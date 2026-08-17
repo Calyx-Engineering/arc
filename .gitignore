@@ -13,3 +13,7 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+
+# Session-scoped working files — carry one session to the next, never committed
+HANDOFF.md
+.arc-work/
