@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# <hook-name> — <event> hook (matcher: <Tool|Tool>).
+#
+# <One paragraph: the friction this catches, and the mechanism it carries.>
+#
+# Copy this file to start a new hook. Everything above `# ---- hook body ----` and
+# everything below it is boilerplate that must not be removed: the kill switch and the
+# fail-open wrapper are the two things that make a mistake here survivable.
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
+# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Never `set -e`. A guardrail bug must never block every tool call. Deny only the one
+# condition this hook was written to catch; on anything unexpected, exit 0 and allow.
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+
+# Emit a PreToolUse deny decision and exit. Only ever called from the one branch that
+# has positively identified the condition being guarded against.
+deny() {
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$(json_string "$1")}}"
+  exit 0
+}
+
+# JSON-encode a string: escape backslash, quote, and newline. Enough for a reason field.
+json_string() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
+}
+
+# Read a top-level or nested field out of the hook payload without requiring jq.
+# Usage: field '"file_path"'
+field() {
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+# Every exit path that is not a positively-identified violation must `exit 0`.
+
+exit 0

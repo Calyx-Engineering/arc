@@ -1,0 +1,2 @@
+# source edit on an arc branch — belongs on an issue branch nested under it
+{"tool_name":"Write","cwd":"__FIXTURE_ARC__","tool_input":{"file_path":"hooks/branch-guard"}}

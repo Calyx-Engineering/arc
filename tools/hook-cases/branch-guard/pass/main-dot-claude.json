@@ -1,0 +1,2 @@
+# .claude/ on main — agent-facing process files stay writable
+{"tool_name":"Write","cwd":"__FIXTURE_MAIN__","tool_input":{"file_path":".claude/skills/chat-response/SKILL.md"}}
