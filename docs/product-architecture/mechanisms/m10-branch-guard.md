@@ -60,17 +60,92 @@ is supplied by Campaign, and it is the part with no precedent.
 
 ---
 
-## Non-negotiables
+## Safe hook development
 
-From [CLAUDE.md](../../../CLAUDE.md), because a bad hook registration fires on every tool
-call in every repo and can break the session needed to fix it:
+**Settled 2026-08-16.** The design goal is that a mistake is *survivable*, not that mistakes
+are prevented by review skill — the user is explicit about not being a hook author.
+
+> *"i'm not skilled at writing hooks. i need a way for you to do it safely."*
+
+A bad hook registration fires on every tool call in every repo and can break the very
+session needed to fix it. Three layers, cheapest first.
+
+### 1. The kill switch — the one thing that must exist
+
+```bash
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+```
+
+`touch ~/.claude/HOOKS_OFF` from any terminal makes every hook inert. No editing JSON while
+the broken thing fights back. **This is what makes the rest safe to attempt.**
+
+**It is a chat obligation, not only a README line.** The agent states the kill switch in
+chat *before proposing any hook change* — the reminder fires at the moment it is needed.
+
+> *"that NEEDs to make it into the plugin readme. probably as a reminder in chat before
+> everytime we re-write set a hook."*
+
+A README line alone is a rule with no trigger, which is the failure mode this whole plan
+exists to fix.
+
+### 2. Fail open — a template obligation, not a checklist item
+
+A hook that errors must not deny the tool call. Deny only on the specific condition it was
+written to catch; on any unexpected failure, exit 0.
+
+A broken guard that lets work through is an annoyance. A broken guard that blocks
+everything is a dead session.
+
+**The agent writes hooks from a skeleton that already contains the kill-switch line and the
+error wrapper**, so it cannot be omitted. Not a thing to check for — a thing that cannot be
+left out.
+
+### 3. Verified before registering — a script, deliberately not a hook
+
+A hook is a program reading JSON on stdin, so it runs standalone:
+
+```bash
+echo '{"tool_name":"Edit","tool_input":{"file_path":"x.md"}}' | hooks/branch-guard
+```
+
+`tools/verify-hook.sh <hook>` runs the cases — one that should pass, one that should deny,
+one malformed — and exits non-zero on failure. **The agent must run it and paste the real
+output before asking for approval.**
+
+**Why a script and not a gate hook.** The instinct to make the gate itself a hook that can
+never be touched is right in spirit and wrong in mechanism:
 
 | | |
 |---|---|
-| Kill switch | Every hook opens with `[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0` |
-| Fail open | On any unexpected failure, exit 0. Deny only the specific condition |
-| Verified before registering | `tools/verify-hook.sh` runs pass, deny and malformed cases; real output pasted before approval |
-| One hook per commit | With the verify output in the commit body, so `git revert` is surgical |
+| A hook validating hook changes | Can be broken by the change it is validating |
+| It is the one thing the kill switch disables | `HOOKS_OFF` turns off the guard along with everything else |
+| A script works with hooks off | And produces output the user can see, rather than a silent pass |
+
+### 4. One hook per commit
+
+With the verify output in the commit body, so `git revert` is surgical.
+
+### 5. Hard-excluded from autonomous edits
+
+The "can never be touched" instinct applies here instead — to the things that make the
+process safe:
+
+| Never edited autonomously | Why |
+|---|---|
+| `settings.json` outside the plugin's own hooks block | Blast radius beyond the plugin |
+| `tools/verify-hook.sh` | The thing that validates changes |
+| The hook template | Carries the kill switch and the wrapper |
+| Any `SessionStart` hook | Runs before the user can intervene, so a mistake is hardest to escape |
+
+Changes to these come to the user as a proposal, always.
+
+### What this permits
+
+With all five in place, the agent **may** write hook registration — provided it shows the
+verify output, confirms the kill-switch line is present, and changes one hook per commit.
+
+The user reviews the diff like anything else: **checking that it tested, not auditing
+bash.**
 
 ---
 
