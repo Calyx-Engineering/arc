@@ -1,13 +1,17 @@
 # Arc — product definition
 
-**A Claude Code plugin for AI-driven engineering delivery.** Arc holds the unit of work an
-engineer actually runs: the workspace it happens in, the issues and reports it produces,
-the knowledge that survives it, and the agents that execute it. It works the same whether
-the work is guided by an engineer step by step or run autonomously between checkpoints.
+> **The authority on what Arc is made of.** Its pieces, its mechanisms, the artifacts it
+> ships, and the state each one is in. Where another document disagrees about scope or
+> composition, this one is correct.
 
-This document is the product definition — what Arc is and what it ships. Build order lives
-in [ROADMAP.md](../../ROADMAP.md); the three-plugin suite Arc belongs to is described in
-[suite-architecture/](../suite-architecture/).
+Arc is six pieces — workspace guard, authoring, the arc, knowledge, delegation, and
+self-improvement. Every mechanism belongs to one and resolves to an artifact, so a piece of
+work traces to the files that carry it and to whatever else must exist before it is useful.
+
+**Not the authority on:** why you would use Arc — [the repo README](../../README.md) ·
+what gets built next — [ROADMAP.md](../../ROADMAP.md) · how the three plugins fit together
+— [suite-architecture/](../suite-architecture/) · how any single mechanism works —
+[mechanisms/](mechanisms/).
 
 ---
 
