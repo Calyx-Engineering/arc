@@ -76,12 +76,12 @@ flowchart TD
 
 | Issue | Dev-log | Status |
 | :--- | :--- | :--- |
-| [#10](https://github.com/Calyx-Engineering/arc/issues/10) skeleton, harness, branch guard | [issue-10-skeleton](../dev-log/issue-10-skeleton.md) | merged to arc |
-| [#11](https://github.com/Calyx-Engineering/arc/issues/11) the record | [issue-11-record](../dev-log/issue-11-record.md) | in progress |
-| [#12](https://github.com/Calyx-Engineering/arc/issues/12) issue writing and verification | — | not started |
-| [#13](https://github.com/Calyx-Engineering/arc/issues/13) the handoff | — | not started |
-| [#14](https://github.com/Calyx-Engineering/arc/issues/14) work watcher and reports | — | not started |
-| [#15](https://github.com/Calyx-Engineering/arc/issues/15) where the arc stands | — | not started |
+| [#10](https://github.com/Calyx-Engineering/arc/issues/10) skeleton, harness, branch guard | [issue-10-skeleton](../dev-log/issue-10-skeleton.md) | merged to arc — [PR #20](https://github.com/Calyx-Engineering/arc/pull/20) |
+| [#11](https://github.com/Calyx-Engineering/arc/issues/11) the record | [issue-11-record](../dev-log/issue-11-record.md) | merged to arc — [PR #21](https://github.com/Calyx-Engineering/arc/pull/21) |
+| [#12](https://github.com/Calyx-Engineering/arc/issues/12) issue writing and verification | [issue-12-issue-write](../dev-log/issue-12-issue-write.md) | merged to arc — [PR #22](https://github.com/Calyx-Engineering/arc/pull/22) |
+| [#13](https://github.com/Calyx-Engineering/arc/issues/13) the handoff | [issue-13-handoff](../dev-log/issue-13-handoff.md) | merged to arc — [PR #23](https://github.com/Calyx-Engineering/arc/pull/23) |
+| [#14](https://github.com/Calyx-Engineering/arc/issues/14) work watcher and reports | [issue-14-work-watch](../dev-log/issue-14-work-watch.md) | merged to arc — [PR #24](https://github.com/Calyx-Engineering/arc/pull/24) |
+| [#15](https://github.com/Calyx-Engineering/arc/issues/15) where the arc stands | — | not started — **David reviews this one** |
 
 **Order is discovered, not planned** — but this arc is the exception that proves it. Pass 1
 is dependency-ordered up front because the artifacts genuinely block each other, and that
@@ -90,6 +90,23 @@ ordering is recorded above as a load-bearing decision rather than as waves.
 ## Related analysis
 
 - [closing keywords and the base branch](../arc-work/02-foundation/closing-keywords-and-base-branch.md) — why `Closes #NN` binds on a PR into `main` and not into an arc branch
+
+## What the arc PR must do
+
+**Five issues are still open.** Every issue PR here carried a `Closes` line that could not
+bind, per the decision above. The arc PR into `main` is the only place they close, and it
+needs a line for each:
+
+```text
+Closes #10
+Closes #11
+Closes #12
+Closes #13
+Closes #14
+```
+
+Verify with `gh pr view <N> --json closingIssuesReferences` after opening it. On that PR an
+empty array is a real bug — it is the one base where the keyword can bind.
 
 ## Future capabilities — designed for, not in scope
 
