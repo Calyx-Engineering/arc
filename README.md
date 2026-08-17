@@ -31,14 +31,14 @@ plugin skeleton does not exist yet.
 | Piece | What it covers |
 |---|---|
 | **Workspace guard** | Branch and worktree guard · issue linking · commit rhythm |
-| **Authoring** | Issue writing · write-back verification · engineering reports |
-| **The arc** | Kickoff and scope gate · decomposition and checkpoints · arc-tree · configuration management · verification campaigns |
+| **Authoring** | Issue writing · write-back verification · engineering reports · chat replies |
+| **Campaign** | Kickoff and scope gate · decomposition and checkpoints · arc-tree · configuration management · verification planning |
 | **Knowledge** | The K1–K4 ladder · context handoff · record routing · `arc-log` and `dev-log` upkeep · test obligation capture |
 | **Delegation** | Agent roster · T0-Inline / T1-Squad / T2-Wave · worktree waves · human gate · the agent wiki |
 | **Self-improvement** | Transcript mining · the self-improvement loop · session preservation · the plugin retrospective |
 
-Twenty-five mechanisms. Eleven already run as working practice elsewhere and need bringing
-in; the rest are specified but unbuilt.
+Twenty-six mechanisms. Twelve already run as working practice; the rest are specified but
+unbuilt.
 
 Full definition in [docs/product-architecture/README.md](docs/product-architecture/README.md).
 
