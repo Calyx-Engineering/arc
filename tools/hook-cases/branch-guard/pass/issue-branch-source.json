@@ -1,0 +1,2 @@
+# source edit on an issue branch — the correct place to work
+{"tool_name":"Edit","cwd":"__FIXTURE_ISSUE__","tool_input":{"file_path":"src/index.ts"}}

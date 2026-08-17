@@ -1,0 +1,2 @@
+# backslash path on main — separators must not defeat the check
+{"tool_name":"Edit","cwd":"__FIXTURE_MAIN__","tool_input":{"file_path":"r:\\arc\\src\\index.ts"}}

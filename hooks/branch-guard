@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# branch-guard — PreToolUse hook (matcher: Edit|Write|NotebookEdit). Carries m10.
+#
+# Denies a source edit made on a coordination branch. The 08-03 incident — four weeks of
+# hardware work landing on the wrong parent branch — cost a session to recover, and the
+# same class of mistake recurred eight-plus times. CLAUDE.md said "check the branch first"
+# and it was skipped, because advice with no trigger is not a mechanism.
+#
+# Coordination branches are `main`, `develop`, and any arc branch (`arc/<slug>`). An arc
+# branch is where issue branches merge to; source work belongs on the issue branch nested
+# under it. Docs and agent-facing files stay writable everywhere, because maintaining the
+# record IS the coordination work those branches exist for.
+#
+# One check, not three. Worktree identity and base freshness are follow-ups — one working
+# check beats three half-finished.
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Never `set -e`. A guardrail bug must never block every tool call.
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+
+json_string() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
+}
+
+deny() {
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$(json_string "$1")}}"
+  exit 0
+}
+
+field() {
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+CWD="$(field cwd)"
+[ -d "$CWD" ] || CWD="$PWD"
+
+BRANCH="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+# No branch means no repo, a detached HEAD, or git unavailable. Allow — the guard has
+# nothing to say about work it cannot classify.
+[ -n "$BRANCH" ] || exit 0
+
+# Issue branches nest under an arc by name, not by ref — git refs cannot nest under an
+# existing branch — so `arc/02-foundation-issue-10-skeleton` is a *work* branch and
+# `arc/02-foundation` is not. The `-issue-` segment is what tells them apart, and getting
+# this backwards would block work on the very branch the guard tells you to create.
+case "$BRANCH" in
+  main|master|develop) KIND=trunk ;;
+  arc/*-issue-*)       exit 0 ;;   # an issue branch — the correct place to work
+  arc/*)               KIND=arc ;;
+  *)                   exit 0 ;;   # a topic branch — also fine
+esac
+
+FILE="$(field file_path)"
+[ -n "$FILE" ] || exit 0
+
+# Normalise separators so one set of patterns covers Windows and POSIX paths.
+NORM="$(printf '%s' "$FILE" | tr '\\' '/')"
+
+# Writable on a coordination branch: the record, the process, and the plugin's own
+# agent-facing surface. This is what those branches exist to maintain.
+case "$NORM" in
+  */docs/*|docs/*)                 exit 0 ;;
+  */.claude/*|.claude/*)           exit 0 ;;
+  */.claude-plugin/*|.claude-plugin/*) exit 0 ;;
+  *.md)                            exit 0 ;;
+  */.gitignore|.gitignore)         exit 0 ;;
+esac
+
+# Everything else on a coordination branch is source work.
+if [ "$KIND" = arc ]; then
+  deny "Source edit blocked: you are on \`$BRANCH\`, an arc branch. Arc branches are coordination only — issue branches nest under them and merge back in. Create \`$BRANCH-issue-<N>-<slug>\` and edit there. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here — maintaining the record is what this branch is for.)"
+else
+  deny "Source edit blocked: you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here.)"
+fi
