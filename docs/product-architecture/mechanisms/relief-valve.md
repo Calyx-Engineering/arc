@@ -77,7 +77,7 @@ itself.
 ## What is not designed
 
 **The trigger.** This is the hard part, and it is the same problem named in
-[what-the-tools-do §3](../what-the-tools-do.md) — ambient work has no git event to bind to.
+[what-the-tools-do §3](../archive/what-the-tools-do.md) — ambient work has no git event to bind to.
 Candidates:
 
 | Candidate | Against |

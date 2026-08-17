@@ -5,7 +5,7 @@ not decided.
 **Home:** Arc — Delegation.
 **Src:** ⚙️ inherited.
 **Covers:** row 25 — the roster and the dispatch ladder. Rows 26–29 come from the same
-source document and are specced separately.
+source document; 26 and 29 are Delegation, 27 and 28 are Campaign.
 
 ---
 

@@ -1,8 +1,8 @@
 # Mechanism — Tracker Write Verification
 
-**Status:** proposed. Evaluation target for the existing `issue-writing` skill.
-**Home:** Arc.
-**Spawned from:** [friction-log.md](../friction-log.md) §2.7, and David's framing, 2026-08-16.
+**Status:** specified. Carries the evaluation set for `issue-writing`.
+**Home:** Arc — Authoring.
+**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.7, and David's framing, 2026-08-16.
 
 ---
 
@@ -158,7 +158,7 @@ gh pr view <N> --json closingIssuesReferences   # empty means it did not link
 
 ## Related
 
-- [friction-log.md](../friction-log.md) §2.7, §2.8
+- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.7, §2.8
 - [commit-rhythm.md](commit-rhythm.md) — dropped staged files, same silent-failure class
 - [handoff-spine.md](handoff-spine.md) — proposed home for pending actions
 - ROADZ `.claude/skills/issue-writing/SKILL.md` — the skill under evaluation

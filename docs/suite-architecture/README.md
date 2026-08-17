@@ -151,3 +151,4 @@ supplies.
 | File | What |
 |---|---|
 | [04-arc-execution-and-roles.md](04-arc-execution-and-roles.md) | The three-role workflow — David, Star, and the arc-spine. **Mirrored with lodestar; edit both copies in the same session** |
+| [domain-engineer-persona.md](domain-engineer-persona.md) | Bench's mechanism 34. Written during the retrospective, held here until Bench's repo has a product definition to take it |

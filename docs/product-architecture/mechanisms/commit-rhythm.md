@@ -1,8 +1,8 @@
 # Mechanism — Commit Rhythm
 
-**Status:** proposed. Strong evidence; David's own rule already stated.
-**Home:** Arc.
-**Spawned from:** [friction-log.md](../friction-log.md) §2.5.
+**Status:** specified.
+**Home:** Arc — Workspace guard.
+**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.5.
 
 ---
 
@@ -176,6 +176,6 @@ either fire constantly or miss the interesting cases.
 
 ## Related
 
-- [friction-log.md](../friction-log.md) §2.5, §2.8
+- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.5, §2.8
 - [handoff-spine.md](handoff-spine.md) — session-end capture points coincide
 - ROADZ `CLAUDE.md` — tracker link mechanics

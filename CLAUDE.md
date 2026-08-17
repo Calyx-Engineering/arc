@@ -10,9 +10,36 @@ Read [docs/product-architecture/README.md](docs/product-architecture/README.md) 
 every cold start. It is the authority on what Arc is made of — its six pieces, its
 mechanisms, the artifacts that carry them, and the state each is in.
 
-Then [docs/product-architecture/HANDOFF.md](docs/product-architecture/HANDOFF.md) for how
-to work with David and what was already decided. Don't re-litigate anything marked decided
-— flag it instead of assuming it is still open.
+Then [ROADMAP.md](ROADMAP.md) for what is being built now and in what order.
+
+## Working with David
+
+These matter more than any finding in the documents.
+
+| | |
+|---|---|
+| **Short chat responses** | He reads slowly and deliberately. Lead with the answer; he pulls for detail. See `.claude/skills/chat-response/` |
+| **Never commit unasked** | He reviews by diff in VS Code's source-control graph. An unrequested commit destroys that surface |
+| **Edit in place, do not paste into chat** | Fixes go into the file; the diff is the review surface. Rewriting a whole file loses his in-progress review comments — edit, never rewrite |
+| **No development narrative** | Never "an earlier draft said…" or "you corrected me…". State the current conclusion. Applies to documents *and* chat |
+| **Wording fixes go in immediately** | Discuss structural changes first, then apply; never stop to ask about word choice |
+| **Verify before asserting** | Several documented beliefs have been disproved by direct test |
+| **Cite TimeScope by mechanism, never by name** | He does not remember its details. Say what it is and how it works in the same breath |
+| **He is right about his own domain** | On EE substance, when he says an analysis is wrong, it is wrong. Do not re-litigate — ask what was missed |
+| **Watch for saturation** | He will say when a context is degrading. He is a reliable judge of it; hand off rather than push through |
+| **Number discussion topics** | A reply covering several topics labels each D1, D2… so he can answer by number instead of restating |
+| **Do not dig without an exit** | Escalating questions with no relief valve is the friction row 41 exists for. Offer to back out to the critical point |
+
+### Rejected, so they are not re-proposed
+
+| Rejected | Why |
+|---|---|
+| Emoji for t-shirt sizes | No equivalent exists. Use the SVGs in `assets/` |
+| Five-level priority scale | Three only — high, medium, low |
+| Red as an effort colour | Reserved; orange/amber/blue instead |
+| `concerns/` as a folder name | Reads wrong to a human, and it is agent-facing |
+| Concern-first folder structure | Subject is the folder, concern is a facet |
+| A single deep-context document | Saturates a session by itself — hence the K1–K4 ladder |
 
 ## What Arc is
 
