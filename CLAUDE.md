@@ -28,7 +28,7 @@ These matter more than any finding in the documents.
 | **He is right about his own domain** | On EE substance, when he says an analysis is wrong, it is wrong. Do not re-litigate — ask what was missed |
 | **Watch for saturation** | He will say when a context is degrading. He is a reliable judge of it; hand off rather than push through |
 | **Number discussion topics** | A reply covering several topics labels each D1, D2… so he can answer by number instead of restating |
-| **Do not dig without an exit** | Escalating questions with no relief valve is the friction row 41 exists for. Offer to back out to the critical point |
+| **Do not dig without an exit** | Escalating questions with no relief valve is the friction m41 exists for. Offer to back out to the critical point |
 
 ### Rejected, so they are not re-proposed
 
@@ -60,11 +60,11 @@ Which file carries a capability is decided when it gets built, not when the gap 
    verbatim quote if there is one, what should have happened, and the trigger. Mark it
    `partial` and name what is undesigned. Thin is correct at capture time.
 2. Add the row to the product definition's mechanism table with ⚪ status and a spec link.
-   New mechanisms take numbers from 38 up.
+   New mechanisms take the next free identifier from the suite registry.
 3. File an issue, so it is tracked as work rather than only described.
 
 **Exception: when the capability is already a single skill, that skill is its own spec.**
-`issue-writing`, `engineering-report` and `chat-response` link to their `SKILL.md`, not to
+m11, m18 and m38 link to their `SKILL.md`, not to
 a `mechanisms/` file — a separate spec would paraphrase the skill and the two would drift.
 
 Full routing table — including what is *not* a definition change — in the product
@@ -76,9 +76,14 @@ A bare number is never ambiguous. Never write "tier 2" alone.
 
 | Ladder | Values | Measures |
 |---|---|---|
+| **Mechanisms** | m09–m41 | Which capability. Not a ladder — an identifier, zero-padded to two digits |
 | **Knowledge tiers** | K1–K4 | Depth of recorded knowledge |
 | **Delegation tiers** | T0-Inline · T1-Squad · T2-Wave | How work is dispatched to agents |
 | **Star authority ladder** | Agreed · Derived · Escalate | How much authority Star answers with (Lodestar's) |
+
+**Never write a bare mechanism number.** `m17`, not "row 17" — issue numbers, mechanism
+numbers and pass numbers all appear in the same sentences. Spec filenames carry the same
+identifier: `mechanisms/m17-k1-upkeep.md`.
 
 Concise usage is the bare token — "that belongs in K2", "doing T1 delegation now".
 Descriptive pairs it with the name — "T1-Squad level delegation".

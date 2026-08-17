@@ -3,7 +3,7 @@
 **Status:** undefined — deferred pending an interview.
 **Home:** Arc — Campaign.
 **Src:** 📐 designed.
-**Covers:** row 24.
+**Covers:** m24.
 
 ---
 
@@ -13,7 +13,7 @@
 validation milestone, and reports results back to Lodestar so the verification matrix
 updates.
 
-The top-down twin of [test-obligation-capture](test-obligation-capture.md): that one accretes
+The top-down twin of [test-obligation-capture](m23-test-obligation-capture.md): that one accretes
 test items from design decisions as they happen; this one starts from what must be proven and
 plans a campaign.
 
@@ -51,6 +51,6 @@ in [friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5
 
 ## Related
 
-- [test-obligation-capture](test-obligation-capture.md) — the bottom-up twin
-- [human-gate](human-gate.md) — the gate this plans toward
+- [test-obligation-capture](m23-test-obligation-capture.md) — the bottom-up twin
+- [human-gate](m28-human-gate.md) — the gate this plans toward
 - [friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview) — the gap

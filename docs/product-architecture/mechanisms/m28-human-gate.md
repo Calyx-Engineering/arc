@@ -4,7 +4,7 @@
 an open architectural question.
 **Home:** Arc — Campaign.
 **Src:** ⚙️ inherited.
-**Covers:** row 28.
+**Covers:** m28.
 
 ---
 
@@ -72,13 +72,13 @@ was already verified. For a CAD review the reviewer opens Altium and forms their
 so the packet may be a summary of what changed and why rather than a checklist.
 
 **How a deferred gate is tracked.** A test that cannot run for weeks is a test obligation
-(row 23) — but the gate is not the obligation. Something has to notice the board arrived.
+(m23) — but the gate is not the obligation. Something has to notice the board arrived.
 
 ---
 
 ## Related
 
-- [test-obligation-capture](test-obligation-capture.md) — captures what the deferred gate will check
-- [arc-decomposition](arc-decomposition.md) — places the checkpoints this sits at
+- [test-obligation-capture](m23-test-obligation-capture.md) — captures what the deferred gate will check
+- [arc-decomposition](m20-arc-decomposition.md) — places the checkpoints this sits at
 - [ROADZ workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md) — steps 5–8, the guided gates
 - [suite-architecture](../../suite-architecture/README.md#open-questions) — gate latency as an open question

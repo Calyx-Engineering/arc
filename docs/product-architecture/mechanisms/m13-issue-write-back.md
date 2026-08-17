@@ -69,7 +69,7 @@ The asymmetry is the whole finding. The same session that carefully re-reads a f
 after editing it will fire a `gh issue edit` and move on.
 
 **Same failure class as §2.8** (tracker mechanics) and the dropped-staged-files case in
-[commit-rhythm](commit-rhythm.md): mechanisms that **report success and do the wrong
+[commit-rhythm](m14-commit-rhythm.md): mechanisms that **report success and do the wrong
 thing**. `issue-writing` already opens with exactly this warning —
 
 > *"Every mechanism here fails silently."*
@@ -128,7 +128,7 @@ with no natural moment to bind a mechanism to. Candidates:
 
 | Option | Note |
 |---|---|
-| Running action list in the handoff | Fits [handoff-spine](handoff-spine.md); no new artifact |
+| Running action list in the handoff | Fits [handoff-spine](m15-handoff-spine.md); no new artifact |
 | Checkpoint sweep — "these were agreed; filed?" | A moment that already exists |
 | File immediately on agreement | Fastest, but risks tracker noise from provisional talk |
 
@@ -159,6 +159,6 @@ gh pr view <N> --json closingIssuesReferences   # empty means it did not link
 ## Related
 
 - [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.7, §2.8
-- [commit-rhythm.md](commit-rhythm.md) — dropped staged files, same silent-failure class
-- [handoff-spine.md](handoff-spine.md) — proposed home for pending actions
+- [commit-rhythm.md](m14-commit-rhythm.md) — dropped staged files, same silent-failure class
+- [handoff-spine.md](m15-handoff-spine.md) — proposed home for pending actions
 - ROADZ `.claude/skills/issue-writing/SKILL.md` — the skill under evaluation

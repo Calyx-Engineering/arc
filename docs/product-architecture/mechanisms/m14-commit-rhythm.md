@@ -169,7 +169,7 @@ either fire constantly or miss the interesting cases.
 |---|---|
 | How often may it propose before becoming noise? | Over-prompting recreates the annoyance in a new form |
 | Does it propose the commit message too? | Probably — but the message must survive the "no development narrative" rule |
-| Interaction with the handoff | A session-end capture point and a handoff update are the same moment ([handoff-spine](handoff-spine.md)) |
+| Interaction with the handoff | A session-end capture point and a handoff update are the same moment ([handoff-spine](m15-handoff-spine.md)) |
 | Does the pre-commit checklist belong in a hook? | Yes for the mechanical items; the judgment cannot be hooked |
 
 ---
@@ -177,5 +177,5 @@ either fire constantly or miss the interesting cases.
 ## Related
 
 - [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.5, §2.8
-- [handoff-spine.md](handoff-spine.md) — session-end capture points coincide
+- [handoff-spine.md](m15-handoff-spine.md) — session-end capture points coincide
 - ROADZ `CLAUDE.md` — tracker link mechanics

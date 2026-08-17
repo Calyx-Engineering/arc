@@ -4,7 +4,7 @@
 deferred pending an interview.
 **Home:** Arc — Workspace guard.
 **Src:** 🔥 observed.
-**Covers:** row 22.
+**Covers:** m22.
 
 ---
 
@@ -60,5 +60,5 @@ Named in
 ## Related
 
 - [ROADZ workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md) — steps 6–8, the manufacturing package and its record
-- [branch-guard](branch-guard.md) — needs the naming vocabulary this would own
+- [branch-guard](m10-branch-guard.md) — needs the naming vocabulary this would own
 - [friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview) — the gap

@@ -1,7 +1,7 @@
 # Archive
 
 Superseded framings, kept for reference. **Nothing here is current.** Do not cite these
-as the plan — [product-plan.md](../product-plan.md) is.
+as the plan — [the product definition](../README.md) is.
 
 | File | What it was | Why it is here |
 |---|---|---|

@@ -1,6 +1,6 @@
 # Mechanism — Session Preservation
 
-**Status:** specified. Prerequisite for [transcript-mining](transcript-mining.md); pairs with [handoff-spine](handoff-spine.md).
+**Status:** specified. Prerequisite for [transcript-mining](m30-transcript-mining.md); pairs with [handoff-spine](m15-handoff-spine.md).
 **Home:** Arc — Self-improvement.
 **Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4.
 
@@ -62,8 +62,8 @@ Two other mechanisms depend on this material being findable:
 
 | Mechanism | Depends on |
 |---|---|
-| [transcript-mining](transcript-mining.md) | Complete coverage — orphaned directories are invisible to a per-project scan |
-| [handoff-spine](handoff-spine.md) | Being able to answer "what happened in that worktree?" during rehydration |
+| [transcript-mining](m30-transcript-mining.md) | Complete coverage — orphaned directories are invisible to a per-project scan |
+| [handoff-spine](m15-handoff-spine.md) | Being able to answer "what happened in that worktree?" during rehydration |
 
 The first hand-run of transcript mining found the orphans **only because the search was
 a wildcard glob across all project directories**. A scan scoped to the current repo's
@@ -180,5 +180,5 @@ index makes transcripts findable; it does not make them durable.**
 ## Related
 
 - [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4 — session context loss
-- [transcript-mining.md](transcript-mining.md) — consumer of this data
-- [handoff-spine.md](handoff-spine.md) — the live-state counterpart
+- [transcript-mining.md](m30-transcript-mining.md) — consumer of this data
+- [handoff-spine.md](m15-handoff-spine.md) — the live-state counterpart

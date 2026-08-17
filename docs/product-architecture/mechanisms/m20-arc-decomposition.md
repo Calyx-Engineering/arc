@@ -4,7 +4,7 @@
 not.
 **Home:** Arc — Campaign.
 **Src:** 📐 designed.
-**Covers:** row 20.
+**Covers:** m20.
 
 ---
 
@@ -32,7 +32,7 @@ that earns the batching.
 
 ## Two decomposition modes
 
-The autonomy switch (row 40) bites hardest here:
+The autonomy switch (m40) bites hardest here:
 
 | | Autonomous | Guided |
 |---|---|---|
@@ -42,7 +42,7 @@ The autonomy switch (row 40) bites hardest here:
 
 **Guided decomposition is the harder case and the less designed one.** A hardware arc starts
 with 3–8 issues and generates more as understanding develops — so "decompose the arc" is not
-a single act at kickoff. See [arc-tree](arc-tree.md).
+a single act at kickoff. See [arc-tree](m21-arc-tree.md).
 
 ---
 
@@ -62,13 +62,13 @@ assumed. Related to Star's derive-versus-escalate gate, which uses the same axis
 
 **Whether checkpoints survive hardware's latency.** Doc 04 assumes a checkpoint is a
 conversation. In hardware the meaningful gate can be weeks away — a board arriving. That is
-row 28's problem too, and it is flagged as an open question in the suite architecture.
+m28's problem too, and it is flagged as an open question in the suite architecture.
 
 ---
 
 ## Related
 
 - [doc 04](../../suite-architecture/04-arc-execution-and-roles.md) — checkpoint design
-- [kickoff-scope-gate](kickoff-scope-gate.md) — the other half of `skills/kickoff`
-- [arc-tree](arc-tree.md) — what discovered decomposition produces
-- [human-gate](human-gate.md) — the checkpoint's hardware-latency problem
+- [kickoff-scope-gate](m09-kickoff-scope-gate.md) — the other half of `skills/kickoff`
+- [arc-tree](m21-arc-tree.md) — what discovered decomposition produces
+- [human-gate](m28-human-gate.md) — the checkpoint's hardware-latency problem

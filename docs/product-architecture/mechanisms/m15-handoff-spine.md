@@ -67,7 +67,7 @@ topic demands. Cost scales with relevance.
 
 **Arc-deep and issue-deep are both K2** — same depth, different scope. They map to
 `arc-work/` and `scratch/` respectively in
-[hardware-record-structure](hardware-record-structure.md).
+[hardware-record-structure](m16-hardware-record-structure.md).
 
 ### Why deep context splits per-issue
 
@@ -229,6 +229,6 @@ than duplicate its ordering — duplicated order drifts.
 ## Related
 
 - [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4 — the evidence
-- [transcript-mining.md](transcript-mining.md) — sibling mechanism
+- [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism
 - TimeScope `docs/arc-log/arc-local-first-storage.md` — the software precedent
 - ROADZ `CLAUDE.md` — arc-tracking GitHub mechanics

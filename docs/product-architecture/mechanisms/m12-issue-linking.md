@@ -139,7 +139,7 @@ gh pr view <N> --json closingIssuesReferences   # empty ⇒ the link did not for
 
 Run after every PR creation and after any body edit. **Report loudly on failure.** This
 is the same silent-success class as
-[tracker-write-verification](issue-write-back.md).
+[tracker-write-verification](m13-issue-write-back.md).
 
 ### 2. Repair rather than reconfigure
 
@@ -208,6 +208,6 @@ link, verify it, repair it) transfers even though the API does not.
 ## Related
 
 - [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.8
-- [issue-write-back.md](issue-write-back.md) — same silent-failure class
-- [handoff-spine.md](handoff-spine.md) — arc structure, Projects over Milestones
+- [issue-write-back.md](m13-issue-write-back.md) — same silent-failure class
+- [handoff-spine.md](m15-handoff-spine.md) — arc structure, Projects over Milestones
 - ROADZ `CLAUDE.md` — the workaround this replaces; issue #42 tracks its removal

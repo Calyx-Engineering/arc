@@ -3,7 +3,7 @@
 **Status:** partial — proven in software; whether guided work ever uses it is open.
 **Home:** Arc — Campaign.
 **Src:** ⚙️ inherited.
-**Covers:** row 27.
+**Covers:** m27.
 
 ---
 
@@ -54,6 +54,6 @@ be better placed, since it already knows what spawned what.
 
 ## Related
 
-- [agent-roster](agent-roster.md) — T2-Wave is the dispatch tier this executes
-- [arc-decomposition](arc-decomposition.md) — decides the chunks this partitions
+- [agent-roster](m25-agent-roster.md) — T2-Wave is the dispatch tier this executes
+- [arc-decomposition](m20-arc-decomposition.md) — decides the chunks this partitions
 - TimeScope `agent-process-foundation.md` §4 and §7 — the source

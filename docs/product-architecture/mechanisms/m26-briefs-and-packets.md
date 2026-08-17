@@ -3,7 +3,7 @@
 **Status:** partial — the pattern is proven; the packet formats Arc ships are not defined.
 **Home:** Arc — Delegation.
 **Src:** ⚙️ inherited.
-**Covers:** row 26.
+**Covers:** m26.
 
 ---
 
@@ -53,6 +53,6 @@ at wrong facts confidently.
 
 ## Related
 
-- [agent-roster](agent-roster.md) — who receives the briefs
-- [agent-wiki](agent-wiki.md) — what every brief points at
+- [agent-roster](m25-agent-roster.md) — who receives the briefs
+- [agent-wiki](m29-agent-wiki.md) — what every brief points at
 - TimeScope `agent-process-foundation.md` §3 — the source

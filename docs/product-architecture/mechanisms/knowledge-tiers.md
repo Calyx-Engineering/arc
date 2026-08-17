@@ -59,7 +59,7 @@ Consequences worth stating plainly:
 
 That last point is why the mining mechanisms exist at all. Knowledge mining is not a
 convenience feature — it is what keeps reasoning from dying with the machine. See
-[transcript-mining](transcript-mining.md).
+[transcript-mining](m30-transcript-mining.md).
 
 ---
 
@@ -95,8 +95,8 @@ Descriptive usage pairs it with the name — "T1-Squad level delegation".
 
 ## Related
 
-- [hardware-record-structure](hardware-record-structure.md) — the folder layout that
+- [hardware-record-structure](m16-hardware-record-structure.md) — the folder layout that
   realises K1–K3
-- [handoff-spine](handoff-spine.md) — the reading order across the ladder
-- [transcript-mining](transcript-mining.md) — promotes K4 → K2
-- [session-preservation](session-preservation.md) — keeps K4 findable
+- [handoff-spine](m15-handoff-spine.md) — the reading order across the ladder
+- [transcript-mining](m30-transcript-mining.md) — promotes K4 → K2
+- [session-preservation](m32-session-preservation.md) — keeps K4 findable
