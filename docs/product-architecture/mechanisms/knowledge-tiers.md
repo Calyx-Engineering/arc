@@ -2,7 +2,7 @@
 
 **Status:** definition. This file is the **single source of truth** for the tier ladder.
 Other documents reference it; none redefine it.
-**Home:** Arc (record structure) · consumed by every mechanism that reads or writes the
+**Home:** Arc — Knowledge. Consumed by every mechanism that reads or writes the
 record.
 
 ---

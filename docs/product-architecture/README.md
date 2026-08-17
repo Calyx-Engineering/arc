@@ -201,7 +201,7 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/gate-run` | skill | 28 | Invoked, at a feature-complete state | — |
 | `skills/verification-plan` | skill | 24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
 | | **KNOWLEDGE** | | | |
-| `skills/handoff-write` | skill | 15 | Invoked, at session end and any handoff | `skills/record-route` for where it is written |
+| `skills/handoff` | skill | 15 | Read at cold start, written at session end | `skills/record-route` for where it lives |
 | `skills/record-route` | skill | 16 · 17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
 | `reference/knowledge-tiers` | reference | — | Read by anything that reads or writes the record | — |
 | `hooks/mining-trigger` | hook | 19 | Automatic, at PR open | `agents/transcript-miner` |
@@ -254,7 +254,7 @@ tree, what is next, what must not be re-litigated. Whether that is an agent, a s
 writing to the arc-log, or a role the main thread adopts is not decided. The name pairs
 with Lodestar's Star.
 
-**`skills/handoff-write` is separate from `skills/record-route` on purpose.** Record routing answers
+**`skills/handoff` is separate from `skills/record-route` on purpose.** Record routing answers
 *where does this go*; the handoff is a durable artifact that survives window death —
 [its spec](mechanisms/handoff-spine.md) names the gap as "2 to 12 days of end-on-end
 development, surviving repeated window death, cheap to rehydrate from." Different trigger,

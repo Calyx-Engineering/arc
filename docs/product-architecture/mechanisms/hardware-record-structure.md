@@ -1,8 +1,8 @@
 # Mechanism — Hardware Record Structure
 
-**Status:** proposed. Mostly **already grown organically in ROADZ** — this documents and
+**Status:** specified. Mostly **already grown organically in ROADZ** — this documents and
 tightens what exists.
-**Home:** Arc (guided mode).
+**Home:** Arc — Knowledge. Guided mode, per row 40.
 **Spawned from:** the context ladder in [handoff-spine](handoff-spine.md).
 **Tiers:** K1–K4 as defined in [knowledge-tiers](knowledge-tiers.md) — this file is the
 folder layout that realises K1–K3.
@@ -404,7 +404,7 @@ of a graduated fact — device physics that outlived the analysis that produced 
 
 ## Autonomy-switch behaviour
 
-Per [friction-log](../friction-log.md) §3.2b, the switch is autonomy, not domain.
+Per [friction-log](../../retrospectives/2026-08-plugin-line/friction-log.md) §3.2b, the switch is autonomy, not domain.
 
 | | Autonomous | Guided |
 |---|---|---|
@@ -440,7 +440,7 @@ works.
 ## Related
 
 - [handoff-spine.md](handoff-spine.md) — the three-tier ladder this implements
-- [friction-log.md](../friction-log.md) §3.2b — the autonomy switch
+- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §3.2b — the autonomy switch
 - ROADZ `docs/report/issue-01-warning-light-dimming/` — the working example
 - ROADZ `.claude/skills/engineering-report/SKILL.md` — governs K3 content
 - TimeScope `docs/dev-log/TEMPLATE.md` — the compact form to preserve

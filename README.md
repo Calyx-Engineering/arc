@@ -71,6 +71,6 @@ self-improvement piece holds the mechanisms that regenerate it.
 | [docs/product-architecture/](docs/product-architecture/) | **What Arc is.** Start with its `README.md` |
 | [docs/product-architecture/mechanisms/](docs/product-architecture/mechanisms/) | Mechanism specs |
 | [docs/suite-architecture/](docs/suite-architecture/) | **What the three-plugin suite is.** Boundaries, build order, mechanism numbering. Mirrored files live here |
-| [docs/product-architecture/friction-log.md](docs/product-architecture/friction-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
+| [docs/retrospectives/2026-08-plugin-line/friction-log.md](docs/retrospectives/2026-08-plugin-line/friction-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
 | [docs/reference-timescope/](docs/reference-timescope/) | TimeScope's working files — source material for extraction, do not edit |
 | [docs/reference-roadz/](docs/reference-roadz/) | ROADZ's `issue-writing` and `engineering-report` skills — same |

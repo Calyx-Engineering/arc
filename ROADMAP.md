@@ -35,7 +35,7 @@ record survive a cold start.
 | `skills/engineering-report` | 18 | Report style re-taught 12+ times | Port, generalise |
 | `skills/chat-response` | 38 | Already here | Soak only |
 | `skills/record-route` | 16 · 17 | **The dev-log and arc-log get written.** Without this there is no K1 | Port from TimeScope |
-| `skills/handoff-write` | 15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
+| `skills/handoff` | 15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
 | `hooks/tracker-verify` | 12 | Links fail silently; a PR to the wrong base splits a milestone | Build |
 | `skills/work-watch` | 14 · 23 · 41 | Commit timing, test obligations, and depth — one sweep | Build |
 | `agents/camp` | 21 | Something to ask "where is this arc, what is next" | Build |
@@ -63,10 +63,10 @@ Dependencies, not value:
 3. skills/record-route              ← everything downstream writes to K1
 4. skills/issue-write               ← tracker-verify needs it for repair
 5. hooks/tracker-verify
-6. skills/handoff-write             ← needs record-route for where it writes
+6. skills/handoff                   ← needs record-route for where it lives
 7. skills/engineering-report        ← needs record-route for where reports land
 8. skills/work-watch                ← needs issue-write to file what it catches
-9. agents/camp                      ← needs record-route and handoff-write
+9. agents/camp                      ← needs record-route and handoff
 ```
 
 **Branch guard ships one check, not three.** Branch only; worktree and base-freshness are
@@ -124,7 +124,7 @@ Delegation and Campaign, once there is autonomous work to run.
 | 22 — Configuration management | Hardware BOM and component-revision practice |
 | 24 — Verification planning | How a campaign is planned and results recorded |
 
-Both are named in [friction-log §5](docs/product-architecture/friction-log.md#5-what-still-needs-the-interview).
+Both are named in [friction-log §5](docs/retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview).
 
 **A related gap surfaced 2026-08-17:** ROADZ's branch-naming vocabulary comes from a BOM
 that lives in a Google Sheet, outside version control. Configuration management is not only

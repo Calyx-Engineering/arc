@@ -119,7 +119,22 @@ around an assumption.
 
 ### 5. Specify
 
-One file per mechanism, in `mechanisms/`. Do not bury specs inside argument documents.
+Two kinds of output, two destinations.
+
+| Output | Goes to |
+|---|---|
+| **The friction log** — evidence, clusters, verbatim quotes | `docs/retrospectives/<YYYY-MM>-<slug>/friction-log.md` |
+| **Mechanism specs** — one file each | `docs/product-architecture/mechanisms/` |
+
+**The friction log is dated and never edited afterwards.** It is evidence, and evidence
+freezes when the run ends. Every retrospective produces one, so they need a home that does
+not clog the product definition — the first run's log sat in the architecture root and had
+to be moved.
+
+**Specs are living.** They change as mechanisms get built. That is why they live apart from
+the evidence that produced them.
+
+One file per mechanism. Do not bury specs inside argument documents.
 
 | Section | Holds |
 | --- | --- |

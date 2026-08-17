@@ -1,8 +1,8 @@
 # Mechanism — Session Preservation
 
-**Status:** proposed. Prerequisite for [transcript-mining](transcript-mining.md); pairs with [handoff-spine](handoff-spine.md).
-**Home:** Arc — Self-improve group.
-**Spawned from:** [friction-log.md](../friction-log.md) §2.4.
+**Status:** specified. Prerequisite for [transcript-mining](transcript-mining.md); pairs with [handoff-spine](handoff-spine.md).
+**Home:** Arc — Self-improvement.
+**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4.
 
 ---
 
@@ -179,6 +179,6 @@ index makes transcripts findable; it does not make them durable.**
 
 ## Related
 
-- [friction-log.md](../friction-log.md) §2.4 — session context loss
+- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4 — session context loss
 - [transcript-mining.md](transcript-mining.md) — consumer of this data
 - [handoff-spine.md](handoff-spine.md) — the live-state counterpart

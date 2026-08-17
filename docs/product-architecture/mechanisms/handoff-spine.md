@@ -1,8 +1,8 @@
 # Mechanism — Handoff / Spine
 
-**Status:** proposed. Partial precedent in TimeScope (spine), failed attempt in ROADZ (handoff files).
-**Home:** Arc.
-**Spawned from:** [friction-log.md](../friction-log.md) §2.4.
+**Status:** partial — the artifact is designed; whether issue-level K2 extends the dev-log or sits beside it is open.
+**Home:** Arc — Knowledge.
+**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4.
 
 ---
 
@@ -204,7 +204,7 @@ flowchart TD
 **David's position:** Milestones are good but cannot express issue *order*. Projects
 can.
 
-This confirms the decision already recorded in [CLAUDE.md](../../CLAUDE.md#arc-tracking-github-mechanics)
+This confirms the decision already recorded in [CLAUDE.md](../../../CLAUDE.md#arc-tracking-github-mechanics)
 — Milestone drag-order is UI-only with no API backing; a Project's item position is
 real and settable via `updateProjectV2ItemPosition`.
 
@@ -228,7 +228,7 @@ than duplicate its ordering — duplicated order drifts.
 
 ## Related
 
-- [friction-log.md](../friction-log.md) §2.4 — the evidence
+- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4 — the evidence
 - [transcript-mining.md](transcript-mining.md) — sibling mechanism
 - TimeScope `docs/arc-log/arc-local-first-storage.md` — the software precedent
 - ROADZ `CLAUDE.md` — arc-tracking GitHub mechanics
