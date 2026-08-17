@@ -117,7 +117,8 @@ retrospective never surfaced it.
 
 **The number space is shared with Lodestar and Bench**, so "highest here, plus one" is
 wrong once another plugin claims one. Row 39 issues the next free number; the registry it
-reads lives in [suite-architecture/](../suite-architecture/).
+reads is in
+[suite-architecture](../suite-architecture/README.md#mechanism-numbering).
 
 ### Spec completeness
 

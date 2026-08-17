@@ -67,9 +67,12 @@ Descriptive pairs it with the name — "T1-Squad level delegation".
 
 ## Mirrored files — edit both copies
 
-`docs/04-arc-execution-and-roles.md` exists **identically** in
+`04-arc-execution-and-roles.md` exists **identically** in
 [lodestar](https://github.com/Calyx-Engineering/lodestar/blob/main/docs/04-arc-execution-and-roles.md)
-and [arc](https://github.com/Calyx-Engineering/arc/blob/main/docs/04-arc-execution-and-roles.md).
+and [arc](https://github.com/Calyx-Engineering/arc/blob/main/docs/suite-architecture/04-arc-execution-and-roles.md).
+
+Mirrored files live in `docs/suite-architecture/` — a document that must exist in two repos
+is about the boundary between them, which is that folder's subject.
 
 **A change to one must be made to the other in the same session.** The design defines
 Star and the arc-spine in relation to each other; each repo needs the whole picture.
