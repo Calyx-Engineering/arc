@@ -24,9 +24,9 @@ end. That piece is Campaign; the arc is what it produces.
 |---|---|---|---|---|---|
 | **Workspace guard** | One edit, commit, or PR | Whether *this* action is landing correctly | On every tool call | Edit on the wrong branch · a PR that never links · a revision nobody can reconstruct | Hooks — mechanical, no judgment |
 | **Authoring** | One issue, report, or reply | What gets said, and what gets cut | On invocation, whenever something is written | Style re-taught every time · a report nobody can read · an edit that left stale content behind | Skills — style and structure |
-| **Campaign** | An arc — many issues, days to weeks | What work exists, in what order, where the human stops | At kickoff, and at each checkpoint | Scope drift · unsequenced work · an arc whose shape nobody can see | Skills — judgment about sequencing and risk |
+| **Campaign** | An arc — many issues, days to weeks | What work exists, in what order, what runs in parallel, where the human stops | At kickoff, and at each checkpoint | Scope drift · unsequenced work · an arc whose shape nobody can see | Skills — judgment about sequencing and risk |
 | **Knowledge** | One finding, routed to one place | Which tier it belongs in, and when it moves up | Session start to read · decision points and PR time to write | A 20-minute cold start · analysis nobody finds again · reasoning that dies with the machine | Skills for routing, plus a hook that invokes the mining agent |
-| **Delegation** | One task, dispatched | Which agent, which model, and when a human must be asked | On dispatch, and at each feature-complete state | Orchestrator filling with raw output · top-model rates for mechanical work · shipping what only a human could verify | Skills and agent definitions, plus the agent wiki |
+| **Delegation** | One task, handed to a worker | Which agent takes it, on which model, and what comes back | On dispatch | Orchestrator filling with raw output · top-model rates for mechanical work · every agent re-deriving what the last one learned | Agent definitions, the brief/packet protocol, and the agent wiki |
 | **Self-improvement** | The toolset itself, across repos | Which friction is worth codifying, and where the fix belongs | At PR time, and on request | The same correction given twelve times · a shipped mechanism that quietly stopped working | Agents that read transcripts, plus a hook |
 
 **Workspace guard polices; campaign plans.** The guard's idea of *correct* — branch names,
@@ -88,6 +88,8 @@ moves next; this column only reports.
 | 20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | — | ⚪ |
 | 21 | Arc-tree — spawn diagram | 🔥 | **Arc shape is visible.** *Family tree of which issue spawned which, so scope growth shows early* | — | ⚪ |
 | 24 | Verification planning | 📐 | **Requirements get proven.** *Turns unproven requirements into a validation milestone, and reports results back* | — | ⚪ |
+| 27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Partitions issues into disjoint-file tracks and sequences their merges. Disjointness is the go/no-go* | — | ⚪ |
+| 28 | Human gate | ⚙️ | **The step only a person can do, happens.** *One gate per feature-complete state, with the environment staged* | — | ⚪ |
 | | **KNOWLEDGE** | | | | |
 | 15 | Context ladder / handoff | 🔥 | **Cold starts stop costing 20 minutes.** *Which documents a fresh session opens, in what order, and when to stop* | [spec](mechanisms/handoff-spine.md) | ⚪ |
 | 16 | Record routing | 🔥 | **Analysis stays findable.** *Decides which file a finding goes in, and promotes it when it outlives the arc* | [tiers](mechanisms/knowledge-tiers.md) · [structure](mechanisms/hardware-record-structure.md) | ⚪ |
@@ -95,11 +97,9 @@ moves next; this column only reports.
 | 19 | Knowledge mining trigger | 🔥 | **Reasoning in transcripts reaches the record.** *Fires at PR time and runs the mining agent with the knowledge filter* | [spec](mechanisms/transcript-mining.md) | ⚪ |
 | 23 | Test obligation capture | 🔥 | **Designs get tested when the part arrives.** *Proposes the test item at design time, months before it can be run* | [spec](mechanisms/test-obligation-capture.md) | ⚪ |
 | | **DELEGATION** | | | | |
-| 25 | Agent roster + dispatch tiers | ⚙️ | **The right agent on the right work.** *Named agents, plus how much to delegate — T0-Inline · T1-Squad · T2-Wave* | — | ⚪ |
+| 25 | Autonomous execution | ⚙️ | **Work runs unattended between checkpoints.** *The agent roster — scout, architect, planner, builder, reviewer, verifier, scribe — each pinned to a model, plus how much to hand over: T0-Inline · T1-Squad · T2-Wave* | [spec](mechanisms/agent-roster.md) | ⚪ |
 | 26 | Briefs down / packets up | ⚙️ | **The orchestrator stays lean.** *A subagent gets a small brief and returns a bounded packet, never its raw context* | — | ⚪ |
-| 27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Disjoint-file tracks, one builder per track in its own worktree* | — | ⚪ |
-| 28 | Human gate | ⚙️ | **The step only a person can do, happens.** *One gate per feature-complete state, with the environment staged* | — | ⚪ |
-| 29 | Agent wiki | ⚙️ | **Exploration cost compounds downward.** *Distilled repo knowledge every agent reads before exploring* | — | ⚪ |
+| 29 | Agent wiki | ⚙️ | **Exploration cost compounds downward.** *Distilled repo knowledge every agent reads before exploring. A fork of the published wiki agent* | — | ⚪ |
 | | **SELF-IMPROVEMENT** | | | | |
 | 30 | Transcript mining | 🔥 | **One pipeline, two filters.** *Knowledge filter promotes findings into the record; friction filter clusters corrections into mechanism candidates* | [spec](mechanisms/transcript-mining.md) | ⚪ |
 | 31 | Self-improvement loop | 🔥 | **Tooling fixes land without leaving the work.** *Files the issue, makes the fix locally uncommitted, opens the diff* | [spec](mechanisms/self-improvement-loop.md) | ⚪ |
