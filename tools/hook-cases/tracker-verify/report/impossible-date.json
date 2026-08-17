@@ -1,0 +1,2 @@
+# a date that cannot be right — evaluation case 5
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"Target ship date: 2019-10-26, confirmed with the vendor\n","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

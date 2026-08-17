@@ -1,0 +1,2 @@
+# an ordinary shell command — not a tracker write
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"ls -la"}}

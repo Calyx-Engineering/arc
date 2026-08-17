@@ -1,0 +1,2 @@
+# template scaffolding survived into the body — evaluation case 3
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n- [ ] Set the current limit to TBD mA\n","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

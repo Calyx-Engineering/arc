@@ -73,12 +73,18 @@ run_case() {
   out="$(printf '%s' "$payload" | bash "$HOOK" 2>&1)"
   rc=$?
 
-  # A hook must always exit 0. A non-zero exit is a crash, and a crashing hook is the one
-  # failure mode that blocks every tool call.
-  if [ "$rc" -ne 0 ]; then
-    verdict="CRASH (exit $rc)"
-  elif printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"'; then
+  # Two hook shapes, two verdict vocabularies:
+  #
+  #   PreToolUse  — exit 0 always; a deny is JSON on stdout. A non-zero exit is a crash,
+  #                 and a crashing PreToolUse hook blocks every matching tool call.
+  #   PostToolUse — the write already happened, so there is nothing to deny. Exit 2 with
+  #                 a message on stderr feeds context back; exit 0 is silence.
+  if printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"'; then
     verdict=deny
+  elif [ "$rc" -eq 2 ]; then
+    verdict=report
+  elif [ "$rc" -ne 0 ]; then
+    verdict="CRASH (exit $rc)"
   else
     verdict=allow
   fi
@@ -97,13 +103,18 @@ run_case() {
 echo "verify-hook.sh — $HOOK"
 echo
 
-# Malformed input must allow. It is the case a hook is most likely to meet in the wild and
-# least likely to have been written for.
-for kind in pass deny malformed; do
+# Malformed input must be silent. It is the case a hook is most likely to meet in the wild
+# and least likely to have been written for.
+#
+# `deny/` and `report/` are the two ways a hook can speak up; a hook has one or the other,
+# never both. An absent directory is skipped, so each hook declares its shape by which
+# cases it ships.
+for kind in pass deny report malformed; do
   [ -d "$CASES_DIR/$kind" ] || continue
   case "$kind" in
     pass|malformed) expect=allow ;;
     deny)           expect=deny ;;
+    report)         expect=report ;;
   esac
   echo "$kind — expect $expect"
   for f in "$CASES_DIR/$kind"/*.json; do
@@ -129,15 +140,18 @@ KS_PREEXISTING=0
 [ -f "$KS" ] && KS_PREEXISTING=1
 mkdir -p "$(dirname "$KS")" 2>/dev/null
 touch "$KS" 2>/dev/null
-if [ -d "$CASES_DIR/deny" ]; then
-  for f in "$CASES_DIR/deny"/*.json; do
+SPEAKS_UP=deny
+[ -d "$CASES_DIR/report" ] && SPEAKS_UP=report
+if [ -d "$CASES_DIR/$SPEAKS_UP" ]; then
+  for f in "$CASES_DIR/$SPEAKS_UP"/*.json; do
     [ -e "$f" ] || continue
     out="$(tail -n +2 "$f" | substitute | bash "$HOOK" 2>&1)"
-    if printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"'; then
-      echo "  FAIL  kill switch did not suppress a deny case"
+    rc=$?
+    if printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"' || [ "$rc" -eq 2 ]; then
+      echo "  FAIL  kill switch did not suppress a $SPEAKS_UP case"
       FAILED=$((FAILED + 1))
     else
-      echo "  PASS  kill switch suppresses deny"
+      echo "  PASS  kill switch suppresses $SPEAKS_UP"
       PASSED=$((PASSED + 1))
     fi
     break

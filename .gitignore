@@ -14,6 +14,8 @@ __pycache__/
 *.pyc
 .venv/
 
-# Session-scoped working files — carry one session to the next, never committed
-HANDOFF.md
+# Session-scoped working files — carry one session to the next, never committed.
+# Anchored to the root: a bare `HANDOFF.md` also matches templates/handoff.md, which is a
+# shipped artifact and must be committed.
+/HANDOFF.md
 .arc-work/

@@ -1,0 +1,2 @@
+# gh issue view — a read, not a write. Must not recurse into itself
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh issue view 10 --json body"}}
