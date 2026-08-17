@@ -31,7 +31,7 @@ record survive a cold start.
 | `.claude-plugin/plugin.json` | — | Nothing loads without it | New |
 | `tools/verify-hook.sh` | — | Required by CLAUDE.md before any hook is registered | New |
 | `hooks/branch-guard` | 10 | Highest-value single mechanism in the plan — the 08-03 incident cost a session | Port, extend |
-| `skills/issue` | 11 · 13 | Issue style re-taught 6+ times; agreed edits silently not landing | Port, generalise |
+| `skills/issue-write` | 11 · 13 | Issue style re-taught 6+ times; agreed edits silently not landing | Port, generalise |
 | `skills/engineering-report` | 18 | Report style re-taught 12+ times | Port, generalise |
 | `skills/chat-response` | 38 | Already here | Soak only |
 | `skills/record` | 16 · 17 | **The dev-log and arc-log get written.** Without this there is no K1 | Port from TimeScope |
@@ -61,7 +61,7 @@ Dependencies, not value:
 1. plugin.json + verify-hook.sh     ← nothing loads or is testable without these
 2. hooks/branch-guard               ← proves the skeleton; one check only, branch
 3. skills/record                    ← everything downstream writes to K1
-4. skills/issue                     ← tracker-verify needs it for repair
+4. skills/issue-write               ← tracker-verify needs it for repair
 5. hooks/tracker-verify
 6. skills/handoff                   ← needs record for where it writes
 7. skills/engineering-report        ← needs record for where reports land

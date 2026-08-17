@@ -186,16 +186,16 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | 10 | Automatic, before any edit | Campaign's branch convention |
-| `hooks/tracker-verify` | hook | 12 | Automatic, on branch create, PR open, PR merge | `skills/issue` for repair |
-| `skills/watch` | skill | 14 · 23 · 41 | Always, as work proceeds | `skills/issue` to file what it catches |
+| `hooks/tracker-verify` | hook | 12 | Automatic, on branch create, PR open, PR merge | `skills/issue-write` for repair |
+| `skills/watch` | skill | 14 · 23 · 41 | Always, as work proceeds | `skills/issue-write` to file what it catches |
 | `skills/config` | skill | 22 | Invoked, when a revision is cut | — |
 | `skills/mode` | skill | 40 | Invoked, at kickoff and when work changes character | — |
 | | **AUTHORING** | | | |
-| `skills/issue` | skill | 11 · 13 | Invoked, when writing or editing an issue or PR | — |
+| `skills/issue-write` | skill | 11 · 13 | Invoked, when writing or editing an issue or PR | — |
 | `skills/engineering-report` | skill | 18 | Invoked, when writing a report | `skills/record` for where it lands |
 | `skills/chat-response` | skill | 38 | Always, every reply | — |
 | | **CAMPAIGN** | | | |
-| `skills/kickoff` | skill | 9 · 20 | Invoked, at the start of an arc | `skills/issue` to file the decomposition · `skills/mode` |
+| `skills/kickoff` | skill | 9 · 20 | Invoked, at the start of an arc | `skills/issue-write` to file the decomposition · `skills/mode` |
 | `agents/camp` | agent | 21 | Invoked, at checkpoints and on request | `skills/record` for the arc-log |
 | `skills/wave` | skill | 27 | Invoked, when work may run in parallel | `agents/camp` for the partition · `skills/delegate` |
 | `skills/gate` | skill | 28 | Invoked, at a feature-complete state | — |
@@ -211,7 +211,7 @@ function list, then read its Needs column to find what else must exist before it
 | `wiki/` | agent | 29 | Invoked, and read by every agent before exploring | — |
 | `agents/transcript-miner` | agent | 30 | Called by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
 | | **SELF-IMPROVEMENT** | | | |
-| `agents/improver` | agent | 31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue` |
+| `agents/improver` | agent | 31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue-write` |
 | `hooks/session-index` | hook | 32 | Automatic, at worktree creation | — |
 | `skills/plugin-retrospective` | skill | 33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | 39 | Called when a mechanism is captured | The suite registry |
@@ -222,7 +222,7 @@ mechanisms fire together:
 | Artifact | Merges | Why |
 |---|---|---|
 | `skills/watch` | 14 · 23 · 41 | One always-on sweep, three things it watches for. See below |
-| `skills/issue` | 11 · 13 | Write the issue and verify the write landed — one moment |
+| `skills/issue-write` | 11 · 13 | Write the issue and verify the write landed — one moment |
 | `skills/kickoff` | 9 · 20 | Scope agreement and decomposition happen in one sitting |
 | `skills/delegate` | 25 · 26 | Choosing the tier and shaping the brief are the same decision |
 
