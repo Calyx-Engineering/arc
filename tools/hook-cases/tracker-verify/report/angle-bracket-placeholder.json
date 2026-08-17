@@ -1,0 +1,2 @@
+# an unfilled <value> placeholder — evaluation case 4
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"Inductor: <value> uH, per the CISPR 25 analysis\n","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

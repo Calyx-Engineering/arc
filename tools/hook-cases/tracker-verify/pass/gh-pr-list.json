@@ -1,0 +1,2 @@
+# gh pr list — a read
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh pr list --state merged"}}
