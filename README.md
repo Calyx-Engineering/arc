@@ -54,12 +54,13 @@ Arc is one of three plugins built from a single retrospective:
 | **Arc** | Get the work done, in order, with a record |
 | **[Bench](https://github.com/Calyx-Engineering/bench)** | Analyse at real engineering depth, and drive the instruments |
 
-**Arc holds the cross-plugin architecture** — how the three fit together, what each
-owns, and the build order. It lives here rather than in Lodestar because the mechanisms
-that maintain it, Arc's self-improvement piece, are Arc's.
-
 Arc calls Bench when a task needs engineering depth, and exchanges data with Lodestar:
 Lodestar says what must be proven, Arc reports what actually was.
+
+**The suite architecture lives in this repo** — how the three fit together, what each owns,
+the build order, and mechanism numbering. It is here rather than in Lodestar because Arc's
+self-improvement piece holds the mechanisms that regenerate it.
+[docs/suite-architecture/](docs/suite-architecture/).
 
 ---
 
@@ -67,9 +68,9 @@ Lodestar says what must be proven, Arc reports what actually was.
 
 | Path | What |
 |---|---|
-| [docs/product-architecture/](docs/product-architecture/) | Arc's product definition. Start with its `README.md` |
-| [docs/product-architecture/mechanisms/](docs/product-architecture/mechanisms/) | Eleven mechanism specs |
+| [docs/product-architecture/](docs/product-architecture/) | **What Arc is.** Start with its `README.md` |
+| [docs/product-architecture/mechanisms/](docs/product-architecture/mechanisms/) | Mechanism specs |
+| [docs/suite-architecture/](docs/suite-architecture/) | **What the three-plugin suite is.** Boundaries, build order, mechanism numbering. Mirrored files live here |
 | [docs/product-architecture/friction-log.md](docs/product-architecture/friction-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
 | [docs/reference-timescope/](docs/reference-timescope/) | TimeScope's working files — source material for extraction, do not edit |
 | [docs/reference-roadz/](docs/reference-roadz/) | ROADZ's `issue-writing` and `engineering-report` skills — same |
-| [docs/04-arc-execution-and-roles.md](docs/04-arc-execution-and-roles.md) | The three-role workflow. **Mirrored with Lodestar — edit both copies** |

@@ -5,7 +5,7 @@
 > This file exists **identically** in two repos:
 >
 > - **[lodestar/docs/04-arc-execution-and-roles.md](https://github.com/Calyx-Engineering/lodestar/blob/main/docs/04-arc-execution-and-roles.md)**
-> - **[arc/docs/04-arc-execution-and-roles.md](https://github.com/Calyx-Engineering/arc/blob/main/docs/04-arc-execution-and-roles.md)**
+> - **[arc/docs/suite-architecture/04-arc-execution-and-roles.md](https://github.com/Calyx-Engineering/arc/blob/main/docs/suite-architecture/04-arc-execution-and-roles.md)**
 >
 > **A change to one must be made to the other in the same session.** They are not
 > allowed to drift.
