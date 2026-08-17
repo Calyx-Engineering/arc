@@ -6,22 +6,42 @@ hooks, commands, once they exist) are the product; this file governs how we work
 
 ## Start here
 
-Read [docs/product-architecture/HANDOFF.md](docs/product-architecture/HANDOFF.md) first,
-every cold start. It has the decided list, what is not built yet, and how to work with
-David.
+Read [docs/product-architecture/README.md](docs/product-architecture/README.md) first,
+every cold start. It is the authority on what Arc is made of — its six pieces, its
+mechanisms, the artifacts that carry them, and the state each is in.
 
-Don't re-litigate anything marked decided — flag it to David instead of assuming it is
-still open.
+Then [docs/product-architecture/HANDOFF.md](docs/product-architecture/HANDOFF.md) for how
+to work with David and what was already decided. Don't re-litigate anything marked decided
+— flag it instead of assuming it is still open.
 
 ## What Arc is
 
-One-line: a Claude Code plugin for engineering delivery — the unit of work from kickoff
-to merge, the record that survives it, and the agents that execute it. Full pitch in
-[README.md](README.md).
+One-line: a Claude Code plugin for AI-driven engineering delivery — six pieces covering the
+workspace work happens in, the issues and reports it produces, the knowledge that survives
+it, and the agents that execute it. Full pitch in [README.md](README.md).
 
 **Arc holds the cross-plugin architecture** for the three-plugin line (Lodestar, Arc,
-Bench). It lives here because the Self-improve group — the mechanisms that regenerate
-that architecture — are Arc's.
+Bench). It lives here because the self-improvement piece — the mechanisms that regenerate
+that architecture — is Arc's.
+
+## Capturing a gap in the product
+
+When Arc should do something and does not, **document the mechanism, never the artifact.**
+Which file carries a capability is decided when it gets built, not when the gap is noticed.
+
+1. Write a mechanism spec in `docs/product-architecture/mechanisms/` — the friction, a
+   verbatim quote if there is one, what should have happened, and the trigger. Mark it
+   `partial` and name what is undesigned. Thin is correct at capture time.
+2. Add the row to the product definition's mechanism table with ⚪ status and a spec link.
+   New mechanisms take numbers from 38 up.
+3. File an issue, so it is tracked as work rather than only described.
+
+**Exception: when the capability is already a single skill, that skill is its own spec.**
+`issue-writing`, `engineering-report` and `chat-response` link to their `SKILL.md`, not to
+a `mechanisms/` file — a separate spec would paraphrase the skill and the two would drift.
+
+Full routing table — including what is *not* a definition change — in the product
+definition's "Capturing a gap" section.
 
 ## Vocabulary — three ladders, deliberately distinct
 
