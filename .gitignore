@@ -3,7 +3,11 @@
 Thumbs.db
 
 # Editor
-.vscode/
+# `.vscode/*` and not `.vscode/`: git will not descend into an excluded directory, so a
+# negation cannot re-include anything inside one. Excluding the contents leaves the
+# directory readable and the exception below effective.
+.vscode/*
+!.vscode/settings.json
 .idea/
 
 # Node (for the future generator/tooling)
