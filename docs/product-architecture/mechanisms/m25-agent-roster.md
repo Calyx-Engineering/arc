@@ -4,7 +4,7 @@
 not decided.
 **Home:** Arc — Delegation.
 **Src:** ⚙️ inherited.
-**Covers:** row 25 — the roster and the dispatch ladder. Rows 26–29 come from the same
+**Covers:** m25 — the roster and the dispatch ladder. M26–m29 come from the same
 source document; 26 and 29 are Delegation, 27 and 28 are Campaign.
 
 ---
@@ -46,19 +46,19 @@ largest single port in Arc's plan.
 
 The ladder is one decision — *how much do I hand over* — so it stays whole here. What
 happens once T2 is chosen is a different question, and it belongs to Campaign: partitioning
-issues into disjoint-file tracks and sequencing their merges is arc-scale work. See row 27.
+issues into disjoint-file tracks and sequencing their merges is arc-scale work. See m27.
 
 ### What this mechanism does not own
 
 | | Owner |
 |---|---|
-| The brief and packet formats | Row 26 |
-| Track partitioning, worktrees, merge order | Row 27 — Campaign |
-| Where a human must act | Row 28 — Campaign |
-| What agents read before exploring | Row 29 |
+| The brief and packet formats | m26 |
+| Track partitioning, worktrees, merge order | m27 — Campaign |
+| Where a human must act | m28 — Campaign |
+| What agents read before exploring | m29 |
 
 Scribe's mission includes wiki curation, but the wiki's structure, page budgets and lint
-rules belong to row 29. The roster says who does the work; row 29 says what the work is.
+rules belong to m29. The roster says who does the work; m29 says what the work is.
 
 ---
 
@@ -83,7 +83,7 @@ exist yet.
 **How the tuning table ships.** Part 2 swaps domain specifics per repo. In a plugin that is
 either a configuration file, a setup skill that interviews the user, or a documented manual
 step. The swaps themselves belong to whichever mechanism owns each — the human gate to row
-28, the builder tracks to row 27.
+m28, the builder tracks to m27.
 
 **Whether the roster is one artifact or many.** TimeScope has one file per agent under
 `.claude/agents/`. A plugin could ship them the same way, or generate them from a single

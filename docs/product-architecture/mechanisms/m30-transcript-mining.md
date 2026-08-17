@@ -26,7 +26,7 @@ across two groups and let the copies drift — see
 
 **Neither filter writes silently.** Both propose; the human decides. What happens after
 the proposal — filing, fixing, reviewing — is
-[self-improvement-loop](self-improvement-loop.md).
+[self-improvement-loop](m31-self-improvement-loop.md).
 
 ### Why the knowledge filter matters
 

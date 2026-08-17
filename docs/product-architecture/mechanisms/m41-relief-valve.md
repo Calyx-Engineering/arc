@@ -3,7 +3,7 @@
 **Status:** partial — the friction is clear, the trigger is not designed.
 **Home:** Arc — Workspace guard.
 **Src:** 🔥 observed.
-**Covers:** row 41.
+**Covers:** m41.
 
 ---
 
@@ -98,5 +98,5 @@ three separate always-on checks is likely wrong.
 
 ## Related
 
-- [commit-rhythm](commit-rhythm.md) — the same propose-never-act posture, same threshold question
+- [commit-rhythm](m14-commit-rhythm.md) — the same propose-never-act posture, same threshold question
 - [`chat-response`](../../../.claude/skills/chat-response/SKILL.md) — governs asking versus deciding; this fires when that guidance is not enough

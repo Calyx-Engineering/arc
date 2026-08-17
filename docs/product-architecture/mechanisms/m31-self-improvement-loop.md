@@ -3,7 +3,7 @@
 **Status:** specified.
 **Home:** Arc — Self-improvement.
 **Form:** agent + hook.
-**Spawned from:** [transcript-mining](transcript-mining.md), which stops at *propose*.
+**Spawned from:** [transcript-mining](m30-transcript-mining.md), which stops at *propose*.
 This spec covers what happens after.
 
 ---
@@ -28,7 +28,7 @@ solved.
 
 At PR time (or on demand), against the transcripts for the current branch:
 
-1. Run the **friction filter** from [transcript-mining](transcript-mining.md). The
+1. Run the **friction filter** from [transcript-mining](m30-transcript-mining.md). The
    knowledge filter runs at the same trigger but feeds K2 rather than this loop.
 2. For each cluster, resolve **which plugin repo owns the mechanism** at fault.
 3. **Present the triage report and stop.** Nothing is filed or written before the user
@@ -111,7 +111,7 @@ Clusters are grouped by what they match, because the three mean different things
 
 **Matched-to-closed is the highest-value signal this mechanism produces.** It is the
 only evidence that a shipped mechanism is not doing its job — the case
-[transcript-mining](transcript-mining.md) calls *"cluster persists after a skill
+[transcript-mining](m30-transcript-mining.md) calls *"cluster persists after a skill
 ships"*. Reopening the issue keeps the history attached rather than starting a fresh one.
 
 ### The report
@@ -427,8 +427,8 @@ context. Not T2-Wave: one track, no parallel worktrees.
 
 ## Related
 
-- [transcript-mining](transcript-mining.md) — the pipeline this consumes
-- [session-preservation](session-preservation.md) — the transcript index it queries
+- [transcript-mining](m30-transcript-mining.md) — the pipeline this consumes
+- [session-preservation](m32-session-preservation.md) — the transcript index it queries
 - [plugin-retrospective](https://github.com/Calyx-Engineering/lodestar/blob/main/.claude/skills/plugin-retrospective/SKILL.md) — sweeps
   the issue queue this fills
-- [commit-rhythm](commit-rhythm.md) — the commit discipline this inherits
+- [commit-rhythm](m14-commit-rhythm.md) — the commit discipline this inherits

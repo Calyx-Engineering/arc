@@ -4,7 +4,7 @@
 hardware work is not decided.
 **Home:** Arc — Knowledge.
 **Src:** ⚙️ inherited.
-**Covers:** row 17.
+**Covers:** m17.
 
 ---
 
@@ -54,7 +54,7 @@ by another name."* Writing at checkpoints is the mechanism; writing constantly d
 
 **Guided work has a third body of material.** Hardware generates analysis, measurements and
 rejected topologies that fit neither compact file. That is K2, specified in
-[hardware-record-structure](hardware-record-structure.md) — but the seam between them is not
+[hardware-record-structure](m16-hardware-record-structure.md) — but the seam between them is not
 settled. The dev-log's retrospective gains a Spawned section pointing down into K2, and
 whether that is the only link is open.
 
@@ -63,7 +63,7 @@ same hook, folds the check into `hooks/tracker-verify`, or makes it a step in th
 skill is undecided.
 
 **Arc-log ownership during an arc.** The status table must move as work lands. Whether that
-is the record skill, `agents/camp`, or a hook is open — and it interacts with row 21, which
+is the record skill, `agents/camp`, or a hook is open — and it interacts with m21, which
 renders the arc's shape into the same file.
 
 **Whether the arc-log template survives contact with hardware.** It is software-shaped:
@@ -75,6 +75,6 @@ rather than planned. The sections may need replacing rather than tuning.
 ## Related
 
 - [knowledge-tiers](knowledge-tiers.md) — K1's definition and the loading rule
-- [hardware-record-structure](hardware-record-structure.md) — the K2 layer below this
-- [handoff-spine](handoff-spine.md) — what a cold session reads, and in what order
+- [hardware-record-structure](m16-hardware-record-structure.md) — the K2 layer below this
+- [handoff-spine](m15-handoff-spine.md) — what a cold session reads, and in what order
 - TimeScope `docs/dev-log/TEMPLATE.md` and `docs/arc-log/ARC-TEMPLATE.md` — the sources

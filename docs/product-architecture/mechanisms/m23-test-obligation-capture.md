@@ -3,7 +3,7 @@
 **Status:** specified. Already run by hand throughout ROADZ rev B.
 **Home:** Arc — Knowledge.
 **Form:** hook + skill. Composes with [`issue-writing`](../../reference-roadz/issue-writing/SKILL.md)
-and [commit-rhythm](commit-rhythm.md).
+and [commit-rhythm](m14-commit-rhythm.md).
 
 ---
 
@@ -24,7 +24,7 @@ specific at the moment of design and forgotten by the time hardware arrives.
 ## What it does
 
 **Evaluates the work in progress and nudges when a test obligation has just been
-created** — the same evaluator pattern as [commit-rhythm](commit-rhythm.md), which
+created** — the same evaluator pattern as [commit-rhythm](m14-commit-rhythm.md), which
 watches for a reviewable point and proposes a commit.
 
 | Step | |
@@ -94,5 +94,5 @@ for.
 
 ## Related
 
-- [commit-rhythm](commit-rhythm.md) — same evaluator, same nudge pattern
-- [issue-write-back](issue-write-back.md) — same failure class: agreed actions never filed
+- [commit-rhythm](m14-commit-rhythm.md) — same evaluator, same nudge pattern
+- [issue-write-back](m13-issue-write-back.md) — same failure class: agreed actions never filed
