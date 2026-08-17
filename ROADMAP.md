@@ -1,0 +1,157 @@
+# Roadmap
+
+> **The authority on what gets built, and in what order.** The product definition says what
+> Arc is made of; this says which parts become real, when, and what blocks what.
+
+Status per mechanism lives in the [product definition](docs/product-architecture/README.md).
+This file decides what moves next.
+
+---
+
+## Milestone: the working foundation
+
+**Two passes, one milestone.** Pass 1 is the bar for using Arc on real work; pass 2
+continues in the same push and adds the loop that improves it.
+
+### Pass 1 — usable on hardware work
+
+**Goal: Arc is usable on real hardware work.** Not complete, not polished — enough that a
+guided arc runs with its record intact and its workspace protected.
+
+The bar: `git clone`, install the plugin, start an arc, work an issue, and have the branch
+guard stop a wrong-branch edit, the issue skill write and verify a tracker edit, and the
+record survive a cold start.
+
+**This is the gate for real use.** Everything after it is improvement on a working base.
+
+### What ships
+
+| Artifact | Mechanisms | Why in pass 1 | Work |
+|---|---|---|---|
+| `.claude-plugin/plugin.json` | — | Nothing loads without it | New |
+| `tools/verify-hook.sh` | — | Required by CLAUDE.md before any hook is registered | New |
+| `hooks/branch-guard` | 10 | Highest-value single mechanism in the plan — the 08-03 incident cost a session | Port, extend |
+| `skills/issue-write` | 11 · 13 | Issue style re-taught 6+ times; agreed edits silently not landing | Port, generalise |
+| `skills/engineering-report` | 18 | Report style re-taught 12+ times | Port, generalise |
+| `skills/chat-response` | 38 | Already here | Soak only |
+| `skills/record-route` | 16 · 17 | **The dev-log and arc-log get written.** Without this there is no K1 | Port from TimeScope |
+| `skills/handoff-write` | 15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
+| `hooks/tracker-verify` | 12 | Links fail silently; a PR to the wrong base splits a milestone | Build |
+| `skills/work-watch` | 14 · 23 · 41 | Commit timing, test obligations, and depth — one sweep | Build |
+| `agents/camp` | 21 | Something to ask "where is this arc, what is next" | Build |
+
+**Eleven artifacts. Four are ports of working practice, one is already here, six are new.**
+
+### What waits
+
+| Not in pass 1 | Why |
+|---|---|
+| Self-improvement — 30 · 31 · 32 · 33 · 39 | **Pass 2**, same milestone. Depends on the rest existing to improve |
+| Delegation — 25 · 26 · 29 | Guided hardware work is mostly serial. Delegation pays off in autonomous work |
+| Campaign — 9 · 20 · 24 · 27 · 28 | Kickoff and decomposition are judgment an engineer already applies; the arc-log carries the result |
+| Configuration management — 22 | Hardware half is undesigned and deferred pending an interview |
+| Autonomy switch — 40 | Pass 1 is guided only. The switch matters when both modes exist |
+| Knowledge mining trigger — 19 | Its only job is calling `agents/transcript-miner`, which is pass 2's. Row 32 is the standalone half and ships here |
+
+### Order
+
+Dependencies, not value:
+
+```text
+1. plugin.json + verify-hook.sh     ← nothing loads or is testable without these
+2. hooks/branch-guard               ← proves the skeleton; one check only, branch
+3. skills/record-route              ← everything downstream writes to K1
+4. skills/issue-write               ← tracker-verify needs it for repair
+5. hooks/tracker-verify
+6. skills/handoff-write             ← needs record-route for where it writes
+7. skills/engineering-report        ← needs record-route for where reports land
+8. skills/work-watch                ← needs issue-write to file what it catches
+9. agents/camp                      ← needs record-route and handoff-write
+```
+
+**Branch guard ships one check, not three.** Branch only; worktree and base-freshness are
+follow-ups. One working check beats three half-finished.
+
+**Soak before the next thing.** Per CLAUDE.md, a change runs against real work before it
+leaves the machine. Pass 1 soaks on live hardware work.
+
+---
+
+### Pass 2 — self-improvement
+
+Same milestone, continuing after pass 1 is usable. The loop that keeps Arc improving
+without leaving the work.
+
+| Artifact | Mechanisms | Order |
+|---|---|---|
+| `hooks/session-index` | 32 | 1 — the miner reads what it writes |
+| `agents/transcript-miner` | 30 | 2 |
+| `hooks/mining-trigger` | 19 | 3 — its only job is calling the miner |
+| `agents/improver` | 31 | 4 |
+| `skills/plugin-retrospective` | 33 | Already here; needs the miner to be more than manual |
+| `scripts/next-mechanism` | 39 | Any time |
+
+**Session preservation first.** Without it K4 has holes and nothing warns you. It also only
+indexes transcripts created *after* it ships — anything from pass 1's own work needs
+backfilling from `~/.claude/projects/`, which is possible but loses the branch and issue
+context that would have been captured live.
+
+**One known gap:** the knowledge filter in
+[transcript-mining](docs/product-architecture/mechanisms/transcript-mining.md) is not
+designed. The friction filter is validated against a real 28-transcript run.
+
+---
+
+## Later — autonomous work
+
+Delegation and Campaign, once there is autonomous work to run.
+
+| Artifact | Mechanisms |
+|---|---|
+| `agents/*.md` · `skills/delegate` | 25 · 26 |
+| `wiki/` | 29 |
+| `skills/kickoff` | 9 · 20 |
+| `skills/wave-plan` | 27 |
+| `skills/gate-run` | 28 |
+| `skills/autonomy-set` | 40 |
+
+---
+
+## Deferred, needing an interview
+
+| Mechanism | Blocked on |
+|---|---|
+| 22 — Configuration management | Hardware BOM and component-revision practice |
+| 24 — Verification planning | How a campaign is planned and results recorded |
+
+Both are named in [friction-log §5](docs/product-architecture/friction-log.md#5-what-still-needs-the-interview).
+
+**A related gap surfaced 2026-08-17:** ROADZ's branch-naming vocabulary comes from a BOM
+that lives in a Google Sheet, outside version control. Configuration management is not only
+"what is in this revision" but "what are the legal names for work."
+
+---
+
+## Spec gaps
+
+Ranked by what they block.
+
+| Gap | Blocks | Note |
+|---|---|---|
+| 17 — K1 upkeep | Pass 1, item 3 | Working practice in TimeScope, no spec. **Highest-priority stub** |
+| 21 — Arc-tree | Pass 1, item 9 | `agents/camp` is unresolved: agent, skill, or a role the main thread adopts |
+| 9 · 20 · 24 · 27 · 28 | Later | All of Campaign. Five mechanisms, no specs |
+| 26 · 29 | Later | 26 is inside `agent-process-foundation.md`; 29 forks a published plugin |
+| 30 — knowledge filter | Pass 2 | Half-designed. Friction filter validated, knowledge filter not |
+| 41 — Relief valve | Pass 1, item 8 | Spec written, four candidate triggers all rejected |
+| Guided flow steps 5–8 | Nothing yet | CAD review, manufacturing package, quoting, PR-as-record have no mechanisms at all |
+
+Stubs are [issue #6](https://github.com/Calyx-Engineering/arc/issues/6).
+
+---
+
+## Not on the roadmap
+
+The mechanism table's Status column reports where things stand. This file decides what
+moves. If a mechanism is not in a pass above, it is not scheduled — which is a statement
+about sequence, not about value.

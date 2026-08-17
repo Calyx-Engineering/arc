@@ -186,23 +186,23 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | 10 | Automatic, before any edit | Campaign's branch convention |
-| `hooks/tracker-verify` | hook | 12 | Automatic, on branch create, PR open, PR merge | `skills/issue` for repair |
-| `skills/watch` | skill | 14 · 23 · 41 | Always, as work proceeds | `skills/issue` to file what it catches |
-| `skills/config` | skill | 22 | Invoked, when a revision is cut | — |
-| `skills/mode` | skill | 40 | Invoked, at kickoff and when work changes character | — |
+| `hooks/tracker-verify` | hook | 12 | Automatic, on branch create, PR open, PR merge | `skills/issue-write` for repair |
+| `skills/work-watch` | skill | 14 · 23 · 41 | Always, as work proceeds | `skills/issue-write` to file what it catches |
+| `skills/config-check` | skill | 22 | Invoked, when a revision is cut | — |
+| `skills/autonomy-set` | skill | 40 | Invoked, at kickoff and when work changes character | — |
 | | **AUTHORING** | | | |
-| `skills/issue` | skill | 11 · 13 | Invoked, when writing or editing an issue or PR | — |
-| `skills/engineering-report` | skill | 18 | Invoked, when writing a report | `skills/record` for where it lands |
+| `skills/issue-write` | skill | 11 · 13 | Invoked, when writing or editing an issue or PR | — |
+| `skills/engineering-report` | skill | 18 | Invoked, when writing a report | `skills/record-route` for where it lands |
 | `skills/chat-response` | skill | 38 | Always, every reply | — |
 | | **CAMPAIGN** | | | |
-| `skills/kickoff` | skill | 9 · 20 | Invoked, at the start of an arc | `skills/issue` to file the decomposition · `skills/mode` |
-| `agents/camp` | agent | 21 | Invoked, at checkpoints and on request | `skills/record` for the arc-log |
-| `skills/wave` | skill | 27 | Invoked, when work may run in parallel | `agents/camp` for the partition · `skills/delegate` |
-| `skills/gate` | skill | 28 | Invoked, at a feature-complete state | — |
+| `skills/kickoff` | skill | 9 · 20 | Invoked, at the start of an arc | `skills/issue-write` to file the decomposition · `skills/autonomy-set` |
+| `agents/camp` | agent | 21 | Invoked, at checkpoints and on request | `skills/record-route` for the arc-log |
+| `skills/wave-plan` | skill | 27 | Invoked, when work may run in parallel | `agents/camp` for the partition · `skills/delegate` |
+| `skills/gate-run` | skill | 28 | Invoked, at a feature-complete state | — |
 | `skills/verification-plan` | skill | 24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
 | | **KNOWLEDGE** | | | |
-| `skills/handoff` | skill | 15 | Invoked, at session end and any handoff | `skills/record` for where it is written |
-| `skills/record` | skill | 16 · 17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
+| `skills/handoff-write` | skill | 15 | Invoked, at session end and any handoff | `skills/record-route` for where it is written |
+| `skills/record-route` | skill | 16 · 17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
 | `reference/knowledge-tiers` | reference | — | Read by anything that reads or writes the record | — |
 | `hooks/mining-trigger` | hook | 19 | Automatic, at PR open | `agents/transcript-miner` |
 | | **DELEGATION** | | | |
@@ -211,7 +211,7 @@ function list, then read its Needs column to find what else must exist before it
 | `wiki/` | agent | 29 | Invoked, and read by every agent before exploring | — |
 | `agents/transcript-miner` | agent | 30 | Called by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
 | | **SELF-IMPROVEMENT** | | | |
-| `agents/improver` | agent | 31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue` |
+| `agents/improver` | agent | 31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue-write` |
 | `hooks/session-index` | hook | 32 | Automatic, at worktree creation | — |
 | `skills/plugin-retrospective` | skill | 33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | 39 | Called when a mechanism is captured | The suite registry |
@@ -221,12 +221,12 @@ mechanisms fire together:
 
 | Artifact | Merges | Why |
 |---|---|---|
-| `skills/watch` | 14 · 23 · 41 | One always-on sweep, three things it watches for. See below |
-| `skills/issue` | 11 · 13 | Write the issue and verify the write landed — one moment |
+| `skills/work-watch` | 14 · 23 · 41 | One always-on sweep, three things it watches for. See below |
+| `skills/issue-write` | 11 · 13 | Write the issue and verify the write landed — one moment |
 | `skills/kickoff` | 9 · 20 | Scope agreement and decomposition happen in one sitting |
 | `skills/delegate` | 25 · 26 | Choosing the tier and shaping the brief are the same decision |
 
-### `skills/watch` — the design-time evaluator
+### `skills/work-watch` — the design-time evaluator
 
 Three mechanisms watch work as it proceeds and nudge. Splitting them into three always-on
 checks means three separate sweeps competing for the same attention — and
@@ -254,7 +254,7 @@ tree, what is next, what must not be re-litigated. Whether that is an agent, a s
 writing to the arc-log, or a role the main thread adopts is not decided. The name pairs
 with Lodestar's Star.
 
-**`skills/handoff` is separate from `skills/record` on purpose.** Record routing answers
+**`skills/handoff-write` is separate from `skills/record-route` on purpose.** Record routing answers
 *where does this go*; the handoff is a durable artifact that survives window death —
 [its spec](mechanisms/handoff-spine.md) names the gap as "2 to 12 days of end-on-end
 development, surviving repeated window death, cheap to rehydrate from." Different trigger,
