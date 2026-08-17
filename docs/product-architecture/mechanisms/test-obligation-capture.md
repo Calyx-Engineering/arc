@@ -1,8 +1,8 @@
 # Mechanism — Test Obligation Capture
 
-**Status:** proposed. **Already run by hand throughout ROADZ rev B.**
-**Home:** Arc.
-**Form:** hook + skill. Composes with [`issue-writing`](../product-plan.md#4-every-mechanism)
+**Status:** specified. Already run by hand throughout ROADZ rev B.
+**Home:** Arc — Knowledge.
+**Form:** hook + skill. Composes with [`issue-writing`](../../reference-roadz/issue-writing/SKILL.md)
 and [commit-rhythm](commit-rhythm.md).
 
 ---

@@ -1,7 +1,7 @@
 # Mechanism — Self-Improvement Loop
 
-**Status:** proposed, nothing built.
-**Home:** Arc — Self-improve group. Agent, triggered by a PR-time hook.
+**Status:** specified.
+**Home:** Arc — Self-improvement.
 **Form:** agent + hook.
 **Spawned from:** [transcript-mining](transcript-mining.md), which stops at *propose*.
 This spec covers what happens after.
@@ -42,7 +42,7 @@ At PR time (or on demand), against the transcripts for the current branch:
 The user reviews, approves, commits with `Closes #NN`, and pushes when convenient.
 
 **It never commits and never pushes.** The dirty working tree is the review surface —
-the same reason [CLAUDE.md](../../CLAUDE.md) forbids unrequested commits.
+the same reason [CLAUDE.md](../../../CLAUDE.md) forbids unrequested commits.
 
 ```mermaid
 flowchart TD
@@ -375,7 +375,7 @@ look.
 
 ### No `dev` branch
 
-Trunk-based, per [CLAUDE.md](../../CLAUDE.md). Local `main` between commit and push
+Trunk-based, per [CLAUDE.md](../../../CLAUDE.md). Local `main` between commit and push
 already provides a private place for unsoaked work.
 
 `dev` earns its place when commits must leave the machine before soaking — a second

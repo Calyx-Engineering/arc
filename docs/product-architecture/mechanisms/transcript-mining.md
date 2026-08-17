@@ -1,7 +1,7 @@
 # Mechanism — Transcript Mining
 
-**Status:** proposed, proven once by hand.
-**Home:** Arc — Self-improve group.
+**Status:** partial — the friction filter is validated; the knowledge filter is not designed.
+**Home:** Arc — Delegation.
 **Form:** agent, not skill — see §4.
 
 ---
@@ -22,7 +22,7 @@ where the output goes:
 
 Splitting these into separate mechanisms would duplicate extraction and clustering
 across two groups and let the copies drift — see
-[product-plan §3](../product-plan.md#3-why-three-plugins-not-five).
+[suite-architecture](../../suite-architecture/README.md#why-three-not-five).
 
 **Neither filter writes silently.** Both propose; the human decides. What happens after
 the proposal — filing, fixing, reviewing — is
@@ -42,7 +42,7 @@ machine-local reasoning to a durable record.
 
 Proven once, by hand, on 2026-08-16. Reading 28 ROADZ transcripts corrected three
 architecture errors in a single pass that four rounds of reasoning from design
-documents had not — see [friction-log.md](../friction-log.md).
+documents had not — see [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md).
 
 The general claim:
 
@@ -176,7 +176,7 @@ That last row is the only honest way to measure whether a plugin is paying for i
 
 ## Related
 
-- [friction-log.md](../friction-log.md) — output of the first hand-run
-- [what-the-tools-do.md](../what-the-tools-do.md) §4.4 — job 13, *Learn*
+- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) — output of the first hand-run
+- [what-the-tools-do.md](../archive/what-the-tools-do.md) §4.4 — job 13, *Learn*
 - ROADZ `.claude/skills/engineering-report`, `issue-writing` — both precipitated from
   corrections this mechanism would have surfaced sooner

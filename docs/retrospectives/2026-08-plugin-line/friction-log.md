@@ -150,7 +150,7 @@ without new evidence, until David said stop. **Re-raising an answered concern is
 defect.**
 
 Full analysis, including the BOM-reuse case, in
-[mechanisms/domain-engineer-persona.md](mechanisms/domain-engineer-persona.md).
+[mechanisms/domain-engineer-persona.md](../../suite-architecture/domain-engineer-persona.md).
 
 **The Slack-thread requirement is a separate finding.** David traces it to a weak PRD —
 *"the temp range is"* style, rather than a story with acceptance criteria. Same root
@@ -244,7 +244,7 @@ Hence a **ladder**, where cost scales with relevance:
 | **K3** — report | A product **capability**, for people | Rarely |
 | **K4** — transcripts | Raw session reasoning | Queried, never loaded |
 
-Canonical definition: [knowledge-tiers](mechanisms/knowledge-tiers.md).
+Canonical definition: [knowledge-tiers](../../product-architecture/mechanisms/knowledge-tiers.md).
 
 Two findings fell out of designing it:
 
@@ -254,8 +254,8 @@ Two findings fell out of designing it:
   PWM dimming; a flat agent index says where to find it, and carries no status — or it
   competes with Lodestar's RD.
 
-Structure: [hardware-record-structure](mechanisms/hardware-record-structure.md) ·
-ladder: [handoff-spine](mechanisms/handoff-spine.md).
+Structure: [hardware-record-structure](../../product-architecture/mechanisms/hardware-record-structure.md) ·
+ladder: [handoff-spine](../../product-architecture/mechanisms/handoff-spine.md).
 
 ### 3.2b The switch is autonomy, not domain
 
@@ -290,7 +290,7 @@ etc. are quite common."* Both are flagged in §6.
 
 **The exception:** the one hardware-specific friction — shallow domain analysis (§2.6) —
 is not delivery process at all. It needs a domain-expert persona, which is why it lands in
-Bench. See [domain-engineer-persona](mechanisms/domain-engineer-persona.md).
+Bench. See [domain-engineer-persona](../../suite-architecture/domain-engineer-persona.md).
 
 ### 3.3 The skills already written are the record of this friction
 
@@ -301,7 +301,7 @@ roughly a dozen repeats each.
 That validates the method and sets an expectation: the highest-confidence content for
 any new plugin is already written. **Extraction, not invention.**
 
-It also motivates [transcript-mining](mechanisms/transcript-mining.md) — doing
+It also motivates [transcript-mining](../../product-architecture/mechanisms/transcript-mining.md) — doing
 deliberately, at three repeats, what happened accidentally at twelve.
 
 ### 3.4 The Lodestar gap appears twice, and not where the design expects it
@@ -357,7 +357,7 @@ a problem that did not exist, and re-raised it four or five times.
 Had it asked *"what duty cycle applies to the light output?"*, Star would return the
 ~10 s burst pattern cited to its story — or escalate because no story carries it.
 **Either outcome prevents the wrong analysis.** Full case in
-[domain-engineer-persona](mechanisms/domain-engineer-persona.md).
+[domain-engineer-persona](../../suite-architecture/domain-engineer-persona.md).
 
 **This makes Lodestar an active participant in delivery, not a document store.** Star is
 queried during engineering work, which is a stronger product boundary than "Arc reads
@@ -381,7 +381,7 @@ the person who lived it corrected them. **The interview step is not optional.**
 
 The §2.4 correction was empirical. ROADZ has **2 live worktrees and 4 transcript
 directories** — two orphans, including the issue-44 conversation David reported lost. It
-is on disk. See [session-preservation](mechanisms/session-preservation.md).
+is on disk. See [session-preservation](../../product-architecture/mechanisms/session-preservation.md).
 
 ### 3.6 The default-branch workaround is unnecessary — tested
 
@@ -401,7 +401,7 @@ base-branch restriction.
 
 **Consequence.** The repo-global default-branch switch — which is what breaks in
 multi-user repos and needs admin rights — can be replaced by per-PR
-**verify-and-repair**. Full detail in [tracker-linking](mechanisms/issue-linking.md).
+**verify-and-repair**. Full detail in [tracker-linking](../../product-architecture/mechanisms/issue-linking.md).
 
 **Confidence caveat.** Both PRs saw manual intervention, so #55's link may have formed
 from the default switch or from a body re-save. The recommendation holds either way —
@@ -435,7 +435,7 @@ already exists for file edits and is simply not applied elsewhere.
 **Friction-derived only.** These fifteen came out of the evidence above.
 They are not the full product scope — mechanisms that already work caused no friction
 and left no trace here. The complete picture, including those, is in
-[product-plan.md](product-plan.md).
+[product-plan.md](../../product-architecture/archive/product-plan.md).
 
 **Form** — `hook` fires automatically and can deny · `skill` is invoked and shapes
 behavior · `agent` runs token-heavy work and returns a bounded packet.
@@ -447,19 +447,19 @@ behavior · `agent` runs token-heavy work and returns a bounded packet.
 | | Represent | Star as requirements interface | agent | [3.4](#34-the-lodestar-gap-appears-twice-and-not-where-the-design-expects-it) | — | ✅ **Already Lodestar doc 04 — validated, not discovered.** *Friction confirmed Star must be queried during analysis; nothing new to read* | — |
 | ‎ | | | | | | | |
 | **Arc** | Guardrails | Branch / worktree guard | hook | [2.1](#21-wrong-branch--worktree--the-most-expensive-failure) | Low | 🆕 **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | — |
-| | Guardrails | Commit rhythm | skill + hook | [2.5](#25-committing-too-early--unreviewable-diffs) | Low | 🆕 **Commits at reviewable points.** *Skill judges when to propose; hook checks files saved, identity, nothing dropped* | [spec](mechanisms/commit-rhythm.md) |
-| | Tracker | Issue linking | hook + skill | [2.8](#28-tracker-mechanics-failing-silently) | Low | 🆕 **Everything links, nothing strays.** *Branch↔issue and PR↔issue links actually form; the PR targets the arc branch, not `main`. Removes the multi-user blocker* | [spec](mechanisms/issue-linking.md) |
-| | Tracker | Issue write-back | hook + skill | [2.7](#27-follow-up-actions-forgotten) | Medium | 🆕 **Edits land, and agreed actions get filed.** *Reads back what it wrote to catch placeholders and stale values; captures follow-ups agreed mid-conversation* | [spec](mechanisms/issue-write-back.md) |
-| | Context | Context ladder / handoff | skill + agent | [2.4](#24-context-lost-between-sessions) | Medium | 🆕 **Cold starts stop costing 20 minutes.** *The reading order: which documents a fresh session opens, in what order, and when to stop* | [spec](mechanisms/handoff-spine.md) |
-| | Context | Record structure | skill | [2.4](#24-context-lost-between-sessions) | Low | 🆕 **Analysis stays findable.** *Defines `arc-log` · `dev-log` · `arc-work/` · `scratch/` · `report/`, decides which one a given piece of work is written to, and moves findings up to the wiki once they outlive the arc* | [spec](mechanisms/hardware-record-structure.md) |
+| | Guardrails | Commit rhythm | skill + hook | [2.5](#25-committing-too-early--unreviewable-diffs) | Low | 🆕 **Commits at reviewable points.** *Skill judges when to propose; hook checks files saved, identity, nothing dropped* | [spec](../../product-architecture/mechanisms/commit-rhythm.md) |
+| | Tracker | Issue linking | hook + skill | [2.8](#28-tracker-mechanics-failing-silently) | Low | 🆕 **Everything links, nothing strays.** *Branch↔issue and PR↔issue links actually form; the PR targets the arc branch, not `main`. Removes the multi-user blocker* | [spec](../../product-architecture/mechanisms/issue-linking.md) |
+| | Tracker | Issue write-back | hook + skill | [2.7](#27-follow-up-actions-forgotten) | Medium | 🆕 **Edits land, and agreed actions get filed.** *Reads back what it wrote to catch placeholders and stale values; captures follow-ups agreed mid-conversation* | [spec](../../product-architecture/mechanisms/issue-write-back.md) |
+| | Context | Context ladder / handoff | skill + agent | [2.4](#24-context-lost-between-sessions) | Medium | 🆕 **Cold starts stop costing 20 minutes.** *The reading order: which documents a fresh session opens, in what order, and when to stop* | [spec](../../product-architecture/mechanisms/handoff-spine.md) |
+| | Context | Record structure | skill | [2.4](#24-context-lost-between-sessions) | Low | 🆕 **Analysis stays findable.** *Defines `arc-log` · `dev-log` · `arc-work/` · `scratch/` · `report/`, decides which one a given piece of work is written to, and moves findings up to the wiki once they outlive the arc* | [spec](../../product-architecture/mechanisms/hardware-record-structure.md) |
 | | Authoring | `issue-writing` | skill | [2.3](#23-issue-style--same-pattern-thinner-skill) | **Written** | ✅ **Already written — validated, not discovered.** *Friction confirmed issue style must be enforced, not re-taught; the skill already exists* | — |
 | | Authoring | `engineering-report` | skill | [2.2](#22-report-style--taught-repeatedly-never-retained) | **Written** | ✅ **Already written — validated, not discovered.** *Friction confirmed report style must be enforced, not re-taught; the skill already exists* | — |
 | ‎ | | | | | | | |
-| **Arc** | Self-improve | Plugin retrospective | skill | meta | **Written** | 🆕 **Turns future work into mechanisms.** *The process that produced this document* | [skill](../../.claude/skills/plugin-retrospective/SKILL.md) |
-| | Memory | Session-transcript mining | agent | [2.4](#24-context-lost-between-sessions) | Medium | 🆕 **Mines past Claude Code chat sessions — one pipeline, two filters.** *Knowledge filter distils findings into the record at PR time; friction filter clusters corrections into mechanism candidates* | [spec](mechanisms/transcript-mining.md) |
-| | Memory | Session preservation | hook | [2.4](#24-context-lost-between-sessions) | Low | 🆕 **Past chat sessions stay findable.** *Indexes Claude Code transcript directories at creation, so they survive the worktree being deleted* | [spec](mechanisms/session-preservation.md) |
+| **Arc** | Self-improve | Plugin retrospective | skill | meta | **Written** | 🆕 **Turns future work into mechanisms.** *The process that produced this document* | [skill](../../../.claude/skills/plugin-retrospective/SKILL.md) |
+| | Memory | Session-transcript mining | agent | [2.4](#24-context-lost-between-sessions) | Medium | 🆕 **Mines past Claude Code chat sessions — one pipeline, two filters.** *Knowledge filter distils findings into the record at PR time; friction filter clusters corrections into mechanism candidates* | [spec](../../product-architecture/mechanisms/transcript-mining.md) |
+| | Memory | Session preservation | hook | [2.4](#24-context-lost-between-sessions) | Low | 🆕 **Past chat sessions stay findable.** *Indexes Claude Code transcript directories at creation, so they survive the worktree being deleted* | [spec](../../product-architecture/mechanisms/session-preservation.md) |
 | ‎ | | | | | | | |
-| **Bench** | Reasoning | Domain engineer persona | agent + skill | [2.6](#26-shallow-domain-analysis) | **High** | 🆕 **Analysis at real engineering depth.** *Reads datasheet curves, asks Star for requirements, escalates once then logs* | [spec](mechanisms/domain-engineer-persona.md) |
+| **Bench** | Reasoning | Domain engineer persona | agent + skill | [2.6](#26-shallow-domain-analysis) | **High** | 🆕 **Analysis at real engineering depth.** *Reads datasheet curves, asks Star for requirements, escalates once then logs* | [spec](../../suite-architecture/domain-engineer-persona.md) |
 
 **🆕 marks what friction actually discovered. ✅ marks a mechanism that already existed** —
 designed in the Lodestar docs, or already written as a skill. Friction only supplied
@@ -521,7 +521,7 @@ structurally different:
 surface entirely different problems — or could find that mechanisms designed here are
 mis-sized for it. **Worth re-running this retrospective after the first execution
 stretch**, which is exactly what the
-[plugin-retrospective](../../.claude/skills/plugin-retrospective/SKILL.md) skill exists
+[plugin-retrospective](../../../.claude/skills/plugin-retrospective/SKILL.md) skill exists
 for.
 
 ---
@@ -530,7 +530,7 @@ for.
 
 Both remaining items test §3.2b's claim that only autonomy differs. Everything else
 raised during the review was resolved in §3.2a, §3.2b, §3.6, and
-[record structure](mechanisms/hardware-record-structure.md).
+[record structure](../../product-architecture/mechanisms/hardware-record-structure.md).
 
 ### 6.1 Does report style transfer unchanged?
 
