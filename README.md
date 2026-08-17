@@ -30,9 +30,9 @@ plugin skeleton does not exist yet.
 
 | Piece | What it covers |
 |---|---|
-| **Workspace guard** | Branch and worktree guard · issue linking · commit rhythm |
+| **Workspace guard** | Branch and worktree guard · issue linking · commit rhythm · configuration management |
 | **Authoring** | Issue writing · write-back verification · engineering reports · chat replies |
-| **Campaign** | Kickoff and scope gate · decomposition and checkpoints · arc-tree · configuration management · verification planning |
+| **Campaign** | Kickoff and scope gate · decomposition and checkpoints · arc-tree · verification planning |
 | **Knowledge** | The K1–K4 ladder · context handoff · record routing · `arc-log` and `dev-log` upkeep · test obligation capture |
 | **Delegation** | Agent roster · T0-Inline / T1-Squad / T2-Wave · worktree waves · human gate · the agent wiki |
 | **Self-improvement** | Transcript mining · the self-improvement loop · session preservation · the plugin retrospective |
