@@ -4,7 +4,7 @@
 is unresolved.
 **Home:** Arc — Campaign.
 **Src:** 🔥 observed.
-**Covers:** row 21.
+**Covers:** m21.
 
 ---
 
@@ -44,7 +44,7 @@ flowchart TD
 
 ## The unresolved part — what carries it
 
-Row 21 alone does not justify an agent. The open question is bigger than a diagram:
+m21 alone does not justify an agent. The open question is bigger than a diagram:
 **does an arc need something that holds its shape?**
 
 > *"some sort of agent i can talk to about the status of my arc (milestone) and support
@@ -80,13 +80,13 @@ sub-issues are a real API relationship. Reading prose is fragile; sub-issues req
 relationship to be recorded at creation.
 
 **What else the agent would own**, if it is an agent: the handoff, the status table, moving
-between issues. Those are rows 15 and 17, which have their own artifacts — so the agent may
+between issues. Those are m15 and m17, which have their own artifacts — so the agent may
 be a reader of them rather than an owner.
 
 ---
 
 ## Related
 
-- [handoff-spine](handoff-spine.md) — the same "what does a cold session need" question
-- [k1-upkeep](k1-upkeep.md) — the arc-log this renders into
+- [handoff-spine](m15-handoff-spine.md) — the same "what does a cold session need" question
+- [k1-upkeep](m17-k1-upkeep.md) — the arc-log this renders into
 - [friction-log §2.7](../../retrospectives/2026-08-plugin-line/friction-log.md#27-follow-up-actions-forgotten) — spawned work that was never filed

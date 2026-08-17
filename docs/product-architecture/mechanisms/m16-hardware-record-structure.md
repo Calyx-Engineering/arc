@@ -2,8 +2,8 @@
 
 **Status:** specified. Mostly **already grown organically in ROADZ** — this documents and
 tightens what exists.
-**Home:** Arc — Knowledge. Guided mode, per row 40.
-**Spawned from:** the context ladder in [handoff-spine](handoff-spine.md).
+**Home:** Arc — Knowledge. Guided mode, per m40.
+**Spawned from:** the context ladder in [handoff-spine](m15-handoff-spine.md).
 **Tiers:** K1–K4 as defined in [knowledge-tiers](knowledge-tiers.md) — this file is the
 folder layout that realises K1–K3.
 
@@ -354,7 +354,7 @@ template's existing "skip any section that doesn't apply" rule.
 | Risk without it | Documents exist that nothing points at | — |
 
 Spawned **issues** belong here too — that is the raw material for the arc-tree diagram
-in [handoff-spine](handoff-spine.md), and it addresses the friction-log §2.7 case where
+in [handoff-spine](m15-handoff-spine.md), and it addresses the friction-log §2.7 case where
 agreed follow-ups were never filed.
 
 **One dev-log per issue remains the entry point to everything that issue produced.**
@@ -439,7 +439,7 @@ works.
 
 ## Related
 
-- [handoff-spine.md](handoff-spine.md) — the three-tier ladder this implements
+- [handoff-spine.md](m15-handoff-spine.md) — the three-tier ladder this implements
 - [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §3.2b — the autonomy switch
 - ROADZ `docs/report/issue-01-warning-light-dimming/` — the working example
 - ROADZ `.claude/skills/engineering-report/SKILL.md` — governs K3 content

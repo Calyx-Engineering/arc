@@ -4,7 +4,7 @@
 is described in a reference document but not specced.
 **Home:** Arc — Campaign.
 **Src:** ⚙️ inherited.
-**Covers:** row 9.
+**Covers:** m09.
 
 ---
 
@@ -52,11 +52,11 @@ and why" has no home. The arc-log is the candidate — its *Why this arc exists*
 close.
 
 **How a scope change is handled after the freeze.** Guided hardware work *generates* issues
-as understanding develops ([arc-tree](arc-tree.md)) — so the freeze cannot mean "no new
+as understanding develops ([arc-tree](m21-arc-tree.md)) — so the freeze cannot mean "no new
 issues." It means new issues are a visible decision rather than drift. The distinction needs
 stating.
 
-**Whether it composes with decomposition (row 20).** Both artifacts merge into
+**Whether it composes with decomposition (m20).** Both artifacts merge into
 `skills/kickoff`, on the reasoning that scope agreement and decomposition happen in one
 sitting. That holds for software. Guided work may agree scope up front and decompose
 continuously.
@@ -72,5 +72,5 @@ mechanism does in the meantime is open.
 
 - [ROADZ Interface PCBA revision workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md) — the guided flow, steps 1–3
 - [doc 04](../../suite-architecture/04-arc-execution-and-roles.md) — the three-role kickoff
-- [arc-decomposition](arc-decomposition.md) — the other half of `skills/kickoff`
-- [branch-guard](branch-guard.md) — consumes the branch convention this sets
+- [arc-decomposition](m20-arc-decomposition.md) — the other half of `skills/kickoff`
+- [branch-guard](m10-branch-guard.md) — consumes the branch convention this sets

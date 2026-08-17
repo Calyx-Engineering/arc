@@ -4,7 +4,7 @@
 decided.
 **Home:** Arc — Delegation.
 **Src:** ⚙️ inherited.
-**Covers:** row 29.
+**Covers:** m29.
 
 ---
 
@@ -41,7 +41,7 @@ A published plugin already implements this — [agent-wiki](https://github.com/o
 — with `wiki-init`, `wiki-ingest`, `wiki-query`, `wiki-lint`, `wiki-compact` and
 `wiki-migrate`.
 
-**That makes row 29 different from the rest of Delegation.** The others are files to copy
+**That makes m29 different from the rest of Delegation.** The others are files to copy
 from a reference document. This one is a decision about an external dependency.
 
 | Option | For | Against |
@@ -65,7 +65,7 @@ than fixed, which changes what the template is.
 **The seam with K2.** The wiki is K2 by depth but permanent by lifetime, which is what
 separates it from the rest of K2. The graduation path — arc-scoped analysis becomes a
 durable repo fact — is specified in
-[hardware-record-structure](hardware-record-structure.md), but nothing enforces the sweep.
+[hardware-record-structure](m16-hardware-record-structure.md), but nothing enforces the sweep.
 
 **Whether the lint is Arc's or the plugin's.** If Arc depends on the published plugin, the
 lint arrives with it and Arc's PR-time enforcement has to call it rather than implement it.
@@ -74,7 +74,7 @@ lint arrives with it and Arc's PR-time enforcement has to call it rather than im
 
 ## Related
 
-- [agent-roster](agent-roster.md) — the agents that read it
-- [briefs-and-packets](briefs-and-packets.md) — every brief points at the index
-- [hardware-record-structure](hardware-record-structure.md) — the graduation path into it
+- [agent-roster](m25-agent-roster.md) — the agents that read it
+- [briefs-and-packets](m26-briefs-and-packets.md) — every brief points at the index
+- [hardware-record-structure](m16-hardware-record-structure.md) — the graduation path into it
 - [agent-wiki](https://github.com/omnilertlabs/agent-wiki) — the published plugin
