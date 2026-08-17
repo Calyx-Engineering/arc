@@ -47,6 +47,11 @@ Lodestar says what must be proven, Arc reports what actually was.
 
 ## Where things are
 
-Documentation moves here from Lodestar's `docs/product-architecture/`. Until that lands,
-the current architecture is
-[there](https://github.com/Calyx-Engineering/lodestar/tree/main/docs/product-architecture).
+| Path | What |
+|---|---|
+| [docs/product-architecture/](docs/product-architecture/) | The cross-plugin architecture. Start with `HANDOFF.md`, then `product-plan.md` |
+| [docs/product-architecture/mechanisms/](docs/product-architecture/mechanisms/) | Eleven mechanism specs |
+| [docs/product-architecture/friction-log.md](docs/product-architecture/friction-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
+| [docs/reference-timescope/](docs/reference-timescope/) | TimeScope's working files — source material for extraction, do not edit |
+| [docs/reference-roadz/](docs/reference-roadz/) | ROADZ's `issue-writing` and `engineering-report` skills — same |
+| [docs/04-arc-execution-and-roles.md](docs/04-arc-execution-and-roles.md) | The three-role workflow. **Mirrored with Lodestar — edit both copies** |

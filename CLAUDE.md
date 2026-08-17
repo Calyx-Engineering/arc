@@ -6,9 +6,9 @@ hooks, commands, once they exist) are the product; this file governs how we work
 
 ## Start here
 
-Read `docs/product-architecture/HANDOFF.md` first, every cold start — once the
-architecture lands here. Until then it is in
-[lodestar](https://github.com/Calyx-Engineering/lodestar/tree/main/docs/product-architecture).
+Read [docs/product-architecture/HANDOFF.md](docs/product-architecture/HANDOFF.md) first,
+every cold start. It has the decided list, what is not built yet, and how to work with
+David.
 
 Don't re-litigate anything marked decided — flag it to David instead of assuming it is
 still open.
@@ -44,6 +44,16 @@ Descriptive pairs it with the name — "T1-Squad level delegation".
   (MD033 off), duplicate headings OK across sibling sections only (MD024 siblings_only).
 - **Diagrams:** prefer Mermaid over prose when a flow or relationship is easier shown
   than described (David's preference).
+
+## Mirrored files — edit both copies
+
+`docs/04-arc-execution-and-roles.md` exists **identically** in
+[lodestar](https://github.com/Calyx-Engineering/lodestar/blob/main/docs/04-arc-execution-and-roles.md)
+and [arc](https://github.com/Calyx-Engineering/arc/blob/main/docs/04-arc-execution-and-roles.md).
+
+**A change to one must be made to the other in the same session.** The design defines
+Star and the arc-spine in relation to each other; each repo needs the whole picture.
+Split it only when the design converges.
 
 ## Branching
 
