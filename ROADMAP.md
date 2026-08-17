@@ -34,10 +34,10 @@ record survive a cold start.
 | `skills/issue-write` | 11 · 13 | Issue style re-taught 6+ times; agreed edits silently not landing | Port, generalise |
 | `skills/engineering-report` | 18 | Report style re-taught 12+ times | Port, generalise |
 | `skills/chat-response` | 38 | Already here | Soak only |
-| `skills/record` | 16 · 17 | **The dev-log and arc-log get written.** Without this there is no K1 | Port from TimeScope |
-| `skills/handoff` | 15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
+| `skills/record-route` | 16 · 17 | **The dev-log and arc-log get written.** Without this there is no K1 | Port from TimeScope |
+| `skills/handoff-write` | 15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
 | `hooks/tracker-verify` | 12 | Links fail silently; a PR to the wrong base splits a milestone | Build |
-| `skills/watch` | 14 · 23 · 41 | Commit timing, test obligations, and depth — one sweep | Build |
+| `skills/work-watch` | 14 · 23 · 41 | Commit timing, test obligations, and depth — one sweep | Build |
 | `agents/camp` | 21 | Something to ask "where is this arc, what is next" | Build |
 
 **Eleven artifacts. Four are ports of working practice, one is already here, six are new.**
@@ -60,13 +60,13 @@ Dependencies, not value:
 ```text
 1. plugin.json + verify-hook.sh     ← nothing loads or is testable without these
 2. hooks/branch-guard               ← proves the skeleton; one check only, branch
-3. skills/record                    ← everything downstream writes to K1
+3. skills/record-route              ← everything downstream writes to K1
 4. skills/issue-write               ← tracker-verify needs it for repair
 5. hooks/tracker-verify
-6. skills/handoff                   ← needs record for where it writes
-7. skills/engineering-report        ← needs record for where reports land
-8. skills/watch                     ← needs issue to file what it catches
-9. agents/camp                      ← needs record and handoff
+6. skills/handoff-write             ← needs record-route for where it writes
+7. skills/engineering-report        ← needs record-route for where reports land
+8. skills/work-watch                ← needs issue-write to file what it catches
+9. agents/camp                      ← needs record-route and handoff-write
 ```
 
 **Branch guard ships one check, not three.** Branch only; worktree and base-freshness are
@@ -111,9 +111,9 @@ Delegation and Campaign, once there is autonomous work to run.
 | `agents/*.md` · `skills/delegate` | 25 · 26 |
 | `wiki/` | 29 |
 | `skills/kickoff` | 9 · 20 |
-| `skills/wave` | 27 |
-| `skills/gate` | 28 |
-| `skills/mode` | 40 |
+| `skills/wave-plan` | 27 |
+| `skills/gate-run` | 28 |
+| `skills/autonomy-set` | 40 |
 
 ---
 
