@@ -26,7 +26,7 @@ end. That piece is Campaign; the arc is what it produces.
 | **Authoring** | One issue, report, or reply | What gets said, and what gets cut | On invocation, whenever something is written | Style re-taught every time · a report nobody can read · an edit that left stale content behind | Skills — style and structure |
 | **Campaign** | An arc — many issues, days to weeks | What work exists, in what order, what runs in parallel, where the human stops | At kickoff, and at each checkpoint | Scope drift · unsequenced work · an arc whose shape nobody can see | Skills — judgment about sequencing and risk |
 | **Knowledge** | One finding, routed to one place | Which tier it belongs in, and when it moves up | Session start to read · decision points and PR time to write | A 20-minute cold start · analysis nobody finds again · reasoning that dies with the machine | Skills for routing, plus a hook that invokes the mining agent |
-| **Delegation** | One task, handed to a worker | Which agent takes it, on which model, and what comes back | On dispatch | Orchestrator filling with raw output · top-model rates for mechanical work · every agent re-deriving what the last one learned | Agent definitions, the brief/packet protocol, and the agent wiki |
+| **Delegation** | One task, handed to a worker | Which agent takes it, on which model, and what comes back | On dispatch, whoever calls | Orchestrator filling with raw output · top-model rates for mechanical work · every agent re-deriving what the last one learned | Agent definitions, the brief/packet protocol, and the agents themselves |
 | **Self-improvement** | The toolset itself, across repos | Which friction is worth codifying, and where the fix belongs | At PR time, and on request | The same correction given twelve times · a shipped mechanism that quietly stopped working | Agents that read transcripts, plus a hook |
 
 **Workspace guard polices; campaign plans.** The guard's idea of *correct* — branch names,
@@ -47,7 +47,7 @@ unread on disk.
 
 ## Mechanisms
 
-Twenty-seven mechanisms across the six pieces.
+Twenty-nine mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -77,6 +77,8 @@ moves next; this column only reports.
 | 12 | Issue linking | 🔥 | **Everything links, nothing strays.** *Branch↔issue and PR↔issue links form; the PR targets the arc branch* | [spec](mechanisms/issue-linking.md) | ⚪ |
 | 14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/commit-rhythm.md) | ⚪ |
 | 22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | — | ⚪ |
+| 40 | Autonomy switch | 📐 | **The workflow matches how the work actually runs.** *Guided means the engineer drives each issue and the agent assists; autonomous means the agent runs between checkpoints. One switch, not a hardware/software fork* | — | ⚪ |
+| 41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/relief-valve.md) | ⚪ |
 | | **AUTHORING** | | | | |
 | 11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, and the link mechanics that fail silently* | [skill](../reference-roadz/issue-writing/SKILL.md) | ⚪ |
 | 13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/issue-write-back.md) | ⚪ |
@@ -100,8 +102,8 @@ moves next; this column only reports.
 | 25 | Autonomous execution | ⚙️ | **Work runs unattended between checkpoints.** *The agent roster — scout, architect, planner, builder, reviewer, verifier, scribe — each pinned to a model, plus how much to hand over: T0-Inline · T1-Squad · T2-Wave* | [spec](mechanisms/agent-roster.md) | ⚪ |
 | 26 | Briefs down / packets up | ⚙️ | **The orchestrator stays lean.** *A subagent gets a small brief and returns a bounded packet, never its raw context* | — | ⚪ |
 | 29 | Agent wiki | ⚙️ | **Exploration cost compounds downward.** *Distilled repo knowledge every agent reads before exploring. A fork of the published wiki agent* | — | ⚪ |
-| | **SELF-IMPROVEMENT** | | | | |
 | 30 | Transcript mining | 🔥 | **One pipeline, two filters.** *Knowledge filter promotes findings into the record; friction filter clusters corrections into mechanism candidates* | [spec](mechanisms/transcript-mining.md) | ⚪ |
+| | **SELF-IMPROVEMENT** | | | | |
 | 31 | Self-improvement loop | 🔥 | **Tooling fixes land without leaving the work.** *Files the issue, makes the fix locally uncommitted, opens the diff* | [spec](mechanisms/self-improvement-loop.md) | ⚪ |
 | 32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/session-preservation.md) | ⚪ |
 | 33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../.claude/skills/plugin-retrospective/SKILL.md) | 🔵 |
@@ -169,4 +171,90 @@ capability is not yet a file, or when it spans several.
 
 ## Artifacts
 
-*To be written — the list of files Arc ships, with the mechanisms each one carries.*
+The files Arc ships. **One artifact carries one or more mechanisms** — they do not map
+one-to-one, and pretending they do produces a plugin with twenty-seven files each doing a
+tenth of a job.
+
+**Merge when two mechanisms fire at the same moment on the same data. Keep them separate
+when their triggers differ**, even when the subject matter is close.
+
+**Reading it for a build increment:** pick the artifact, read back its mechanisms to get the
+function list, then read its Needs column to find what else must exist before it is useful.
+
+| Artifact | Form | Carries | Invoked by | Needs |
+|---|---|---|---|---|
+| | **WORKSPACE GUARD** | | | |
+| `hooks/branch-guard` | hook | 10 | Automatic, before any edit | Campaign's branch convention |
+| `hooks/tracker-verify` | hook | 12 | Automatic, on branch create, PR open, PR merge | `skills/issue` for repair |
+| `skills/watch` | skill | 14 · 23 · 41 | Always, as work proceeds | `skills/issue` to file what it catches |
+| `skills/config` | skill | 22 | Invoked, when a revision is cut | — |
+| `skills/mode` | skill | 40 | Invoked, at kickoff and when work changes character | — |
+| | **AUTHORING** | | | |
+| `skills/issue` | skill | 11 · 13 | Invoked, when writing or editing an issue or PR | — |
+| `skills/engineering-report` | skill | 18 | Invoked, when writing a report | `skills/record` for where it lands |
+| `skills/chat-response` | skill | 38 | Always, every reply | — |
+| | **CAMPAIGN** | | | |
+| `skills/kickoff` | skill | 9 · 20 | Invoked, at the start of an arc | `skills/issue` to file the decomposition · `skills/mode` |
+| `agents/camp` | agent | 21 | Invoked, at checkpoints and on request | `skills/record` for the arc-log |
+| `skills/wave` | skill | 27 | Invoked, when work may run in parallel | `agents/camp` for the partition · `skills/delegate` |
+| `skills/gate` | skill | 28 | Invoked, at a feature-complete state | — |
+| `skills/verification-plan` | skill | 24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
+| | **KNOWLEDGE** | | | |
+| `skills/handoff` | skill | 15 | Invoked, at session end and any handoff | `skills/record` for where it is written |
+| `skills/record` | skill | 16 · 17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
+| `reference/knowledge-tiers` | reference | — | Read by anything that reads or writes the record | — |
+| `hooks/mining-trigger` | hook | 19 | Automatic, at PR open | `agents/transcript-miner` |
+| | **DELEGATION** | | | |
+| `agents/*.md` | agents | 25 | Dispatched by the orchestrator | `wiki/` |
+| `skills/delegate` | skill | 25 · 26 | Invoked, when deciding how much to hand over | `agents/*.md` |
+| `wiki/` | agent | 29 | Invoked, and read by every agent before exploring | — |
+| `agents/transcript-miner` | agent | 30 | Called by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
+| | **SELF-IMPROVEMENT** | | | |
+| `agents/improver` | agent | 31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue` |
+| `hooks/session-index` | hook | 32 | Automatic, at worktree creation | — |
+| `skills/plugin-retrospective` | skill | 33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
+| `scripts/next-mechanism` | script | 39 | Called when a mechanism is captured | The suite registry |
+
+**Twenty-four artifacts for twenty-nine mechanisms.** Four merges, each because the
+mechanisms fire together:
+
+| Artifact | Merges | Why |
+|---|---|---|
+| `skills/watch` | 14 · 23 · 41 | One always-on sweep, three things it watches for. See below |
+| `skills/issue` | 11 · 13 | Write the issue and verify the write landed — one moment |
+| `skills/kickoff` | 9 · 20 | Scope agreement and decomposition happen in one sitting |
+| `skills/delegate` | 25 · 26 | Choosing the tier and shaping the brief are the same decision |
+
+### `skills/watch` — the design-time evaluator
+
+Three mechanisms watch work as it proceeds and nudge. Splitting them into three always-on
+checks means three separate sweeps competing for the same attention — and
+[test-obligation-capture](mechanisms/test-obligation-capture.md) rejects the split
+outright: *"one of the things the design-time evaluator watches for, alongside commit
+timing. Not a separate always-on process — a check in the same sweep."*
+
+| Watches for | Proposes | Mechanism |
+|---|---|---|
+| The work reached a reviewable point | A commit | 14 |
+| A design decision implies later physical verification | A test item | 23 |
+| Questioning has gone deeper than the decision needs | Backing out to the critical point | 41 |
+
+All three **propose and never act**, and all three share one open question: how often it
+may fire before the nudging becomes the annoyance.
+
+**Names are provisional.** Paths firm up when the plugin skeleton exists.
+
+**`reference/knowledge-tiers` carries no mechanism.** The K1–K4 ladder is a definition that
+every record-reading and record-writing artifact depends on, not a capability of its own.
+It is in the list because the dependency is real and something must ship it.
+
+**`agents/camp` is unresolved.** An arc needs something that holds its shape — the spawn
+tree, what is next, what must not be re-litigated. Whether that is an agent, a skill
+writing to the arc-log, or a role the main thread adopts is not decided. The name pairs
+with Lodestar's Star.
+
+**`skills/handoff` is separate from `skills/record` on purpose.** Record routing answers
+*where does this go*; the handoff is a durable artifact that survives window death —
+[its spec](mechanisms/handoff-spine.md) names the gap as "2 to 12 days of end-on-end
+development, surviving repeated window death, cheap to rehydrate from." Different trigger,
+different lifetime.
