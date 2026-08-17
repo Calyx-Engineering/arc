@@ -73,10 +73,10 @@ moves next; this column only reports.
 | # | Mechanism | Src | Payoff | Spec | Status |
 |---|---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | | |
-| 10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | — | ⚪ |
+| 10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/branch-guard.md) | ⚪ |
 | 12 | Issue linking | 🔥 | **Everything links, nothing strays.** *Branch↔issue and PR↔issue links form; the PR targets the arc branch* | [spec](mechanisms/issue-linking.md) | ⚪ |
 | 14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/commit-rhythm.md) | ⚪ |
-| 22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | — | ⚪ |
+| 22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | [spec](mechanisms/configuration-management.md) | ⚪ |
 | 40 | Autonomy switch | 📐 | **The workflow matches how the work actually runs.** *Guided means the engineer drives each issue and the agent assists; autonomous means the agent runs between checkpoints. One switch, not a hardware/software fork* | — | ⚪ |
 | 41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/relief-valve.md) | ⚪ |
 | | **AUTHORING** | | | | |
@@ -86,22 +86,22 @@ moves next; this column only reports.
 | 38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, and when to decide rather than ask* | [skill](../../.claude/skills/chat-response/SKILL.md) | 🔵 |
 | | | | ↳ *The dev-log and arc-log are authored by row 17, in Knowledge* | | |
 | | **CAMPAIGN** | | | | |
-| 9 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | — | ⚪ |
-| 20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | — | ⚪ |
-| 21 | Arc-tree — spawn diagram | 🔥 | **Arc shape is visible.** *Family tree of which issue spawned which, so scope growth shows early* | — | ⚪ |
-| 24 | Verification planning | 📐 | **Requirements get proven.** *Turns unproven requirements into a validation milestone, and reports results back* | — | ⚪ |
-| 27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Partitions issues into disjoint-file tracks and sequences their merges. Disjointness is the go/no-go* | — | ⚪ |
-| 28 | Human gate | ⚙️ | **The step only a person can do, happens.** *One gate per feature-complete state, with the environment staged* | — | ⚪ |
+| 9 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/kickoff-scope-gate.md) | ⚪ |
+| 20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | [spec](mechanisms/arc-decomposition.md) | ⚪ |
+| 21 | Arc-tree — spawn diagram | 🔥 | **Arc shape is visible.** *Family tree of which issue spawned which, so scope growth shows early* | [spec](mechanisms/arc-tree.md) | ⚪ |
+| 24 | Verification planning | 📐 | **Requirements get proven.** *Turns unproven requirements into a validation milestone, and reports results back* | [spec](mechanisms/verification-planning.md) | ⚪ |
+| 27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Partitions issues into disjoint-file tracks and sequences their merges. Disjointness is the go/no-go* | [spec](mechanisms/worktree-waves.md) | ⚪ |
+| 28 | Human gate | ⚙️ | **The step only a person can do, happens.** *One gate per feature-complete state, with the environment staged* | [spec](mechanisms/human-gate.md) | ⚪ |
 | | **KNOWLEDGE** | | | | |
 | 15 | Context ladder / handoff | 🔥 | **Cold starts stop costing 20 minutes.** *Which documents a fresh session opens, in what order, and when to stop* | [spec](mechanisms/handoff-spine.md) | ⚪ |
 | 16 | Record routing | 🔥 | **Analysis stays findable.** *Decides which file a finding goes in, and promotes it when it outlives the arc* | [tiers](mechanisms/knowledge-tiers.md) · [structure](mechanisms/hardware-record-structure.md) | ⚪ |
-| 17 | K1 upkeep | ⚙️ | **The dev-log and arc-log get written, not remembered.** *A dev-log per issue authored at decision points, the arc-log status table updated as work lands, both gated at PR time* | — | ⚪ |
+| 17 | K1 upkeep | ⚙️ | **The dev-log and arc-log get written, not remembered.** *A dev-log per issue authored at decision points, the arc-log status table updated as work lands, both gated at PR time* | [spec](mechanisms/k1-upkeep.md) | ⚪ |
 | 19 | Knowledge mining trigger | 🔥 | **Reasoning in transcripts reaches the record.** *Fires at PR time and runs the mining agent with the knowledge filter* | [spec](mechanisms/transcript-mining.md) | ⚪ |
 | 23 | Test obligation capture | 🔥 | **Designs get tested when the part arrives.** *Proposes the test item at design time, months before it can be run* | [spec](mechanisms/test-obligation-capture.md) | ⚪ |
 | | **DELEGATION** | | | | |
 | 25 | Autonomous execution | ⚙️ | **Work runs unattended between checkpoints.** *The agent roster — scout, architect, planner, builder, reviewer, verifier, scribe — each pinned to a model, plus how much to hand over: T0-Inline · T1-Squad · T2-Wave* | [spec](mechanisms/agent-roster.md) | ⚪ |
-| 26 | Briefs down / packets up | ⚙️ | **The orchestrator stays lean.** *A subagent gets a small brief and returns a bounded packet, never its raw context* | — | ⚪ |
-| 29 | Agent wiki | ⚙️ | **Exploration cost compounds downward.** *Distilled repo knowledge every agent reads before exploring. A fork of the published wiki agent* | — | ⚪ |
+| 26 | Briefs down / packets up | ⚙️ | **The orchestrator stays lean.** *A subagent gets a small brief and returns a bounded packet, never its raw context* | [spec](mechanisms/briefs-and-packets.md) | ⚪ |
+| 29 | Agent wiki | ⚙️ | **Exploration cost compounds downward.** *Distilled repo knowledge every agent reads before exploring. A fork of the published wiki agent* | [spec](mechanisms/agent-wiki.md) | ⚪ |
 | 30 | Transcript mining | 🔥 | **One pipeline, two filters.** *Knowledge filter promotes findings into the record; friction filter clusters corrections into mechanism candidates* | [spec](mechanisms/transcript-mining.md) | ⚪ |
 | | **SELF-IMPROVEMENT** | | | | |
 | 31 | Self-improvement loop | 🔥 | **Tooling fixes land without leaving the work.** *Files the issue, makes the fix locally uncommitted, opens the diff* | [spec](mechanisms/self-improvement-loop.md) | ⚪ |

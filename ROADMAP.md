@@ -136,17 +136,22 @@ that lives in a Google Sheet, outside version control. Configuration management 
 
 Ranked by what they block.
 
-| Gap | Blocks | Note |
-|---|---|---|
-| 17 — K1 upkeep | Pass 1, item 3 | Working practice in TimeScope, no spec. **Highest-priority stub** |
-| 21 — Arc-tree | Pass 1, item 9 | `agents/camp` is unresolved: agent, skill, or a role the main thread adopts |
-| 9 · 20 · 24 · 27 · 28 | Later | All of Campaign. Five mechanisms, no specs |
-| 26 · 29 | Later | 26 is inside `agent-process-foundation.md`; 29 forks a published plugin |
-| 30 — knowledge filter | Pass 2 | Half-designed. Friction filter validated, knowledge filter not |
-| 41 — Relief valve | Pass 1, item 8 | Spec written, four candidate triggers all rejected |
-| Guided flow steps 5–8 | Nothing yet | CAD review, manufacturing package, quoting, PR-as-record have no mechanisms at all |
+**Every mechanism except 39 and 40 now has a spec.** What remains is what those specs say is
+undesigned — a `partial` spec names its own holes.
 
-Stubs are [issue #6](https://github.com/Calyx-Engineering/arc/issues/6).
+| Gap | Blocks | What is missing |
+|---|---|---|
+| 21 — Arc-tree | Pass 1, item 9 | **The form is unresolved.** `agents/camp` could be an agent, a skill writing to the arc-log, or a role the main thread adopts |
+| 10 — Branch guard | Pass 1, item 2 | Where the guard learns which branch is correct. Two of its three checks have no precedent |
+| 17 — K1 upkeep | Pass 1, item 3 | Whether TimeScope's arc-log template survives hardware — it is wave-and-track shaped, and a guided arc has neither |
+| 41 — Relief valve | Pass 1, item 8 | The trigger. Four candidates named, all rejected |
+| 15 — Handoff | Pass 1, item 6 | Whether issue-level K2 extends the dev-log or sits beside it |
+| 30 — Transcript mining | Pass 2 | The knowledge filter. The friction filter is validated against a real run |
+| 29 — Agent wiki | Later | Fork, depend, or reimplement — a published plugin already exists |
+| 40 — Autonomy switch | Later | **No spec.** Nothing written beyond the row |
+| 39 — Mechanism numbering | Pass 2 | **No spec.** Covered by [issue #5](https://github.com/Calyx-Engineering/arc/issues/5) |
+| 22 · 24 | Deferred | Both need the interview above |
+| Guided flow steps 5–8 | Nothing yet | CAD review, manufacturing package, quoting, PR-as-record have no mechanisms at all. Design review is described in [M28](docs/product-architecture/mechanisms/human-gate.md) but unowned |
 
 ---
 
