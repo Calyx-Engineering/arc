@@ -45,6 +45,12 @@ Lodestar says what must be proven, Arc reports what actually was.
 
 ---
 
+## Next steps
+
+[NEXT.md](NEXT.md) — what to build first, in what order, and the Monday prototype bar.
+
+---
+
 ## Where things are
 
 | Path | What |
