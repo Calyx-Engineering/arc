@@ -242,8 +242,27 @@ That is the one shape that cannot be afforded casually — and it is exactly obl
 | Obligation 3, event half | Hooks | Free until they fire |
 | Obligation 3, conversational half | A skill now, an agent later | Bounded |
 
-**You still get a colleague.** Addressed by name, consistent voice, answers from the record,
-reports what it did. What is missing today is unprompted noticing of conversational shape.
+### The relocation does not cost you the assistant
+
+**Camp is still a personality.** What changed is what runs underneath, not what you interact
+with. You address it by name, it answers in a consistent voice, it speaks up unasked at
+events, it reads the record so its answers outlive any chat, and it is governed by an
+agreement you amend.
+
+The two things that make an assistant an assistant both survive:
+
+| | Where it lives |
+|---|---|
+| **Personality** | `voice.md` — register, prefix rule, length |
+| **Memory** | `notes.md` and the operating agreement |
+
+Camp is Claude wearing a mask, and **a mask backed by two committed documents is more
+consistent than a resident agent would be.** An agent's memory dies with its session;
+`notes.md` persists and can be read, diffed, and corrected.
+
+**What is genuinely lost is the independent observer** — something watching the conversation
+that is not the agent itself. That matters for exactly one thing, the relief valve, and it is
+deferred on cost rather than abandoned.
 
 ---
 
@@ -287,6 +306,20 @@ deep" alone, but together they make the check fire without conversational readin
 | Turns since the last commit or file write | Countable |
 | Questions asked with no artifact changed | Countable |
 | Time in one issue with no checklist movement | Countable |
+| **Emphasis markers in the user's own messages** | Countable — see below |
+
+**The user's frustration is the most reliable signal available, and it is visible in the
+text.** By the time it appears the valve has already failed, but it is the one marker that
+never gives a false negative:
+
+| Marker | |
+|---|---|
+| WORDS IN ALL CAPS | *"YOU HAVENT TOUCHED THE REPO"* |
+| **Bold** or *italic* emphasis on a correction | Emphasis where plain text would do |
+| Profanity, or a sharp shortening of message length | Both appear in the record |
+
+Ship the crude version — caps runs and emphasis density — and improve it from evidence. A
+late signal that fires is worth more than an early one that does not exist.
 
 Mechanical trigger, judged response. **The skill catches the cases the agent is capable of
 noticing; the agent — later — catches the ones it is not.**
