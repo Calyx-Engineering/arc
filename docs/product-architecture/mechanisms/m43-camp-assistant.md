@@ -64,6 +64,68 @@ substance of the relationship, and it is what an operating agreement exists to d
 **Onboarding is obligation 0 answered before you knew to ask** — same capability, different
 moment, which is why it belongs here rather than being a separate feature.
 
+#### It holds the goal — it is not a help function
+
+**Obligation 0 is the project manager.** It fixes the arc's intent in place and answers *does
+this serve it?* — before the work happens, not after.
+
+> *"its meant so that Claude can say — are we developing in the right direction or are we off
+> base for the intent of this arc/milestone … its kinda like how Star is supposed to be able
+> to act as delegate PO."*
+
+| | |
+|---|---|
+| **Not** | Reading history to find where things went wrong. That is the retrospective |
+| **Is** | Holding the destination, and testing proposed work against it |
+
+**Only the user moves the goal.** That authority is what makes it a delegate rather than an
+observer — when work is proposed outside the arc's intent, obligation 0 says so and cannot
+be argued out of it, because the intent is not its to change.
+
+This is **development drift**, one level up from the conversational drift the relief valve
+catches.
+
+#### The intent lives in the arc-log
+
+No new artifact. The arc-log already carries *why this arc exists* and its *load-bearing
+decisions* — obligation 0 is the skill that reads them and answers against them.
+
+#### The authority ladder
+
+Saying *"that is off-intent"* cannot be final, or it becomes an obstacle that gets routed
+around. Three levels, borrowed from Star:
+
+| Level | |
+|---|---|
+| **Agreed** | It serves the stated intent. Proceed |
+| **Derived** | Off the stated intent but a reasonable consequence of it. Say so, proceed |
+| **Escalate** | Genuinely outside. Stop and ask |
+
+**The worked example is this arc.** The tracker-mechanics issues — #31, #32, #33, #34, #35 —
+are off-topic for an arc about Camp, and were right to do anyway. That is an *escalate*, and
+the user's answer was yes. A mechanism that blocked them would have been wrong.
+
+**It never blocks. It asks.** Telling someone they are drifting when they deliberately
+changed direction is worse than silence.
+
+#### When it fires
+
+| Moment | |
+|---|---|
+| **Issue spawn** | Does this belong in the arc, or outside it |
+| **Issue close · PR open** | Checkpoints that already exist |
+| **Asked** | Always available |
+| **When the relief valve fires** | Depth and drift, asked together |
+
+**The last one is the pairing that makes both cheap.** Going deep is usually *how* drift
+happens — questioning escalates because the direction stopped being clear. One precondition
+fires and both questions get asked: *are we too deep here*, and *does this still serve the
+arc*. No second trigger, no second over-firing budget.
+
+**Log-based firing was considered and rejected.** Obligation 0 is about where the work is
+going, not what already happened — the log serves the retrospective and the human reader,
+not this.
+
 #### It is not a capability catalogue
 
 *"What can Arc do?"* in the abstract is a help command: useful once, then never re-read.
