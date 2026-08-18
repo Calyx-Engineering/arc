@@ -55,7 +55,7 @@ reasoning is in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md#s
 | **Delegation** | Agent roster · T0-Inline / T1-Squad / T2-Wave · worktree waves · human gate · the agent wiki |
 | **Self-improvement** | Transcript mining · the self-improvement loop · session preservation · the plugin retrospective |
 
-Thirty mechanisms across twenty-four artifacts. Most already run as working practice
+Thirty-one mechanisms across twenty-four artifacts. Most already run as working practice
 somewhere; the rest are specified but unbuilt.
 
 Full definition in [docs/product-architecture/README.md](docs/product-architecture/README.md).

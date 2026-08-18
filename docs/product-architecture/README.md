@@ -47,7 +47,7 @@ unread on disk.
 
 ## Mechanisms
 
-Thirty mechanisms across the six pieces.
+Thirty-one mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -89,6 +89,7 @@ moves next; this column only reports.
 | | **CAMPAIGN** | | | | |
 | m09 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/m09-kickoff-scope-gate.md) | ⚪ |
 | m20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | [spec](mechanisms/m20-arc-decomposition.md) | ⚪ |
+| m43 | Camp — the delivery assistant | 🔥 | **A colleague, not a command.** *A personality you can place expectations on: explains what Arc is doing and should be doing, answers where the arc stands, decomposes work, and speaks up unasked — governed by an operating agreement you approve* | [spec](mechanisms/m43-camp-assistant.md) | ⚪ |
 | m21 | Arc-tree — spawn diagram | 🔥 | **Arc shape is visible.** *Family tree of which issue spawned which, so scope growth shows early* | [spec](mechanisms/m21-arc-tree.md) | ⚪ |
 | m24 | Verification planning | 📐 | **Requirements get proven.** *Turns unproven requirements into a validation milestone, and reports results back* | [spec](mechanisms/m24-verification-planning.md) | ⚪ |
 | m27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Partitions issues into disjoint-file tracks and sequences their merges. Disjointness is the go/no-go* | [spec](mechanisms/m27-worktree-waves.md) | ⚪ |
@@ -217,7 +218,7 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/plugin-retrospective` | skill | m33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | m39 | Called when a mechanism is captured | The suite registry |
 
-**Twenty-four artifacts for thirty mechanisms.** Four merges, each because the
+**Twenty-four artifacts for thirty-one mechanisms.** Four merges, each because the
 mechanisms fire together:
 
 | Artifact | Merges | Why |
