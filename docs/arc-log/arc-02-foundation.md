@@ -81,7 +81,7 @@ flowchart TD
 | [#12](https://github.com/Calyx-Engineering/arc/issues/12) issue writing and verification | [issue-12-issue-write](../dev-log/issue-12-issue-write.md) | merged to arc — [PR #22](https://github.com/Calyx-Engineering/arc/pull/22) |
 | [#13](https://github.com/Calyx-Engineering/arc/issues/13) the handoff | [issue-13-handoff](../dev-log/issue-13-handoff.md) | merged to arc — [PR #23](https://github.com/Calyx-Engineering/arc/pull/23) |
 | [#14](https://github.com/Calyx-Engineering/arc/issues/14) work watcher and reports | [issue-14-work-watch](../dev-log/issue-14-work-watch.md) | merged to arc — [PR #24](https://github.com/Calyx-Engineering/arc/pull/24) |
-| [#15](https://github.com/Calyx-Engineering/arc/issues/15) where the arc stands | — | not started — **David reviews this one** |
+| [#15](https://github.com/Calyx-Engineering/arc/issues/15) where the arc stands | — | **closed, superseded by [#27](https://github.com/Calyx-Engineering/arc/issues/27)** |
 
 **Order is discovered, not planned** — but this arc is the exception that proves it. Pass 1
 is dependency-ordered up front because the artifacts genuinely block each other, and that
@@ -117,6 +117,28 @@ without a central registry.
 
 **Worktree and base-freshness checks.** `hooks/branch-guard` is written so a second and
 third check are added branches in one `case`, not a second hook.
+
+## What this arc learned
+
+**A closing keyword cannot bind on a PR into an arc branch.** Isolated here by direct
+comparison, after being raised repeatedly and dismissed. Three workarounds were tested and
+ruled out; the fix is [m42](../product-architecture/mechanisms/m42-default-branch-flip.md),
+which was written during this arc rather than after it.
+
+**The record loop closed inside one arc.** The base-branch finding was written to K2 during
+#11 and changed #12's design before it was built. First evidence the ladder does what it
+claims.
+
+**Two cold starts proved the handoff and found a real gap** — the reading order pointed at a
+dev-log that does not exist until work starts. Fixed and re-tested during the same issue.
+
+**#15's scope was wrong, and reconvening caught it.** *Something to ask where the arc stands*
+turned out to be a delivery-lead personality with five obligations and an operating
+agreement. Superseded by [#27](https://github.com/Calyx-Engineering/arc/issues/27) and
+[m43](../product-architecture/mechanisms/m43-camp-assistant.md).
+
+**Nothing spawned.** Six issues, planned up front, executed in order — which is itself a
+result about how this arc ran, per m21's execution axis.
 
 ## At arc close
 
