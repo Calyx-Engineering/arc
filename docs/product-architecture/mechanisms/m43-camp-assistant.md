@@ -153,11 +153,24 @@ The relief valve ([m41](m41-relief-valve.md)) originally had the agent notice it
 depth problem. That is the thing least likely to work: **the agent is inside the hole it needs
 to notice.**
 
-Camp reads the record and is not inside the stuck conversation:
+A camp that reads the record from outside the stuck conversation does not have that problem:
 
-> *"Camp here — I see what you and Claude are doing. We might want to step back."*
+> *"**Camp here —** I see what you and Claude are doing. We might want to step back."*
 
-This removes the conflict of interest rather than asking the agent to overcome it.
+That removes the conflict of interest rather than asking the agent to overcome it.
+
+**But outside-ness is the expensive property.** It requires something reading the
+conversation continuously, which is the cost case above. So the relief valve ships in two
+stages:
+
+| Stage | Form | Honest limitation |
+|---|---|---|
+| **Now** | A skill the main thread runs at a mechanical precondition | Self-detection wearing a skill's clothes. It catches what the agent is *capable* of noticing |
+| **Later** | A genuine third party reading independently | Deferred on cost, not on design |
+
+The mechanical precondition is what keeps stage one from being pure judgment — turns without
+a write, questions with no artifact changed, time in an issue with no checklist movement.
+**Mechanical trigger, judged response.**
 
 ---
 
