@@ -47,7 +47,7 @@ unread on disk.
 
 ## Mechanisms
 
-Twenty-nine mechanisms across the six pieces.
+Thirty-one mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -75,6 +75,7 @@ moves next; this column only reports.
 | | **WORKSPACE GUARD** | | | | |
 | m10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/m10-branch-guard.md) | ⚪ |
 | m12 | Issue linking | 🔥 | **Everything links, nothing strays.** *Branch↔issue and PR↔issue links form; the PR targets the arc branch* | [spec](mechanisms/m12-issue-linking.md) | ⚪ |
+| m42 | Default branch flip | 🔥 | **Closing keywords bind inside an arc.** *Offers to point the default branch at the arc for its lifetime, on preconditions it checks itself; restores at close* | [spec](mechanisms/m42-default-branch-flip.md) | ⚪ |
 | m14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/m14-commit-rhythm.md) | ⚪ |
 | m22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | [spec](mechanisms/m22-configuration-management.md) | ⚪ |
 | m40 | Autonomy switch | 📐 | **The workflow matches how the work actually runs.** *Guided means the engineer drives each issue and the agent assists; autonomous means the agent runs between checkpoints. One switch, not a hardware/software fork* | — | ⚪ |
@@ -88,6 +89,7 @@ moves next; this column only reports.
 | | **CAMPAIGN** | | | | |
 | m09 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/m09-kickoff-scope-gate.md) | ⚪ |
 | m20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | [spec](mechanisms/m20-arc-decomposition.md) | ⚪ |
+| m43 | Camp — the delivery assistant | 🔥 | **A colleague, not a command.** *A personality you can place expectations on: explains what Arc is doing and should be doing, answers where the arc stands, decomposes work, and speaks up unasked — governed by an operating agreement you approve* | [spec](mechanisms/m43-camp-assistant.md) | ⚪ |
 | m21 | Arc-tree — spawn diagram | 🔥 | **Arc shape is visible.** *Family tree of which issue spawned which, so scope growth shows early* | [spec](mechanisms/m21-arc-tree.md) | ⚪ |
 | m24 | Verification planning | 📐 | **Requirements get proven.** *Turns unproven requirements into a validation milestone, and reports results back* | [spec](mechanisms/m24-verification-planning.md) | ⚪ |
 | m27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Partitions issues into disjoint-file tracks and sequences their merges. Disjointness is the go/no-go* | [spec](mechanisms/m27-worktree-waves.md) | ⚪ |
@@ -216,7 +218,7 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/plugin-retrospective` | skill | m33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | m39 | Called when a mechanism is captured | The suite registry |
 
-**Twenty-four artifacts for twenty-nine mechanisms.** Four merges, each because the
+**Twenty-four artifacts for thirty-one mechanisms.** Four merges, each because the
 mechanisms fire together:
 
 | Artifact | Merges | Why |
