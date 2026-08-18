@@ -64,3 +64,7 @@ cheap later. (Delete if none.)
 - [ ] Tree regenerated
 - [ ] K2 and K3 swept — durable product facts graduated to the wiki, ladder entries replaced
       with links rather than copies
+- [ ] **Milestone closed by hand.** GitHub does not close it when its last issue closes
+- [ ] **Default branch restored** — `tools/arc-default-branch.sh restore`. A crashed session
+      leaves it pointed at a branch that may later be deleted, and nothing about that state
+      is visible in ordinary work

@@ -52,7 +52,7 @@ compactness that makes these files readable every session.
 | **A decision point** | The decision and what was rejected, while the reasoning is live |
 | **Something is created** | Add it to the dev-log's Spawned section *then* — a document nothing points at is a document nobody finds |
 | **PR time** | Fill in the Retrospective. Move the arc-log status table |
-| **Arc close** | Sweep K2 and K3, graduate durable facts to the wiki, regenerate the tree |
+| **Arc close** | Sweep K2 and K3, graduate durable facts to the wiki, regenerate the tree, close the milestone by hand, restore the default branch |
 
 ---
 
