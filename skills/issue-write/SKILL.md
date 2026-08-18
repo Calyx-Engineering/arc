@@ -71,6 +71,21 @@ When a PR closes exactly one issue, cite it in the title: `<type>: <summary> (#4
 closes several, omit the number from the title and list them in the body. The title number
 is cosmetic — the body still needs its own line.
 
+### PR titles inside an arc take the arc's prefix
+
+An issue PR inside an arc is titled:
+
+```text
+arc-02: feat: the handoff — a cold start that costs one read (#13)
+```
+
+**Without it a flat PR list has no thread back to the arc.** Five PRs sharing no visible
+name read as five unrelated features, and a human scanning the list cannot see the effort.
+The prefix groups arc PRs together and leaves non-arc fixes grouping separately — no labels
+needed.
+
+`hooks/tracker-verify` reports a PR into an `arc/*` base whose title lacks it.
+
 ---
 
 ## The base branch decides whether the link binds
@@ -85,6 +100,11 @@ This is not a corner case in a nested-branch workflow — it is *every* issue PR
 |---|---|
 | The default branch | **A defect.** The link should have formed |
 | An arc or integration branch | **Expected.** The link cannot form; it defers to the arc PR |
+
+**The fix is [m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md):
+point the default branch at the arc for its lifetime.** Where that is in force, keywords bind
+normally and the rest of this section does not apply. Where it is not — more than one
+collaborator, protected trunk — the following holds.
 
 Two consequences:
 
@@ -109,6 +129,11 @@ edits, and the asymmetry is the whole finding:
 | Verification | The tool errors if the match fails | The API returns success regardless |
 | Visibility | The diff is in front of the user | Lives on a website nobody re-opens |
 | Detection | Immediate | Only when someone happens to look |
+
+**Set the milestone at creation.** `gh pr create --milestone "<name>"`. A PR without one
+drops out of the milestone view, which is the only place a human sees the arc as one unit.
+This is unrelated to the base-branch problem and purely an omission — every PR in this
+repo's first two arcs was missing it.
 
 After **every** create or edit:
 
