@@ -1,0 +1,2 @@
+# cwd is not a git repo — the guard cannot classify the work, so it allows
+{"tool_name":"Edit","cwd":"__FIXTURE_NOREPO__","tool_input":{"file_path":"src/index.ts"}}

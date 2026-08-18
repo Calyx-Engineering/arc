@@ -1,0 +1,2 @@
+# a body with nothing wrong with it — the common case must be silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n- [ ] Set the current limit to 250 mA\n\nMeasured 2026-08-17 on the rev B board.\n","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

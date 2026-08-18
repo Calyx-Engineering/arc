@@ -139,10 +139,22 @@ the machine. Committed is not the same as exercised.
 Arc ships hooks. A bad hook registration fires on every tool call in every repo and can
 break the session needed to fix it.
 
-- Every hook starts with `[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0`. **Say this in
-  chat before proposing any hook change.**
+**The goal is that a mistake is survivable, not that mistakes are prevented by review
+skill.** David is not a hook author and does not audit bash — he checks that you tested.
+
+- Every hook starts with `[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0`. **Say this in chat
+  before proposing any hook change** — a README line is a rule with no trigger.
 - Hooks **fail open** — on unexpected failure, exit 0. Deny only the specific condition.
+  Write from a skeleton that already carries the kill switch and the wrapper, so neither
+  can be omitted.
 - **Run `tools/verify-hook.sh` and paste the real output** before asking for approval.
-- One hook per commit, verify output in the commit body.
+  Pass case, deny case, malformed case.
+- One hook per commit, verify output in the commit body, so `git revert` is surgical.
 - **Never edited autonomously:** `settings.json` outside the plugin's hooks block, the
   verify script, the hook template, any `SessionStart` hook.
+
+**The gate is a script, not a hook.** A hook validating hook changes can be broken by the
+change it is validating, and `HOOKS_OFF` would disable it along with everything else. A
+script works with hooks off and produces output you can see.
+
+Full reasoning in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md).

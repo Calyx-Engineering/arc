@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+# tracker-verify — PostToolUse hook (matcher: Bash). Carries m12, and the mechanical half of m13.
+#
+# A tracker write returns success whether or not it did the right thing. Six real cases in
+# four weeks: two where an agreed edit was never made, four where an edit landed with
+# placeholder values, a stale number, or an impossible date still in it. The second shape is
+# worse — it reports success and is wrong, which defeats the assumption that a completed
+# edit is complete.
+#
+# PostToolUse, not PreToolUse: the write has already happened, so there is nothing to deny.
+# This reads back what landed and reports a mismatch. Judging "does this match what we
+# agreed" is skills/issue-write's job; this catches the mechanical half.
+#
+# Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Never `set -e`. A guardrail bug must never break every Bash call.
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+
+field() {
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# PostToolUse communicates by writing context back to the transcript, not by a decision.
+report() {
+  printf '%s\n' "$1" >&2
+  exit 2
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/"$//')"
+[ -n "$CMD" ] || exit 0
+
+# Only tracker writes. A read is not a write, and `gh pr view` is what this hook itself uses.
+case "$CMD" in
+  *"gh issue create"*|*"gh issue edit"*|*"gh pr create"*|*"gh pr edit"*|*"gh pr merge"*) ;;
+  *) exit 0 ;;
+esac
+
+command -v gh >/dev/null 2>&1 || exit 0
+
+CWD="$(field cwd)"
+[ -d "$CWD" ] || CWD="$PWD"
+
+FINDINGS=""
+add() { FINDINGS="$FINDINGS
+  - $1"; }
+
+# Scaffolding that survived into a body. Each of these was a real case.
+scan_placeholders() {
+  local body="$1" what="$2" hit
+  hit="$(printf '%s' "$body" | grep -nE '\bTBD\b|\bXXX\b|\bTODO\b|placeholder|<value>|<link>|<N>|YYYY-MM-DD' | head -3)"
+  [ -n "$hit" ] && add "$what still contains template scaffolding: $(printf '%s' "$hit" | tr '\n' ';')"
+}
+
+# A date that cannot be right. Cheap check: a year before the repo existed or in the future.
+scan_dates() {
+  local body="$1" what="$2" year now
+  now="$(date +%Y)"
+  for year in $(printf '%s' "$body" | grep -oE '\b20[0-9]{2}\b' | sort -u); do
+    if [ "$year" -gt $((now + 1)) ] || [ "$year" -lt 2024 ]; then
+      add "$what carries a date that does not make sense: $year"
+    fi
+  done
+}
+
+# A body supplied directly in the payload skips the tracker read. This is how the scanners
+# are exercised offline — a hook whose only test path needs the network is a hook nobody
+# runs the day it matters.
+FIXTURE_BODY="$(field arc_test_body)"
+if [ -n "$FIXTURE_BODY" ]; then
+  scan_placeholders "$FIXTURE_BODY" "the body"
+  scan_dates "$FIXTURE_BODY" "the body"
+  [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
+  exit 0
+fi
+
+# The number of whatever was just written. `gh` prints the URL on create; on edit the number
+# is an argument.
+NUM="$(printf '%s' "$CMD" | grep -oE '(issue|pr) (edit|merge|view) +#?[0-9]+' | grep -oE '[0-9]+$')"
+[ -n "$NUM" ] || NUM="$(printf '%s' "$INPUT" | grep -oE 'https://github\.com/[^/]+/[^/]+/(issues|pull)/[0-9]+' | head -1 | grep -oE '[0-9]+$')"
+[ -n "$NUM" ] || exit 0
+
+case "$CMD" in
+  *"gh issue"*)
+    BODY="$(gh issue view "$NUM" --repo "$(git -C "$CWD" remote get-url origin 2>/dev/null)" --json body -q .body 2>/dev/null)" \
+      || BODY="$(cd "$CWD" && gh issue view "$NUM" --json body -q .body 2>/dev/null)"
+    [ -n "$BODY" ] || exit 0
+    scan_placeholders "$BODY" "issue #$NUM"
+    scan_dates "$BODY" "issue #$NUM"
+    ;;
+
+  *"gh pr"*)
+    META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
+    [ -n "$META" ] || exit 0
+
+    BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","baseRefName.*//')"
+    BASE="$(printf '%s' "$META" | grep -oE '"baseRefName":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+    DEFAULT="$(cd "$CWD" && gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)"
+
+    TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+
+    scan_placeholders "$BODY" "PR #$NUM"
+    scan_dates "$BODY" "PR #$NUM"
+
+    # A PR with no milestone drops out of the milestone view, which is the only place a
+    # human sees the arc as one unit. Settable and unrelated to the base-branch problem —
+    # every PR in this repo's first two arcs simply never had one set.
+    printf '%s' "$META" | grep -q '"milestone":null'       && add "PR #$NUM has no milestone. It will not appear in the milestone view, which is where the arc reads as one unit."
+
+    # An issue PR inside an arc takes the arc's prefix, so a flat PR list groups by arc and
+    # non-arc fixes group separately. Traceability for a human reading the list, which no
+    # amount of correct linking provides.
+    case "$BASE" in
+      arc/*)
+        ARCNUM="$(printf '%s' "$BASE" | sed -n 's#^arc/\([0-9][0-9]*\).*#\1#p')"
+        if [ -n "$ARCNUM" ] && ! printf '%s' "$TITLE" | grep -q "^arc-$ARCNUM:"; then
+          add "PR #$NUM targets \`$BASE\` but its title does not start with \`arc-$ARCNUM:\`. Without it the PR list has no thread back to the arc."
+        fi
+        ;;
+    esac
+
+    # Did the closing keyword bind? Empty is a defect on the default branch and expected
+    # anywhere else — a check that cries wolf on every issue PR in an arc gets turned off.
+    WANTS_CLOSE=0
+    printf '%s' "$BODY" | grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+' && WANTS_CLOSE=1
+    LINKED=0
+    printf '%s' "$META" | grep -q '"closingIssuesReferences":\[\]' || LINKED=1
+
+    if [ "$WANTS_CLOSE" -eq 1 ] && [ "$LINKED" -eq 0 ]; then
+      if [ -n "$DEFAULT" ] && [ "$BASE" = "$DEFAULT" ]; then
+        add "PR #$NUM has a closing keyword and no link, on the default branch. This is the failure — re-save the body to force a re-parse, then check again."
+      else
+        add "PR #$NUM: closure defers to the arc PR. A keyword cannot bind on a base of \`$BASE\` — say so in the PR rather than leaving it looking orphaned."
+      fi
+    fi
+
+    # The arc PR is the one that actually closes things. An arc merging into the default
+    # branch with no closing keywords leaves every issue it consumed open.
+    if [ "$WANTS_CLOSE" -eq 0 ] && [ -n "$DEFAULT" ] && [ "$BASE" = "$DEFAULT" ]; then
+      case "$CMD" in
+        *"gh pr merge"*) add "PR #$NUM merges to \`$DEFAULT\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
+      esac
+    fi
+    ;;
+esac
+
+[ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
+
+exit 0

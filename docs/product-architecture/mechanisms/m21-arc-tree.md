@@ -90,3 +90,30 @@ be a reader of them rather than an owner.
 - [handoff-spine](m15-handoff-spine.md) — the same "what does a cold session need" question
 - [k1-upkeep](m17-k1-upkeep.md) — the arc-log this renders into
 - [friction-log §2.7](../../retrospectives/2026-08-plugin-line/friction-log.md#27-follow-up-actions-forgotten) — spawned work that was never filed
+
+---
+
+## Pinned — the tree shows execution, not only spawning
+
+**2026-08-18.** Arc 02 spawned nothing: six issues, planned up front, executed in order. A
+tree of that arc is six static nodes.
+
+**That is a result, not an empty diagram.** It says the arc was constrained in vision,
+planned up front, and executed autonomously — and it says so at a glance.
+
+So the tree carries two axes, not one:
+
+| Axis | Shows |
+|---|---|
+| **Spawning** | Which issue caused which to exist. Scope growth |
+| **Execution** | The order work actually ran, and what ran in parallel |
+
+A heavily-spawning tree under autonomous execution is a signal worth checking — autonomous
+work sticks to what the issue says, so spawning means the issue was wrong. Exploratory
+guided work spawns as a matter of course, and the same shape means something different.
+
+**Both readings are retrospective and informative.** The tree does not get work done; it
+tells you how the work went. Worth having, not worth blocking on.
+
+**Backlog, not scope:** related-issue relationships. Spawned is what matters; related is a
+different diagram and does not belong in this one.

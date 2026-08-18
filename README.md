@@ -21,8 +21,26 @@ detail on demand and a durable wiki that outlives the arc or issue that produced
 Arc exists to solve the inconsistencies in AI-driven development and extinguish the
 friction between human and AI.
 
-**Status: nothing is built.** This repo holds the architecture and mechanism specs. The
-plugin skeleton does not exist yet.
+**Status: under construction.** The architecture and mechanism specs are complete; the
+plugin skeleton, the hook harness, and the branch guard are the first working parts.
+[ROADMAP.md](ROADMAP.md) says what lands next.
+
+---
+
+## Turning hooks off
+
+Arc ships hooks that can deny a tool call. If one misbehaves, from any terminal:
+
+```bash
+touch ~/.claude/HOOKS_OFF
+```
+
+Every Arc hook goes inert immediately — no editing settings while the broken thing fights
+back. Restore with `rm ~/.claude/HOOKS_OFF`.
+
+Every hook opens with the line that checks for that file, and
+[`tools/verify-hook.sh`](tools/verify-hook.sh) fails a hook that has lost it. The full
+reasoning is in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md#safe-hook-development).
 
 ---
 
@@ -37,8 +55,8 @@ plugin skeleton does not exist yet.
 | **Delegation** | Agent roster · T0-Inline / T1-Squad / T2-Wave · worktree waves · human gate · the agent wiki |
 | **Self-improvement** | Transcript mining · the self-improvement loop · session preservation · the plugin retrospective |
 
-Twenty-six mechanisms. Twelve already run as working practice; the rest are specified but
-unbuilt.
+Thirty-one mechanisms across twenty-four artifacts. Most already run as working practice
+somewhere; the rest are specified but unbuilt.
 
 Full definition in [docs/product-architecture/README.md](docs/product-architecture/README.md).
 
@@ -74,3 +92,5 @@ self-improvement piece holds the mechanisms that regenerate it.
 | [docs/retrospectives/2026-08-plugin-line/friction-log.md](docs/retrospectives/2026-08-plugin-line/friction-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
 | [docs/reference-timescope/](docs/reference-timescope/) | TimeScope's working files — source material for extraction, do not edit |
 | [docs/reference-roadz/](docs/reference-roadz/) | ROADZ's `issue-writing` and `engineering-report` skills — same |
+| [hooks/](hooks/) | The hooks, and the `TEMPLATE` every new one starts from |
+| [tools/verify-hook.sh](tools/verify-hook.sh) | The gate — run it before any hook is registered |

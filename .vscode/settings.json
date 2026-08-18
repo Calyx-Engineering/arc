@@ -1,0 +1,11 @@
+{
+  // Saves when focus leaves the editor — including clicking into the chat, which is the
+  // exact moment the failure happens. An unsaved buffer means the agent reads stale content
+  // from disk, writes its own version, and the two diverge; those conflicts are what produce
+  // defensive over-committing. VS Code exposes no dirty-buffer signal to an external process,
+  // so this eliminates the failure rather than detecting it.
+  //
+  // onFocusChange rather than afterDelay: a deliberate boundary, not mid-keystroke states
+  // landing in the diff. That matters when review happens by diff.
+  "files.autoSave": "onFocusChange"
+}

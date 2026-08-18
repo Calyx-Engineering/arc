@@ -1,0 +1,2 @@
+# a tracker write with no resolvable number — nothing to read back, so stay silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh issue edit --body-file body.md"}}

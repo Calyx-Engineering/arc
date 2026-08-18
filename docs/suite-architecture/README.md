@@ -111,8 +111,8 @@ issued 1–37; Arc has since taken 38 onward.
 | 1–8 | Lodestar |
 | 9–33 | Arc |
 | 34–37 | Bench |
-| 38–41 | Arc |
-| **42** | **Next free** |
+| 38–43 | Arc |
+| **44** | **Next free** |
 
 **Take the next free number, then update this table.** "Highest in my own table, plus one"
 is wrong — it collides the moment another plugin claims one.

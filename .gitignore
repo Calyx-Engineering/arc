@@ -3,7 +3,11 @@
 Thumbs.db
 
 # Editor
-.vscode/
+# `.vscode/*` and not `.vscode/`: git will not descend into an excluded directory, so a
+# negation cannot re-include anything inside one. Excluding the contents leaves the
+# directory readable and the exception below effective.
+.vscode/*
+!.vscode/settings.json
 .idea/
 
 # Node (for the future generator/tooling)
@@ -13,3 +17,9 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+
+# Session-scoped working files — carry one session to the next, never committed.
+# Anchored to the root: a bare `HANDOFF.md` also matches templates/handoff.md, which is a
+# shipped artifact and must be committed.
+/HANDOFF.md
+.arc-work/

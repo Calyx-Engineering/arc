@@ -1,0 +1,5 @@
+# Shell scripts and hooks must keep LF. A CRLF checkout makes bash fail with
+# "bad interpreter: /usr/bin/env bash^M" — which on a hook means every tool call errors.
+*.sh text eol=lf
+hooks/* text eol=lf
+tools/hook-cases/**/*.json text eol=lf
