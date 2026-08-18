@@ -61,13 +61,47 @@ substance of the relationship, and it is what an operating agreement exists to d
 > *"Arc is too big for even me (the owner) to track all it should be doing at a time to
 > properly evaluate."*
 
-It answers three questions, and the third is the valuable one:
+**Onboarding is obligation 0 answered before you knew to ask** — same capability, different
+moment, which is why it belongs here rather than being a separate feature.
+
+#### It is not a capability catalogue
+
+*"What can Arc do?"* in the abstract is a help command: useful once, then never re-read.
 
 | Question | |
 |---|---|
-| What can you do? | The roster of camp's own obligations |
-| What can Arc do? | The mechanisms, in plain terms, and which are live |
-| **What should have happened just now, and did it?** | The evaluation question — the one that turns a user into a source of improvement signal |
+| What can Arc do, in general | **Not built.** Onboarding covers the user; the plugin's file layout covers Claude |
+| **What did Arc just do here** | The report — obligation 4 |
+| **What should it have done, and did it** | The same report, one line further |
+
+**Obligation 0 mostly collapses into obligation 4**, and that collapse is what makes it
+affordable. The artifact that ran the checks already knows what it checked and what it
+skipped; nothing else has to be built to ask it.
+
+What survives independently is the arc-level question — *where does this arc stand* — which
+is obligation 1.
+
+#### The report always says what was checked
+
+```text
+**Camp here —** PR #33 opened.
+  Checked: milestone, arc prefix, closing keywords — all set
+  Declared but skipped: placeholder scan (no body edit)
+```
+
+**The skipped line is always present**, with a switch to turn it off. Always-on makes it a
+check; only-when-interesting makes it quieter and easier to stop trusting. A non-empty
+skipped line is a gap you can act on now rather than three weeks later in a retrospective.
+
+**One rule carries most of the value: an artifact says what it was checking for, not only
+what it found.** *"Checked milestone — not set"* rather than *"milestone missing."* One extra
+word, and the machinery stays visible even when everything passes.
+
+**Naming the governing clause was considered and dropped.** With no single camp agent there
+is no subject for *"why are you doing this"* — each artifact knows only its own reason.
+Making the clause a header field, and building a cross-Arc sweep to read them all, was
+scaffolding for a question the phrasing above already answers. Revisit when something
+concrete needs it.
 
 ### Obligation 4 is an audit trail in conversation
 
