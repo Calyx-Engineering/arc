@@ -181,6 +181,69 @@ obligation 0.** It also puts the m42 warning in front of the user at the moment 
 
 ---
 
+## Verbosity — three levels, two settings
+
+**Everything is logged regardless.** Verbosity controls what surfaces in chat, never what is
+recorded — so turning it down loses nothing.
+
+| Level | Shows |
+|---|---|
+| **loud** | The machinery. What was checked, what passed, what was declared but skipped |
+| **normal** | The outcome only |
+| **quiet** | Silence unless something is wrong |
+
+```text
+loud     **Camp here —** PR #33 opened.
+           Checked: milestone, arc prefix, closing keywords — all set
+           Declared but skipped: placeholder scan (no body edit)
+
+normal   **Camp here —** PR #33 opened. Milestone and keywords set.
+
+quiet    (nothing)
+```
+
+### Two settings, not one
+
+Reports and unsolicited nudges are different kinds of noise.
+
+| | Default |
+|---|---|
+| **Reports** — obligation 4 | `normal` |
+| **Nudges** — obligation 3 | `loud` |
+
+A nudge fires because something looks wrong, so it should be hard to miss. A report fires on
+every completion, so it should be brief.
+
+**Finer control is an amendment, not a fourth level.** *"Don't bother me about PR generation
+reports"* is a clause in the operating agreement — per-artifact suppression handled by tuning
+rather than by growing the level scheme.
+
+---
+
+## The log — what actually fired
+
+Verbosity decides what you see. **The log records everything**, and it is a distinct artifact
+with three readers.
+
+```text
+.claude/arc/camp/log.md
+```
+
+| Reader | Uses it for |
+|---|---|
+| **Obligation 0** | Drift detection — the gap between what was decided and what happened |
+| The retrospective | What fired, what never fired, what fired too often |
+| **You, by hand** | First weeks. It is how you learn whether Arc is working at all |
+
+**The third reader is why it ships now.** Before any automated analysis exists, a human
+reading the log is the evaluation loop — and it is the only way to set the over-firing
+threshold on evidence rather than by guess.
+
+**Why the arc-log cannot serve.** The arc-log holds what was *decided*; the log holds what
+*happened*. Drift is the gap between them, so both are needed and neither substitutes.
+
+---
+
 ## The relief valve — camp is the third party
 
 The relief valve ([m41](m41-relief-valve.md)) originally had the agent notice its own
