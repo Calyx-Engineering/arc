@@ -138,6 +138,13 @@ verbosity level, whether the default-branch flip is available.
 **Camp's first useful act being to configure itself is the clearest possible demonstration of
 obligation 0.** It also puts the m42 warning in front of the user at the moment it matters.
 
+**Two steps it would carry:**
+
+| | |
+|---|---|
+| Pick the register | Colleague, terse, or character — trying all three is how the choice gets made on evidence |
+| **Import an agreement from another repo** | Where tuning has already happened, rather than starting from stock again. This is cross-pollination at install time instead of at graduation |
+
 ---
 
 ## The relief valve — camp is the third party
@@ -175,6 +182,50 @@ amendment*:
 That is what makes the personality trustworthy rather than a colleague who misremembers
 confidently. **Camp's authority comes from reading the record, not from private memory.**
 
+### The agreement is where Arc deviates from stock
+
+Arc's mechanisms carry what is **common across projects**. The agreement carries what is
+**specific to this one** — the documented deviation from the matured default.
+
+> *"here is what the default matured version of Arc does, but it doesnt match my exact
+> needs, so i'm tuning its operation."*
+
+**Camp is the customer-facing side of that**, and the agreement is where the deviation is
+written down rather than re-explained.
+
+### Sections
+
+| Section | Holds |
+|---|---|
+| **Register and verbosity** | Colleague · terse · character, and how loud |
+| **What camp does unasked** | The triggers for obligations 3 and 4 |
+| **Work size and shape** | Issue granularity, *and* the form work takes — checklist versus prose, table versus paragraph |
+| **Response shape** | Where long is wanted, where short |
+| **Standing corrections** | Things not to repeat — see below |
+
+**Shape is not a subset of size.** A preference for many small issues and a preference for
+checklists over narrative are both deviations from stock, and both belong here.
+
+### Standing corrections — camp watches for the uncommon ones
+
+The largest idea in this section, and it is what makes camp more than an interface.
+
+> *"i've found i'm constantly applying corrective nudges and guidance to claude … but if
+> [memories] work so well, then why do i keep running into the same issue?"*
+
+**Because memory is retrieval, and retrieval is probabilistic.** A remembered correction
+surfaces when something cues it. An agreement clause is a document camp reads deliberately
+before it acts.
+
+| | Handles |
+|---|---|
+| **Arc's mechanisms** | What is common across every project |
+| **The agreement's standing corrections** | What is specific to this repo, this person, this work |
+
+So a correction given to Claude can be captured as a clause, and **camp watches for its
+recurrence** — the correction outliving the chat it was given in. That is the same content
+as the handoff's *do not* section, except permanent rather than arc-scoped.
+
 ### What tuning sounds like
 
 Real examples, verbatim in shape:
@@ -186,6 +237,35 @@ Real examples, verbatim in shape:
 
 Each is a durable preference about how work runs in **this** repo. None is a fact about the
 product.
+
+### The default agreement governs
+
+Arc ships a **filled-in** agreement, not a template with blanks. A blank one means camp has
+no obligations until you write them, so day one is useless. The default governs from
+install; you amend what chafes.
+
+**The risk, noted rather than solved:** a default nobody read quietly governing. The
+mitigation is a rule camp applies to itself.
+
+> **Camp must be able to answer *"why are you doing this?"* with the clause it is acting
+> under.** If it cannot name one, it should not be acting.
+
+Camp asks itself that question whether or not anyone else does. An action with no clause
+behind it is camp improvising, which is the failure the agreement exists to prevent.
+
+### Where it lives
+
+```text
+.claude/arc/camp/
+├── operating-agreement.md      ← what camp will do. Yours; amended by approved diff
+└── notes.md                    ← what camp learned about this repo. Camp's own
+```
+
+**Agent space, not `docs/`.** This is configuration a human reviews, not documentation a
+human navigates — the same reasoning that put the concern index in agent space. Committed
+and diffable; someone who wants to look under the hood can find it.
+
+**Namespaced under `arc/`** so Lodestar's Star and Bench get their own without collision.
 
 ### Cross-pollination
 
