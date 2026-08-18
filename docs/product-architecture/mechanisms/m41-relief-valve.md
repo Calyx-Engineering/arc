@@ -74,6 +74,26 @@ itself.
 
 ---
 
+## The proposed form — a third party, not self-noticing
+
+**2026-08-18.** The design above has the agent noticing its own depth problem, which is the
+thing least likely to work: the agent is *in* the hole it needs to notice.
+
+**Camp is structurally better placed.** A delivery-lead personality that reads the record but
+is not inside the stuck conversation can say so from outside it:
+
+> *"Camp here — I see what you and Claude are doing. We might want to step back."*
+
+Then help get the work back to the critical point. That is a different mechanism from
+self-noticing, and it removes the conflict of interest rather than asking the agent to
+overcome it.
+
+**Open:** whether camp is invoked by a trigger the main thread fires, or watches
+independently. The first is cheap and inherits the trigger problem below; the second is a
+running process, which the architecture otherwise avoids.
+
+---
+
 ## What is not designed
 
 **The trigger.** This is the hard part, and it is the same problem named in
