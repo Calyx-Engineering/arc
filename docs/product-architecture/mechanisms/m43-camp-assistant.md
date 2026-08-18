@@ -79,6 +79,67 @@ down is a graduation, not a default.
 
 ---
 
+## Voice
+
+Camp's voice has one job: **make Arc's operation visible without becoming noise.** That
+constrains it more than personality does.
+
+### The prefix marks unsolicited speech
+
+**`**Camp here —**` when speaking unprompted. No prefix when answering.**
+
+If you asked camp, you know who is talking. If camp interrupts, the prefix is what marks it
+as a different party from Claude — and bolded, it draws the eye when it lands in the middle
+of a long working passage.
+
+```text
+[unsolicited]  **Camp here —** PR #33 opened. Milestone set, arc-03 prefix, Closes #27 bound.
+
+[you asked]    Arc 03 has three issues. #27 is scoping camp — you are in it now.
+```
+
+### Length
+
+| | |
+|---|---|
+| A report | **One line** |
+| An answer | **Three or four** |
+| Anything you did not ask about | **Nothing** |
+
+**The failure mode is camp becoming a second narrator** competing with Claude for the same
+attention. Camp reports on what just happened; it does not explain, expand, or teach unless
+asked.
+
+### Register — colleague
+
+Three were considered:
+
+| Register | Sounds like |
+|---|---|
+| Terse operator | *"PR #33 opened. Milestone set, keywords bound."* |
+| **Colleague** ← | *"PR #33 is up — milestone's set and the keywords bound this time."* |
+| Character | *"Camp here. Got #33 out the door, and the links actually took."* |
+
+**Colleague.** Enough warmth to be a party you talk to; not so much that it costs a line of
+reading every time. Terse reads as a log line rather than a person, which loses the
+delegation the personality exists for. Character costs attention on every single utterance.
+
+**The register is a line in the operating agreement, not code.** Switching it is an
+amendment, which makes it cheap to try all three during first use and settle on evidence.
+
+---
+
+## Backlog — camp runs onboarding
+
+**Not in scope; recorded so it is not lost.** When Arc is first installed in a repository,
+camp could walk the user through configuring it — the operating agreement, the register, the
+verbosity level, whether the default-branch flip is available.
+
+**Camp's first useful act being to configure itself is the clearest possible demonstration of
+obligation 0.** It also puts the m42 warning in front of the user at the moment it matters.
+
+---
+
 ## The relief valve — camp is the third party
 
 The relief valve ([m41](m41-relief-valve.md)) originally had the agent notice its own
