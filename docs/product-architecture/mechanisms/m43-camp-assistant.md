@@ -443,12 +443,15 @@ durable fact in Arc.
 
 ---
 
-## Form: an agent
+## Form — documents, skills, and hooks
+
+**Revised 2026-08-18.** An earlier draft chose "an agent" because a personality felt like an
+agent thing. Asking what each obligation actually needs relocated it.
 
 | Form | Verdict |
 |---|---|
-| **Agent** | **Chosen.** A portable personality goes where the work goes, and carries across contexts |
-| Skill | Camp *uses* skills. A skill that maintains the plan is a piece of camp, not camp |
+| **Documents + skills + hooks** | **Chosen.** The identity is committed files; the capabilities are invoked skills; the watching is event hooks |
+| A resident agent | **Deferred, not rejected.** Only the conversational watching needs one, and continuous reading is the expensive case |
 | Main-thread role | **Rejected.** Tied to which window is open and which branch it is on — lose the window, lose the role |
 
 **Camp owns no arc state.** [m15](m15-handoff-spine.md) owns the handoff,
@@ -457,20 +460,42 @@ them. The moment camp holds state it is the spine window again under a new name.
 
 ---
 
+## What ships in arc 03
+
+**Settled 2026-08-18.** Everything except the monitoring agent and obligation 2.
+
+| | Arc 03 | Why |
+|---|---|---|
+| `voice.md` · operating agreement · `notes.md` | **Yes** | The identity. Nothing works without it |
+| Obligation 0 — explain Arc | **Yes** | The product. What makes Arc evaluable |
+| Obligation 1 — where the arc stands | **Yes** | Cheapest obligation, immediate payoff |
+| Obligation 4 — report per the agreement | **Yes** | The artifact speaks; free |
+| Obligation 3, event half | **Yes** | Hooks. Five of seven watch-moments |
+| Obligation 3, conversational half | **Yes** | Skill plus mechanical precondition. Partial, and says so |
+| **Obligation 2 — decompose an idea** | **No** | Least defined, and not needed for the first week of use |
+| **The monitoring agent** | **No** | Deferred on cost. The relief valve degrades to the skill above |
+
+**The bar is 2026-08-19**, when hardware work resumes. Camp is what makes that an evaluation
+rather than just use.
+
+---
+
 ## What is not designed
 
-**The unsolicited triggers.** Obligation 3 needs a moment to fire on. Candidates: PR open,
-branch create, an edit with no arc active, the relief-valve condition. Each is cheap
-individually; the risk is the same over-firing failure `work-watch` has, and the two share
-one threshold.
+**Verbosity levels.** Loud is the default. What the other levels are, and what each
+suppresses, is open — and is the last spec question before decomposition.
 
-**The verbosity default.** Loud is right for week one. What "loud" means concretely — every
-action, or every decision — comes out of real use.
+**Obligation 3's over-firing budget.** The event half and `work-watch`'s three checks share
+one threshold, and nothing sets it. First use produces the number.
 
-**Cost.** Camp is spawned often by design. Expected to more than repay itself, unmeasured.
+**The relief valve's real triggers.** The shipped signals are plausible guesses, not
+evidence. [#36](https://github.com/Calyx-Engineering/arc/issues/36) mines three repositories
+for what was countable *before* the frustration surfaced.
 
 **Whether camp speaks for `work-watch`.** `work-watch` does the noticing; camp may be the
 voice. One voice, several sources — attractive, unproven.
+
+**Obligation 2's shape.** Deferred rather than designed, so it is undefined by choice.
 
 ---
 
