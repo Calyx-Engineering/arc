@@ -76,8 +76,27 @@ point is what this fixes.
 | **Verify the commit identity** | Committing as one account and commenting as another makes no sense and has happened |
 | **Watch for silently dropped staged files** | Recurred twice, weeks apart. Confirm what actually got staged |
 | **Verify the issue closed** | A `Closes #NN` that did not bind reports success. See [issue-write](../issue-write/SKILL.md) |
+| **Never amend or rebase a pushed branch** | See below — it is the one rule here whose damage is permanent |
 
 The last two are **silent** — they report success and do the wrong thing.
+
+### Never amend or rebase a branch that has been pushed
+
+Once a branch is on the remote, `--amend`, `rebase`, and `push --force` rewrite history other
+things already point at.
+
+**The damage is to the graph, and it is permanent.** One amend on a pushed branch during arc
+02 produced a three-way crossing in the merge graph that no later commit can clean up — the
+arc's shape is harder to read forever, and the review surface is what a merge graph is *for*.
+
+| Instead | |
+|---|---|
+| Wrong commit message | A follow-up commit, or fix it at merge |
+| Forgot a file | A second commit. Small commits are not the problem |
+| Messy history | It is a record of what happened. Leave it |
+
+The exception is a branch nobody has pulled and no PR points at — which is difficult to be
+certain of, and the certainty is worth less than the graph.
 
 ### Unsaved buffers
 

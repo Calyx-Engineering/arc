@@ -98,15 +98,34 @@ case "$CMD" in
     ;;
 
   *"gh pr"*)
-    META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences 2>/dev/null)"
+    META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
     [ -n "$META" ] || exit 0
 
     BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","baseRefName.*//')"
     BASE="$(printf '%s' "$META" | grep -oE '"baseRefName":"[^"]*"' | sed 's/.*:"//; s/"$//')"
     DEFAULT="$(cd "$CWD" && gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)"
 
+    TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+
     scan_placeholders "$BODY" "PR #$NUM"
     scan_dates "$BODY" "PR #$NUM"
+
+    # A PR with no milestone drops out of the milestone view, which is the only place a
+    # human sees the arc as one unit. Settable and unrelated to the base-branch problem —
+    # every PR in this repo's first two arcs simply never had one set.
+    printf '%s' "$META" | grep -q '"milestone":null'       && add "PR #$NUM has no milestone. It will not appear in the milestone view, which is where the arc reads as one unit."
+
+    # An issue PR inside an arc takes the arc's prefix, so a flat PR list groups by arc and
+    # non-arc fixes group separately. Traceability for a human reading the list, which no
+    # amount of correct linking provides.
+    case "$BASE" in
+      arc/*)
+        ARCNUM="$(printf '%s' "$BASE" | sed -n 's#^arc/\([0-9][0-9]*\).*#\1#p')"
+        if [ -n "$ARCNUM" ] && ! printf '%s' "$TITLE" | grep -q "^arc-$ARCNUM:"; then
+          add "PR #$NUM targets \`$BASE\` but its title does not start with \`arc-$ARCNUM:\`. Without it the PR list has no thread back to the arc."
+        fi
+        ;;
+    esac
 
     # Did the closing keyword bind? Empty is a defect on the default branch and expected
     # anywhere else — a check that cries wolf on every issue PR in an arc gets turned off.

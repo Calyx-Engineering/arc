@@ -1,0 +1,2 @@
+# gh pr create before the URL is known — nothing to read back
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh pr create --base arc/03-camp --title x"}}
