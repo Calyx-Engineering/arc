@@ -161,9 +161,95 @@ This removes the conflict of interest rather than asking the agent to overcome i
 
 ---
 
+## Invocation — how camp is reached
+
+### Both: addressed in prose, and `/camp`
+
+Prose for natural use — *"Camp, where are we?"* — and a slash command for when the entry
+point should be unambiguous.
+
+### Claude delegates when the answer comes from the record
+
+**The big vision:** camp is who you talk to *about* the work; Claude is who *does* the work.
+State, shape, sequence and *should we* route to camp. Code, files and doing route to Claude.
+You stop switching between asking about the project and asking about the thing in front of
+you — and because camp answers from the record, its answers survive chat turnover.
+
+**What ships now is one rule, deliberately small:**
+
+> **Claude delegates when the answer comes from the record rather than from the
+> conversation.**
+
+| Camp | Claude |
+|---|---|
+| Where are we · what did we decide · what is next | What does this function do |
+| Does this belong in this arc · is this issue too big | Fix this · write this |
+
+**Fails safe.** Unsure means Claude answers and says camp could have. A wrong delegation is
+visible immediately, which is what first use is for.
+
+**Deferred:** camp deciding for itself when to intervene. That is obligation 3, whose
+triggers are undesigned.
+
+---
+
+## Cost decides the form — two tiers
+
+**Every agent spawn is a fresh context.** Nothing persists between them; there is no resident
+agent to keep warm. So each invocation pays full setup, and the cost scales with how much
+camp must read before it can answer.
+
+**That rules out spawning camp for every report.** A one-line PR report would cost more than
+the work it reports on.
+
+| | Form | Why |
+|---|---|---|
+| **Reports** — obligation 4 | Voice, no spawn | Independence adds nothing here; cost is everything |
+| **Answers** — obligations 0, 1, 2 | Real spawn | Has to read the record |
+| **The relief valve** | Real spawn | **Independence is the entire mechanism** |
+
+### So camp's identity is a document, and camp's reasoning is an agent
+
+A third artifact, beside the agreement and the notes:
+
+```text
+.claude/arc/camp/
+├── operating-agreement.md   ← what camp will do. Yours; amended by approved diff
+├── voice.md                 ← register, prefix rule, length. Read by whoever speaks
+└── notes.md                 ← what camp learned about this repo. Camp's own
+```
+
+**Stated plainly, because it is a real cost:** at report time camp is a voice Claude speaks
+in, not a separate party. That is why the relief valve keeps a genuine spawn — it needs
+outside-ness, and a voice does not provide it.
+
+### Which artifacts report is declared by the artifact
+
+*"Does this generate a camp response?"* cannot be a question asked separately of every
+artifact, now and forever. **That is a rule with no trigger** — the failure this product
+exists to fix.
+
+Each skill and hook declares it in its own header:
+
+```markdown
+---
+name: issue-write
+camp-reports: on tracker write
+---
+```
+
+No per-case judgment, and no artifact that quietly forgets. **Whoever did the work speaks**,
+in camp's voice, reading `voice.md` — the same way a skill shapes Claude's output without
+being a separate party.
+
+---
+
 ## Two documents, and the difference is authority
 
 The single most important structural decision here.
+
+Three artifacts, two of them governed. `voice.md` is settings; these two are the
+relationship.
 
 | | **Operating agreement** | **Camp's notes** |
 |---|---|---|
