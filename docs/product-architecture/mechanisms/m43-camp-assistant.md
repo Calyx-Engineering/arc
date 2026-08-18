@@ -193,54 +193,90 @@ triggers are undesigned.
 
 ---
 
-## Cost decides the form — two tiers
+## Cost decides the form — and four of five obligations are not an agent
 
-**Every agent spawn is a fresh context.** Nothing persists between them; there is no resident
-agent to keep warm. So each invocation pays full setup, and the cost scales with how much
-camp must read before it can answer.
+**The root issue camp solves:** *you cannot see what Arc is doing, so you cannot tell when it
+is working, when it is absent, or when it is wrong.*
 
-**That rules out spawning camp for every report.** A one-line PR report would cost more than
-the work it reports on.
+Asking whether each obligation needs an **agent** — rather than assuming the personality
+implies one — relocates most of camp:
 
-| | Form | Why |
+| Obligation | What it needs | Agent? |
 |---|---|---|
-| **Reports** — obligation 4 | Voice, no spawn | Independence adds nothing here; cost is everything |
-| **Answers** — obligations 0, 1, 2 | Real spawn | Has to read the record |
-| **The relief valve** | Real spawn | **Independence is the entire mechanism** |
+| 0 — explain Arc | Read specs and status, synthesise | **No.** A skill reading files |
+| 1 — where the arc stands | Read arc-log, handoff, issues | **No.** A skill |
+| 2 — decompose an idea | Judgment against the record | **No.** A skill you invoke |
+| 3 — notice unasked | **Continuous observation** | **The only one that does** |
+| 4 — report what happened | Speak when an artifact completes | **No.** The artifact speaks |
 
-### So camp's identity is a document, and camp's reasoning is an agent
+**The personality is a document. The capabilities are skills. Only the watching is an agent.**
 
-A third artifact, beside the agreement and the notes:
+### Why continuous watching is the expensive case
 
-```text
-.claude/arc/camp/
-├── operating-agreement.md   ← what camp will do. Yours; amended by approved diff
-├── voice.md                 ← register, prefix rule, length. Read by whoever speaks
-└── notes.md                 ← what camp learned about this repo. Camp's own
-```
+Cost is input tokens plus output tokens, and input dominates when something reads every turn.
+An assistant looking over the shoulder of the main conversation consumes both sides of every
+message, continuously, to produce output that is silent most of the time.
 
-**Stated plainly, because it is a real cost:** at report time camp is a voice Claude speaks
-in, not a separate party. That is why the relief valve keeps a genuine spawn — it needs
-outside-ness, and a voice does not provide it.
+That is the one shape that cannot be afforded casually — and it is exactly obligation 3.
 
-### Which artifacts report is declared by the artifact
+### What camp is, concretely
 
-*"Does this generate a camp response?"* cannot be a question asked separately of every
-artifact, now and forever. **That is a rule with no trigger** — the failure this product
-exists to fix.
+| | Form | Cost |
+|---|---|---|
+| Identity | `voice.md` + the operating agreement | Free |
+| Obligations 0, 1, 2 | Skills, invoked | Per use |
+| Obligation 4 | The artifact speaks in camp's voice | Free |
+| Obligation 3, event half | Hooks | Free until they fire |
+| Obligation 3, conversational half | A skill now, an agent later | Bounded |
 
-Each skill and hook declares it in its own header:
+**You still get a colleague.** Addressed by name, consistent voice, answers from the record,
+reports what it did. What is missing today is unprompted noticing of conversational shape.
 
-```markdown
 ---
-name: issue-write
-camp-reports: on tracker write
----
-```
 
-No per-case judgment, and no artifact that quietly forgets. **Whoever did the work speaks**,
-in camp's voice, reading `voice.md` — the same way a skill shapes Claude's output without
-being a separate party.
+## Obligation 3 — when does camp need to watch?
+
+**Almost nothing needs *continuous*.** Most of what camp should notice happens at
+identifiable moments, and a moment is a hook.
+
+| Moment | Catches | Continuous? |
+|---|---|---|
+| First edit of a session | No arc, no issue, no branch | No — one check |
+| Branch creation | Branch does not match the arc convention | No — event |
+| PR open | Milestone missing, prefix missing, base wrong | No — event |
+| Issue creation | A title promising more than it delivers | No — event |
+| After a tool call | Work reached a capture point | No — hookable |
+| **Questioning gone too deep** | The relief valve | **Yes** |
+| **A standing correction being repeated** | The agreement's clauses | **Yes** |
+
+**Five of seven are events.** They cost nothing until they fire, and they carry most of the
+payoff. The two that remain share a property: they are about the **shape of the dialogue**,
+not the state of the repo. A hook sees tool calls; it cannot see that three clarifying
+questions have been answered without a decision landing.
+
+### The conversational half — a skill with a mechanical precondition
+
+**The honest weakness:** the relief valve fires when the agent has gone too deep, so a
+skill the agent must invoke is self-detection wearing a skill's clothes. Not noticing is the
+failure being solved.
+
+**Why it is still worth building.** A skill is a named thing with criteria checked at a
+defined moment, rather than a vague obligation to be self-aware. It converts *"should I have
+noticed?"* into *"did I run the check?"* — the move `work-watch` already makes. And it
+degrades safely: when it fires you get real value, when it misses you are no worse off than
+today.
+
+**Give it a mechanical precondition** so it is not purely judgment. None of these means "too
+deep" alone, but together they make the check fire without conversational reading:
+
+| Signal | |
+|---|---|
+| Turns since the last commit or file write | Countable |
+| Questions asked with no artifact changed | Countable |
+| Time in one issue with no checklist movement | Countable |
+
+Mechanical trigger, judged response. **The skill catches the cases the agent is capable of
+noticing; the agent — later — catches the ones it is not.**
 
 ---
 
