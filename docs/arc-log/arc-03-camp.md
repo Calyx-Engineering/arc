@@ -17,7 +17,7 @@ stay open.
 | | |
 |---|---|
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last |
-| **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics |
+| **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) spawned mid-arc |
 | **Build order** | See *Status — execution order*. It is numbered 1–11 and marks where to stop |
 | **Autonomous** | Issues 1–4 only, one session. **Stop before issue 5** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
@@ -122,6 +122,7 @@ classified *escalate* under obligation 0's own ladder, and correct to do. **Sche
 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping an involved piece of work |
 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply |
 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
+| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line |
 
 ---
 
@@ -136,11 +137,11 @@ flowchart TB
         W1["<b>Wave 1</b><br/>1 · #39 documents<br/>2 · #37 event log"] --> W2["<b>Wave 2</b><br/>3 · #40 reach Camp<br/>4 · #45 announce + templates"]
     end
     A ==> STOP{{"<b>STOP</b><br/>human review<br/>before issue 5"}}
-    subgraph B[" Reviewed first — issues 5 to 16 "]
+    subgraph B[" Reviewed first — issues 5 to 17 "]
         direction LR
         W3["<b>Wave 3</b><br/>5 · #41 · 6 · #44<br/>7 · #47 · 8 · #43<br/>9 · #46"] --> W4["<b>Wave 4</b><br/>10 · #42<br/>obligation 0"]
-        W4 --> W5["<b>Wave 5</b><br/>11–15 · #31–#35<br/>tracker mechanics"]
-        W5 --> W6["<b>Wave 6</b><br/>16 · #48<br/>skill parity"]
+        W4 --> W5["<b>Wave 5</b><br/>11–16 · #31–#35, #55<br/>tracker mechanics"]
+        W5 --> W6["<b>Wave 6</b><br/>17 · #48<br/>skill parity"]
     end
     STOP ==> B
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
@@ -240,8 +241,10 @@ Settled during scoping. **These apply across every issue in the arc.**
 | 12 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | 5 | Blocked on review |
 | 13 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | 5 | Blocked on review |
 | 14 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | 5 | Blocked on review |
-| 15 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | 5 | Blocked on review |
-| 16 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | 6 | Blocked on review |
+| 15 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
+| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | 5 | Blocked on review |
+| 16 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | 5 | Blocked on review |
+| 17 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | 6 | Blocked on review |
 | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | — | **Closed** — produced m43, m44 and this plan |
 
 ### What each wave is
