@@ -119,8 +119,23 @@ changed direction is worse than silence.
 
 **The last one is the pairing that makes both cheap.** Going deep is usually *how* drift
 happens — questioning escalates because the direction stopped being clear. One precondition
-fires and both questions get asked: *are we too deep here*, and *does this still serve the
-arc*. No second trigger, no second over-firing budget.
+fires, and no second trigger or over-firing budget is needed.
+
+**The two questions are sequential, not parallel. Drift is asked first.**
+
+```text
+precondition fires
+   ↓
+does this still serve the arc?
+   ├── yes  →  the work is just hard. Say nothing
+   └── no   →  are we too deep? Offer the exit
+```
+
+**Depth that serves the arc is not a problem.** Long, deep questioning on the right subject
+is the work being difficult, and interrupting it is precisely the annoyance the valve exists
+to prevent. Depth only becomes a finding once the direction is already in doubt.
+
+That ordering removes the valve's most likely false positive.
 
 **Log-based firing was considered and rejected.** Obligation 0 is about where the work is
 going, not what already happened — the log serves the retrospective and the human reader,
