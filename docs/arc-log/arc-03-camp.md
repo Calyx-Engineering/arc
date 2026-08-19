@@ -19,7 +19,7 @@ stay open.
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
 | **Build order** | See *Status — execution order*. It is numbered 1–11 and marks where to stop |
-| **Autonomous** | Waves 1 and 2 only, one session. **Stopped and cleared 2026-08-19** |
+| **Autonomous** | All six waves. Waves 1–2 stopped for review 2026-08-19; that stop is cleared |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -158,7 +158,7 @@ flowchart TB
         W1["<b>Wave 1</b><br/>1 · #39 documents<br/>2 · #37 event log"] --> W2["<b>Wave 2</b><br/>3 · #40 reach Camp<br/>4 · #45 announce + templates"]
     end
     A ==> STOP{{"<b>STOP</b><br/>human review<br/>before wave 3<br/><i>cleared 2026-08-19</i>"}}
-    subgraph B[" Reviewed first — waves 3 to 6 "]
+    subgraph B[" Autonomous — waves 3 to 6 "]
         direction LR
         W3["<b>Wave 3</b><br/>5 · #41 · 6 · #44<br/>7 · #47 · 8 · #43<br/>9 · #46"] --> W4["<b>Wave 4</b><br/>10 · #42<br/>obligation 0"]
         W4 --> W5["<b>Wave 5</b><br/>11–17 · #31–#35<br/>#55 · #56"]
@@ -188,8 +188,16 @@ different plans, and the difference belongs here rather than in a chat message.
 
 | Wave | Mode | Why |
 |---|---|---|
-| **1–2** — [#39](https://github.com/Calyx-Engineering/arc/issues/39) · [#37](https://github.com/Calyx-Engineering/arc/issues/37) · [#40](https://github.com/Calyx-Engineering/arc/issues/40) · [#45](https://github.com/Calyx-Engineering/arc/issues/45) | **Autonomous, then stop** | The foundation. Most specified, no judgement calls, and everything downstream depends on them |
-| **3–6** | **Reviewed first** | Held until waves 1 and 2 land clean |
+| **1–2** | **Autonomous, then stop** | The foundation. Everything downstream depends on it |
+| **3–6** | **Autonomous** — changed 2026-08-19 | The stop cleared and the arc is past its deadline. The spec work exists precisely so execution does not need step-by-step approval |
+
+**Waves 3 and 4 are ten obligations taken straight from m43's numbered sections.** Wave 5 is
+six issues with no spec behind them, and is where judgement is actually required.
+
+| Where a decision is genuinely undecided | |
+|---|---|
+| **Decide it, record it, keep going** | The dev-log carries the decision and its reasoning; the arc PR flags it for batch review |
+| **Never** | Stop and wait, or leave it silently unresolved |
 
 **The stop is the point.** Sixteen issues run unattended ends in either a good arc or sixteen
 PRs on a wrong foundation, and the second is not visible until it is expensive. The numbered
@@ -256,19 +264,19 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 4 | 2.2 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Obligation 4 — announcing actions, and the templates | **Merged** — [PR #54](https://github.com/Calyx-Engineering/arc/pull/54) |
 | | | | **■ STOP — cleared 2026-08-19 ■** | |
 | 5 | 3.1 | [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Obligation 1 — status and the close sequence | **Next** |
-| 6 | 3.2 | [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | Ready — stop cleared |
-| 7 | 3.3 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | Ready — stop cleared |
-| 8 | 3.4 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | Obligation 3 — four hooks | Ready — stop cleared |
-| 9 | 3.5 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | Ready — stop cleared |
-| 10 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | Ready — stop cleared |
-| 11 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready — stop cleared |
-| 12 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready — stop cleared |
-| 13 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready — stop cleared |
-| 14 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready — stop cleared |
-| 15 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | Ready — stop cleared |
-| 16 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | Ready — stop cleared |
+| 6 | 3.2 | [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | Not started |
+| 7 | 3.3 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | Not started |
+| 8 | 3.4 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | Obligation 3 — four hooks | Not started |
+| 9 | 3.5 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | Not started |
+| 10 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | Not started |
+| 11 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Not started |
+| 12 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Not started |
+| 13 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Not started |
+| 14 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Not started |
+| 15 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | Not started |
+| 16 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | Not started |
 | 17 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
-| 18 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Ready — stop cleared |
+| 18 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Not started |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
 ### What each wave is
