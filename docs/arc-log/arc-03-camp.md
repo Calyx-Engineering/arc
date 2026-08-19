@@ -19,7 +19,7 @@ stay open.
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics |
 | **Build order** | See *Status — execution order*. It is numbered 1–11 and marks where to stop |
-| **Autonomous** | Issues 1–4 only, in one session. **Then stop for review** |
+| **Autonomous** | Issues 1–4 only, one session. **Stop before issue 5** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -112,7 +112,8 @@ flowchart TB
 ### Carried in from scoping
 
 Five issues spawned by friction observed while writing the spec. Tracker mechanics, not Camp —
-classified *escalate* under obligation 0's own ladder, and correct to do.
+classified *escalate* under obligation 0's own ladder, and correct to do. **Scheduled as wave
+5**, issues 11 through 15.
 
 | Issue | |
 |---|---|
@@ -129,44 +130,28 @@ classified *escalate* under obligation 0's own ladder, and correct to do.
 Dependency, not value. **The most valuable issue is frequently the one that cannot start.**
 
 ```mermaid
-flowchart LR
-    subgraph W1[" No dependencies — start here "]
-        direction TB
-        A1["<b>#39</b><br/>documents"]
-        A2["<b>#37</b><br/>event log"]
+flowchart TB
+    subgraph A[" Autonomous — issues 1 to 4, one session "]
+        direction LR
+        W1["<b>Wave 1</b><br/>1 · #39 documents<br/>2 · #37 event log"] --> W2["<b>Wave 2</b><br/>3 · #40 reach Camp<br/>4 · #45 announce + templates"]
     end
-    subgraph W2[" Needs the documents "]
-        direction TB
-        B1["<b>#40</b><br/>reach Camp"]
-        B2["<b>#45</b> · ob 4<br/>announce actions<br/>+ templates"]
+    A ==> STOP{{"<b>STOP</b><br/>human review<br/>before issue 5"}}
+    subgraph B[" Reviewed first — issues 5 to 16 "]
+        direction LR
+        W3["<b>Wave 3</b><br/>5 · #41 · 6 · #44<br/>7 · #47 · 8 · #43<br/>9 · #46"] --> W4["<b>Wave 4</b><br/>10 · #42<br/>obligation 0"]
+        W4 --> W5["<b>Wave 5</b><br/>11–15 · #31–#35<br/>tracker mechanics"]
+        W5 --> W6["<b>Wave 6</b><br/>16 · #48<br/>skill parity"]
     end
-    subgraph W3[" Needs the entry point "]
-        direction TB
-        C1["<b>#41</b> · ob 1<br/>status + the<br/>close sequence"]
-        C2["<b>#44</b><br/>relief valve"]
-        C3["<b>#47</b> · ob 2<br/>decomposition"]
-        C4["<b>#43</b> · ob 3<br/>four hooks"]
-        C5["<b>#46</b><br/>verbosity"]
-    end
-    subgraph W4[" Needs status and the valve "]
-        direction TB
-        D1["<b>#42</b> · ob 0<br/>hold the intent"]
-    end
-    subgraph W5[" Last — once every skill exists "]
-        direction TB
-        E1["<b>#48</b><br/>shipping skills match<br/>their local copies"]
-    end
-    W1 --> W2 --> W3 --> W4 --> W5
+    STOP ==> B
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
-    class A1,A2,B1,B2,C1,C2,C3,C4,C5,D1,E1 n
-    style W1 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
-    style W2 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
-    style W3 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
-    style W4 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
-    style W5 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
+    classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
+    class W1,W2,W3,W4,W5,W6 n
+    class STOP s
+    style A fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
+    style B fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
 ```
 
-**Why obligation 0 is last despite being the priority.** It cannot evaluate direction without
+**Why obligation 0 is late despite being the priority.** It cannot evaluate direction without
 knowing where work stands ([#41](https://github.com/Calyx-Engineering/arc/issues/41)), and its
 fourth firing moment is the relief valve
 ([#44](https://github.com/Calyx-Engineering/arc/issues/44)). Building it first would mean
@@ -182,11 +167,11 @@ different plans, and the difference belongs here rather than in a chat message.
 | Wave | Mode | Why |
 |---|---|---|
 | **1–2** — [#39](https://github.com/Calyx-Engineering/arc/issues/39) · [#37](https://github.com/Calyx-Engineering/arc/issues/37) · [#40](https://github.com/Calyx-Engineering/arc/issues/40) · [#45](https://github.com/Calyx-Engineering/arc/issues/45) | **Autonomous, then stop** | The foundation. Most specified, no judgement calls, and everything downstream depends on them |
-| **3–5** — issues 5 through 11 | **Reviewed first** | Held until waves 1–2 land clean |
+| **3–6** — issues 5 through 16 | **Reviewed first** | Held until issues 1–4 land clean |
 
-**The stop is the point.** Eleven issues run unattended ends in either a good arc or eleven PRs
-on a wrong foundation, and the second is not visible until it is expensive. The numbered table
-under *Status* marks where it is.
+**The stop is the point.** Sixteen issues run unattended ends in either a good arc or sixteen
+PRs on a wrong foundation, and the second is not visible until it is expensive. The numbered
+table under *Status* marks where it is.
 
 **One session, no reset between issues.** A session cannot clear its own context, so waves 1–2
 are four issues in one continuous run — the wave boundary is dependency, not a fresh start.
@@ -236,44 +221,56 @@ Settled during scoping. **These apply across every issue in the arc.**
 
 ## Status — execution order
 
-**Work top to bottom. Do not skip an issue because it looks independent.**
+**Work top to bottom, in this order. Every issue has a number and a wave.**
 
 | # | Issue | Delivers | Wave | State |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Camp's three documents | **1** | Not started |
-| 2 | [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | **1** | Not started |
-| 3 | [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | **2** | Not started |
-| 4 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Obligation 4 — announcing actions, and the templates | **2** | Not started |
-| | | | | |
-| | | **■ STOP — human review of waves 1–2 ■** | | |
-| | | | | |
+| 1 | [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Camp's three documents | 1 | Not started |
+| 2 | [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | 1 | Not started |
+| 3 | [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | 2 | Not started |
+| 4 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Obligation 4 — announcing actions, and the templates | 2 | Not started |
+| | | **■ STOP — human review before issue 5 ■** | | |
 | 5 | [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Obligation 1 — status and the close sequence | 3 | Blocked on review |
 | 6 | [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | 3 | Blocked on review |
 | 7 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | 3 | Blocked on review |
 | 8 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | Obligation 3 — four hooks | 3 | Blocked on review |
 | 9 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | 3 | Blocked on review |
 | 10 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | 4 | Blocked on review |
-| 11 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | 5 | Blocked on review |
-| | | | | |
-| — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | — | In progress |
-| — | [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) | Tracker mechanics, from scoping | — | Any time |
+| 11 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | 5 | Blocked on review |
+| 12 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | 5 | Blocked on review |
+| 13 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | 5 | Blocked on review |
+| 14 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | 5 | Blocked on review |
+| 15 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | 5 | Blocked on review |
+| 16 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | 6 | Blocked on review |
+| — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | — | **In progress** — closes at arc PR |
+
+### What each wave is
+
+| Wave | | Mode |
+|---|---|---|
+| **1** | The two artifacts nothing else can be built without | **Autonomous** |
+| **2** | The entry point, and artifacts declaring what they report | **Autonomous** |
+| **3** | The obligations that need only the entry point | Reviewed first |
+| **4** | Obligation 0, which needs status and the relief valve | Reviewed first |
+| **5** | Tracker and chat mechanics — touches `skills/`, not Camp | Reviewed first |
+| **6** | The parity check, which needs every skill to exist | Reviewed first |
+
+**Wave 5 is last of the substantive work, not optional.** It was spawned during scoping and is
+scheduled here because it depends on nothing in Camp — but it ships in this arc.
 
 ### The stop is mandatory
 
-**After [#45](https://github.com/Calyx-Engineering/arc/issues/45) merges, stop and wait.** Do not begin [#41](https://github.com/Calyx-Engineering/arc/issues/41) or anything below it.
+**After issue 4 merges, stop and wait. Do not begin issue 5.**
 
 | | |
 |---|---|
-| **Why here** | Waves 1–2 are the foundation. Everything below depends on the documents, the entry point and the log being right |
+| **Why here** | Issues 1–4 are the foundation. Everything after depends on the documents, the entry point and the log being right |
 | **What is checked** | That the four merged PRs did what their spec sections say — and that a skill written from `hooks/TEMPLATE` reports without its author knowing the convention exists |
-| **If the foundation is wrong** | It is four PRs to redo. Discovered at issue 11, it is eleven |
+| **If the foundation is wrong** | Four PRs to redo. Discovered at issue 16, it is sixteen |
 
-**Waves 1–2 run in one session.** The wave boundary is dependency, not context — nothing
-resets between [#39](https://github.com/Calyx-Engineering/arc/issues/39) and [#45](https://github.com/Calyx-Engineering/arc/issues/45). Degradation is likeliest at the fourth issue, so the
-diagram check before each PR matters most there.
-
-**[#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) are unblocked throughout.** They touch `skills/` and `.claude/skills/`, not
-Camp, and can fill a gap while review is pending.
+**Issues 1–4 run in one session.** A session cannot clear its own context, so the wave boundary
+is dependency rather than a fresh start. Degradation is likeliest at issue 4, which is where
+the diagram check before the PR matters most.
 
 ## At arc close
 
