@@ -249,12 +249,17 @@ The implementation changes; the interface does not. Camp remains addressable by 
 in a consistent voice, speaks unprompted at events, answers from the committed record, and is
 governed by an amendable agreement.
 
-Both properties that constitute an assistant persist:
+All three properties that constitute an assistant persist, each in its own artifact:
 
-| | Location |
-|---|---|
-| **Personality** | `voice.md` — register, prefix rule, length |
-| **Memory** | `notes.md` and the operating agreement |
+| Property | Artifact | Authority |
+|---|---|---|
+| **Personality** | `voice.md` — register, prefix rule, length | Settings |
+| **Obligations** | `operating-agreement.md` — what camp will do | **The user's** |
+| **Memory** | `notes.md` — what camp learned about this repo | Camp's own |
+
+**Obligations and memory are distinct and must not be conflated.** What camp is required to do
+is user-owned; what camp has learned is camp's own. Merging them would let learning silently
+alter obligations, which is the failure the agreement exists to prevent.
 
 Camp is the main thread operating under a defined persona. **A persona backed by committed
 documents is more consistent than a resident agent would be**: an agent's memory terminates
