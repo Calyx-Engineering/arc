@@ -10,6 +10,10 @@ verbosity are settled. What remains open is named in *What is not designed*.
 
 ## Rationale
 
+Camp addresses two distinct failures.
+
+### Arc's operation is not observable
+
 Arc's hooks, skills and templates operate without announcing themselves. Two consequences
 follow.
 
@@ -23,17 +27,45 @@ self-improvement loop starves on tooling nobody noticed.
 > *"the obfuscation means i dont know what it is actually doing and thus i don't know when i
 > need it and when not."* — 2026-08-18
 
-The second motivation is delegation. A role carries standing expectations; a command does
-not. Lodestar's Star establishes the pattern for product ownership — **camp is its delivery
-counterpart.** Star owns what the product must be; camp owns getting the work done, in
+### Work drifts from its stated intent
+
+An arc holds a stated intent, and the work executed under it diverges from that intent while
+each individual step remains locally reasonable. Nothing in Arc holds the destination and
+tests proposed work against it.
+
+The existing mechanisms address adjacent problems and not this one:
+
+| Mechanism | Answers |
+|---|---|
+| [m15](m15-handoff-spine.md) · [m17](m17-k1-upkeep.md) | What was decided, and where the work stands |
+| [m20](m20-arc-decomposition.md) | How the work was sequenced at the outset |
+| [m41](m41-relief-valve.md) | Whether the *conversation* has gone too deep |
+| **None** | **Whether the work still serves the arc's intent** |
+
+Detection is the smaller half. **The intent must be held by something with the authority to
+say no** — an advisory reminder is routed around, and a party that can revise the goal when
+challenged is not holding it.
+
+### A role carries expectations; a command does not
+
+The two problems above share a solution shape. Observability requires something that speaks
+for Arc's operation; intent-holding requires something with standing authority over
+direction. Both are properties of a **role**, not of a tool invoked on request.
+
+Lodestar's Star establishes the pattern for product ownership. **Camp is its delivery
+counterpart:** Star owns what the product must be, camp owns getting the work done, in
 order, with a record.
 
 ---
 
 ## Definition
 
-**Camp is a delivery-lead role: invocable on demand, speaking unprompted at defined events,
-and governed by a committed operating agreement the user amends.**
+**Camp is a delivery-lead role that holds an arc's intent and makes Arc's operation visible.**
+Invocable on demand, speaking unprompted at defined events, and governed by a committed
+operating agreement the user amends.
+
+The intent it holds is user-owned: camp evaluates work against the goal and cannot revise the
+goal itself.
 
 ---
 
