@@ -96,10 +96,10 @@ flowchart TB
 |---|---|---|
 | §2 · §6 | The persona, its voice, how it is reached | [#40](https://github.com/Calyx-Engineering/arc/issues/40) |
 | §3.1 | **Obligation 0** — hold the arc's intent, the authority ladder | [#42](https://github.com/Calyx-Engineering/arc/issues/42) |
-| §3.2 | **Obligation 1** — status, flow, firing the handoff | [#41](https://github.com/Calyx-Engineering/arc/issues/41) |
+| §3.2 | **Obligation 1** — status, and the close/start sequence run the same way every time | [#41](https://github.com/Calyx-Engineering/arc/issues/41) |
 | §3.3 | **Obligation 2** — decomposition | [#47](https://github.com/Calyx-Engineering/arc/issues/47) |
 | §3.4 | **Obligation 3** — the event half, four hooks | [#43](https://github.com/Calyx-Engineering/arc/issues/43) |
-| §3.5 | **Obligation 4** — announcing completed actions | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
+| §3.5 | **Obligation 4** — announcing completed actions, and the templates that make future artifacts do the same | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
 | §3.6 | The relief valve — the conversational half | [#44](https://github.com/Calyx-Engineering/arc/issues/44) |
 | §5 | The three documents and their ownership | [#39](https://github.com/Calyx-Engineering/arc/issues/39) |
 | §7 | Verbosity — three levels, two settings | [#46](https://github.com/Calyx-Engineering/arc/issues/46) |
@@ -136,11 +136,11 @@ flowchart LR
     subgraph W2[" Needs the documents "]
         direction TB
         B1["<b>#40</b><br/>reach Camp"]
-        B2["<b>#45</b> · ob 4<br/>announce actions"]
+        B2["<b>#45</b> · ob 4<br/>announce actions<br/>+ templates"]
     end
     subgraph W3[" Needs the entry point "]
         direction TB
-        C1["<b>#41</b> · ob 1<br/>status and flow"]
+        C1["<b>#41</b> · ob 1<br/>status + the<br/>close sequence"]
         C2["<b>#44</b><br/>relief valve"]
         C3["<b>#47</b> · ob 2<br/>decomposition"]
         C4["<b>#43</b> · ob 3<br/>four hooks"]
