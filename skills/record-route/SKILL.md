@@ -85,6 +85,25 @@ blockquote at the top, so the constraint travels with the file.
 parallel tracks. If a sequence genuinely is known up front, it is a load-bearing decision —
 write it there rather than adding structure the table does not have.
 
+### An arc-log records how the work runs, not only what it produces
+
+**When any part of an arc will run without a human beside it, the arc-log says so before it
+starts** — which issues run unattended, where the run stops for review, and what is least
+certain about the ones that do.
+
+| Without it | |
+|---|---|
+| The plan lives in a chat message | It dies with the session that agreed it |
+| A later session cannot tell what was meant to be autonomous | So it either over-asks or over-reaches |
+| Nothing records *why* a boundary was drawn there | The next arc redraws it from scratch |
+
+**The uncertainty list is the load-bearing half.** Naming what is least specified is what
+makes the stopping point defensible rather than arbitrary — and it is the first thing to check
+when an autonomous run produces something wrong.
+
+Prompt for this at kickoff, not at PR time. **A human should not have to ask for the execution
+plan.**
+
 ---
 
 ## Verify the write landed

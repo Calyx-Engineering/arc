@@ -102,18 +102,52 @@ designed. The friction filter is validated against a real 28-transcript run.
 
 ---
 
-## Later — autonomous work
+**Before this arc:** [#49](https://github.com/Calyx-Engineering/arc/issues/49) evaluates whether
+GitHub Projects replaces this file as the roadmap. A markdown table stops working once waves
+run in parallel.
 
-Delegation and Campaign, once there is autonomous work to run.
+---
+
+## Arc: autonomous execution
+
+**Ports TimeScope's wave-execution tooling.** Arc can decide what runs unattended — the arc-log
+records the mode and the stopping point — but has nothing that *runs* it. TimeScope built the
+dispatch, the worktree partitioning and the merge sequencing; that is what this arc brings in.
 
 | Artifact | Mechanisms |
 |---|---|
 | `agents/*.md` · `skills/delegate` | m25 · m26 |
-| `wiki/` | m29 |
-| `skills/kickoff` | m09 · m20 |
 | `skills/wave-plan` | m27 |
 | `skills/gate-run` | m28 |
+| `skills/kickoff` | m09 · m20 |
 | `skills/autonomy-set` | m40 |
+| `wiki/` | m29 |
+
+**Follows self-improvement**, because an autonomous run that produces the wrong thing is only
+affordable once the retrospective can find out why.
+
+**The precondition is the arc below.** Running work unattended without a way to test the
+tooling means a defect ships to every repo before anyone notices.
+
+---
+
+## Arc: Arc tests itself
+
+**Nothing in this repository executes a skill.** A skill is written, read against its spec,
+and marked done — with no evidence it behaves correctly. Every skill Arc has shipped went out
+on that basis.
+
+| Needed | |
+|---|---|
+| A way to execute a skill against a fixture and assert on the result | The gap |
+| Hook tests | `tools/verify-hook.sh` already does this, and is the shape to follow |
+| The evaluation sets as runnable cases | m13's six cases exist as prose |
+| A regression suite that runs before a release | Nothing today |
+
+**`tools/verify-hook.sh` is the precedent.** It builds real throwaway repositories rather than
+mocking, and it caught a real defect the first time it ran. Skills need the equivalent.
+
+**Blocks autonomous execution.** Unattended work multiplies whatever the tooling gets wrong.
 
 ---
 

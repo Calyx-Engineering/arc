@@ -173,6 +173,34 @@ building it twice.
 
 ---
 
+## How this arc is executed
+
+**Not only what gets built — how.** An arc run autonomously and an arc run beside a human are
+different plans, and the difference belongs here rather than in a chat message.
+
+| Wave | Mode | Why |
+|---|---|---|
+| **1–2** — [#39](https://github.com/Calyx-Engineering/arc/issues/39) · [#37](https://github.com/Calyx-Engineering/arc/issues/37) · [#40](https://github.com/Calyx-Engineering/arc/issues/40) · [#45](https://github.com/Calyx-Engineering/arc/issues/45) | **Autonomous, then stop** | The foundation. Most specified, no judgement calls, and everything downstream depends on them |
+| **3–5** — the rest | **Reviewed first** | Held until waves 1–2 land clean |
+
+**The stop is the point.** Ten issues run unattended ends in either a good arc or ten PRs on a
+wrong foundation, and the second is not visible until it is expensive.
+
+### What is least certain, and why
+
+| | |
+|---|---|
+| **Skills cannot be executed here** | Nothing in this repo runs a skill. A session writes one, checks it against the spec diagram, and marks it done — with no evidence it *behaves* right. True of every skill Arc has shipped |
+| **Obligation 0 is judgement** | *"Does this serve the arc's intent"* has no mechanical test. It will build; whether it fires usefully is unknown until used |
+| **The relief valve's thresholds are estimates** | 8 turns, 3 questions, 45 minutes. Placed so the mechanism is buildable, corrected by [#36](https://github.com/Calyx-Engineering/arc/issues/36) |
+| **The close sequence is unproven** | [#41](https://github.com/Calyx-Engineering/arc/issues/41)'s nine steps were written from informal practice. Executing it will find gaps the spec side could not see |
+| **Context depth** | Arc 02 ran five pre-specified issues autonomously and held. This is ten, several with judgement. Expect degradation around the middle |
+
+**Autonomy is per-arc, not per-repo** — [m40](../product-architecture/mechanisms/m40-autonomy-switch.md).
+The mode above is this arc's, decided from how specified the work is.
+
+---
+
 ## Load-bearing decisions
 
 Settled during scoping. **These apply across every issue in the arc.**
