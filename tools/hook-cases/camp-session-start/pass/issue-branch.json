@@ -1,0 +1,2 @@
+# first edit on an issue branch — the correct place, so silence
+{"session_id":"verify-issue","cwd":"__FIXTURE_ISSUE__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_ISSUE__/src/a.c"}}

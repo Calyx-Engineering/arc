@@ -1,0 +1,2 @@
+# not a git repo — nothing to classify
+{"session_id":"verify-norepo","cwd":"__FIXTURE_NOREPO__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_NOREPO__/a.c"}}

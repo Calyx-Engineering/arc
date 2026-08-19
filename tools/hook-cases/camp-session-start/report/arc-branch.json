@@ -1,0 +1,2 @@
+# first edit on an arc branch — coordination only
+{"session_id":"verify-arc","cwd":"__FIXTURE_ARC__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_ARC__/src/a.c"}}
