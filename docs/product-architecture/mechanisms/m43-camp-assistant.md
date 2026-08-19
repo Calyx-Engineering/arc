@@ -8,82 +8,68 @@ verbosity are settled. What remains open is named in *What is not designed*.
 
 ---
 
-## Why a personality
+## Rationale
 
-Arc ships hooks, skills, templates and agents. All of them work **under the hood**, and that
-is the defect.
+Arc's hooks, skills and templates operate without announcing themselves. Two consequences
+follow.
 
-> *"Superpowers makes things just work better … but it also all happens under the hood which
-> obfuscates operations and benefits. Most importantly, the obfuscation means i dont know
-> what it is actually doing and thus i don't know when i need it and when not."*
-> — David, 2026-08-18
+**A tool that cannot be observed cannot be evaluated.** The user cannot tell whether Arc
+helped, was absent, or was wrong — so no judgement about the tooling is possible.
 
-**You cannot evaluate what you cannot observe.** And self-improvement depends on noticing
-friction — m30 mines transcripts for corrections, but a correction is only made about
-machinery the user knew was running. Invisible tooling produces no signal to mine.
+**Invisible tooling produces no improvement signal.** [m30](m30-transcript-mining.md) mines
+transcripts for corrections, but a user only corrects machinery they knew was running. The
+self-improvement loop starves on tooling nobody noticed.
 
-The second reason is delegation. Star exists because a product owner is a *role you can place
-expectations on*, not a command you issue:
+> *"the obfuscation means i dont know what it is actually doing and thus i don't know when i
+> need it and when not."* — 2026-08-18
 
-> *"what makes the team run well is that we lean on eachother and can have expectations on
-> what the other will do … I can place expectations on that personality and i'd like to see
-> it grow."*
-
-Camp is that for delivery. Star owns what the product must be; **camp owns getting the work
-done, in order, with a record.**
+The second motivation is delegation. A role carries standing expectations; a command does
+not. Lodestar's Star establishes the pattern for product ownership — **camp is its delivery
+counterpart.** Star owns what the product must be; camp owns getting the work done, in
+order, with a record.
 
 ---
 
-## What camp is, in one line
+## Definition
 
-**A delivery lead you can ask, who also tells you things you did not ask for — governed by an
-operating agreement you can read and change.**
+**Camp is a delivery-lead role: invocable on demand, speaking unprompted at defined events,
+and governed by a committed operating agreement the user amends.**
 
 ---
 
 ## The five obligations
 
-Sorted by who initiates, because that is what separates a colleague from a command.
+Ordered by initiator. The distinction is load-bearing: obligations that fire without a
+request are what the operating agreement exists to govern.
 
-| | Obligation | Kind |
+| | Obligation | Initiator |
 |---|---|---|
-| **0** | **Hold the arc's intent — does this work still serve it** | Asked · and at checkpoints |
-| 1 | Where does this arc stand | Asked · reads the record |
-| 2 | Help decompose an idea or a base issue into issues | Asked · works with you |
-| 3 | Notice and speak up unasked — *"you're starting an issue with no arc; want me to check for related ones?"* | **Unsolicited** |
-| 4 | Report what happened, per the agreement — *"PR generated, here is the summary"* | **Unsolicited** |
+| **0** | Hold the arc's intent; test proposed work against it | Asked, and at checkpoints |
+| 1 | Report where the arc stands | Asked |
+| 2 | Decompose an idea or a base issue into issues | Asked |
+| 3 | Notice and speak up unprompted | **Unsolicited** |
+| 4 | Report completed work per the agreement | **Unsolicited** |
 
-**Obligations 3 and 4 are load-bearing.** What camp does *without being asked* is the entire
-substance of the relationship, and it is what an operating agreement exists to define.
+### Obligation 0 — holding the arc's intent
 
-### Obligation 0 is the product, not a help command
-
-> *"Arc is too big for even me (the owner) to track all it should be doing at a time to
-> properly evaluate."*
-
-**Onboarding is obligation 0 answered before you knew to ask** — same capability, different
-moment, which is why it belongs here rather than being a separate feature.
-
-#### It holds the goal — it is not a help function
-
-**Obligation 0 is the project manager.** It fixes the arc's intent in place and answers *does
-this serve it?* — before the work happens, not after.
-
-> *"its meant so that Claude can say — are we developing in the right direction or are we off
-> base for the intent of this arc/milestone … its kinda like how Star is supposed to be able
-> to act as delegate PO."*
+Obligation 0 is a project-management function. It fixes the arc's stated intent and tests
+proposed work against it **before** the work is done.
 
 | | |
 |---|---|
-| **Not** | Reading history to find where things went wrong. That is the retrospective |
-| **Is** | Holding the destination, and testing proposed work against it |
+| **Is** | Holding the destination; evaluating proposed work against it |
+| **Is not** | Reading history to locate past errors — that is the retrospective's function |
 
-**Only the user moves the goal.** That authority is what makes it a delegate rather than an
-observer — when work is proposed outside the arc's intent, obligation 0 says so and cannot
-be argued out of it, because the intent is not its to change.
+**The goal is user-owned.** Camp cannot revise the arc's intent; only the user can. That
+constraint is what distinguishes a delegate from an observer — work proposed outside the
+stated intent is flagged, and the flag cannot be argued away by the proposer.
 
-This is **development drift**, one level up from the conversational drift the relief valve
-catches.
+The failure addressed is **development drift**: work that diverges from an arc's intent while
+each individual step appears reasonable. This is one level above the conversational drift
+[m41](m41-relief-valve.md) addresses.
+
+**Onboarding is the same capability at install time** — obligation 0 answered before the user
+knows to ask.
 
 #### The intent lives in the arc-log
 
@@ -92,8 +78,7 @@ decisions* — obligation 0 is the skill that reads them and answers against the
 
 #### The authority ladder
 
-Saying *"that is off-intent"* cannot be final, or it becomes an obstacle that gets routed
-around. Three levels, borrowed from Star:
+A binary block would be routed around. Three levels, matching Star's ladder:
 
 | Level | |
 |---|---|
@@ -101,12 +86,12 @@ around. Three levels, borrowed from Star:
 | **Derived** | Off the stated intent but a reasonable consequence of it. Say so, proceed |
 | **Escalate** | Genuinely outside. Stop and ask |
 
-**The worked example is this arc.** The tracker-mechanics issues — #31, #32, #33, #34, #35 —
-are off-topic for an arc about Camp, and were right to do anyway. That is an *escalate*, and
-the user's answer was yes. A mechanism that blocked them would have been wrong.
+**Worked example.** Issues #31–#35 are tracker-mechanics work filed during an arc scoped to
+Camp. They are outside the stated intent and were correct to do. Classification: *escalate*;
+user decision: proceed. A blocking mechanism would have produced the wrong outcome.
 
-**It never blocks. It asks.** Telling someone they are drifting when they deliberately
-changed direction is worse than silence.
+**Obligation 0 never blocks — it asks.** A drift flag raised against a deliberate change of
+direction is worse than silence, and the mechanism cannot distinguish the two on its own.
 
 #### When it fires
 
@@ -117,11 +102,11 @@ changed direction is worse than silence.
 | **Asked** | Always available |
 | **When the relief valve fires** | Depth and drift, asked together |
 
-**The last one is the pairing that makes both cheap.** Going deep is usually *how* drift
-happens — questioning escalates because the direction stopped being clear. One precondition
-fires, and no second trigger or over-firing budget is needed.
+**The relief-valve pairing shares one trigger.** Excessive depth is commonly a symptom of
+drift — questioning escalates because the direction has stopped being clear. One precondition
+serves both, requiring no second trigger and no second over-firing budget.
 
-**The two questions are sequential, not parallel. Drift is asked first.**
+**Evaluation is sequential, not parallel. Drift resolves first.**
 
 ```text
 precondition fires
@@ -131,32 +116,29 @@ does this still serve the arc?
    └── no   →  are we too deep? Offer the exit
 ```
 
-**Depth that serves the arc is not a problem.** Long, deep questioning on the right subject
-is the work being difficult, and interrupting it is precisely the annoyance the valve exists
-to prevent. Depth only becomes a finding once the direction is already in doubt.
+Depth on a subject that serves the arc is not a defect — it is difficult work. Interrupting
+it reproduces the annoyance [m41](m41-relief-valve.md) exists to prevent. Depth becomes a
+finding only once direction is already in question.
 
-That ordering removes the valve's most likely false positive.
+**This ordering eliminates the relief valve's most likely false positive.**
 
-**Log-based firing was considered and rejected.** Obligation 0 is about where the work is
-going, not what already happened — the log serves the retrospective and the human reader,
-not this.
+**Rejected: log-based firing.** Obligation 0 evaluates direction, not history. The log serves
+the retrospective and the human reader.
 
-#### It is not a capability catalogue
+#### Excluded: the capability catalogue
 
-*"What can Arc do?"* in the abstract is a help command: useful once, then never re-read.
+An abstract *"what can Arc do"* listing is a help command — read once, then never again. It
+is not built.
 
-| Question | |
+| Question | Served by |
 |---|---|
-| What can Arc do, in general | **Not built.** Onboarding covers the user; the plugin's file layout covers Claude |
-| **What did Arc just do here** | The report — obligation 4 |
-| **What should it have done, and did it** | The same report, one line further |
+| What Arc can do, in general | Onboarding for the user; the plugin's file layout for the agent |
+| What Arc just did here | The report — obligation 4 |
+| What it should have done, and whether it did | The same report, one line further |
 
-**Obligation 0 mostly collapses into obligation 4**, and that collapse is what makes it
-affordable. The artifact that ran the checks already knows what it checked and what it
-skipped; nothing else has to be built to ask it.
-
-What survives independently is the arc-level question — *where does this arc stand* — which
-is obligation 1.
+**Obligation 0's per-action half collapses into obligation 4.** The artifact that ran the
+checks already holds what it checked and what it skipped, so no additional mechanism is
+required. The arc-level question is obligation 1.
 
 #### The report always says what was checked
 
@@ -166,56 +148,57 @@ is obligation 1.
   Declared but skipped: placeholder scan (no body edit)
 ```
 
-**The skipped line is always present**, with a switch to turn it off. Always-on makes it a
-check; only-when-interesting makes it quieter and easier to stop trusting. A non-empty
-skipped line is a gap you can act on now rather than three weeks later in a retrospective.
+**The skipped line is emitted unconditionally**, with a configuration switch to suppress it.
+Unconditional emission makes it a check; conditional emission makes it easy to stop trusting.
+A non-empty skipped line is an actionable gap at the moment it occurs rather than at the next
+retrospective.
 
-**One rule carries most of the value: an artifact says what it was checking for, not only
-what it found.** *"Checked milestone — not set"* rather than *"milestone missing."* One extra
-word, and the machinery stays visible even when everything passes.
+**Reporting rule: an artifact states what it checked for, not only what it found.** *"Checked
+milestone — not set"* rather than *"milestone missing."* One additional word keeps the
+machinery visible when checks pass.
 
-**Naming the governing clause was considered and dropped.** With no single camp agent there
-is no subject for *"why are you doing this"* — each artifact knows only its own reason.
-Making the clause a header field, and building a cross-Arc sweep to read them all, was
-scaffolding for a question the phrasing above already answers. Revisit when something
-concrete needs it.
+**Rejected: naming the governing clause in each report.** With no single camp agent, no
+subject exists for *"why is this being done"* — each artifact holds only its own reason. A
+`governed-by:` header plus a cross-artifact sweep was scaffolding for a question the
+reporting rule above already answers.
 
-### Obligation 4 is an audit trail in conversation
+### Obligation 4 — an audit trail in conversation
 
-> *"just having a personality that says 'Camp here, trimmed the issue definition' can be
-> helpful. and it can respect verbosity."*
+Each completed action is announced in camp's voice, producing a running record of Arc's
+operation in the conversation itself.
 
-**Reports default to `normal`; nudges default to `loud`** — see *Verbosity* below. Someone
-who has never run Arc needs to see it working, so the defaults start visible and turning them
-down is a graduation.
+**Reports default to `normal`, nudges to `loud`** (see *Verbosity*). Defaults start visible
+because a user new to Arc needs to observe it operating; reducing verbosity is a later
+adjustment.
 
 ---
 
 ## Cost decides the form — and four of five obligations are not an agent
 
-**The root issue camp solves:** *you cannot see what Arc is doing, so you cannot tell when it
-is working, when it is absent, or when it is wrong.*
+**Problem statement:** Arc's operation is not observable, so its correctness cannot be
+assessed.
 
-Asking whether each obligation needs an **agent** — rather than assuming the personality
-implies one — relocates most of camp:
+Evaluating each obligation against whether it requires an **agent** — rather than assuming a
+personality implies one — relocates most of camp:
 
 | Obligation | What it needs | Agent? |
 |---|---|---|
 | 0 — explain Arc | Read specs and status, synthesise | **No.** A skill reading files |
 | 1 — where the arc stands | Read arc-log, handoff, issues | **No.** A skill |
-| 2 — decompose an idea | Judgment against the record | **No.** A skill you invoke — deferred |
+| 2 — decompose an idea | Judgement against the record | **No.** An invoked skill — deferred |
 | 3 — notice unasked | **Continuous observation** | **The only one that does** |
 | 4 — report what happened | Speak when an artifact completes | **No.** The artifact speaks |
 
 **The personality is a document. The capabilities are skills. Only the watching is an agent.**
 
-### Why continuous watching is the expensive case
+### Cost model
 
-Cost is input tokens plus output tokens, and input dominates when something reads every turn.
-An assistant looking over the shoulder of the main conversation consumes both sides of every
-message, continuously, to produce output that is silent most of the time.
+Invocation cost is input tokens plus output tokens. Input dominates for any process reading
+every turn: an observer of the main conversation consumes both sides of every message
+continuously while producing output only occasionally.
 
-That is the one shape that cannot be afforded casually — and it is exactly obligation 3.
+Continuous observation is therefore the only form that cannot be afforded by default, and it
+is required by obligation 3 alone.
 
 ### What camp is, concretely
 
@@ -228,27 +211,26 @@ That is the one shape that cannot be afforded casually — and it is exactly obl
 | Obligation 3, event half | Hooks | Free until they fire |
 | Obligation 3, conversational half | A skill now, an agent later | Bounded |
 
-### The relocation does not cost you the assistant
+### The relocation preserves the role
 
-**Camp is still a personality.** What changed is what runs underneath, not what you interact
-with. You address it by name, it answers in a consistent voice, it speaks up unasked at
-events, it reads the record so its answers outlive any chat, and it is governed by an
-agreement you amend.
+The implementation changes; the interface does not. Camp remains addressable by name, answers
+in a consistent voice, speaks unprompted at events, answers from the committed record, and is
+governed by an amendable agreement.
 
-The two things that make an assistant an assistant both survive:
+Both properties that constitute an assistant persist:
 
-| | Where it lives |
+| | Location |
 |---|---|
 | **Personality** | `voice.md` — register, prefix rule, length |
 | **Memory** | `notes.md` and the operating agreement |
 
-Camp is Claude wearing a mask, and **a mask backed by two committed documents is more
-consistent than a resident agent would be.** An agent's memory dies with its session;
-`notes.md` persists and can be read, diffed, and corrected.
+Camp is the main thread operating under a defined persona. **A persona backed by committed
+documents is more consistent than a resident agent would be**: an agent's memory terminates
+with its session, whereas `notes.md` persists and is readable, diffable and correctable.
 
-**What is genuinely lost is the independent observer** — something watching the conversation
-that is not the agent itself. That matters for exactly one thing, the relief valve, and it is
-deferred on cost rather than abandoned.
+**The one property genuinely lost is independent observation** — a process watching the
+conversation that is not the agent itself. It is required only by the relief valve, and is
+deferred on cost rather than rejected.
 
 ---
 
@@ -271,36 +253,36 @@ them. The moment camp holds state it is the spine window again under a new name.
 
 ## Three artifacts, and only two are governed
 
-The single most important structural decision here. `voice.md` and `log.md` are settings and
-record; these two are the relationship.
+The defining structural decision. `voice.md` and `log.md` are settings and record; the two
+below define the relationship.
 
 | | **Operating agreement** | **Camp's notes** |
 |---|---|---|
 | Holds | What camp will do, and how | What camp has learned about this repo |
-| Authority | **Yours.** Camp proposes; you approve | Camp's own |
+| Authority | **The user's.** Camp proposes; the user approves | Camp's own |
 | Changed by | A reviewed diff | Camp, freely |
 | Committed | Yes | Yes |
 | If they conflict | **The agreement wins** | — |
 
-**Camp never silently rewrites its own obligations.** Feedback is ingested as a *proposed
-amendment*:
+**Camp never silently revises its own obligations.** User feedback is ingested as a *proposed
+amendment*: camp drafts the change, presents the diff, and the user approves it.
 
-> *"hey camp, i'd like you to stop poking me so much"* → camp proposes the amendment, shows
-> the diff, you approve.
+Example: *"stop poking me so much"* produces a proposed amendment to the unsolicited-behaviour
+clause, not an immediate behaviour change.
 
-That is what makes the personality trustworthy rather than a colleague who misremembers
-confidently. **Camp's authority comes from reading the record, not from private memory.**
+**Camp's authority derives from reading the record, not from private memory.** This is the
+property that makes the persona trustworthy rather than confidently wrong.
 
 ### The agreement is where Arc deviates from stock
 
-Arc's mechanisms carry what is **common across projects**. The agreement carries what is
-**specific to this one** — the documented deviation from the matured default.
+Arc's mechanisms encode what is **common across projects**. The agreement encodes what is
+**specific to one repository** — the documented deviation from the shipped default.
 
 > *"here is what the default matured version of Arc does, but it doesnt match my exact
 > needs, so i'm tuning its operation."*
 
-**Camp is the customer-facing side of that**, and the agreement is where the deviation is
-written down rather than re-explained.
+**Camp is the user-facing surface of that tuning**, and the agreement is where a deviation is
+recorded rather than re-explained each session.
 
 ### Sections
 
@@ -313,27 +295,27 @@ written down rather than re-explained.
 | **Standing corrections** | Things not to repeat — see below |
 
 **Shape is not a subset of size.** A preference for many small issues and a preference for
-checklists over narrative are both deviations from stock, and both belong here.
+checklists over narrative are both deviations from the default and both belong in this
+section.
 
 ### Standing corrections — camp watches for the uncommon ones
 
-The largest idea in this section, and it is what makes camp more than an interface.
+This clause type is what makes camp more than an interface.
 
 > *"i've found i'm constantly applying corrective nudges and guidance to claude … but if
 > [memories] work so well, then why do i keep running into the same issue?"*
 
-**Because memory is retrieval, and retrieval is probabilistic.** A remembered correction
-surfaces when something cues it. An agreement clause is a document camp reads deliberately
-before it acts.
+**Memory is retrieval, and retrieval is probabilistic.** A remembered correction surfaces only
+when something cues it. An agreement clause is a document read deliberately before acting.
 
 | | Handles |
 |---|---|
 | **Arc's mechanisms** | What is common across every project |
 | **The agreement's standing corrections** | What is specific to this repo, this person, this work |
 
-So a correction given to Claude can be captured as a clause, and **camp watches for its
-recurrence** — the correction outliving the chat it was given in. That is the same content
-as the handoff's *do not* section, except permanent rather than arc-scoped.
+A correction given in conversation is captured as a clause, and **camp watches for its
+recurrence** — the correction outliving the session in which it was given. Equivalent in
+content to the handoff's *do not* section, but permanent rather than arc-scoped.
 
 ### What tuning sounds like
 
@@ -349,18 +331,18 @@ product.
 
 ### The default agreement governs
 
-Arc ships a **filled-in** agreement, not a template with blanks. A blank one means camp has
-no obligations until you write them, so day one is useless. The default governs from
-install; you amend what chafes.
+Arc ships a **populated** agreement rather than a template. A blank agreement leaves camp
+without obligations until the user writes them, making the first session useless. The default
+governs from install and is amended as needed.
 
-**The risk, noted rather than solved:** a default nobody read quietly governing. The
-mitigation is a rule camp applies to itself.
+**Known risk, noted rather than solved:** an unread default silently governing. Mitigated by a
+rule camp applies to itself.
 
 > **Camp must be able to answer *"why are you doing this?"* with the clause it is acting
 > under.** If it cannot name one, it should not be acting.
 
-Camp asks itself that question whether or not anyone else does. An action with no clause
-behind it is camp improvising, which is the failure the agreement exists to prevent.
+Camp applies this test irrespective of whether the user asks. An action with no clause behind
+it is improvisation, which is the failure the agreement exists to prevent.
 
 ### Where it lives
 
@@ -370,32 +352,32 @@ behind it is camp improvising, which is the failure the agreement exists to prev
 └── notes.md                    ← what camp learned about this repo. Camp's own
 ```
 
-**Agent space, not `docs/`.** This is configuration a human reviews, not documentation a
-human navigates — the same reasoning that put the concern index in agent space. Committed
-and diffable; someone who wants to look under the hood can find it.
+**Agent space, not `docs/`.** These are configuration files a human reviews, not documentation
+a human navigates — the same rationale that places the concern index in agent space. Committed
+and diffable.
 
 **Namespaced under `arc/`** so Lodestar's Star and Bench get their own without collision.
 
 ### Cross-pollination
 
-An agreement that proves out in one repo graduates to the plugin default — as a reviewed
-change, never as accumulated behaviour nobody chose. Same promotion path as every other
-durable fact in Arc.
+An agreement clause proven in one repository graduates to the plugin default as a reviewed
+change, never as accumulated behaviour. This is the same promotion path as every other durable
+fact in Arc.
 
 ---
 
 ## Voice
 
-Camp's voice has one job: **make Arc's operation visible without becoming noise.** That
-constrains it more than personality does.
+The voice has one function: **make Arc's operation visible without becoming noise.** That
+constraint governs the decisions below more than personality does.
 
 ### The prefix marks unsolicited speech
 
 **`**Camp here —**` when speaking unprompted. No prefix when answering.**
 
-If you asked camp, you know who is talking. If camp interrupts, the prefix is what marks it
-as a different party from Claude — and bolded, it draws the eye when it lands in the middle
-of a long working passage.
+A response to a direct question needs no attribution. Unprompted speech does: the prefix marks
+it as distinct from the main thread's own output, and bold weight makes it visible inside a
+long working passage.
 
 ```text
 [unsolicited]  **Camp here —** PR #33 opened. Milestone set, arc-03 prefix, Closes #27 bound.
@@ -409,11 +391,10 @@ of a long working passage.
 |---|---|
 | A report | **One line** |
 | An answer | **Three or four** |
-| Anything you did not ask about | **Nothing** |
+| Anything not asked for | **Nothing** |
 
-**The failure mode is camp becoming a second narrator** competing with Claude for the same
-attention. Camp reports on what just happened; it does not explain, expand, or teach unless
-asked.
+**Failure mode: camp becoming a second narrator** competing for the same attention. Camp
+reports what occurred; it does not explain, expand, or instruct unless asked.
 
 ### Register — colleague
 
@@ -425,19 +406,18 @@ Three were considered:
 | **Colleague** ← | *"PR #33 is up — milestone's set and the keywords bound this time."* |
 | Character | *"Camp here. Got #33 out the door, and the links actually took."* |
 
-**Colleague.** Enough warmth to be a party you talk to; not so much that it costs a line of
-reading every time. Terse reads as a log line rather than a person, which loses the
-delegation the personality exists for. Character costs attention on every single utterance.
+**Colleague is selected.** Terse reads as a log line rather than a party, forfeiting the
+delegation the persona exists to support. Character costs reader attention on every utterance.
 
-**The register is a line in the operating agreement, not code.** Switching it is an
-amendment, which makes it cheap to try all three during first use and settle on evidence.
+**The register is a value in the operating agreement, not code.** Changing it is an amendment,
+making it inexpensive to trial all three during first use and select on evidence.
 
 ---
 
 ## Verbosity — three levels, two settings
 
-**Everything is logged regardless.** Verbosity controls what surfaces in chat, never what is
-recorded — so turning it down loses nothing.
+**All events are logged regardless of setting.** Verbosity governs what surfaces in
+conversation, never what is recorded; reducing it loses no information.
 
 | Level | Shows |
 |---|---|
@@ -464,43 +444,42 @@ Reports and unsolicited nudges are different kinds of noise.
 | **Reports** — obligation 4 | `normal` |
 | **Nudges** — obligation 3 | `loud` |
 
-A nudge fires because something looks wrong, so it should be hard to miss. A report fires on
-every completion, so it should be brief.
+A nudge fires because a condition appears wrong and should be hard to miss. A report fires on
+every completion and should be brief.
 
-**Finer control is an amendment, not a fourth level.** *"Don't bother me about PR generation
-reports"* is a clause in the operating agreement — per-artifact suppression handled by tuning
-rather than by growing the level scheme.
+**Finer control is an amendment, not a fourth level.** Per-artifact suppression — *"no reports
+for PR generation"* — is an agreement clause rather than an extension of the level scheme.
 
 ---
 
 ## The log — what actually fired
 
-Verbosity decides what you see. **The log records everything**, and it is a distinct artifact
-with three readers.
+Verbosity governs what is displayed. **The log records all events** and is a distinct artifact
+with three consumers.
 
 ```text
 .claude/arc/camp/log.md
 ```
 
-| Reader | Uses it for |
+| Consumer | Purpose |
 |---|---|
-| **Obligation 0** | Drift detection — the gap between what was decided and what happened |
-| The retrospective | What fired, what never fired, what fired too often |
-| **You, by hand** | First weeks. It is how you learn whether Arc is working at all |
+| Obligation 0 | Corroborating evidence for drift assessment |
+| The retrospective | What fired, what never fired, what fired excessively |
+| **The user, manually** | First weeks of operation |
 
-**The third reader is why it ships now.** Before any automated analysis exists, a human
-reading the log is the evaluation loop — and it is the only way to set the over-firing
-threshold on evidence rather than by guess.
+**The third consumer is the reason it ships now.** Prior to any automated analysis, a human
+reading the log constitutes the evaluation loop, and is the only means of setting the
+over-firing threshold on evidence rather than estimate.
 
-**Why the arc-log cannot serve.** The arc-log holds what was *decided*; the log holds what
-*happened*. Drift is the gap between them, so both are needed and neither substitutes.
+**The arc-log does not substitute.** The arc-log records what was *decided*; this log records
+what *occurred*. Both are required.
 
 ---
 
 ## Obligation 3 — when does camp need to watch?
 
-**Almost nothing needs *continuous*.** Most of what camp should notice happens at
-identifiable moments, and a moment is a hook.
+Most events camp must notice occur at identifiable moments, which are hookable. Continuous
+observation is required by a minority of cases.
 
 | Moment | Catches | Continuous? |
 |---|---|---|
@@ -512,25 +491,23 @@ identifiable moments, and a moment is a hook.
 | **Questioning gone too deep** | The relief valve | **Yes** |
 | **A standing correction being repeated** | The agreement's clauses | **Yes** |
 
-**Five of seven are events.** They cost nothing until they fire, and they carry most of the
-payoff. The two that remain share a property: they are about the **shape of the dialogue**,
-not the state of the repo. A hook sees tool calls; it cannot see that three clarifying
-questions have been answered without a decision landing.
+**Five of seven are events**, costing nothing until they fire and carrying most of the value.
+The remaining two concern the **shape of the dialogue** rather than repository state: a hook
+observes tool calls and cannot observe that three clarifying questions have been answered
+without a decision landing.
 
 ### The conversational half — a skill with a mechanical precondition
 
-**The honest weakness:** the relief valve fires when the agent has gone too deep, so a
-skill the agent must invoke is self-detection wearing a skill's clothes. Not noticing is the
-failure being solved.
+**Stated limitation:** the relief valve fires when the agent has gone too deep, so a skill the
+agent must invoke is self-detection. Failure to notice is the condition being addressed.
 
-**Why it is still worth building.** A skill is a named thing with criteria checked at a
-defined moment, rather than a vague obligation to be self-aware. It converts *"should I have
-noticed?"* into *"did I run the check?"* — the move `work-watch` already makes. And it
-degrades safely: when it fires you get real value, when it misses you are no worse off than
-today.
+**Justification for building it regardless.** A skill is a named check with criteria, run at a
+defined moment, rather than a standing obligation to be self-aware — converting *"should this
+have been noticed"* into *"was the check run"*, the same conversion `work-watch` performs. It
+degrades safely: firing produces value, missing leaves current behaviour unchanged.
 
-**Give it a mechanical precondition** so it is not purely judgment. None of these means "too
-deep" alone, but together they make the check fire without conversational reading:
+**A mechanical precondition prevents it being pure judgement.** No single signal indicates
+excessive depth; in combination they trigger the check without conversational reading:
 
 | Signal | |
 |---|---|
@@ -539,9 +516,8 @@ deep" alone, but together they make the check fire without conversational readin
 | Time in one issue with no checklist movement | Countable |
 | **Emphasis markers in the user's own messages** | Countable — see below |
 
-**The user's frustration is the most reliable signal available, and it is visible in the
-text.** By the time it appears the valve has already failed, but it is the one marker that
-never gives a false negative:
+**User frustration is the most reliable available signal and is present in the message text.**
+Its appearance means the valve has already failed, but it produces no false negatives:
 
 | Marker | |
 |---|---|
@@ -549,8 +525,9 @@ never gives a false negative:
 | **Bold** or *italic* emphasis on a correction | Emphasis where plain text would do |
 | Profanity, or a sharp shortening of message length | Both appear in the record |
 
-Ship the crude version — caps runs and emphasis density — and improve it from evidence. A
-late signal that fires is worth more than an early one that does not exist.
+The initial implementation detects capitalisation runs and emphasis density, and is refined
+from evidence by [#36](https://github.com/Calyx-Engineering/arc/issues/36). A late signal that
+fires exceeds the value of an early signal that does not exist.
 
 Mechanical trigger, judged response. **The skill catches the cases the agent is capable of
 noticing; the agent — later — catches the ones it is not.**
@@ -559,18 +536,18 @@ noticing; the agent — later — catches the ones it is not.**
 
 ## The relief valve — and why it is not yet a third party
 
-The relief valve ([m41](m41-relief-valve.md)) originally had the agent notice its own
-depth problem. That is the thing least likely to work: **the agent is inside the hole it needs
-to notice.**
+[m41](m41-relief-valve.md) originally specified the agent detecting its own excessive depth.
+That is the least reliable arrangement available: **the detecting party is inside the
+condition being detected.**
 
-A camp that reads the record from outside the stuck conversation does not have that problem:
+An observer reading from outside the affected conversation does not have that defect:
 
 > *"**Camp here —** I see what you and Claude are doing. We might want to step back."*
 
-That removes the conflict of interest rather than asking the agent to overcome it.
+This removes the conflict of interest rather than requiring the agent to overcome it.
 
-**But outside-ness is the expensive property.** It requires something reading the
-conversation continuously, which is the cost case above. So the relief valve ships in two
+**Independence is the expensive property.** It requires continuous reading of the
+conversation — the cost case established above. The relief valve therefore ships in two
 stages:
 
 | Stage | Form | Honest limitation |
@@ -592,17 +569,16 @@ is said. Full ordering under [obligation 0](#when-it-fires).
 
 ### Both: addressed in prose, and `/camp`
 
-Prose for natural use — *"Camp, where are we?"* — and a slash command for when the entry
-point should be unambiguous.
+Prose for conversational use — *"Camp, where are we?"* — and a slash command where the entry
+point must be unambiguous.
 
 ### Claude delegates when the answer comes from the record
 
-**The big vision:** camp is who you talk to *about* the work; Claude is who *does* the work.
-State, shape, sequence and *should we* route to camp. Code, files and doing route to Claude.
-You stop switching between asking about the project and asking about the thing in front of
-you — and because camp answers from the record, its answers survive chat turnover.
+**Target state:** camp handles questions *about* the work; the main thread performs the work.
+State, shape, sequence and prioritisation route to camp; code, files and execution route to
+the main thread. Because camp answers from the record, its answers survive session turnover.
 
-**What ships now is one rule, deliberately small:**
+**Initial implementation is a single rule:**
 
 > **Claude delegates when the answer comes from the record rather than from the
 > conversation.**
@@ -612,11 +588,11 @@ you — and because camp answers from the record, its answers survive chat turno
 | Where are we · what did we decide · what is next | What does this function do |
 | Does this belong in this arc · is this issue too big | Fix this · write this |
 
-**Fails safe.** Unsure means Claude answers and says camp could have. A wrong delegation is
-visible immediately, which is what first use is for.
+**Fails safe.** Under uncertainty the main thread answers and notes that camp could have. A
+misrouted question is immediately visible.
 
-**Deferred:** camp deciding for itself when to intervene *conversationally*. Obligation 3's
-event triggers are designed and ship in arc 03; only the continuous half waits.
+**Deferred:** camp determining unprompted *conversational* intervention. Obligation 3's event
+triggers are specified and ship in arc 03; the continuous half does not.
 
 ---
 
