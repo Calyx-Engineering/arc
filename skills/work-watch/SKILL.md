@@ -200,6 +200,33 @@ frustrated at depth, that is the evidence it did — and it belongs in a retrosp
 
 ---
 
+## Before the PR — does the build match the spec's diagram?
+
+**A spec section that defines a feature opens with a diagram. That diagram is the compact
+statement of what the feature is**, and it is the cheapest check available on whether the
+right thing got built.
+
+| Step | |
+|---|---|
+| **At the start of the work** | Read the section and its diagram. Every node is something the issue delivers |
+| **Before opening the PR** | Walk the diagram node by node against what exists |
+
+**A mismatch is escalated, never reconciled silently.** Two things produce one, and they need
+opposite responses:
+
+| | |
+|---|---|
+| The spec is wrong | Building revealed something the design missed. **The spec changes** — and a human decides that |
+| The build is wrong | It drifted. **The build changes** |
+
+An agent that quietly picks one has made a design decision on its own. State the mismatch, say
+which you believe it is and why, and wait.
+
+**A diagram that is merely incomplete is still a mismatch.** A node with nothing behind it is
+a feature nobody built — the most common shape this catches, and invisible in a diff.
+
+---
+
 ## Why one sweep
 
 All three are the same shape: notice something about the work in progress, and say so. Three

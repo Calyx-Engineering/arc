@@ -250,6 +250,22 @@ user decides*, say so in one line — otherwise it is decoration.
 
 ---
 
+## The diagram is the acceptance test
+
+A section's diagram is not only how the reader understands the feature — it is what the build
+is checked against.
+
+| | |
+|---|---|
+| **Draw it so it can be walked** | Every node should be something a builder can point at and say *that exists* |
+| **A node with no deliverable behind it is a spec bug** | Found at build time, when it is expensive |
+| **Mismatches escalate** | Either the spec was wrong or the build drifted. A human decides which |
+
+**This is why the diagram must state behaviour rather than sequencing.** *"Ships in wave 2"*
+cannot be walked against a working artifact; *"names what closing requires"* can.
+
+---
+
 ## Closing the loop
 
 | | |
