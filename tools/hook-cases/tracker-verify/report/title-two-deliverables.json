@@ -1,0 +1,2 @@
+# an issue title naming more than one deliverable
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"feat: add the event log, and wire it to the reports","tool_input":{"command":"gh issue create --title x"}}

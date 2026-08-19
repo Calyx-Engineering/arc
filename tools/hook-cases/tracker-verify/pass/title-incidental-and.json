@@ -1,0 +1,2 @@
+# a single "and" inside one deliverable is not two issues
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"fix: branch and worktree guard fires before the first edit","tool_input":{"command":"gh issue create --title x"}}
