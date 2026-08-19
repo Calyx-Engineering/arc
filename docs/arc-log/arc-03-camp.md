@@ -17,7 +17,7 @@ stay open.
 | | |
 |---|---|
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last |
-| **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) spawned mid-arc |
+| **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
 | **Build order** | See *Status — execution order*. It is numbered 1–11 and marks where to stop |
 | **Autonomous** | Issues 1–4 only, one session. **Stop before issue 5** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
@@ -115,6 +115,8 @@ Five issues spawned by friction observed while writing the spec. Tracker mechani
 classified *escalate* under obligation 0's own ladder, and correct to do. **Scheduled as wave
 5**, issues 11 through 15.
 
+Two more were spawned later, by the work itself — see below.
+
 | Issue | |
 |---|---|
 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting **is** when naming it |
@@ -122,7 +124,26 @@ classified *escalate* under obligation 0's own ladder, and correct to do. **Sche
 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping an involved piece of work |
 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply |
 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
-| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line |
+
+### Spawned during execution
+
+**Found by building the arc, not by planning it.** Each names the issue whose work exposed it.
+Both are tracker and document mechanics rather than Camp, so both join wave 5.
+
+```mermaid
+flowchart LR
+    I45["<b>#45</b><br/>announce completed actions"] -->|"its own PR bound a link<br/>its keyword did not ask for"| I55["<b>#55</b><br/>reject a stray<br/>closing keyword"]
+    I39["<b>#39</b><br/>Camp's three documents"] -->|"review found the agreement<br/>restating the spec"| I56["<b>#56</b><br/>strip the agreement<br/>to actionable clauses"]
+    classDef p fill:#1e3a5f,stroke:#4a9eff,color:#fff
+    classDef c fill:#4a3520,stroke:#d98f2b,color:#fff
+    class I45,I39 p
+    class I55,I56 c
+```
+
+| Issue | | Spawned by | Why it exists |
+|---|---|---|---|
+| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Its PR heading bound a link the body's `Refs` did not ask for. The trap is documented in `skills/issue-write`; no check derives from it |
+| [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Sections 1, 2 and 6 restated m43 — rationale a user cannot act on, in a document that exists to record deviation |
 
 ---
 
@@ -137,11 +158,11 @@ flowchart TB
         W1["<b>Wave 1</b><br/>1 · #39 documents<br/>2 · #37 event log"] --> W2["<b>Wave 2</b><br/>3 · #40 reach Camp<br/>4 · #45 announce + templates"]
     end
     A ==> STOP{{"<b>STOP</b><br/>human review<br/>before issue 5"}}
-    subgraph B[" Reviewed first — issues 5 to 17 "]
+    subgraph B[" Reviewed first — issues 5 to 18 "]
         direction LR
         W3["<b>Wave 3</b><br/>5 · #41 · 6 · #44<br/>7 · #47 · 8 · #43<br/>9 · #46"] --> W4["<b>Wave 4</b><br/>10 · #42<br/>obligation 0"]
-        W4 --> W5["<b>Wave 5</b><br/>11–16 · #31–#35, #55<br/>tracker mechanics"]
-        W5 --> W6["<b>Wave 6</b><br/>17 · #48<br/>skill parity"]
+        W4 --> W5["<b>Wave 5</b><br/>11–17 · #31–#35<br/>#55 · #56"]
+        W5 --> W6["<b>Wave 6</b><br/>18 · #48<br/>skill parity"]
     end
     STOP ==> B
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
@@ -241,10 +262,10 @@ Settled during scoping. **These apply across every issue in the arc.**
 | 12 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | 5 | Blocked on review |
 | 13 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | 5 | Blocked on review |
 | 14 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | 5 | Blocked on review |
-| 15 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
-| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | 5 | Blocked on review |
+| 15 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | 5 | Blocked on review |
 | 16 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | 5 | Blocked on review |
-| 17 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | 6 | Blocked on review |
+| 17 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | 5 | Blocked on review |
+| 18 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | 6 | Blocked on review |
 | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | — | **Closed** — produced m43, m44 and this plan |
 
 ### What each wave is
