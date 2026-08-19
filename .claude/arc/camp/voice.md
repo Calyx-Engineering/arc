@@ -96,4 +96,4 @@ generation"* is section 2 of the agreement.
 ## Related
 
 - [`operating-agreement.md`](operating-agreement.md) — what Camp does. Wins over this file on any conflict
-- [m43 §6–§7](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
+- [m43 §6–§7](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#6-voice) — the specification

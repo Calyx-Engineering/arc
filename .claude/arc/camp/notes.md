@@ -37,4 +37,4 @@ silently shaping behaviour.
 ## Related
 
 - [`operating-agreement.md`](operating-agreement.md) — what Camp does. Wins over this file
-- [m43 §5.2](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
+- [m43 §5.2](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#52-camps-notes-what-belongs-in-notesmd) — the specification
