@@ -138,7 +138,7 @@ point and the persona; each obligation ships as its own artifact.**
 |---|---|---|---|
 | **0** | Hold the arc's intent; test proposed work against it | Asked, at checkpoints, and unsolicited on issue spawn | [#42](https://github.com/Calyx-Engineering/arc/issues/42) |
 | 1 | Report where the arc stands, and what comes next | Asked | [#41](https://github.com/Calyx-Engineering/arc/issues/41) |
-| 2 | Decompose an idea or a base issue into issues | Asked | [#47](https://github.com/Calyx-Engineering/arc/issues/47) |
+| 2 | Decompose an idea or a base issue into issues | Asked | [#47](https://github.com/Calyx-Engineering/arc/issues/47) — **built**, [`decompose`](../decompose/SKILL.md) |
 | 3 | Catch problems at the moment they happen | Unsolicited | [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) |
 | 4 | Report completed work per the agreement | Unsolicited | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
 

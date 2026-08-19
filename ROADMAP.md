@@ -39,6 +39,7 @@ record survive a cold start.
 | `hooks/tracker-verify` | m12 | Links fail silently; a PR to the wrong base splits a milestone | Build |
 | `skills/work-watch` | m14 · m23 · m41 | Commit timing, test obligations, and depth — one sweep | Build |
 | `skills/camp` | m21 · m43 | Something to ask "where is this arc, what is next" | Build |
+| `skills/decompose` | m43 | A spec or idea into a proposed set of issues | Build |
 
 **Eleven artifacts. Four are ports of working practice, one is already here, six are new.**
 

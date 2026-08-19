@@ -201,7 +201,8 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/spec-interview` | skill | m45 | Invoked, when a capability needs specifying before it can be built | `skills/issue-write` for the decomposition that follows |
 | | **CAMPAIGN** | | | |
 | `skills/kickoff` | skill | m09 · m20 | Invoked, at the start of an arc | `skills/issue-write` to file the decomposition · `skills/autonomy-set` |
-| `skills/camp` | skill | m21 · m43 | Addressed by name, or `/camp` | `.claude/arc/camp/` for its agreement and voice |
+| `skills/camp` | skill | m21 · m43 | Addressed by name, or `/camp` | `.claude/arc/camp/` for its agreement and voice · `skills/decompose` |
+| `skills/decompose` | skill | m43 | Invoked, when a spec or idea must become a set of issues | `skills/issue-write` to file the approved set |
 | `commands/camp.md` | command | m43 | Typed as `/camp` | `skills/camp` |
 | `.claude/arc/camp/` | record | m43 | Read by `skills/camp` on every invocation | — |
 | `camp-reports.md` | reference | m43 | Read by anything that declares what it checks | — |

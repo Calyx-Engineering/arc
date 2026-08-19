@@ -17,7 +17,7 @@ cd "$(dirname "$0")/.." || exit 1
 
 # Skills worth having live locally. Not every shipped skill — only the ones that
 # shape how work is done in this repo.
-SKILLS="chat-response spec-interview issue-write work-watch record-route handoff camp"
+SKILLS="chat-response spec-interview issue-write work-watch record-route handoff camp decompose"
 
 CHECK=0
 [ "${1:-}" = "--check" ] && CHECK=1
