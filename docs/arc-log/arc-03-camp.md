@@ -229,7 +229,7 @@ Settled during scoping. **These apply across every issue in the arc.**
 | 2 | [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | 1 | Not started |
 | 3 | [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | 2 | Not started |
 | 4 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Obligation 4 — announcing actions, and the templates | 2 | Not started |
-| | | **■ STOP — human review before issue 5 ■** | | |
+| | | **■ STOP — human review before issue 41 ■** | | |
 | 5 | [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Obligation 1 — status and the close sequence | 3 | Blocked on review |
 | 6 | [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | 3 | Blocked on review |
 | 7 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | 3 | Blocked on review |
@@ -242,7 +242,7 @@ Settled during scoping. **These apply across every issue in the arc.**
 | 14 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | 5 | Blocked on review |
 | 15 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | 5 | Blocked on review |
 | 16 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | 6 | Blocked on review |
-| — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | — | **In progress** — closes at arc PR |
+| — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | — | **Closed** — produced m43, m44 and this plan |
 
 ### What each wave is
 
