@@ -24,6 +24,36 @@ description: Use when creating or editing a tracker issue or pull request — Gi
 
 A body that survives this is usually a short paragraph plus one or two tables.
 
+## Titles
+
+**A title states what the reader gets when the issue merges, and is understandable to someone
+with no prior context.**
+
+The reader is scanning a milestone list weeks later. They have not read the body, were not in
+the conversation, and are deciding whether this issue is the one they want.
+
+| Fails | Why | Instead |
+|---|---|---|
+| *"The scoping loop"* | Names a concept from inside one conversation | *"Work a spec interview in labelled question sets"* |
+| *"Labelled question blocks"* | Invented term. Nothing indicates what changes | *"Number multi-topic questions so they can be answered by reference"* |
+| *"The tracker as in-session working state"* | Abstract. No deliverable named | *"Keep the issue checklist current while the work runs"* |
+| *"Name the thing, not just its identifier"* | An instruction with no subject | *"Say what a branch or issue is when first referenced in chat"* |
+
+**The test: read the title alone, out loud, to someone who has not seen the body.** If they
+cannot say what would change when it merges, it fails.
+
+| Rule | |
+|---|---|
+| **Name the deliverable, not the insight** | The reasoning that produced the issue is body material |
+| **No invented vocabulary** | A term coined in the conversation that produced it means nothing in a list |
+| **A verb the work performs** | *"Add"*, *"keep"*, *"say"*, *"verify"* — not a bare noun phrase |
+| **A scoping issue says so** | `scope:` prefix, and name what gets specified |
+| **Comprehensible cold** | Assume no body, no conversation, no arc context |
+
+**Titles go stale — do not copy them.** When referencing an issue from a document, link the
+number and describe it in the document's own words. A copied title silently diverges the
+moment the issue is renamed.
+
 **The tracker owns actions.** Acceptance criteria, checklists, next steps and owners live in
 the issue and nowhere else. A report states what is known; an issue states what must happen.
 Mixing them means neither is trustworthy.

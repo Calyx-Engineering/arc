@@ -85,11 +85,12 @@ moves next; this column only reports.
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
 | m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../reference-roadz/engineering-report/SKILL.md) | ⚪ |
 | m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, and when to decide rather than ask* | [skill](../../.claude/skills/chat-response/SKILL.md) | 🔵 |
+| m45 | `spec-interview` | 🔥 | **A spec that matches what was agreed.** *Labelled question sets to reach the decisions, then the full re-read that catches a document contradicting itself* | [skill](../../.claude/skills/spec-interview/SKILL.md) | 🔵 |
 | | | | ↳ *The dev-log and arc-log are authored by m17, in Knowledge* | | |
 | | **CAMPAIGN** | | | | |
 | m09 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/m09-kickoff-scope-gate.md) | ⚪ |
 | m20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | [spec](mechanisms/m20-arc-decomposition.md) | ⚪ |
-| m43 | Camp — the delivery assistant | 🔥 | **A colleague, not a command.** *A personality you can place expectations on: explains what Arc is doing and should be doing, answers where the arc stands, decomposes work, and speaks up unasked — governed by an operating agreement you approve* | [spec](mechanisms/m43-camp-assistant.md) | ⚪ |
+| m43 | Camp — the delivery assistant | 🔥 | **A colleague, not a command.** *Holds the arc's intent and asks whether proposed work still serves it, answers where the arc stands, and makes Arc's operation visible — governed by an operating agreement you approve* | [spec](mechanisms/m43-camp-assistant.md) | ⚪ |
 | m21 | Arc-tree — spawn diagram | 🔥 | **Arc shape is visible.** *Family tree of which issue spawned which, so scope growth shows early* | [spec](mechanisms/m21-arc-tree.md) | ⚪ |
 | m24 | Verification planning | 📐 | **Requirements get proven.** *Turns unproven requirements into a validation milestone, and reports results back* | [spec](mechanisms/m24-verification-planning.md) | ⚪ |
 | m27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Partitions issues into disjoint-file tracks and sequences their merges. Disjointness is the go/no-go* | [spec](mechanisms/m27-worktree-waves.md) | ⚪ |
@@ -110,6 +111,7 @@ moves next; this column only reports.
 | m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | ⚪ |
 | m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../.claude/skills/plugin-retrospective/SKILL.md) | 🔵 |
 | m39 | Mechanism numbering | 📐 | **A new mechanism gets a number that is actually free.** *The number space spans all three plugins; a registry issues the next one and records the claim* | — | ⚪ |
+| m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | ⚪ |
 
 Numbering is inherited from the retrospective's product plan and kept stable so existing
 specs and evidence still resolve. That plan ran to 37 across all three plugins, so new
@@ -196,6 +198,7 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/issue-write` | skill | m11 · m13 | Invoked, when writing or editing an issue or PR | — |
 | `skills/engineering-report` | skill | m18 | Invoked, when writing a report | `skills/record-route` for where it lands |
 | `skills/chat-response` | skill | m38 | Always, every reply | — |
+| `skills/spec-interview` | skill | m45 | Invoked, when a capability needs specifying before it can be built | `skills/issue-write` for the decomposition that follows |
 | | **CAMPAIGN** | | | |
 | `skills/kickoff` | skill | m09 · m20 | Invoked, at the start of an arc | `skills/issue-write` to file the decomposition · `skills/autonomy-set` |
 | `agents/camp` | agent | m21 | Invoked, at checkpoints and on request | `skills/record-route` for the arc-log |
@@ -217,6 +220,7 @@ function list, then read its Needs column to find what else must exist before it
 | `hooks/session-index` | hook | m32 | Automatic, at worktree creation | — |
 | `skills/plugin-retrospective` | skill | m33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | m39 | Called when a mechanism is captured | The suite registry |
+| `.claude/arc/log.md` | record | m44 | Appended whenever any artifact fires | Every artifact that declares `camp-reports:` |
 
 **Twenty-four artifacts for thirty-one mechanisms.** Four merges, each because the
 mechanisms fire together:

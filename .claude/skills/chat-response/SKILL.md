@@ -141,6 +141,31 @@ not process. Prime with examples:
 | A summary of the reply at the end of the reply | End at the last useful sentence |
 
 
+## A clarification constrains the request; it does not replace it
+
+When the user follows up on work you just did, the follow-up is **an additional constraint on
+the same requirement** unless they say otherwise. Both hold.
+
+> **Requirement:** *"if calling out gh issue numbers then list each and as links"*
+> **Clarification:** *"you left a massive bullet list — it takes up 20% of the screen"*
+>
+> Wrong: collapse to `#31–#35`. Satisfies the second, silently drops *list each*.
+> Right: `#31 · #32 · #33 · #34 · #35`, each linked, inline. Satisfies both.
+
+**The failure is quiet.** The user sees the thing they complained about is gone and has to
+re-check the original requirement themselves — which is the work they delegated.
+
+| Before editing | |
+|---|---|
+| **Restate the original requirement** | In its own words, not as remembered |
+| **Restate the new constraint** | What specifically is wrong with the current form |
+| **Find the form that satisfies both** | If none exists, say so and ask — do not silently pick one |
+
+A follow-up that *replaces* a requirement says so: *"actually, drop the links"*. Absent that,
+assume it narrows.
+
+---
+
 ## Scope
 
 This governs **chat replies only.**

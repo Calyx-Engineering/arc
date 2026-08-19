@@ -1,6 +1,8 @@
 # Mechanism — Relief Valve
 
-**Status:** partial — the friction is clear, the trigger is not designed.
+**Status:** specified — the form, the precondition and the response are settled. The
+thresholds are provisional estimates, replaced with mined evidence by
+[#36](https://github.com/Calyx-Engineering/arc/issues/36).
 **Home:** Arc — Workspace guard.
 **Src:** 🔥 observed.
 **Covers:** m41.
@@ -74,49 +76,110 @@ itself.
 
 ---
 
-## The proposed form — a third party, not self-noticing
+## Form — a skill now, a third party later
 
-**2026-08-18.** The design above has the agent noticing its own depth problem, which is the
-thing least likely to work: the agent is *in* the hole it needs to notice.
+**Settled 2026-08-18 during [m43](m43-camp-assistant.md)'s specification.**
 
-**Camp is structurally better placed.** A delivery-lead personality that reads the record but
-is not inside the stuck conversation can say so from outside it:
+The original design had the agent noticing its own depth problem, which is the least reliable
+arrangement available: **the detecting party is inside the condition being detected.**
 
-> *"Camp here — I see what you and Claude are doing. We might want to step back."*
+An observer reading from outside the affected conversation does not have that defect. That
+observer is Camp — but independence requires continuously reading the conversation, which is
+the one form Arc cannot afford by default. So the valve ships in two stages:
 
-Then help get the work back to the critical point. That is a different mechanism from
-self-noticing, and it removes the conflict of interest rather than asking the agent to
-overcome it.
+| Stage | Form | Honest limitation |
+|---|---|---|
+| **Now** | A skill the main thread runs when a mechanical precondition trips | Self-detection wearing a skill's clothes. Catches what the agent is *capable* of noticing |
+| **Later** | Camp reading independently | Deferred on cost, not on design |
 
-**Open:** whether camp is invoked by a trigger the main thread fires, or watches
-independently. The first is cheap and inherits the trigger problem below; the second is a
-running process, which the architecture otherwise avoids.
+**A skill still beats bare judgment.** It is a named check with criteria, run at a defined
+moment, rather than a standing obligation to be self-aware — converting *"should I have
+noticed"* into *"did I run the check"*. It degrades safely: firing produces value, missing
+leaves current behaviour unchanged.
+
+---
+
+## The precondition — what makes the check fire
+
+**Mechanical trigger, judged response.** No signal means "too deep" on its own; the
+combination fires the check, and judgment then decides whether the depth is real.
+
+### The signals
+
+| Signal | Countable as | Provisional threshold |
+|---|---|---|
+| Turns since the last commit or file write | Turn count since the last write tool call | **8** |
+| Questions asked with no artifact changed | Questions in assistant turns, since the last write | **3** |
+| Time in one issue with no checklist movement | Minutes since the active issue's checklist last changed | **45** |
+| Emphasis markers in the user's messages | See below | **any** |
+
+**The worked case: eight turns, no artifact written, three questions asked.** That combination
+fires the check without any conversational reading.
+
+### Combining them
+
+The first three are **cumulative and none is sufficient alone** — a long analysis legitimately
+runs many turns without a write. Two of three at threshold fires the check.
+
+**Emphasis markers fire on their own**, because they are a direct report from the person the
+mechanism exists to protect.
+
+| Marker | Example |
+|---|---|
+| Words in all caps | *"YOU HAVENT TOUCHED THE REPO"* |
+| Bold or italic on a correction | Emphasis where plain text would do |
+| Profanity | Both appear in the record |
+| A sharp drop in message length | Terse replies after long ones |
+
+**Emphasis is a late signal — by the time it appears the valve has already failed.** It
+produces no false negatives, which is why it ships crude. A late signal that fires beats an
+early signal that does not exist.
+
+### The numbers are provisional
+
+**Every threshold above is an estimate, not a measurement.** They are placed so the mechanism
+is buildable and so first use produces evidence to correct them.
+[#36](https://github.com/Calyx-Engineering/arc/issues/36) mines this repository, ROADZ and
+TimeScope for real instances and works backwards: what was countable *before* the frustration
+surfaced.
+
+Tuning is expected in the first weeks of use, and belongs in the repository's operating
+agreement rather than in code.
+
+---
+
+## What the check does when it fires
+
+**It always says something.** Direction sets the strength of the nudge, never whether it
+speaks — the precondition already established that something is worth remarking on.
+
+| Does the work still serve the arc? | Nudge |
+|---|---|
+| **Yes** | Light. Note the depth, offer a checkpoint — *"Deep on this. Worth a checkpoint, or keep going?"* |
+| **No** | Strong. Name the drift and offer the exit — *"Four questions into naming and it has left the arc's scope. Back out to the decision?"* |
+
+The direction question is [m43](m43-camp-assistant.md)'s obligation 0, which shares this
+precondition rather than carrying its own.
+
+**Propose, never act.** The valve offers the exit; the user takes it.
 
 ---
 
 ## What is not designed
 
-**The trigger.** This is the hard part, and it is the same problem named in
-[what-the-tools-do §3](../archive/what-the-tools-do.md) — ambient work has no git event to bind to.
-Candidates:
+**The over-firing budget.** This check, [m14](m14-commit-rhythm.md)'s commit rhythm and
+[m23](m23-test-obligation.md)'s test capture all watch work in progress. They share one sweep
+in `work-watch`, and how often that sweep may speak is unset. First use produces the number.
 
-| Candidate | Against |
-|---|---|
-| Turn count without a commit | Fires during legitimate long analysis |
-| Questions asked without a decision landing | Needs a definition of "decision landed" |
-| Model judgment on conversation shape | Not mechanically checkable, so it can silently stop working |
-| User-invoked only — *"back out"* | Puts the load back on the user, which is the friction |
-
-**The threshold.** Over-firing recreates the annoyance in a new form. Commit rhythm has the
-same open question and the two should probably answer it together.
-
-**Whether it composes with the design-time evaluator.** Commit rhythm (14) and test
-obligation capture (23) both watch work in progress and nudge. This is a third watcher, and
-three separate always-on checks is likely wrong.
+**Whether the thresholds hold outside this repository.** They were estimated from one
+person's sessions in a docs-heavy repo. Hardware work in ROADZ may have a different natural
+rhythm, in which case the numbers move to the operating agreement per repo.
 
 ---
 
 ## Related
 
-- [commit-rhythm](m14-commit-rhythm.md) — the same propose-never-act posture, same threshold question
+- [m14](m14-commit-rhythm.md) — the same propose-never-act posture, and the sweep this check shares
+- [m43](m43-camp-assistant.md) — Camp, which shares this precondition and is the deferred third party
+- [#36](https://github.com/Calyx-Engineering/arc/issues/36) — replaces the provisional thresholds with mined evidence
 - [`chat-response`](../../../.claude/skills/chat-response/SKILL.md) — governs asking versus deciding; this fires when that guidance is not enough
