@@ -21,18 +21,16 @@ because a user only corrects machinery they knew was running.
 | **`skips` entries carry the condition, not just the name** | *"`arc-prefix` (base is not an arc branch)"*. A skipped check with no reason is indistinguishable from a broken one |
 | **The gate reports, never denies** | A missing declaration makes an artifact invisible, not wrong. Blocking would make the convention a cost paid at the moment someone is trying to fix something else |
 
-## `verify-hook.sh` was not edited
+## `verify-hook.sh` was proposed before it was edited
 
-**The one item in #45 not applied.** CLAUDE.md excludes `tools/verify-hook.sh` from autonomous
-edits, alongside `settings.json`, the hook template and any `SessionStart` hook.
+CLAUDE.md excludes `tools/verify-hook.sh` from autonomous edits, alongside `settings.json`, the
+hook template and any `SessionStart` hook. The change was written up first —
+[`proposed-verify-hook-declaration-check.md`](../arc-work/proposed-verify-hook-declaration-check.md),
+naming the block, its placement and the three cases — and applied on approval.
 
-The change is written up as a proposal at
-[`docs/arc-work/proposed-verify-hook-declaration-check.md`](../arc-work/proposed-verify-hook-declaration-check.md)
-— the block to add, where it goes, and the three cases to verify, including the one that
-matters: **the note must not change the exit code.**
-
-Detection was verified independently: `grep -q '^# camp-reports:'` finds the declaration in
-both hooks and the template, and correctly finds none in a file without one.
+**The check reports and never fails.** It sits outside the `PASSED`/`FAILED` tally and the exit
+code, because a missing declaration makes a hook invisible rather than wrong. All three cases
+were run; the note appears only on the undeclared hook, and `exit=0` is unchanged.
 
 ## A YAML bug in #40, found here
 
@@ -91,6 +89,19 @@ and the template carry a greppable declaration, and a file without one is correc
 whether a hook emits the skipped line, whether verbosity is honoured, and whether the report
 reaches the event log are all unknown. The issue's acceptance criteria are written as runtime
 behaviour and none of them can be run in this repository.
+
+## A closing keyword in a heading binds
+
+The first draft of this PR opened with `## ⚠️ This does not close #45`. GitHub bound it — the
+parser matches the keyword and the number and ignores the word *not*, which is the trap
+`skills/issue-write` names explicitly with that exact string as its worked example.
+
+The skill was loaded and the rule was broken anyway. **The lesson is placement, not wording:**
+a keyword-plus-number belongs only in the final bare line. Prose that needs to discuss closure
+avoids the keyword entirely — *"this does not complete the capability"*.
+
+The binding was initially misattributed to the branch name's `issue-NN` segment. That remains
+untested: every PR in this arc carried a body keyword as well, so the two are confounded.
 
 **The criterion to check first on real use:** *"a hook written from `hooks/TEMPLATE` reports
 without its author knowing the convention existed."* That is the one that proves the convention
