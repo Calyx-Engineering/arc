@@ -1,6 +1,11 @@
 ---
 name: issue-write
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
+camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
+checks: [base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
+skips:
+  - arc-prefix (base is not an arc branch)
+  - closing-keyword (the change informs rather than delivers — Refs, not Closes)
 ---
 
 > **Copy — do not edit.** The source is [`skills/issue-write/SKILL.md`](../../../skills/issue-write/SKILL.md),

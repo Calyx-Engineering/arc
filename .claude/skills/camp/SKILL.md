@@ -1,6 +1,8 @@
 ---
 name: camp
-description: Use when the user addresses Camp by name — "Camp, where are we?" — or runs /camp, and when a question is answered from the committed record rather than from the conversation: where the arc stands, what was decided, what comes next, whether work belongs in this arc, whether an issue is too big. Not for questions about code, files, or execution — those are the main thread's.
+description: Use when the user addresses Camp by name, or runs /camp, and when a question is answered from the committed record rather than from the conversation — where the arc stands, what was decided, what comes next, whether work belongs in this arc, whether an issue is too big. Not for questions about code, files, or execution; those are the main thread's.
+camp-reports: [amendment-proposed, note-written]
+checks: [documents-loaded, clause-named, record-read]
 ---
 
 > **Copy — do not edit.** The source is [`skills/camp/SKILL.md`](../../../skills/camp/SKILL.md),
@@ -205,8 +207,34 @@ Yes — an amendment. No — a note.
 
 ---
 
+## Reporting what an artifact did
+
+**Obligation 4.** An artifact that acts declares what it checks, in a `camp-reports:` header.
+That one declaration drives both the spoken report and the event-log entry — the artifact
+speaks, in Camp's voice, and **Camp does not narrate it.**
+
+```text
+**Camp here —** PR #33 opened.
+  Checked: milestone, arc prefix, closing keywords — all set
+  Declared but skipped: placeholder scan (no body edit)
+```
+
+| | |
+|---|---|
+| **State what was checked, not only what was found** | *"Checked milestone — not set"*, never *"milestone missing"*. One extra word keeps the machinery visible when checks pass |
+| **The skipped line is emitted unconditionally** | It is what distinguishes an artifact that was quiet because everything passed from one that never ran |
+| **An artifact with no declaration reports nothing** | Silence is the default, so a missing declaration is invisible rather than noisy |
+
+Verbosity from `voice.md` governs how much of this surfaces — and **never** what reaches
+`.claude/arc/log.md`.
+
+Format: [`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
+
+---
+
 ## Related
 
+- [`camp-reports.md`](../../docs/product-architecture/camp-reports.md) — the declaration every acting artifact carries
 - `.claude/arc/camp/operating-agreement.md` — the authority on what Camp does here
 - [m43](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
 - [m44](../../docs/product-architecture/mechanisms/m44-event-log.md) — the event log Camp declares into

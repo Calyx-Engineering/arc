@@ -1,6 +1,8 @@
 ---
 name: work-watch
 description: Use continuously while work is in progress — one sweep that watches for three things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, and whether questioning has gone deeper than the decision warrants. Run it at natural pauses, not every turn.
+camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged]
+checks: [commit-point, test-obligation, depth]
 ---
 
 # Watching the work
