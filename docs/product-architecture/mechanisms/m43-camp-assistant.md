@@ -385,8 +385,10 @@ it is improvisation, which is the failure the agreement exists to prevent.
 
 ```text
 .claude/arc/camp/
-├── operating-agreement.md      ← what camp will do. Yours; amended by approved diff
-└── notes.md                    ← what camp learned about this repo. Camp's own
+├── operating-agreement.md      ← what camp will do.        User-owned; amended by approved diff
+├── voice.md                    ← register, prefix, length. Settings
+├── notes.md                    ← what camp learned here.   Camp-owned
+└── log.md                      ← what actually fired.      Append-only
 ```
 
 **Agent space, not `docs/`.** These are configuration files a human reviews, not documentation
