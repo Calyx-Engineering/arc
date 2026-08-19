@@ -288,10 +288,11 @@ them. The moment camp holds state it is the spine window again under a new name.
 
 ---
 
-## Three artifacts, and only two are governed
+## Camp owns three artifacts, and only two are governed
 
-The defining structural decision. `voice.md` and `log.md` are settings and record; the two
-below define the relationship.
+The defining structural decision. `voice.md` holds settings; the two below define the
+relationship between camp and the user. The event log is plugin-level and not camp's — see
+*The log*.
 
 | | **Operating agreement** | **Camp's notes** |
 |---|---|---|
@@ -384,12 +385,17 @@ it is improvisation, which is the failure the agreement exists to prevent.
 ### Where it lives
 
 ```text
-.claude/arc/camp/
-├── operating-agreement.md      ← what camp will do.        User-owned; amended by approved diff
-├── voice.md                    ← register, prefix, length. Settings
-├── notes.md                    ← what camp learned here.   Camp-owned
-└── log.md                      ← what actually fired.      Append-only
+.claude/arc/
+├── log.md                      ← what every Arc artifact fired. Append-only, plugin-level
+└── camp/
+    ├── operating-agreement.md  ← what camp will do.        User-owned; amended by approved diff
+    ├── voice.md                ← register, prefix, length. Settings
+    └── notes.md                ← what camp learned here.   Camp-owned
 ```
+
+**The log sits at plugin level, not under `camp/`.** It records what *every* Arc artifact did
+— a `branch-guard` denial has nothing to do with camp. Camp is one of three consumers and not
+the primary one; filing it under `camp/` would imply ownership camp does not have.
 
 **Agent space, not `docs/`.** These are configuration files a human reviews, not documentation
 a human navigates — the same rationale that places the concern index in agent space. Committed
@@ -497,7 +503,7 @@ Verbosity governs what is displayed. **The log records all events** and is a dis
 with three consumers.
 
 ```text
-.claude/arc/camp/log.md
+.claude/arc/log.md
 ```
 
 | Consumer | Purpose |
