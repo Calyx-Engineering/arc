@@ -1,7 +1,8 @@
 # Mechanism — The event log
 
-**Status:** partial — the artifact, its independence from verbosity and its consumers are
-settled. Entry format, rotation and retention are open.
+**Status:** partial — the artifact, its independence from verbosity, its consumers, the
+entry format and per-arc rotation are settled. Retention after an arc closes, and volume
+control, are open.
 **Home:** Arc — Self-improvement.
 **Src:** 🔥 observed.
 **Covers:** m44.
@@ -78,6 +79,11 @@ was considered and rejected.
 
 Timestamp · artifact · event · what was checked · outcome.
 
+**Serialised as plain lines, not a table** — appending a table row means locating the header
+first, and an append that must read the file is an append that gets skipped under load. The
+authority on the format is [`templates/event-log.md`](../../../templates/event-log.md); it is
+not restated here, so the two cannot drift.
+
 **An entry states what was checked, not only what was found** — the same reporting rule
 [m43](m43-camp-assistant.md) applies to conversation. A check that passed is evidence the
 machinery ran; only recording failures makes a silent artifact indistinguishable from a
@@ -99,11 +105,9 @@ both are required for a retrospective to say anything useful.
 
 ## What is not designed
 
-**Rotation and retention.** Per-arc rotation is the assumption. Whether logs are kept after an
-arc closes, and where they go if so, is undecided.
-
-**Entry format specifics.** The content list above is settled; its serialisation is not.
-Whichever form is chosen must stay readable by a human without tooling.
+**Retention after an arc closes.** Per-arc rotation is settled — the log moves to
+`docs/arc-log/events/` beside that arc's arc-log. How long it is kept there, and whether it
+is ever pruned, is undecided. The move preserves the file until that question has an answer.
 
 **Volume control.** An artifact firing on every tool call could dominate the file. Whether
 that needs sampling, or whether the artifact simply should not log at that rate, is unanswered
