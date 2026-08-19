@@ -16,6 +16,27 @@ list. Name the outcomes that drive the sequence.
 
 A Mermaid diagram of the end state. The north star every issue aims at.
 
+## How this arc is executed
+
+> Delete this section only if every issue is worked beside a human. **Any autonomy at all
+> means the plan for it belongs here** — what runs unattended, where it stops, and what is
+> least certain.
+
+| Wave or issue | Mode | Why |
+|---|---|---|
+| | **Autonomous, then stop** / **Reviewed first** | |
+
+### What is least certain, and why
+
+| | |
+|---|---|
+| | |
+
+**Autonomy is per-arc, not per-repo** — m40. Decide the mode from how specified the work is,
+not from how much time there is.
+
+---
+
 ## Load-bearing decisions
 
 The choices that constrain every issue under this arc — what must not be re-litigated
@@ -64,3 +85,7 @@ cheap later. (Delete if none.)
 - [ ] Tree regenerated
 - [ ] K2 and K3 swept — durable product facts graduated to the wiki, ladder entries replaced
       with links rather than copies
+- [ ] **Milestone closed by hand.** GitHub does not close it when its last issue closes
+- [ ] **Default branch restored** — `tools/arc-default-branch.sh restore`. A crashed session
+      leaves it pointed at a branch that may later be deleted, and nothing about that state
+      is visible in ordinary work

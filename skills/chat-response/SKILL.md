@@ -3,11 +3,6 @@ name: chat-response
 description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
-> **Copy — do not edit.** The source is [`skills/chat-response/SKILL.md`](../../../skills/chat-response/SKILL.md),
-> which is what the plugin ships. This copy exists only so the skill is live in this repo
-> before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
-
-
 # chat-response
 
 ## The principle everything follows from

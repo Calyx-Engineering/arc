@@ -3,6 +3,11 @@ name: work-watch
 description: Use continuously while work is in progress — one sweep that watches for three things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, and whether questioning has gone deeper than the decision warrants. Run it at natural pauses, not every turn.
 ---
 
+> **Copy — do not edit.** The source is [`skills/work-watch/SKILL.md`](../../../skills/work-watch/SKILL.md),
+> which is what the plugin ships. This copy exists only so the skill is live in this repo
+> before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
+
+
 # Watching the work
 
 Three mechanisms watch work as it proceeds. **One sweep, not three always-on checks

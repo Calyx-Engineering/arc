@@ -3,6 +3,11 @@ name: record-route
 description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Decides which file it belongs in across the K1–K4 ladder, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
 ---
 
+> **Copy — do not edit.** The source is [`skills/record-route/SKILL.md`](../../../skills/record-route/SKILL.md),
+> which is what the plugin ships. This copy exists only so the skill is live in this repo
+> before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
+
+
 # Where the record goes
 
 > **The dev-log and arc-log get written, not remembered.** A template alone produces

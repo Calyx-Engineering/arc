@@ -134,6 +134,25 @@ the machine. Committed is not the same as exercised.
 
 **Unsoaked** = a commit here with no soak line from any repo.
 
+## Local skill copies — temporary, until the first release
+
+Arc is not installed in its own repository, so **nothing in `skills/` is live here.** Claude
+Code discovers `.claude/skills/`, and that is all it discovers.
+
+Until there is a release, `.claude/skills/` holds **copies** of the shipping skills, each
+carrying a do-not-edit banner.
+
+| | |
+|---|---|
+| **The source is `skills/`** | That is what the plugin ships. Edit there, never in the copy |
+| **Re-copy after editing** | `tools/sync-local-skills.sh` |
+| **Check before a PR** | `tools/sync-local-skills.sh --check` exits 1 if a copy is stale |
+
+**After the first release this arrangement is deleted.** This repo installs the *released*
+plugin from the marketplace, and `skills/` becomes purely the dev tree — exercised in other
+repos, never against itself. Testing a change with the version of itself being changed is the
+trap this avoids, and it is the same reasoning as the soak rule below.
+
 ## Safe hook editing
 
 Arc ships hooks. A bad hook registration fires on every tool call in every repo and can
