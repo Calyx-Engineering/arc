@@ -38,7 +38,7 @@ record survive a cold start.
 | `skills/handoff` | m15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
 | `hooks/tracker-verify` | m12 | Links fail silently; a PR to the wrong base splits a milestone | Build |
 | `skills/work-watch` | m14 · m23 · m41 | Commit timing, test obligations, and depth — one sweep | Build |
-| `agents/camp` | m21 | Something to ask "where is this arc, what is next" | Build |
+| `skills/camp` | m21 · m43 | Something to ask "where is this arc, what is next" | Build |
 
 **Eleven artifacts. Four are ports of working practice, one is already here, six are new.**
 
@@ -66,7 +66,7 @@ Dependencies, not value:
 6. skills/handoff                   ← needs record-route for where it lives
 7. skills/engineering-report        ← needs record-route for where reports land
 8. skills/work-watch                ← needs issue-write to file what it catches
-9. agents/camp                      ← needs record-route and handoff
+9. skills/camp                      ← needs record-route and handoff
 ```
 
 **Branch guard ships one check, not three.** Branch only; worktree and base-freshness are
@@ -176,7 +176,6 @@ undesigned — a `partial` spec names its own holes.
 
 | Gap | Blocks | What is missing |
 |---|---|---|
-| m21 — Arc-tree | Pass 1, item 9 | **The form is unresolved.** `agents/camp` could be an agent, a skill writing to the arc-log, or a role the main thread adopts |
 | m10 — Branch guard | Pass 1, item 2 | Where the guard learns which branch is correct. Two of its three checks have no precedent |
 | m17 — K1 upkeep | Pass 1, item 3 | Whether TimeScope's arc-log template survives hardware — it is wave-and-track shaped, and a guided arc has neither |
 | m41 — Relief valve | Pass 1, item 8 | The trigger. Four candidates named, all rejected |

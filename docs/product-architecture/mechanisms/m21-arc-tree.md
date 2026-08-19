@@ -1,7 +1,8 @@
 # Mechanism — Arc-Tree
 
-**Status:** partial — the data source is established practice; the artifact that renders it
-is unresolved.
+**Status:** partial — the data source is established practice, and the artifact is settled
+as `skills/camp` by [m43](m43-camp-assistant.md). What renders the tree, and whether it is
+generated on demand or maintained live, is open.
 **Home:** Arc — Campaign.
 **Src:** 🔥 observed.
 **Covers:** m21.
@@ -42,26 +43,28 @@ flowchart TD
 
 ---
 
-## The unresolved part — what carries it
+## What carries it — settled
 
-m21 alone does not justify an agent. The open question is bigger than a diagram:
-**does an arc need something that holds its shape?**
+m21 alone does not justify a dedicated artifact. The question it belongs to is bigger than a
+diagram: **does an arc need something that holds its shape?**
 
 > *"some sort of agent i can talk to about the status of my arc (milestone) and support
 > moving through the issues"* — David, 2026-08-17
 
 That is more than rendering a tree. It is answering *where are we, what is next, what must
-not be re-litigated* — and moving work along. Three candidate forms:
+not be re-litigated* — and moving work along. Three forms were considered:
 
 | Form | For | Against |
 |---|---|---|
-| **An agent** — `agents/camp` | Conversational. Reads the arc-log, the tree, and open issues without filling the main thread | Heaviest to build. Needs a defined packet |
-| **A skill** writing to the arc-log | Cheapest. The arc-log already holds the status table | Not conversational — you read a file rather than ask a question |
+| **An agent** — `agents/camp` | Conversational. Reads the arc-log, the tree, and open issues without filling the main thread | Heaviest to build. Needs a defined packet, and reads the conversation continuously |
+| **A skill** — `skills/camp` ← **selected** | Cheapest. Addressed by name or `/camp`, and reads the record on demand | Cannot watch the conversation unprompted — the relief valve fires on countable signals instead |
 | **A role the main thread adopts** | No new artifact. TimeScope's spine works this way | The spine's known failure: a window holding that much context saturates |
 
-**Leaning toward an agent,** named to pair with Lodestar's Star. TimeScope's spine failed
-because a *window* cannot hold arc state; an agent that reads durable state on demand does
-not have that failure.
+**Settled by [m43](m43-camp-assistant.md): a skill**, named to pair with Lodestar's Star.
+TimeScope's spine failed because a *window* cannot hold arc state, and a skill reading
+durable state on demand does not have that failure. An agent was rejected on cost — it would
+read the conversation continuously, and only the relief valve needed that, so the valve
+degrades to a skill instead.
 
 ---
 
