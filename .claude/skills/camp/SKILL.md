@@ -225,8 +225,31 @@ speaks, in Camp's voice, and **Camp does not narrate it.**
 | **The skipped line is emitted unconditionally** | It is what distinguishes an artifact that was quiet because everything passed from one that never ran |
 | **An artifact with no declaration reports nothing** | Silence is the default, so a missing declaration is invisible rather than noisy |
 
-Verbosity from `voice.md` governs how much of this surfaces — and **never** what reaches
-`.claude/arc/log.md`.
+### Verbosity — which of three renderings surfaces
+
+**The level is read from the operating agreement**, section 1 — the checked box is the value.
+`voice.md` says what each level means; the agreement says which is selected.
+
+| The event is | Setting | Default |
+|---|---|---|
+| A completed action reported — obligation 4 | **Report verbosity** | `normal` |
+| A problem caught as it happens — obligation 3 | **Nudge verbosity** | `loud` |
+
+| Level | The outcome line | The checked line | The skipped line |
+|---|---|---|---|
+| `loud` | Yes | Yes | Yes |
+| `normal` | Yes | No | No |
+| `quiet` | **Only if a check failed** | No | No |
+
+> **`quiet` is not silence.** A failed check still surfaces — the level suppresses the
+> machinery and the all-clear, never a finding.
+
+**Verbosity governs display and never what reaches `.claude/arc/log.md`.** Every event is
+appended whatever the setting, including at `quiet` and including checks that passed — which
+is what makes turning the volume down cost display only.
+
+**Finer control is an agreement clause, not a fourth level.** *"No reports for PR
+generation"* is section 2.
 
 Format: [`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
 
