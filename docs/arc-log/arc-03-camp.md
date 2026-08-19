@@ -317,6 +317,29 @@ make every copy compare unequal on a clean tree. Logged against
 acceptance criterion written as runtime behaviour has been tested. The event log has three
 hand-written entries and no producer.
 
+## Wave 3 review — 2026-08-19
+
+**Six issues, eight PRs open, none merged.** The review at a wave's end is the reviewer's, per
+the autonomous mode. Findings below are mine, on my own work.
+
+| | |
+|---|---|
+| **Every PR binds its issue** | Checked with `gh pr view --json closingIssuesReferences`, not by reading the keyword — the check [#41](https://github.com/Calyx-Engineering/arc/issues/41) specifies, run against the eight PRs. All eight bound |
+| **Three merge conflicts are unavoidable** | [#62](https://github.com/Calyx-Engineering/arc/issues/62)+[#44](https://github.com/Calyx-Engineering/arc/issues/44) both edit `work-watch`'s mechanism list, the README and ROADMAP · [#47](https://github.com/Calyx-Engineering/arc/issues/47)+[#41](https://github.com/Calyx-Engineering/arc/issues/41) both edit `skills/camp` · [#43](https://github.com/Calyx-Engineering/arc/issues/43) edits the README rows again. **No merge order avoids them** — tested both directions |
+| **Two defects found by tests, not review** | A truncated payload made `camp-session-start` speak on input that was not a hook call; the `field` helper's comma split erased the very signal the issue-title check reads. Both in [#43](https://github.com/Calyx-Engineering/arc/issues/43) |
+| **A hardcoded list hid a new skill** | `tools/sync-local-skills.sh` reported success while copying nothing. Filed as [#68](https://github.com/Calyx-Engineering/arc/issues/68) |
+| **[#43](https://github.com/Calyx-Engineering/arc/issues/43) built three artifacts, not four hooks** | Two of the four moments are already `tracker-verify`'s. Flagged in the PR rather than reconciled silently |
+
+**The conflicts are the finding worth carrying.** Six issues in one wave touching four shared
+surfaces — README, ROADMAP, `skills/camp`, `work-watch` — means parallel branches collide by
+construction. Either the wave's issues are partitioned by file, which is
+[m27](../product-architecture/mechanisms/m27-worktree-waves.md)'s disjointness test, or they
+are merged in sequence and each rebased on the last. **Nothing in the plan made that choice.**
+
+**Still unexercised.** Nothing here has run. The hooks are the exception — they were executed
+against real fixtures by `tools/verify-hook.sh`, which is the first acceptance criterion in
+this arc tested rather than asserted.
+
 ## At arc close
 
 - [ ] Status table reflects reality
