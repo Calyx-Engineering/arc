@@ -1096,8 +1096,9 @@ obligation 0.** It also puts the m42 warning in front of the user at the moment 
 
 ## 12 What is not designed
 
-**Obligation 3's over-firing budget.** The event half and `work-watch`'s three checks share
-one threshold, and nothing sets it. First use produces the number.
+**Obligation 3's over-firing budget.** The event half and `work-watch`'s three proposing
+checks share one threshold, and nothing sets it. First use produces the number. Its fourth
+check — edit completeness — is exempt: it fires on an act, not a pause.
 
 **The relief valve's real triggers.** The shipped signals are plausible guesses, not
 evidence. [#36](https://github.com/Calyx-Engineering/arc/issues/36) mines three repositories

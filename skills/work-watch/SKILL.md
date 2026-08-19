@@ -1,13 +1,13 @@
 ---
 name: work-watch
-description: Use continuously while work is in progress — one sweep that watches for three things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, and whether questioning has gone deeper than the decision warrants. Run it at natural pauses, not every turn.
-camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged]
-checks: [commit-point, test-obligation, depth]
+description: Use continuously while work is in progress — one sweep that watches for four things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, and whether an edit reported as done is contradicted somewhere else in the file. Run it at natural pauses, not every turn.
+camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught]
+checks: [commit-point, test-obligation, depth, edit-completeness]
 ---
 
 # Watching the work
 
-Three mechanisms watch work as it proceeds. **One sweep, not three always-on checks
+Four mechanisms watch work as it proceeds. **One sweep, not four always-on checks
 competing for the same attention.**
 
 | Watches for | Proposes | |
@@ -15,10 +15,15 @@ competing for the same attention.**
 | The work reached a reviewable point | A commit | m14 |
 | A decision implies later physical verification | A test item | m23 |
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 |
+| An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
 
-> **Propose, never act.** All three nudge; the human decides. This is the whole posture, and
-> violating it on the first — committing unasked — is the single most repeated correction in
-> the record.
+> **Propose, never act.** Three of the four nudge; the human decides. This is the whole
+> posture, and violating it on the first — committing unasked — is the single most repeated
+> correction in the record.
+>
+> **The fourth is not a nudge.** Edit completeness is a gate on your own reporting, not a
+> proposal to the human — it runs before you claim an edit is done, and it is the only check
+> here that blocks.
 
 ---
 
@@ -27,9 +32,12 @@ competing for the same attention.**
 At a natural pause: a document reached a readable state, a decision landed, a sub-analysis
 finished, a question was answered. **Not every turn.**
 
-Over-firing recreates the annoyance in a new form. The three checks share one threshold and
-it is judgment, not a count: *has anything actually changed since the last sweep?* If not,
-say nothing.
+Over-firing recreates the annoyance in a new form. The first three checks share one
+threshold and it is judgment, not a count: *has anything actually changed since the last
+sweep?* If not, say nothing.
+
+**Check 4 is exempt from the threshold.** It is not triggered by a pause but by an act — you
+are about to report an edit complete. It runs every time, at that moment.
 
 ---
 
@@ -202,6 +210,70 @@ frustrated at depth, that is the evidence it did — and it belongs in a retrosp
 
 ---
 
+## 4. Is the edit actually finished, everywhere the claim appears?
+
+> **Before reporting any edit done, `grep` the file for the string you replaced. Zero hits,
+> or it is not done.**
+
+One claim lives in several forms at once — a summary row, a table cell, a diagram label, a
+prose sentence. Editing the form the person pointed at, then reporting the change complete,
+leaves the others stating the opposite.
+
+**This is not hypothetical and it is not rare.** It happened four times consecutively in one
+session on a single file, each time reported as complete, each time caught by the person
+rather than by any check.
+
+### The rule
+
+| Step | |
+|---|---|
+| 1 | Before editing, `grep` the file for the claim in **every** form it takes — not the sentence you were shown |
+| 2 | Edit all of them |
+| 3 | Before reporting done, `grep` for the replaced string again. **Zero hits, or it is not done** |
+| 4 | Report the count you got, not the fact that you checked |
+
+### Naming one location does not scope the edit
+
+> *"fix the summary row"* means the claim is wrong, not that one row is wrong.
+
+A person points at the instance they happened to see. They are reporting a defect, not
+bounding a change. **Treat a named location as the symptom.**
+
+### Where a claim hides
+
+| Form | Why it is missed |
+|---|---|
+| **Diagram labels** | Inside a Mermaid block; a prose grep phrased in sentence form misses `W3["<b>Wave 3</b>…"]` |
+| **Summary and header rows** | Written early, read as furniture, never re-read |
+| **Section headings** | A heading asserting the old state survives a body rewrite |
+| **Counts** | *"three modes"* over a four-row table. Changing the rows leaves the number |
+| **The description in frontmatter** | Not visible in the rendered document at all |
+| **A second file** | Mirrored files, and `skills/` versus `.claude/skills/`. See CLAUDE.md |
+
+**A count is a claim.** Adding a row to a table whose sentence says *"three"* is the same
+failure with no string to grep for — so when the edit changes a quantity, re-read the number.
+
+### Grep for the old string, not the new one
+
+Grepping for what you wrote confirms you wrote it. It says nothing about what survived.
+**The check is that the thing you replaced is gone.**
+
+```sh
+grep -n "waves 3-6 are reviewed first" docs/arc-log/arc-03-camp.md   # expect zero
+```
+
+A structural check — links resolve, YAML parses, markdown lints — does not catch this. Three
+defects have shipped in this repo past passing checks.
+
+### Why it lives here and not in a tracker skill
+
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) records this
+failure shape for tracker writes and states that file edits are *"verified routinely"*. **That
+is disproved.** The same shape occurs in files; the difference is only that a diff makes it
+recoverable, not that it is caught.
+
+---
+
 ## Before the PR — does the build match the spec's diagram?
 
 **A spec section that defines a feature opens with a diagram. That diagram is the compact
@@ -231,6 +303,11 @@ a feature nobody built — the most common shape this catches, and invisible in 
 
 ## Why one sweep
 
-All three are the same shape: notice something about the work in progress, and say so. Three
-separate always-on checks would compete for the same attention and share the same
+**Checks 1 to 3 are the same shape:** notice something about the work in progress, and say
+so. Three separate always-on checks would compete for the same attention and share the same
 over-firing failure, so they share one threshold and one moment.
+
+**Check 4 is here because it is the same sweep, not the same shape.** It fires on an act
+rather than a pause, and it gates your own report rather than proposing to the human. It sits
+with the others because the moment it matters — an edit just landed and is about to be called
+done — is a moment this sweep is already looking at.
