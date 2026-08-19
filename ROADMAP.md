@@ -123,8 +123,9 @@ dispatch, the worktree partitioning and the merge sequencing; that is what this 
 | `skills/autonomy-set` | m40 |
 | `wiki/` | m29 |
 
-**Follows self-improvement**, because an autonomous run that produces the wrong thing is only
-affordable once the retrospective can find out why.
+**After the first release.** Foundation pass 2 puts in place what *enables* self-improvement —
+session preservation, the miner, the loop — and ships with release one. Porting TimeScope's
+execution tooling does not.
 
 **The precondition is the arc below.** Running work unattended without a way to test the
 tooling means a defect ships to every repo before anyone notices.
