@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# camp-branch-check — PostToolUse hook (matcher: Bash). Carries m43 §3.4.
+#
+# A branch is named once and lived with for the whole issue. A name that does not carry
+# its issue number leaves nothing linking the work to the tracker, and renaming it later
+# means every ref that already points at it is wrong. Camp names the mismatch at creation,
+# when the fix is one command.
+#
+# camp-reports: branch-create
+# checks: branch-name-convention, issue-number-present, base-is-arc
+# skips: base-is-arc (branch was created without an explicit base)
+#
+# The three lines above are the `camp-reports:` declaration. They are why this hook is
+# visible when it fires — one declaration drives both the spoken report and the event-log
+# entry. Name every check, including the ones that always pass: only reporting failures
+# makes a silent hook indistinguishable from a working one.
+# Format: docs/product-architecture/camp-reports.md
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
+# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Never `set -e`. The branch already exists by the time this runs, so there is nothing to
+# deny — this hook reports. On anything unexpected, exit 0 and stay silent.
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+
+# Read a top-level or nested field out of the hook payload without requiring jq.
+field() {
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# Speak, without blocking. exit 2 surfaces stderr to the transcript.
+report() {
+  printf '%s\n' "$1" >&2
+  exit 2
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/"$//')"
+[ -n "$CMD" ] || exit 0
+
+# Only branch creation. `git checkout <existing>` and `git switch` without -c are moves,
+# not creations, and this hook has nothing to say about them.
+case "$CMD" in
+  *"git checkout -b "*|*"git checkout -B "*|*"git switch -c "*|*"git switch -C "*|*"git branch "*) ;;
+  *) exit 0 ;;
+esac
+
+# The name is the argument after the creating flag. `git branch -d` and friends delete
+# rather than create, so they are excluded before the name is read.
+case "$CMD" in
+  *"git branch -d"*|*"git branch -D"*|*"git branch -m"*|*"git branch --list"*|*"git branch -a"*|*"git branch -r"*) exit 0 ;;
+esac
+
+NAME="$(printf '%s' "$CMD" \
+  | grep -oE 'git (checkout|switch|branch) +(-[bBcC] +)?[^ ]+' \
+  | head -1 \
+  | awk '{print $NF}')"
+[ -n "$NAME" ] || exit 0
+
+# A flag rather than a name means the command was something this hook does not model.
+case "$NAME" in -*) exit 0 ;; esac
+
+# The trunk branches are not work branches and are never created by this path in practice;
+# if one is, the session-start hook is the thing that speaks about it.
+case "$NAME" in main|master|develop) exit 0 ;; esac
+
+FINDINGS=""
+add() { FINDINGS="$FINDINGS
+  - $1"; }
+
+case "$NAME" in
+  arc/*-issue-*)
+    # The convention. Nothing to say.
+    ;;
+  arc/*)
+    add "\`$NAME\` is an arc branch, not a work branch. Work belongs on \`$NAME-issue-<N>-<slug>\`"
+    ;;
+  *)
+    add "\`$NAME\` does not match \`arc/<nn>-<slug>-issue-<N>-<slug>\`, so nothing links it to an issue"
+    ;;
+esac
+
+[ -n "$FINDINGS" ] && report "**Camp here —** branch \`$NAME\` created.
+  Checked: name convention, issue number present$FINDINGS
+  Declared but skipped: base-is-arc (no explicit base in the command)"
+
+exit 0
