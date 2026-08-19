@@ -204,6 +204,8 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/camp` | skill | m21 · m43 | Addressed by name, or `/camp` | `.claude/arc/camp/` for its agreement and voice |
 | `commands/camp.md` | command | m43 | Typed as `/camp` | `skills/camp` |
 | `.claude/arc/camp/` | record | m43 | Read by `skills/camp` on every invocation | — |
+| `camp-reports.md` | reference | m43 | Read by anything that declares what it checks | — |
+| `templates/SKILL.md` | template | m43 | Copied when a new skill is written | `camp-reports.md` |
 | `skills/wave-plan` | skill | m27 | Invoked, when work may run in parallel | `skills/camp` for the partition · `skills/delegate` |
 | `skills/gate-run` | skill | m28 | Invoked, at a feature-complete state | — |
 | `skills/verification-plan` | skill | m24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
@@ -224,7 +226,7 @@ function list, then read its Needs column to find what else must exist before it
 | `scripts/next-mechanism` | script | m39 | Called when a mechanism is captured | The suite registry |
 | `.claude/arc/log.md` | record | m44 | Appended whenever any artifact fires | Every artifact that declares `camp-reports:` |
 
-**Twenty-four artifacts for thirty-one mechanisms.** Four merges, each because the
+**Thirty-one artifacts for thirty-one mechanisms.** Four merges, each because the
 mechanisms fire together:
 
 | Artifact | Merges | Why |

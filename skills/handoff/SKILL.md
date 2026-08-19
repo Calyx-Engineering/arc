@@ -1,6 +1,10 @@
 ---
 name: handoff
 description: Use at a cold start to rehydrate from the previous session in one read, and at session end, issue close, or branch change to write what the next session needs. Covers what the handoff holds, what belongs in the committed record instead, and why it is a document rather than a chat window.
+camp-reports: [handoff-written, handoff-read]
+checks: [handoff-exists, open-threads-carried, graduated-to-record, stale-rows-removed]
+skips:
+  - graduated-to-record (nothing in the handoff outlives the arc)
 ---
 
 # The handoff

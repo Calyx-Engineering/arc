@@ -13,6 +13,10 @@
 #
 # One check, not three. Worktree identity and base freshness are follow-ups — one working
 # check beats three half-finished.
+#
+# camp-reports: edit-denied
+# checks: branch-kind, path-is-source
+# skips: worktree-identity (not built), base-freshness (not built)
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.

@@ -11,6 +11,10 @@
 # This reads back what landed and reports a mismatch. Judging "does this match what we
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
+# camp-reports: issue-write, pr-write, pr-merge
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword
+# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body)
+#
 # Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
 
 # ---- kill switch ----------------------------------------------------------------

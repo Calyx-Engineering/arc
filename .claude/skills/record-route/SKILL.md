@@ -1,6 +1,10 @@
 ---
 name: record-route
 description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Decides which file it belongs in across the K1–K4 ladder, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
+camp-reports: [record-routed, arc-log-updated, dev-log-written]
+checks: [tier, destination-exists, arc-log-status-current, dev-log-exists]
+skips:
+  - arc-log-status-current (the change is not issue state)
 ---
 
 > **Copy — do not edit.** The source is [`skills/record-route/SKILL.md`](../../../skills/record-route/SKILL.md),
