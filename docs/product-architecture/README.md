@@ -191,7 +191,8 @@ function list, then read its Needs column to find what else must exist before it
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
 | `hooks/tracker-verify` | hook | m12 | Automatic, on branch create, PR open, PR merge | `skills/issue-write` for repair |
-| `skills/work-watch` | skill | m14 · m23 · m41 | Always, as work proceeds | `skills/issue-write` to file what it catches |
+| `skills/work-watch` | skill | m14 · m23 · m41 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches |
+| `skills/relief-valve` | skill | m41 | Run by `work-watch` when the precondition trips | — |
 | `skills/config-check` | skill | m22 | Invoked, when a revision is cut | — |
 | `skills/autonomy-set` | skill | m40 | Invoked, at kickoff and when work changes character | — |
 | | **AUTHORING** | | | |
@@ -248,7 +249,7 @@ timing. Not a separate always-on process — a check in the same sweep."*
 |---|---|---|
 | The work reached a reviewable point | A commit | m14 |
 | A design decision implies later physical verification | A test item | m23 |
-| Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 |
+| Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 — runs `skills/relief-valve` |
 
 All three **propose and never act**, and all three share one open question: how often it
 may fire before the nudging becomes the annoyance.
