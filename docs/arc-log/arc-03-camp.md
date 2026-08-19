@@ -16,7 +16,7 @@ stay open.
 
 | | |
 |---|---|
-| **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them |
+| **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics |
 | **Build order** | Documents → entry point → obligations → hooks and verbosity |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
@@ -106,6 +106,7 @@ flowchart TB
 | §8 · [m44](../product-architecture/mechanisms/m44-event-log.md) | The event log, independent of verbosity | [#37](https://github.com/Calyx-Engineering/arc/issues/37) |
 | §11 | Onboarding | **Backlogged** — not this arc |
 | §12 | Named gaps | **Open by design** — see below |
+| — | Repo hygiene: shipping skills match their local copies | [#48](https://github.com/Calyx-Engineering/arc/issues/48) |
 
 ### Carried in from scoping
 
@@ -150,13 +151,18 @@ flowchart LR
         direction TB
         D1["<b>#42</b> · ob 0<br/>hold the intent"]
     end
-    W1 --> W2 --> W3 --> W4
+    subgraph W5[" Last — once every skill exists "]
+        direction TB
+        E1["<b>#48</b><br/>shipping skills match<br/>their local copies"]
+    end
+    W1 --> W2 --> W3 --> W4 --> W5
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
-    class A1,A2,B1,B2,C1,C2,C3,C4,C5,D1 n
+    class A1,A2,B1,B2,C1,C2,C3,C4,C5,D1,E1 n
     style W1 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
     style W2 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
     style W3 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
     style W4 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
+    style W5 fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
 ```
 
 **Why obligation 0 is last despite being the priority.** It cannot evaluate direction without
@@ -209,6 +215,7 @@ Settled during scoping. **These apply across every issue in the arc.**
 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Obligation 4 — announcing actions | Not started |
 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | Not started |
 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | Not started |
+| [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Not started — **runs last** |
 | [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | Not started |
 | [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) | Tracker mechanics, from scoping | Not started |
 
