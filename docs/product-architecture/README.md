@@ -201,8 +201,10 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/spec-interview` | skill | m45 | Invoked, when a capability needs specifying before it can be built | `skills/issue-write` for the decomposition that follows |
 | | **CAMPAIGN** | | | |
 | `skills/kickoff` | skill | m09 · m20 | Invoked, at the start of an arc | `skills/issue-write` to file the decomposition · `skills/autonomy-set` |
-| `agents/camp` | agent | m21 | Invoked, at checkpoints and on request | `skills/record-route` for the arc-log |
-| `skills/wave-plan` | skill | m27 | Invoked, when work may run in parallel | `agents/camp` for the partition · `skills/delegate` |
+| `skills/camp` | skill | m21 · m43 | Addressed by name, or `/camp` | `.claude/arc/camp/` for its agreement and voice |
+| `commands/camp.md` | command | m43 | Typed as `/camp` | `skills/camp` |
+| `.claude/arc/camp/` | record | m43 | Read by `skills/camp` on every invocation | — |
+| `skills/wave-plan` | skill | m27 | Invoked, when work may run in parallel | `skills/camp` for the partition · `skills/delegate` |
 | `skills/gate-run` | skill | m28 | Invoked, at a feature-complete state | — |
 | `skills/verification-plan` | skill | m24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
 | | **KNOWLEDGE** | | | |
@@ -255,10 +257,11 @@ may fire before the nudging becomes the annoyance.
 every record-reading and record-writing artifact depends on, not a capability of its own.
 It is in the list because the dependency is real and something must ship it.
 
-**`agents/camp` is unresolved.** An arc needs something that holds its shape — the spawn
-tree, what is next, what must not be re-litigated. Whether that is an agent, a skill
-writing to the arc-log, or a role the main thread adopts is not decided. The name pairs
-with Lodestar's Star.
+**Camp is a skill, not an agent.** An arc needs something that holds its shape — the spawn
+tree, what is next, what must not be re-litigated. [m43](mechanisms/m43-camp-assistant.md)
+settled the form: documents, skills and hooks. An agent would have to read the conversation
+continuously, which is the one cost Arc cannot carry; only the relief valve needed it, and
+that half degrades to a skill. The name pairs with Lodestar's Star.
 
 **`skills/handoff` is separate from `skills/record-route` on purpose.** Record routing answers
 *where does this go*; the handoff is a durable artifact that survives window death —
