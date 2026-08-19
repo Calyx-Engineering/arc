@@ -85,7 +85,7 @@ moves next; this column only reports.
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
 | m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../reference-roadz/engineering-report/SKILL.md) | ⚪ |
 | m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, and when to decide rather than ask* | [skill](../../.claude/skills/chat-response/SKILL.md) | 🔵 |
-| m45 | `spec-interview` | 🔥 | **A spec that matches what was agreed.** *Labelled question sets to reach the decisions, then the full re-read that catches a document contradicting itself* | [skill](../../.claude/skills/spec-interview/SKILL.md) | 🔵 |
+| m45 | `spec-interview` | 🔥 | **A spec that matches what was agreed.** *Labelled question sets to reach the decisions, then the full re-read that catches a document contradicting itself* | [skill](../../skills/spec-interview/SKILL.md) | 🔵 |
 | | | | ↳ *The dev-log and arc-log are authored by m17, in Knowledge* | | |
 | | **CAMPAIGN** | | | | |
 | m09 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/m09-kickoff-scope-gate.md) | ⚪ |
