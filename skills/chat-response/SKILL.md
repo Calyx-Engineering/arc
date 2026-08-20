@@ -1,6 +1,6 @@
 ---
 name: chat-response
-description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
+description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 # chat-response
@@ -49,6 +49,11 @@ with what they can ask for, not with the answer to what they did not ask.
 
 **Match the question's altitude.** A yes/no question gets yes or no first. A "how
 should we…" question gets a recommendation first.
+
+**Every issue and PR number is a link.** `[#42](…/issues/42)`, never a bare `#42` — a number
+the reader has to go and find is the work the reply exists to save. A run is linked
+individually: `#31 · #32 · #33`, not `#31–#35`. PRs take `/pull/`. Code blocks and commit
+text stay plain.
 
 
 ## What compression must never break
