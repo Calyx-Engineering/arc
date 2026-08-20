@@ -1076,6 +1076,10 @@ worse than none.
 
 ## 11 Backlog — Camp runs onboarding
 
+> **Onboarding is [m47](m47-onboarding.md).** Camp is its voice, not its owner — it writes
+> repository instructions, registers hooks and points at the mechanism registry, which are
+> other mechanisms' concerns. What follows is Camp's part.
+
 **Not in scope; recorded so it is not lost.** When Arc is first installed in a repository,
 Camp could walk the user through configuring it — the operating agreement, the register, the
 verbosity level, whether the default-branch flip is available.
@@ -1120,3 +1124,4 @@ the boundary against [m20](m20-arc-decomposition.md), are named as undesigned in
 - [m15](m15-handoff-spine.md) · [m17](m17-k1-upkeep.md) — the record Camp reads and never owns
 - [m25](m25-agent-roster.md) — the roster Camp's deferred monitoring agent would join
 - [m44](m44-event-log.md) — the event log Camp's verbosity makes necessary
+- [m46](m46-work-navigation.md) — where a discovery goes; obligation 0 decides whether it belongs in this arc at all

@@ -172,7 +172,7 @@ flowchart TB
         W4 --> BR4{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
         BR4 --> W5["<b>Wave 5</b><br/>14–20 · #31–#35<br/>#55 · #56"]
         W5 --> BR5{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
-        BR5 --> W6["<b>Wave 6</b><br/>21 · #48<br/>skill parity"]
+        BR5 --> W6["<b>Wave 6</b><br/>21 · #48 · 22 · #73<br/>23 · #78<br/>parity, autonomy, work nav"]
     end
     STOP ==> B
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
@@ -286,6 +286,9 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Ready |
+| 22 | 6.2 | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch — what auto changes, and how it ends | Spawned mid-arc. In a worktree, worked in its own window |
+| 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
+| — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
 ### What each wave is
@@ -409,3 +412,4 @@ this arc tested rather than asserted.
 - [m44](../product-architecture/mechanisms/m44-event-log.md) — the event log
 - [m41](../product-architecture/mechanisms/m41-relief-valve.md) — the relief valve's precondition and thresholds
 - [m42](../product-architecture/mechanisms/m42-default-branch-flip.md) — why the default branch is pointed at this arc
+- [m46](../product-architecture/mechanisms/m46-work-navigation.md) — where a discovery goes and how the work gets back out, spawned mid-arc by [#75](https://github.com/Calyx-Engineering/arc/pull/75)

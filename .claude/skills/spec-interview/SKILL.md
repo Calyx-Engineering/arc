@@ -144,6 +144,20 @@ someone looking for where to make a change.
 maintainable. *When* it was made is noise — unless a dated revision marker stops someone
 re-opening a settled question.
 
+### Number the sections when they will be cited
+
+**A spec whose parts get referenced from issues, PRs and other specs numbers its sections.**
+`m43 §3.2` resolves; *"the obligation 1 section"* does not.
+
+| | |
+|---|---|
+| **Number it** | Parts of it will be cited elsewhere, or it is long enough that a reader needs an index |
+| **Leave it** | It is read start to finish and nothing points into its middle |
+
+**Not a blanket rule.** Most mechanism specs are short and unnumbered, and numbering them
+adds ceremony for no reader. It is decided per document, and changing it later renumbers
+every citation — so decide it when the document is written.
+
 ### Structure it for the editor, not the author
 
 A spec grown by insertion ends in insertion order, which is nobody's reading order.
