@@ -1,4 +1,4 @@
-# Handoff — &lt;YYYY-MM-DD&gt;
+# Handoff — &lt;YYYY-MM-DD HH:MM&gt;
 
 > Session-scoped working file. **Gitignored — not part of the record.** Delete it when the
 > arc closes; anything worth keeping graduates to the arc-log or a dev-log first.
