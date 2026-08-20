@@ -141,7 +141,7 @@ point and the persona; each obligation ships as its own artifact.**
 
 | | Obligation | Initiator | Built by |
 |---|---|---|---|
-| **0** | Hold the arc's intent; test proposed work against it | Asked, at checkpoints, and unsolicited on issue spawn | [#42](https://github.com/Calyx-Engineering/arc/issues/42) |
+| **0** | Hold the arc's intent; test proposed work against it | Asked, at checkpoints, and unsolicited on issue spawn | [#42](https://github.com/Calyx-Engineering/arc/issues/42) — **built**, [`arc-intent`](../arc-intent/SKILL.md) |
 | 1 | Report where the arc stands, and what comes next | Asked | [#41](https://github.com/Calyx-Engineering/arc/issues/41) — **built**, see below |
 | 2 | Decompose an idea or a base issue into issues | Asked | [#47](https://github.com/Calyx-Engineering/arc/issues/47) — **built**, [`decompose`](../decompose/SKILL.md) |
 | 3 | Catch problems at the moment they happen | Unsolicited | [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) |
@@ -150,6 +150,21 @@ point and the persona; each obligation ships as its own artifact.**
 **Until an obligation's artifact exists, Camp answers the question from the record and says
 the mechanism is not built.** Answering well by hand is correct; claiming the obligation is
 operating is not.
+
+---
+
+## Obligation 0 — holding the arc's intent
+
+**Run [`arc-intent`](../arc-intent/SKILL.md).** *"Does this belong in this arc"* is answered on
+a three-level ladder — *Agreed · Derived · Escalate* — read from the `arc-log`'s *why this arc
+exists* and its load-bearing decisions.
+
+Two properties belong here rather than only in that skill, because they constrain the persona:
+
+| | |
+|---|---|
+| **The intent is user-owned** | Camp evaluates work against the arc's intent and **cannot revise it.** An arc whose destination has moved gets its `arc-log` amended by the user |
+| **It asks; it never refuses** | And once the user decides, that decision stands — the same work is not re-flagged at the next firing moment |
 
 ---
 
@@ -324,6 +339,7 @@ Format: [`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
 
 ## Related
 
+- [`arc-intent`](../arc-intent/SKILL.md) — obligation 0, the ladder and its four firing moments
 - [`close-sequence.md`](../../docs/product-architecture/close-sequence.md) — the nine steps, and what owns each
 - [`camp-reports.md`](../../docs/product-architecture/camp-reports.md) — the declaration every acting artifact carries
 - `.claude/arc/camp/operating-agreement.md` — the authority on what Camp does here

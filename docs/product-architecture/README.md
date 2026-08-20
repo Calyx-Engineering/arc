@@ -207,7 +207,8 @@ function list, then read its Needs column to find what else must exist before it
 | | **CAMPAIGN** | | | |
 | `skills/kickoff` | skill | m09 · m20 | Invoked, at the start of an arc | `skills/issue-write` to file the decomposition · `skills/autonomy-set` |
 | `skills/camp` | skill | m21 · m43 | Addressed by name, or `/camp` | `.claude/arc/camp/` for its agreement and voice · `skills/decompose` |
-| `skills/decompose` | skill | m43 | Invoked, when a spec or idea must become a set of issues | `skills/issue-write` to file the approved set |
+| `skills/decompose` | skill | m43 | Invoked, when a spec or idea must become a set of issues | `skills/arc-intent` to classify the set · `skills/issue-write` to file it |
+| `skills/arc-intent` | skill | m43 | On issue spawn, at PR open, when asked, and when the relief valve fires | `docs/arc-log/` for the stated intent |
 | `commands/camp.md` | command | m43 | Typed as `/camp` | `skills/camp` |
 | `.claude/arc/camp/` | record | m43 | Read by `skills/camp` on every invocation | — |
 | `camp-reports.md` | reference | m43 | Read by anything that declares what it checks | — |

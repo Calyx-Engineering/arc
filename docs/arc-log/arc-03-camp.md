@@ -278,7 +278,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 11 | 3.5 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | Obligation 3 — four hooks | **Merged** — [PR #70](https://github.com/Calyx-Engineering/arc/pull/70) |
 | 12 | 3.6 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | **Merged** — [PR #71](https://github.com/Calyx-Engineering/arc/pull/71) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | **Next** — `docs/dev-log/issue-42-intent.md` does not exist yet |
+| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready |

@@ -18,7 +18,7 @@ cd "$(dirname "$0")/.." || exit 1
 
 # Skills worth having live locally. Not every shipped skill — only the ones that
 # shape how work is done in this repo.
-SKILLS="chat-response spec-interview issue-write work-watch record-route handoff camp relief-valve decompose"
+SKILLS="chat-response spec-interview issue-write work-watch record-route handoff camp relief-valve decompose arc-intent"
 
 # Commands have the same problem for the same reason: `commands/` is discovered through
 # ${CLAUDE_PLUGIN_ROOT}, which resolves only for an installed plugin, and Claude Code

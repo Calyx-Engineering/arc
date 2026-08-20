@@ -2,7 +2,7 @@
 name: decompose
 description: Use when turning a specification or a rough idea into a proposed set of issues — reading the spec and the arc's intent, listing every part that must exist, grouping into one artifact or one decision each, ordering by dependency, and naming what each delivers when it merges. Presents the set for approval and files nothing unapproved.
 camp-reports: [decomposition-proposed]
-checks: [intent-read, parts-listed, one-artifact-each, dependency-ordered, deliverable-named, approval-held]
+checks: [intent-read, parts-listed, one-artifact-each, dependency-ordered, deliverable-named, intent-classified, approval-held]
 ---
 
 > **Copy — do not edit.** The source is [`skills/decompose/SKILL.md`](../../../skills/decompose/SKILL.md),
@@ -30,10 +30,15 @@ mechanism costs the whole decomposition, every time.
 | 3 | **Group into issues** | One artifact, or one decision, each |
 | 4 | **Order by dependency** | Not by value |
 | 5 | **Name what each delivers when it merges** | One line per issue |
-| 6 | **Present the set for approval** | **File nothing unapproved** |
+| 6 | **Classify each against the arc's intent** | [`arc-intent`](../arc-intent/SKILL.md). Issue spawn is one of its four firing moments |
+| 7 | **Present the set for approval** | **File nothing unapproved** |
 
 **Step 2 before step 3.** Listing parts and grouping them are different acts, and doing them
 together produces issues shaped by what is convenient to write rather than by what must exist.
+
+**Step 6 does not remove anything from the set.** An issue outside the arc's intent is
+presented with its classification attached — *escalate*, and the reason — so the user decides
+whether it lands here or later. Dropping it silently is the same failure as filing it silently.
 
 ---
 
@@ -116,4 +121,5 @@ a gap discovered at use is one that produced a bad decomposition first.
 
 - [m43 §3.3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — obligation 2, which this implements
 - [`issue-write`](../issue-write/SKILL.md) — what files the set once approved, and the title rule
-- [`camp`](../camp/SKILL.md) — the entry point; obligation 0 owns whether the work belongs in this arc
+- [`arc-intent`](../arc-intent/SKILL.md) — obligation 0, which decides whether a proposed issue belongs in this arc
+- [`camp`](../camp/SKILL.md) — the entry point

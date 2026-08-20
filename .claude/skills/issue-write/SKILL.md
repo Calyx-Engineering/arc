@@ -2,10 +2,11 @@
 name: issue-write
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
+checks: [arc-intent, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
+  - arc-intent (the current arc has no arc-log)
 ---
 
 > **Copy — do not edit.** The source is [`skills/issue-write/SKILL.md`](../../../skills/issue-write/SKILL.md),
@@ -18,6 +19,22 @@ skips:
 > **Every mechanism here fails silently.** A wrong closing keyword, a stale hand-made link,
 > a scripted edit that never landed — each reports success and does the wrong thing. That is
 > why the read-back is a step, not a courtesy.
+
+---
+
+## Before the write — does this belong in the arc?
+
+**Filing an issue and opening a PR are two of obligation 0's four firing moments.** Run
+[`arc-intent`](../arc-intent/SKILL.md) before the write, not after.
+
+| Writing | The question |
+|---|---|
+| **A new issue** | Does this belong in the arc, or outside it |
+| **A PR** | Is what merged the work the arc asked for |
+
+**It never blocks a write.** An *escalate* is a question put to the user with the body ready
+to go — the issue is still worth filing, and the arc it lands in is the user's call. What it
+prevents is the file happening silently while the arc's stated scope says otherwise.
 
 ---
 
