@@ -82,6 +82,38 @@ good as that classification, so the mechanism may need to check it rather than t
 sub-issues are a real API relationship. Reading prose is fragile; sub-issues require the
 relationship to be recorded at creation.
 
+---
+
+## A node is a work item, not an issue
+
+**Settled 2026-08-20.** The tree's node is the unit of work, which is usually an issue and
+sometimes only a PR — a small fix taken branch-to-PR spawns no issue, and reading issue
+bodies alone makes it invisible.
+
+| Shape | Renders as |
+|---|---|
+| **Issue with its PR — the 1-to-1 case** | **One node.** The issue, with its PR noted on it |
+| **Issue with several PRs** | One node per PR beneath the issue. The split is the interesting part |
+| **PR with no issue** | **One node.** The PR itself |
+
+**The 1-to-1 collapse is the rule that keeps the tree readable.** Most issues have exactly
+one PR, so drawing both doubles every node and adds nothing — the pair is one piece of work
+that happens to have two identifiers. Only draw the second node when the ratio is not 1-to-1,
+because that is when it carries information.
+
+**A 0-to-1 is always drawn.** It is real work with a real parent, and it is the case the
+issue-only reader loses entirely.
+
+### What it reads
+
+| Source | Carries |
+|---|---|
+| An issue's spawned table | Its children, whether those are issues or PRs |
+| A PR body's `Spawned by #NN` | Its parent, when no issue records it |
+
+Both are written by [`skills/issue-write`](../../../skills/issue-write/SKILL.md). **The tree
+reads; it never infers a relationship nobody recorded.**
+
 **What else the agent would own**, if it is an agent: the handoff, the status table, moving
 between issues. Those are m15 and m17, which have their own artifacts — so the agent may
 be a reader of them rather than an owner.
