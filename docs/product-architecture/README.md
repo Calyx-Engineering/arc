@@ -47,7 +47,7 @@ unread on disk.
 
 ## Mechanisms
 
-Thirty-four mechanisms across the six pieces.
+Thirty-five mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -89,6 +89,7 @@ moves next; this column only reports.
 | m46 | Work navigation | 🔥 | **A discovery does not derail the work or get lost.** *Records it in the parent's `Spawned` section, asks the user to ascend or descend, and branches where the dependency actually is — the patch series model* | [spec](mechanisms/m46-work-navigation.md) | ⚪ |
 | | | | ↳ *The dev-log and arc-log are authored by m17, in Knowledge* | | |
 | | **CAMPAIGN** | | | | |
+| m47 | Onboarding | 🔥 | **Arc's behaviours survive the repository boundary.** *Configures a fresh repository once — the rules that must load without a skill firing, Camp's documents, the hooks, the default-branch decision. Zero re-teaching* | [spec](mechanisms/m47-onboarding.md) | ⚪ |
 | m09 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/m09-kickoff-scope-gate.md) | ⚪ |
 | m20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | [spec](mechanisms/m20-arc-decomposition.md) | ⚪ |
 | m43 | Camp — the delivery assistant | 🔥 | **A colleague, not a command.** *Holds the arc's intent and asks whether proposed work still serves it, answers where the arc stands, and makes Arc's operation visible — governed by an operating agreement you approve* | [spec](mechanisms/m43-camp-assistant.md) | ⚪ |

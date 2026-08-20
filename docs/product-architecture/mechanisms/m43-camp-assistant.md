@@ -1076,6 +1076,10 @@ worse than none.
 
 ## 11 Backlog — Camp runs onboarding
 
+> **Onboarding is [m47](m47-onboarding.md).** Camp is its voice, not its owner — it writes
+> repository instructions, registers hooks and points at the mechanism registry, which are
+> other mechanisms' concerns. What follows is Camp's part.
+
 **Not in scope; recorded so it is not lost.** When Arc is first installed in a repository,
 Camp could walk the user through configuring it — the operating agreement, the register, the
 verbosity level, whether the default-branch flip is available.
