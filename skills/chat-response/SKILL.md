@@ -1,6 +1,6 @@
 ---
 name: chat-response
-description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
+description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 # chat-response
@@ -49,6 +49,25 @@ with what they can ask for, not with the answer to what they did not ask.
 
 **Match the question's altitude.** A yes/no question gets yes or no first. A "how
 should we…" question gets a recommendation first.
+
+### Every issue and PR number is a link
+
+**An issue or PR number written in chat is always a markdown link.** Never a bare `#42`.
+
+```text
+Wrong:  Next is #42, obligation 0.
+Right:  Next is [#42](https://github.com/OWNER/REPO/issues/42), obligation 0.
+```
+
+| | |
+|---|---|
+| **Applies everywhere in a reply** | Prose, tables, bullets, the trailing next-action line. There is no position where a bare number is acceptable |
+| **A run of numbers is linked individually** | `#31 · #32 · #33`, each its own link — never `#31–#35` collapsed to one |
+| **Same for PRs** | `/pull/<N>` rather than `/issues/<N>` |
+| **Not in code blocks or commit text** | A commit body, a branch name and a `Closes #NN` line are plain text. This rule is about chat only |
+
+**The number alone is unusable.** The reader has to search for it, which is the work the
+reply exists to save — and a wrong number is invisible until someone follows it.
 
 
 ## What compression must never break
