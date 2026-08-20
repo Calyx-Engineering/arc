@@ -411,6 +411,17 @@ this arc tested rather than asserted.
 - [ ] Soak line appended for every plugin change made during this arc
 - [ ] K2 swept — durable product facts graduated
 
+**Why nothing has run, and what closes it.** `hooks/hooks.json` registers all four hooks
+correctly, through `${CLAUDE_PLUGIN_ROOT}` — a path that resolves only for an installed plugin.
+The skills half of this has a stopgap in `tools/sync-local-skills.sh`; the hooks half has none
+and gets none, because a hook copied into `.claude/settings.json` would be tested against a
+version of itself.
+
+**Installing the released plugin is what closes it** — a release milestone, not arc work, per
+CLAUDE.md and the ROADMAP's release bar. Until then every hook-carried check is written and
+not running: `hooks/tracker-verify` already holds the milestone check that
+[PR #91](https://github.com/Calyx-Engineering/arc/pull/91) in this arc still missed.
+
 ---
 
 ## Related
