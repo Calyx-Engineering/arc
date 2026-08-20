@@ -282,7 +282,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready |
 | 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | Ready |
-| 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | Ready |
+| 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **In progress** — pulled forward out of order, uncommitted |
 | 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Ready |
@@ -365,8 +365,12 @@ are checked.
 | An unquoted colon made `skills/camp`'s frontmatter fail to parse | [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Adding a field that forced the frontmatter to be parsed rather than read |
 | Ten template links one directory too shallow, and one truncated line | [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Checking link resolution on the template, which #39 never did |
 
-**Also open:** `tools/sync-local-skills.sh --check` false-positives on Windows — line endings
-make every copy compare unequal on a clean tree. Logged against
+**Since fixed:** `tools/sync-local-skills.sh --check` false-positived on Windows — line endings
+made every copy compare unequal on a clean tree. The sync writes LF and `.gitattributes` had no
+`.md` rule, so a synced copy came back CRLF-dirty with no content change. `*.md text eol=lf` plus
+a renormalize took a repeat sync from `4 copied` to `0 copied, 9 checked`. Fixed while doing
+[#55](https://github.com/Calyx-Engineering/arc/issues/55); noted on
+[#68](https://github.com/Calyx-Engineering/arc/issues/68) and
 [#48](https://github.com/Calyx-Engineering/arc/issues/48).
 
 **Still unexercised.** Nothing in this repository runs a skill or fires a hook, so no

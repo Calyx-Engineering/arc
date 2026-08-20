@@ -3,3 +3,9 @@
 *.sh text eol=lf
 hooks/* text eol=lf
 tools/hook-cases/**/*.json text eol=lf
+tools/tracker-cases/**/*.md text eol=lf
+
+# Markdown is LF too. `tools/sync-local-skills.sh` writes LF, so without this every sync
+# reports each skill copy as modified with no content change — noise in the diff that is
+# the review surface.
+*.md text eol=lf
