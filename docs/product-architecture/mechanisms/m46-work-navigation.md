@@ -150,28 +150,56 @@ dependent change cannot land before what it depends on.
 
 ```mermaid
 flowchart TB
-    START(["Working on a unit"]) --> WORK["Work on it"]
-    WORK -->|something spotted| TABLE["Row into the parent's<br/><b>spawned table</b> — unfiled.<br/><i>Do not act on it</i>"]
+    LEGEND["<b>unit</b> = the issue or PR being worked on now<br/><b>parent</b> = the unit this one was spawned from"]
+    START(["Working on a unit"]) --> WORK["Work the unit"]
+    WORK -->|something spotted| SCOPE{"Could this be<br/>its own unit?"}
+    SCOPE -->|"no — it is work<br/>on this unit"| TODO["Add it to this unit's<br/><b>checklist</b> — it is<br/>part of the unit now"]
+    TODO --> WORK
+    SCOPE -->|"yes — it is<br/>a new unit"| TABLE["Record it in the parent's<br/><code>Spawned</code> section —<br/><i>record only, no work on it now</i>"]
     TABLE --> WORK
-    WORK --> DONE{"Unit<br/>complete?"}
+    WORK --> DONE{"Is this unit's<br/>own work done?"}
     DONE -->|not yet| WORK
-    DONE -->|yes| SPAWN["Spawn the tabled rows —<br/>issue, PR, or marked abandoned"]
+    DONE -->|yes| SPAWN["Give each <code>Spawned</code> row a real<br/>issue or PR — or mark it abandoned"]
     SPAWN --> ASK{{"<b>Ascend or descend?</b><br/>the user decides"}}
-    ASK -->|descend| START
-    ASK -->|ascend| REVIEW["Review · merge"]
-    REVIEW --> EXHALE(["Breath ends<br/>at the merge"])
+    ASK -->|"descend — but it is<br/>its own unit"| REVIEW["Review · merge"]
+    ASK -->|"ascend — nothing<br/>left below"| REVIEW
+    ASK -->|"descend — it changes<br/>what this unit is"| GROW["Same unit, same branch.<br/><b>Retitle it</b>"]
+    GROW --> WORK
+    REVIEW --> AFTER{"Was a new unit<br/>waiting below?"}
+    AFTER -->|yes| START
+    AFTER -->|no| EXHALE(["Back to the parent —<br/>this breath ends"])
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef u fill:#3d2b4f,stroke:#b07fd6,color:#fff
     classDef d fill:#1f3d2b,stroke:#4caf70,color:#fff
-    class WORK,TABLE,DONE,SPAWN,REVIEW,START n
+    classDef leg fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0,text-align:left
+    class WORK,SCOPE,TODO,TABLE,DONE,SPAWN,REVIEW,GROW,AFTER,START n
     class ASK u
     class EXHALE d
+    class LEGEND leg
 ```
 
 **Entry condition:** a small, scoped discovery during manual work — the no-issue PR case.
 Larger or already-scoped work goes to a worktree instead, and does not move the tree at all.
 
-### 5.1 Breaths nest
+### 5.1 Not everything spotted is spawned work
+
+**The test is whether it could stand alone: *could this be its own issue or PR?***
+
+| Answer | Where it goes | Because |
+|---|---|---|
+| **No** — it is work this unit already implied | This unit's **issue or PR checklist** | A paragraph to fix or a link to add is not a unit of work. A `Spawned` row implies it becomes its own issue or PR, which it never will |
+| **Yes** — it could stand alone | The parent's **`Spawned` section** | Whether it folds into this unit or splits off is decided later, at spawn time |
+
+**The checklist, not chat.** A todo held in conversation dies with the session, and the
+checklist is already the session's working state —
+[`work-watch`](../../../skills/work-watch/SKILL.md) treats it that way.
+
+**A yes does not mean it leaves.** [§4](#4-three-relations-not-two)'s row 4 was a new unit
+that got a `Spawned` row and still stayed in PR
+[#75](https://github.com/Calyx-Engineering/arc/pull/75) — the row records it, the
+reviewable-unit test decides where it lands.
+
+### 5.2 Breaths nest
 
 A discovery inside a discovery is normal and does not need flattening.
 
@@ -184,20 +212,20 @@ several PRs** — the failure this mechanism was written after.
 
 ---
 
-## 6 The spawned table is a scope buffer
+## 6 The `Spawned` section is a scope buffer
 
-**A spotted tangent goes into the parent's spawned table immediately, unfiled. Nothing is
-acted on when it is spotted.**
+**A spotted tangent goes into the parent issue or PR's `Spawned` section immediately — as a
+new row, or as a sharpening of one already there. Nothing is acted on when it is spotted.**
 
 | | |
 |---|---|
-| **Not a to-do list** | A growing definition of what this work turned out to be |
+| **Not a to-do list** | A growing definition of what this work turned out to be. Rows are edited as understanding improves, not only appended |
 | **Long is fine** | Length is evidence of scope, and seeing it early is the point |
-| **Unfiled rows get numbers later** | At spawn time, not at spot time |
+| **A row gets its number later** | At spawn time, not at spot time. Until then it is a described row with no tracker object of its own |
 | **Abandoned rows stay**, marked at the front of the row | A record of what was chosen against is worth more than a tidy table |
 
 **This is [`decompose`](../../../skills/decompose/SKILL.md)'s other input.** It reads a spec
-*or* a spawned table, and records which — so the proposed set carries its own origin. A table
+*or* a `Spawned` section, and records which — so the proposed set carries its own origin. A table
 that grew for three days is exactly the raw material decomposition needs.
 
 **Both directions are recorded**, and the pair is what makes the tree navigable rather than
@@ -320,8 +348,8 @@ unscoped discovery does not. The boundary between them is judgement.
 
 | Artifact | Carries |
 |---|---|
-| [`skills/issue-write`](../../../skills/issue-write/SKILL.md) | The spawned table, the abandoned marker, mandatory retitling |
-| [`skills/decompose`](../../../skills/decompose/SKILL.md) | Reading the spawned table as an input, and recording its origin |
+| [`skills/issue-write`](../../../skills/issue-write/SKILL.md) | The `Spawned` section, the abandoned marker, mandatory retitling |
+| [`skills/decompose`](../../../skills/decompose/SKILL.md) | Reading the `Spawned` section as an input, and recording its origin |
 | [`skills/chat-response`](../../../skills/chat-response/SKILL.md) | The ascend/descend prompt as a standalone message |
 | `CLAUDE.md` — branching | Branch naming with the number |
 | [m21](m21-arc-tree.md) | Rendering these relations |
