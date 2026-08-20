@@ -155,6 +155,31 @@ Not continuously — TimeScope already learned that lesson for dev-logs
 (*"Continuous per-turn dev-log churn is narration by another name"*). Write at
 checkpoints: issue close, branch change, session end, and before any handoff.
 
+### The entry point — `/arc-next`
+
+A document-as-spine still needs something to open it. Left to a pasted prompt, the read
+path is only as reliable as what the user types while tired at the end of a long stretch.
+
+> **The prompt is a pointer, and a pointer that never varies should not be retyped.**
+
+Everything that changes between stop points — the issue, the branch, the constraint — is
+already in the handoff's *Do these in order*. What is left is invariant: *read the handoff,
+then execute its ordered actions*. So it is a command rather than a message.
+
+| | |
+|---|---|
+| **`commands/arc-next.md`** | Reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
+| **The loop is one action** | New session, `/arc-next`. Nothing to copy, nothing to keep straight |
+| **Two stated failure modes** | No handoff — stop and say so, because guessing the arc's state is the failure this mechanism exists to prevent. No ordered actions — report what the handoff does carry and ask, rather than filling the gap by inference |
+
+**A pasted prompt remains valid** and is still the way to carry something that has no home in
+the handoff — a standing approval, or an instruction for how the next session should run.
+The command replaces the invariant half, not the whole message.
+
+**Observed 2026-08-20.** The user's description of the loop was *"all I do is pull the handoff
+from you at the end of each stop point, copy/paste a prompt, and then start a new prompt"* —
+three manual steps where the varying part was already written down.
+
 ---
 
 ## Arc-tree — the shape hardware work actually takes

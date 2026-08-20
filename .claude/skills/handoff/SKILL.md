@@ -236,3 +236,8 @@ always reasoning that belongs in a dev-log, or detail that belongs in K2.
 [templates/handoff.md](../../templates/handoff.md). Copy it rather than writing from memory
 — the section list is the mechanism, and a handoff missing *do not*, *open threads* or *do
 these in order* fails in exactly the way those sections exist to prevent.
+
+**The title carries a date and a time**, `YYYY-MM-DD HH:MM`. It is the only thing in the
+document that says when the state it describes was true, and the next session reads it to
+decide whether to trust the rest. A date alone cannot distinguish a handoff written an hour
+ago from one written before a full day's work in another window.
