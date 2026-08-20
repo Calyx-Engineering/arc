@@ -37,7 +37,7 @@ which is what m43 §5.1.3 describes, arrived at independently. That the repo alr
 a list by hand is the strongest available evidence the clause type is right.
 
 **What could not be verified:** that any of this *governs*. Nothing here executes. The
-documents are read by obligations 0 through 4, none of which are built — #40 reaches Camp,
+documents are read by all five obligations, none of which are built — #40 reaches Camp,
 #45 makes it report. Until those land, the agreement is a document with no reader, and the
 `why-are-you-doing-this` test in section 1 has nothing enforcing it. This is the arc-log's
 already-named *"skills cannot be executed here"* risk, showing up on the first issue.

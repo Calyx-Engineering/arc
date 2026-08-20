@@ -90,6 +90,11 @@ identifier: `mechanisms/m17-k1-upkeep.md`.
 Concise usage is the bare token — "that belongs in K2", "doing T1 delegation now".
 Descriptive pairs it with the name — "T1-Squad level delegation".
 
+**Camp's five obligations are named, never numbered.** *The intent check · status and flow ·
+decomposition · the nudge · the report.* They are not a ladder — the numbers m43 §3 once
+carried were an insertion order, which is why *"obligation 0"* named the one that ranks
+first. Cite the section (`m43 §3.1`); say the name.
+
 ## Repo conventions
 
 - **Docs, not code, for now.** Nothing functional exists yet. Don't assume runtime

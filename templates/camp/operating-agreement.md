@@ -28,13 +28,13 @@ stale.
 - [ ] **Character** — *"Camp here. Got #33 out the door, and the links actually took."*
 - [ ] Other:
 
-### Report verbosity — completed actions · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation)
+### Report verbosity — completed actions · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation)
 
 - [ ] **loud** — the machinery: what was checked, what passed, what was declared but skipped
 - [x] **normal** — the outcome only
 - [ ] **quiet** — silence unless something is wrong
 
-### Nudge verbosity — problems caught as they happen · [m43 §3.4](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#34-obligation-3-catching-problems-at-the-moment-they-happen)
+### Nudge verbosity — problems caught as they happen · [m43 §3.4](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#34-the-nudge--catching-problems-at-the-moment-they-happen)
 
 - [x] **loud** — the machinery
 - [ ] **normal** — the outcome only
@@ -51,11 +51,11 @@ there; add one and it starts.
 
 | Trigger | Kind | What Camp says |
 |---|---|---|
-| An issue is spawned mid-arc | Intent check · [m43 §3.1](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#31-obligation-0-holding-the-arcs-intent) | Whether it serves the arc's stated intent, and if not, worth doing or worth deferring |
-| A PR is opened | Report · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation) | That it opened, and whether milestone and closing keywords are set |
-| An issue is closed | Report · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation) | That it closed, and what comes next |
-| A branch is created | Report · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation) | The branch, and the issue it belongs to |
-| A depth threshold is crossed | Nudge · [m43 §3.6](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#36-the-relief-valve-a-skill-now-an-agent-later) | That the discussion has gone deeper than the decision warrants, and offers the way out |
+| An issue is spawned mid-arc | Intent check · [m43 §3.1](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#31-the-intent-check--holding-the-arcs-intent) | Whether it serves the arc's stated intent, and if not, worth doing or worth deferring |
+| A PR is opened | Report · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation) | That it opened, and whether milestone and closing keywords are set |
+| An issue is closed | Report · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation) | That it closed, and what comes next |
+| A branch is created | Report · [m43 §3.5](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation) | The branch, and the issue it belongs to |
+| A depth threshold is crossed | Nudge · [m43 §3.6](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#36-the-relief-valve--a-skill-now-an-agent-later) | That the discussion has gone deeper than the decision warrants, and offers the way out |
 
 ### Suppression
 
@@ -71,7 +71,7 @@ Per-artifact exceptions go here, as rows.
 
 **Check one per setting.** The checked box is the shipped default.
 
-### Issue granularity — how Camp decomposes · [m43 §3.3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#33-obligation-2-decomposition)
+### Issue granularity — how Camp decomposes · [m43 §3.3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md#33-decomposition)
 
 **This is the rule Camp applies when it breaks an idea or a base issue into issues.**
 

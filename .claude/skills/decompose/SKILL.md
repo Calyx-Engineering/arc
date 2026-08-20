@@ -25,7 +25,7 @@ mechanism costs the whole decomposition, every time.
 
 | # | Step | |
 |---|---|---|
-| 1 | **Read the spec and the arc's stated intent** | Both. A set that satisfies the spec and drifts from the intent is the failure obligation 0 exists to catch |
+| 1 | **Read the spec and the arc's stated intent** | Both. A set that satisfies the spec and drifts from the intent is the failure the intent check exists to catch |
 | 2 | **List every part that must exist** | Parts, not issues. Grouping comes next, and grouping first hides parts |
 | 3 | **Group into issues** | One artifact, or one decision, each |
 | 4 | **Order by dependency** | Not by value |
@@ -69,7 +69,7 @@ not merged is blocked, not merely later.
 | | Owner |
 |---|---|
 | Whether the set is right | **The user.** Camp proposes; approval is a separate act |
-| What lands in this arc versus later | **The user.** Scope is obligation 0's territory |
+| What lands in this arc versus later | **The user.** Scope is the intent check's territory |
 | Whether an issue is worth doing at all | **The user** |
 
 > **Camp files nothing unapproved.** The output is a proposed set — a list, with what each
@@ -119,7 +119,7 @@ a gap discovered at use is one that produced a bad decomposition first.
 
 ## Related
 
-- [m43 §3.3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — obligation 2, which this implements
+- [m43 §3.3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — decomposition, which this implements
 - [`issue-write`](../issue-write/SKILL.md) — what files the set once approved, and the title rule
-- [`arc-intent`](../arc-intent/SKILL.md) — obligation 0, which decides whether a proposed issue belongs in this arc
+- [`arc-intent`](../arc-intent/SKILL.md) — the intent check, which decides whether a proposed issue belongs in this arc
 - [`camp`](../camp/SKILL.md) — the entry point

@@ -134,13 +134,17 @@ missing checklist item. The main thread acts, after the user approves.
 Camp is relied on for five things without being asked each time. **This skill is the entry
 point and the persona; each obligation ships as its own artifact.**
 
-| | Obligation | Initiator | Built by |
+| Obligation | | Initiator | Built by |
 |---|---|---|---|
-| **0** | Hold the arc's intent; test proposed work against it | Asked, at checkpoints, and unsolicited on issue spawn | [#42](https://github.com/Calyx-Engineering/arc/issues/42) — **built**, [`arc-intent`](../arc-intent/SKILL.md) |
-| 1 | Report where the arc stands, and what comes next | Asked | [#41](https://github.com/Calyx-Engineering/arc/issues/41) — **built**, see below |
-| 2 | Decompose an idea or a base issue into issues | Asked | [#47](https://github.com/Calyx-Engineering/arc/issues/47) — **built**, [`decompose`](../decompose/SKILL.md) |
-| 3 | Catch problems at the moment they happen | Unsolicited | [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) |
-| 4 | Report completed work per the agreement | Unsolicited | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
+| **The intent check** | Hold the arc's intent; test proposed work against it | Asked, at checkpoints, and unsolicited on issue spawn | [#42](https://github.com/Calyx-Engineering/arc/issues/42) — **built**, [`arc-intent`](../arc-intent/SKILL.md) |
+| **Status and flow** | Report where the arc stands, and what comes next | Asked | [#41](https://github.com/Calyx-Engineering/arc/issues/41) — **built**, see below |
+| **Decomposition** | Decompose an idea or a base issue into issues | Asked | [#47](https://github.com/Calyx-Engineering/arc/issues/47) — **built**, [`decompose`](../decompose/SKILL.md) |
+| **The nudge** | Catch problems at the moment they happen | Unsolicited | [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) |
+| **The report** | Report completed work per the agreement | Unsolicited | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
+
+**Call them by name, never by number.** [m43 §3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md)
+numbers them as its own section index; the numbers were an insertion order and say nothing
+about the role.
 
 **Until an obligation's artifact exists, Camp answers the question from the record and says
 the mechanism is not built.** Answering well by hand is correct; claiming the obligation is
@@ -148,7 +152,7 @@ operating is not.
 
 ---
 
-## Obligation 0 — holding the arc's intent
+## The intent check — holding the arc's intent
 
 **Run [`arc-intent`](../arc-intent/SKILL.md)** — it owns the ladder, the test, and the four
 firing moments. *"Does this belong in this arc"* is never answered from memory here.
@@ -159,7 +163,7 @@ proposes an amendment; it never makes one.
 
 ---
 
-## Obligation 1 — where the arc stands, and what comes next
+## Status and flow — where the arc stands, and what comes next
 
 Two halves, both answered from the record rather than from the conversation.
 
@@ -254,7 +258,7 @@ Yes — an amendment. No — a note.
 [asked]        "Camp, where are we?"
 
                Arc 03 has twenty-one steps. Wave 2 is done — #60 and #62 merged
-               with the four before them. Next is #41, obligation 1; waves 3 to 6
+               with the four before them. Next is #41, status and flow; waves 3 to 6
                run autonomously, and the window breaks after wave 3.
 
 [asked]        "Help me close this and get to the next issue."
@@ -282,7 +286,7 @@ Yes — an amendment. No — a note.
 
 ## Reporting what an artifact did
 
-**Obligation 4.** An artifact that acts declares what it checks, in a `camp-reports:` header.
+**The report.** An artifact that acts declares what it checks, in a `camp-reports:` header.
 That one declaration drives both the spoken report and the event-log entry — the artifact
 speaks, in Camp's voice, and **Camp does not narrate it.**
 
@@ -305,8 +309,8 @@ speaks, in Camp's voice, and **Camp does not narrate it.**
 
 | The event is | Setting | Default |
 |---|---|---|
-| A completed action reported — obligation 4 | **Report verbosity** | `normal` |
-| A problem caught as it happens — obligation 3 | **Nudge verbosity** | `loud` |
+| A completed action reported | **Report verbosity** | `normal` |
+| A problem caught as it happens | **Nudge verbosity** | `loud` |
 
 | Level | The outcome line | The checked line | The skipped line |
 |---|---|---|---|
@@ -330,7 +334,7 @@ Format: [`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
 
 ## Related
 
-- [`arc-intent`](../arc-intent/SKILL.md) — obligation 0, the ladder and its four firing moments
+- [`arc-intent`](../arc-intent/SKILL.md) — the intent check, the ladder and its four firing moments
 - [`close-sequence.md`](../../docs/product-architecture/close-sequence.md) — the nine steps, and what owns each
 - [`camp-reports.md`](../../docs/product-architecture/camp-reports.md) — the declaration every acting artifact carries
 - `.claude/arc/camp/operating-agreement.md` — the authority on what Camp does here

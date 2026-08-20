@@ -71,7 +71,7 @@ Three homes were considered and rejected, and §2 records the conclusions withou
 
 - **Not [m21](../product-architecture/mechanisms/m21-arc-tree.md)** — m21 renders a tree. This is how work is created and navigated, which is upstream of rendering.
 - **Not [m20](../product-architecture/mechanisms/m20-arc-decomposition.md)** — m20 sequences an arc's known issues at kickoff. This navigates discovery at any point. They meet only when a discovery is large enough to become an arc.
-- **Not [m43](../product-architecture/mechanisms/m43-camp-assistant.md) obligation 0** — scope asks whether a discovery belongs in this arc. Different question, and the fire-extinguisher case is precisely one where scope says no and the answer is still *fix it now*.
+- **Not [m43](../product-architecture/mechanisms/m43-camp-assistant.md) the intent check** — scope asks whether a discovery belongs in this arc. Different question, and the fire-extinguisher case is precisely one where scope says no and the answer is still *fix it now*.
 - **Not arc-scoped at all** — discovery happens outside arcs, so it is its own mechanism.
 
 ## Spawned

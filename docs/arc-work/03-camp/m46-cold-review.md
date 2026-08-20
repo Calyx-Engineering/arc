@@ -148,7 +148,7 @@ visible in the transcript and none in the spec:
 - **Why `-fix-` and a separate `fix<NN>` index were rejected** — a second counter creates two
   tokens for one thing, and GitHub numbers cannot be reserved.
 - **Why the tree change stayed in PR #75 while issue #76 split** — the reviewable-unit call.
-- **Why this is not m21, m20, or m43 obligation 0** — §2 states the conclusions but not the
+- **Why this is not m21, m20, or m43 the intent check** — §2 states the conclusions but not the
   reasoning that got there.
 
 **Fix:** write `docs/dev-log/issue-76-work-navigation.md`.

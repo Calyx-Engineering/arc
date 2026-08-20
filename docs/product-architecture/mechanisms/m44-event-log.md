@@ -58,7 +58,7 @@ consumer's directory would imply an ownership no consumer has.
 analysis, a human reading the log is the entire evaluation loop, and the only means of setting
 an over-firing threshold on evidence rather than estimate.
 
-**Not a consumer: [m43](m43-camp-assistant.md)'s obligation 0.** Obligation 0 evaluates
+**Not a consumer: [m43](m43-camp-assistant.md)'s intent check.** The intent check evaluates
 whether proposed work serves the arc's intent — a question about direction, answered against
 the `arc-log`'s stated intent. It does not read history to locate past errors. Log-based firing
 was considered and rejected.

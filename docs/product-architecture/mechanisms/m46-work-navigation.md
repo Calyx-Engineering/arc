@@ -29,10 +29,10 @@ at all.**
 ## 2 What this is not
 
 **Not scope control.** Whether a discovery belongs in this arc is
-[m43](m43-camp-assistant.md)'s obligation 0.
+[m43](m43-camp-assistant.md)'s intent check.
 
 **Not decomposition.** Turning a body of work into issues is
-[m43](m43-camp-assistant.md)'s (not [m20](m20-arc-decomposition.md)'s) obligation 2, carried
+[m43](m43-camp-assistant.md)'s (not [m20](m20-arc-decomposition.md)'s) decomposition, carried
 by [`skills/decompose`](../../../skills/decompose/SKILL.md). This decides *where a discovery
 goes and how you get back*; decompose decides *what shape it takes* once it is going
 somewhere.
@@ -424,4 +424,4 @@ unscoped discovery does not. The boundary between them is judgement.
 - [m40](m40-autonomy-switch.md) — auto and manual, and who reviews
 - [m20](m20-arc-decomposition.md) — sequences an arc at kickoff; this navigates discovery at any point
 - [m21](m21-arc-tree.md) — the tree these relations render into
-- [m43 §3.1](m43-camp-assistant.md) — obligation 0, which owns whether a discovery belongs in this arc
+- [m43 §3.1](m43-camp-assistant.md) — the intent check, which owns whether a discovery belongs in this arc

@@ -24,7 +24,7 @@ skips:
 
 ## Before the write — does this belong in the arc?
 
-Filing an issue and opening a PR are two of obligation 0's firing moments. **Run
+Filing an issue and opening a PR are two of the intent check's firing moments. **Run
 [`arc-intent`](../arc-intent/SKILL.md) before the write, not after**, and let it classify.
 
 **It never blocks the write.** An *escalate* is a question put to the user with the body ready

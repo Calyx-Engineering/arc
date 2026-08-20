@@ -96,11 +96,11 @@ flowchart TB
 | Spec | What it defines | Issue |
 |---|---|---|
 | §2 · §6 | The persona, its voice, how it is reached | [#40](https://github.com/Calyx-Engineering/arc/issues/40) |
-| §3.1 | **Obligation 0** — hold the arc's intent, the authority ladder | [#42](https://github.com/Calyx-Engineering/arc/issues/42) |
-| §3.2 | **Obligation 1** — status, and the close/start sequence run the same way every time | [#41](https://github.com/Calyx-Engineering/arc/issues/41) |
-| §3.3 | **Obligation 2** — decomposition | [#47](https://github.com/Calyx-Engineering/arc/issues/47) |
-| §3.4 | **Obligation 3** — the event half, four hooks | [#43](https://github.com/Calyx-Engineering/arc/issues/43) |
-| §3.5 | **Obligation 4** — announcing completed actions, and the templates that make future artifacts do the same | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
+| §3.1 | **The intent check** — hold the arc's intent, the authority ladder | [#42](https://github.com/Calyx-Engineering/arc/issues/42) |
+| §3.2 | **Status and flow** — status, and the close/start sequence run the same way every time | [#41](https://github.com/Calyx-Engineering/arc/issues/41) |
+| §3.3 | **Decomposition** — decomposition | [#47](https://github.com/Calyx-Engineering/arc/issues/47) |
+| §3.4 | **The nudge** — the event half, four hooks | [#43](https://github.com/Calyx-Engineering/arc/issues/43) |
+| §3.5 | **The report** — announcing completed actions, and the templates that make future artifacts do the same | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
 | §3.6 | The relief valve — the conversational half | [#44](https://github.com/Calyx-Engineering/arc/issues/44) |
 | §5 | The three documents and their ownership | [#39](https://github.com/Calyx-Engineering/arc/issues/39) |
 | §7 | Verbosity — three levels, two settings | [#46](https://github.com/Calyx-Engineering/arc/issues/46) |
@@ -112,7 +112,7 @@ flowchart TB
 ### Carried in from scoping
 
 Five issues spawned by friction observed while writing the spec. Tracker mechanics, not Camp —
-classified *escalate* under obligation 0's own ladder, and correct to do. **Scheduled as wave
+classified *escalate* under the intent check's own ladder, and correct to do. **Scheduled as wave
 5**, issues 11 through 15.
 
 Two more were spawned later, by the work itself — see below.
@@ -168,7 +168,7 @@ flowchart TB
     subgraph B[" Autonomous — waves 3 to 6 "]
         direction LR
         W3["<b>Wave 3</b><br/>7 · #61 · 8 · #41<br/>9 · #44 · 10 · #47<br/>11 · #43 · 12 · #46"] --> BR3{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
-        BR3 --> W4["<b>Wave 4</b><br/>13 · #42<br/>obligation 0"]
+        BR3 --> W4["<b>Wave 4</b><br/>13 · #42<br/>the intent check"]
         W4 --> BR4{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
         BR4 --> W5["<b>Wave 5</b><br/>14–20 · #31–#35<br/>#55 · #56"]
         W5 --> BR5{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
@@ -183,7 +183,7 @@ flowchart TB
     style B fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
 ```
 
-**Why obligation 0 is late despite being the priority.** It cannot evaluate direction without
+**Why the intent check is late despite being the priority.** It cannot evaluate direction without
 knowing where work stands ([#41](https://github.com/Calyx-Engineering/arc/issues/41)), and its
 fourth firing moment is the relief valve
 ([#44](https://github.com/Calyx-Engineering/arc/issues/44)). Building it first would mean
@@ -213,7 +213,7 @@ are four issues in one continuous run — the wave boundary is dependency, not a
 | | |
 |---|---|
 | **Skills cannot be executed here** | Nothing in this repo runs a skill. A session writes one, checks it against the spec diagram, and marks it done — with no evidence it *behaves* right. True of every skill Arc has shipped |
-| **Obligation 0 is judgement** | *"Does this serve the arc's intent"* has no mechanical test. It will build; whether it fires usefully is unknown until used |
+| **The intent check is judgement** | *"Does this serve the arc's intent"* has no mechanical test. It will build; whether it fires usefully is unknown until used |
 | **The relief valve's thresholds are estimates** | 8 turns, 3 questions, 45 minutes. Placed so the mechanism is buildable, corrected by [#36](https://github.com/Calyx-Engineering/arc/issues/36) |
 | **The close sequence is unproven** | [#41](https://github.com/Calyx-Engineering/arc/issues/41)'s nine steps were written from informal practice. Executing it will find gaps the spec side could not see |
 | **Context depth** | Arc 02 ran five pre-specified issues autonomously and held. This is ten, several with judgement. Expect degradation around the middle |
@@ -233,14 +233,15 @@ Settled during scoping. **These apply across every issue in the arc.**
 
 | | |
 |---|---|
-| **Camp is documents, skills and hooks — not an agent** | Continuous conversation reading is the one form Arc cannot afford. Only obligation 3's conversational half needs it, and that half ships as a skill |
+| **Camp is documents, skills and hooks — not an agent** | Continuous conversation reading is the one form Arc cannot afford. Only the nudge's conversational half needs it, and that half ships as a skill |
 | **Camp owns no arc state** | m15 owns the handoff, m17 the logs, m21 the tree. Camp reads them and fires them; it authors none of them |
 | **Obligations and memory never merge** | The agreement is what Camp must do (user-owned). Notes are what Camp learned (Camp's own). Merging them lets learning silently rewrite obligations |
 | **The goal is user-owned** | Camp evaluates work against the arc's intent and cannot revise that intent |
 | **Camp proposes; it never executes** | It names what is required. The main thread acts, after the user approves |
 | **A fired precondition always nudges** | Direction sets the nudge's strength, never whether it speaks |
 | **Verbosity governs display, never retention** | Everything reaches the event log regardless of setting |
-| **Two mechanisms ship knowingly partial** | Obligations 2 and 3's conversational half. Both state their limits where they are specified |
+| **Two mechanisms ship knowingly partial** | Decomposition, and the nudge's conversational half. Both state their limits where they are specified |
+| **The obligations are named, not numbered** | *The intent check · status and flow · decomposition · the nudge · the report.* The numbers were m43 §3's insertion order — which is why the one that ranks first was called *obligation 0* — and a sixth numeric token competing with issue, mechanism and wave numbers helped nobody. The names are not new: `operating-agreement.md` already shipped three of them. Sections are still cited by number |
 
 ---
 
@@ -249,7 +250,7 @@ Settled during scoping. **These apply across every issue in the arc.**
 | | Why |
 |---|---|
 | **The monitoring agent** | Continuous conversation reading — the one unaffordable form. The relief valve degrades to a skill instead |
-| **Onboarding** | Camp configuring itself at install. Obligation 0 ships without it |
+| **Onboarding** | Camp configuring itself at install. The intent check ships without it |
 | **Mined relief-valve thresholds** | [#36](https://github.com/Calyx-Engineering/arc/issues/36), pass 2 — needs the transcript miner |
 | **How fine an issue should be** | An operating-agreement clause once first use produces examples |
 
@@ -267,18 +268,18 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 1 | 1.1 | [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Camp's three documents | **Merged** — [PR #51](https://github.com/Calyx-Engineering/arc/pull/51) |
 | 2 | 1.2 | [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | **Merged** — [PR #52](https://github.com/Calyx-Engineering/arc/pull/52) |
 | 3 | 2.1 | [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | **Merged** — [PR #53](https://github.com/Calyx-Engineering/arc/pull/53) |
-| 4 | 2.2 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Obligation 4 — announcing actions, and the templates | **Merged** — [PR #54](https://github.com/Calyx-Engineering/arc/pull/54) |
+| 4 | 2.2 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | The report — announcing actions, and the templates | **Merged** — [PR #54](https://github.com/Calyx-Engineering/arc/pull/54) |
 | | | | **■ STOP — cleared 2026-08-19 ■** | |
 | 5 | 2.3 | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **Merged** — [PR #63](https://github.com/Calyx-Engineering/arc/pull/63) |
 | 6 | 2.4 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | **Merged** — [PR #64](https://github.com/Calyx-Engineering/arc/pull/64) |
 | 7 | 3.1 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's missing ordered actions and transcript save | **Merged** — [PR #65](https://github.com/Calyx-Engineering/arc/pull/65) |
-| 8 | 3.2 | [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Obligation 1 — status and the close sequence | **Merged** — [PR #66](https://github.com/Calyx-Engineering/arc/pull/66) |
+| 8 | 3.2 | [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Status and flow — status and the close sequence | **Merged** — [PR #66](https://github.com/Calyx-Engineering/arc/pull/66) |
 | 9 | 3.3 | [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | **Merged** — [PR #67](https://github.com/Calyx-Engineering/arc/pull/67) |
-| 10 | 3.4 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | **Merged** — [PR #69](https://github.com/Calyx-Engineering/arc/pull/69) |
-| 11 | 3.5 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | Obligation 3 — four hooks | **Merged** — [PR #70](https://github.com/Calyx-Engineering/arc/pull/70) |
+| 10 | 3.4 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Decomposition — decomposition | **Merged** — [PR #69](https://github.com/Calyx-Engineering/arc/pull/69) |
+| 11 | 3.5 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | The nudge — four hooks | **Merged** — [PR #70](https://github.com/Calyx-Engineering/arc/pull/70) |
 | 12 | 3.6 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | **Merged** — [PR #71](https://github.com/Calyx-Engineering/arc/pull/71) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites |
+| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready |
@@ -309,7 +310,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | **1** | The two artifacts nothing else can be built without | **Autonomous** |
 | **2** | The entry point, and artifacts declaring what they report | **Autonomous** |
 | **3** | The obligations that need only the entry point | **Autonomous** |
-| **4** | Obligation 0, which needs status and the relief valve | **Autonomous** |
+| **4** | The intent check, which needs status and the relief valve | **Autonomous** |
 | **5** | Tracker and chat mechanics — touches `skills/`, not Camp | **Autonomous** |
 | **6** | The parity check, which needs every skill to exist | **Autonomous** |
 
@@ -328,7 +329,7 @@ needs least explanation. **Never mid-wave.**
 | Break after | Carries | Why there |
 |---|---|---|
 | **Wave 3** | [#61](https://github.com/Calyx-Engineering/arc/issues/61) · [#41](https://github.com/Calyx-Engineering/arc/issues/41) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) · [#47](https://github.com/Calyx-Engineering/arc/issues/47) · [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Six issues, all obligations, all specified. The expected limit of one window |
-| **Wave 4** | [#42](https://github.com/Calyx-Engineering/arc/issues/42) alone | Only if wave 3 ran light. Obligation 0 is the judgement-heaviest issue in the arc |
+| **Wave 4** | [#42](https://github.com/Calyx-Engineering/arc/issues/42) alone | Only if wave 3 ran light. The intent check is the judgement-heaviest issue in the arc |
 | **Wave 5** | [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) · [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Six issues, no spec. Judgement plus no spec is the most expensive combination here — its own window regardless |
 
 **A break is not optional and not a checkpoint to pass through.** The window ends there.

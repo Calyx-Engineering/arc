@@ -1,4 +1,4 @@
-# Issue #42 — Obligation 0, holding the arc's intent
+# Issue #42 — The intent check, holding the arc's intent
 
 > Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
@@ -11,7 +11,7 @@ divergence is only visible against the destination, and nothing in Arc holds the
 and tests proposed work against it.
 
 **This is one level above the drift [m41](../product-architecture/mechanisms/m41-relief-valve.md)
-addresses.** The relief valve catches a conversation that has gone too deep; obligation 0
+addresses.** The relief valve catches a conversation that has gone too deep; the intent check
 catches work that is going somewhere the arc did not agree to go.
 
 **The judgement is the deliverable, and it has no mechanical test.** *"Does this serve the
@@ -28,7 +28,7 @@ a question rather than a pass/fail.
 | **It shares the relief valve's precondition rather than carrying its own** | m43 §3.1.3. Excessive depth is commonly a symptom of drift, so one trigger serves both — no second over-firing budget to tune, and no second set of provisional thresholds to correct in [#36](https://github.com/Calyx-Engineering/arc/issues/36) |
 | **Three levels, because a binary block gets routed around** | *Agreed · Derived · Escalate*, matching Star's ladder. The middle level is what keeps the mechanism usable: most real work is a reasonable consequence of the intent rather than a restatement of it, and a two-level ladder would classify all of it as drift |
 | **Escalate is a question, and the user's answer ends it** | The acceptance criterion phrased as a refusal-to-refuse: after the user decides, Camp proceeds without re-raising it. A flag that survives its own answer is a flag the proposer learns to route around, which is the failure the ladder exists to avoid |
-| **The intent is user-owned and Camp cannot revise it** | m43 §3.1. This is the property that makes obligation 0 a delegate rather than an observer — the flag cannot be argued away by the thing that proposed the work |
+| **The intent is user-owned and Camp cannot revise it** | m43 §3.1. This is the property that makes the intent check a delegate rather than an observer — the flag cannot be argued away by the thing that proposed the work |
 | **The classification is reported, including when it is *agreed*** | The `camp-reports:` rule — state what was checked, not only what was found. An obligation that only speaks on escalate is indistinguishable from one that never ran |
 
 ## What this issue does not build
@@ -42,7 +42,7 @@ a question rather than a pass/fail.
 | The report's format | [`camp-reports.md`](../product-architecture/camp-reports.md), built by [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
 
 **Reading history to find past errors is the retrospective's job**, and m43 §3.1.3.2 rejects
-firing obligation 0 from the event log. Obligation 0 evaluates direction, not the past.
+firing the intent check from the event log. The intent check evaluates direction, not the past.
 
 ## What the review passes changed
 
@@ -97,7 +97,7 @@ something this issue delivers.
 
 | Node | Delivered by |
 |---|---|
-| Work is proposed | The four call sites — `decompose` step 6, `issue-write`'s pre-write section, `relief-valve`'s direction question, `camp`'s obligation 0 section |
+| Work is proposed | The four call sites — `decompose` step 6, `issue-write`'s pre-write section, `relief-valve`'s direction question, `camp`'s intent check section |
 | Does it serve the arc's stated intent? | *The intent lives in the `arc-log`* — the two sections read, and the refusal to classify when there is no arc-log |
 | **Agreed** — proceed without comment | The ladder table. Reported, but nothing said in conversation |
 | **Derived** — say so, then proceed | The ladder table, with the one-line phrasing |
@@ -111,7 +111,7 @@ something this issue delivers.
 |---|---|
 | An issue is spawned | `decompose` step 6, before the set is presented |
 | An issue closes, a PR opens | `issue-write`'s *Before the write*, and the `arc-intent` check in its declaration |
-| The user asks | `camp`'s obligation 0 section |
+| The user asks | `camp`'s intent check section |
 | The relief valve fires on depth | `relief-valve`'s direction question, now answered on the ladder |
 | The question, and Agreed · Derived · Escalate | One ladder, reached from all four moments |
 
@@ -126,5 +126,5 @@ something this issue delivers.
   mechanical moment, which is what keeps it from being pure self-awareness. The independent
   observer that would remove it is deferred in m43 §4, at the same cost as the relief valve's
 - **`skills/camp` grew rather than shrank.** [#90](https://github.com/Calyx-Engineering/arc/issues/90)
-  flags it at 326 lines against a 180 limit; obligation 0 added roughly fifteen. Putting the
+  flags it at 326 lines against a 180 limit; the intent check added roughly fifteen. Putting the
   ladder in its own skill kept that number from being much larger, but it did not reverse it

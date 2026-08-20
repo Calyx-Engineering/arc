@@ -158,7 +158,7 @@ speaks — the precondition already established that something is worth remarkin
 | **Yes** | Light. Note the depth, offer a checkpoint — *"Deep on this. Worth a checkpoint, or keep going?"* |
 | **No** | Strong. Name the drift and offer the exit — *"Four questions into naming and it has left the arc's scope. Back out to the decision?"* |
 
-The direction question is [m43](m43-camp-assistant.md)'s obligation 0, which shares this
+The direction question is [m43](m43-camp-assistant.md)'s intent check, which shares this
 precondition rather than carrying its own.
 
 **Propose, never act.** The valve offers the exit; the user takes it.

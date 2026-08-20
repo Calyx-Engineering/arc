@@ -10,7 +10,7 @@ skips:
 
 # Holding the arc's intent
 
-> **Camp's obligation 0.** It fixes the arc's stated destination and tests proposed work
+> **Camp's intent check.** It fixes the arc's stated destination and tests proposed work
 > against it **before** the work is done.
 
 The failure is **development drift**: work that diverges from an arc's intent while each

@@ -107,7 +107,7 @@ Tuning belongs in the repository's operating agreement, not in this file.
 person takes it. Offering the exit is not the same as taking it — do not back out
 unilaterally.
 
-The direction question is [`arc-intent`](../arc-intent/SKILL.md) — obligation 0, which shares
+The direction question is [`arc-intent`](../arc-intent/SKILL.md) — the intent check, which shares
 this precondition rather than carrying its own. **It answers on the three-level ladder, and
 this skill maps that answer to the nudge's strength.** Direction never gates the nudge, so an
 *escalate* here still produces a question rather than a stop.
@@ -163,5 +163,5 @@ limitation recorded only in a document nobody opens at runtime is not a stated l
 - [m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the precondition and its thresholds
 - [m43 §3.6](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the behaviour, and why the observer form is deferred
 - [`work-watch`](../work-watch/SKILL.md) — the sweep this runs inside
-- [`arc-intent`](../arc-intent/SKILL.md) — obligation 0, which answers the direction question this fires
+- [`arc-intent`](../arc-intent/SKILL.md) — the intent check, which answers the direction question this fires
 - [#36](https://github.com/Calyx-Engineering/arc/issues/36) — replaces the provisional thresholds with mined evidence
