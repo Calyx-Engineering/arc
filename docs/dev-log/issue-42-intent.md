@@ -117,11 +117,37 @@ something this issue delivers.
 
 **No mismatch found.** Both diagrams are delivered whole.
 
+## The mechanism's first live firing — the rename itself
+
+**Recorded here because the skill's own rule requires it:** an override is written against the
+work it admitted.
+
+| | |
+|---|---|
+| **Proposed** | Rename Camp's five obligations from numbers to names |
+| **Classified** | *Derived* for the intent check alone — this issue's own artifact. ***Escalate*** for all five, because it edits artifacts delivered by [#41](https://github.com/Calyx-Engineering/arc/issues/41) · [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) · [#45](https://github.com/Calyx-Engineering/arc/issues/45) · [#47](https://github.com/Calyx-Engineering/arc/issues/47) |
+| **Asked, not blocked** | Both options put to the user with the trade-off stated |
+| **User decision** | All five. Proceed |
+| **Not raised again** | The naming rule went into `CLAUDE.md` and the arc-log's load-bearing decisions, so no later session re-reaches the same escalate |
+
+**This is the one acceptance criterion that did get exercised.** The classification came out
+of the ladder, the escalate was a question rather than a refusal, the user's answer ended it,
+and the decision was written down. It also produced the case the skill could not have
+predicted: the *derived* and *escalate* readings differed only by scope, which is why the
+answer was two options rather than one flag.
+
+**What it did not test:** the unclear-case tie-break, and the *agreed* path, which by design
+says nothing and therefore leaves no evidence.
+
 ## Open
 
-- **Nothing here has been executed.** No skill runs in this repo, so every acceptance
-  criterion written as runtime behaviour — the escalate phrasing, the override being honoured,
-  the refusal to re-flag — is unverified. Same status as every issue in this arc
+- **Almost nothing here has been executed.** No skill runs in this repo. The rename above is
+  the single exception, and it was run by hand rather than by the skill firing — so the
+  phrasing, the ladder and the override rule have been exercised, while the *triggering* has
+  not. Same status as every issue in this arc
+- **The soak rule has never been executed in this repo.** [`arc-02`](../arc-log/arc-02-foundation.md)
+  and `arc-03` both carry an unchecked *soak line appended* box and neither holds a single soak
+  line. This issue writes the first one; the two arcs behind it are a gap nobody has closed
 - **The self-detection limit is real and unsolved.** Three of the four call sites fire from a
   mechanical moment, which is what keeps it from being pure self-awareness. The independent
   observer that would remove it is deferred in m43 §4, at the same cost as the relief valve's

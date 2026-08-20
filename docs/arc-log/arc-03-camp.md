@@ -279,7 +279,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 11 | 3.5 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | The nudge — four hooks | **Merged** — [PR #70](https://github.com/Calyx-Engineering/arc/pull/70) |
 | 12 | 3.6 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | **Merged** — [PR #71](https://github.com/Calyx-Engineering/arc/pull/71) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites |
+| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites. **Its PR also renames the five obligations**, so it edits artifacts delivered by [#41](https://github.com/Calyx-Engineering/arc/issues/41) [#43](https://github.com/Calyx-Engineering/arc/issues/43) [#44](https://github.com/Calyx-Engineering/arc/issues/44) [#45](https://github.com/Calyx-Engineering/arc/issues/45) [#47](https://github.com/Calyx-Engineering/arc/issues/47) — classified *escalate*, admitted by the user |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready |
@@ -404,12 +404,30 @@ are merged in sequence and each rebased on the last. **Nothing in the plan made 
 against real fixtures by `tools/verify-hook.sh`, which is the first acceptance criterion in
 this arc tested rather than asserted.
 
+## Soak
+
+**Per `CLAUDE.md`: a plugin change runs against real work before it leaves the machine.**
+Committed is not exercised. Unsoaked means a commit here with no soak line from any repo.
+
+| Change | Soaked on | Result |
+|---|---|---|
+| `skills/arc-intent` — the ladder, the test, the override rule ([#42](https://github.com/Calyx-Engineering/arc/issues/42)) | The rest of [#42](https://github.com/Calyx-Engineering/arc/issues/42), by hand — the obligation rename was classified through the ladder before it was done | **Fired correctly.** *Derived* for the one artifact, *escalate* for all five, put as a question rather than a refusal; the user chose all five and it was not raised again. Found a case the skill does not name: the two readings differed only by scope, so the honest output was two options, not one flag |
+
+> **This is the first soak line in this repository, across three arcs.**
+> `arc-02` and everything in `arc-03` before it shipped plugin changes with the box unticked
+> and nothing written. The rule was stated and never once executed — a gap in the practice,
+> not in this issue.
+
+**What a soak cannot cover here.** Nothing Arc ships actually *runs* in this repo, so a soak
+line records the mechanism being followed by hand against real work. That is weaker than
+execution and is worth exactly what it says.
+
 ## At arc close
 
 - [ ] Status table reflects reality
 - [ ] Default branch restored — `tools/arc-default-branch.sh restore`
 - [ ] Arc PR into `main` carries a `Closes` line for every issue
-- [ ] Soak line appended for every plugin change made during this arc
+- [ ] Soak line appended for every plugin change made during this arc — **started**, see *Soak* above. Every earlier plugin change in this arc is still unsoaked
 - [ ] K2 swept — durable product facts graduated
 
 **Why nothing has run, and what closes it.** `hooks/hooks.json` registers all four hooks
