@@ -155,8 +155,11 @@ flowchart TB
     WORK -->|something spotted| SCOPE{"Could this be<br/>its own unit?"}
     SCOPE -->|"no — it is work<br/>on this unit"| TODO["Add it to this unit's<br/><b>checklist</b> — it is<br/>part of the unit now"]
     TODO --> WORK
-    SCOPE -->|"yes — it is<br/>a new unit"| TABLE["Record it in the parent's<br/><code>Spawned</code> section —<br/><i>record only, no work on it now</i>"]
-    TABLE --> WORK
+    SCOPE -->|"yes — it is<br/>a new unit"| TABLE["Record it in the parent's<br/><code>Spawned</code> section"]
+    TABLE --> BLEED{{"<b>Fix it now?</b><br/>the user decides"}}
+    BLEED -->|"no — at spawn time"| WORK
+    BLEED -->|yes| FIXNOW["Fix it now, on this branch.<br/><i>The row stays</i>"]
+    FIXNOW --> WORK
     WORK --> DONE{"Is this unit's<br/>own work done?"}
     DONE -->|not yet| WORK
     DONE -->|yes| SPAWN["Give each <code>Spawned</code> row a real<br/>issue or PR — or mark it abandoned"]
@@ -172,8 +175,8 @@ flowchart TB
     classDef u fill:#3d2b4f,stroke:#b07fd6,color:#fff
     classDef d fill:#1f3d2b,stroke:#4caf70,color:#fff
     classDef leg fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0,text-align:left
-    class WORK,SCOPE,TODO,TABLE,DONE,SPAWN,REVIEW,GROW,AFTER,START n
-    class ASK u
+    class WORK,SCOPE,TODO,TABLE,FIXNOW,DONE,SPAWN,REVIEW,GROW,AFTER,START n
+    class ASK,BLEED u
     class EXHALE d
     class LEGEND leg
 ```
@@ -189,6 +192,34 @@ Larger or already-scoped work goes to a worktree instead, and does not move the 
 |---|---|---|
 | **No** — it is work this unit already implied | This unit's **issue or PR checklist** | A paragraph to fix or a link to add is not a unit of work. A `Spawned` row implies it becomes its own issue or PR, which it never will |
 | **Yes** — it could stand alone | The parent's **`Spawned` section** | Whether it folds into this unit or splits off is decided later, at spawn time |
+
+**A recorded row is usually left alone until spawn time. Sometimes it should not be.**
+
+> **Fix it now? The user decides.**
+
+**This is a judgement, not a test.** Reasons vary and no single condition captures them —
+a defect that will keep firing until fixed, something the rest of the unit depends on,
+something cheap now and expensive later.
+
+> *"If you're building a house and it catches on fire you don't tell yourself 'that has
+> nothing to do with finishing the wall i'm framing right now.' You just grab a fire
+> extinguisher and go."*
+
+**Relevance is not always the test.** The fire has nothing to do with the wall. What decides it is
+the cost of waiting, and that is why no scope rule can answer it — scope asks whether the
+thing belongs here, and this asks whether it can wait.
+
+| | |
+|---|---|
+| **The bar is high** | Deferring is the default, and *small* or *interesting* is not a reason to break it |
+| **It is not a descent** | A descent changes what this unit is and forces a retitle. This does neither — it is a separate fix that could not wait |
+| **The row stays** | It is the record that the work happened. Removing it because the work is done loses the spawn edge |
+| **Same branch, and the commit says so** | Its own branch would move the working tree mid-unit, which is the failure this mechanism exists to prevent |
+
+**Worked example.** Writing this spec, a decision was buried under 120 words instead of
+leading the message. `chat-response` could stand alone — a `Spawned` row — but leaving it
+there meant every remaining reply that session would repeat the defect. It was fixed
+immediately, on this branch, and the row remains.
 
 **The checklist, not chat.** A todo held in conversation dies with the session, and the
 checklist is already the session's working state —
