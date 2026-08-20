@@ -191,7 +191,7 @@ function list, then read its Needs column to find what else must exist before it
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
 | `hooks/tracker-verify` | hook | m12 | Automatic, on branch create, PR open, PR merge | `skills/issue-write` for repair |
-| `skills/work-watch` | skill | m14 · m23 · m41 | Always, as work proceeds | `skills/issue-write` to file what it catches |
+| `skills/work-watch` | skill | m14 · m23 · m41 · m13 | Always, as work proceeds | `skills/issue-write` to file what it catches |
 | `skills/config-check` | skill | m22 | Invoked, when a revision is cut | — |
 | `skills/autonomy-set` | skill | m40 | Invoked, at kickoff and when work changes character | — |
 | | **AUTHORING** | | | |
@@ -231,15 +231,15 @@ mechanisms fire together:
 
 | Artifact | Merges | Why |
 |---|---|---|
-| `skills/work-watch` | m14 · m23 · m41 | One always-on sweep, three things it watches for. See below |
+| `skills/work-watch` | m14 · m23 · m41 · m13 | One always-on sweep, four things it watches for. See below |
 | `skills/issue-write` | m11 · m13 | Write the issue and verify the write landed — one moment |
 | `skills/kickoff` | m09 · m20 | Scope agreement and decomposition happen in one sitting |
 | `skills/delegate` | m25 · m26 | Choosing the tier and shaping the brief are the same decision |
 
 ### `skills/work-watch` — the design-time evaluator
 
-Three mechanisms watch work as it proceeds and nudge. Splitting them into three always-on
-checks means three separate sweeps competing for the same attention — and
+Four mechanisms watch work as it proceeds. Splitting them into four always-on
+checks means four separate sweeps competing for the same attention — and
 [test-obligation-capture](mechanisms/m23-test-obligation-capture.md) rejects the split
 outright: *"one of the things the design-time evaluator watches for, alongside commit
 timing. Not a separate always-on process — a check in the same sweep."*
@@ -249,9 +249,15 @@ timing. Not a separate always-on process — a check in the same sweep."*
 | The work reached a reviewable point | A commit | m14 |
 | A design decision implies later physical verification | A test item | m23 |
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 |
+| An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
 
-All three **propose and never act**, and all three share one open question: how often it
-may fire before the nudging becomes the annoyance.
+The first three **propose and never act**, and share one open question: how often they may
+fire before the nudging becomes the annoyance.
+
+**The fourth blocks instead of proposing.** Edit completeness gates the agent's own report
+that an edit is done — a `grep` for the replaced string, zero hits or it is not finished. It
+is m13's shape B in files, which m13 had recorded as already handled; arc 03 disproved that
+four times in one session.
 
 **Names are provisional.** Paths firm up when the plugin skeleton exists.
 

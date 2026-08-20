@@ -14,8 +14,9 @@
 
 Two things follow:
 
-1. **The verify-after-write behaviour already exists** and works well for file edits. It
-   is not being applied to tracker writes.
+1. **The verify-after-write behaviour was believed to exist** for file edits, and to be
+   missing only for tracker writes. **Arc 03 disproved the first half** — see *Shape B
+   occurs in files too* below. Both need the check.
 2. **These cases are test cases.** They are a ready-made evaluation set for
    `issue-writing` — a skill that already exists and demonstrably does not close this
    gap.
@@ -60,13 +61,28 @@ leaving placeholder values behind, twice.
 
 | | File edit | Tracker write |
 |---|---|---|
-| Verification | The tool errors if the match fails | API returns success regardless |
+| Verification | The tool errors if the *match* fails — never that the *claim* is complete | API returns success regardless |
 | Visibility | The diff is in front of the user | Lives on a website nobody re-opens |
-| Detection | Immediate | Only when someone happens to look |
-| Existing behaviour | **Verified routinely** | **Not verified** |
+| Detection | Immediate, if the person reads the whole diff | Only when someone happens to look |
+| Existing behaviour | **Not verified** — see below | **Not verified** |
 
-The asymmetry is the whole finding. The same session that carefully re-reads a file
-after editing it will fire a `gh issue edit` and move on.
+The asymmetry originally claimed here was that files are verified routinely and trackers
+are not. **That is wrong, and the correction matters more than the original finding.**
+
+### Shape B occurs in files too
+
+An edit tool erroring on a failed string match proves the string was replaced. It proves
+nothing about the other places the same claim appears — a summary row, a diagram label, a
+count in a sentence. A partial edit reports success exactly as a tracker write does.
+
+Arc 03, one session, one file: **four consecutive edits reported complete while another
+surface of the same file still said the opposite.** Each was caught by the person, not by
+any check.
+
+The check is a `grep` for the *replaced* string before reporting done — zero hits, or the
+edit is not finished. It lives in
+[`skills/work-watch`](../../../skills/work-watch/SKILL.md) as check 4, because the moment it
+fires is the moment an edit is about to be called done.
 
 **Same failure class as §2.8** (tracker mechanics) and the dropped-staged-files case in
 [commit-rhythm](m14-commit-rhythm.md): mechanisms that **report success and do the wrong
