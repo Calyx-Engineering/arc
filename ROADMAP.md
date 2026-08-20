@@ -38,6 +38,7 @@ record survive a cold start.
 | `skills/handoff` | m15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
 | `hooks/tracker-verify` | m12 | Links fail silently; a PR to the wrong base splits a milestone | Build |
 | `skills/work-watch` | m14 · m23 · m41 · m13 | Commit timing, test obligations, depth, and edit completeness — one sweep | Build |
+| `skills/relief-valve` | m41 | The depth check's mechanical precondition, run inside that sweep | Build |
 | `skills/camp` | m21 · m43 | Something to ask "where is this arc, what is next" | Build |
 
 **Eleven artifacts. Four are ports of working practice, one is already here, six are new.**

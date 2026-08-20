@@ -19,7 +19,7 @@ competing for the same attention.**
 |---|---|---|
 | The work reached a reviewable point | A commit | m14 |
 | A decision implies later physical verification | A test item | m23 |
-| Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 |
+| Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 · [`relief-valve`](../relief-valve/SKILL.md) |
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
 
 > **Propose, never act.** Three of the four nudge; the human decides. This is the whole
@@ -203,15 +203,36 @@ When decisions are landing and nothing can record them, say so and propose track
 is the same failure class as the branch guard — work in the wrong place — except here the
 wrong place is nowhere.
 
-### The trigger is judgment, and says so
+### The trigger is a mechanical precondition, then judgment
 
-Four mechanical triggers were considered and each fails: turn count fires during legitimate
-long analysis; "questions without a decision landing" needs a definition of *landed*;
+**No single signal means *too deep*.** Turn count alone fires during legitimate long
+analysis; *"questions without a decision landing"* needs a definition of *landed*;
 user-invoked puts the load back on the person the mechanism exists to protect.
 
-**So this check is model judgment, and that is a stated limitation rather than a hidden
-one.** A judgment check can silently stop working. If a session ends with the person
-frustrated at depth, that is the evidence it did — and it belongs in a retrospective.
+**A combination of them does work**, and that is what fires this check:
+
+| Signal | Threshold |
+|---|---|
+| Turns since the last commit or file write | 8 |
+| Questions asked with no artifact changed | 3 |
+| Minutes in one issue with no checklist movement | 45 |
+| Emphasis markers — caps, bolded corrections, profanity, sharply shorter replies | any |
+
+**Two of the first three fire it. An emphasis marker fires it alone.** The thresholds are
+provisional estimates, replaced by mined evidence in
+[#36](https://github.com/Calyx-Engineering/arc/issues/36).
+
+**[`relief-valve`](../relief-valve/SKILL.md) is what this check runs when that precondition
+trips** — the countable version of the same check, invoked rather than felt. It is not a
+separate always-on process; it runs inside this sweep.
+
+**Mechanical trigger, judged response.** The precondition decides whether to look; judgment
+decides whether the depth is real, and the direction question sets the nudge's strength.
+
+**What neither form fixes:** a skill the agent invokes is self-detection, and failing to
+notice is the condition being detected. The precondition limits how much this matters; it does
+not remove it. If a session ends with the person frustrated at depth, that is evidence the
+check did not fire — and it belongs in a retrospective.
 
 ---
 
