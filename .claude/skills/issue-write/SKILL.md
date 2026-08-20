@@ -89,12 +89,17 @@ Before writing `Closes`, ask:
 |---|---|
 | Yes — the issue's deliverable is in this change | `Closes` |
 | No — this informs, analyses, or partially advances it | `Refs` |
+| There is no issue | **Neither.** A PR can stand alone |
 
 A design report, an investigation, or a spike almost never closes a capability issue. An
 issue titled *"Add X capability"* closes when X ships, not when X is specified.
 
 **When in doubt use `Refs`.** A missed auto-close costs one click; a wrong auto-close
 silently closes live work and nobody notices until someone looks for it.
+
+**Not every PR needs an issue.** A small fix found while doing something else goes branch to
+PR directly — filing an issue to close it in the same hour is ceremony. File one when the work
+needs scheduling, discussion, or a place to accumulate before it starts.
 
 ### Placement
 
