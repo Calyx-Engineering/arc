@@ -54,7 +54,7 @@ repository, before any arc exists.
 |---|---|
 | **Behavioural rules that survive the boundary** | Written into the repository's own instructions, so they load without a skill firing |
 | **Camp's three documents** | The operating agreement, the register, the verbosity level — [m43](m43-camp-assistant.md) |
-| **The hooks, registered and verified** | Including the kill switch. A hook that fires wrong in a fresh repo is the expensive failure |
+| **The hooks' preconditions, checked** | The plugin registers its own hooks through `hooks.json`; onboarding does not install them. What it must confirm is that they can pass — the repo is a git repo, the kill switch is understood, and a hook denying an edit in an unconfigured repo is survivable |
 | **The default-branch decision** | [m42](m42-default-branch-flip.md)'s warning put in front of the user at the moment it matters |
 | **The mechanism registry's source** | Where this repository looks up the next free number — [lodestar#9](https://github.com/Calyx-Engineering/lodestar/issues/9) is the same gap in another repo |
 
@@ -65,27 +65,83 @@ each skill carrying its own copy.
 
 ---
 
-## 4 What is not designed
+## 4 The hard problem — two copies of one rule
 
-**The sequence.** What is asked, in what order, and what is inferred rather than asked.
+**A rule written into `CLAUDE.md` also lives in a skill, and the two will drift.** This is the
+design problem onboarding has to solve, not a detail of it.
 
-**Idempotency.** Onboarding a repository that is already partly configured must not overwrite
-a tuned agreement or duplicate a rule. Nothing says how it detects that state.
+The failure is not hypothetical. `chat-response` and `engineering-report` each state
+*lead with the finding* for their own genre; a third copy in `CLAUDE.md` makes three, in three
+repositories, updated at different times.
+
+Three shapes, and the choice is undesigned:
+
+| | How it works | Cost |
+|---|---|---|
+| **Copy** | Onboarding writes the rule's text into `CLAUDE.md` | Drifts the moment the skill is edited. Every repo holds a different vintage |
+| **Point** | `CLAUDE.md` names the principle in one line and defers to the skills | Survives edits, but a pointer only helps if something reads it — and the failure being fixed is that nothing fired |
+| **Generate** | `CLAUDE.md`'s Arc section is regenerated from the plugin, and marked as generated | No drift, but it owns a region of a file the user also edits, and re-running must not destroy their content |
+
+**Generate is the only one that holds the zero-re-teaching promise without decaying**, and it
+is also the one that forces idempotency to be solved. That coupling is why the two are named
+together below rather than as separate open questions.
+
+---
+
+## 5 The trigger
+
+**Onboarding cannot wait to be asked for.** A user who does not know Arc has behaviours to
+configure will not request the thing that configures them, and the failure is silent — the
+repo simply behaves as though Arc were not installed.
+
+| | |
+|---|---|
+| **Fires on first session in an unconfigured repo** | The detectable state is the absence of Arc's own artifacts, not a flag the user sets |
+| **Offers, never performs unasked** | It writes to `CLAUDE.md` and the repository's configuration. The same rule that governs any hook change applies: a mistake must be survivable |
+| **Declinable, and the decline is remembered** | Asked once per repo, not once per session. A prompt that returns every session is the friction it exists to remove |
+
+---
+
+## 6 The failure this must not produce
+
+**A half-onboarded repository is worse than an un-onboarded one.** An un-onboarded repo
+behaves predictably — Arc's rules are simply absent. A repo where onboarding ran, wrote some
+artifacts and stopped, presents rules that partly apply, and the user cannot tell which.
+
+Whatever the sequence turns out to be, it either completes or leaves nothing behind.
+
+---
+
+## 7 What is not designed
+
+**Copy, point, or generate** — [§4](#4-the-hard-problem--two-copies-of-one-rule)'s three
+shapes. Everything else here depends on this one, because it decides whether onboarding writes
+text or owns a region.
+
+**Idempotency**, which generate forces. Re-running must not overwrite a tuned agreement,
+duplicate a rule, or destroy user-authored content in a file Arc shares. How the existing
+state is detected is undesigned.
+
+**The sequence.** What is asked, in what order, and what is inferred rather than asked. The
+bar is that a user with no Arc knowledge can answer every question.
 
 **What writes each artifact.** Camp is the voice; whether Camp, a skill, or a script performs
 each write is open.
+
+**How completion is guaranteed**, given [§6](#6-the-failure-this-must-not-produce). Whether
+that is a transaction, a marker written last, or a check that repairs a partial state.
 
 **Importing from another repository.** [m43 §11](m43-camp-assistant.md) names this — taking an
 agreement from a repo where tuning already happened, rather than starting from stock. The
 mechanics are undesigned.
 
-**Where a genre-independent rule lives once it is in `CLAUDE.md`.** The three skills keep
-their genre-specific versions; what the repository instruction says, and how the two avoid
-drifting, is open.
+**Which rules are portable at all.** Three are named in [§1](#1-the-friction). Nobody has
+swept the skills for the rest, and a rule that turns out to be repo-specific must not be
+onboarded.
 
 ---
 
-## 5 Related
+## 8 Related
 
 - [m43 §11](m43-camp-assistant.md) — Camp runs onboarding; Camp is the voice, not the owner
 - [m42](m42-default-branch-flip.md) — the flip decision onboarding surfaces
