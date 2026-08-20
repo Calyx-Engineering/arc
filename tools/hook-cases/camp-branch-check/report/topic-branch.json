@@ -1,0 +1,2 @@
+# a branch naming no issue
+{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git checkout -b fix-the-thing"}}

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# camp-session-start — PreToolUse hook (matcher: Edit|Write|NotebookEdit). Carries m43 §3.4.
+#
+# The first edit of a session is the moment a missing arc, issue or branch is cheapest to
+# notice. Work that starts on trunk with no issue is untracked until someone remembers —
+# and the reasoning behind it dies with the transcript. Camp names the condition once, at
+# the first edit, and never again in that session.
+#
+# camp-reports: session-start
+# checks: branch-is-work, issue-in-branch-name
+# skips: arc-active (no arc registry exists yet)
+#
+# The three lines above are the `camp-reports:` declaration. They are why this hook is
+# visible when it fires — one declaration drives both the spoken report and the event-log
+# entry. Name every check, including the ones that always pass: only reporting failures
+# makes a silent hook indistinguishable from a working one.
+# Format: docs/product-architecture/camp-reports.md
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
+# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Never `set -e`. A guardrail bug must never block every tool call. This hook never denies
+# at all — it reports. On anything unexpected, exit 0 and allow.
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+
+# Read a top-level or nested field out of the hook payload without requiring jq.
+field() {
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# Speak, without blocking. exit 2 surfaces stderr to the transcript; the edit still runs.
+report() {
+  printf '%s\n' "$1" >&2
+  exit 2
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+CWD="$(field cwd)"
+[ -d "$CWD" ] || CWD="$PWD"
+
+# Once per session. The marker is keyed to the session id so a new session speaks again,
+# and lives under the repo's .git so it is never committed and dies with the clone.
+GITDIR="$(git -C "$CWD" rev-parse --git-dir 2>/dev/null)"
+# No repo means nothing to say — this hook is about repository state.
+[ -n "$GITDIR" ] || exit 0
+case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
+
+# A truncated payload can still yield a readable `cwd`, which is enough to classify a
+# branch and speak — on input that is not a real hook call. Requiring the tool name as
+# well as the session id means a half-written payload is silent rather than wrong.
+SESSION="$(field session_id)"
+[ -n "$SESSION" ] || exit 0
+[ -n "$(field tool_name)" ] || exit 0
+MARKER="$GITDIR/arc-camp-session-$SESSION"
+# Already spoke this session. Silence is the default and repeating is the annoyance.
+[ -e "$MARKER" ] && exit 0
+
+BRANCH="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+# Detached HEAD or git unavailable — nothing to classify, so nothing to say.
+[ -n "$BRANCH" ] || exit 0
+
+FINDINGS=""
+add() { FINDINGS="$FINDINGS
+  - $1"; }
+
+case "$BRANCH" in
+  main|master|develop)
+    add "you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit"
+    ;;
+  arc/*-issue-*)
+    # An issue branch. This is the correct place to work, and it names its issue.
+    ;;
+  arc/*)
+    add "you are on \`$BRANCH\`, an arc branch. It is coordination only — create \`$BRANCH-issue-<N>-<slug>\` for the work"
+    ;;
+  *)
+    # A topic branch is fine, but it carries no issue number, so nothing links the work.
+    add "\`$BRANCH\` names no issue. If this work has one, an \`arc/<nn>-<slug>-issue-<N>-<slug>\` branch links them"
+    ;;
+esac
+
+# Write the marker whatever the outcome, so a clean session is also only checked once.
+: > "$MARKER" 2>/dev/null
+
+[ -n "$FINDINGS" ] && report "**Camp here —** first edit of the session.
+  Checked: branch is a work branch, issue in branch name$FINDINGS
+  Declared but skipped: arc-active (no arc registry yet)"
+
+exit 0

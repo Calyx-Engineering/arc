@@ -36,7 +36,9 @@ record survive a cold start.
 | `skills/chat-response` | m38 | Already here | Soak only |
 | `skills/record-route` | m16 · m17 | **The dev-log and arc-log get written.** Without this there is no K1 | Port from TimeScope |
 | `skills/handoff` | m15 | Cold starts cost 20+ minutes. Guided hardware work restarts constantly | Build |
-| `hooks/tracker-verify` | m12 | Links fail silently; a PR to the wrong base splits a milestone | Build |
+| `hooks/tracker-verify` | m12 · m43 | Links fail silently; a PR to the wrong base splits a milestone | Build |
+| `hooks/camp-session-start` | m43 | A session's first edit with no arc, issue or branch | Build |
+| `hooks/camp-branch-check` | m43 | A branch named so nothing links it to an issue | Build |
 | `skills/work-watch` | m14 · m23 · m41 · m13 | Commit timing, test obligations, depth, and edit completeness — one sweep | Build |
 | `skills/relief-valve` | m41 | The depth check's mechanical precondition, run inside that sweep | Build |
 | `skills/camp` | m21 · m43 | Something to ask "where is this arc, what is next" | Build |

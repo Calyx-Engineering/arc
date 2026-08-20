@@ -190,7 +190,9 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
-| `hooks/tracker-verify` | hook | m12 | Automatic, on branch create, PR open, PR merge | `skills/issue-write` for repair |
+| `hooks/tracker-verify` | hook | m12 · m43 | Automatic, on issue create, PR open, PR merge | `skills/issue-write` for repair |
+| `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
+| `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
 | `skills/work-watch` | skill | m14 · m23 · m41 · m13 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches |
 | `skills/relief-valve` | skill | m41 | Run by `work-watch` when the precondition trips | — |
 | `skills/config-check` | skill | m22 | Invoked, when a revision is cut | — |
