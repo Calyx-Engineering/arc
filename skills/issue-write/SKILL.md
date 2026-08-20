@@ -195,6 +195,19 @@ Three of the six evaluation cases are mechanically catchable. Before and after w
 | A number that was meant to change and did not | Diff the old body against the new |
 | A date inconsistent with reality | Compare against the current date |
 | A referenced commit or issue that does not exist | Check it resolves |
+| A closing keyword anywhere but the last line | `tools/verify-tracker-body.sh body <file>` |
+
+The first four patterns are *scaffolding survived*. The fifth is the opposite shape — text
+that is complete and correct-looking and binds something it should not. It needs its own
+check because reading for the first four does not surface it.
+
+```sh
+tools/verify-tracker-body.sh body body.md      # before the write
+tools/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
+```
+
+Both report and neither blocks. `binding` is the only check that catches a keyword which
+bound *despite* the intent; every other diagnostic here is for a link that failed to form.
 
 `hooks/tracker-verify` runs the mechanical half at branch create, PR open, and PR merge.
 The judgement half — *does this match what we agreed* — is this skill's.
@@ -229,6 +242,11 @@ keyword entirely:
 
 - ✗ "Does not close #42"
 - ✓ "This does not complete the capability — the deliverable in #42 is …"
+
+**This trap shipped a defect while this section was loaded and read.** Prose does not stop
+it, so the rule is placement rather than phrasing: one keyword, on the last line, checked by
+`tools/verify-tracker-body.sh body` before the write. Escaping the keyword is a workaround
+for writing *about* the trap in a document, not a fix.
 
 ### Hand-attached links are separate from body keywords
 
