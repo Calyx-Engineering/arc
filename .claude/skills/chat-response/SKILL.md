@@ -55,24 +55,10 @@ with what they can ask for, not with the answer to what they did not ask.
 **Match the question's altitude.** A yes/no question gets yes or no first. A "how
 should we…" question gets a recommendation first.
 
-### Every issue and PR number is a link
-
-**An issue or PR number written in chat is always a markdown link.** Never a bare `#42`.
-
-```text
-Wrong:  Next is #42, obligation 0.
-Right:  Next is [#42](https://github.com/OWNER/REPO/issues/42), obligation 0.
-```
-
-| | |
-|---|---|
-| **Applies everywhere in a reply** | Prose, tables, bullets, the trailing next-action line. There is no position where a bare number is acceptable |
-| **A run of numbers is linked individually** | `#31 · #32 · #33`, each its own link — never `#31–#35` collapsed to one |
-| **Same for PRs** | `/pull/<N>` rather than `/issues/<N>` |
-| **Not in code blocks or commit text** | A commit body, a branch name and a `Closes #NN` line are plain text. This rule is about chat only |
-
-**The number alone is unusable.** The reader has to search for it, which is the work the
-reply exists to save — and a wrong number is invisible until someone follows it.
+**Every issue and PR number is a link.** `[#42](…/issues/42)`, never a bare `#42` — a number
+the reader has to go and find is the work the reply exists to save. A run is linked
+individually: `#31 · #32 · #33`, not `#31–#35`. PRs take `/pull/`. Code blocks and commit
+text stay plain.
 
 
 ## What compression must never break
