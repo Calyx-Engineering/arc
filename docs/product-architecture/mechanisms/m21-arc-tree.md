@@ -124,6 +124,7 @@ be a reader of them rather than an owner.
 
 - [handoff-spine](m15-handoff-spine.md) — the same "what does a cold session need" question
 - [k1-upkeep](m17-k1-upkeep.md) — the arc-log this renders into
+- [m46](m46-work-navigation.md) — how the relations this renders are created, and the `Spawned` rows it reads
 - [friction-log §2.7](../../retrospectives/2026-08-plugin-line/friction-log.md#27-follow-up-actions-forgotten) — spawned work that was never filed
 
 ---

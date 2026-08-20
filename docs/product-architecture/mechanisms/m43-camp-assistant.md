@@ -1120,3 +1120,4 @@ the boundary against [m20](m20-arc-decomposition.md), are named as undesigned in
 - [m15](m15-handoff-spine.md) · [m17](m17-k1-upkeep.md) — the record Camp reads and never owns
 - [m25](m25-agent-roster.md) — the roster Camp's deferred monitoring agent would join
 - [m44](m44-event-log.md) — the event log Camp's verbosity makes necessary
+- [m46](m46-work-navigation.md) — where a discovery goes; obligation 0 decides whether it belongs in this arc at all
