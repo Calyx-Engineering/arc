@@ -18,12 +18,14 @@ These matter more than any finding in the documents.
 
 | | |
 |---|---|
+| **The ask is the first line** | Any decision, approval or blocking question opens the reply, before the reasoning that produced it. **Reasoning that discovers an ask must be reordered before sending** — a reply in thinking-order buries the ask at the end. `skills/chat-response` and m46 §7.1 both state the rule and were loaded when it was broken four times in one session; [#89](https://github.com/Calyx-Engineering/arc/issues/89) tracks the missing trigger |
 | **Short chat responses** | He reads slowly and deliberately. Lead with the answer; he pulls for detail. See `.claude/skills/chat-response/` |
 | **Never commit unasked** | He reviews by diff in VS Code's source-control graph. An unrequested commit destroys that surface |
 | **Edit in place, do not paste into chat** | Fixes go into the file; the diff is the review surface. Rewriting a whole file loses his in-progress review comments — edit, never rewrite |
 | **No development narrative** | Never "an earlier draft said…" or "you corrected me…". State the current conclusion. Applies to documents *and* chat |
 | **Wording fixes go in immediately** | Discuss structural changes first, then apply; never stop to ask about word choice |
 | **Verify before asserting** | Several documented beliefs have been disproved by direct test |
+| **When he says you did something, check what you sent** | Do not reason about why he might have perceived it. Re-read the actual output first. Explaining a report away is how a real error gets excused instead of fixed |
 | **Cite TimeScope by mechanism, never by name** | He does not remember its details. Say what it is and how it works in the same breath |
 | **He is right about his own domain** | On EE substance, when he says an analysis is wrong, it is wrong. Do not re-litigate — ask what was missed |
 | **Watch for saturation** | He will say when a context is degrading. He is a reliable judge of it; hand off rather than push through |
