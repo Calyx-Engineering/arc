@@ -206,6 +206,7 @@ function list, then read its Needs column to find what else must exist before it
 | `commands/camp.md` | command | m43 | Typed as `/camp` | `skills/camp` |
 | `.claude/arc/camp/` | record | m43 | Read by `skills/camp` on every invocation | — |
 | `camp-reports.md` | reference | m43 | Read by anything that declares what it checks | — |
+| `close-sequence.md` | reference | m43 | Read by `skills/camp` when an issue is closing or starting | `skills/record-route` · `skills/issue-write` · `hooks/tracker-verify` |
 | `templates/SKILL.md` | template | m43 | Copied when a new skill is written | `camp-reports.md` |
 | `skills/wave-plan` | skill | m27 | Invoked, when work may run in parallel | `skills/camp` for the partition · `skills/delegate` |
 | `skills/gate-run` | skill | m28 | Invoked, at a feature-complete state | — |
