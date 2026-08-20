@@ -119,6 +119,33 @@ break, or state the assumption inline and continue.
 
 When a question *is* warranted:
 
+### A decision leads the message
+
+**A question that changes what happens next opens the reply.** Never at the end, never after
+the reasoning.
+
+> **The reader must not have to finish the message to learn a decision was wanted.** A
+> question in the last line reads as commentary, and the answer you get back is the answer to
+> whatever they read first.
+
+| | |
+|---|---|
+| **First, and marked** | One line at the top saying a decision is needed, before any reasoning |
+| **Bold and set apart** | It is a break in the conversation, not a sentence inside a paragraph |
+| **Every option named** | The user answers without reconstructing where they are |
+| **Reasoning goes below it**, or in the next reply | It is there if wanted, and skippable if not |
+
+```text
+**Decision needed.**
+
+**Row it into the spawned table and PR after your review, or open the PR now?**
+
+Reasoning below.
+```
+
+**This applies to any decision that moves the work** — which branch, fold in or split off,
+file now or table it. Not to a passing clarification.
+
 **One decision per question.** Bundled questions get partial answers.
 
 **Say what you would do.** "I'd go with A because X — object if you disagree" beats an

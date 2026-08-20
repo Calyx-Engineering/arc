@@ -8,7 +8,7 @@ below and built separately.
 
 ---
 
-## The friction
+## 1 The friction
 
 Work is discovered while doing other work. There was no defined way to record it, decide
 whether it belonged here or elsewhere, or find the way back out — so a discovery either
@@ -26,7 +26,7 @@ at all.**
 
 ---
 
-## What this is not
+## 2 What this is not
 
 **Not scope control.** Whether a discovery belongs in this arc is
 [m43](m43-camp-assistant.md)'s obligation 0.
@@ -42,7 +42,7 @@ rather than part of [m21](m21-arc-tree.md) or the arc-log.
 
 ---
 
-## The industry model — a patch series
+## 3 The industry model — a patch series
 
 **This is the patch series tradition**, most visible in Linux kernel practice: a set of
 related changes reviewed and landed as one unit, ordered so each builds on the last.
@@ -68,7 +68,7 @@ local invention.
 
 ---
 
-## Three relations, not two
+## 4 Three relations, not two
 
 A discovery relates to its parent in one of three ways, and the branch shape follows.
 
@@ -78,29 +78,61 @@ A discovery relates to its parent in one of three ways, and the branch shape fol
 | **Descent** | It changes what the parent should be | The parent branch | The parent |
 | **Tangent with dependency** | Shared base, but it would not exist without the parent | The shared base | The shared base |
 
-**The third is the most common and has no distinct branch shape.** `chat-response`'s link
-rule was only discovered because of the handoff work, but it does not depend on it — it is
-a work-tree relationship, not a git one.
+**The third is the most common and has no distinct branch shape.** A worked example, from
+the work that produced this mechanism:
+
+| # | | Discovery | Relation | Why | Branched from |
+|---|---|---|---|---|---|
+| 1 | **Parent** | issue [#45](https://github.com/Calyx-Engineering/arc/issues/45) — announcing completed actions | — | The work in hand | `arc/03-camp` |
+| 2 | **Child** | PR [#74](https://github.com/Calyx-Engineering/arc/pull/74) — issue numbers in chat must be links | **Tangent with dependency** | Noticed while reading issue [#45](https://github.com/Calyx-Engineering/arc/issues/45)'s output, but changes nothing about it and needs none of its code | `arc/03-camp` |
+| 3 | **Grandchild** | PR [#75](https://github.com/Calyx-Engineering/arc/pull/75) — a PR needs no issue | **Tangent with dependency** | Same shape again, one level down: found by doing PR [#74](https://github.com/Calyx-Engineering/arc/pull/74), independent of it | `arc/03-camp` |
+| 4 | **Inside PR [#75](https://github.com/Calyx-Engineering/arc/pull/75)** | The arc tree must see a no-issue PR | **Descent** | The new rule was useless unless something read it, so it changes what PR [#75](https://github.com/Calyx-Engineering/arc/pull/75) is | **PR [#75](https://github.com/Calyx-Engineering/arc/pull/75) itself** — no new branch |
+| 5 | **Great-grandchild** | issue [#76](https://github.com/Calyx-Engineering/arc/issues/76) — this mechanism | **Tangent with dependency** | The rule needed a whole navigation model behind it. Too large to fold into PR [#75](https://github.com/Calyx-Engineering/arc/pull/75) without making it unreviewable | `arc/03-camp` |
+
+**Rows 4 and 5 were both found inside PR [#75](https://github.com/Calyx-Engineering/arc/pull/75),
+and only one stayed there.** That is the reviewable-unit test, and it is the judgement this
+whole mechanism turns on:
+
+| | |
+|---|---|
+| **The tree change stayed** | A rule and the thing that reads it are one story. Splitting them would ship a rule nothing honours |
+| **Issue [#76](https://github.com/Calyx-Engineering/arc/issues/76) split off** | A spec, a diagram and five artifacts is a different story. Folding it in would have grown PR [#75](https://github.com/Calyx-Engineering/arc/pull/75) past what one review can hold |
+
+**Every one of these branched from the same base**, because none of them needed another's
+code. The parent/child structure is real and lives in the spawned tree, not in git.
 
 ```mermaid
-flowchart LR
-    subgraph G[" The git graph — dependency "]
+flowchart TB
+    subgraph G[" The git graph — dependency only "]
         direction TB
-        B1["base"] --> T1["tangent"]
-        B1 --> T2["tangent with<br/>dependency"]
-        B1 --> P1["parent"] --> D1["descent"]
+        GB["<b>arc/03-camp</b><br/>the shared base"]
+        GB --> G45["issue #45<br/>parent"]
+        GB --> G74["PR #74<br/>tangent w/ dependency"]
+        GB --> G75["PR #75<br/>tangent w/ dependency"]
+        G75 --> GD["descent —<br/>same branch as PR #75"]
+        GB --> G76["issue #76<br/>tangent w/ dependency"]
     end
     subgraph W[" The spawned tree — the work story "]
         direction TB
-        P2["parent"] --> T3["tangent"]
-        P2 --> T4["tangent with<br/>dependency"]
-        P2 --> D2["descent"]
+        W45["<b>issue #45</b><br/>announce actions"]
+        W45 -->|spawned| W74["<b>PR #74</b><br/>numbers are links"]
+        W74 -->|spawned| W75["<b>PR #75</b><br/>a PR needs no issue"]
+        W75 -->|descent| WD["the tree must<br/>see it"]
+        W75 -->|spawned| W76["<b>issue #76</b><br/>this mechanism"]
     end
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
-    class B1,T1,T2,P1,D1,P2,T3,T4,D2 n
+    classDef b fill:#2b2b3d,stroke:#6b6b8a,color:#c9c9d4
+    classDef d fill:#4a3520,stroke:#d98f2b,color:#fff
+    class G45,G74,G75,G76,W45,W74,W75,W76 n
+    class GB b
+    class GD,WD d
     style G fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
     style W fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
 ```
+
+**Read the two side by side.** The left is flat because nothing depended on anything — three
+siblings off one base. The right is three levels deep because each was found by doing the one
+above it. **Both are correct.**
 
 > **The git graph carries dependency. The spawned tree carries the work story.** They are
 > different views of the same work and **neither fakes the other** — a tangent with a
@@ -112,28 +144,26 @@ dependent change cannot land before what it depends on.
 
 ---
 
-## The loop
+## 5 The loop
 
 **A unit of work is a breath.** It opens, it may nest, and it ends at a merge.
 
 ```mermaid
 flowchart TB
-    START(["Working on a unit"]) --> SPOT{"Something<br/>spotted?"}
-    SPOT -->|no| WORK["Continue"] --> SPOT
-    SPOT -->|yes| TABLE["Row into the parent's<br/><b>spawned table</b> — unfiled.<br/><i>Do not act</i>"]
+    START(["Working on a unit"]) --> WORK["Work on it"]
+    WORK -->|something spotted| TABLE["Row into the parent's<br/><b>spawned table</b> — unfiled.<br/><i>Do not act on it</i>"]
     TABLE --> WORK
     WORK --> DONE{"Unit<br/>complete?"}
-    DONE -->|no| SPOT
-    DONE -->|yes| SPAWN["Spawn the tabled rows<br/>for real — issue, PR,<br/>or marked abandoned"]
+    DONE -->|not yet| WORK
+    DONE -->|yes| SPAWN["Spawn the tabled rows —<br/>issue, PR, or marked abandoned"]
     SPAWN --> ASK{{"<b>Ascend or descend?</b><br/>the user decides"}}
-    ASK -->|descend| REVIEW1["Review · merge<br/>the parent first"]
-    REVIEW1 --> START
-    ASK -->|ascend| REVIEW2["Review · merge,<br/>return to the parent"]
-    REVIEW2 --> EXHALE(["Breath ends<br/>at the merge"])
+    ASK -->|descend| START
+    ASK -->|ascend| REVIEW["Review · merge"]
+    REVIEW --> EXHALE(["Breath ends<br/>at the merge"])
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef u fill:#3d2b4f,stroke:#b07fd6,color:#fff
     classDef d fill:#1f3d2b,stroke:#4caf70,color:#fff
-    class SPOT,WORK,TABLE,DONE,SPAWN,REVIEW1,REVIEW2,START n
+    class WORK,TABLE,DONE,SPAWN,REVIEW,START n
     class ASK u
     class EXHALE d
 ```
@@ -141,7 +171,7 @@ flowchart TB
 **Entry condition:** a small, scoped discovery during manual work — the no-issue PR case.
 Larger or already-scoped work goes to a worktree instead, and does not move the tree at all.
 
-### Breaths nest
+### 5.1 Breaths nest
 
 A discovery inside a discovery is normal and does not need flattening.
 
@@ -154,7 +184,7 @@ several PRs** — the failure this mechanism was written after.
 
 ---
 
-## The spawned table is a scope buffer
+## 6 The spawned table is a scope buffer
 
 **A spotted tangent goes into the parent's spawned table immediately, unfiled. Nothing is
 acted on when it is spotted.**
@@ -180,7 +210,28 @@ only readable:
 
 ---
 
-## The ascend/descend prompt
+## 7 Asking the user to choose
+
+### 7.1 Any navigation decision leads the message
+
+**A decision that changes where the work goes next is never buried.** It opens the reply, it
+is set apart, and it is flagged as needing an answer.
+
+> **The reader must not have to finish the message to learn a decision was wanted.** A
+> question in the last line of a long reply reads as commentary, and the answer given is the
+> answer to whatever they read first.
+
+| Rule | |
+|---|---|
+| **First, and marked** | A one-line note at the top that a decision is needed, before any reasoning |
+| **Bold and set apart** | It is a break in the conversation, not a sentence within it |
+| **Just the ask** | **No other content in that message.** Reasoning goes below, or in the next reply |
+| **Every option named concretely** | The user answers without reconstructing where they are |
+
+**This governs any navigation decision** — ascend or descend, fold in or split off, file now
+or table it. The ascend/descend prompt below is the most frequent instance, not the only one.
+
+### 7.2 The ascend/descend prompt
 
 **Whether a discovery is a tangent or a descent is the user's call and cannot be inferred.**
 It is the same judgement as *is this in scope*, and it is cheap for the user to make in the
@@ -189,12 +240,12 @@ moment — but only if the question is asked plainly.
 | Rule | |
 |---|---|
 | **Fires only when there is somewhere to descend to** | At depth zero there is no decision, so there is no prompt |
-| **A standalone break in the conversation** | Just the ask. **No other content in that message** — it is a decision point, not a paragraph |
-| **Both destinations named concretely** | The user answers without reconstructing where they are |
 | **The words match the action** | *Ascend* and *descend*, on the work tree |
 
 ```text
-**Descend into the spawned process update, or ascend to #45 (the handoff blockage)?**
+**Decision needed.**
+
+**Descend into the spawned process update, or ascend to issue #45 (the handoff blockage)?**
 ```
 
 **Never *"what next?"*** — that puts the reconstruction back on the person the prompt exists
@@ -202,7 +253,7 @@ to serve.
 
 ---
 
-## Manual mode
+## 8 Manual mode
 
 Auto and manual are [m40](m40-autonomy-switch.md)'s. What binds here:
 
@@ -217,7 +268,7 @@ exists to prevent.
 
 ---
 
-## Branch naming
+## 9 Branch naming
 
 **The branch name is often the only reference visible** — an editor's status bar truncates
 early, and it is the one place the current work is named while a PR is being reviewed in a
@@ -252,11 +303,11 @@ and renamed before its first push if a placeholder was used.
 
 ---
 
-## What is not designed
+## 10 What is not designed
 
 **Where the mechanism's rules live so they are portable.** They must arrive with the plugin
 and not be re-taught per repo — the same requirement as
-[#73](https://github.com/Calyx-Engineering/arc/issues/73). The carrier is undecided.
+issue [#73](https://github.com/Calyx-Engineering/arc/issues/73). The carrier is undecided.
 
 **When a worktree is right instead.** Already-scoped parallel work belongs in a worktree, and
 unscoped discovery does not. The boundary between them is judgement.
@@ -265,7 +316,7 @@ unscoped discovery does not. The boundary between them is judgement.
 
 ---
 
-## Artifacts
+## 11 Artifacts
 
 | Artifact | Carries |
 |---|---|
@@ -277,9 +328,9 @@ unscoped discovery does not. The boundary between them is judgement.
 
 ---
 
-## Related
+## 12 Related
 
-- [#76](https://github.com/Calyx-Engineering/arc/issues/76) — the issue this specifies
+- issue [#76](https://github.com/Calyx-Engineering/arc/issues/76) — the issue this specifies
 - [m40](m40-autonomy-switch.md) — auto and manual, and who reviews
 - [m20](m20-arc-decomposition.md) — sequences an arc at kickoff; this navigates discovery at any point
 - [m21](m21-arc-tree.md) — the tree these relations render into
