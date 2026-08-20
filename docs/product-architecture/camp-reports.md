@@ -86,11 +86,56 @@ one-line description**, before the kill switch.
 | **The skipped line is emitted unconditionally** | Suppressed only by a `skips` entry being absent, or by an agreement clause |
 | **Reports default to `normal` verbosity** | The outcome only. `loud` adds the checked and skipped lines; `quiet` shows nothing |
 
-Verbosity is read from `.claude/arc/camp/voice.md`. **It governs display, never retention.**
+**The setting is read from the operating agreement**, `.claude/arc/camp/operating-agreement.md`
+section 1 — the checked box is the value.
+[`voice.md`](../../templates/camp/voice.md) says what each level *means*; the agreement says
+which one is selected. **It governs display, never retention.**
+
+### Rendering a level
+
+Two settings, chosen by what produced the event — not by which artifact fired.
+
+| The event is | Setting | Default |
+|---|---|---|
+| A completed action reported — obligation 4 | **Report verbosity** | `normal` |
+| A problem caught as it happens — obligation 3 | **Nudge verbosity** | `loud` |
+
+A nudge fires because a condition appears wrong and should be hard to miss. A report fires on
+every completion and should be brief.
+
+**One event, three renderings.** The same declaration produces all three; the level selects
+how much of it surfaces.
+
+```text
+loud     **Camp here —** PR #33 opened.
+           Checked: milestone, arc prefix, closing keywords — all set
+           Declared but skipped: placeholder scan (no body edit)
+
+normal   **Camp here —** PR #33 opened. Milestone and keywords set.
+
+quiet    (nothing)
+```
+
+| Level | The outcome line | The checked line | The skipped line |
+|---|---|---|---|
+| `loud` | Yes | Yes | Yes |
+| `normal` | Yes | No | No |
+| `quiet` | **Only if a check failed** | No | No |
+
+> **`quiet` is not silence.** A failed check still surfaces — the level suppresses the
+> machinery and the all-clear, never a finding. An artifact that swallowed a failure at
+> `quiet` would make the setting unsafe to choose, which is the property this whole scheme
+> is built to protect.
+
+**Finer control is an agreement clause, not a fourth level.** *"No reports for PR
+generation"* is section 2 of the agreement — per-artifact suppression, not an extension of
+the level scheme.
 
 ### The log entry
 
-The same names, appended to `.claude/arc/log.md` regardless of verbosity. Format in
+The same names, appended to `.claude/arc/log.md` **regardless of verbosity — including at
+`quiet`, and including checks that passed.** This is the branch verbosity cannot reach, and
+it is what makes turning the volume down cost display only. Format in
 [`templates/event-log.md`](../../templates/event-log.md).
 
 ```text

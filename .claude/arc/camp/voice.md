@@ -78,10 +78,19 @@ quiet    (nothing)
 
 Two settings, because reports and nudges are different kinds of noise:
 
-| | Setting |
-|---|---|
-| **Reports** — obligation 4 | `normal` |
-| **Nudges** — obligation 3 | `loud` |
+| | Fires | So it should be |
+|---|---|---|
+| **Reports** — obligation 4 | On every completion | Brief |
+| **Nudges** — obligation 3 | Because something looks wrong | Hard to miss |
+
+**Which level is selected lives in [`operating-agreement.md`](operating-agreement.md)
+section 1**, where the checked box is the value. This file says what the levels mean; the
+agreement says which one is chosen. Two copies of a selection drift, and the agreement is the
+one a user edits.
+
+**`quiet` is not silence.** A failed check still surfaces at every level — what `quiet`
+suppresses is the machinery and the all-clear, never a finding. How each level renders:
+[`camp-reports.md`](../../../docs/product-architecture/camp-reports.md).
 
 **Verbosity governs display, never retention.** Every event reaches
 [m44](../../../docs/product-architecture/mechanisms/m44-event-log.md)'s event log at
