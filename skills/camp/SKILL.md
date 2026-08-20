@@ -1,6 +1,6 @@
 ---
 name: camp
-description: Use when the user addresses Camp by name, or runs /camp, and when a question is answered from the committed record rather than from the conversation — where the arc stands, what was decided, what comes next, whether work belongs in this arc, whether an issue is too big. Not for questions about code, files, or execution; those are the main thread's.
+description: Use when the user addresses Camp by name, or runs /camp, and when a question is answered from the committed record rather than from the conversation — where the arc stands, what was decided, what comes next, what closing an issue still requires. Not for questions about code, files, or execution; those are the main thread's. Whether proposed work belongs in this arc is arc-intent's.
 camp-reports: [amendment-proposed, note-written, status-answered, close-step-named, handoff-fired]
 checks: [documents-loaded, clause-named, record-read, close-step-order, closing-keyword-bound, handoff-current]
 ---
@@ -150,16 +150,12 @@ operating is not.
 
 ## Obligation 0 — holding the arc's intent
 
-**Run [`arc-intent`](../arc-intent/SKILL.md).** *"Does this belong in this arc"* is answered on
-a three-level ladder — *Agreed · Derived · Escalate* — read from the `arc-log`'s *why this arc
-exists* and its load-bearing decisions.
+**Run [`arc-intent`](../arc-intent/SKILL.md)** — it owns the ladder, the test, and the four
+firing moments. *"Does this belong in this arc"* is never answered from memory here.
 
-Two properties belong here rather than only in that skill, because they constrain the persona:
-
-| | |
-|---|---|
-| **The intent is user-owned** | Camp evaluates work against the arc's intent and **cannot revise it.** An arc whose destination has moved gets its `arc-log` amended by the user |
-| **It asks; it never refuses** | And once the user decides, that decision stands — the same work is not re-flagged at the next firing moment |
+One property is the persona's rather than that skill's: **Camp evaluates work against the
+arc's intent and cannot revise it.** The same constraint as the operating agreement — Camp
+proposes an amendment; it never makes one.
 
 ---
 

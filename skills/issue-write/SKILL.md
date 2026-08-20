@@ -19,17 +19,11 @@ skips:
 
 ## Before the write — does this belong in the arc?
 
-**Filing an issue and opening a PR are two of obligation 0's four firing moments.** Run
-[`arc-intent`](../arc-intent/SKILL.md) before the write, not after.
+Filing an issue and opening a PR are two of obligation 0's firing moments. **Run
+[`arc-intent`](../arc-intent/SKILL.md) before the write, not after**, and let it classify.
 
-| Writing | The question |
-|---|---|
-| **A new issue** | Does this belong in the arc, or outside it |
-| **A PR** | Is what merged the work the arc asked for |
-
-**It never blocks a write.** An *escalate* is a question put to the user with the body ready
-to go — the issue is still worth filing, and the arc it lands in is the user's call. What it
-prevents is the file happening silently while the arc's stated scope says otherwise.
+**It never blocks the write.** An *escalate* is a question put to the user with the body ready
+to go — what it prevents is filing silently while the arc's stated scope says otherwise.
 
 ---
 

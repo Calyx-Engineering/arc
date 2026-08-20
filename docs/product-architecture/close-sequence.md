@@ -30,6 +30,11 @@ before naming the next. Every step is already owned by an artifact.
 **Steps 1 to 7 are Camp's to name. Steps 8 and 9 are the user's to perform.** An issue is not
 closed because the work is done; it is closed because someone merged it.
 
+**Obligation 0 fires inside step 5, not as a tenth step.** `issue-write` runs
+[`skills/arc-intent`](../../skills/arc-intent/SKILL.md) before it writes the PR body — *does
+what this delivers serve the arc.* It is a checkpoint that already existed, which is why it
+adds no step and cannot change the count.
+
 ### Step 6 is the one that fails silently
 
 A closing keyword on a PR into an arc branch **reports success and binds nothing** — the

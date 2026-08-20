@@ -44,6 +44,50 @@ a question rather than a pass/fail.
 **Reading history to find past errors is the retrospective's job**, and m43 §3.1.3.2 rejects
 firing obligation 0 from the event log. Obligation 0 evaluates direction, not the past.
 
+## What the review passes changed
+
+Two rounds. Each round is four passes per artifact, then two consistency passes against every
+mechanism that touches them — m11 · m13 · m21 · m41 · m42 · m43 · m44 · m46, plus
+`record-route`'s K1–K4 routing and `camp-reports.md`'s declaration format.
+
+**The second round earned its place.** It caught three defects the first round introduced or
+missed, including one the first round created while fixing something else.
+
+| | |
+|---|---|
+| **The ladder had labels and no test** | Added the discriminator: *would "why this arc exists", as written, have covered this if its author had thought of it?* Three names and no way to choose between them is not a classification mechanism |
+| **A genuinely unclear call is an *escalate*** | The tie-break was agreed in conversation and never reached the artifact. An unclear case resolved downward is silent drift, which is the one thing this cannot do |
+| **An override did not survive the session** | Acceptance requires an override to proceed *without further challenge*; nothing recorded it, so the next session re-read the same `arc-log` and re-raised the same *escalate*. The override is now written against the work it admitted |
+| **…but not into the load-bearing decisions** | First draft routed it there. [`record-route`](../../skills/record-route/SKILL.md) sends a decision there only when it constrains **every** issue in the arc, and an override constrains nothing. Caught by the consistency pass, not the review pass |
+| **Three blocks existed in two places** | The nudge-strength table in `arc-intent` and `relief-valve`; the user-owned pair in `arc-intent` and `camp`. The skill's own rule is that a second copy is what drifts. Owner keeps it, callers point |
+| **A trigger collision** | `camp`'s description still claimed *"whether work belongs in this arc"*, which is now `arc-intent`'s. Two skills competing for one phrase is [#89](https://github.com/Calyx-Engineering/arc/issues/89)'s failure shape |
+| **The fourth firing moment was thinner than claimed** | Issue close had no separate call site. It did not need one — `issue-write` runs inside close-sequence step 5. Named there rather than added as a tenth step, because the invariant nine is the point of that document |
+| **A [#62](https://github.com/Calyx-Engineering/arc/issues/62) failure, in this issue's own work** | A wording fix was applied in `issue-write` and the identical claim left standing in `arc-intent`'s firing table. Found by the second round, not the first — which is the argument for there being a second round |
+| **Work outside any arc was unhandled** | The skill covered *no arc-log* but not *no arc*. Both now skip the check and defer to [m46](../product-architecture/mechanisms/m46-work-navigation.md), which owns discovery outside an arc |
+| **A check and an event shared a name** | `override-recorded` appeared in both `camp-reports:` and `checks:`. No sibling artifact overlaps the two lists; the check is now `override-row-written` |
+
+## Length — answering [#90](https://github.com/Calyx-Engineering/arc/issues/90) rather than ignoring it
+
+The first draft added 63 lines to skills already over the 180-line working limit. After the
+de-duplication pass:
+
+| | Before this issue | First draft | Now |
+|---|---|---|---|
+| `issue-write` | 344 | 361 | **355** |
+| `camp` | 326 | 342 | **338** |
+| `relief-valve` | 159 | 162 | 162 |
+| `decompose` | 114 | 120 | 120 |
+| `arc-intent` | — | 173 | **192** |
+
+`arc-intent` grew because the review added rules to it. **It sits 12 lines over the limit,
+and #90's own escape clause is that a skill which cannot reach 180 without losing a rule says
+so — this is that statement.** The two remaining cuts are the m43 §3.1 ladder diagram, which
+the issue calls the compact statement of the feature, and the worked case, which is an
+acceptance criterion. Neither is a line worth buying back.
+
+**Every skill this issue touched came down from its first draft**, which is the outcome that
+matters: the feature no longer makes #90 worse than it found it.
+
 ## The diagram walk — m43 §3.1
 
 Required before the PR. m43 §3.1 carries **two** diagrams, and every node in both is
