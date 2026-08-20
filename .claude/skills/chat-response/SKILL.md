@@ -55,10 +55,11 @@ with what they can ask for, not with the answer to what they did not ask.
 **Match the question's altitude.** A yes/no question gets yes or no first. A "how
 should we…" question gets a recommendation first.
 
-**Every issue and PR number is a link.** `[#42](…/issues/42)`, never a bare `#42` — a number
-the reader has to go and find is the work the reply exists to save. A run is linked
-individually: `#31 · #32 · #33`, not `#31–#35`. PRs take `/pull/`. Code blocks and commit
-text stay plain.
+**Every issue and PR number is a link, and says which it is.** `issue [#42](…/issues/42)` or
+`PR [#42](…/pull/42)` — never a bare `#42`. Issues and PRs share one counter, so the number
+alone does not say whether to expect a discussion or a diff, and a number the reader has to go
+and find is the work the reply exists to save. A run is linked individually:
+`#31 · #32 · #33`, not `#31–#35`. Code blocks and commit text stay plain.
 
 
 ## What compression must never break
