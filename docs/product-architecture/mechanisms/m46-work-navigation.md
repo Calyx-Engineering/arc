@@ -246,7 +246,9 @@ several PRs** — the failure this mechanism was written after.
 ## 6 The `Spawned` section is a scope buffer
 
 **A spotted tangent goes into the parent issue or PR's `Spawned` section immediately — as a
-new row, or as a sharpening of one already there. Nothing is acted on when it is spotted.**
+new row, or as a sharpening of one already there. Recording it is not acting on it: the row is
+written first, and whether it is fixed now or at spawn time is the user's call
+([§5.1](#51-not-everything-spotted-is-spawned-work)).**
 
 | | |
 |---|---|
@@ -264,8 +266,34 @@ only readable:
 
 | | Written on |
 |---|---|
-| `Spawned` table | The parent |
+| `Spawned` section | The parent |
 | `Spawned by #NN` | The child — **the only record when the child has no issue** |
+
+### 6.1 Merged work always has a dev-log
+
+**Every unit that merges gets a dev-log, whether or not an issue exists.** A no-issue PR is a
+unit of work like any other, and the record does not care which identifier it carries.
+
+| The unit | Its dev-log |
+|---|---|
+| An issue | `docs/dev-log/issue-<NN>-<slug>.md` |
+| A PR with no issue | `docs/dev-log/pr-<NN>-<slug>.md` |
+
+The two forms mirror [§9](#9-branch-naming)'s branch names: the number names whichever
+identifier exists first.
+
+> **This is not a judgement call, and deliberately so.** A gate on *is this big enough to be
+> worth recording* fails in exactly the case that matters — the small fix that turns out not
+> to be small.
+
+PR [#75](https://github.com/Calyx-Engineering/arc/pull/75) is that case. It was a two-file fix
+when it opened, judged too small to need a record, and it descended into the mechanism this
+document specifies. A size test would have discarded its reasoning at the point the reasoning
+was cheapest to write down.
+
+**One dev-log per unit.** Whatever changes the unit — a discovery folded in, a rewrite, a
+change of direction — is documented in that unit's dev-log. Work that becomes a different unit
+is documented in that one, and the `Spawned` rows link them.
 
 ---
 
@@ -382,6 +410,7 @@ unscoped discovery does not. The boundary between them is judgement.
 | [`skills/issue-write`](../../../skills/issue-write/SKILL.md) | The `Spawned` section, the abandoned marker, mandatory retitling |
 | [`skills/decompose`](../../../skills/decompose/SKILL.md) | Reading the `Spawned` section as an input, and recording its origin |
 | [`skills/chat-response`](../../../skills/chat-response/SKILL.md) | The ascend/descend prompt as a standalone message |
+| [`skills/record-route`](../../../skills/record-route/SKILL.md) | A dev-log per merged unit, `pr-<NN>-<slug>.md` when there is no issue |
 | `CLAUDE.md` — branching | Branch naming with the number |
 | [m21](m21-arc-tree.md) | Rendering these relations |
 

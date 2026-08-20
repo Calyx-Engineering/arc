@@ -47,7 +47,7 @@ unread on disk.
 
 ## Mechanisms
 
-Thirty-one mechanisms across the six pieces.
+Thirty-four mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
