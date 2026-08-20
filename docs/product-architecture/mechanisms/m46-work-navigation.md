@@ -181,8 +181,10 @@ flowchart TB
     class LEGEND leg
 ```
 
-**Entry condition:** a small, scoped discovery during manual work — the no-issue PR case.
-Larger or already-scoped work goes to a worktree instead, and does not move the tree at all.
+**Entry condition:** any unit of work, in manual mode. The loop was written from the small
+no-issue PR case and is not limited to it — an issue-backed unit that spawns further issues
+runs the same loop. Already-scoped parallel work goes to a worktree instead, and does not move
+the tree at all.
 
 ### 5.1 Not everything spotted is spawned work
 
