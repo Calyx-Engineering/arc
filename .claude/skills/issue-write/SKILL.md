@@ -89,12 +89,17 @@ Before writing `Closes`, ask:
 |---|---|
 | Yes — the issue's deliverable is in this change | `Closes` |
 | No — this informs, analyses, or partially advances it | `Refs` |
+| There is no issue | **Neither.** A PR can stand alone |
 
 A design report, an investigation, or a spike almost never closes a capability issue. An
 issue titled *"Add X capability"* closes when X ships, not when X is specified.
 
 **When in doubt use `Refs`.** A missed auto-close costs one click; a wrong auto-close
 silently closes live work and nobody notices until someone looks for it.
+
+**Not every PR needs an issue.** A small fix found while doing something else goes branch to
+PR directly — filing an issue to close it in the same hour is ceremony. File one when the work
+needs scheduling, discussion, or a place to accumulate before it starts.
 
 ### Placement
 
@@ -281,6 +286,17 @@ unrelated to the parent. A documentation cleanup discovered while editing a diag
 
 Keep spawned work in a table at the end of the parent issue, and say plainly whether any of
 it blocks the parent. It is also the raw material for the arc-log's tree.
+
+**Spawned work is not always an issue.** A small fix taken branch-to-PR is spawned work too,
+and it belongs in the parent's table like any other row. Two things then carry the link:
+
+| | |
+|---|---|
+| **The parent's spawned table** | Gets a row naming the PR, same as it would an issue |
+| **The PR body** | Carries `Spawned by #NN` — the only place the relationship exists when there is no issue |
+
+Without both, a no-issue PR is invisible to the arc's tree: the tree is built from what
+records its own parent, and a PR nobody linked records nothing.
 
 ---
 
