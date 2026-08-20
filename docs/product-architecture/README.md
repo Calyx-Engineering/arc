@@ -86,7 +86,7 @@ moves next; this column only reports.
 | m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../reference-roadz/engineering-report/SKILL.md) | ⚪ |
 | m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, and when to decide rather than ask* | [skill](../../.claude/skills/chat-response/SKILL.md) | 🔵 |
 | m45 | `spec-interview` | 🔥 | **A spec that matches what was agreed.** *Labelled question sets to reach the decisions, then the full re-read that catches a document contradicting itself* | [skill](../../skills/spec-interview/SKILL.md) | 🔵 |
-| m46 | Work navigation | 🔥 | **A discovery does not derail the work or get lost.** *Records it in the parent's spawned table, asks the user to ascend or descend, and branches where the dependency actually is — the patch series model* | [spec](mechanisms/m46-work-navigation.md) | ⚪ |
+| m46 | Work navigation | 🔥 | **A discovery does not derail the work or get lost.** *Records it in the parent's `Spawned` section, asks the user to ascend or descend, and branches where the dependency actually is — the patch series model* | [spec](mechanisms/m46-work-navigation.md) | ⚪ |
 | | | | ↳ *The dev-log and arc-log are authored by m17, in Knowledge* | | |
 | | **CAMPAIGN** | | | | |
 | m09 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/m09-kickoff-scope-gate.md) | ⚪ |

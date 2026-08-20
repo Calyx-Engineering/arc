@@ -139,7 +139,7 @@ the reasoning.
 ```text
 **Decision needed.**
 
-**Row it into the spawned table and PR after your review, or open the PR now?**
+**Row it into the `Spawned` section and PR after your review, or open the PR now?**
 
 Reasoning below.
 ```

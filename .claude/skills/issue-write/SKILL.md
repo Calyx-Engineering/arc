@@ -284,15 +284,15 @@ The common error is filtering on topic — rejecting a spawned issue because its
 unrelated to the parent. A documentation cleanup discovered while editing a diagram is
 **spawned**: the parent effort is why it exists, regardless of what it is about.
 
-Keep spawned work in a table at the end of the parent issue, and say plainly whether any of
-it blocks the parent. It is also the raw material for the arc-log's tree.
+Keep spawned work in a `Spawned` section at the end of the parent issue, and say plainly
+whether any of it blocks the parent. It is also the raw material for the arc-log's tree.
 
 **Spawned work is not always an issue.** A small fix taken branch-to-PR is spawned work too,
-and it belongs in the parent's table like any other row. Two things then carry the link:
+and it belongs in the parent's `Spawned` section like any other row. Two things then carry the link:
 
 | | |
 |---|---|
-| **The parent's spawned table** | Gets a row naming the PR, same as it would an issue |
+| **The parent's `Spawned` section** | Gets a row naming the PR, same as it would an issue |
 | **The PR body** | Carries `Spawned by #NN` — the only place the relationship exists when there is no issue |
 
 Without both, a no-issue PR is invisible to the arc's tree: the tree is built from what

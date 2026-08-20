@@ -108,7 +108,7 @@ issue-only reader loses entirely.
 
 | Source | Carries |
 |---|---|
-| An issue's spawned table | Its children, whether those are issues or PRs |
+| An issue's `Spawned` section | Its children, whether those are issues or PRs |
 | A PR body's `Spawned by #NN` | Its parent, when no issue records it |
 
 Both are written by [`skills/issue-write`](../../../skills/issue-write/SKILL.md). **The tree
