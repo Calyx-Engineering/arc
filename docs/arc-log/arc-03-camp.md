@@ -16,10 +16,10 @@ stay open.
 
 | | |
 |---|---|
-| **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last |
+| **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
-| **Build order** | See *Status — execution order*. It is numbered 1–11 and marks where to stop |
-| **Autonomous** | Waves 1 and 2 only, one session. **Stopped and cleared 2026-08-19** |
+| **Build order** | See *Status — execution order*. It is numbered 1–21 |
+| **Autonomous** | All waves. Waves 1–2 ran and stopped; the stop cleared 2026-08-19 and waves 3–6 run autonomously. **Breaks at wave boundaries are context, not approval** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -128,22 +128,29 @@ Two more were spawned later, by the work itself — see below.
 ### Spawned during execution
 
 **Found by building the arc, not by planning it.** Each names the issue whose work exposed it.
-Both are tracker and document mechanics rather than Camp, so both join wave 5.
+[#55](https://github.com/Calyx-Engineering/arc/issues/55) and [#56](https://github.com/Calyx-Engineering/arc/issues/56)
+are tracker and document mechanics, so they join wave 5. The three below block work in progress
+and are scheduled where they are needed.
 
 ```mermaid
 flowchart LR
     I45["<b>#45</b><br/>announce completed actions"] -->|"its own PR bound a link<br/>its keyword did not ask for"| I55["<b>#55</b><br/>reject a stray<br/>closing keyword"]
     I39["<b>#39</b><br/>Camp's three documents"] -->|"review found the agreement<br/>restating the spec"| I56["<b>#56</b><br/>strip the agreement<br/>to actionable clauses"]
+    I60["<b>#60</b><br/>the arc's approval mode"] -->|"writing the handoff<br/>exposed the gap"| I61["<b>#61</b><br/>handoff omits ordered<br/>actions + transcript save"]
+    I60 -->|"four partial edits<br/>reported as complete"| I62["<b>#62</b><br/>edit reported done<br/>unchecked elsewhere"]
     classDef p fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef c fill:#4a3520,stroke:#d98f2b,color:#fff
-    class I45,I39 p
-    class I55,I56 c
+    class I45,I39,I60 p
+    class I55,I56,I61,I62 c
 ```
 
 | Issue | | Spawned by | Why it exists |
 |---|---|---|---|
 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Its PR heading bound a link the body's `Refs` did not ask for. The trap is documented in `skills/issue-write`; no check derives from it |
 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Sections 1, 2 and 6 restated m43 — rationale a user cannot act on, in a document that exists to record deviation |
+| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | State the arc's approval mode and where a window breaks | The stop review | The plan named no mode the arc actually ran in, and said nothing about surviving one context window. **Wave 2.3** |
+| [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff omits the next session's ordered actions and the transcript save | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | `skills/handoff` says nothing about the prompt that starts the next chat, so the prompt duplicated the handoff. **Wave 3.1** |
+| [#62](https://github.com/Calyx-Engineering/arc/issues/62) | An edit is reported done without checking everywhere the claim appears | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | One claim lives in a table, a diagram label and a summary row. Editing one and reporting done left the others contradicting it, four times consecutively. **Wave 2.4** |
 
 ---
 
@@ -153,22 +160,25 @@ Dependency, not value. **The most valuable issue is frequently the one that cann
 
 ```mermaid
 flowchart TB
-    subgraph A[" Autonomous — issues 1 to 4, one session "]
+    subgraph A[" Autonomous — waves 1 and 2 "]
         direction LR
-        W1["<b>Wave 1</b><br/>1 · #39 documents<br/>2 · #37 event log"] --> W2["<b>Wave 2</b><br/>3 · #40 reach Camp<br/>4 · #45 announce + templates"]
+        W1["<b>Wave 1</b><br/>1 · #39 documents<br/>2 · #37 event log"] --> W2["<b>Wave 2</b><br/>3 · #40 reach Camp<br/>4 · #45 announce + templates<br/>5 · #60 plan modes<br/>6 · #62 edit verification"]
     end
     A ==> STOP{{"<b>STOP</b><br/>human review<br/>before wave 3<br/><i>cleared 2026-08-19</i>"}}
-    subgraph B[" Reviewed first — waves 3 to 6 "]
+    subgraph B[" Autonomous — waves 3 to 6 "]
         direction LR
-        W3["<b>Wave 3</b><br/>5 · #41 · 6 · #44<br/>7 · #47 · 8 · #43<br/>9 · #46"] --> W4["<b>Wave 4</b><br/>10 · #42<br/>obligation 0"]
-        W4 --> W5["<b>Wave 5</b><br/>11–17 · #31–#35<br/>#55 · #56"]
-        W5 --> W6["<b>Wave 6</b><br/>18 · #48<br/>skill parity"]
+        W3["<b>Wave 3</b><br/>7 · #61 · 8 · #41<br/>9 · #44 · 10 · #47<br/>11 · #43 · 12 · #46"] --> BR3{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
+        BR3 --> W4["<b>Wave 4</b><br/>13 · #42<br/>obligation 0"]
+        W4 --> BR4{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
+        BR4 --> W5["<b>Wave 5</b><br/>14–20 · #31–#35<br/>#55 · #56"]
+        W5 --> BR5{{"<b>BREAK</b><br/>new window<br/>handoff written"}}
+        BR5 --> W6["<b>Wave 6</b><br/>21 · #48<br/>skill parity"]
     end
     STOP ==> B
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
     class W1,W2,W3,W4,W5,W6 n
-    class STOP s
+    class STOP,BR3,BR4,BR5 s
     style A fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
     style B fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
 ```
@@ -189,7 +199,7 @@ different plans, and the difference belongs here rather than in a chat message.
 | Wave | Mode | Why |
 |---|---|---|
 | **1–2** — [#39](https://github.com/Calyx-Engineering/arc/issues/39) · [#37](https://github.com/Calyx-Engineering/arc/issues/37) · [#40](https://github.com/Calyx-Engineering/arc/issues/40) · [#45](https://github.com/Calyx-Engineering/arc/issues/45) | **Autonomous, then stop** | The foundation. Most specified, no judgement calls, and everything downstream depends on them |
-| **3–6** | **Reviewed first** | Held until waves 1 and 2 land clean |
+| **3–6** | **Autonomous** | The stop cleared 2026-08-19. The spec exists and the foundation is proven, so execution does not need step-by-step approval |
 
 **The stop is the point.** Sixteen issues run unattended ends in either a good arc or sixteen
 PRs on a wrong foundation, and the second is not visible until it is expensive. The numbered
@@ -207,6 +217,7 @@ are four issues in one continuous run — the wave boundary is dependency, not a
 | **The relief valve's thresholds are estimates** | 8 turns, 3 questions, 45 minutes. Placed so the mechanism is buildable, corrected by [#36](https://github.com/Calyx-Engineering/arc/issues/36) |
 | **The close sequence is unproven** | [#41](https://github.com/Calyx-Engineering/arc/issues/41)'s nine steps were written from informal practice. Executing it will find gaps the spec side could not see |
 | **Context depth** | Arc 02 ran five pre-specified issues autonomously and held. This is ten, several with judgement. Expect degradation around the middle |
+| **Degradation is observed, not forecast** | A session at this point lost the ability to follow direction: it went autonomous against instruction and reported an issue number that was never created. Recovery was the user escaping out. **Hand off at a wave boundary before the middle of a wave, not after** |
 
 **Autonomy is per-arc, not per-repo** — [m40](../product-architecture/mechanisms/m40-autonomy-switch.md).
 The mode above is this arc's, decided from how specified the work is.
@@ -255,35 +266,77 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 3 | 2.1 | [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | **Merged** — [PR #53](https://github.com/Calyx-Engineering/arc/pull/53) |
 | 4 | 2.2 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | Obligation 4 — announcing actions, and the templates | **Merged** — [PR #54](https://github.com/Calyx-Engineering/arc/pull/54) |
 | | | | **■ STOP — cleared 2026-08-19 ■** | |
-| 5 | 3.1 | [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Obligation 1 — status and the close sequence | **Next** |
-| 6 | 3.2 | [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | Ready — stop cleared |
-| 7 | 3.3 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | Ready — stop cleared |
-| 8 | 3.4 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | Obligation 3 — four hooks | Ready — stop cleared |
-| 9 | 3.5 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | Ready — stop cleared |
-| 10 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | Ready — stop cleared |
-| 11 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready — stop cleared |
-| 12 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready — stop cleared |
-| 13 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready — stop cleared |
-| 14 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready — stop cleared |
-| 15 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | Ready — stop cleared |
-| 16 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | Ready — stop cleared |
-| 17 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
-| 18 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Ready — stop cleared |
+| 5 | 2.3 | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **In progress** — uncommitted |
+| 6 | 2.4 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | Ready |
+| 7 | 3.1 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's missing ordered actions and transcript save | **Next** |
+| 8 | 3.2 | [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Obligation 1 — status and the close sequence | Ready |
+| 9 | 3.3 | [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | Ready |
+| 10 | 3.4 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Obligation 2 — decomposition | Ready |
+| 11 | 3.5 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | Obligation 3 — four hooks | Ready |
+| 12 | 3.6 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | Ready |
+| | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
+| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | Obligation 0 — holding the intent | Ready |
+| | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
+| 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready |
+| 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready |
+| 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready |
+| 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready |
+| 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | Ready |
+| 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | Ready |
+| 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
+| | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
+| 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Ready |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
 ### What each wave is
+
+**Three modes, and the difference is who reviews the wave's work.**
+
+| Mode | Who reviews, and when |
+|---|---|
+| **Per step** | You approve after each issue. You start it, I run one issue, you review it |
+| **Per wave** | You approve at the end of the wave. You start it, I run the wave, you review it in detail |
+| **Autonomous** | I do not wait for approval. I run it, and I perform the review at the end of the wave |
 
 | Wave | | Mode |
 |---|---|---|
 | **1** | The two artifacts nothing else can be built without | **Autonomous** |
 | **2** | The entry point, and artifacts declaring what they report | **Autonomous** |
-| **3** | The obligations that need only the entry point | Reviewed first |
-| **4** | Obligation 0, which needs status and the relief valve | Reviewed first |
-| **5** | Tracker and chat mechanics — touches `skills/`, not Camp | Reviewed first |
-| **6** | The parity check, which needs every skill to exist | Reviewed first |
+| **3** | The obligations that need only the entry point | **Autonomous** |
+| **4** | Obligation 0, which needs status and the relief valve | **Autonomous** |
+| **5** | Tracker and chat mechanics — touches `skills/`, not Camp | **Autonomous** |
+| **6** | The parity check, which needs every skill to exist | **Autonomous** |
 
 **Wave 5 is last of the substantive work, not optional.** It was spawned during scoping and is
 scheduled here because it depends on nothing in Camp — but it ships in this arc.
+
+### Where a window breaks
+
+**A break is context, not approval.** Ten issues do not fit one window. The mode says who
+reviews the work; the break says where the window ends — and the two are independent, so
+**breaks happen in every mode.**
+
+Break at a wave boundary — a boundary is a dependency edge, and it is where a fresh session
+needs least explanation. **Never mid-wave.**
+
+| Break after | Carries | Why there |
+|---|---|---|
+| **Wave 3** | [#61](https://github.com/Calyx-Engineering/arc/issues/61) · [#41](https://github.com/Calyx-Engineering/arc/issues/41) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) · [#47](https://github.com/Calyx-Engineering/arc/issues/47) · [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Six issues, all obligations, all specified. The expected limit of one window |
+| **Wave 4** | [#42](https://github.com/Calyx-Engineering/arc/issues/42) alone | Only if wave 3 ran light. Obligation 0 is the judgement-heaviest issue in the arc |
+| **Wave 5** | [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) · [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Six issues, no spec. Judgement plus no spec is the most expensive combination here — its own window regardless |
+
+**A break is not optional and not a checkpoint to pass through.** The window ends there.
+
+| At a break | |
+|---|---|
+| 1 | Write the handoff |
+| 2 | Say it was written |
+| 3 | Give the prompt for the next chat |
+
+A new chat starts from that prompt and picks up where the last one stopped.
+
+**Stopping to hand off is not stopping for approval** — it is what makes a long arc survive
+its own context. Write a fresh handoff and stop whenever the context degrades, boundary or not.
 
 ### The stop — cleared 2026-08-19
 
