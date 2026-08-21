@@ -34,8 +34,9 @@ The north star did not move. Four things changed underneath it.
 | **Two of the three Required rows are already owned elsewhere, and that is the finding** | *Write the decision before the next topic* is `spec-interview`'s **load-bearing rule**, scoped to an interview. *File the tangent now* is [m46](../product-architecture/mechanisms/m46-work-navigation.md)'s and `issue-write`'s `Spawned` section. **Neither holds outside its own moment** — which is why the general case was never written down |
 | **[#33](https://github.com/Calyx-Engineering/arc/issues/33) shipped the inventory an hour ago** | *"Progress was countable — three of five"* is now real for scoping. This issue generalises the surface from a scoping inventory to any checklist the work is running against |
 
-**So the deliverable is a sixth `work-watch` check**, and its subject is *the working surface*
-— whether the tracker still says where the work is.
+**So the deliverable is a new `work-watch` check**, and its subject is *the working surface* —
+whether the tracker still says where the work is. It landed as **check 5**, beside check 4
+where the gates belong; the friction check renumbered to 6.
 
 **Intent classification — [`arc-intent`](../../skills/arc-intent/SKILL.md).** Read §2 and §7.
 Tracker and chat mechanics in a Camp-scoped arc: ***escalate***, decided already —
