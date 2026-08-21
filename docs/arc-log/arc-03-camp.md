@@ -355,6 +355,10 @@ specified the work is. **m40 has no spec file**; writing it is
 *Onboarding — m47* milestone because its hard requirement is that the behaviour survive a
 repository boundary.
 
+**§6.1 is the interim stand-in, and it is arc-scoped.** It defines autonomous mode well enough
+to run this arc and no further — it dies with the arc-log it lives in. Anything tracing to m40
+reads §6.1 first and [#73](https://github.com/Calyx-Engineering/arc/issues/73) second.
+
 ---
 
 ## 7 Load-bearing decisions
@@ -418,17 +422,17 @@ authority for every mechanism's spec link.
 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **None** | Pre-release repo hygiene. The local-copy arrangement is deleted at first release |
 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **m12** issue linking | [m12](../product-architecture/mechanisms/m12-issue-linking.md) |
 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43** | m43 §5.1 — the only wave 5 issue that reads m43 |
-| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 has no spec** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) owns writing it · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
+| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 has no spec.** Read §6.1 *Autonomous mode* — this arc's interim definition, and the closest thing that exists — then [#73](https://github.com/Calyx-Engineering/arc/issues/73), which owns the durable one · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's ordered actions and transcript save | **m15** context ladder / handoff | [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md), via [`skills/work-watch`](../../skills/work-watch/SKILL.md) |
-| [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch | **m40** autonomy switch | **No spec.** This issue is the one that would write it, and it left this arc for *Onboarding — m47* |
+| [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch | **m40** autonomy switch | **No spec.** This issue is the one that would write it, and it left this arc for *Onboarding — m47*. Read §6.1 *Autonomous mode* first — it is the interim definition and the input this issue starts from |
 | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) — this issue produced it |
 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) |
 
 | | |
 |---|---|
 | **A skill can be its own spec** | m11, m38 and m45 have no `mechanisms/` file. `CLAUDE.md` states the exception: a capability that is already a single skill is specified by that skill |
-| **m40 has no spec at all** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. [#73](https://github.com/Calyx-Engineering/arc/issues/73) is the issue that would write it, and it left this arc |
+| **m40 has no spec at all** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. §6.1 *Autonomous mode* is this arc's interim stand-in; [#73](https://github.com/Calyx-Engineering/arc/issues/73) owns the durable version and left this arc |
 | **One issue traces to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) is pre-release repo hygiene, not a mechanism |
 
 ---
