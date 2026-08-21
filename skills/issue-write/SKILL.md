@@ -97,10 +97,6 @@ inherits a capability-sized title, which is the first failure above. **Not `spec
 word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
 its keep stays open until a month of real use answers it.
 
-**Retitle before children exist, not after** — once a title is referenced from comments,
-documents and other issues, changing it costs more than the wrong title does. Size it at
-filing.
-
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
 moment the issue is renamed.
@@ -108,6 +104,32 @@ moment the issue is renamed.
 **The tracker owns actions.** Acceptance criteria, checklists, next steps and owners live in
 the issue and nowhere else. A report states what is known; an issue states what must happen.
 Mixing them means neither is trustworthy.
+
+### Retitling — the rule differs by unit, and the units must be named
+
+**An issue title and a PR title are governed in opposite directions.** Both rules below are
+right; applying either to the other unit is the failure.
+
+| Unit | Rule | Why |
+|---|---|---|
+| **An issue** | **Retitle before children exist, not after.** Size it at filing | The title is an identifier other things point at. Once comments, documents and other issues reference it, changing it costs more than the wrong title does |
+| **A PR** | **Retitle as the unit grows — mandatory, not a courtesy** | The title is a description of a diff still being written. Nothing points at it but the review about to happen |
+
+**A PR that grows and keeps its first title is unreviewable, whatever its size.**
+
+> **The anti-pattern is not a big PR. It is a unit that grew without its title and description
+> growing with it.** A four-file PR that expanded four times and still carries the name of its
+> first commit tells the reviewer to expect one thing and hands them another.
+
+**The trigger is a descent** — a discovery that changes what this unit *is*, folded into the
+same branch rather than split off. When that happens the title and the description are both
+rewritten; *Editing an existing body* below governs the description.
+
+| | |
+|---|---|
+| **Retitle at the descent, not at review time** | The moment the scope changed is the moment it is cheapest to name, and the only moment you still remember what it was before |
+| **A tangent does not trigger it** | Something spotted and recorded in `Spawned`, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
+| **The same test applies** | The retitled PR still has to pass *A name, not a summary* above. A title that grew by accretion is the other failure |
 
 ### What a good issue contains
 
@@ -416,6 +438,26 @@ and it belongs in the parent's `Spawned` section like any other row. Two things 
 
 Without both, a no-issue PR is invisible to the arc's tree: the tree is built from what
 records its own parent, and a PR nobody linked records nothing.
+
+### A row that was decided against stays, marked
+
+**Never delete a `Spawned` row.** When the work is abandoned — folded into something else,
+ruled out, or overtaken — mark it and leave it where it is.
+
+```text
+| **Abandoned** — folded into #78 | A dev-log for every merged unit |
+| **Abandoned** — the shared `temp/` branch, disproved by PR #111 | Retarget a PR's head |
+```
+
+| | |
+|---|---|
+| **At the front of the row**, never at the end | A table is scanned down its first column. A marker in the last cell is found only by someone already reading the row they were going to read anyway |
+| **Say what happened to it**, not only that it stopped | *Abandoned* alone leaves the next reader to re-derive whether it was wrong, done elsewhere, or deferred — which is the work the row exists to save |
+| **A deleted row loses the spawn edge** | The tree is built from recorded relationships, so a removed row does not become an unspawned discovery. It becomes one nobody can see was ever considered |
+
+**A record of what was chosen against is worth more than a tidy table.** The `Spawned` section
+is a growing definition of what this work turned out to be, not a to-do list that gets cleared
+down — so length is evidence, and pruning it destroys the evidence.
 
 ---
 

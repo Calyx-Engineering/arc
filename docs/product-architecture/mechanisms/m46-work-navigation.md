@@ -1,7 +1,9 @@
 # Mechanism — Work Navigation
 
-**Status:** specified. The decisions are settled; the artifacts that carry them are named
-below and built separately.
+**Status:** specified, and carried. The decisions are settled and [§11](#11-artifacts)'s
+artifacts each hold their part, as of [#78](https://github.com/Calyx-Engineering/arc/issues/78).
+**Not exercised** — nothing in this repository runs a skill, so every rule below is checked as
+text and never as behaviour.
 **Home:** Arc — Authoring.
 **Src:** 🔥 observed, 2026-08-20.
 **Covers:** m46.
@@ -548,8 +550,11 @@ unscoped discovery does not. The boundary between them is judgement.
 | [`skills/decompose`](../../../skills/decompose/SKILL.md) | Reading the `Spawned` section as an input, and recording its origin |
 | [`skills/chat-response`](../../../skills/chat-response/SKILL.md) | The ascend/descend prompt as a standalone message |
 | [`skills/record-route`](../../../skills/record-route/SKILL.md) | A dev-log per merged unit, `pr-<NN>-<slug>.md` when there is no issue |
+| [`templates/dev-log.md`](../../../templates/dev-log.md) | Both filename forms, and the heading a no-issue unit takes |
 | `CLAUDE.md` — branching | Branch naming with the number |
 | [m21](m21-arc-tree.md) | Rendering these relations |
+| `tools/new-direct-pr.sh` | [§9.1](#91-the-pr-number-does-not-exist-when-the-branch-is-created) steps 1–4 as one command — predict, branch, stub dev-log, push, open the draft |
+| `hooks/camp-branch-check` | Reports a work branch carrying neither number form |
 
 ---
 

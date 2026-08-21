@@ -18,9 +18,9 @@ stay open.
 |---|---|
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
-| **Build order** | See §10 *Status — execution order*. Numbered 1–23. **22 was vacant while [#73](https://github.com/Calyx-Engineering/arc/issues/73) was out of the arc; it returned and reclaimed the slot** |
+| **Build order** | See §10 *Status — execution order*. Numbered 1–25. **22 was vacant while [#73](https://github.com/Calyx-Engineering/arc/issues/73) was out of the arc; it returned and reclaimed the slot** |
 | **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval.** Step 10 needs `.claude/settings.json` — §6.1.1 |
-| **Waves 1–5** | **Done and merged.** Wave 6 is [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#78](https://github.com/Calyx-Engineering/arc/issues/78) |
+| **Waves 1–5** | **Done and merged.** Wave 6 is [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#73](https://github.com/Calyx-Engineering/arc/issues/73) · [#78](https://github.com/Calyx-Engineering/arc/issues/78) · [#119](https://github.com/Calyx-Engineering/arc/issues/119) · [#120](https://github.com/Calyx-Engineering/arc/issues/120) — **the last two are review and release, not build** |
 | **After wave 5** | Four no-issue PRs — [PR #107](https://github.com/Calyx-Engineering/arc/pull/107) [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) [PR #110](https://github.com/Calyx-Engineering/arc/pull/110) [PR #113](https://github.com/Calyx-Engineering/arc/pull/113) — and [#105](https://github.com/Calyx-Engineering/arc/issues/105) · [#106](https://github.com/Calyx-Engineering/arc/issues/106) filed **out of** the arc. See §12.2 |
 | **Friction with Arc itself** | Goes in [`docs/arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md), **as it happens**. Read in by the retrospective at the end; it does not replace one. Governed by a switch in Camp's operating agreement, **on in this repository and off everywhere else** — [#98](https://github.com/Calyx-Engineering/arc/issues/98) |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
@@ -479,12 +479,14 @@ write.
 | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) — this issue produced it |
 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) |
 | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **m17** the record ladder · **m47** onboarding | [`skills/record-route`](../../skills/record-route/SKILL.md) — the skill routes it · [m47](../product-architecture/mechanisms/m47-onboarding.md) §3 carries the switch's question |
+| [#119](https://github.com/Calyx-Engineering/arc/issues/119) | Every shipping artifact reviewed against what it claims | **None** | Pre-release, like [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#68](https://github.com/Calyx-Engineering/arc/issues/68). It reads the artifacts themselves; there is no spec above it, and its own output — `docs/release/pre-release-review.md` — becomes the spec for the second review |
+| [#120](https://github.com/Calyx-Engineering/arc/issues/120) | Release `v0.1.0` | **None** | Pre-release. The release bar is [ROADMAP.md](../../ROADMAP.md)'s and `CLAUDE.md`'s, not a mechanism's |
 
 | | |
 |---|---|
 | **A skill can be its own spec** | m11, m38 and m45 have no `mechanisms/` file. `CLAUDE.md` states the exception: a capability that is already a single skill is specified by that skill |
 | **m40 is specified now** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. §6.1 was this arc's interim stand-in and [m40](../product-architecture/mechanisms/m40-autonomy-switch.md) supersedes it — read m40 first |
-| **Two issues trace to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#68](https://github.com/Calyx-Engineering/arc/issues/68) are pre-release repo hygiene, not mechanisms. The arrangement they check is deleted at first release |
+| **Four issues trace to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#68](https://github.com/Calyx-Engineering/arc/issues/68) · [#119](https://github.com/Calyx-Engineering/arc/issues/119) · [#120](https://github.com/Calyx-Engineering/arc/issues/120) are pre-release work, not mechanisms. [#119](https://github.com/Calyx-Engineering/arc/issues/119) and [#120](https://github.com/Calyx-Engineering/arc/issues/120) are **the arc's last two steps**. The local-copy arrangement [#48](https://github.com/Calyx-Engineering/arc/issues/48) checks survives the release — `CLAUDE.md` ties its deletion to *this repo installing the plugin*, which is the user's act and not [#120](https://github.com/Calyx-Engineering/arc/issues/120)'s |
 
 ---
 
@@ -533,9 +535,11 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **Merged** — [PR #114](https://github.com/Calyx-Engineering/arc/pull/114). Also delivers [#68](https://github.com/Calyx-Engineering/arc/issues/68), which the PR could not bind — `tools/verify-tracker-body.sh body` allows one closing keyword, so it was closed by hand. Ships `tools/verify-sync-parity.sh` |
 | — | — | [PR #115](https://github.com/Calyx-Engineering/arc/pull/115) | The staleness check compares transcripts by mtime | **Merged** 08-21 18:34. Also gave [m15](../product-architecture/mechanisms/m15-handoff-spine.md) the checks it never specified, and its three missing sections |
-| 22 | 6.2 | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | The autonomy switch — specified and built | **PR open** — [PR #116](https://github.com/Calyx-Engineering/arc/pull/116). Left for *Onboarding — m47* and **returned 2026-08-21** after three to five failed surface fixes; it reclaims its own slot, so nothing renumbers. Ships [m40](../product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set` and `tools/verify-autonomy.sh` |
-| — | — | [PR #118](https://github.com/Calyx-Engineering/arc/pull/118) | One command runs every gate | **Open**. `tools/verify-all.sh` — 8 gates, 99 cases. Prerequisite for [#117](https://github.com/Calyx-Engineering/arc/issues/117) |
-| 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
+| 22 | 6.2 | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | The autonomy switch — specified and built | **Merged** — [PR #116](https://github.com/Calyx-Engineering/arc/pull/116). Left for *Onboarding — m47* and **returned 2026-08-21** after three to five failed surface fixes; it reclaims its own slot, so nothing renumbers. Ships [m40](../product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set` and `tools/verify-autonomy.sh` |
+| — | — | [PR #118](https://github.com/Calyx-Engineering/arc/pull/118) | One command runs every gate | **Merged** 08-21 20:02. `tools/verify-all.sh` — 8 gates, 112 cases at [#78](https://github.com/Calyx-Engineering/arc/issues/78). Prerequisite for [#117](https://github.com/Calyx-Engineering/arc/issues/117) |
+| 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last **build** row — it touches skills every earlier wave edits |
+| 24 | 6.4 | [#119](https://github.com/Calyx-Engineering/arc/issues/119) | Review every shipping artifact before the first release | **Not a build row.** Every skill, hook, command, template and the manifest read against what it claims. Findings are filed, never fixed in place — the process itself is the deliverable, `docs/release/pre-release-review.md`, written so the second review runs from it |
+| 25 | 6.5 | [#120](https://github.com/Calyx-Engineering/arc/issues/120) | Release `v0.1.0` | **Gated by [#119](https://github.com/Calyx-Engineering/arc/issues/119)** — a release cut over unreviewed artifacts is the review not happening. `docs/release/release-process.md`, install instructions for **both** marketplace and local, and the cut. **Installing it is the user's**, and it is what finally exercises the hooks |
 
 **Steps 19 and 20 sit at their plan position, not their merge time.** [PR #88](https://github.com/Calyx-Engineering/arc/pull/88)
 and [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) were pulled forward; the numbered column is the plan and does not
@@ -558,7 +562,7 @@ is stated.
 | **3** | The obligations that need only the entry point | **Autonomous** |
 | **4** | The intent check, which needs status and the relief valve | **Autonomous** |
 | **5** | Tracker and chat mechanics — touches `skills/`, not Camp | **Autonomous** |
-| **6** | The parity check, which needs every skill to exist | **Autonomous** |
+| **6** | The parity check, the autonomy switch, work navigation — then the pre-release review and the release. **The last two need every other artifact to be finished**, which is what puts them here | **Autonomous** |
 
 **Wave 5 is last of the substantive work, not optional.** It was spawned during scoping and is
 scheduled here because it depends on nothing in Camp — but it ships in this arc.
@@ -721,8 +725,9 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 | m46 §9.1 · `skills/issue-write` — the branch rule ([PR #108](https://github.com/Calyx-Engineering/arc/pull/108), [PR #110](https://github.com/Calyx-Engineering/arc/pull/110)) | [PR #113](https://github.com/Calyx-Engineering/arc/pull/113), this close-out | **Fired correctly.** The branch was named by the rule, by the script, before the work started |
 | `commands/arc-next.md` — the staleness check ([PR #115](https://github.com/Calyx-Engineering/arc/pull/115)) | — | **Unsoaked.** It lands after the run that found it. The next `/arc-next` is its first exercise, and the check it replaced was itself only ever exercised once |
 | `tools/sync-local-skills.sh` — the derived lists, both directions, the link re-basing ([#48](https://github.com/Calyx-Engineering/arc/issues/48), [#68](https://github.com/Calyx-Engineering/arc/issues/68)) | Its own tree, at the moment it was rewritten | **Found two real defects the old check reported clean.** `skills/engineering-report` had no copy, and 28 links across 11 copies pointed at `.claude/docs/`. Nine fixture cases in `tools/verify-sync-parity.sh`, and four mutations of the script each failed the case meant to catch them |
-| m40 · `skills/autonomy-set` · the four auto arms ([#73](https://github.com/Calyx-Engineering/arc/issues/73)) | — | **Unsoaked, and it is the one that matters.** The three acceptance criteria are behavioural and nothing here runs a skill. `tools/verify-autonomy.sh` covers the textual half — that no artifact states a prohibition without its auto arm — which is the half that failed five times. **The first real exercise is the next autonomous run** |
+| m40 · `skills/autonomy-set` · the four auto arms ([#73](https://github.com/Calyx-Engineering/arc/issues/73)) | **Two autonomous runs, 2026-08-21** — the stretch that merged [PR #118](https://github.com/Calyx-Engineering/arc/pull/118), and wave 6.3 | **Fired correctly, and it is the one that matters.** Entered explicitly with a named boundary, the loop ran unattended, the boundary ended it and the handoff was written with the mode row set back to manual. The second run read that row rather than the conversation, and rewrote it on entry — **the state half works.** Two things it does *not* establish: nothing here executes a skill, so this is the mechanism followed by hand; and **the merge still followed an explicit ask**, so [PR #118](https://github.com/Calyx-Engineering/arc/pull/118) is not evidence against *who initiated* |
 | `tools/sync-local-skills.sh` — the parity check ([#48](https://github.com/Calyx-Engineering/arc/issues/48), [#68](https://github.com/Calyx-Engineering/arc/issues/68)) | [#73](https://github.com/Calyx-Engineering/arc/issues/73), by adding a skill | **Fired correctly, unprompted.** `autonomy-set` could not ship half-installed — the check demanded both the local copy and a registry row with a mechanism number, and failed until it had them |
+| `tools/verify-all.sh` — the gate runner ([PR #118](https://github.com/Calyx-Engineering/arc/pull/118)) | [#78](https://github.com/Calyx-Engineering/arc/issues/78), the first PR opened after it merged | **Ran clean — 8 gates, 112 cases, one command.** It replaced four invocations from memory, which is the whole claim; it caught nothing here, because the re-sync had already been run by hand before it. **`--list` is the half worth keeping** — it prints what the runner *cannot* cover, so a green run stops reading as a claim about hooks firing or skills behaving |
 
 > **The first four of these are the first soak lines in this repository, across three arcs.**
 > `arc-02` and everything in `arc-03` before [#42](https://github.com/Calyx-Engineering/arc/issues/42)
@@ -737,6 +742,13 @@ execution and is worth exactly what it says.
 
 ## 14 At arc close
 
+**The release is the last thing in this arc, and it is what the close waits on.**
+[#119](https://github.com/Calyx-Engineering/arc/issues/119) reviews every shipping artifact and
+[#120](https://github.com/Calyx-Engineering/arc/issues/120) cuts `v0.1.0`; the checklist below
+runs after both merge, not beside them.
+
+- [ ] [#119](https://github.com/Calyx-Engineering/arc/issues/119) merged — every skill, hook, command, template and the manifest read against what it claims, findings **filed rather than fixed in place**
+- [ ] [#120](https://github.com/Calyx-Engineering/arc/issues/120) merged — `v0.1.0` cut, with install instructions for **both** marketplace and local
 - [ ] Status table reflects reality
 - [ ] Default branch restored — `tools/arc-default-branch.sh restore`
 - [ ] Arc PR into `main` carries a `Closes` line for every issue
@@ -751,10 +763,12 @@ The skills half of this has a stopgap in `tools/sync-local-skills.sh`; the hooks
 and gets none, because a hook copied into `.claude/settings.json` would be tested against a
 version of itself.
 
-**Installing the released plugin is what closes it** — a release milestone, not arc work, per
-CLAUDE.md and the ROADMAP's release bar. Until then every hook-carried check is written and
-not running: `hooks/tracker-verify` already holds the milestone check that
-[PR #91](https://github.com/Calyx-Engineering/arc/pull/91) in this arc still missed.
+**Installing the released plugin is what closes it, and installing is the user's.**
+[#120](https://github.com/Calyx-Engineering/arc/issues/120) cuts the release — that part *is*
+arc work now — but a cut plugin that nobody has installed still fires no hook. Until it is
+installed here, every hook-carried check is written and not running: `hooks/tracker-verify`
+already holds the milestone check that [PR #91](https://github.com/Calyx-Engineering/arc/pull/91)
+in this arc still missed.
 
 ---
 

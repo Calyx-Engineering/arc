@@ -1,6 +1,6 @@
 ---
 name: chat-response
-description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
+description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 # chat-response
@@ -173,6 +173,29 @@ Reasoning below.
 file now or table it. Not to a passing clarification.
 
 **One decision per numbered question.** Bundled decisions get partial answers.
+
+#### Ascend or descend — the standalone prompt
+
+**The most frequent instance of the rule above**, and the one that gets buried the most. It
+fires when a unit's own work is finished and something was spawned beneath it: the next move is
+either down into that, or back up to whatever this unit was spawned from. **Which one is the
+user's call and cannot be inferred.**
+
+```text
+**Decision needed.**
+
+**Descend into the spawned process update, or ascend to issue #45 (the handoff blockage)?**
+```
+
+| | |
+|---|---|
+| **Its own message. Nothing else in it** | Not a closing line under a status report, not a sentence after the summary of what just merged. The reply that reports the work and the reply that asks where to go next are two messages |
+| **Fires only when there is somewhere to descend to** | At depth zero there is no decision, so there is no prompt. A unit that spawned nothing ends and the work returns to the parent without asking |
+| **Name both destinations concretely** | *"issue #45 (the handoff blockage)"*, not *"the parent"*. The user has been reading a diff, not holding the work tree in their head |
+| **The words match the action** | *Ascend* and *descend*, on the work tree. Not *"go back"* or *"keep going"*, which do not say what they move relative to |
+
+**Never *"what next?"*** It hands the reconstruction back to the person the prompt exists to
+serve — they have to rebuild where they are before they can answer where to go.
 
 ### Several topics — the question block
 

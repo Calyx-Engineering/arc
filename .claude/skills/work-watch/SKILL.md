@@ -322,7 +322,7 @@ should cost the *why* behind a few decisions and nothing else.
 | Fires when | The gate |
 |---|---|
 | **A decision was settled and the next topic is opening** | Write it to its artifact first — the spec, the dev-log, the issue. Then move |
-| **A tangent or a spawned idea appeared** | File it now. *"I will file that later"* is the failure this prevents; [`issue-write`](../issue-write/SKILL.md)'s `Spawned` section is where it goes |
+| **A tangent or a spawned idea appeared** | **Record the row now — filing is a later, separate act.** *"I will write that down later"* is the failure this prevents; the row goes in the parent's `Spawned` section ([`issue-write`](../issue-write/SKILL.md)), and it gets a real issue or PR number at spawn time, or a marker saying it was abandoned |
 | **A checklist item is done and still unticked** | Tick it and read it back. `gh issue view <N> --json body` — a tracker write reports success whether or not it landed |
 | **Re-anchoring cost the transcript** | If working out where things stand meant re-reading the conversation, the surface has stopped holding the state. Say so |
 

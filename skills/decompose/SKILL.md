@@ -1,8 +1,8 @@
 ---
 name: decompose
-description: Use when turning a specification or a rough idea into a proposed set of issues — reading the spec and the arc's intent, listing every part that must exist, grouping into one artifact or one decision each, ordering by dependency, and naming what each delivers when it merges. Presents the set for approval and files nothing unapproved.
+description: Use when turning a specification, a rough idea, or an accumulated Spawned section into a proposed set of issues — reading the source and the arc's intent, listing every part that must exist, grouping into one artifact or one decision each, ordering by dependency, and naming what each delivers when it merges. Presents the set for approval and files nothing unapproved.
 camp-reports: [decomposition-proposed]
-checks: [intent-read, parts-listed, one-artifact-each, dependency-ordered, deliverable-named, intent-classified, approval-held]
+checks: [intent-read, origin-recorded, parts-listed, one-artifact-each, dependency-ordered, deliverable-named, intent-classified, approval-held]
 ---
 
 # Decomposition
@@ -20,13 +20,13 @@ mechanism costs the whole decomposition, every time.
 
 | # | Step | |
 |---|---|---|
-| 1 | **Read the spec and the arc's stated intent** | Both. A set that satisfies the spec and drifts from the intent is the failure the intent check exists to catch |
+| 1 | **Read the source and the arc's stated intent** | Both. A set that satisfies the source and drifts from the intent is the failure the intent check exists to catch. **Two kinds of source** — below |
 | 2 | **List every part that must exist** | Parts, not issues. Grouping comes next, and grouping first hides parts |
 | 3 | **Group into issues** | One artifact, or one decision, each |
 | 4 | **Order by dependency** | Not by value |
 | 5 | **Name what each delivers when it merges** | One line per issue |
 | 6 | **Classify each against the arc's intent** | [`arc-intent`](../arc-intent/SKILL.md). Issue spawn is one of its four firing moments |
-| 7 | **Present the set for approval** | **File nothing unapproved** |
+| 7 | **Present the set for approval, naming its origin** | **File nothing unapproved** |
 
 **Step 2 before step 3.** Listing parts and grouping them are different acts, and doing them
 together produces issues shaped by what is convenient to write rather than by what must exist.
@@ -34,6 +34,29 @@ together produces issues shaped by what is convenient to write rather than by wh
 **Step 6 does not remove anything from the set.** An issue outside the arc's intent is
 presented with its classification attached — *escalate*, and the reason — so the user decides
 whether it lands here or later. Dropping it silently is the same failure as filing it silently.
+
+### Two kinds of source, and the set says which it read
+
+**A spec is not the only input. A `Spawned` section is the other, and it has equal standing.**
+
+| Source | Is | Reading it means |
+|---|---|---|
+| **A specification** | Written forward. Someone decided what should exist, then wrote it down | Every part is named. The work is finding the ones the prose implies without stating |
+| **A parent's `Spawned` section** | Written backward. Rows accumulated as work uncovered work, over hours or days | The parts are already observed rather than predicted — and they are unordered, unequal in size, and some are already abandoned |
+
+**A `Spawned` table that grew for three days is not a rough note.** It is the only record of
+what the work turned out to be, written at the moments the observations were made rather than
+reconstructed afterwards, and it is exactly the raw material this loop wants.
+
+| Reading a `Spawned` section | |
+|---|---|
+| **Abandoned rows are input, not noise** | A row marked abandoned records a decision already taken. Re-proposing it as an issue reopens something settled — read the marker and leave it out, saying so |
+| **A row is not an issue** | Rows are spot-sized: some are a part, some are three, some are half of another row. Step 2 still applies, and skipping it because the rows look issue-shaped is how a `Spawned` table decomposes straight into a bad set |
+| **Rows already fixed on the branch stay** | m46 §5.1 keeps the row when the work was done immediately. It is a record, not an open item — do not propose it again |
+
+**Record which source was read, in the proposed set's first line.** A set carries its own
+origin or the user cannot tell whether an absent part was never specified or never observed —
+and those have opposite fixes.
 
 ---
 
@@ -76,10 +99,12 @@ Filing is [`issue-write`](../issue-write/SKILL.md)'s, after approval.
 
 ## The output
 
-A list. One line per issue, in dependency order, each naming what merging it delivers.
+A list. One line per issue, in dependency order, each naming what merging it delivers —
+**headed by what it was decomposed from.**
 
 ```text
 Proposed — 5 issues, in dependency order.
+From m43 §3, the Camp spec.
 
 1  The event log's format            no dependency
    Merging gives every artifact one place to append to.
@@ -96,6 +121,10 @@ Nothing filed. Approve, edit, or reject the set.
 ```
 
 **The last line is not decoration.** It states the boundary the mechanism is built on.
+
+**Neither is the second.** `From m43 §3, the Camp spec` and
+`From #45's Spawned section, 11 rows, 2 abandoned` are read differently — the first invites
+*what did the spec not say*, the second *what did we not notice*.
 
 ---
 
@@ -115,6 +144,7 @@ a gap discovered at use is one that produced a bad decomposition first.
 ## Related
 
 - [m43 §3.3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — decomposition, which this implements
-- [`issue-write`](../issue-write/SKILL.md) — what files the set once approved, and the title rule
+- [m46 §6](../../docs/product-architecture/mechanisms/m46-work-navigation.md) — the `Spawned` section this reads as a source, and why its rows accumulate rather than being cleared down
+- [`issue-write`](../issue-write/SKILL.md) — what files the set once approved, the title rule, and what writes a `Spawned` row
 - [`arc-intent`](../arc-intent/SKILL.md) — the intent check, which decides whether a proposed issue belongs in this arc
 - [`camp`](../camp/SKILL.md) — the entry point

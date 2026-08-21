@@ -18,7 +18,7 @@ before naming the next. Every step is already owned by an artifact.
 | # | Step | Owned by | Confirmed by |
 |---|---|---|---|
 | 1 | Checklist items still unchecked, or explicitly dropped | Camp names them | The issue body |
-| 2 | The `dev-log` written for this issue | [`skills/record-route`](../../skills/record-route/SKILL.md) | The file exists |
+| 2 | The `dev-log` written for this **unit** — `issue-<NN>-` or `pr-<NN>-`, whichever identifier it carries | [`skills/record-route`](../../skills/record-route/SKILL.md) | The file exists |
 | 3 | The `arc-log` status row updated | [`skills/record-route`](../../skills/record-route/SKILL.md) | The row says what merged |
 | 4 | Changes committed — nothing uncommitted in the tree | [`skills/work-watch`](../../skills/work-watch/SKILL.md) | `git status --short` is empty |
 | 4b | **Every gate clean** | `tools/verify-all.sh` | Its own exit code — one command, not four claims |

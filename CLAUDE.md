@@ -125,9 +125,33 @@ Trunk-based. `main` stays deployable and coherent at every commit.
 - **Arc branches** (`arc/NN-short-slug`) — a planned, multi-session push toward a
   numbered milestone. Merges to `main` only when that milestone is actually
   deployable or dogfoodable.
-- **Topic branches** — anything smaller or exploratory. Short-lived, merge back quickly.
+- **Work branches** — one unit of work off an arc branch. **Two forms, and both carry a
+  number.** Below.
+- **Topic branches** — anything smaller or exploratory, and anything outside an arc.
+  Short-lived, merge back quickly. No number, because there is no unit to name.
 - No permanent `develop` branch. Revisit when Arc has external consumers, or when
   commits must leave this machine before they have been exercised.
+
+### A work branch carries the number of whichever identifier exists first
+
+```text
+arc/<nn>-<slug>-issue-<NN>-<hint>    an issue exists — use its number
+arc/<nn>-<slug>-pr<NN>-<hint>        no issue — the PR number is the only identifier
+
+arc/03-camp-issue-78-work-nav
+arc/03-camp-pr115-transcript-staleness
+```
+
+| | |
+|---|---|
+| **The number is mandatory, in both forms** | The branch name is often the only reference visible — an editor's status bar truncates early, and it is where the work is named while its PR is read in a browser |
+| **So is the `pr` label** | Issues and PRs share one counter. A bare number points at whichever object happens to hold it |
+| **Never `pr<NN>` on an issue-backed branch** | Two different numbers from the same counter. The wrong one points the reader at an unrelated object |
+| **No issue means the number does not exist yet** | It is issued when the PR opens. `tools/new-direct-pr.sh <hint> "<title>"` predicts it, branches, commits a stub dev-log, pushes, and opens the **draft PR before the work** — which is what makes the race window seconds wide |
+| **A missed prediction is recorded, never retried** | **Renaming an open PR's branch closes the PR** — tested, [PR #109](https://github.com/Calyx-Engineering/arc/pull/109) went `OPEN` → `CLOSED`. Say it in the PR body, the dev-log and the friction log instead |
+
+Mechanics in [`skills/issue-write`](skills/issue-write/SKILL.md); full reasoning in
+[m46 §9](docs/product-architecture/mechanisms/m46-work-navigation.md#9-branch-naming).
 
 ## Soak — before a plugin change is pushed
 
