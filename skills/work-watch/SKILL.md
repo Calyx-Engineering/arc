@@ -1,13 +1,15 @@
 ---
 name: work-watch
-description: Use continuously while work is in progress — one sweep that watches for four things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, and whether an edit reported as done is contradicted somewhere else in the file. Run it at natural pauses, not every turn.
-camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught]
-checks: [commit-point, test-obligation, depth, edit-completeness]
+description: Use continuously while work is in progress — one sweep that watches for five things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, and whether Arc itself just cost the work something. Run it at natural pauses, not every turn.
+camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, friction-caught]
+checks: [commit-point, test-obligation, depth, edit-completeness, friction]
+skips:
+  - friction (the operating agreement has the friction log off)
 ---
 
 # Watching the work
 
-Four mechanisms watch work as it proceeds. **One sweep, not four always-on checks
+Five mechanisms watch work as it proceeds. **One sweep, not five always-on checks
 competing for the same attention.**
 
 | Watches for | Proposes | |
@@ -16,12 +18,13 @@ competing for the same attention.**
 | A decision implies later physical verification | A test item | m23 |
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 · [`relief-valve`](../relief-valve/SKILL.md) |
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
+| Arc itself cost the work something | A line in the arc's friction log | m17 · [`record-route`](../record-route/SKILL.md) |
 
-> **Propose, never act.** Three of the four nudge; the human decides. This is the whole
+> **Propose, never act.** Four of the five nudge; the human decides. This is the whole
 > posture, and violating it on the first — committing unasked — is the single most repeated
 > correction in the record.
 >
-> **The fourth is not a nudge.** Edit completeness is a gate on your own reporting, not a
+> **Check 4 is not a nudge.** Edit completeness is a gate on your own reporting, not a
 > proposal to the human — it runs before you claim an edit is done, and it is the only check
 > here that blocks.
 
@@ -295,6 +298,32 @@ recoverable, not that it is caught.
 
 ---
 
+## 5. Did Arc itself just cost the work something?
+
+**Only when the operating agreement has the friction log on** — off is the default, and off
+means this check does not run. Where it is on, the log is
+`docs/arc-work/<arc-slug>/friction-log.md` and [`record-route`](../record-route/SKILL.md)
+routes to it.
+
+**The subject is the tooling, not the work.** A wrong analysis is the work being hard; a step
+that would not run is Arc being in the way. Only the second belongs here.
+
+| Fires on | |
+|---|---|
+| **A step in a documented loop did not execute** | It was skipped, denied, or silently did nothing |
+| **A correction given twice** | The second time is the signal. The first is a conversation |
+| **Time lost to Arc rather than to the problem** | Hunting for a file the record should have named, re-deriving something already written down |
+| **A tool call denied** | And the denial was *recorded* rather than diagnosed. What was refused is not the same question as which part |
+
+**An entry is written at the moment, not at the break.** Reconstructed friction is what m17's
+transcript mining exists to replace, and doing it by hand a week late is strictly worse than
+both.
+
+**Propose the entry; do not append it silently.** The user decides whether it was friction —
+they are the one who felt it.
+
+---
+
 ## Before the PR — does the build match the spec's diagram?
 
 **A spec section that defines a feature opens with a diagram. That diagram is the compact
@@ -324,9 +353,13 @@ a feature nobody built — the most common shape this catches, and invisible in 
 
 ## Why one sweep
 
-**Checks 1 to 3 are the same shape:** notice something about the work in progress, and say
-so. Three separate always-on checks would compete for the same attention and share the same
+**Checks 1 to 3 and 5 are the same shape:** notice something about the work in progress, and
+say so. Four separate always-on checks would compete for the same attention and share the same
 over-firing failure, so they share one threshold and one moment.
+
+**Check 5 is the only one with an off switch.** The other four are about the work and hold
+everywhere. This one is about Arc, and a repository consuming Arc has no reason to record its
+rough edges.
 
 **Check 4 is here because it is the same sweep, not the same shape.** It fires on an act
 rather than a pause, and it gates your own report rather than proposing to the human. It sits
