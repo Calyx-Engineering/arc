@@ -19,7 +19,7 @@ stay open.
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
 | **Build order** | See §9 *Status — execution order*. It is numbered 1–21 |
-| **Autonomous** | All waves. Waves 1–2 ran and stopped; the stop cleared 2026-08-19 and waves 3–6 run autonomously. **Breaks at wave boundaries are context, not approval** |
+| **Autonomous** | Every wave. The modes are defined in §6 and assigned in §9.1. **Breaks at wave boundaries are context, not approval** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -196,17 +196,23 @@ building it twice.
 **Not only what gets built — how.** An arc run autonomously and an arc run beside a human are
 different plans, and the difference belongs here rather than in a chat message.
 
-| Wave | Mode | Why |
-|---|---|---|
-| **1–2** — [#39](https://github.com/Calyx-Engineering/arc/issues/39) · [#37](https://github.com/Calyx-Engineering/arc/issues/37) · [#40](https://github.com/Calyx-Engineering/arc/issues/40) · [#45](https://github.com/Calyx-Engineering/arc/issues/45) | **Autonomous, then stop** | The foundation. Most specified, no judgement calls, and everything downstream depends on them |
-| **3–6** | **Autonomous** | The stop cleared 2026-08-19. The spec exists and the foundation is proven, so execution does not need step-by-step approval |
+**Three modes, and the difference is who reviews the wave's work.**
+
+| Mode | Who reviews, and when |
+|---|---|
+| **Per step** | The user approves after each issue. They start it, Claude runs one issue, they review it |
+| **Per wave** | The user approves at the end of the wave. They start it, Claude runs the wave, they review it in detail |
+| **Autonomous** | Claude does not wait for approval. It runs the wave, and performs the review at the end of it |
+
+**Which mode each wave runs in is recorded once, in §9.1** — beside the description of what
+that wave is. It is not repeated here, because two tables of wave modes drift.
+
+**Why this arc runs autonomously throughout.** The spec exists and the foundation was proven
+at the stop, so execution does not need step-by-step approval.
 
 **The stop is the point.** Sixteen issues run unattended ends in either a good arc or sixteen
 PRs on a wrong foundation, and the second is not visible until it is expensive. The numbered
 table under §9 *Status — execution order* marks where it is.
-
-**One session, no reset between issues.** A session cannot clear its own context, so waves 1–2
-are four issues in one continuous run — the wave boundary is dependency, not a fresh start.
 
 ### 6.1 Autonomous mode — what it actually means
 
@@ -289,7 +295,7 @@ A break marked in the execution order **stops autonomous execution.** In order:
 | | |
 |---|---|
 | 1 | Write the updated handoff |
-| 2 | **Re-evaluate it** — it must cue the next `/arc-next` into the right mode, autonomous from here on, and initialise enough state for the next window to continue with the next wave |
+| 2 | **Re-evaluate it** — it must cue the next `/arc-next` into **the mode §9.1 assigns the next wave**, not whatever mode this window happened to run in, and initialise enough state for the next window to continue from §9 |
 | 3 | A status update of **50 words or less** on issues and merges, **leading with any problem** |
 
 ### 6.2 What is least certain, and why
@@ -381,13 +387,8 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 
 ### 9.1 What each wave is
 
-**Three modes, and the difference is who reviews the wave's work.**
-
-| Mode | Who reviews, and when |
-|---|---|
-| **Per step** | You approve after each issue. You start it, I run one issue, you review it |
-| **Per wave** | You approve at the end of the wave. You start it, I run the wave, you review it in detail |
-| **Autonomous** | I do not wait for approval. I run it, and I perform the review at the end of the wave |
+**The modes are defined in §6.** This table is the assignment — the only place a wave's mode
+is stated.
 
 | Wave | | Mode |
 |---|---|---|
