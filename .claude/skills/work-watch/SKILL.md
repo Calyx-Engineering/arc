@@ -26,13 +26,15 @@ competing for the same attention.**
 | A decision is settled and the next topic is opening | Writing it down first | m13 · m15 |
 | Arc itself cost the work something | A line in the arc's friction log | m17 · [`record-route`](../record-route/SKILL.md) |
 
-> **Propose, never act.** Four of the six nudge; the human decides. This is the whole
+> **Propose, never act.** Checks 1, 2, 3 and 6 nudge; the human decides. This is the whole
 > posture, and violating it on the first — committing unasked — is the single most repeated
 > correction in the record.
 >
-> **Check 4 is not a nudge.** Edit completeness is a gate on your own reporting, not a
-> proposal to the human — it runs before you claim an edit is done, and it is the only check
-> here that blocks.
+> **Checks 4 and 5 are gates, not nudges.** They govern your own behaviour rather than
+> proposing anything: check 4 runs before you claim an edit is done, check 5 before you open
+> the next topic. **Check 4 is the only one that blocks.** Check 5 nudges in one case — when
+> the working surface itself has stopped holding the state, which is not something writing
+> one more thing down repairs.
 
 ---
 
@@ -325,11 +327,16 @@ should cost the *why* behind a few decisions and nothing else.
 | **A checklist item is done and still unticked** | Tick it and read it back. `gh issue view <N> --json body` — a tracker write reports success whether or not it landed |
 | **Re-anchoring cost the transcript** | If working out where things stand meant re-reading the conversation, the surface has stopped holding the state. Say so |
 
-### Not a nudge — a gate, like check 4
+### Mostly a gate, like check 4
 
 **Check 4 gates your own reporting; this gates your own moving on.** Both fire on an act
-rather than a pause, and neither asks the human anything. Announcing *"I am about to open the
-next topic"* is narration; writing the decision down first is the whole behaviour.
+rather than a pause. Announcing *"I am about to open the next topic"* is narration; writing
+the decision down first is the whole behaviour.
+
+**The last row is the exception, and it is a nudge.** *Re-anchoring cost the transcript* is
+not something you can fix by writing one thing down — the surface itself has stopped working,
+and only the human can decide whether to rebuild it, split the work, or carry on. Say it
+once, propose, and move.
 
 ### Cheap to re-read, or it is not a working surface
 
