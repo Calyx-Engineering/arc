@@ -138,7 +138,12 @@ break, or state the assumption inline and continue.
 
 ## Asking the user things
 
-When a question *is* warranted:
+When a question *is* warranted, in one of two shapes:
+
+| | |
+|---|---|
+| **One decision** | The bold single-decision form below |
+| **Several, on one subject** | The question block. Same rule about leading the message — the block *is* the top of the reply |
 
 ### A decision leads the message
 
@@ -185,9 +190,16 @@ number.** Restating a question to answer it is work the label removes.
 
 I lean colleague — enough warmth to be a party you talk to, not so much
 that it costs a line of reading every time.
+
+## V4 — Does unsolicited speech carry a prefix?
+
+`**Camp here —**` costs four words every time and makes it obvious the
+line is Arc's rather than the main thread's.
+
+I lean yes. The cost is small and the ambiguity it removes is not.
 ```
 
-Answered as *"V3 — agreed, colleague"*. Three words.
+Answered as *"V3 — agreed, colleague. V4 — yes"*. Seven words for two decisions.
 
 | The block | |
 |---|---|
