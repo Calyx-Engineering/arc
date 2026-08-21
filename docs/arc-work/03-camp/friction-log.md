@@ -20,6 +20,12 @@ would otherwise have to reconstruct.
 
 **One entry per friction, not per session.** A session with no friction adds nothing.
 
+| Who fills it | |
+|---|---|
+| [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 | Notices, and **proposes** the entry. The user decides whether it was friction — they are the one who felt it |
+| [`record-route`](../../../skills/record-route/SKILL.md) | Routes it here rather than to a dev-log or the arc-log |
+| Camp's operating agreement, §1 | **The switch.** On in this repository, off in the template — logging Arc's own rough edges is the case for a repository where Arc is being built |
+
 ---
 
 ## 1 · The autonomous loop's merge step had never once executed
