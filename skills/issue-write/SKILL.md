@@ -162,13 +162,20 @@ not say which object it names.
 **The number does not exist yet when you branch — predict it, then confirm.** The next number
 is the higher of the latest issue and the latest PR, plus one.
 
+```sh
+tools/new-direct-pr.sh <hint-slug> "<PR title>"
+```
+
+**Steps 1 to 4 are one command, and they have to be** — by hand the sequence takes minutes with
+a real race running underneath it, which makes *the window is seconds wide* false.
+
 | | |
 |---|---|
 | 1 | Branch with the predicted number |
-| 2 | Write the dev-log and commit — a PR needs a commit to exist, and a merged unit needs a dev-log anyway |
+| 2 | Commit a **stub** dev-log — a PR needs a commit to exist, and a merged unit needs a dev-log anyway. Writing the real one first is what reintroduces the delay |
 | 3 | **Open it as a draft, before doing the work** |
 | 4 | Confirm the PR's number against the branch's — **a mismatch is recorded, never retried** |
-| 5 | Then work, and mark it ready |
+| 5 | Then work, fill in the dev-log, and mark it ready |
 
 **The draft comes before the work.** Branching, building for an hour and opening the PR at the
 end leaves the number unclaimed for that hour, and puts the check *after* everything has landed

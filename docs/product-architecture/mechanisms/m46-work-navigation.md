@@ -395,6 +395,13 @@ flowchart TB
     START["<b>Work with no issue</b><br/>branch to PR directly"] --> Q{{"<b>Does an issue exist?</b>"}}
     Q ==>|yes| ISS["<b>arc/nn-slug-issue-NN-hint</b><br/>the issue number names it"]
     Q ==>|no| PRED["<b>Predict the number</b><br/><code>gh issue list</code> + <code>gh pr list</code><br/>max of the two, plus one"]
+    subgraph ONE[" one command — tools/new-direct-pr.sh "]
+        direction TB
+        PRED
+        BR
+        LOG
+        OPEN
+    end
     PRED --> BR["<b>Branch</b><br/>arc/nn-slug-prNN-hint"]
     BR --> LOG["<b>Write</b> <code>docs/dev-log/pr-NN-slug.md</code><br/>and commit it<br/><i>§6.1 requires one, and a PR<br/>needs a commit to exist</i>"]
     LOG --> OPEN["<b>Open a DRAFT PR</b><br/><code>gh pr create --draft</code><br/><i>before the work, not after —<br/>this makes the window<br/>seconds, not hours</i>"]
@@ -412,6 +419,7 @@ flowchart TB
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
     classDef x fill:#4a2020,stroke:#d95b5b,color:#fff
+    style ONE fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
     class START,ISS,PRED,BR,LOG,OPEN,WORK,ACCEPT,SAY,DEVLOG,FRIC n
     class Q,CHK,FQ s
     class REN,DEAD x
@@ -448,6 +456,24 @@ the whole branch; correcting at step 4 costs nothing.
 > **This was got wrong on its own first use.** [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) specified *open the PR
 > immediately*, then branched, implemented, and opened it over an hour later. The prediction
 > happened to hold, which is exactly why the gap was invisible.
+
+```sh
+tools/new-direct-pr.sh <hint-slug> "<PR title>"      # steps 1-4, one command
+tools/new-direct-pr.sh --dry-run <hint> "<title>"    # what it would do
+```
+
+**Steps 1 to 4 are one command, and they have to be.** By hand the sequence is branch, author
+a dev-log, commit, push, open the PR — minutes of typing with a real race running underneath
+it, which makes *the window is seconds wide* false. The script collapses it: predict, branch,
+commit a **stub** dev-log, push, open the draft, and report whether the number held.
+
+**The stub is the point, not a shortcut.** A PR needs a commit to exist and
+[§6.1](#61-merged-work-always-has-a-dev-log) wants a dev-log of every merged unit; writing the
+real one first is what reintroduces the delay. It is filled in as the work proceeds, before the
+PR is marked ready.
+
+The prediction underneath it is one line — issues and PRs share a counter, so the next number
+is one past whichever is higher:
 
 ```sh
 I=$(gh issue list --state all --limit 1 --json number --jq '.[0].number')

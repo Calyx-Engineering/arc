@@ -46,6 +46,9 @@ from `Branch` straight to `Open the PR` has to be either true or visibly wrong.
 | **The negative path is drawn, not only written** | `Rename the branch` is a dotted edge to `The PR closes`. The thing the [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) test disproved is now visible in the picture rather than only in a blockquote |
 | **A miss is never retried** | Arrived at in two steps: first a one-retry limit, then none at all. **A miss is not a mistake to correct; it is a race that already happened.** Retrying buys a tidier name with a real number, and the name was only ever a pointer |
 | **The notification is the fix, in three places** | PR body, dev-log, and the friction log where one exists. **Unexplained, the branch is silently wrong** — the exact failure §9 exists to prevent. Explained, it is merely inexact |
+| **The window claim forced a script** | The diagram says *seconds, not hours*. By hand the sequence is branch, author a dev-log, commit, push, open — **minutes**, with the race running underneath. `tools/new-direct-pr.sh` collapses steps 1–4 into one command, which is what makes the claim true rather than aspirational |
+| **The dev-log it commits is a stub** | Not a shortcut. A PR needs a commit to exist and §6.1 wants a dev-log anyway; writing the real one first is exactly what reintroduces the delay. It is filled in before the PR is marked ready |
+| **The script reports a miss, it does not act on one** | Same rule as the spec — no rename, no close, no retry. It prints the three places to record it and exits 1 |
 | **The dev-log is unconditional; the friction log is not** | The dev-log already exists at that point — it was the first commit, so noting the miss is an edit, not a new obligation. Not every repository keeps a friction log, and [#98](https://github.com/Calyx-Engineering/arc/issues/98) made it a switch that is off by default |
 
 ## The shared `temp/` branch — tested, and it fails twice
