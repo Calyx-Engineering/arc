@@ -85,6 +85,7 @@ Every section below exists because something was missing at a real failed cold s
 | **The tree** | Issues and what spawned them, with status | A flat list losing the shape of hardware work |
 | **Load-bearing decisions** | What must not be re-litigated | A fresh session re-opening settled questions |
 | **Open threads** | Agreed but unfiled follow-ups, and unresolved questions | *"i asked you to update #12 … that didn't happen"* |
+| **What was ruled out** | Causes checked and eliminated, with what eliminated them | The next session re-deriving what this one already disproved |
 | **Next action** | One line, concrete — the first row of *do these in order* | The "what now?" round trip |
 | **Do not** | Live traps — wrong branch, do not commit, do not rewrite that file | Repeating a correction already given |
 
