@@ -211,15 +211,15 @@ are four issues in one continuous run — the wave boundary is dependency, not a
 ### 6.1 Autonomous mode — what it actually means
 
 > **Manual is the default.** Autonomous is entered only by an explicit instruction from the
-> user, or by the handoff naming it. Absent either, propose and wait.
+> user, or by the handoff naming it. Absent either, Claude proposes and waits for the user.
 
-**In autonomous mode, read this arc-log whole** — not the section you think you need. The
+**In autonomous mode, Claude reads this arc-log whole** — not the section that looks relevant. The
 §9 *Status — execution order* table is the work queue, and it is followed top to bottom.
 
 ```mermaid
 flowchart TB
     START["<b>/arc-next</b><br/>a new window, or<br/>called inside one"] --> MODE{{"<b>Which mode?</b><br/>the handoff's<br/><i>Execution mode</i> row"}}
-    MODE ==>|"manual — the default"| MAN{{"<b>MANUAL</b><br/>propose<br/>wait for approval"}}
+    MODE ==>|"manual — the default"| MAN{{"<b>MANUAL</b><br/>Claude proposes,<br/>the user approves"}}
     MODE ==>|"autonomous"| READ["<b>Read the arc-log whole</b><br/>the execution order<br/>and this definition"]
     subgraph L[" One issue — read to merge "]
         direction TB
@@ -231,12 +231,12 @@ flowchart TB
         REV --> PR["<b>Open the PR</b><br/>milestone + Closes"]
         PR --> FIN{{"<b>Final review</b><br/>all reasonable angles"}}
         FIN -->|"not clean"| REV
-        FIN -->|"clean"| MERGE["<b>Merge it yourself</b>"]
+        FIN -->|"clean"| MERGE["<b>Claude merges the PR</b><br/>not the user"]
     end
     READ --> ISSUE
     MERGE --> NEXT{{"<b>Break point on<br/>the next row?</b>"}}
-    NEXT -->|"no"| ISSUE
-    NEXT ==>|"yes"| BRK{{"<b>BREAK</b><br/>handoff written, mode cued<br/>50-word status, problems first"}}
+    NEXT -->|"no — take the next issue"| ISSUE
+    NEXT ==>|"yes — stop the run"| BRK{{"<b>BREAK</b><br/>handoff written, mode cued<br/>50-word status, problems first"}}
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
     class START,READ,ISSUE,INTENT,PLAN,IMPL,REF,REV,PR,MERGE n
@@ -257,7 +257,7 @@ flowchart TB
 | 7 | **Final review, iterated three times**, fixing what each pass finds |
 | 8 | **Open the PR** |
 | 9 | **One more review, from every reasonable angle** |
-| 10 | **Merge it yourself** — only when satisfied, everything resolved, everything clean |
+| 10 | **Claude merges the PR** — not the user. Only when satisfied, everything resolved, everything clean |
 | 11 | **Continue to the next row, or stop** — whichever the execution order says |
 
 #### 6.1.2 The refining axes
