@@ -118,6 +118,11 @@ Mixing them means neither is trustworthy.
 | Constraints | Numbers, parts, interfaces, standards — as a table |
 | Related | Bulleted issue links, each with a few words on the relationship |
 
+**A `scope:` issue carries one more thing: the question inventory.** Every subject the spec
+cannot be written without, as a checklist, checked off as each is settled.
+[`spec-interview`](../spec-interview/SKILL.md) owns the loop; the issue is where its count
+lives, because a chat window ends and the tracker does not.
+
 ---
 
 ## Closing keywords — the deliverable test

@@ -61,6 +61,9 @@ enough to need an inventory is large enough to be tracked.
 
 ### Work in labelled question sets
 
+**One inventory row is one set.** Its letter is the set's letter, and the questions inside it
+take numbers.
+
 **Two to three questions per set, one set per exchange, each labelled with a letter and a
 number.**
 
@@ -75,7 +78,7 @@ question, no ambiguity about which answer belongs to what.
 
 | Rule | |
 |---|---|
-| **A letter per subject** | V for voice, W for when-to-watch. The letter is a handle for the whole subject |
+| **A letter per subject** | The one it was given in the inventory. The letter is a handle for the whole subject, and reusing it is what lets a nudge say *three of five* |
 | **Two or three questions, never more** | Four is where a set stops being answerable in one pass |
 | **Give a recommendation with each** | *"I lean three levels"* — the human agrees or overrides, which is faster than choosing from scratch |
 | **State the tradeoff, not the survey** | One sentence per option. If it needs a table, the question is too big |
