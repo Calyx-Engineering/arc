@@ -2,7 +2,7 @@
 
 > Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#78](https://github.com/Calyx-Engineering/arc/issues/78)  ·  **PR:** —
+**Issue:** [#78](https://github.com/Calyx-Engineering/arc/issues/78)  ·  **PR:** [#121](https://github.com/Calyx-Engineering/arc/pull/121)
 
 ## Problem
 
@@ -107,4 +107,29 @@ the file — the tenth acceptance item, and the one that makes the other nine ch
 
 ## Retrospective
 
-*Written at PR time.*
+**Ten acceptance boxes, seven files touched, and four more that contradicted the result.** The
+plan's eleven items all landed. What the plan did not have is the fourth line of the table
+below — the sweep for contradictions, which found more than the checklist did.
+
+| | |
+|---|---|
+| **The retitling conflict was the whole of pass 2's value** | A single-pass read would have added *retitle as the unit grows* twelve lines below *retitle before children exist, not after* and shipped a skill arguing with itself. The resolution is [#34](https://github.com/Calyx-Engineering/arc/issues/34)'s, reused: **name the unit each rule governs** |
+| **`record-route` keyed on the issue in five places, not one** | The routing table is the one the checklist points at. The other four — the scratch trap, *Plan time*, the templates list, and the template file itself — would each have kept saying *per issue* under a routing table that no longer did |
+| **The contradictions did not stop at the six artifacts** | m17's K1 table, `close-sequence` step 2, the registry's m17 one-liner and `work-watch`'s *"File it now"*. **None is in the issue.** They were found by grepping the *rule*, not the *file list* — and a rule contradicted somewhere else is [#62](https://github.com/Calyx-Engineering/arc/issues/62) exactly |
+| **The issue's own verification was stale and said so** | *"Verified by grep against `arc/03-camp-issue-76-work-nav`."* Three PRs edited these skills after that branch. Re-running it cost one command; trusting it would have cost a wrong plan. §12.3 names this as what wave 5 did not fix, and it is still not fixed — nothing prompts the re-read, the loop's pass 2 just happens to catch it |
+
+**What review found that four refining passes did not.** Three placement defects, all created
+by the edits themselves: two paragraphs swept under a new heading they did not belong to, a
+step-6 note separated from its step-2 sibling, and a diagram labelling the one edge the table
+above it calls unlabelled. **All three are the cost of inserting into a document rather than
+appending to one**, and none is visible without reading the rendered result rather than the edit.
+
+**What is not established.** Nothing here executes a skill. Every rule in this PR is verified as
+text — the box exists, in both trees, with the wording the spec asks for — and never as
+behaviour. m46's status line now says this outright rather than leaving *specified* to imply
+more than it means.
+
+### Spawned
+
+- **Nothing new filed.** The four contradicting artifacts were fixed here rather than rowed out: each is one line, and a rule that ships contradicted teaches the contradiction
+- **Named and not filed:** `skills/camp` is m21's settled carrier and does not render the tree. That is m21's own open question, and its `Related` now says so beside the link rather than leaving a reader to look for it

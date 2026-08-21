@@ -194,7 +194,7 @@ different diagram and does not belong in this one.
 
 **Artifacts** — what carries this mechanism:
 
-- [`skills/camp`](../../../skills/camp/SKILL.md) — the settled carrier, per [m43](m43-camp-assistant.md)
+- [`skills/camp`](../../../skills/camp/SKILL.md) — the settled carrier, per [m43](m43-camp-assistant.md). **It does not render the tree yet** — that is the open half this mechanism's status names
 - [`skills/issue-write`](../../../skills/issue-write/SKILL.md) — writes both sources the tree reads: the `Spawned` section and `Spawned by #NN`
 
 **Mechanisms:**
