@@ -221,7 +221,49 @@ to §7 — it does not rewrite the passes because the artifact list grew.
 
 *Recorded during [#119](https://github.com/Calyx-Engineering/arc/issues/119).*
 
-**Scope:** 13 skills (both trees) · 4 hooks + `hooks.json` · 2 commands · 5 templates ·
-`plugin.json`.
+**Scope:** 13 skills (both trees) · 4 hooks + `hooks.json` · 2 commands · 5 templates + `camp/`'s
+three · `plugin.json`.
 
-*Findings recorded below as the passes run.*
+**Six findings, one blocking.** All filed, none fixed here.
+
+| # | Finding | Where | Issue | |
+|---|---|---|---|---|
+| 1 | **18 template links resolve to nothing where the template lands** — and half have no correct depth, because they point into `docs/` which a consuming repo does not have | 5 templates | [#122](https://github.com/Calyx-Engineering/arc/issues/122) | **Blocking** |
+| 2 | A skill's `references/` directory is not copied, so the copy's link is dead and `--check` passes | `sync-local-skills.sh` | [#123](https://github.com/Calyx-Engineering/arc/issues/123) | |
+| 3 | The artifact table lists 11 artifacts that do not exist and omits 4 that do, with nothing marking which | product definition | [#124](https://github.com/Calyx-Engineering/arc/issues/124) | |
+| 4 | Nothing reports a skill with no `camp-reports:` / `checks:` declaration. Hooks have such a reporter; skills do not | 3 skills | [#125](https://github.com/Calyx-Engineering/arc/issues/125) | |
+| 5 | `camp-session-start` is a `PreToolUse` hook named for a different event. Registration is correct; the name is not | `hooks/` | [#126](https://github.com/Calyx-Engineering/arc/issues/126) | |
+
+**Finding 1 is blocking** because `.claude/arc/camp/operating-agreement.md` is the document m43
+requires a user to read and approve, and in a consuming repository every one of its eleven spec
+references is dead. **It is live in this repository right now.**
+
+### Pass by pass
+
+| Pass | Result |
+|---|---|
+| **0 — the runner** | Green. 8 gates, 112 cases |
+| **1 — it parses** | Clean. 26 `SKILL.md` frontmatter blocks across both trees, 2 commands, 2 JSON files, `bash -n` on 4 hooks and the template. **Every hook carries the kill switch and none sets `-e`** |
+| **2 — it resolves** | `skills/` source clean. **One broken link in the copies** (finding 2). **18 broken at template destinations** (finding 1) |
+| **3 — it declares what it does** | Every hook's `hooks.json` event and matcher matches its own header, all four. No skill skips a check it never declares. **Three skills declare nothing** (finding 4) |
+| **4 — it matches its mechanism** | Registry rows checked against the tree (finding 3). `plugin.json`'s description matches the README's six pieces, and `version` matches the release target |
+
+### What this run did not establish
+
+Everything in [§2.2](#22-what-a-clean-run-does-not-mean), and one thing more concrete: **no hook
+has fired and no skill has been invoked.** Pass 3 verified that `hooks.json` says what the hooks
+say. It did not verify that Claude Code reads it, that `${CLAUDE_PLUGIN_ROOT}` resolves, or that
+any `description:` causes a skill to load. **Installing the release is the only thing that does**,
+and that is the first thing to do after [#120](https://github.com/Calyx-Engineering/arc/issues/120).
+
+### What the instrument cost, and what to keep
+
+**Passes 1 and 2 were scripts written for this run, and they should not be.** Frontmatter parsing,
+link resolution and destination resolution are mechanical, repeatable, and exactly what
+`verify-all.sh` exists to hold — [#122](https://github.com/Calyx-Engineering/arc/issues/122) asks
+for the destination checker as part of its fix.
+
+**One false positive is worth recording so the next run does not re-chase it.** The first link
+checker read `` `[#42](…/issues/42)` `` inside a code span in `chat-response` as a live link. **A
+link checker must strip fenced blocks and inline code first** — a skill that documents link syntax
+is full of link-shaped text that is not a link.

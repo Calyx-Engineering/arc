@@ -70,4 +70,32 @@ description of what happened to be done, which is the thing that cannot be execu
 
 ## Retrospective
 
-*Written at PR time.*
+**Six findings, one blocking, none fixed here.** [#122](https://github.com/Calyx-Engineering/arc/issues/122)–[#126](https://github.com/Calyx-Engineering/arc/issues/126)
+carry them; [`docs/release/pre-release-review.md`](../release/pre-release-review.md) §7.1 is the
+run.
+
+| | |
+|---|---|
+| **The blocking one is the whole justification for the issue** | 18 template links resolve to nothing where the template lands — 11 of them in the operating agreement, the document m43 requires a user to read and approve. **They are dead in this repository right now** and would have shipped. Nothing had ever resolved a template link from its destination, because the templates read correctly where they sit |
+| **The two-layer failure is what a depth fix would have missed** | Half these links point into `docs/product-architecture/`, which a consuming repo does not have at any depth. Had the finding been *the depth is wrong*, the fix would have re-based them and shipped a second broken version — which is what `sync-local-skills.sh` does correctly for skills and cannot do here |
+| **Writing the process first changed what got reviewed** | The issue's seven boxes are surfaces. Turning them into four ordered passes produced pass 2's *resolve from the destination*, which no box asked for and which found the blocking finding |
+| **Passes 1 and 2 should not have been scripts I wrote** | They are mechanical and repeatable — the exact shape `verify-all.sh` holds. Writing them by hand for one run is how a check stays unrepeatable. [#122](https://github.com/Calyx-Engineering/arc/issues/122) asks for the destination resolver as part of its fix |
+| **`verify-all.sh` closed a third of the checklist and found nothing** | Correct and worth saying: the gated surfaces were clean, and every finding is on a surface no gate covers. That is the argument for the review existing rather than against it |
+
+**One false positive, recorded rather than quietly fixed.** The first link checker read
+`` `[#42](…/issues/42)` `` inside a code span as a live link. A skill that documents link syntax is
+full of link-shaped text that is not a link, and the next reviewer would have chased it too.
+
+**What the review cannot say.** No hook fired and no skill was invoked. Pass 3 established that
+`hooks.json` says what the hooks say — not that Claude Code reads it, that `${CLAUDE_PLUGIN_ROOT}`
+resolves, or that any `description:` loads a skill. **Installing the release is the only thing that
+closes this**, and it is the first thing to do after [#120](https://github.com/Calyx-Engineering/arc/issues/120).
+
+### Spawned
+
+- [#122](https://github.com/Calyx-Engineering/arc/issues/122) — template links break where the template lands · **blocking the release**
+- [#123](https://github.com/Calyx-Engineering/arc/issues/123) — a skill's `references/` directory is not copied
+- [#124](https://github.com/Calyx-Engineering/arc/issues/124) — the artifact table does not say what exists
+- [#125](https://github.com/Calyx-Engineering/arc/issues/125) — nothing reports a skill with no declaration
+- [#126](https://github.com/Calyx-Engineering/arc/issues/126) — `camp-session-start` is named for the wrong event
+- [`docs/release/pre-release-review.md`](../release/pre-release-review.md) — the process, and this run's record
