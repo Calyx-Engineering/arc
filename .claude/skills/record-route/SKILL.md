@@ -11,7 +11,6 @@ skips:
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # Where the record goes
 
 > **The dev-log and arc-log get written, not remembered.** A template alone produces

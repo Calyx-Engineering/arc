@@ -138,7 +138,15 @@ case_is "an outbound link gains one level" 0 "1" "$?" "$out"
 out=$(grep -c -- '](../beta/SKILL.md)' "$copy")
 case_is "a sibling link is left alone" 0 "1" "$?" "$out"
 
-# 8 — a second sync writes nothing. A sync that churns files with no content change is noise
+# 8 — exactly one blank line between the banner and the body. The banner is built as a
+#     string and printed, so a trailing newline inside it and the one `print` adds are two
+#     separate blank lines — invisible in the source, in all twelve copies.
+root=$(make_tree spacing)
+run "$root" >/dev/null
+out=$(awk '/^> .*Edit the source/{getline; b=0; while ($0 == "") {b++; getline}; print b; exit}' "$root/.claude/skills/alpha/SKILL.md")
+case_is "one blank line after the banner" 0 "1" 0 "$out"
+
+# 9 — a second sync writes nothing. A sync that churns files with no content change is noise
 #     in the diff that is this repo's review surface.
 root=$(make_tree idempotent)
 run "$root" >/dev/null

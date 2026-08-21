@@ -12,7 +12,6 @@ skips:
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # Holding the arc's intent
 
 > **Camp's intent check.** It fixes the arc's stated destination and tests proposed work

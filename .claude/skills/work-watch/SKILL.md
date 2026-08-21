@@ -11,7 +11,6 @@ skips:
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # Watching the work
 
 Six mechanisms watch work as it proceeds. **One sweep, not six always-on checks

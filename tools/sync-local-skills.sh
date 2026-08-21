@@ -57,11 +57,13 @@ for s in $SKILLS; do
     continue
   fi
 
+  # No trailing newline inside the string. `print` adds one, and the source's own blank line
+  # after the frontmatter adds the separation — a trailing newline here made it two blank
+  # lines, in every copy.
   banner="
 > **Copy — do not edit.** The source is [\`skills/$s/SKILL.md\`](../../../skills/$s/SKILL.md),
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
-> before Arc is installed here. **Edit the source, then re-run \`tools/sync-local-skills.sh\`.**
-"
+> before Arc is installed here. **Edit the source, then re-run \`tools/sync-local-skills.sh\`.**"
 
   # Rebuild what the copy should be: source with its outbound links re-based, then the
   # banner after its frontmatter.
