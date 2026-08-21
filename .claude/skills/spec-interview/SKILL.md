@@ -172,6 +172,7 @@ last line of defence, not the first.
 | Check | Catches |
 |---|---|
 | **Does each heading describe what is under it?** | Counts, scope words, stale titles |
+| **Does it name the artifacts that implement it?** | Top or bottom. A spec with no `Related` is unreachable from the skill that carries it |
 | **Is every artifact filed under its actual owner?** | Things documented inside a consumer |
 | **Does the open-questions section list anything now answered?** | The most common stale section |
 | **Does any table's key column contradict a section below it?** | Initiator, status and ownership columns drift first |
@@ -233,6 +234,21 @@ A spec grown by insertion ends in insertion order, which is nobody's reading ord
 
 **A worked example of what the thing looks like in use is worth more than any amount of
 description.** If the spec cannot show a concrete instance, the design is not settled.
+
+### Name the artifacts that implement it, at the top or the bottom
+
+**A spec that names no artifact is unreachable from the thing it specifies.** The
+skill-to-spec direction gets written because the skill is being edited; the reverse does not,
+and a session reading the spec never learns which skill carries it.
+
+| | |
+|---|---|
+| **Name the artifacts, not only the sibling mechanisms** | *"the skill that carries this"*, *"the hook that fires it"*. A list of neighbouring specs is not the same thing |
+| **Top or bottom, never the middle** | A `Related` section with a section after it reads as the end of the document and hides what follows. Bottom is the convention here |
+| **Both directions, or it decays** | The spec links the skill; the skill links the spec. One-way is how four mechanisms ended up pointing at nothing |
+
+**Add it when you touch the spec, and only then.** A spec you are not otherwise editing is not
+yours to sweep — that is a separate piece of work with its own scope.
 
 ### Every core-function section opens with a diagram
 
