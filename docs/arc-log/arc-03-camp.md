@@ -401,6 +401,10 @@ issues trace elsewhere, and reading m43 for them costs a thousand lines and retu
 registry in [`docs/product-architecture/README.md`](../product-architecture/README.md) is the
 authority for every mechanism's spec link.
 
+**For a merged issue the last column is a record, not an instruction.** It says what that work
+traced to, which is how a later session finds the reasoning behind an artifact it did not
+write.
+
 | Issue | Delivers | Traces to | Where the spec is |
 |---|---|---|---|
 | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and the decomposition | **m43** · **m44** | [m43](../product-architecture/mechanisms/m43-camp-assistant.md) whole — this issue produced it |
@@ -422,7 +426,7 @@ authority for every mechanism's spec link.
 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **None** | Pre-release repo hygiene. The local-copy arrangement is deleted at first release |
 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **m12** issue linking | [m12](../product-architecture/mechanisms/m12-issue-linking.md) |
 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43** | m43 §5.1 — the only wave 5 issue that reads m43 |
-| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 has no spec.** Read §6.1 *Autonomous mode* — this arc's interim definition, and the closest thing that exists — then [#73](https://github.com/Calyx-Engineering/arc/issues/73), which owns the durable one · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
+| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 had no spec, and still does not.** This issue wrote §6 *How this arc is executed* instead — the interim stand-in [#73](https://github.com/Calyx-Engineering/arc/issues/73) will replace · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's ordered actions and transcript save | **m15** context ladder / handoff | [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md), via [`skills/work-watch`](../../skills/work-watch/SKILL.md) |
 | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch | **m40** autonomy switch | **No spec.** This issue is the one that would write it, and it left this arc for *Onboarding — m47*. Read §6.1 *Autonomous mode* first — it is the interim definition and the input this issue starts from |
