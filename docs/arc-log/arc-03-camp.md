@@ -8,7 +8,7 @@
 
 ---
 
-## In one minute
+## 1 In one minute
 
 **Camp is the spine window made portable** — the role that holds an arc's plan and tracks
 which issue is active, backed by committed documents instead of a VS Code window that has to
@@ -18,8 +18,8 @@ stay open.
 |---|---|
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
-| **Build order** | See *Status — execution order*. It is numbered 1–21 |
-| **Autonomous** | All waves. Waves 1–2 ran and stopped; the stop cleared 2026-08-19 and waves 3–6 run autonomously. **Breaks at wave boundaries are context, not approval** |
+| **Build order** | See §10 *Status — execution order*. Numbered 1–23; **22 is vacant** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) left the arc and took step 6.2 with it |
+| **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -27,7 +27,7 @@ exactly once, so a gap there is a feature nobody is building.
 
 ---
 
-## Why this arc exists
+## 2 Why this arc exists
 
 Arc's workflow depends on one VS Code window holding the plan and tracking which issue is
 active. That window is fragile — close it, switch branches, or move to another repo and the
@@ -48,7 +48,7 @@ just use.
 
 ---
 
-## What the decomposition produced
+## 3 What the decomposition produced
 
 Nine new issues, plus one already filed and five carried in from the tracker work spawned
 during scoping.
@@ -88,12 +88,12 @@ flowchart TB
 
 ---
 
-## Every spec section, and the issue that delivers it
+## 4 Every spec section, and the issue that delivers it
 
 **Read this table to check nothing was dropped.** Every numbered section of
 [m43](../product-architecture/mechanisms/m43-camp-assistant.md) appears exactly once.
 
-| Spec | What it defines | Issue |
+| m43 § | What it defines | Issue |
 |---|---|---|
 | §2 · §6 | The persona, its voice, how it is reached | [#40](https://github.com/Calyx-Engineering/arc/issues/40) |
 | §3.1 | **The intent check** — hold the arc's intent, the authority ladder | [#42](https://github.com/Calyx-Engineering/arc/issues/42) |
@@ -109,7 +109,7 @@ flowchart TB
 | §12 | Named gaps | **Open by design** — see below |
 | — | Repo hygiene: shipping skills match their local copies | [#48](https://github.com/Calyx-Engineering/arc/issues/48) |
 
-### Carried in from scoping
+### 4.1 Carried in from scoping
 
 Five issues spawned by friction observed while writing the spec. Tracker mechanics, not Camp —
 classified *escalate* under the intent check's own ladder, and correct to do. **Scheduled as wave
@@ -125,7 +125,9 @@ Two more were spawned later, by the work itself — see below.
 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply |
 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
 
-### Spawned during execution
+**What each of these traces to is §9**, beside the execution order.
+
+### 4.2 Spawned during execution
 
 **Found by building the arc, not by planning it.** Each names the issue whose work exposed it.
 [#55](https://github.com/Calyx-Engineering/arc/issues/55) and [#56](https://github.com/Calyx-Engineering/arc/issues/56)
@@ -154,7 +156,7 @@ flowchart LR
 
 ---
 
-## Build order
+## 5 Build order
 
 Dependency, not value. **The most valuable issue is frequently the one that cannot start.**
 
@@ -191,32 +193,160 @@ building it twice.
 
 ---
 
-## How this arc is executed
+## 6 How this arc is executed
 
 **Not only what gets built — how.** An arc run autonomously and an arc run beside a human are
 different plans, and the difference belongs here rather than in a chat message.
 
-| Wave | Mode | Why |
-|---|---|---|
-| **1–2** — [#39](https://github.com/Calyx-Engineering/arc/issues/39) · [#37](https://github.com/Calyx-Engineering/arc/issues/37) · [#40](https://github.com/Calyx-Engineering/arc/issues/40) · [#45](https://github.com/Calyx-Engineering/arc/issues/45) | **Autonomous, then stop** | The foundation. Most specified, no judgement calls, and everything downstream depends on them |
-| **3–6** | **Autonomous** | The stop cleared 2026-08-19. The spec exists and the foundation is proven, so execution does not need step-by-step approval |
+**Three modes, and the difference is who reviews the wave's work.**
+
+| Mode | Who reviews, and when |
+|---|---|
+| **Per step** | The user approves after each issue. They start it, Claude runs one issue, they review it |
+| **Per wave** | The user approves at the end of the wave. They start it, Claude runs the wave, they review it in detail |
+| **Autonomous** | Claude does not wait for approval. It runs the wave, and performs the review at the end of it |
+
+**Which mode each wave runs in is recorded once, in §10.1** — beside the description of what
+that wave is. It is not repeated here, because two tables of wave modes drift.
+
+**Why this arc runs autonomously throughout.** The spec exists and the foundation was proven
+at the stop, so execution does not need step-by-step approval.
 
 **The stop is the point.** Sixteen issues run unattended ends in either a good arc or sixteen
 PRs on a wrong foundation, and the second is not visible until it is expensive. The numbered
-table under *Status* marks where it is.
+table under §10 *Status — execution order* marks where it is.
 
-**One session, no reset between issues.** A session cannot clear its own context, so waves 1–2
-are four issues in one continuous run — the wave boundary is dependency, not a fresh start.
+### 6.1 Autonomous mode — what it actually means
 
-### What is least certain, and why
+> **Manual is the default.** Autonomous is entered only by an explicit instruction from the
+> user, or by the handoff naming it. Absent either, Claude proposes and waits for the user.
+
+**In autonomous mode, Claude reads this arc-log whole** — not the section that looks relevant. The
+§10 *Status — execution order* table is the work queue, and it is followed top to bottom.
+
+**And the spec of the mechanism the issue traces to.** Every piece of work in this repo traces
+back to a mechanism, and a fair number of those have a written spec. An issue's intent is not
+recoverable from its own body when the body assumes that spec.
+
+| | |
+|---|---|
+| **Where the mapping is** | §9 *What each issue traces to* — every issue in the arc, ordered by number |
+| **Where the spec is** | [`docs/product-architecture/README.md`](../product-architecture/README.md)'s registry — the mechanism's row carries its spec link, or a dash where none exists |
+| **When** | Once, when the issue is picked up. Not once per window, and not m43 by default |
+| **A dash is not a gap to fill** | Read the artifacts the issue names instead |
+
+**m43 is read whole only when the issue traces to it.** Wave 5 is what proves the point: eight
+of its nine issues trace to m11, m12, m13, m38 or m45, and reading m43 for them costs a
+thousand lines and returns nothing.
+
+```mermaid
+flowchart TB
+    START["<b>/arc-next</b><br/>a new window, or<br/>called inside one"] --> MODE{{"<b>Which mode?</b><br/>the handoff's<br/><i>Execution mode</i> row"}}
+    MODE ==>|"manual — the default"| MAN{{"<b>MANUAL</b><br/>Claude proposes,<br/>the user approves"}}
+    MODE ==>|"autonomous"| READ["<b>Read the arc-log whole</b><br/>the execution order<br/>and this definition"]
+    subgraph L[" One issue — read to merge "]
+        direction TB
+        ISSUE["<b>Take the next row</b><br/>read the issue from gh<br/>create the branch"] --> INTENT["<b>Intent and north star</b><br/>what the issue is really for,<br/>written into the dev-log<br/><i>before any plan exists</i>"]
+        INTENT --> PLAN["<b>Plan</b><br/>the execution plan,<br/>in the dev-log,<br/>tested against the north star"]
+        PLAN --> IMPL["<b>Initial pass</b><br/>fix the intent,<br/>not the symptom"]
+        IMPL --> REF["<b>Refine · 4 passes</b><br/>every axis, every pass"]
+        REF --> REV["<b>Review · 3 passes</b><br/>fixing what<br/>each pass finds"]
+        REV --> PR["<b>Open the PR</b><br/>milestone + Closes"]
+        PR --> FIN{{"<b>Final review</b><br/>all reasonable angles"}}
+        FIN -->|"not clean"| REV
+        FIN -->|"clean"| MERGE["<b>Claude merges the PR</b><br/>not the user"]
+    end
+    READ --> ISSUE
+    MERGE --> NEXT{{"<b>Break point on<br/>the next row?</b>"}}
+    NEXT -->|"no — take the next issue"| ISSUE
+    NEXT ==>|"yes — stop the run"| BRK{{"<b>BREAK</b><br/>handoff written, mode cued<br/>50-word status, problems first"}}
+    classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
+    classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
+    class START,READ,ISSUE,INTENT,PLAN,IMPL,REF,REV,PR,MERGE n
+    class MODE,MAN,FIN,NEXT,BRK s
+    style L fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
+```
+
+#### 6.1.1 One issue, start to merge
+
+| | |
+|---|---|
+| 1 | **Read the issue from `gh`** — the one the execution order names, not the one that seems next |
+| 2 | **Create the branch** |
+| 3 | **Establish the issue's intent and its north star, in the dev-log — before any plan exists.** Two passes, below. A plan written first steers by the issue's wording instead |
+| 4 | **Write the execution plan in the dev-log**, tested against the north star above |
+| 5 | **Implement the initial pass** — fix the intent, not the symptom it happens to describe |
+| 6 | **Refine four times** — the axes are below |
+| 7 | **Final review, iterated three times**, fixing what each pass finds |
+| 8 | **Open the PR** — the north star from step 3 goes in the body **verbatim**, so step 9 tests the diff against it rather than re-deriving it |
+| 9 | **One more review, from every reasonable angle** — and against the north star in the body. If the diff does not reach it, the issue is not done |
+| 10 | **Claude merges the PR** — not the user. Only when satisfied, everything resolved, everything clean |
+| 11 | **Continue to the next row, or stop** — whichever the execution order says |
+
+#### 6.1.2 Establishing the intent — two passes
+
+**One pass produces a paraphrase of the title.** The second is where the intent appears.
+
+| Pass | Reads | Writes into the dev-log |
+|---|---|---|
+| **1** | The issue body alone, and any verbatim quote it carries | The problem in one sentence, and a first north star |
+| **2** | Every issue it links to, the spec of the mechanism it traces to, and every artifact it names | **What changed from pass 1** — and if nothing changed, that it did not |
+
+**Not every mechanism has a spec.** The registry's *Spec* column carries a dash where none is written — m40 is the example. Pass 2 then reads the artifacts the issue names instead. An absent spec is not a gap to hunt for.
+
+**The verbatim quote is the intent.** Where an issue carries one — most of this arc's do — the
+north star is tested against the quote, never against the title.
+
+**Fire `skills/arc-intent` here.** It classifies proposed work Agreed, Derived or Escalate
+against the arc's stated intent, and this is its call site in the loop. An *escalate* is not a
+stop; it is a thing to say plainly in the dev-log and in the PR body.
+
+| The north star must | |
+|---|---|
+| **Say something the title does not** | A restatement means the issue was read, not understood |
+| **Name what makes the fix durable** | What it has to survive — a reworded heading, a fresh session, a different repository |
+| **Name what is out of scope** | Four refining passes will otherwise grow the work into whatever looks adjacent |
+
+#### 6.1.3 The refining axes
+
+**Read the dev-log before each pass** — the north star and the plan, as written, never as remembered. An axis answered from memory drifts with the work it is meant to check.
+
+| |
+|---|
+| Does this reach the north star recorded in the dev-log? |
+| Does this make skills or other artifacts larger than they should be? |
+| Can it be trimmed without sacrificing performance? |
+| Is there anything new that needs inventing to make this work better? |
+| Have references to every modified file been checked? |
+| Is it consistent with every file in the repo? |
+| Are there other files that should be touched to make this work better? |
+| Am I on topic? |
+| Are there tests that need writing to evaluate this? |
+| Have all evaluating tests been run? |
+
+#### 6.1.4 Commit cadence
+
+**Over-committing bloats the log and the tree.** Commit at least once for the plan, once for
+the initial implementation, and once per refinement and review loop.
+
+#### 6.1.5 At a break point
+
+A break marked in the execution order **stops autonomous execution.** In order:
+
+| | |
+|---|---|
+| 1 | Write the updated handoff |
+| 2 | **Re-evaluate it** — it must cue the next `/arc-next` into **the mode §10.1 assigns the next wave**, not whatever mode this window happened to run in, and initialise enough state for the next window to continue from §10 |
+| 3 | A status update of **50 words or less** on issues and merges, **leading with any problem** |
+
+### 6.2 What is least certain, and why
 
 | | |
 |---|---|
 | **Skills cannot be executed here** | Nothing in this repo runs a skill. A session writes one, checks it against the spec diagram, and marks it done — with no evidence it *behaves* right. True of every skill Arc has shipped |
-| **The intent check is judgement** | *"Does this serve the arc's intent"* has no mechanical test. It will build; whether it fires usefully is unknown until used |
+| **The intent check is judgement** | *"Does this serve the arc's intent"* has no mechanical test. It will build; whether it fires usefully is unknown until used. §6.1.2 makes the autonomous loop fire it on every issue, which is the first real exercise it gets |
 | **The relief valve's thresholds are estimates** | 8 turns, 3 questions, 45 minutes. Placed so the mechanism is buildable, corrected by [#36](https://github.com/Calyx-Engineering/arc/issues/36) |
 | **The close sequence is unproven** | [#41](https://github.com/Calyx-Engineering/arc/issues/41)'s nine steps were written from informal practice. Executing it will find gaps the spec side could not see |
-| **Context depth** | Arc 02 ran five pre-specified issues autonomously and held. This is ten, several with judgement. Expect degradation around the middle |
 | **Degradation is observed, not forecast** | A session at this point lost the ability to follow direction: it went autonomous against instruction and reported an issue number that was never created. Recovery was the user escaping out. **Hand off at a wave boundary before the middle of a wave, not after** |
 
 **Autonomy is per-arc, not per-repo** — m40. The mode above is this arc's, decided from how
@@ -225,9 +355,13 @@ specified the work is. **m40 has no spec file**; writing it is
 *Onboarding — m47* milestone because its hard requirement is that the behaviour survive a
 repository boundary.
 
+**§6.1 is the interim stand-in, and it is arc-scoped.** It defines autonomous mode well enough
+to run this arc and no further — it dies with the arc-log it lives in. Anything tracing to m40
+reads §6.1 first and [#73](https://github.com/Calyx-Engineering/arc/issues/73) second.
+
 ---
 
-## Load-bearing decisions
+## 7 Load-bearing decisions
 
 Settled during scoping. **These apply across every issue in the arc.**
 
@@ -245,7 +379,7 @@ Settled during scoping. **These apply across every issue in the arc.**
 
 ---
 
-## What is deliberately not in this arc
+## 8 What is deliberately not in this arc
 
 | | Why |
 |---|---|
@@ -256,7 +390,58 @@ Settled during scoping. **These apply across every issue in the arc.**
 
 ---
 
-## Status — execution order
+## 9 What each issue traces to
+
+**Every issue in this repo traces back to a mechanism.** This table is what a session reads
+before starting one — the spec to read is that mechanism's, and it is **m43's only when the
+*Traces to* column says m43.** Wave 5 is what makes that worth stating: eight of its nine
+issues trace elsewhere, and reading m43 for them costs a thousand lines and returns nothing.
+
+**Ordered by issue number**, not by build order — the table below it is the build order. The
+registry in [`docs/product-architecture/README.md`](../product-architecture/README.md) is the
+authority for every mechanism's spec link.
+
+**For a merged issue the last column is a record, not an instruction.** It says what that work
+traced to, which is how a later session finds the reasoning behind an artifact it did not
+write.
+
+| Issue | Delivers | Traces to | Where the spec is |
+|---|---|---|---|
+| [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and the decomposition | **m43** · **m44** | [m43](../product-architecture/mechanisms/m43-camp-assistant.md) whole — this issue produced it |
+| [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch, file or setting is when naming it | **m38** `chat-response` · **m42** | [`skills/chat-response`](../../skills/chat-response/SKILL.md) · [m42](../product-architecture/mechanisms/m42-default-branch-flip.md) |
+| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **m11** `issue-writing` | [`issue-writing`](../reference-roadz/issue-writing/SKILL.md) — the skill is its own spec |
+| [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **m45** `spec-interview` | [`skills/spec-interview`](../../skills/spec-interview/SKILL.md) — the skill is its own spec |
+| [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **m38** `chat-response` | [`skills/chat-response`](../../skills/chat-response/SKILL.md) — the skill is its own spec |
+| [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md) |
+| [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | **m44** event log | [m44](../product-architecture/mechanisms/m44-event-log.md) · m43 §8 |
+| [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Camp's three documents | **m43** | m43 §5 |
+| [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | **m43** | m43 §2 · §6 |
+| [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Status and flow — status and the close sequence | **m43** | m43 §3.2 |
+| [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the arc's intent | **m43** | m43 §3.1 |
+| [#43](https://github.com/Calyx-Engineering/arc/issues/43) | The nudge — four hooks | **m43** | m43 §3.4 |
+| [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | **m41** relief valve · **m43** | [m41](../product-architecture/mechanisms/m41-relief-valve.md) · m43 §3.6 |
+| [#45](https://github.com/Calyx-Engineering/arc/issues/45) | The report — announcing actions, and the templates | **m43** | m43 §3.5 |
+| [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity — three levels, two settings | **m43** | m43 §7 |
+| [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Decomposition | **m43** · **m20** | m43 §3.3 · [m20](../product-architecture/mechanisms/m20-arc-decomposition.md) |
+| [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **None** | Pre-release repo hygiene. The local-copy arrangement is deleted at first release |
+| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **m12** issue linking | [m12](../product-architecture/mechanisms/m12-issue-linking.md) |
+| [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43** | m43 §5.1 — the only wave 5 issue that reads m43 |
+| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 had no spec, and still does not.** This issue wrote §6 *How this arc is executed* instead — the interim stand-in [#73](https://github.com/Calyx-Engineering/arc/issues/73) will replace · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
+| [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's ordered actions and transcript save | **m15** context ladder / handoff | [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
+| [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md), via [`skills/work-watch`](../../skills/work-watch/SKILL.md) |
+| [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch | **m40** autonomy switch | **No spec.** This issue is the one that would write it, and it left this arc for *Onboarding — m47*. Read §6.1 *Autonomous mode* first — it is the interim definition and the input this issue starts from |
+| [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) — this issue produced it |
+| [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) |
+
+| | |
+|---|---|
+| **A skill can be its own spec** | m11, m38 and m45 have no `mechanisms/` file. `CLAUDE.md` states the exception: a capability that is already a single skill is specified by that skill |
+| **m40 has no spec at all** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. §6.1 *Autonomous mode* is this arc's interim stand-in; [#73](https://github.com/Calyx-Engineering/arc/issues/73) owns the durable version and left this arc |
+| **One issue traces to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) is pre-release repo hygiene, not a mechanism |
+
+---
+
+## 10 Status — execution order
 
 **Work top to bottom, in this order.**
 
@@ -279,9 +464,9 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 11 | 3.5 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | The nudge — four hooks | **Merged** — [PR #70](https://github.com/Calyx-Engineering/arc/pull/70) |
 | 12 | 3.6 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | **Merged** — [PR #71](https://github.com/Calyx-Engineering/arc/pull/71) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites. **Its PR also renames the five obligations**, so it edits artifacts delivered by [#41](https://github.com/Calyx-Engineering/arc/issues/41) [#43](https://github.com/Calyx-Engineering/arc/issues/43) [#44](https://github.com/Calyx-Engineering/arc/issues/44) [#45](https://github.com/Calyx-Engineering/arc/issues/45) [#47](https://github.com/Calyx-Engineering/arc/issues/47) — classified *escalate*, admitted by the user |
+| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **Merged** — [PR #95](https://github.com/Calyx-Engineering/arc/pull/95). Ships `skills/arc-intent`, fired from four call sites, and renamed the five obligations across the artifacts [#41](https://github.com/Calyx-Engineering/arc/issues/41) [#43](https://github.com/Calyx-Engineering/arc/issues/43) [#44](https://github.com/Calyx-Engineering/arc/issues/44) [#45](https://github.com/Calyx-Engineering/arc/issues/45) [#47](https://github.com/Calyx-Engineering/arc/issues/47) delivered |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready |
+| 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **PR open** — [PR #96](https://github.com/Calyx-Engineering/arc/pull/96), awaiting merge. The rule landed in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints. **Also carries this arc-log's autonomous-mode definition** |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready |
 | 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready |
@@ -295,15 +480,10 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
-### What each wave is
+### 10.1 What each wave is
 
-**Three modes, and the difference is who reviews the wave's work.**
-
-| Mode | Who reviews, and when |
-|---|---|
-| **Per step** | You approve after each issue. You start it, I run one issue, you review it |
-| **Per wave** | You approve at the end of the wave. You start it, I run the wave, you review it in detail |
-| **Autonomous** | I do not wait for approval. I run it, and I perform the review at the end of the wave |
+**The modes are defined in §6.** This table is the assignment — the only place a wave's mode
+is stated.
 
 | Wave | | Mode |
 |---|---|---|
@@ -317,7 +497,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 **Wave 5 is last of the substantive work, not optional.** It was spawned during scoping and is
 scheduled here because it depends on nothing in Camp — but it ships in this arc.
 
-### Where a window breaks
+### 10.2 Where a window breaks
 
 **A break is context, not approval.** Ten issues do not fit one window. The mode says who
 reviews the work; the break says where the window ends — and the two are independent, so
@@ -345,7 +525,7 @@ A new chat starts from that prompt and picks up where the last one stopped.
 **Stopping to hand off is not stopping for approval** — it is what makes a long arc survive
 its own context. Write a fresh handoff and stop whenever the context degrades, boundary or not.
 
-### The stop — cleared 2026-08-19
+### 10.3 The stop — cleared 2026-08-19
 
 Waves 1 and 2 merged and were reviewed together. **Wave 3 may start.**
 
@@ -357,7 +537,7 @@ Waves 1 and 2 merged and were reviewed together. **Wave 3 may start.**
 Waves 1 and 2 ran in one session. A session cannot clear its own context, so the wave boundary
 was dependency rather than a fresh start.
 
-#### What the review found
+#### 10.3.1 What the review found
 
 Three defects, all in artifacts whose verification had passed. **The pattern is that structural
 checks passed while the artifact itself was wrong** — worth carrying into how later positions
@@ -381,7 +561,7 @@ a renormalize took a repeat sync from `4 copied` to `0 copied, 9 checked`. Fixed
 acceptance criterion written as runtime behaviour has been tested. The event log has three
 hand-written entries and no producer.
 
-## Wave 3 review — 2026-08-19
+## 11 Wave 3 review — 2026-08-19
 
 **Six issues, eight PRs open, none merged.** The review at a wave's end is the reviewer's, per
 the autonomous mode. Findings below are mine, on my own work.
@@ -404,7 +584,7 @@ are merged in sequence and each rebased on the last. **Nothing in the plan made 
 against real fixtures by `tools/verify-hook.sh`, which is the first acceptance criterion in
 this arc tested rather than asserted.
 
-## Soak
+## 12 Soak
 
 **Per `CLAUDE.md`: a plugin change runs against real work before it leaves the machine.**
 Committed is not exercised. Unsoaked means a commit here with no soak line from any repo.
@@ -422,7 +602,7 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 line records the mechanism being followed by hand against real work. That is weaker than
 execution and is worth exactly what it says.
 
-## At arc close
+## 13 At arc close
 
 - [ ] Status table reflects reality
 - [ ] Default branch restored — `tools/arc-default-branch.sh restore`
@@ -443,7 +623,7 @@ not running: `hooks/tracker-verify` already holds the milestone check that
 
 ---
 
-## Related
+## 14 Related
 
 - [m43](../product-architecture/mechanisms/m43-camp-assistant.md) — the Camp spec
 - [m44](../product-architecture/mechanisms/m44-event-log.md) — the event log

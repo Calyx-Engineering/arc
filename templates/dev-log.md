@@ -9,6 +9,21 @@
 
 What wasn't working, or what this enables. A sentence or two.
 
+## Intent and north star
+
+**Written before the plan, in two passes.** Pass 1 from the issue body alone; pass 2 after
+reading what it links to, the spec section it delivers, and the artifacts it names — recording
+what changed, or that nothing did.
+
+| | |
+|---|---|
+| **What this issue is really for** | Not a restatement of the title |
+| **North star** | What must be true when this merges. Tested against the issue's verbatim quote where it has one |
+| **What makes it durable** | What the fix has to survive |
+| **Out of scope** | What refinement must not grow this into |
+
+Carried into the PR body verbatim, so the final review tests the diff against it.
+
 ## Decisions & trade-offs
 
 The choices that shaped the work, and why. The reasoning that won't survive in the diff.
