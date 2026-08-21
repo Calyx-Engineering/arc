@@ -91,7 +91,21 @@ marketplace install gets the arc branch.**
 |---|---|
 | **Restore the default branch before announcing a release** | `tools/arc-default-branch.sh restore`. It is already on the arc-log's close checklist; this is the second reason for it |
 | **The tag alone does not fix it** | The tag is what `git` resolves; the marketplace route resolves the *default branch* unless the user pins a `ref` when adding the marketplace, which is their setting and not ours to set |
-| **So the order is: cut the tag, merge the arc, restore the default, then announce** | A release that is installable only if the installer knows to pin a ref is not installable |
+**The order, when a release lands at the end of an arc:**
+
+| | |
+|---|---|
+| 1 | **Merge the arc into `main`** |
+| 2 | **Restore the default branch** — `tools/arc-default-branch.sh restore` |
+| 3 | **Tag, on `main`** | 
+| 4 | **Announce** |
+
+**Tag after the merge, not before.** A tag cut on the arc branch is reachable from `main` once the
+arc merges, so it resolves — but the tag then names a commit that was never the default branch's
+tip, and the marketplace route resolves the default branch rather than the tag. Tagging `main`
+after the merge makes the two the same thing.
+
+> **A release that is installable only if the installer knows to pin a `ref` is not installable.**
 
 ---
 

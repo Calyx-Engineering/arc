@@ -285,3 +285,24 @@ nothing this repository ships can remove that.
 file into the transcript archive was refused; PowerShell's `Copy-Item` did it unchanged. So the
 classifier is not keyed to `gh pr merge` — the transcript save has the same exposure, and it
 is a mandatory step of every break.
+
+---
+
+## Swept — 2026-08-21, at the arc close
+
+**All four entries are resolved.** What outlives this log is in
+[m40](../../product-architecture/mechanisms/m40-autonomy-switch.md),
+[m15](../../product-architecture/mechanisms/m15-handoff-spine.md), and the arc-log's §14.1, which
+is the sweep's record. **This file dies with the arc**, as its own header says.
+
+| Entry | |
+|---|---|
+| **1** | Resolved. *Who initiated* is the variable, m40 is the durable switch, and wave 6.3 added the fact that closes it: **one standing grant covered every merge of a whole issue**, where every earlier success needed an ask per merge |
+| **2** | Resolved. m40 §7 states *an agent that can install its own switch has no switch* as a design constraint. The *unfiled — ask* is moot |
+| **3** | Resolved by [PR #115](https://github.com/Calyx-Engineering/arc/pull/115) |
+| **4** | Resolved by entry 1's answer and superseded by wave 6.3. Its *unfiled* is **dropped rather than filed** — what it wanted filed was a durable switch, and that exists |
+
+**No fifth entry was added by wave 6.** The arc's last five units ran without friction worth
+recording, which is a result rather than an omission — and the one correction that did happen
+(a substring match read as a resolution) is recorded in
+[#122](https://github.com/Calyx-Engineering/arc/issues/122)'s dev-log where the work was, not here.
