@@ -51,6 +51,23 @@ from `Branch` straight to `Open the PR` has to be either true or visibly wrong.
 | **The script reports a miss, it does not act on one** | Same rule as the spec — no rename, no close, no retry. It prints the three places to record it and exits 1 |
 | **The dev-log is unconditional; the friction log is not** | The dev-log already exists at that point — it was the first commit, so noting the miss is an edit, not a new obligation. Not every repository keeps a friction log, and [#98](https://github.com/Calyx-Engineering/arc/issues/98) made it a switch that is off by default |
 
+## The script, tested live
+
+Dry-run and the guards were not enough — five composed steps, each proven alone, had never run
+as a sequence. Tested on [PR #112](https://github.com/Calyx-Engineering/arc/pull/112), opened and closed for the purpose:
+
+```text
+  branch    arc/03-camp-pr112-script-selftest
+  dev-log   docs/dev-log/pr-112-script-selftest.md
+  PR        https://github.com/Calyx-Engineering/arc/pull/112
+
+  PASS  predicted 112, got 112 — the branch names its own PR
+```
+
+`isDraft: true`, base `arc/03-camp`, title `arc-03: …`. **Three probes this session, three
+numbers burned** — [#109](https://github.com/Calyx-Engineering/arc/pull/109) disproved the rename, [#111](https://github.com/Calyx-Engineering/arc/pull/111) disproved the shared branch, and
+[#112](https://github.com/Calyx-Engineering/arc/pull/112) confirmed the thing that works.
+
 ## The shared `temp/` branch — tested, and it fails twice
 
 Proposed as an alternative: open every PR against one throwaway branch, take the number, then

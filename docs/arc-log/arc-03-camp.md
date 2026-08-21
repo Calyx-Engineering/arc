@@ -276,7 +276,7 @@ flowchart TB
 | | |
 |---|---|
 | 1 | **Read the issue from `gh`** — the one the execution order names, not the one that seems next |
-| 2 | **Create the branch** |
+| 2 | **Create the branch** — `arc/<nn>-<slug>-issue-<NN>-<slug>`. **Work with no issue takes the other form**, `-pr<NN>-`, and `tools/new-direct-pr.sh` does it in one command ([m46 §9](../product-architecture/mechanisms/m46-work-navigation.md)) |
 | 3 | **Establish the issue's intent and its north star, in the dev-log — before any plan exists.** Two passes, below. A plan written first steers by the issue's wording instead |
 | 4 | **Write the execution plan in the dev-log**, tested against the north star above |
 | 5 | **Implement the initial pass** — fix the intent, not the symptom it happens to describe |
