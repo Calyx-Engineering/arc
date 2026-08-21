@@ -84,6 +84,10 @@ edit is not finished. It lives in
 [`skills/work-watch`](../../../skills/work-watch/SKILL.md) as check 4, because the moment it
 fires is the moment an edit is about to be called done.
 
+**Check 5 is this mechanism's other half.** Write-back is what makes the tracker *correct*;
+check 5 is what makes it *current* — ticking a done item and reading it back, so the checklist
+still says where the work is. Both fire on an act rather than a pause.
+
 **Same failure class as §2.8** (tracker mechanics) and the dropped-staged-files case in
 [commit-rhythm](m14-commit-rhythm.md): mechanisms that **report success and do the wrong
 thing**. `issue-writing` already opens with exactly this warning —

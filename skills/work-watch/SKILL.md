@@ -1,15 +1,15 @@
 ---
 name: work-watch
-description: Use continuously while work is in progress — one sweep that watches for five things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, and whether Arc itself just cost the work something. Run it at natural pauses, not every turn.
-camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, friction-caught]
-checks: [commit-point, test-obligation, depth, edit-completeness, friction]
+description: Use continuously while work is in progress — one sweep that watches for six things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, whether a settled decision has been written down before the next topic opens, and whether Arc itself just cost the work something. Run it at natural pauses, not every turn.
+camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, decision-unwritten, friction-caught]
+checks: [commit-point, test-obligation, depth, edit-completeness, working-surface, friction]
 skips:
   - friction (the operating agreement has the friction log off)
 ---
 
 # Watching the work
 
-Five mechanisms watch work as it proceeds. **One sweep, not five always-on checks
+Six mechanisms watch work as it proceeds. **One sweep, not six always-on checks
 competing for the same attention.**
 
 | Watches for | Proposes | |
@@ -18,15 +18,18 @@ competing for the same attention.**
 | A decision implies later physical verification | A test item | m23 |
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 · [`relief-valve`](../relief-valve/SKILL.md) |
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
+| A decision is settled and the next topic is opening | Writing it down first | m13 · m15 |
 | Arc itself cost the work something | A line in the arc's friction log | m17 · [`record-route`](../record-route/SKILL.md) |
 
-> **Propose, never act.** Four of the five nudge; the human decides. This is the whole
+> **Propose, never act.** Checks 1, 2, 3 and 6 nudge; the human decides. This is the whole
 > posture, and violating it on the first — committing unasked — is the single most repeated
 > correction in the record.
 >
-> **Check 4 is not a nudge.** Edit completeness is a gate on your own reporting, not a
-> proposal to the human — it runs before you claim an edit is done, and it is the only check
-> here that blocks.
+> **Checks 4 and 5 are gates, not nudges.** They govern your own behaviour rather than
+> proposing anything: check 4 runs before you claim an edit is done, check 5 before you open
+> the next topic. **Check 4 is the only one that blocks.** Check 5 nudges in one case — when
+> the working surface itself has stopped holding the state, which is not something writing
+> one more thing down repairs.
 
 ---
 
@@ -39,8 +42,9 @@ Over-firing recreates the annoyance in a new form. The first three checks share 
 threshold and it is judgment, not a count: *has anything actually changed since the last
 sweep?* If not, say nothing.
 
-**Check 4 is exempt from the threshold.** It is not triggered by a pause but by an act — you
-are about to report an edit complete. It runs every time, at that moment.
+**Checks 4 and 5 are exempt from the threshold.** Neither is triggered by a pause but by an
+act — you are about to report an edit complete, or about to open the next topic. They run
+every time, at that moment.
 
 ---
 
@@ -298,7 +302,54 @@ recoverable, not that it is caught.
 
 ---
 
-## 5. Did Arc itself just cost the work something?
+## 5. Does the working surface still say where the work is?
+
+> **A decision that lives only in the conversation is lost at compaction. Write it to its
+> artifact before the next topic opens.**
+
+**Focus degrades with context length regardless of intent. Structure outside the context does
+not** — a checklist read fresh each turn is as good on turn 200 as on turn 10. That is
+[m15](../../docs/product-architecture/mechanisms/m15-handoff-spine.md)'s argument applied
+inside a session rather than between them.
+
+**The transcript holds the reasoning; the tracker holds the state.** Losing the transcript
+should cost the *why* behind a few decisions and nothing else.
+
+| Fires when | The gate |
+|---|---|
+| **A decision was settled and the next topic is opening** | Write it to its artifact first — the spec, the dev-log, the issue. Then move |
+| **A tangent or a spawned idea appeared** | File it now. *"I will file that later"* is the failure this prevents; [`issue-write`](../issue-write/SKILL.md)'s `Spawned` section is where it goes |
+| **A checklist item is done and still unticked** | Tick it and read it back. `gh issue view <N> --json body` — a tracker write reports success whether or not it landed |
+| **Re-anchoring cost the transcript** | If working out where things stand meant re-reading the conversation, the surface has stopped holding the state. Say so |
+
+### Mostly a gate, like check 4
+
+**Check 4 gates your own reporting; this gates your own moving on.** Both fire on an act
+rather than a pause. Announcing *"I am about to open the next topic"* is narration; writing
+the decision down first is the whole behaviour.
+
+**The last row is the exception, and it is a nudge.** *Re-anchoring cost the transcript* is
+not something you can fix by writing one thing down — the surface itself has stopped working,
+and only the human can decide whether to rebuild it, split the work, or carry on. Say it
+once, propose, and move.
+
+### Cheap to re-read, or it is not a working surface
+
+| | |
+|---|---|
+| **Nine lines, not a page** | A surface that costs a page to load gets skipped, and a skipped surface holds nothing |
+| **It is whatever the work is running against** | A scoping inventory ([`spec-interview`](../spec-interview/SKILL.md)), an issue's `Required` checklist, the dev-log's plan table. **This check does not create one** — it notices when the one in use has stopped being current |
+| **Countable beats complete** | *Three of five* re-anchors in one glance. A prose paragraph describing progress does not |
+
+### Where it stops
+
+**Deciding what gets tracked is not this.** [m46](../../docs/product-architecture/mechanisms/m46-work-navigation.md)
+owns where a discovery goes and whether to ascend or descend to it; this check only fires the
+moment one appears and nothing has been written down.
+
+---
+
+## 6. Did Arc itself just cost the work something?
 
 **Only when the operating agreement has the friction log on** — off is the default, and off
 means this check does not run. Where it is on, the log is
@@ -353,11 +404,15 @@ a feature nobody built — the most common shape this catches, and invisible in 
 
 ## Why one sweep
 
-**Checks 1 to 3 and 5 are the same shape:** notice something about the work in progress, and
+**Checks 1 to 3 and 6 are the same shape:** notice something about the work in progress, and
 say so. Four separate always-on checks would compete for the same attention and share the same
 over-firing failure, so they share one threshold and one moment.
 
-**Check 5 is the only one with an off switch.** The other four are about the work and hold
+**Checks 4 and 5 are gates, not nudges.** They fire on an act — reporting an edit done,
+opening the next topic — and they govern your own behaviour rather than proposing anything.
+They sit here because the moment each matters is a moment this sweep is already watching.
+
+**Check 6 is the only one with an off switch.** The other five are about the work and hold
 everywhere. This one is about Arc, and a repository consuming Arc has no reason to record its
 rough edges.
 

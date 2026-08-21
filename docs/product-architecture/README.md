@@ -195,7 +195,7 @@ function list, then read its Needs column to find what else must exist before it
 | `hooks/tracker-verify` | hook | m12 · m43 | Automatic, on issue create, PR open, PR merge | `skills/issue-write` for repair |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
-| `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry |
+| `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry |
 | `skills/relief-valve` | skill | m41 | Run by `work-watch` when the precondition trips | — |
 | `skills/config-check` | skill | m22 | Invoked, when a revision is cut | — |
 | `skills/autonomy-set` | skill | m40 | Invoked, at kickoff and when work changes character | — |
@@ -240,14 +240,14 @@ mechanisms fire together:
 
 | Artifact | Merges | Why |
 |---|---|---|
-| `skills/work-watch` | m14 · m23 · m41 · m13 · m17 | One always-on sweep, five things it watches for. See below |
+| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | One always-on sweep, six things it watches for. See below |
 | `skills/issue-write` | m11 · m13 | Write the issue and verify the write landed — one moment |
 | `skills/kickoff` | m09 · m20 | Scope agreement and decomposition happen in one sitting |
 | `skills/delegate` | m25 · m26 | Choosing the tier and shaping the brief are the same decision |
 
 ### `skills/work-watch` — the design-time evaluator
 
-Five mechanisms watch work as it proceeds. Splitting them into five always-on
+Six mechanisms watch work as it proceeds. Splitting them into six always-on
 checks means four separate sweeps competing for the same attention — and
 [test-obligation-capture](mechanisms/m23-test-obligation-capture.md) rejects the split
 outright: *"one of the things the design-time evaluator watches for, alongside commit
@@ -259,6 +259,7 @@ timing. Not a separate always-on process — a check in the same sweep."*
 | A design decision implies later physical verification | A test item | m23 |
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 — runs `skills/relief-valve` |
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
+| A decision is settled and the next topic is opening | Writing it down before moving | m15 · m13 — a gate on your own moving on. Nudges only when the surface itself has stopped holding the state |
 | Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default |
 
 The first three **propose and never act**, and share one open question: how often they may
