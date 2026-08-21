@@ -485,8 +485,8 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **Merged** — [PR #96](https://github.com/Calyx-Engineering/arc/pull/96). The rule landed in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints. **Also carries this arc-log's autonomous-mode definition**, and it is the first run of that loop |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **In progress** — `arc/03-camp-issue-32-size-the-title` |
-| 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **In progress** — `arc/03-camp-issue-33-scoping-loop` |
-| 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready |
+| 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **Merged** — [PR #101](https://github.com/Calyx-Engineering/arc/pull/101). Extended `spec-interview` rather than creating `skills/scope-work`; the deviation is in the dev-log |
+| 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **In progress** — `arc/03-camp-issue-34-question-blocks` |
 | 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | Ready |
 | 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **Merged** — [PR #88](https://github.com/Calyx-Engineering/arc/pull/88). Pulled forward out of order |
 | 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
