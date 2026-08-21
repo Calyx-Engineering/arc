@@ -44,6 +44,25 @@ from `Branch` straight to `Open the PR` has to be either true or visibly wrong.
 | **The dev-log is the first commit** | A PR needs a commit to exist, and [§6.1](../product-architecture/mechanisms/m46-work-navigation.md) requires a dev-log of every merged unit regardless. The requirement and the mechanism happen to be the same act |
 | **A wrong prediction loops back to *predict*, not to *branch*** | The first diagram sent the correction path back to the dev-log step, which would re-use the burned number. Caught reading the diagram back |
 | **The negative path is drawn, not only written** | `Rename the branch` is a dotted edge to `The PR closes`. The thing the [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) test disproved is now visible in the picture rather than only in a blockquote |
+| **One retry, then accept** | The user's call, and it is principled rather than arbitrary: attempt 1 can be wrong from a stale counter read, attempt 2 cannot. A second miss is a property of the repository, and a third attempt does not address it |
+| **An accepted mismatch is said twice** | The PR body near the top, and the friction log where one exists. **Unexplained, the branch is silently wrong** — the exact failure §9 exists to prevent. Explained, it is a record |
+
+## The shared `temp/` branch — tested, and it fails twice
+
+Proposed as an alternative: open every PR against one throwaway branch, take the number, then
+point the PR at the real branch. **It does not work, and the first failure is silent.**
+
+| Tested on [PR #111](https://github.com/Calyx-Engineering/arc/pull/111) | Result |
+|---|---|
+| `PATCH /repos/{o}/{r}/pulls/111` with `head` | **200, and the field ignored.** Head stayed `temp/pr-probe` |
+| A second PR from the same head | **Rejected** — one already exists for that head-and-base pair |
+
+**A PR's `head` is fixed at creation; only `base` can be changed.** The advice this came from is
+almost certainly about `base`. So one shared branch serialises every direct PR to one at a
+time, and the retarget that would free it silently does nothing.
+
+**Two probes, two numbers burned** — [PR #109](https://github.com/Calyx-Engineering/arc/pull/109) for the rename, [PR #111](https://github.com/Calyx-Engineering/arc/pull/111) for this. Both
+disproved something that was about to be written down as true.
 
 ## What this says about the write-up checklist
 

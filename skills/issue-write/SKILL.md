@@ -175,6 +175,17 @@ end leaves the number unclaimed for that hour, and puts the check *after* everyt
 on a possibly-wrong branch. If the numbers disagree at step 4, close and re-branch — one number
 burned and no work lost.
 
+**One retry, then accept.** A second miss means someone is filing inside a seconds-wide window,
+which is a fact about the repository, not a fixable prediction. Keep the branch and **say so in
+two places**:
+
+| | |
+|---|---|
+| **The PR body, near the top** | *"Branch says `pr112`, this is PR #114."* An unexplained mismatch is silently wrong; an explained one is a record |
+| **The friction log**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md` — [`record-route`](../record-route/SKILL.md) routes it. Two consecutive races reaches nobody unless it is written down |
+
+**Rename nothing.** See the warning above.
+
 > **Never rename the branch of an open PR. It closes the PR.** Tested: the rename succeeds,
 > the branch moves, and GitHub closes the PR whose head just disappeared.
 

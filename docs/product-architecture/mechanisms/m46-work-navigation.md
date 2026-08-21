@@ -400,15 +400,20 @@ flowchart TB
     LOG --> OPEN["<b>Open it as a DRAFT</b><br/><i>before the work, not after</i><br/>this is what makes the<br/>window seconds not hours"]
     OPEN --> CHK{{"<b>PR number ==<br/>branch number?</b>"}}
     CHK ==>|yes| WORK["<b>Do the work</b><br/>mark ready when done"]
-    CHK ==>|no| FIX["<b>Close the PR</b><br/><i>one number burned,<br/>and no work lost —<br/>this is why the draft is first</i>"]
+    CHK ==>|no| RETRY{{"<b>First miss?</b>"}}
+    RETRY ==>|yes| FIX["<b>Close the PR</b><br/><i>one number burned,<br/>and no work lost —<br/>this is why the draft is first</i>"]
     FIX --> PRED
+    RETRY ==>|"no — second miss"| ACCEPT["<b>Accept the mismatch</b><br/>keep the branch, rename nothing"]
+    ACCEPT --> SAY["<b>Say it in the PR body</b><br/>near the top, in one line"]
+    SAY --> FRIC["<b>Entry in the friction log</b><br/>where the repo keeps one —<br/>two races is a fact about<br/>the repo, not the prediction"]
+    FRIC --> WORK
     CHK -.->|"<b>never</b>"| REN["<b>Rename the branch</b>"]
     REN -.-> DEAD["<b>The PR closes</b><br/>a rename reads as a delete<br/>to an open PR"]
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
     classDef x fill:#4a2020,stroke:#d95b5b,color:#fff
-    class START,ISS,PRED,BR,LOG,OPEN,WORK,FIX n
-    class Q,CHK s
+    class START,ISS,PRED,BR,LOG,OPEN,WORK,FIX,ACCEPT,SAY,FRIC n
+    class Q,CHK,RETRY s
     class REN,DEAD x
 ```
 
@@ -419,6 +424,22 @@ flowchart TB
 | 3 | **Open it as a draft, before the work.** This is what makes the window seconds wide instead of hours |
 | 4 | **Confirm** the PR's number against the branch's. Equal, and nothing more is needed |
 | 5 | **Then do the work**, and mark the PR ready when it is done |
+
+**One retry, then accept.** If the second attempt is also off, the repository is genuinely
+contended and a third will not help. **Keep the branch, and say so** — an unexplained mismatch
+is the *confidently wrong* failure this section exists to prevent; an explained one is a
+record.
+
+| On accepting a mismatch | |
+|---|---|
+| **The PR body says it, near the top** | *"Branch says `pr112`, this is PR #114 — the number moved twice under it."* Without this the branch is silently wrong |
+| **The friction log gets an entry**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md`. Two consecutive races is a fact about the repository, and the only way that reaches anyone is if it is written down |
+| **Nothing is renamed** | Renaming closes the PR — see below |
+
+**Why one retry and not more.** The first attempt can be wrong from a stale read of the
+counter; the second cannot, because it re-reads immediately after observing the true position.
+A second miss means someone else is filing inside a seconds-wide window, which is a property of
+the repository rather than of the prediction.
 
 **The draft comes before the work, not after it.** Branching, building for an hour and opening
 the PR at the end leaves the number unclaimed for that whole hour — and puts the confirmation
@@ -451,6 +472,19 @@ whose head branch disappears.
 
 **This is why the number is predicted rather than assigned afterwards.** There is no cheap
 repair once the PR exists.
+
+**A shared `temp/` branch does not solve this either.** The idea is to open every PR against
+one throwaway branch, take the number, then point the PR at the real branch. Tested
+2026-08-21 on [PR #111](https://github.com/Calyx-Engineering/arc/pull/111):
+
+| | |
+|---|---|
+| `PATCH /repos/{o}/{r}/pulls/{n}` with `head` | **Returned 200 and ignored the field.** The head was unchanged. Silent success, wrong result |
+| A second PR from the same head branch | **Rejected** — *"a pull request for branch `temp/pr-probe` into `arc/03-camp` already exists"* |
+
+**A PR's `head` is fixed at creation; only `base` can be changed.** So one shared branch
+serialises every direct PR to one at a time, and the retarget that would free it does not
+work.
 
 **Do not leave a mismatch.** A branch naming a PR that is not the one it opened is worse than
 a branch naming nothing — it is confidently wrong, which is what the number was added to
