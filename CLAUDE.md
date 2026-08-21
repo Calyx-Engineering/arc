@@ -126,7 +126,9 @@ Trunk-based. `main` stays deployable and coherent at every commit.
   numbered milestone. Merges to `main` only when that milestone is actually
   deployable or dogfoodable.
 - **Work branches** — one unit of work off an arc branch. **Two forms, and both carry a
-  number.**
+  number.** Below.
+- **Topic branches** — anything smaller or exploratory, and anything outside an arc.
+  Short-lived, merge back quickly. No number, because there is no unit to name.
 - No permanent `develop` branch. Revisit when Arc has external consumers, or when
   commits must leave this machine before they have been exercised.
 

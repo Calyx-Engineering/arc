@@ -97,6 +97,14 @@ inherits a capability-sized title, which is the first failure above. **Not `spec
 word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
 its keep stays open until a month of real use answers it.
 
+**Titles go stale — do not copy them.** When referencing an issue from a document, link the
+number and describe it in the document's own words. A copied title silently diverges the
+moment the issue is renamed.
+
+**The tracker owns actions.** Acceptance criteria, checklists, next steps and owners live in
+the issue and nowhere else. A report states what is known; an issue states what must happen.
+Mixing them means neither is trustworthy.
+
 ### Retitling — the rule differs by unit, and the units must be named
 
 **An issue title and a PR title are governed in opposite directions.** Both rules below are
@@ -122,14 +130,6 @@ rewritten; *Editing an existing body* below governs the description.
 | **Retitle at the descent, not at review time** | The moment the scope changed is the moment it is cheapest to name, and the only moment you still remember what it was before |
 | **A tangent does not trigger it** | Something spotted and recorded in `Spawned`, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
 | **The same test applies** | The retitled PR still has to pass *A name, not a summary* above. A title that grew by accretion is the other failure |
-
-**Titles go stale — do not copy them.** When referencing an issue from a document, link the
-number and describe it in the document's own words. A copied title silently diverges the
-moment the issue is renamed.
-
-**The tracker owns actions.** Acceptance criteria, checklists, next steps and owners live in
-the issue and nowhere else. A report states what is known; an issue states what must happen.
-Mixing them means neither is trustworthy.
 
 ### What a good issue contains
 

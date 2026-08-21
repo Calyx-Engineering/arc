@@ -134,7 +134,7 @@ relations to its parent. The tree draws all three, and only one of them is a new
 ```mermaid
 flowchart TB
     P["<b>#45</b><br/>announce completed actions"]
-    P ---|tangent| T["a tangent<br/><i>would have existed anyway</i>"]
+    P --- T["a tangent<br/><i>would have existed anyway</i>"]
     P -->|spawned| D1["<b>PR #74</b><br/>numbers are links"]
     D1 -->|spawned| D2["<b>PR #75</b><br/>a PR needs no issue<br/><i>+ the tree must see it</i>"]
     D2 -->|spawned| D3["<b>#76</b><br/>work navigation"]

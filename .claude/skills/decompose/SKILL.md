@@ -35,6 +35,10 @@ mechanism costs the whole decomposition, every time.
 **Step 2 before step 3.** Listing parts and grouping them are different acts, and doing them
 together produces issues shaped by what is convenient to write rather than by what must exist.
 
+**Step 6 does not remove anything from the set.** An issue outside the arc's intent is
+presented with its classification attached — *escalate*, and the reason — so the user decides
+whether it lands here or later. Dropping it silently is the same failure as filing it silently.
+
 ### Two kinds of source, and the set says which it read
 
 **A spec is not the only input. A `Spawned` section is the other, and it has equal standing.**
@@ -57,10 +61,6 @@ reconstructed afterwards, and it is exactly the raw material this loop wants.
 **Record which source was read, in the proposed set's first line.** A set carries its own
 origin or the user cannot tell whether an absent part was never specified or never observed —
 and those have opposite fixes.
-
-**Step 6 does not remove anything from the set.** An issue outside the arc's intent is
-presented with its classification attached — *escalate*, and the reason — so the user decides
-whether it lands here or later. Dropping it silently is the same failure as filing it silently.
 
 ---
 
