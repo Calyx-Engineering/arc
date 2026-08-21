@@ -98,11 +98,16 @@ check_body() {
 title_findings() {
   local title="$1" body="${2:-}" name words commas type multi=0
 
-  # The type prefix and a trailing mechanism tag are bookkeeping, not part of the name, and
-  # a free-standing dash joins two halves of one name. Strip all three before counting, or
-  # every title spends words on punctuation.
+  # The type prefix and a trailing mechanism or issue tag are bookkeeping, not part of the
+  # name, and a free-standing dash joins two halves of one name. Strip all three before
+  # counting, or every title spends words on punctuation.
+  #
+  # Only `(mNN)` and `(#NN)` are stripped, not any trailing parenthetical — `feat: the
+  # relief valve (three thresholds)` names its deliverable inside the brackets.
   name="$(printf '%s' "$title" \
-    | sed -e 's/^[a-z][a-z]*\(([^)]*)\)\{0,1\}!\{0,1\}: *//' -e 's/ *([^)]*) *$//' -e 's/ [^[:alnum:]] / /g')"
+    | sed -e 's/^[A-Za-z][A-Za-z]*\(([^)]*)\)\{0,1\}!\{0,1\}: *//' \
+          -e 's/ *([m#][0-9][0-9]*) *$//' \
+          -e 's/ [^[:alnum:]] / /g')"
   words="$(printf '%s' "$name" | wc -w | tr -d ' ')"
   commas="$(printf '%s' "$name" | tr -cd ',' | wc -c | tr -d ' ')"
 
@@ -120,7 +125,11 @@ title_findings() {
 
   # A clause after the deliverable is body material: the mechanism, the consequence, the
   # reason it matters. Each of these joined an already-complete title to its explanation.
-  printf '%s' "$name" | grep -qiE '[ ,](so|because|which|while|until|without) ' \
+  #
+  # `which` and `without` also read as prepositions inside a deliverable's own name —
+  # "publish without a milestone" is the thing being built. They count only after a comma,
+  # where they can only be starting a clause. The rest subordinate wherever they appear.
+  printf '%s' "$name" | grep -qiE '[ ,](so|because|until|while) |, *(which|without) ' \
     && echo "the title carries a clause after the deliverable. The explanation belongs in the body."
 
   # Two deliverables in one title means the second is the one that quietly does not get
@@ -138,10 +147,16 @@ title_findings() {
   # inherits a capability-sized title, and every child it spawns then reads as part of an
   # unfinished promise rather than a finished piece of work. The body is the only place that
   # intent is visible at write time, since the children do not exist yet.
-  if [ -n "$body" ] && [ -f "$body" ]; then
-    type="$(printf '%s' "$title" | grep -oiE '^(feat|fix)(\([^)]*\))?!?:')"
-    if [ -n "$type" ] && grep -qiE 'decompos' "$body"; then
-      echo "the title is \`$type\` and the body describes a decomposition. \`scope:\` is the type whose deliverable is the decision, not the capability it decomposes."
+  if [ -n "$body" ]; then
+    # A path that does not resolve would otherwise skip this check silently, which reads
+    # as a pass. Say so on stderr — findings go to stdout, so this cannot be mistaken for one.
+    if [ ! -f "$body" ]; then
+      echo "note: no such body file '$body' — the scope-type check did not run" >&2
+    else
+      type="$(printf '%s' "$title" | grep -oiE '^(feat|fix)(\([^)]*\))?!?:')"
+      if [ -n "$type" ] && grep -qiE 'decompos' "$body"; then
+        echo "the title is \`$type\` and the body describes a decomposition. \`scope:\` is the type whose deliverable is the decision, not the capability it decomposes."
+      fi
     fi
   fi
   return 0
