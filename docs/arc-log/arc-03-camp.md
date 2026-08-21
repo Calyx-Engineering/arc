@@ -19,7 +19,8 @@ stay open.
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
 | **Build order** | See §10 *Status — execution order*. Numbered 1–23; **22 is vacant** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) left the arc and took step 6.2 with it |
-| **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval** |
+| **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval.** Step 10 needs `.claude/settings.json` — §6.1.1 |
+| **Waves 1–5** | **Done and merged.** Wave 6 is [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#78](https://github.com/Calyx-Engineering/arc/issues/78) |
 | **Friction with Arc itself** | Goes in [`docs/arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md), **as it happens**. Read in by the retrospective at the end; it does not replace one. Governed by a switch in Camp's operating agreement, **on in this repository and off everywhere else** — [#98](https://github.com/Calyx-Engineering/arc/issues/98) |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
@@ -487,7 +488,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **In progress** — `arc/03-camp-issue-32-size-the-title` |
 | 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **Merged** — [PR #101](https://github.com/Calyx-Engineering/arc/pull/101). Extended `spec-interview` rather than creating `skills/scope-work`; the deviation is in the dev-log |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **Merged** — [PR #102](https://github.com/Calyx-Engineering/arc/pull/102). Reconciled the unit `chat-response` and `spec-interview` disagreed on |
-| 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **In progress** — `arc/03-camp-issue-35-tracker-as-state` |
+| 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **Merged** — [PR #103](https://github.com/Calyx-Engineering/arc/pull/103). `work-watch` check 5; the friction check renumbered to 6 |
 | 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **Merged** — [PR #88](https://github.com/Calyx-Engineering/arc/pull/88). Pulled forward out of order |
 | 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
@@ -603,7 +604,35 @@ are merged in sequence and each rebased on the last. **Nothing in the plan made 
 against real fixtures by `tools/verify-hook.sh`, which is the first acceptance criterion in
 this arc tested rather than asserted.
 
-## 12 Soak
+## 12 Wave 5 review — 2026-08-21
+
+**Seven issues, seven PRs, all merged.** [#31](https://github.com/Calyx-Engineering/arc/issues/31) [#32](https://github.com/Calyx-Engineering/arc/issues/32) [#33](https://github.com/Calyx-Engineering/arc/issues/33) [#34](https://github.com/Calyx-Engineering/arc/issues/34) [#35](https://github.com/Calyx-Engineering/arc/issues/35), plus [#98](https://github.com/Calyx-Engineering/arc/issues/98) and the no-issue [PR #100](https://github.com/Calyx-Engineering/arc/pull/100) spawned during it. No merge conflicts — unlike wave 3, these issues partition by file almost cleanly.
+
+| | |
+|---|---|
+| **Four of five issues were repairs, not additions** | [#32](https://github.com/Calyx-Engineering/arc/issues/32) [#33](https://github.com/Calyx-Engineering/arc/issues/33) [#34](https://github.com/Calyx-Engineering/arc/issues/34) [#35](https://github.com/Calyx-Engineering/arc/issues/35) each named an artifact that already existed and already carried part of the capability. **The issues were written before the skills shipped**, and nothing re-read them afterwards |
+| **A shipped rule's own examples were the defect, twice** | [#32](https://github.com/Calyx-Engineering/arc/issues/32) found `issue-write`'s *Instead* column breaking the rule above it; [#34](https://github.com/Calyx-Engineering/arc/issues/34) found the block example carrying one question under a rule requiring two or three. **A rule contradicted by the example under it teaches the example** |
+| **Two shipping skills contradicted each other** | `chat-response`'s *one decision per question* against `spec-interview`'s *two or three questions per set*. Both right about different units; neither named its unit. Found by [#34](https://github.com/Calyx-Engineering/arc/issues/34), fixed by naming three levels |
+| **Nothing back-references** | m41, m15, m13 and m46 all pointed at nothing from the mechanisms whose friction their skills bound. Four instances across two waves. **The spec-to-skill direction gets written; the reverse does not** |
+| **A diagnosis was committed to three documents before one `grep` disproved it** | The merge blocker. See the friction log |
+
+### 12.1 The merge step, and what it cost
+
+**§6.1.1 step 10 had never executed.** Autonomous mode was declared in this file; the harness never reads it, and merging is an outward-facing action that needs durable authorization. [#31](https://github.com/Calyx-Engineering/arc/issues/31) and [#32](https://github.com/Calyx-Engineering/arc/issues/32) both handed the merge to the user and both recorded the wrong cause.
+
+The user identified it: *"you dont get it when i ask you because then i'm explicitly asking."*
+
+**[PR #100](https://github.com/Calyx-Engineering/arc/pull/100) added `.claude/settings.json`, and every PR after it merged unattended.** Five of the wave's seven.
+
+### 12.2 What this wave did not fix
+
+| | |
+|---|---|
+| **Six places outside `work-watch` assert its check count** | Moved four → five → six in one day. Swept clean both times, and never de-duplicated |
+| **Issues are not re-read against the tree before being picked up** | Four of five needed their scope re-derived at pass 2. The loop's pass 2 catches it, at the cost of a plan written and then rewritten |
+| **Nothing here has run** | `hooks/hooks.json` resolves `${CLAUDE_PLUGIN_ROOT}`. Fixtures and selftests are real executions; the deployed path is not |
+
+## 13 Soak
 
 **Per `CLAUDE.md`: a plugin change runs against real work before it leaves the machine.**
 Committed is not exercised. Unsoaked means a commit here with no soak line from any repo.
@@ -611,22 +640,29 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 | Change | Soaked on | Result |
 |---|---|---|
 | `skills/arc-intent` — the ladder, the test, the override rule ([#42](https://github.com/Calyx-Engineering/arc/issues/42)) | The rest of [#42](https://github.com/Calyx-Engineering/arc/issues/42), by hand — the obligation rename was classified through the ladder before it was done | **Fired correctly.** *Derived* for the one artifact, *escalate* for all five, put as a question rather than a refusal; the user chose all five and it was not raised again. Found a case the skill does not name: the two readings differed only by scope, so the honest output was two options, not one flag |
+| `tools/verify-tracker-body.sh title` — the four title checks ([#32](https://github.com/Calyx-Engineering/arc/issues/32)) | Every PR title and issue title written in the rest of wave 5 — six of them | **Fired correctly, and silently.** Every title it passed was one a human would defend; the two it would have flagged were caught at draft. Also run over all 25 open issues, which is what set the thresholds |
+| `skills/issue-write` — the Titles section ([#32](https://github.com/Calyx-Engineering/arc/issues/32)) | Writing [#98](https://github.com/Calyx-Engineering/arc/issues/98)'s title and body | **Fired correctly.** `feat: an arc friction log` was chosen over three longer candidates by running them through the check |
+| `.claude/settings.json` — the permission allow-list ([PR #100](https://github.com/Calyx-Engineering/arc/pull/100)) | Five subsequent merges, unattended | **Fired correctly.** §6.1.1 step 10 executed for the first time in three attempts across two arcs |
+| `skills/spec-interview` — the question inventory ([#33](https://github.com/Calyx-Engineering/arc/issues/33)) | — | **Unsoaked.** No scoping interview has run since it merged |
+| `skills/work-watch` — checks 5 and 6 ([#35](https://github.com/Calyx-Engineering/arc/issues/35), [#98](https://github.com/Calyx-Engineering/arc/issues/98)) | — | **Unsoaked.** Nothing in this repository runs a skill |
 
-> **This is the first soak line in this repository, across three arcs.**
-> `arc-02` and everything in `arc-03` before it shipped plugin changes with the box unticked
-> and nothing written. The rule was stated and never once executed — a gap in the practice,
-> not in this issue.
+> **The first four of these are the first soak lines in this repository, across three arcs.**
+> `arc-02` and everything in `arc-03` before [#42](https://github.com/Calyx-Engineering/arc/issues/42)
+> shipped plugin changes with the box unticked and nothing written. The rule was stated and
+> never once executed. **Wave 5 is the first stretch where soaking was the default rather than
+> the exception** — and two of its six changes are still unsoaked, both because nothing in this
+> repository runs a skill.
 
 **What a soak cannot cover here.** Nothing Arc ships actually *runs* in this repo, so a soak
 line records the mechanism being followed by hand against real work. That is weaker than
 execution and is worth exactly what it says.
 
-## 13 At arc close
+## 14 At arc close
 
 - [ ] Status table reflects reality
 - [ ] Default branch restored — `tools/arc-default-branch.sh restore`
 - [ ] Arc PR into `main` carries a `Closes` line for every issue
-- [ ] Soak line appended for every plugin change made during this arc — **started**, see *Soak* above. Every earlier plugin change in this arc is still unsoaked
+- [ ] Soak line appended for every plugin change made during this arc — **wave 5 done**, see *Soak* above. Waves 1–4 are still unsoaked
 - [ ] K2 swept — durable product facts graduated
 
 **Why nothing has run, and what closes it.** `hooks/hooks.json` registers all four hooks
@@ -642,7 +678,7 @@ not running: `hooks/tracker-verify` already holds the milestone check that
 
 ---
 
-## 14 Related
+## 15 Related
 
 - [m43](../product-architecture/mechanisms/m43-camp-assistant.md) — the Camp spec
 - [m44](../product-architecture/mechanisms/m44-event-log.md) — the event log
