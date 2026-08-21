@@ -47,7 +47,7 @@ the second copy is what drifts.
 **If there is no current arc, or it has no `arc-log`, say so and do not classify.** An answer
 with no stated intent behind it is the improvisation this obligation exists to prevent —
 record `intent-located` as skipped and let the work proceed. Discovery outside an arc is
-[m46](../../docs/product-architecture/mechanisms/m46-work-navigation.md)'s, not this.
+[m46](../../../docs/product-architecture/mechanisms/m46-work-navigation.md)'s, not this.
 
 ---
 
@@ -136,7 +136,7 @@ arc exists*, in a diff.
 | Moment | Fired by | The question |
 |---|---|---|
 | **An issue is spawned** | [`decompose`](../decompose/SKILL.md) | Does this belong in the arc, or outside it |
-| **An issue closes · a PR opens** | [`issue-write`](../issue-write/SKILL.md), inside [close-sequence](../../docs/product-architecture/close-sequence.md) step 5 | Is what this delivers the work the arc asked for |
+| **An issue closes · a PR opens** | [`issue-write`](../issue-write/SKILL.md), inside [close-sequence](../../../docs/product-architecture/close-sequence.md) step 5 | Is what this delivers the work the arc asked for |
 | **The user asks** | [`camp`](../camp/SKILL.md) | Always available |
 | **The relief valve fires on depth** | [`relief-valve`](../relief-valve/SKILL.md) | Direction and depth, asked together |
 
@@ -155,7 +155,7 @@ never a stop.
 
 Every classification is reported, **including *agreed*** — an obligation that only speaks on
 escalate is indistinguishable from one that never ran. Format:
-[`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
+[`camp-reports.md`](../../../docs/product-architecture/camp-reports.md).
 
 ```text
 **Camp here —** #56 spawned.
@@ -191,7 +191,7 @@ deferred at the same cost as [`relief-valve`](../relief-valve/SKILL.md)'s.
 
 ## Related
 
-- [m43 §3.1](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
+- [m43 §3.1](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
 - [`camp`](../camp/SKILL.md) — the persona and the entry point
 - [`relief-valve`](../relief-valve/SKILL.md) — the precondition this shares
-- [m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the conversational drift one level below this
+- [m41](../../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the conversational drift one level below this

@@ -109,7 +109,7 @@ Nothing filed. Approve, edit, or reject the set.
 | | |
 |---|---|
 | **How fine is too fine** | *"Many small issues, not a couple with 14-point checklists"* is a stated preference; the boundary is undefined. It belongs in the operating agreement as a work-size clause once first use produces examples |
-| **The boundary against [m20](../../docs/product-architecture/mechanisms/m20-arc-decomposition.md)** | m20 sequences an arc's issues at kickoff; this decomposes a single idea or spec at any point. They overlap when the idea being decomposed **is** the arc, and which owns that case is unsettled |
+| **The boundary against [m20](../../../docs/product-architecture/mechanisms/m20-arc-decomposition.md)** | m20 sequences an arc's issues at kickoff; this decomposes a single idea or spec at any point. They overlap when the idea being decomposed **is** the arc, and which owns that case is unsettled |
 | **Whether a large idea should be an arc** | A large enough idea is an arc rather than a set of issues. This skill does not make that call — say so and let the user decide |
 
 **These are stated, not hidden.** A gap named in the artifact is one the user can work around;
@@ -119,7 +119,7 @@ a gap discovered at use is one that produced a bad decomposition first.
 
 ## Related
 
-- [m43 §3.3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — decomposition, which this implements
+- [m43 §3.3](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — decomposition, which this implements
 - [`issue-write`](../issue-write/SKILL.md) — what files the set once approved, and the title rule
 - [`arc-intent`](../arc-intent/SKILL.md) — the intent check, which decides whether a proposed issue belongs in this arc
 - [`camp`](../camp/SKILL.md) — the entry point

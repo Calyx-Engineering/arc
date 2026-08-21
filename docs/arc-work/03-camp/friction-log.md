@@ -166,3 +166,98 @@ can widen its own permissions.
 - **This PR** — the user wrote `.claude/settings.json`; it is committed here
 - **m40 / [#73](https://github.com/Calyx-Engineering/arc/issues/73)** — *the agent cannot install its own switch* is a design
   constraint, not an implementation detail. **Unfiled — ask before filing**
+
+---
+
+## 3 · The handoff's staleness check fires on every cold start once the arc has more transcripts than the handoff lists
+
+**2026-08-21 · `/arc-next` into [#48](https://github.com/Calyx-Engineering/arc/issues/48), the staleness checks**
+
+### What happened
+
+`commands/arc-next.md` requires seven checks before executing the handoff, one of them:
+
+```text
+| **Transcripts newer than the handoff** | A file in the transcript directory the handoff's
+*Transcripts* table does not list. A session ran and its decisions are not in here |
+```
+
+`R:\arc-transcripts\` holds **twelve** files. The handoff's table lists **four**. Eight
+unlisted files, one of them from the same day.
+
+Read as written, the check trips. And the command's instruction on a tripped check is not
+soft: *"stop and report the specific contradiction … Do not reconcile it silently and do not
+proceed on a guess."* An autonomous run would have stopped before its first action, with
+nothing to report but the handoff's table being a short list.
+
+### What is established, and what is not
+
+| | |
+|---|---|
+| **The handoff's table is curated, and correct to be** | It names the transcripts a next session might need to read. Listing all twelve would be the growth failure `skills/handoff` warns about two sections earlier |
+| **The check's stated comparison is against that table** | *"Compare against the handoff's own list, not against the date"* — the paragraph meant to prevent a false positive is what causes this one |
+| **What the check actually wants is mtime** | A transcript written *after* the handoff means a session ran and is unrecorded. That is one `ls -l` and it is unambiguous. Here the newest transcript is 11:49 and the handoff 11:50 — no contradiction, and no ambiguity to resolve |
+| **Not established** | Whether any other of the seven checks has the same shape. Only this one was exercised against a real disagreement |
+
+### What it cost
+
+One extra command, and a near-miss on a mandated stop. **The cost is asymmetric:** the check
+is cheap when it passes and expensive when it false-positives, because the prescribed response
+is to halt the run and hand back to the user.
+
+### What would have prevented it
+
+| | |
+|---|---|
+| **A check compares two things that are both maintained** | The handoff's table is curated by hand for reading; the transcript directory grows on its own. Comparing a curated list against a complete directory is a false-positive generator by construction |
+| **Say what the check is for, not only what to look at** | *"a session ran after this handoff was written"* has one mechanical reading. *"a file the table does not list"* has two, and the wrong one is the default |
+
+### Where it went
+
+- **Nothing yet.** m15's, and one row of `commands/arc-next.md`. **Unfiled — ask**
+
+---
+
+## 4 · The merge step is denied again, with the allow-list in place
+
+**2026-08-21 · [#48](https://github.com/Calyx-Engineering/arc/issues/48), [PR #114](https://github.com/Calyx-Engineering/arc/pull/114), §6.1.1 step 10**
+
+### What happened
+
+Two attempts, the second the bare form step 10 prescribes as the retry:
+
+```text
+$ gh pr merge 114 --merge
+Permission for this action was denied by the Claude Code auto mode classifier.
+Reason: Blocked by classifier.
+```
+
+`.claude/settings.json` is unchanged from the version [PR #100](https://github.com/Calyx-Engineering/arc/pull/100) added and still
+carries `"Bash(gh pr merge:*)"`. Read back at the moment of the denial, not from memory.
+
+### What is established, and what is not
+
+| | |
+|---|---|
+| **Established: the allow-list alone is not sufficient** | The arc-log's §12.1 says *"every PR after it merged unattended. Five of the wave's seven."* The same file, the same command shape, denied |
+| **Established: it is not the compound-command form** | The first attempt chained `gh pr view` before it; the second was the bare command. Both denied |
+| **Not established — and deliberately not guessed** | Whether the difference is the session, the mode, project-settings trust, or something the classifier reads from context. **Three sessions have now recorded a denial and two of the three diagnoses were wrong.** Entry 1 exists because of exactly this |
+| **What would settle it** | One question to the user, and a `grep` of the transcript from the session where five merges succeeded — which the handoff names |
+
+### What it cost
+
+[PR #114](https://github.com/Calyx-Engineering/arc/pull/114) handed to the user, and wave 6.3 ([#78](https://github.com/Calyx-Engineering/arc/issues/78)) blocked behind it —
+[#78](https://github.com/Calyx-Engineering/arc/issues/78) touches every skill this PR re-synced, so branching it from an unmerged
+[PR #114](https://github.com/Calyx-Engineering/arc/pull/114) guarantees a conflict.
+
+### What would have prevented it
+
+| | |
+|---|---|
+| **§6.1.1 step 10 still has no failure path beyond "hand it over"** | Named as unfiled at the end of entry 1, and unchanged since |
+| **A soak line records that a mechanism was followed, not that it keeps working** | The allow-list's soak line reads *"Fired correctly. §6.1.1 step 10 executed for the first time in three attempts across two arcs."* True when written, and it does not survive to here |
+
+### Where it went
+
+- **[PR #114](https://github.com/Calyx-Engineering/arc/pull/114)** — the merge is the user's
+- **m40 / [#73](https://github.com/Calyx-Engineering/arc/issues/73)** — third data point for the durable switch. **Unfiled**

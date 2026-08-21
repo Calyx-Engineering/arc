@@ -18,7 +18,7 @@ skips:
 > nothing — ROADZ had one and it stayed an empty stub for a month. The mechanism is the
 > trigger plus the template plus the enforcement, and this skill is the trigger.
 
-Tier definitions are in [knowledge-tiers](../../reference/knowledge-tiers.md). This skill
+Tier definitions are in [knowledge-tiers](../../../reference/knowledge-tiers.md). This skill
 decides **which file**, and **when to write**.
 
 ---
@@ -85,8 +85,8 @@ does not know where the work stands. Usually that means detail crowded out the c
 
 ## Templates
 
-- [dev-log](../../templates/dev-log.md) — one per issue, every issue
-- [arc-log](../../templates/arc-log.md) — one per arc
+- [dev-log](../../../templates/dev-log.md) — one per issue, every issue
+- [arc-log](../../../templates/arc-log.md) — one per arc
 
 Copy the template rather than writing from memory. Both carry their own rules in the
 blockquote at the top, so the constraint travels with the file.

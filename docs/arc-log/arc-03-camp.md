@@ -110,7 +110,7 @@ flowchart TB
 | §8 · [m44](../product-architecture/mechanisms/m44-event-log.md) | The event log, independent of verbosity | [#37](https://github.com/Calyx-Engineering/arc/issues/37) |
 | §11 | Onboarding | **Backlogged** — not this arc |
 | §12 | Named gaps | **Open by design** — see below |
-| — | Repo hygiene: shipping skills match their local copies | [#48](https://github.com/Calyx-Engineering/arc/issues/48) |
+| — | Repo hygiene: shipping skills match their local copies | [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#68](https://github.com/Calyx-Engineering/arc/issues/68) |
 
 ### 4.1 Carried in from scoping
 
@@ -461,6 +461,7 @@ write.
 | [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Decomposition | **m43** · **m20** | m43 §3.3 · [m20](../product-architecture/mechanisms/m20-arc-decomposition.md) |
 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **None** | Pre-release repo hygiene. The local-copy arrangement is deleted at first release |
 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **m12** issue linking | [m12](../product-architecture/mechanisms/m12-issue-linking.md) |
+| [#68](https://github.com/Calyx-Engineering/arc/issues/68) | A new skill is invisible to the parity check until someone edits the script | **None** | Pre-release repo hygiene, like [#48](https://github.com/Calyx-Engineering/arc/issues/48) — whose fourth requirement cannot be met durably without it |
 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43** | m43 §5.1 — the only wave 5 issue that reads m43 |
 | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 had no spec, and still does not.** This issue wrote §6 *How this arc is executed* instead — the interim stand-in [#73](https://github.com/Calyx-Engineering/arc/issues/73) will replace · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's ordered actions and transcript save | **m15** context ladder / handoff | [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
@@ -474,7 +475,7 @@ write.
 |---|---|
 | **A skill can be its own spec** | m11, m38 and m45 have no `mechanisms/` file. `CLAUDE.md` states the exception: a capability that is already a single skill is specified by that skill |
 | **m40 has no spec at all** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. §6.1 *Autonomous mode* is this arc's interim stand-in; [#73](https://github.com/Calyx-Engineering/arc/issues/73) owns the durable version and left this arc |
-| **One issue traces to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) is pre-release repo hygiene, not a mechanism |
+| **Two issues trace to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#68](https://github.com/Calyx-Engineering/arc/issues/68) are pre-release repo hygiene, not mechanisms. The arrangement they check is deleted at first release |
 
 ---
 
@@ -504,14 +505,14 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **Merged** — [PR #95](https://github.com/Calyx-Engineering/arc/pull/95). Ships `skills/arc-intent`, fired from four call sites, and renamed the five obligations across the artifacts [#41](https://github.com/Calyx-Engineering/arc/issues/41) [#43](https://github.com/Calyx-Engineering/arc/issues/43) [#44](https://github.com/Calyx-Engineering/arc/issues/44) [#45](https://github.com/Calyx-Engineering/arc/issues/45) [#47](https://github.com/Calyx-Engineering/arc/issues/47) delivered |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **Merged** — [PR #96](https://github.com/Calyx-Engineering/arc/pull/96). The rule landed in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints. **Also carries this arc-log's autonomous-mode definition**, and it is the first run of that loop |
-| 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **In progress** — `arc/03-camp-issue-32-size-the-title` |
+| 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **Merged** — [PR #97](https://github.com/Calyx-Engineering/arc/pull/97). Ships `tools/verify-tracker-body.sh title` and `issue-write`'s Titles section |
 | 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **Merged** — [PR #101](https://github.com/Calyx-Engineering/arc/pull/101). Extended `spec-interview` rather than creating `skills/scope-work`; the deviation is in the dev-log |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **Merged** — [PR #102](https://github.com/Calyx-Engineering/arc/pull/102). Reconciled the unit `chat-response` and `spec-interview` disagreed on |
 | 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **Merged** — [PR #103](https://github.com/Calyx-Engineering/arc/pull/103). `work-watch` check 5; the friction check renumbered to 6 |
 | 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **Merged** — [PR #88](https://github.com/Calyx-Engineering/arc/pull/88). Pulled forward out of order |
 | 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | Ready |
+| 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **Merged** — [PR #114](https://github.com/Calyx-Engineering/arc/pull/114). Also delivers [#68](https://github.com/Calyx-Engineering/arc/issues/68), which the PR could not bind — `tools/verify-tracker-body.sh body` allows one closing keyword, so it was closed by hand. Ships `tools/verify-sync-parity.sh` |
 | — | — | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch — what auto changes, and how it ends | **Left this arc** — moved to the *Onboarding — m47* milestone. Its portability requirement is onboarding's to carry, and nothing was written |
 | 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
@@ -695,6 +696,7 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 | `hooks/camp-branch-check` — the `pr<NN>` form ([PR #108](https://github.com/Calyx-Engineering/arc/pull/108)) | `tools/verify-hook.sh`, 13 cases | **Fired correctly.** A `pr<NN>` branch passes, a slug-only branch reports. Not soaked in a live session — no hook runs here |
 | `tools/new-direct-pr.sh` ([PR #110](https://github.com/Calyx-Engineering/arc/pull/110)) | [PR #112](https://github.com/Calyx-Engineering/arc/pull/112) end to end, then [PR #113](https://github.com/Calyx-Engineering/arc/pull/113) in real use | **Fired correctly, twice.** Prediction held both times; draft, base and title prefix all correct. **This is the only wave-5-era change soaked by using it rather than by hand** |
 | m46 §9.1 · `skills/issue-write` — the branch rule ([PR #108](https://github.com/Calyx-Engineering/arc/pull/108), [PR #110](https://github.com/Calyx-Engineering/arc/pull/110)) | [PR #113](https://github.com/Calyx-Engineering/arc/pull/113), this close-out | **Fired correctly.** The branch was named by the rule, by the script, before the work started |
+| `tools/sync-local-skills.sh` — the derived lists, both directions, the link re-basing ([#48](https://github.com/Calyx-Engineering/arc/issues/48), [#68](https://github.com/Calyx-Engineering/arc/issues/68)) | Its own tree, at the moment it was rewritten | **Found two real defects the old check reported clean.** `skills/engineering-report` had no copy, and 28 links across 11 copies pointed at `.claude/docs/`. Nine fixture cases in `tools/verify-sync-parity.sh`, and four mutations of the script each failed the case meant to catch them |
 
 > **The first four of these are the first soak lines in this repository, across three arcs.**
 > `arc-02` and everything in `arc-03` before [#42](https://github.com/Calyx-Engineering/arc/issues/42)

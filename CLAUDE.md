@@ -146,14 +146,17 @@ the machine. Committed is not the same as exercised.
 Arc is not installed in its own repository, so **nothing in `skills/` is live here.** Claude
 Code discovers `.claude/skills/`, and that is all it discovers.
 
-Until there is a release, `.claude/skills/` holds **copies** of the shipping skills, each
-carrying a do-not-edit banner.
+Until there is a release, `.claude/skills/` holds a **copy of every shipping skill**, each
+carrying a do-not-edit banner. **Every skill is copied — there is no exception list**, because
+a list of what to copy is what made a new skill invisible to the check in the first place.
 
 | | |
 |---|---|
 | **The source is `skills/`** | That is what the plugin ships. Edit there, never in the copy |
 | **Re-copy after editing** | `tools/sync-local-skills.sh` |
-| **Check before a PR** | `tools/sync-local-skills.sh --check` exits 1 if a copy is stale |
+| **Check before a PR** | `tools/sync-local-skills.sh --check` exits 1 if a copy is stale, if a shipping skill has no copy, if a copy's source was deleted, or if a skill is missing from the product definition's artifact table |
+| **A skill that is genuinely repo-local** | Lives in `.claude/skills/` with no banner. The check names it and passes |
+| **After changing the sync** | `tools/verify-sync-parity.sh` — nine cases against throwaway fixture trees |
 
 **After the first release this arrangement is deleted.** This repo installs the *released*
 plugin from the marketplace, and `skills/` becomes purely the dev tree — exercised in other

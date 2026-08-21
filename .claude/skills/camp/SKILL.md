@@ -147,7 +147,7 @@ point and the persona; each obligation ships as its own artifact.**
 | **The nudge** | Catch problems at the moment they happen | Unsolicited | [#43](https://github.com/Calyx-Engineering/arc/issues/43) · [#44](https://github.com/Calyx-Engineering/arc/issues/44) |
 | **The report** | Report completed work per the agreement | Unsolicited | [#45](https://github.com/Calyx-Engineering/arc/issues/45) |
 
-**Call them by name, never by number.** [m43 §3](../../docs/product-architecture/mechanisms/m43-camp-assistant.md)
+**Call them by name, never by number.** [m43 §3](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md)
 numbers them as its own section index; the numbers were an insertion order and say nothing
 about the role.
 
@@ -201,7 +201,7 @@ Three or four lines. Which issues are open, what merged, what is next.
 
 **Nine steps, in one order, every issue** — so the process does not vary with how much
 context the session still holds. The list, what owns each step and how each is confirmed:
-[`close-sequence.md`](../../docs/product-architecture/close-sequence.md).
+[`close-sequence.md`](../../../docs/product-architecture/close-sequence.md).
 
 **Camp names which remain and stops at the first that is not done.** It does not recite all
 nine; a session three steps in hears about steps 4 onward. Each is confirmed landed before
@@ -333,15 +333,15 @@ is what makes turning the volume down cost display only.
 **Finer control is an agreement clause, not a fourth level.** *"No reports for PR
 generation"* is section 2.
 
-Format: [`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
+Format: [`camp-reports.md`](../../../docs/product-architecture/camp-reports.md).
 
 ---
 
 ## Related
 
 - [`arc-intent`](../arc-intent/SKILL.md) — the intent check, the ladder and its four firing moments
-- [`close-sequence.md`](../../docs/product-architecture/close-sequence.md) — the nine steps, and what owns each
-- [`camp-reports.md`](../../docs/product-architecture/camp-reports.md) — the declaration every acting artifact carries
+- [`close-sequence.md`](../../../docs/product-architecture/close-sequence.md) — the nine steps, and what owns each
+- [`camp-reports.md`](../../../docs/product-architecture/camp-reports.md) — the declaration every acting artifact carries
 - `.claude/arc/camp/operating-agreement.md` — the authority on what Camp does here
-- [m43](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
-- [m44](../../docs/product-architecture/mechanisms/m44-event-log.md) — the event log Camp declares into
+- [m43](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
+- [m44](../../../docs/product-architecture/mechanisms/m44-event-log.md) — the event log Camp declares into

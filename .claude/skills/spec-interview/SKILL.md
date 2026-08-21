@@ -110,7 +110,7 @@ It also gives the human a running artifact to review rather than a transcript to
 ### Offer the exit
 
 Escalating depth with no relief valve is the failure
-[m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md) exists for. Before a
+[m41](../../../docs/product-architecture/mechanisms/m41-relief-valve.md) exists for. Before a
 set that goes deeper than the last:
 
 > *"That is D settled — three of five. N and X left. We are three questions into naming
@@ -369,10 +369,10 @@ loop ran unnamed through [#27](https://github.com/Calyx-Engineering/arc/issues/2
 
 | | |
 |---|---|
-| [m09](../../docs/product-architecture/mechanisms/m09-kickoff-scope-gate.md) — kickoff and the scope gate | Gates scope at an arc's start. **This is how the scope being gated gets made** |
+| [m09](../../../docs/product-architecture/mechanisms/m09-kickoff-scope-gate.md) — kickoff and the scope gate | Gates scope at an arc's start. **This is how the scope being gated gets made** |
 | **This skill** | Rough idea → a spec complete enough to split |
-| [m20](../../docs/product-architecture/mechanisms/m20-arc-decomposition.md) — decomposition | Consumes what this produces. **You cannot split work whose shape is not settled** |
-| [m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the relief valve | The friction this bounds. The inventory is what makes m41's offer answerable rather than a matter of patience |
+| [m20](../../../docs/product-architecture/mechanisms/m20-arc-decomposition.md) — decomposition | Consumes what this produces. **You cannot split work whose shape is not settled** |
+| [m41](../../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the relief valve | The friction this bounds. The inventory is what makes m41's offer answerable rather than a matter of patience |
 
 **Not every piece of work needs this.** Small work is scoped by writing it. The test is whether
 you can name more than two or three subjects that must be settled first — below that, the

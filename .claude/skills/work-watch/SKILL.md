@@ -300,7 +300,7 @@ defects have shipped in this repo past passing checks.
 
 ### Why it lives here and not in a tracker skill
 
-[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) records this
+[m13](../../../docs/product-architecture/mechanisms/m13-issue-write-back.md) records this
 failure shape for tracker writes and states that file edits are *"verified routinely"*. **That
 is disproved.** The same shape occurs in files; the difference is only that a diff makes it
 recoverable, not that it is caught.
@@ -314,7 +314,7 @@ recoverable, not that it is caught.
 
 **Focus degrades with context length regardless of intent. Structure outside the context does
 not** — a checklist read fresh each turn is as good on turn 200 as on turn 10. That is
-[m15](../../docs/product-architecture/mechanisms/m15-handoff-spine.md)'s argument applied
+[m15](../../../docs/product-architecture/mechanisms/m15-handoff-spine.md)'s argument applied
 inside a session rather than between them.
 
 **The transcript holds the reasoning; the tracker holds the state.** Losing the transcript
@@ -348,7 +348,7 @@ once, propose, and move.
 
 ### Where it stops
 
-**Deciding what gets tracked is not this.** [m46](../../docs/product-architecture/mechanisms/m46-work-navigation.md)
+**Deciding what gets tracked is not this.** [m46](../../../docs/product-architecture/mechanisms/m46-work-navigation.md)
 owns where a discovery goes and whether to ascend or descend to it; this check only fires the
 moment one appears and nothing has been written down.
 
