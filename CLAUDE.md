@@ -182,10 +182,18 @@ a list of what to copy is what made a new skill invisible to the check in the fi
 | **A skill that is genuinely repo-local** | Lives in `.claude/skills/` with no banner. The check names it and passes |
 | **After changing the sync** | `tools/verify-sync-parity.sh` — nine cases against throwaway fixture trees |
 
-**After the first release this arrangement is deleted.** This repo installs the *released*
-plugin from the marketplace, and `skills/` becomes purely the dev tree — exercised in other
-repos, never against itself. Testing a change with the version of itself being changed is the
-trap this avoids, and it is the same reasoning as the soak rule below.
+**The condition for deleting this arrangement is that *this repository* has installed the released
+plugin — not that a release exists.**
+
+| | |
+|---|---|
+| **Releasing does not delete the copies** | `v0.1.0` is cut and the copies stay. A tag changes nothing about what Claude Code discovers here |
+| **Another repo installing Arc does not either** | The copies exist because *this* repo is not an Arc consumer |
+| **The test is one command** | `/plugin` lists what is installed. If `arc` is not there, `.claude/skills/` is still the only thing Claude Code discovers in this repo, and deleting it removes every skill from this session |
+
+Once it is installed here, `skills/` becomes purely the dev tree — exercised in other repos,
+never against itself. Testing a change with the version of itself being changed is the trap this
+avoids, and it is the same reasoning as the soak rule below.
 
 ## Safe hook editing
 
