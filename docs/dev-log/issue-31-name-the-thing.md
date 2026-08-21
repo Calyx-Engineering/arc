@@ -79,7 +79,28 @@ m43 §3.1.2. Not re-raised.
 The script is the emitter and cannot read either document at runtime. The spec states the
 phrasing so a future rewrite of the script does not have to rediscover it from the strings.
 
+## What was tested, and what cannot be
+
+| | |
+|---|---|
+| `bash -n` | Clean |
+| `check` — all preconditions pass | Every emitted line names the object type |
+| `check` — precondition fails | `FAIL  arc branch arc/does-not-exist is not pushed` |
+| `status`, `usage`, `restore` strings | Read by inspection; `flip` and `restore` mutate the repository and were not executed |
+| `tools/sync-local-skills.sh --check` | Exit 0 |
+
+**No mechanical test exists for the rule itself, and one should not be invented.** Whether a
+qualifier is present *and meaningful* is a judgement — a regex can confirm a word precedes an
+identifier, not that the word names its type. A check that passes on `the arc/03-camp` would
+be worse than none, because it would be trusted.
+
 ## Open
 
 - The rule is unenforced. Nothing checks a new prompt for a bare identifier, and the
   hook-carried checks Arc ships have never run in this repository
+- **The hooks are a second emitter with the same defect, and were deliberately not touched.**
+  `camp-branch-check` says *"`$NAME` does not match `arc/<nn>-<slug>-issue-<N>-<slug>`"* and
+  *"`$BRANCH` names no issue"* — both open on a bare identifier. `tracker-verify` has three
+  more. Fixing them means the hook ceremony in `CLAUDE.md` — kill-switch line, `verify-hook.sh`
+  output, one hook per commit — which is a larger change than this issue scoped, and the
+  north star recorded above puts a sweep out of scope. **Worth its own issue**
