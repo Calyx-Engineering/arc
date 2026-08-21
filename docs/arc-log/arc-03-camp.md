@@ -8,7 +8,7 @@
 
 ---
 
-## In one minute
+## 1 In one minute
 
 **Camp is the spine window made portable** — the role that holds an arc's plan and tracks
 which issue is active, backed by committed documents instead of a VS Code window that has to
@@ -18,7 +18,7 @@ stay open.
 |---|---|
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
-| **Build order** | See *Status — execution order*. It is numbered 1–21 |
+| **Build order** | See §9 *Status — execution order*. It is numbered 1–21 |
 | **Autonomous** | All waves. Waves 1–2 ran and stopped; the stop cleared 2026-08-19 and waves 3–6 run autonomously. **Breaks at wave boundaries are context, not approval** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
@@ -27,7 +27,7 @@ exactly once, so a gap there is a feature nobody is building.
 
 ---
 
-## Why this arc exists
+## 2 Why this arc exists
 
 Arc's workflow depends on one VS Code window holding the plan and tracking which issue is
 active. That window is fragile — close it, switch branches, or move to another repo and the
@@ -48,7 +48,7 @@ just use.
 
 ---
 
-## What the decomposition produced
+## 3 What the decomposition produced
 
 Nine new issues, plus one already filed and five carried in from the tracker work spawned
 during scoping.
@@ -88,7 +88,7 @@ flowchart TB
 
 ---
 
-## Every spec section, and the issue that delivers it
+## 4 Every spec section, and the issue that delivers it
 
 **Read this table to check nothing was dropped.** Every numbered section of
 [m43](../product-architecture/mechanisms/m43-camp-assistant.md) appears exactly once.
@@ -109,7 +109,7 @@ flowchart TB
 | §12 | Named gaps | **Open by design** — see below |
 | — | Repo hygiene: shipping skills match their local copies | [#48](https://github.com/Calyx-Engineering/arc/issues/48) |
 
-### Carried in from scoping
+### 4.1 Carried in from scoping
 
 Five issues spawned by friction observed while writing the spec. Tracker mechanics, not Camp —
 classified *escalate* under the intent check's own ladder, and correct to do. **Scheduled as wave
@@ -125,7 +125,7 @@ Two more were spawned later, by the work itself — see below.
 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply |
 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
 
-### Spawned during execution
+### 4.2 Spawned during execution
 
 **Found by building the arc, not by planning it.** Each names the issue whose work exposed it.
 [#55](https://github.com/Calyx-Engineering/arc/issues/55) and [#56](https://github.com/Calyx-Engineering/arc/issues/56)
@@ -154,7 +154,7 @@ flowchart LR
 
 ---
 
-## Build order
+## 5 Build order
 
 Dependency, not value. **The most valuable issue is frequently the one that cannot start.**
 
@@ -191,7 +191,7 @@ building it twice.
 
 ---
 
-## How this arc is executed
+## 6 How this arc is executed
 
 **Not only what gets built — how.** An arc run autonomously and an arc run beside a human are
 different plans, and the difference belongs here rather than in a chat message.
@@ -203,18 +203,18 @@ different plans, and the difference belongs here rather than in a chat message.
 
 **The stop is the point.** Sixteen issues run unattended ends in either a good arc or sixteen
 PRs on a wrong foundation, and the second is not visible until it is expensive. The numbered
-table under *Status* marks where it is.
+table under §9 *Status — execution order* marks where it is.
 
 **One session, no reset between issues.** A session cannot clear its own context, so waves 1–2
 are four issues in one continuous run — the wave boundary is dependency, not a fresh start.
 
-### Autonomous mode — what it actually means
+### 6.1 Autonomous mode — what it actually means
 
 > **Manual is the default.** Autonomous is entered only by an explicit instruction from the
 > user, or by the handoff naming it. Absent either, propose and wait.
 
 **In autonomous mode, read this arc-log whole** — not the section you think you need. The
-*Status — execution order* table is the work queue, and it is followed top to bottom.
+§9 *Status — execution order* table is the work queue, and it is followed top to bottom.
 
 ```mermaid
 flowchart TB
@@ -243,7 +243,7 @@ flowchart TB
     style L fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
 ```
 
-#### One issue, start to merge
+#### 6.1.1 One issue, start to merge
 
 | | |
 |---|---|
@@ -259,7 +259,7 @@ flowchart TB
 | 10 | **Merge it yourself** — only when satisfied, everything resolved, everything clean |
 | 11 | **Continue to the next row, or stop** — whichever the execution order says |
 
-#### The refining axes
+#### 6.1.2 The refining axes
 
 Run every pass against all of them.
 
@@ -276,12 +276,12 @@ Run every pass against all of them.
 | Are there tests that need writing to evaluate this? |
 | Have all evaluating tests been run? |
 
-#### Commit cadence
+#### 6.1.3 Commit cadence
 
 **Over-committing bloats the log and the tree.** Commit at least once for the plan, once for
 the initial implementation, and once per refinement and review loop.
 
-#### At a break point
+#### 6.1.4 At a break point
 
 A break marked in the execution order **stops autonomous execution.** In order:
 
@@ -291,7 +291,7 @@ A break marked in the execution order **stops autonomous execution.** In order:
 | 2 | **Re-evaluate it** — it must cue the next `/arc-next` into the right mode, autonomous from here on, and initialise enough state for the next window to continue with the next wave |
 | 3 | A status update of **50 words or less** on issues and merges, **leading with any problem** |
 
-### What is least certain, and why
+### 6.2 What is least certain, and why
 
 | | |
 |---|---|
@@ -310,7 +310,7 @@ repository boundary.
 
 ---
 
-## Load-bearing decisions
+## 7 Load-bearing decisions
 
 Settled during scoping. **These apply across every issue in the arc.**
 
@@ -328,7 +328,7 @@ Settled during scoping. **These apply across every issue in the arc.**
 
 ---
 
-## What is deliberately not in this arc
+## 8 What is deliberately not in this arc
 
 | | Why |
 |---|---|
@@ -339,7 +339,7 @@ Settled during scoping. **These apply across every issue in the arc.**
 
 ---
 
-## Status — execution order
+## 9 Status — execution order
 
 **Work top to bottom, in this order.**
 
@@ -378,7 +378,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
-### What each wave is
+### 9.1 What each wave is
 
 **Three modes, and the difference is who reviews the wave's work.**
 
@@ -400,7 +400,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 **Wave 5 is last of the substantive work, not optional.** It was spawned during scoping and is
 scheduled here because it depends on nothing in Camp — but it ships in this arc.
 
-### Where a window breaks
+### 9.2 Where a window breaks
 
 **A break is context, not approval.** Ten issues do not fit one window. The mode says who
 reviews the work; the break says where the window ends — and the two are independent, so
@@ -428,7 +428,7 @@ A new chat starts from that prompt and picks up where the last one stopped.
 **Stopping to hand off is not stopping for approval** — it is what makes a long arc survive
 its own context. Write a fresh handoff and stop whenever the context degrades, boundary or not.
 
-### The stop — cleared 2026-08-19
+### 9.3 The stop — cleared 2026-08-19
 
 Waves 1 and 2 merged and were reviewed together. **Wave 3 may start.**
 
@@ -440,7 +440,7 @@ Waves 1 and 2 merged and were reviewed together. **Wave 3 may start.**
 Waves 1 and 2 ran in one session. A session cannot clear its own context, so the wave boundary
 was dependency rather than a fresh start.
 
-#### What the review found
+#### 9.3.1 What the review found
 
 Three defects, all in artifacts whose verification had passed. **The pattern is that structural
 checks passed while the artifact itself was wrong** — worth carrying into how later positions
@@ -464,7 +464,7 @@ a renormalize took a repeat sync from `4 copied` to `0 copied, 9 checked`. Fixed
 acceptance criterion written as runtime behaviour has been tested. The event log has three
 hand-written entries and no producer.
 
-## Wave 3 review — 2026-08-19
+## 10 Wave 3 review — 2026-08-19
 
 **Six issues, eight PRs open, none merged.** The review at a wave's end is the reviewer's, per
 the autonomous mode. Findings below are mine, on my own work.
@@ -487,7 +487,7 @@ are merged in sequence and each rebased on the last. **Nothing in the plan made 
 against real fixtures by `tools/verify-hook.sh`, which is the first acceptance criterion in
 this arc tested rather than asserted.
 
-## Soak
+## 11 Soak
 
 **Per `CLAUDE.md`: a plugin change runs against real work before it leaves the machine.**
 Committed is not exercised. Unsoaked means a commit here with no soak line from any repo.
@@ -505,7 +505,7 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 line records the mechanism being followed by hand against real work. That is weaker than
 execution and is worth exactly what it says.
 
-## At arc close
+## 12 At arc close
 
 - [ ] Status table reflects reality
 - [ ] Default branch restored — `tools/arc-default-branch.sh restore`
@@ -526,7 +526,7 @@ not running: `hooks/tracker-verify` already holds the milestone check that
 
 ---
 
-## Related
+## 13 Related
 
 - [m43](../product-architecture/mechanisms/m43-camp-assistant.md) — the Camp spec
 - [m44](../product-architecture/mechanisms/m44-event-log.md) — the event log
