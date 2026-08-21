@@ -91,7 +91,7 @@ point is what this fixes.
 
 | Rule | |
 |---|---|
-| **Never commit unasked** | Standing. Propose and wait |
+| **Never commit unasked** | **In manual, which is the default** — propose and wait. **In autonomous mode, commit at the capture points check 1 defines**, without asking. Read the mode from `HANDOFF.md`'s *Execution mode* row, never from memory — [`autonomy-set`](../autonomy-set/SKILL.md) |
 | **Check files are saved first** | See below — this is upstream of half the problem |
 | **Never squash merge** | It destroys reviewability |
 | **Verify the commit identity** | Committing as one account and commenting as another makes no sense and has happened |

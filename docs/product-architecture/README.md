@@ -78,7 +78,7 @@ moves next; this column only reports.
 | m42 | Default branch flip | 🔥 | **Closing keywords bind inside an arc.** *Offers to point the default branch at the arc for its lifetime, on preconditions it checks itself; restores at close* | [spec](mechanisms/m42-default-branch-flip.md) | ⚪ |
 | m14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/m14-commit-rhythm.md) | ⚪ |
 | m22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | [spec](mechanisms/m22-configuration-management.md) | ⚪ |
-| m40 | Autonomy switch | 📐 | **The workflow matches how the work actually runs.** *Guided means the engineer drives each issue and the agent assists; autonomous means the agent runs between checkpoints. One switch, not a hardware/software fork* | — | ⚪ |
+| m40 | Autonomy switch | 🔥 | **The mode is state the user can see, not an instruction to remember.** *Three states — manual, autonomous, and autonomous suspended for a conversation. Entering is always explicit; returning to manual never has to be. The permission sits beside every prohibition it overrides, because the prohibition is read every turn and a cross-reference is read once* | [spec](mechanisms/m40-autonomy-switch.md) | 🔵 |
 | m41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/m41-relief-valve.md) | ⚪ |
 | | **AUTHORING** | | | | |
 | m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
@@ -198,7 +198,7 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry |
 | `skills/relief-valve` | skill | m41 | Run by `work-watch` when the precondition trips | — |
 | `skills/config-check` | skill | m22 | Invoked, when a revision is cut | — |
-| `skills/autonomy-set` | skill | m40 | Invoked, at kickoff and when work changes character | — |
+| `skills/autonomy-set` | skill | m40 | Invoked, at kickoff, on a mode word, at a wave boundary, and when an exchange turns into a conversation | `HANDOFF.md`'s *Execution mode* row for the state · `skills/work-watch` for the capture points auto commits at |
 | | **AUTHORING** | | | |
 | `skills/issue-write` | skill | m11 · m13 | Invoked, when writing or editing an issue or PR | — |
 | `skills/engineering-report` | skill | m18 | Invoked, when writing a report | `skills/record-route` for where it lands |
