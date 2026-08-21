@@ -44,8 +44,9 @@ from `Branch` straight to `Open the PR` has to be either true or visibly wrong.
 | **The dev-log is the first commit** | A PR needs a commit to exist, and [§6.1](../product-architecture/mechanisms/m46-work-navigation.md) requires a dev-log of every merged unit regardless. The requirement and the mechanism happen to be the same act |
 | **A wrong prediction loops back to *predict*, not to *branch*** | The first diagram sent the correction path back to the dev-log step, which would re-use the burned number. Caught reading the diagram back |
 | **The negative path is drawn, not only written** | `Rename the branch` is a dotted edge to `The PR closes`. The thing the [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) test disproved is now visible in the picture rather than only in a blockquote |
-| **One retry, then accept** | The user's call, and it is principled rather than arbitrary: attempt 1 can be wrong from a stale counter read, attempt 2 cannot. A second miss is a property of the repository, and a third attempt does not address it |
-| **An accepted mismatch is said twice** | The PR body near the top, and the friction log where one exists. **Unexplained, the branch is silently wrong** — the exact failure §9 exists to prevent. Explained, it is a record |
+| **A miss is never retried** | Arrived at in two steps: first a one-retry limit, then none at all. **A miss is not a mistake to correct; it is a race that already happened.** Retrying buys a tidier name with a real number, and the name was only ever a pointer |
+| **The notification is the fix, in three places** | PR body, dev-log, and the friction log where one exists. **Unexplained, the branch is silently wrong** — the exact failure §9 exists to prevent. Explained, it is merely inexact |
+| **The dev-log is unconditional; the friction log is not** | The dev-log already exists at that point — it was the first commit, so noting the miss is an edit, not a new obligation. Not every repository keeps a friction log, and [#98](https://github.com/Calyx-Engineering/arc/issues/98) made it a switch that is off by default |
 
 ## The shared `temp/` branch — tested, and it fails twice
 

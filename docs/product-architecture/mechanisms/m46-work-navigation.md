@@ -400,20 +400,20 @@ flowchart TB
     LOG --> OPEN["<b>Open it as a DRAFT</b><br/><i>before the work, not after</i><br/>this is what makes the<br/>window seconds not hours"]
     OPEN --> CHK{{"<b>PR number ==<br/>branch number?</b>"}}
     CHK ==>|yes| WORK["<b>Do the work</b><br/>mark ready when done"]
-    CHK ==>|no| RETRY{{"<b>First miss?</b>"}}
-    RETRY ==>|yes| FIX["<b>Close the PR</b><br/><i>one number burned,<br/>and no work lost —<br/>this is why the draft is first</i>"]
-    FIX --> PRED
-    RETRY ==>|"no — second miss"| ACCEPT["<b>Accept the mismatch</b><br/>keep the branch, rename nothing"]
-    ACCEPT --> SAY["<b>Say it in the PR body</b><br/>near the top, in one line"]
-    SAY --> FRIC["<b>Entry in the friction log</b><br/>where the repo keeps one —<br/>two races is a fact about<br/>the repo, not the prediction"]
+    CHK ==>|"no — never retried"| ACCEPT["<b>Accept the mismatch</b><br/>rename nothing, close nothing,<br/>burn no number"]
+    ACCEPT --> SAY["<b>PR body</b><br/>one line, near the top"]
+    SAY --> DEVLOG["<b>Dev-log</b><br/>it already exists —<br/>it was the first commit"]
+    DEVLOG --> FQ{{"<b>Friction log<br/>in this repo?</b>"}}
+    FQ ==>|yes| FRIC["<b>An entry</b><br/>a race is a fact about the repo,<br/>not about the prediction"]
+    FQ ==>|no| WORK
     FRIC --> WORK
     CHK -.->|"<b>never</b>"| REN["<b>Rename the branch</b>"]
     REN -.-> DEAD["<b>The PR closes</b><br/>a rename reads as a delete<br/>to an open PR"]
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
     classDef x fill:#4a2020,stroke:#d95b5b,color:#fff
-    class START,ISS,PRED,BR,LOG,OPEN,WORK,FIX,ACCEPT,SAY,FRIC n
-    class Q,CHK,RETRY s
+    class START,ISS,PRED,BR,LOG,OPEN,WORK,ACCEPT,SAY,DEVLOG,FRIC n
+    class Q,CHK,FQ s
     class REN,DEAD x
 ```
 
@@ -422,24 +422,23 @@ flowchart TB
 | 1 | **Predict.** The next number is the higher of the latest issue and the latest PR, plus one — they share a counter |
 | 2 | **Branch with it**, and write the dev-log — [§6.1](#61-merged-work-always-has-a-dev-log) requires one anyway, and a PR needs at least one commit to exist |
 | 3 | **Open it as a draft, before the work.** This is what makes the window seconds wide instead of hours |
-| 4 | **Confirm** the PR's number against the branch's. Equal, and nothing more is needed |
+| 4 | **Confirm** the PR's number against the branch's. Equal, and nothing more is needed. **Not equal, and nothing is retried** — see below |
 | 5 | **Then do the work**, and mark the PR ready when it is done |
 
-**One retry, then accept.** If the second attempt is also off, the repository is genuinely
-contended and a third will not help. **Keep the branch, and say so** — an unexplained mismatch
-is the *confidently wrong* failure this section exists to prevent; an explained one is a
-record.
+**A miss is never retried.** Accept it, and say so. Retrying burns a number to buy a tidier
+branch name, and the name was only ever a pointer — an explained mismatch points just as well.
 
-| On accepting a mismatch | |
+| On a miss | |
 |---|---|
-| **The PR body says it, near the top** | *"Branch says `pr112`, this is PR #114 — the number moved twice under it."* Without this the branch is silently wrong |
-| **The friction log gets an entry**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md`. Two consecutive races is a fact about the repository, and the only way that reaches anyone is if it is written down |
-| **Nothing is renamed** | Renaming closes the PR — see below |
+| **The PR body says it, near the top** | *"Branch says `pr112`, this is PR #114."* Without this the branch is **silently wrong**, which is the failure this section exists to prevent. With it, the branch is merely inexact |
+| **The dev-log says it** | It already exists — it was the first commit. One line under the problem statement |
+| **The friction log too, where the repository keeps one** | `docs/arc-work/<arc-slug>/friction-log.md`. A miss means someone filed inside a seconds-wide window, which is a fact about the repository and reaches nobody unless written down |
+| **Nothing is renamed, nothing is closed** | Renaming closes the PR — see below. Closing to re-try burns a number for cosmetics |
 
-**Why one retry and not more.** The first attempt can be wrong from a stale read of the
-counter; the second cannot, because it re-reads immediately after observing the true position.
-A second miss means someone else is filing inside a seconds-wide window, which is a property of
-the repository rather than of the prediction.
+**Why never rather than once.** A miss is not a mistake to correct; it is a race that already
+happened. The prediction cannot be made more right after the fact, and every retry costs a real
+number for a cosmetic gain. **The notification is the fix** — three places record it, and
+nothing is silently wrong.
 
 **The draft comes before the work, not after it.** Branching, building for an hour and opening
 the PR at the end leaves the number unclaimed for that whole hour — and puts the confirmation
@@ -456,8 +455,7 @@ P=$(gh pr list --state all --limit 1 --json number --jq '.[0].number')
 N=$(( (I > P ? I : P) + 1 ))
 ```
 
-**One correction. Close the PR, re-branch, re-open.** Nothing is merged yet, so the cost is
-one PR number burned.
+**No correction. Two were considered and both are worse than recording the miss.**
 
 > **Do not rename the branch of an open PR. It closes the PR.**
 >
@@ -470,8 +468,12 @@ one PR number burned.
 combination that fails: a rename behaves like a delete to an open PR, and GitHub closes a PR
 whose head branch disappears.
 
-**This is why the number is predicted rather than assigned afterwards.** There is no cheap
-repair once the PR exists.
+**Closing and re-opening works, and is still not worth it.** It costs a real number to buy a
+branch name that is tidier but no more useful — the name is a pointer, and a pointer with a
+one-line correction beside it points fine.
+
+**This is why a miss is recorded rather than corrected.** There is no repair once the PR
+exists — only a tidier second attempt, bought with a real number.
 
 **A shared `temp/` branch does not solve this either.** The idea is to open every PR against
 one throwaway branch, take the number, then point the PR at the real branch. Tested
