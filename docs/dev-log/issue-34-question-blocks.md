@@ -46,17 +46,40 @@ Tracker and chat mechanics in a Camp-scoped arc: ***escalate***, decided already
 
 | | | Status |
 |---|---|---|
-| 1 | **Reconcile the unit** — one block, two or three numbered questions, one decision each | — |
-| 2 | `chat-response` — the block convention, with alternatives and a recommendation | — |
-| 3 | The label scheme, and that it is `spec-interview`'s letters where an inventory exists | — |
-| 4 | One block per message; never a second before the first is answered | — |
-| 5 | Fix the dead m38 link in the issue body | — |
-| 6 | Four refining passes, three review passes | — |
+| 1 | **Reconcile the unit** — one block, two or three numbered questions, one decision each | Done, `f0a...` in the feat commit |
+| 2 | `chat-response` — the block convention, with alternatives and a recommendation | Done |
+| 3 | The label scheme, and that it is `spec-interview`'s letters where an inventory exists | Done |
+| 4 | One block per message; never a second before the first is answered | Done |
+| 5 | Fix the dead m38 link in the issue body | Done, read back — zero hits for the old path |
+| 6 | Four refining passes, three review passes | Done |
+| + | **`spec-interview` names the same unit** — the reconciliation needs both sides | Done |
+| + | **`CLAUDE.md`'s D1/D2 row names the artifact that owns it** | Done, `23a620d` |
+| + | **The example block carries two questions** | Done, `e6337d9` |
 
 ## Decisions & trade-offs
 
-_Filled as they are made._
+| | |
+|---|---|
+| **`D` degrades from the inventory letters; it is not a second scheme** | [#33](https://github.com/Calyx-Engineering/arc/issues/33) shipped `spec-interview`'s per-subject letters an hour earlier. Two schemes for the same job is worse than none, so `D` is what the scheme becomes when no inventory exists — a discussion rather than an interview |
+| **The unit is stated in `chat-response` and referenced from `spec-interview`** | It is a conversational rule, so it belongs to m38. `spec-interview` defers rather than restating it, which is what stops the two drifting again |
+| **The single-decision form stays** | A block for one decision is ceremony. The section now names both shapes and when each applies, rather than replacing one with the other |
 
 ## Retrospective
 
-_At PR time._
+**The format was the easy half.** The load-bearing find was that two shipping skills
+contradicted each other: `chat-response` said *"one decision per question"*, `spec-interview`
+said *"two or three questions per set"*. Both were right about different units and neither
+named its unit, so a reader following both had no consistent rule.
+
+Naming the three levels — message, block, question — dissolves it, and neither original
+sentence had to be wrong.
+
+| Found by | |
+|---|---|
+| *Is it consistent with every file?* | The contradiction above, and `CLAUDE.md` carrying the D1/D2 rule with no artifact behind it — the [#89](https://github.com/Calyx-Engineering/arc/issues/89) shape |
+| *Have references to every modified file been checked?* | The issue's own m38 link pointed at a `mechanisms/` file that does not exist. Same dead link [#31](https://github.com/Calyx-Engineering/arc/issues/31) found in its body |
+| *Does this reach the north star?* | The example block showed one question under a rule requiring two or three. Fixed the example — [#32](https://github.com/Calyx-Engineering/arc/issues/32)'s finding that a rule contradicted by its example teaches the example |
+
+**What is still untested.** Nothing here has run. The convention worked throughout
+[#27](https://github.com/Calyx-Engineering/arc/issues/27)'s scoping; whether writing it down
+makes it reproducible is unknown until the next interview.
