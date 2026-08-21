@@ -3,7 +3,7 @@
 **The conclusion of the 2026-08 retrospective.** What each plugin is, what it ships, and
 what state each mechanism is in.
 
-Evidence for the friction-derived rows lives in [friction-log.md](../retrospectives/2026-08-plugin-line/friction-log.md).
+Evidence for the friction-derived rows lives in [friction-transcript-log.md](../retrospectives/2026-08-plugin-line/friction-transcript-log.md).
 Specifications live in [mechanisms/](mechanisms/). This file is the plan; those are the
 inputs.
 
@@ -57,7 +57,7 @@ Lodestar; Lodestar never needs Arc.
 
 **The dotted arrow is the new one.** The EE persona queries **Star** for requirements
 rather than reading stories directly
-([friction-log §3.4](../retrospectives/2026-08-plugin-line/friction-log.md#34-the-lodestar-gap-appears-twice-and-not-where-the-design-expects-it)),
+([friction-transcript-log §3.4](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#34-the-lodestar-gap-appears-twice-and-not-where-the-design-expects-it)),
 which makes Lodestar an active participant in delivery rather than a document store.
 
 **Freezing any one plugin leaves the others valid** — the direct answer to single-track
@@ -133,8 +133,8 @@ Arc invokes the agent at PR time the same way it invokes any other agent in its 
 | # | Plugin | Group | Mechanism | Form | Src | State | Eff | Payback | Spec |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | **Lodestar** | Capture | Story capture + wake-word | hook<br/>skill | 📐 | ⬜ | ![high](assets/effort-high.svg) | **Requirements get solicited during ordinary chat.** *Notices a discussion touching on requirements and builds the story on the spot, with the user* | — |
-| 2 |  | Capture | Source retrieval | agent | 🔥 | ⬜ | ![high](assets/effort-high.svg) | **Requirements stop hiding in Slack.** *Finds requirements someone already stated in writing — Slack threads, email, tickets, docs — and writes them into the story set* | [evidence](../retrospectives/2026-08-plugin-line/friction-log.md#34-the-lodestar-gap-appears-twice-and-not-where-the-design-expects-it) |
-| 3 |  | Capture | Source decomposition | agent | 🔥 | ⬜ | ![high](assets/effort-high.svg) | **Constraints become requirements nobody wrote down.** *Derives them from datasheets, standards, and interface specs — the requirement exists in the engineering, not in anything anyone said* | [evidence](../retrospectives/2026-08-plugin-line/friction-log.md#34-the-lodestar-gap-appears-twice-and-not-where-the-design-expects-it) |
+| 2 |  | Capture | Source retrieval | agent | 🔥 | ⬜ | ![high](assets/effort-high.svg) | **Requirements stop hiding in Slack.** *Finds requirements someone already stated in writing — Slack threads, email, tickets, docs — and writes them into the story set* | [evidence](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#34-the-lodestar-gap-appears-twice-and-not-where-the-design-expects-it) |
+| 3 |  | Capture | Source decomposition | agent | 🔥 | ⬜ | ![high](assets/effort-high.svg) | **Constraints become requirements nobody wrote down.** *Derives them from datasheets, standards, and interface specs — the requirement exists in the engineering, not in anything anyone said* | [evidence](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#34-the-lodestar-gap-appears-twice-and-not-where-the-design-expects-it) |
 | 4 |  | Capture | Story set upkeep | skill<br/>hook | 📐 | ⬜ | ![med](assets/effort-medium.svg) | **The set stays coherent.** *Fires when a story is written or changed; dedupes, retires, flags contradictions as the set grows* | — |
 | 5 |  | Represent | RD generation | skill | 📐 | 🟦 | ![med](assets/effort-medium.svg) | **One readable product definition.** *Groups stories by area and stakeholder into `docs/stories/RD.md`* | [doc 01](https://github.com/Calyx-Engineering/lodestar/blob/main/docs/01-design-story-driven-requirements.md#the-requirements-document-rd) |
 | 6 |  | Represent | Verification method per story | skill | 📐 | ⬜ | ![med](assets/effort-medium.svg) | **Every story says how it will be proven.** *Authors acceptance criteria and picks the method — test, analysis, inspection, or demonstration* | [doc 04](https://github.com/Calyx-Engineering/lodestar/blob/main/docs/04-arc-execution-and-roles.md#what-star-owns) |
@@ -154,9 +154,9 @@ Arc invokes the agent at PR time the same way it invokes any other agent in its 
 | 19 |  | Record | Knowledge mining trigger | hook | 🔥 | 🟦 | ![low](assets/effort-low.svg) | **Reasoning in Claude transcripts reaches the record.** *Fires at PR time and invokes row 29 with the knowledge filter; findings land in K2 — `arc-work/`, `scratch/`, the wiki* | [spec](mechanisms/transcript-mining.md) |
 | 20 |  | Planning | Arc decomposition, checkpoints | skill | 📐 | 🟦 | ![med](assets/effort-medium.svg) | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints right after the riskiest work — risk-weighted, not calendar-weighted* | [doc 04](https://github.com/Calyx-Engineering/lodestar/blob/main/docs/04-arc-execution-and-roles.md#checkpoints--risk-weighted-not-calendar-weighted) |
 | 21 |  | Planning | Arc-tree — spawn diagram | agent | 🔥 | ⬜ | ![med](assets/effort-medium.svg) | **Arc shape is visible.** *Family tree of which issue spawned which — scope growth shows early. Rendered into the `arc-log` at arc close, so the shape the arc actually took is part of its record.* **Proposed by the retrospective, not extracted from friction** | — |
-| 22 |  | Planning | Configuration management | skill | 🔥 | ⬜ | ![high](assets/effort-high.svg) | **What is in this revision, exactly.** *Software: solved by branches, PRs, releases — sits naturally in Arc. Hardware: component versions and BOM state,* **undefined and deferred** — *file as an Arc issue when the plugin exists* | [needs interview](../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview) |
+| 22 |  | Planning | Configuration management | skill | 🔥 | ⬜ | ![high](assets/effort-high.svg) | **What is in this revision, exactly.** *Software: solved by branches, PRs, releases — sits naturally in Arc. Hardware: component versions and BOM state,* **undefined and deferred** — *file as an Arc issue when the plugin exists* | [needs interview](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview) |
 | 23 |  | Planning | Test obligation capture | hook<br/>skill | 🔥 | 🟦 | ![low](assets/effort-low.svg) | **Designs get tested when the part arrives.** *Proposes the test item at design time; `issue-writing` files it* | [spec](mechanisms/test-obligation-capture.md) |
-| 24 |  | Planning | Verification campaign | skill | 📐 | ⬜ | ![high](assets/effort-high.svg) | **Requirements get proven, and the matrix moves.** *Turns unproven RVTM rows into a validation milestone; results flow back to Lodestar. The top-down twin of row 23.* **Deferred — needs the interview** | [gap](../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview) |
+| 24 |  | Planning | Verification campaign | skill | 📐 | ⬜ | ![high](assets/effort-high.svg) | **Requirements get proven, and the matrix moves.** *Turns unproven RVTM rows into a validation milestone; results flow back to Lodestar. The top-down twin of row 23.* **Deferred — needs the interview** | [gap](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview) |
 | 25 | | Agents | Agent roster + dispatch tiers | skill | ⚙️ | ✅ | — | ✅ *Already written — TimeScope's `agent-process-foundation.md`: named agent definitions (scout, planner, builder, reviewer) plus how much to delegate — T0-Inline none · T1-Squad one track · T2-Wave parallel worktrees* | — |
 | 26 | | Agents | Briefs down / packets up | skill | ⚙️ | ✅ | — | ✅ *Already written — a subagent gets a small brief and returns a bounded packet, never its raw working context. What keeps the orchestrator from filling up* | — |
 | 27 |  | Agents | Worktree waves | skill | ⚙️ | 🟩 | ![low](assets/effort-low.svg) | ✅ *Already TimeScope — parallel tracks on disjoint files* | — |
@@ -205,7 +205,7 @@ Everything else is extraction or a low-effort adaptation.
 **This table is a checkpoint, not a final scope.** All evidence behind it is
 discovery-phase — execution was never observed, and may need mechanisms nobody has named.
 Re-run the retrospective after the first execution stretch
-([friction-log §5](../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview)).
+([friction-transcript-log §5](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview)).
 
 ---
 
@@ -231,7 +231,7 @@ and leave the rest of Arc for later. Momentum is a real asset.
 
 | Question | Blocks |
 |---|---|
-| Does the autonomy switch hold, or do report and issue styles diverge? | [friction-log §6](../retrospectives/2026-08-plugin-line/friction-log.md#6-parked--pull-on-these-later) |
+| Does the autonomy switch hold, or do report and issue styles diverge? | [friction-transcript-log §6](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#6-parked--pull-on-these-later) |
 | Where do requirements actually live today? | Lodestar's source-decomposition mechanism |
 | Does hardware's gate latency break the human-gate model? | Arc's guided mode |
 | Does `Bench` stay right if the domain-persona pattern generalises beyond EE? | Nothing yet; the name commits to hardware |

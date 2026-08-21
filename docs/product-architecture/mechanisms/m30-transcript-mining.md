@@ -42,7 +42,7 @@ machine-local reasoning to a durable record.
 
 Proven once, by hand, on 2026-08-16. Reading 28 ROADZ transcripts corrected three
 architecture errors in a single pass that four rounds of reasoning from design
-documents had not — see [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md).
+documents had not — see [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md).
 
 The general claim:
 
@@ -176,7 +176,7 @@ That last row is the only honest way to measure whether a plugin is paying for i
 
 ## Related
 
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) — output of the first hand-run
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) — output of the first hand-run
 - [what-the-tools-do.md](../archive/what-the-tools-do.md) §4.4 — job 13, *Learn*
 - ROADZ `.claude/skills/engineering-report`, `issue-writing` — both precipitated from
   corrections this mechanism would have surfaced sooner

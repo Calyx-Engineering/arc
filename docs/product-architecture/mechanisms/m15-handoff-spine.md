@@ -2,7 +2,7 @@
 
 **Status:** partial — the artifact is designed; whether issue-level K2 extends the dev-log or sits beside it is open.
 **Home:** Arc — Knowledge.
-**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4.
+**Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4.
 
 ---
 
@@ -253,7 +253,7 @@ than duplicate its ordering — duplicated order drifts.
 
 ## Related
 
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4 — the evidence
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
 - [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism
 - TimeScope `docs/arc-log/arc-local-first-storage.md` — the software precedent
 - ROADZ `CLAUDE.md` — arc-tracking GitHub mechanics

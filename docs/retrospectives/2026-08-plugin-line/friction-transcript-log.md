@@ -1,4 +1,4 @@
-# Friction Log — ROADZ rev B, 2026-07-21 → 2026-08-14
+# Friction transcript log — ROADZ rev B, 2026-07-21 → 2026-08-14
 
 Evidence for the plugin-scope decision. Extracted from 28 Claude Code transcripts
 across the ROADZ branches and worktrees (~91 MB), filtered to 474 David messages, then
@@ -6,6 +6,11 @@ to 75 carrying a correction or friction signal.
 
 Method: read the user's own words, not the assistant's summaries of them. Every row
 below traces to a real message.
+
+> **Mined, and ranked by recurrence** — which is why it is *transcript* log and not simply
+> *friction log*. Ranking needs the whole corpus, so this shape can only be produced after
+> the fact. The live counterpart is an arc's own `docs/arc-work/<arc-slug>/friction-log.md`,
+> appended as friction is felt and read in by a retrospective like this one.
 
 ---
 

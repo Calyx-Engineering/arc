@@ -2,7 +2,7 @@
 
 **Status:** specified.
 **Home:** Arc — Workspace guard.
-**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.5.
+**Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.5.
 
 ---
 
@@ -176,6 +176,6 @@ either fire constantly or miss the interesting cases.
 
 ## Related
 
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.5, §2.8
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.5, §2.8
 - [handoff-spine.md](m15-handoff-spine.md) — session-end capture points coincide
 - ROADZ `CLAUDE.md` — tracker link mechanics

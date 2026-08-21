@@ -164,7 +164,7 @@ mocking, and it caught a real defect the first time it ran. Skills need the equi
 | m22 — Configuration management | Hardware BOM and component-revision practice |
 | m24 — Verification planning | How a campaign is planned and results recorded |
 
-Both are named in [friction-log §5](docs/retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview).
+Both are named in [friction-transcript-log §5](docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview).
 
 **A related gap surfaced 2026-08-17:** ROADZ's branch-naming vocabulary comes from a BOM
 that lives in a Google Sheet, outside version control. Configuration management is not only

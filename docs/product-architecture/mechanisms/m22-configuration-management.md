@@ -45,7 +45,7 @@ that vocabulary, and it is currently unavailable to anything automated.
 ## What the interview needs to establish
 
 Named in
-[friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview):
+[friction-transcript-log §5](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview):
 
 | Question | |
 |---|---|
@@ -61,4 +61,4 @@ Named in
 
 - [ROADZ workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md) — steps 6–8, the manufacturing package and its record
 - [branch-guard](m10-branch-guard.md) — needs the naming vocabulary this would own
-- [friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview) — the gap
+- [friction-transcript-log §5](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview) — the gap

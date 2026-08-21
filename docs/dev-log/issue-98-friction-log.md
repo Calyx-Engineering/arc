@@ -31,7 +31,7 @@ The north star did not move. Three things changed underneath it.
 | | |
 |---|---|
 | **`skills/record-route` has no row for friction at all** | Its table routes measurements, analysis, rejected approaches and findings. Friction is none of those — it is about the *tooling*, not the work. That absence is why this has never been captured live, and it makes the record-route row the load-bearing half of this issue rather than an extra |
-| **The retrospective friction log is a different artifact, not a template** | [`docs/retrospectives/2026-08-plugin-line/friction-log.md`](../retrospectives/2026-08-plugin-line/friction-log.md) is 560 lines, mined from 28 transcripts, **ranked by recurrence**. Ranking needs the whole corpus. A live log cannot rank as it goes, so it is chronological and the ranking is the retrospective's job |
+| **The retrospective friction log is a different artifact, not a template** | [`friction-transcript-log.md`](../retrospectives/2026-08-plugin-line/friction-transcript-log.md) is 560 lines, mined from 28 transcripts, **ranked by recurrence**. Ranking needs the whole corpus. A live log cannot rank as it goes, so it is chronological and the ranking is the retrospective's job |
 | **This log is the retrospective's input, not a small copy of it** | Which settles the format: each entry carries what a miner would otherwise have to reconstruct — the trigger, the cost, and what would have prevented it |
 
 **Intent classification — [`arc-intent`](../../skills/arc-intent/SKILL.md).** Read §2 *Why this
