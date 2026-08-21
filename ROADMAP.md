@@ -39,7 +39,7 @@ record survive a cold start.
 | `hooks/tracker-verify` | m12 · m43 | Links fail silently; a PR to the wrong base splits a milestone | Build |
 | `hooks/camp-session-start` | m43 | A session's first edit with no arc, issue or branch | Build |
 | `hooks/camp-branch-check` | m43 | A branch named so nothing links it to an issue | Build |
-| `skills/work-watch` | m14 · m23 · m41 · m13 | Commit timing, test obligations, depth, and edit completeness — one sweep | Build |
+| `skills/work-watch` | m14 · m23 · m41 · m13 · m17 | Commit timing, test obligations, depth, edit completeness, and friction with Arc itself — one sweep | Build |
 | `skills/relief-valve` | m41 | The depth check's mechanical precondition, run inside that sweep | Build |
 | `skills/camp` | m21 · m43 | Something to ask "where is this arc, what is next" | Build |
 | `skills/decompose` | m43 | A spec or idea into a proposed set of issues | Build |
@@ -164,7 +164,7 @@ mocking, and it caught a real defect the first time it ran. Skills need the equi
 | m22 — Configuration management | Hardware BOM and component-revision practice |
 | m24 — Verification planning | How a campaign is planned and results recorded |
 
-Both are named in [friction-log §5](docs/retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview).
+Both are named in [friction-transcript-log §5](docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview).
 
 **A related gap surfaced 2026-08-17:** ROADZ's branch-naming vocabulary comes from a BOM
 that lives in a Google Sheet, outside version control. Configuration management is not only

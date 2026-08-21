@@ -20,6 +20,7 @@ stay open.
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
 | **Build order** | See §10 *Status — execution order*. Numbered 1–23; **22 is vacant** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) left the arc and took step 6.2 with it |
 | **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval** |
+| **Friction with Arc itself** | Goes in [`docs/arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md), **as it happens**. Read in by the retrospective at the end; it does not replace one. Governed by a switch in Camp's operating agreement, **on in this repository and off everywhere else** — [#98](https://github.com/Calyx-Engineering/arc/issues/98) |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -153,6 +154,7 @@ flowchart LR
 | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | State the arc's approval mode and where a window breaks | The stop review | The plan named no mode the arc actually ran in, and said nothing about surviving one context window. **Wave 2.3** |
 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff omits the next session's ordered actions and the transcript save | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | `skills/handoff` says nothing about the prompt that starts the next chat, so the prompt duplicated the handoff. **Wave 3.1** |
 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | An edit is reported done without checking everywhere the claim appears | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | One claim lives in a table, a diagram label and a summary row. Editing one and reporting done left the others contradicting it, four times consecutively. **Wave 2.4** |
+| [#98](https://github.com/Calyx-Engineering/arc/issues/98) | A friction log for the arc, and the switch that enables it | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | The autonomous loop's merge step was blocked on two consecutive issues and the wrong cause was recorded both times. Nothing in the ladder held *friction with the tooling*, so it was on its way to being lost until a retrospective mined it back |
 
 ---
 
@@ -432,6 +434,7 @@ write.
 | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch | **m40** autonomy switch | **No spec.** This issue is the one that would write it, and it left this arc for *Onboarding — m47*. Read §6.1 *Autonomous mode* first — it is the interim definition and the input this issue starts from |
 | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) — this issue produced it |
 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) |
+| [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **m17** the record ladder · **m47** onboarding | [`skills/record-route`](../../skills/record-route/SKILL.md) — the skill routes it · [m47](../product-architecture/mechanisms/m47-onboarding.md) §3 carries the switch's question |
 
 | | |
 |---|---|
@@ -478,6 +481,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | — | — | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch — what auto changes, and how it ends | **Left this arc** — moved to the *Onboarding — m47* milestone. Its portability requirement is onboarding's to carry, and nothing was written |
 | 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
+| — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **In progress** — spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order. **Takes no step number**; the order is frozen |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
 ### 10.1 What each wave is
@@ -630,3 +634,4 @@ not running: `hooks/tracker-verify` already holds the milestone check that
 - [m41](../product-architecture/mechanisms/m41-relief-valve.md) — the relief valve's precondition and thresholds
 - [m42](../product-architecture/mechanisms/m42-default-branch-flip.md) — why the default branch is pointed at this arc
 - [m46](../product-architecture/mechanisms/m46-work-navigation.md) — where a discovery goes and how the work gets back out, spawned mid-arc by [#75](https://github.com/Calyx-Engineering/arc/pull/75)
+- [`arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md) — friction with Arc itself, appended while this arc runs

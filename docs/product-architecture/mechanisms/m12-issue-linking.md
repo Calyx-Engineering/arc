@@ -2,7 +2,7 @@
 
 **Status:** specified. Its key assumption was tested and disproved 2026-08-16.
 **Home:** Arc — Workspace guard.
-**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.8, and David's requirement, 2026-08-16.
+**Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.8, and David's requirement, 2026-08-16.
 
 ---
 
@@ -207,7 +207,7 @@ link, verify it, repair it) transfers even though the API does not.
 
 ## Related
 
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.8
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.8
 - [issue-write-back.md](m13-issue-write-back.md) — same silent-failure class
 - [handoff-spine.md](m15-handoff-spine.md) — arc structure, Projects over Milestones
 - ROADZ `CLAUDE.md` — the workaround this replaces; issue #42 tracks its removal

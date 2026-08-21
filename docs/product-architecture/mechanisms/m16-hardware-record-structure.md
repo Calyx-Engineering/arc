@@ -404,7 +404,7 @@ of a graduated fact — device physics that outlived the analysis that produced 
 
 ## Autonomy-switch behaviour
 
-Per [friction-log](../../retrospectives/2026-08-plugin-line/friction-log.md) §3.2b, the switch is autonomy, not domain.
+Per [friction-transcript-log](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §3.2b, the switch is autonomy, not domain.
 
 | | Autonomous | Guided |
 |---|---|---|
@@ -440,7 +440,7 @@ works.
 ## Related
 
 - [handoff-spine.md](m15-handoff-spine.md) — the three-tier ladder this implements
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §3.2b — the autonomy switch
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §3.2b — the autonomy switch
 - ROADZ `docs/report/issue-01-warning-light-dimming/` — the working example
 - ROADZ `.claude/skills/engineering-report/SKILL.md` — governs K3 content
 - TimeScope `docs/dev-log/TEMPLATE.md` — the compact form to preserve

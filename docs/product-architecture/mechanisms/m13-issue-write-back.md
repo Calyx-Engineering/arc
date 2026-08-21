@@ -2,7 +2,7 @@
 
 **Status:** specified. Carries the evaluation set for `issue-writing`.
 **Home:** Arc — Authoring.
-**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.7, and David's framing, 2026-08-16.
+**Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.7, and David's framing, 2026-08-16.
 
 ---
 
@@ -174,7 +174,7 @@ gh pr view <N> --json closingIssuesReferences   # empty means it did not link
 
 ## Related
 
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.7, §2.8
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.7, §2.8
 - [commit-rhythm.md](m14-commit-rhythm.md) — dropped staged files, same silent-failure class
 - [handoff-spine.md](m15-handoff-spine.md) — proposed home for pending actions
 - ROADZ `.claude/skills/issue-writing/SKILL.md` — the skill under evaluation

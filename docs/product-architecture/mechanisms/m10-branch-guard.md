@@ -169,6 +169,6 @@ which the hook never sees.
 
 ## Related
 
-- [friction-log §2.1](../../retrospectives/2026-08-plugin-line/friction-log.md#21-wrong-branch--worktree--the-most-expensive-failure) — the evidence
+- [friction-transcript-log §2.1](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#21-wrong-branch--worktree--the-most-expensive-failure) — the evidence
 - [issue-linking](m12-issue-linking.md) — the other half of workspace correctness
 - TimeScope `hooks/block_source_edits.js` — the porting source

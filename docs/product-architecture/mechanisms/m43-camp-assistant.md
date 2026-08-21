@@ -1088,7 +1088,8 @@ worse than none.
 
 **Not in scope; recorded so it is not lost.** When Arc is first installed in a repository,
 Camp could walk the user through configuring it — the operating agreement, the register, the
-verbosity level, whether the default-branch flip is available.
+verbosity level, whether the default-branch flip is available, and whether the friction log is
+on ([m47 §3](m47-onboarding.md#3-what-it-must-produce), where *off* is the expected answer).
 
 **Camp's first useful act being to configure itself is the clearest possible demonstration of
 the intent check.** It also puts the m42 warning in front of the user at the moment it matters.

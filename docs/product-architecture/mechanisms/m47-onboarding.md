@@ -54,6 +54,7 @@ repository, before any arc exists.
 |---|---|
 | **Behavioural rules that survive the boundary** | Written into the repository's own instructions, so they load without a skill firing |
 | **Camp's three documents** | The operating agreement, the register, the verbosity level — [m43](m43-camp-assistant.md) |
+| **The friction-log switch, asked with *off* expected** | The agreement's one developer-facing setting. It logs Arc's own rough edges, not the work's — useful where Arc is being built or evaluated, noise everywhere else. **Onboarding asks rather than assuming**, because a repository that wants it has no other way to find out it exists |
 | **The hooks' preconditions, checked** | The plugin registers its own hooks through `hooks.json`; onboarding does not install them. What it must confirm is that they can pass — the repo is a git repo, the kill switch is understood, and a hook denying an edit in an unconfigured repo is survivable |
 | **The default-branch decision** | [m42](m42-default-branch-flip.md)'s warning put in front of the user at the moment it matters |
 | **The mechanism registry's source** | Where this repository looks up the next free number — [lodestar#9](https://github.com/Calyx-Engineering/lodestar/issues/9) is the same gap in another repo |
