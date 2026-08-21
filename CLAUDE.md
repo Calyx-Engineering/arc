@@ -154,7 +154,7 @@ a list of what to copy is what made a new skill invisible to the check in the fi
 |---|---|
 | **The source is `skills/`** | That is what the plugin ships. Edit there, never in the copy |
 | **Re-copy after editing** | `tools/sync-local-skills.sh` |
-| **Check before a PR** | `tools/sync-local-skills.sh --check` exits 1 if a copy is stale, if a shipping skill has no copy, if a copy's source was deleted, or if a skill is missing from the product definition's artifact table |
+| **Check before a PR** | `tools/verify-all.sh` runs this and every other gate. On its own, `tools/sync-local-skills.sh --check` exits 1 if a copy is stale, if a shipping skill has no copy, if a copy's source was deleted, or if a skill is missing from the product definition's artifact table |
 | **A skill that is genuinely repo-local** | Lives in `.claude/skills/` with no banner. The check names it and passes |
 | **After changing the sync** | `tools/verify-sync-parity.sh` — nine cases against throwaway fixture trees |
 
@@ -185,5 +185,11 @@ skill.** David is not a hook author and does not audit bash — he checks that y
 **The gate is a script, not a hook.** A hook validating hook changes can be broken by the
 change it is validating, and `HOOKS_OFF` would disable it along with everything else. A
 script works with hooks off and produces output you can see.
+
+**`tools/verify-all.sh` runs every gate in one command** — the four verifiers and the skill
+parity check, one exit code, the failing one named. It **fails on a hook with no case
+directory**, so the rule above is enforced rather than remembered. `--list` prints what it
+runs and, as importantly, what it cannot: no hook fires in a live session here and no skill is
+invoked, so a green run is not a claim about either.
 
 Full reasoning in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md).
