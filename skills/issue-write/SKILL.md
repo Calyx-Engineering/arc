@@ -60,6 +60,12 @@ scanning a milestone list weeks later — no body, no conversation, no arc conte
 | **Costs** | The parent stays open across every child, so the milestone shows one perpetually incomplete item instead of steady progress | Word salad — harder to scan than the vague title it replaced |
 | **Instead** | `scope: Camp — obligations, documents, and the build decomposition` | `feat: work navigation artifacts (m46)` |
 
+**Only the second is visible in the title alone.** *"the delivery assistant"* is a fine name
+for something that ships in one merge — what makes it a false promise is the body underneath
+it. `verify-tracker-body.sh title` needs the body file to catch the first, and even then only
+where the body says outright that it decomposes. The first failure is judgement; the second is
+mechanical.
+
 ### A name, not a summary
 
 **The second failure is what *comprehensible cold* over-corrects into.** Told a title must
@@ -147,7 +153,7 @@ Closes #42
 Parsers do not understand prose. `Closes the block-diagram item of #26` creates **no link** —
 the Development sidebar stays empty and the issue looks orphaned.
 
-When a PR closes exactly one issue, cite it in the title: `<type>: <summary> (#42)`. When it
+When a PR closes exactly one issue, cite it in the title: `<type>: <name> (#42)`. When it
 closes several, omit the number from the title and list them in the body. The title number
 is cosmetic — the body still needs its own line.
 
@@ -156,7 +162,7 @@ is cosmetic — the body still needs its own line.
 An issue PR inside an arc is titled:
 
 ```text
-arc-02: feat: the handoff — a cold start that costs one read (#13)
+arc-02: feat: the handoff (#13)
 ```
 
 **Without it a flat PR list has no thread back to the arc.** Five PRs sharing no visible

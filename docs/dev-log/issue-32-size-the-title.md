@@ -53,12 +53,15 @@ the arc-log records the user's proceed in §4.1. Not re-raised.
 
 | | | Status |
 |---|---|---|
-| 1 | `skills/issue-write` — the two failures stated as one rule, with the counterweight beside the cold-comprehension rule | — |
-| 2 | **Replace the *Instead* examples that break it.** The table is the guidance | — |
-| 3 | The type list — `scope:` versus [#73](https://github.com/Calyx-Engineering/arc/issues/73)'s `spec:`, resolved and written down | — |
-| 4 | `hooks/tracker-verify` — a mechanical signal for length, and the verify-hook ceremony run and pasted | — |
-| 5 | `tools/sync-local-skills.sh` after any `skills/` edit | — |
-| 6 | Four refining passes, three review passes, against this north star | — |
+| 1 | `skills/issue-write` — the two failures stated as one rule, with the counterweight beside the cold-comprehension rule | Done, `12c34a1` |
+| 2 | **Replace the *Instead* examples that break it.** The table is the guidance | Done, `12c34a1` · `4fb77c9` |
+| 3 | The type list — `scope:` versus [#73](https://github.com/Calyx-Engineering/arc/issues/73)'s `spec:`, resolved and written down | Done, `12c34a1` |
+| 4 | `hooks/tracker-verify` — a mechanical signal for length, and the verify-hook ceremony run and pasted | Done, `12c34a1` · moved to the tool in `2500659` |
+| 5 | `tools/sync-local-skills.sh` after any `skills/` edit | Done, every commit |
+| 6 | Four refining passes, three review passes, against this north star | Done |
+| + | **`tools/verify-tracker-body.sh title`** — not in the plan. Refining pass 2 found the hook cannot reach *before the write*, which the north star requires | Done, `2500659` |
+| + | **`.gitattributes`** — a `.txt` fixture escaped a `**/*.md` rule and committed CRLF-bound | Done, `5cbf96f` |
+| + | **m11's registry row** — pointed at the frozen ROADZ copy, where the rule does not exist | Done, `319e45e` |
 
 ## Decisions & trade-offs
 
@@ -78,4 +81,24 @@ the arc-log records the user's proceed in §4.1. Not re-raised.
 
 ## Retrospective
 
-_At PR time._
+The issue reads as *write a title rule*. There already was one — [#31](https://github.com/Calyx-Engineering/arc/issues/31) shipped `## Titles`
+three days earlier — and its *Instead* column carried the exact trailing clauses this issue
+names as the failure. **A rule contradicted by the example under it teaches the example**, so
+replacing four examples did more of the work than any sentence added.
+
+The plan grew by three rows, each from a refining axis rather than from the issue.
+
+| Found by | |
+|---|---|
+| *Does this reach the north star?* | The north star says *before the write*, and a `PostToolUse` hook is by definition after. The rules moved into `tools/verify-tracker-body.sh`, whose own header already argued exactly this for keyword placement. The hook now calls it |
+| *Consistent with every file in the repo?* | m11's registry row pointed at the do-not-edit ROADZ copy, which has none of this. A session following the registry to m11's spec would have concluded the rule does not exist |
+| *Have all evaluating tests been run?* | Running the check over all twenty-five open issues is what set the threshold. At ten words it flagged three titles that were doing their job; at twelve it flags nine, every one of them a title this issue names |
+
+**The measurement changed the design.** A word count alone misses the worst real case —
+`feat: carry work navigation in issue-write, decompose, …` is eleven words, because six file
+names cost one word each. Counting separators catches it and counting words never would.
+
+**What is still untested.** Nothing here has fired inside a real session: `hooks/hooks.json`
+resolves `${CLAUDE_PLUGIN_ROOT}`, which needs an installed plugin. The hook was executed
+against fixtures by `tools/verify-hook.sh` and the tool against its own selftest — both real
+executions, neither of them the deployed path.
