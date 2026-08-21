@@ -167,7 +167,63 @@ Reasoning below.
 **This applies to any decision that moves the work** — which branch, fold in or split off,
 file now or table it. Not to a passing clarification.
 
-**One decision per question.** Bundled questions get partial answers.
+**One decision per numbered question.** Bundled decisions get partial answers.
+
+### Several topics — the question block
+
+**When a reply needs answers on more than one subject, label them and let the user answer by
+number.** Restating a question to answer it is work the label removes.
+
+```text
+## V3 — How much personality is actually there?
+
+| Register | Sounds like |
+|---|---|
+| Terse operator | "PR #33 opened. Milestone set." |
+| Colleague | "PR #33 is up — the keywords bound this time." |
+| Character | "Camp here. Got #33 out the door." |
+
+I lean colleague — enough warmth to be a party you talk to, not so much
+that it costs a line of reading every time.
+```
+
+Answered as *"V3 — agreed, colleague"*. Three words.
+
+| The block | |
+|---|---|
+| **The label** | The user answers without restating the question |
+| **Alternatives** | The design work is done. The user judges rather than invents |
+| **A recommendation** | Rejectable in one word. A bare question is not |
+| **One block per message** | Never a second block while the first has an unanswered question in it. Parallel blocks produce answers to some and silence on others |
+
+**A question with no recommendation hands the design back to the user.** That is
+[m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md)'s friction in a different
+form — the depth is not in the questioning but in the answering.
+
+#### The unit, stated once
+
+Three things nest, and naming them apart is what stops *"one decision per question"* and
+*"two or three questions per set"* reading as a contradiction:
+
+| | |
+|---|---|
+| **A message** carries at most one block | |
+| **A block** carries two or three numbered questions, all on one subject | Four is where a block stops being answerable in one pass |
+| **A question** carries exactly one decision | Bundle two and you get an answer to one |
+
+#### The labels
+
+**Where a question inventory exists, the block's letter is the inventory's letter** —
+[`spec-interview`](../spec-interview/SKILL.md) assigns one per subject and numbers the
+questions inside it. Reusing it is what lets a nudge say *three of five settled*.
+
+| | |
+|---|---|
+| `V1` `A1` `I1` | A block belonging to a named subject. The letter is the subject's |
+| `D1` `D2` | A discussion with no inventory behind it. **`D` is what the scheme degrades to**, not a separate convention |
+
+**Never a bare number.** `D1`, not *"question 1"* — issue numbers, mechanism numbers and pass
+numbers all appear in the same sentences.
 
 **Say what you would do.** "I'd go with A because X — object if you disagree" beats an
 even-handed survey. The user can overrule a recommendation; they cannot overrule a

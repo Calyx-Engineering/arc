@@ -88,6 +88,11 @@ question, no ambiguity about which answer belongs to what.
 | **Give a recommendation with each** | *"I lean three levels"* — the human agrees or overrides, which is faster than choosing from scratch |
 | **State the tradeoff, not the survey** | One sentence per option. If it needs a table, the question is too big |
 
+**A set is a question block.** [`chat-response`](../chat-response/SKILL.md) owns its shape —
+alternatives, a recommendation, one block per message — and the unit it names is the one used
+here: **a message carries one block, a block carries two or three numbered questions, a
+question carries one decision.**
+
 ### One set at a time, and a set is not closed until they say so
 
 A set can reopen. Reopening signals the answer was not actually reached — it is not a failure.
