@@ -21,6 +21,7 @@ before naming the next. Every step is already owned by an artifact.
 | 2 | The `dev-log` written for this issue | [`skills/record-route`](../../skills/record-route/SKILL.md) | The file exists |
 | 3 | The `arc-log` status row updated | [`skills/record-route`](../../skills/record-route/SKILL.md) | The row says what merged |
 | 4 | Changes committed — nothing uncommitted in the tree | [`skills/work-watch`](../../skills/work-watch/SKILL.md) | `git status --short` is empty |
+| 4b | **Every gate clean** | `tools/verify-all.sh` | Its own exit code — one command, not four claims |
 | 5 | PR opened, titled with the arc prefix, milestone set | [`skills/issue-write`](../../skills/issue-write/SKILL.md) | `gh pr view` |
 | 6 | `Closes #NN` present, and **verified to have bound** | [`hooks/tracker-verify`](../../hooks/tracker-verify) | **See below** |
 | 7 | Soak line appended, if the change touched the plugin | The repo's `CLAUDE.md` soak rule | The arc-log |

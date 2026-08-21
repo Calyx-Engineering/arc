@@ -497,11 +497,14 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 
 | # | Step | Issue | Delivers | State |
 | :--- | :--- | :--- | :--- | :--- |
+| — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and the decomposition | **Closed** — produced m43, m44 and this plan |
 | 1 | 1.1 | [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Camp's three documents | **Merged** — [PR #51](https://github.com/Calyx-Engineering/arc/pull/51) |
 | 2 | 1.2 | [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | **Merged** — [PR #52](https://github.com/Calyx-Engineering/arc/pull/52) |
 | 3 | 2.1 | [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | **Merged** — [PR #53](https://github.com/Calyx-Engineering/arc/pull/53) |
 | 4 | 2.2 | [#45](https://github.com/Calyx-Engineering/arc/issues/45) | The report — announcing actions, and the templates | **Merged** — [PR #54](https://github.com/Calyx-Engineering/arc/pull/54) |
 | | | | **■ STOP — cleared 2026-08-19 ■** | |
+| — | — | [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) | A PR does not need an issue, and the arc tree must still hold it | **Merged** 08-20 15:41. Spawned [#76](https://github.com/Calyx-Engineering/arc/issues/76) |
+| — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | 5 | 2.3 | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **Merged** — [PR #63](https://github.com/Calyx-Engineering/arc/pull/63) |
 | 6 | 2.4 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | **Merged** — [PR #64](https://github.com/Calyx-Engineering/arc/pull/64) |
 | 7 | 3.1 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's missing ordered actions and transcript save | **Merged** — [PR #65](https://github.com/Calyx-Engineering/arc/pull/65) |
@@ -515,23 +518,33 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **Merged** — [PR #96](https://github.com/Calyx-Engineering/arc/pull/96). The rule landed in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints. **Also carries this arc-log's autonomous-mode definition**, and it is the first run of that loop |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **Merged** — [PR #97](https://github.com/Calyx-Engineering/arc/pull/97). Ships `tools/verify-tracker-body.sh title` and `issue-write`'s Titles section |
+| — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **Merged** 08-21 12:39 — [PR #99](https://github.com/Calyx-Engineering/arc/pull/99). Spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order |
+| — | — | [PR #100](https://github.com/Calyx-Engineering/arc/pull/100) | The autonomy switch's missing half — the permission allow-list | **Merged** 08-21 12:46. Spawned by [#98](https://github.com/Calyx-Engineering/arc/issues/98). **Step 10 executed for the first time on this PR** |
 | 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **Merged** — [PR #101](https://github.com/Calyx-Engineering/arc/pull/101). Extended `spec-interview` rather than creating `skills/scope-work`; the deviation is in the dev-log |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **Merged** — [PR #102](https://github.com/Calyx-Engineering/arc/pull/102). Reconciled the unit `chat-response` and `spec-interview` disagreed on |
 | 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **Merged** — [PR #103](https://github.com/Calyx-Engineering/arc/pull/103). `work-watch` check 5; the friction check renumbered to 6 |
+| — | — | [PR #104](https://github.com/Calyx-Engineering/arc/pull/104) | Wave 5 review, soak lines, and the status table | **Merged** 08-21 13:03. **No dev-log** — m46 §6.1 requires one of every merged unit |
+| — | — | [PR #107](https://github.com/Calyx-Engineering/arc/pull/107) | A spec names the artifacts that implement it | **Merged** 08-21 14:51. Adds §6.1.3 to this file. **Wrote the rule and repaired no actual spec** — found by [PR #115](https://github.com/Calyx-Engineering/arc/pull/115) |
+| — | — | [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) | A no-issue branch carries its PR number | **Merged** 08-21 15:08. m46 §9.1, and `hooks/camp-branch-check` learns the second form |
+| — | — | [PR #110](https://github.com/Calyx-Engineering/arc/pull/110) | The branch-naming flow, drawn and corrected | **Merged** 08-21 15:46. Ships `tools/new-direct-pr.sh` |
+| — | — | [PR #113](https://github.com/Calyx-Engineering/arc/pull/113) | Wave 5 close-out, and the branch-naming stretch recorded | **Merged** 08-21 15:48 |
 | 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **Merged** — [PR #88](https://github.com/Calyx-Engineering/arc/pull/88). Pulled forward out of order |
 | 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **Merged** — [PR #114](https://github.com/Calyx-Engineering/arc/pull/114). Also delivers [#68](https://github.com/Calyx-Engineering/arc/issues/68), which the PR could not bind — `tools/verify-tracker-body.sh body` allows one closing keyword, so it was closed by hand. Ships `tools/verify-sync-parity.sh` |
+| — | — | [PR #115](https://github.com/Calyx-Engineering/arc/pull/115) | The staleness check compares transcripts by mtime | **Merged** 08-21 18:34. Also gave [m15](../product-architecture/mechanisms/m15-handoff-spine.md) the checks it never specified, and its three missing sections |
 | 22 | 6.2 | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | The autonomy switch — specified and built | **PR open** — [PR #116](https://github.com/Calyx-Engineering/arc/pull/116). Left for *Onboarding — m47* and **returned 2026-08-21** after three to five failed surface fixes; it reclaims its own slot, so nothing renumbers. Ships [m40](../product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set` and `tools/verify-autonomy.sh` |
+| — | — | [PR #118](https://github.com/Calyx-Engineering/arc/pull/118) | One command runs every gate | **Open**. `tools/verify-all.sh` — 8 gates, 99 cases. Prerequisite for [#117](https://github.com/Calyx-Engineering/arc/issues/117) |
 | 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
-| — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
-| — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **Merged** — [PR #99](https://github.com/Calyx-Engineering/arc/pull/99). Spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order. **Takes no step number**; the order is frozen |
-| — | — | *no issue* | The autonomy switch's missing half | **Merged** — [PR #100](https://github.com/Calyx-Engineering/arc/pull/100). Spawned by [#98](https://github.com/Calyx-Engineering/arc/issues/98); a fix small enough to go branch-to-PR. **Step 10 executed for the first time on this PR** |
-| — | — | *no issue* | A spec names the artifacts that implement it | **Merged** — [PR #107](https://github.com/Calyx-Engineering/arc/pull/107). Adds §6.1.3 to this file |
-| — | — | *no issue* | A no-issue branch carries its PR number | **Merged** — [PR #108](https://github.com/Calyx-Engineering/arc/pull/108). m46 §9.1, and `hooks/camp-branch-check` learns the second form |
-| — | — | *no issue* | The branch-naming flow, drawn and corrected | **Merged** — [PR #110](https://github.com/Calyx-Engineering/arc/pull/110). Ships `tools/new-direct-pr.sh` |
-| — | — | *no issue* | The staleness check compares transcripts by mtime | **Open** — [PR #115](https://github.com/Calyx-Engineering/arc/pull/115). Found by `/arc-next` firing it at [#48](https://github.com/Calyx-Engineering/arc/issues/48)'s cold start. Also gives m15 the checks it never specified, and its three missing sections |
-| — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
+
+**Steps 19 and 20 sit at their plan position, not their merge time.** [PR #88](https://github.com/Calyx-Engineering/arc/pull/88)
+and [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) were pulled forward; the numbered column is the plan and does not
+move. **Everything else is in the order it ran.**
+
+**A `—` in the first two columns means work with no step number** — a direct PR, or an issue
+run outside the wave order. **The Issue column then carries the PR itself**, so the row links
+to what was done and says in the same glyph that no issue existed. These never renumber the
+plan.
 
 ### 10.1 What each wave is
 
