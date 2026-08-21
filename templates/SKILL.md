@@ -55,7 +55,7 @@ template rather than learned from a neighbouring skill.
 including the ones that always pass: only reporting failures makes a silent skill
 indistinguishable from a working one.
 
-Format: [`docs/product-architecture/camp-reports.md`](../docs/product-architecture/camp-reports.md).
+Format: [`docs/product-architecture/camp-reports.md`](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/camp-reports.md).
 
 ## The body
 

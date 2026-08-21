@@ -234,9 +234,16 @@ three · `plugin.json`.
 | 4 | Nothing reports a skill with no `camp-reports:` / `checks:` declaration. Hooks have such a reporter; skills do not | 3 skills | [#125](https://github.com/Calyx-Engineering/arc/issues/125) | |
 | 5 | `camp-session-start` is a `PreToolUse` hook named for a different event. Registration is correct; the name is not | `hooks/` | [#126](https://github.com/Calyx-Engineering/arc/issues/126) | |
 
-**Finding 1 is blocking** because `.claude/arc/camp/operating-agreement.md` is the document m43
+**Finding 1 is blocking** because `templates/camp/operating-agreement.md` is the document m43
 requires a user to read and approve, and in a consuming repository every one of its eleven spec
-references is dead. **It is live in this repository right now.**
+references is dead.
+
+> **It is not live in this repository, and that is the interesting part.** `.claude/arc/camp/`'s
+> copies use `../../../docs/`, which resolves here — one level deeper than the template they came
+> from. **Someone corrected the copies by hand and the template kept the wrong depth**, so every
+> reader since has seen a working document and an unread template. A finding that reproduces in
+> the repo would have been found years earlier; this one could only be found by resolving from the
+> destination.
 
 ### Pass by pass
 

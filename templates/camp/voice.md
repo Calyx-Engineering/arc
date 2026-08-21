@@ -90,7 +90,7 @@ one a user edits.
 
 **`quiet` is not silence.** A failed check still surfaces at every level — what `quiet`
 suppresses is the machinery and the all-clear, never a finding. How each level renders:
-[`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
+[`camp-reports.md`](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/camp-reports.md).
 
 **Verbosity governs display, never retention.** Every event reaches the event log at
 `.claude/arc/log.md` whatever this is set to — which is what makes turning the volume down
