@@ -1,0 +1,2 @@
+# a title that summarises the body instead of naming the deliverable
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"feat: carry work navigation in issue-write, decompose, chat-response, record-route, CLAUDE.md and m21 (m46)","tool_input":{"command":"gh issue create --title x"}}

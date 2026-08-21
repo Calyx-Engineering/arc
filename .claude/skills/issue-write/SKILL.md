@@ -2,11 +2,12 @@
 name: issue-write
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [arc-intent, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
+checks: [arc-intent, title-size, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
   - arc-intent (the current arc has no arc-log)
+  - title-size (editing a body, not a title)
 ---
 
 > **Copy — do not edit.** The source is [`skills/issue-write/SKILL.md`](../../../skills/issue-write/SKILL.md),
@@ -47,29 +48,57 @@ A body that survives this is usually a short paragraph plus one or two tables.
 
 ## Titles
 
-**A title states what the reader gets when the issue merges, and is understandable to someone
-with no prior context.**
+**A title names the deliverable, at the size merging actually delivers it.** The reader is
+scanning a milestone list weeks later — no body, no conversation, no arc context.
 
-The reader is scanning a milestone list weeks later. They have not read the body, were not in
-the conversation, and are deciding whether this issue is the one they want.
+**The check is the closing keyword's, asked one step earlier:**
 
-| Fails | Why | Instead |
+> **Does merging this ship the thing the title names?**
+
+`Closes` asks it of a change; the title asks it of the issue. Both fail the same way — by
+promising something the merge does not contain.
+
+### Two failures, one rule
+
+| | **Claims more than merging delivers** | **Describes the deliverable instead of naming it** |
 |---|---|---|
-| *"The scoping loop"* | Names a concept from inside one conversation | *"Work a spec interview in labelled question sets"* |
-| *"Labelled question blocks"* | Invented term. Nothing indicates what changes | *"Number multi-topic questions so they can be answered by reference"* |
-| *"The tracker as in-session working state"* | Abstract. No deliverable named | *"Keep the issue checklist current while the work runs"* |
-| *"Name the thing, not just its identifier"* | An instruction with no subject | *"Say what a branch or issue is when first referenced in chat"* |
+| **Looks like** | `feat: Camp — the delivery assistant`, on an issue that delivered a scoping decision | `feat: carry work navigation in issue-write, decompose, chat-response, record-route, CLAUDE.md and m21 (m46)` |
+| **Costs** | The issue stays open across every child it spawns. The milestone shows one perpetually incomplete item instead of steady progress | Word salad — harder to scan than the vague title it replaced |
+| **Instead** | `scope: Camp — obligations, documents and the build decomposition` | `feat: work navigation artifacts (m46)` |
 
-**The test: read the title alone, out loud, to someone who has not seen the body.** If they
-cannot say what would change when it merges, it fails.
+### The second failure is this section's own over-correction
 
-| Rule | |
+*Comprehensible cold* is what produces it. Told a title must stand alone, the reflex is to
+put the explanation in the title — the mechanism, the consequence, the affected files, every
+one of them body material.
+
+| | |
 |---|---|
-| **Name the deliverable, not the insight** | The reasoning that produced the issue is body material |
+| **A title is a name, not a summary** | It identifies the work in a list. The body explains it |
+| **Length is the tell** | Past roughly eight words it has stopped naming and started explaining |
+| **No clause after the deliverable** | *"…and nothing catches it"*, *"…so X applies without being taught"* — cut at the deliverable |
+| **Do not list the files** | Six artifacts in a title is the body's table, inlined |
 | **No invented vocabulary** | A term coined in the conversation that produced it means nothing in a list |
 | **A verb the work performs** | *"Add"*, *"keep"*, *"say"*, *"verify"* — not a bare noun phrase |
-| **A scoping issue says so** | `scope:` prefix, and name what gets specified |
-| **Comprehensible cold** | Assume no body, no conversation, no arc context |
+
+**The test: read the title alone, out loud, to someone who has not seen the body.** If they
+cannot say what would change when it merges, it is too vague. If they need a second breath,
+it is too long. `fix: a spawned issue records no parent` passes both.
+
+### Types
+
+| | |
+|---|---|
+| `scope:` | The output is a decision or a decomposition — the specification, not the thing it specifies |
+| `feat:` · `fix:` · `docs:` · `chore:` | New construction · repair · documentation · housekeeping |
+
+**`scope:` is the one that has to exist.** Without it a scoping issue takes `feat:` and
+inherits a capability-sized title, which is the first failure above. Whether the rest of the
+conventional set earns its keep is open until a month of real use answers it. **Not `spec:`**
+— one word for one meaning, or the type stops sorting anything.
+
+**Retitle before children exist, not after.** A title referenced from comments, documents and
+other issues costs more to change than the wrong title costs to keep. Size it at filing.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
