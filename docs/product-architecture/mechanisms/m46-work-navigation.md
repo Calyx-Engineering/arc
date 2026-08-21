@@ -394,17 +394,17 @@ above — a branch pointing at an unrelated object.
 flowchart TB
     START["<b>Work with no issue</b><br/>branch to PR directly"] --> Q{{"<b>Does an issue exist?</b>"}}
     Q ==>|yes| ISS["<b>arc/nn-slug-issue-NN-hint</b><br/>the issue number names it"]
-    Q ==>|no| PRED["<b>Predict</b><br/>max(latest issue, latest PR) + 1"]
+    Q ==>|no| PRED["<b>Predict the number</b><br/><code>gh issue list</code> + <code>gh pr list</code><br/>max of the two, plus one"]
     PRED --> BR["<b>Branch</b><br/>arc/nn-slug-prNN-hint"]
-    BR --> LOG["<b>Write the dev-log, commit</b><br/>§6.1 requires one, and a PR<br/>needs a commit to exist"]
-    LOG --> OPEN["<b>Open it as a DRAFT</b><br/><i>before the work, not after</i><br/>this is what makes the<br/>window seconds not hours"]
+    BR --> LOG["<b>Write</b> <code>docs/dev-log/pr-NN-slug.md</code><br/>and commit it<br/><i>§6.1 requires one, and a PR<br/>needs a commit to exist</i>"]
+    LOG --> OPEN["<b>Open a DRAFT PR</b><br/><code>gh pr create --draft</code><br/><i>before the work, not after —<br/>this makes the window<br/>seconds, not hours</i>"]
     OPEN --> CHK{{"<b>PR number ==<br/>branch number?</b>"}}
-    CHK ==>|yes| WORK["<b>Do the work</b><br/>mark ready when done"]
+    CHK ==>|yes| WORK["<b>Do the work</b><br/><code>gh pr ready NN</code> when done"]
     CHK ==>|"no — never retried"| ACCEPT["<b>Accept the mismatch</b><br/>rename nothing, close nothing,<br/>burn no number"]
-    ACCEPT --> SAY["<b>PR body</b><br/>one line, near the top"]
-    SAY --> DEVLOG["<b>Dev-log</b><br/>it already exists —<br/>it was the first commit"]
-    DEVLOG --> FQ{{"<b>Friction log<br/>in this repo?</b>"}}
-    FQ ==>|yes| FRIC["<b>An entry</b><br/>a race is a fact about the repo,<br/>not about the prediction"]
+    ACCEPT --> SAY["<b>Write to the PR description</b><br/><code>gh pr edit NN --body-file</code><br/><i>one line, near the top:</i><br/>branch says prNN, this is PR MM"]
+    SAY --> DEVLOG["<b>Write to</b> <code>docs/dev-log/pr-NN-slug.md</code><br/><i>always — it already exists,<br/>it was the first commit</i>"]
+    DEVLOG --> FQ{{"<b>Does</b> <code>docs/arc-work/&lt;arc&gt;/friction-log.md</code><br/><b>exist?</b><br/><i>the agreement switch, off by default</i>"}}
+    FQ ==>|yes| FRIC["<b>Append an entry to</b><br/><code>docs/arc-work/&lt;arc&gt;/friction-log.md</code><br/><i>a race is a fact about the repo,<br/>not about the prediction</i>"]
     FQ ==>|no| WORK
     FRIC --> WORK
     CHK -.->|"<b>never</b>"| REN["<b>Rename the branch</b>"]
