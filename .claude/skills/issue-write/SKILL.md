@@ -55,27 +55,26 @@ scanning a milestone list weeks later — no body, no conversation, no arc conte
 
 > **Does merging this ship the thing the title names?**
 
-`Closes` asks it of a change; the title asks it of the issue. Both fail the same way — by
-promising something the merge does not contain.
+`Closes` asks it of a change; the title asks it of the issue.
 
 ### Two failures, one rule
 
 | | **Claims more than merging delivers** | **Describes the deliverable instead of naming it** |
 |---|---|---|
 | **Looks like** | `feat: Camp — the delivery assistant`, on an issue that delivered a scoping decision | `feat: carry work navigation in issue-write, decompose, chat-response, record-route, CLAUDE.md and m21 (m46)` |
-| **Costs** | The issue stays open across every child it spawns. The milestone shows one perpetually incomplete item instead of steady progress | Word salad — harder to scan than the vague title it replaced |
-| **Instead** | `scope: Camp — obligations, documents and the build decomposition` | `feat: work navigation artifacts (m46)` |
+| **Costs** | The parent stays open across every child. The milestone shows one perpetually incomplete item instead of steady progress | Word salad — harder to scan than the vague title it replaced |
+| **Instead** | `scope: Camp — obligations, documents, and the build decomposition` | `feat: work navigation artifacts (m46)` |
 
-### The second failure is this section's own over-correction
+### A name, not a summary
 
-*Comprehensible cold* is what produces it. Told a title must stand alone, the reflex is to
-put the explanation in the title — the mechanism, the consequence, the affected files, every
-one of them body material.
+**The second failure is what *comprehensible cold* over-corrects into.** Told a title must
+stand alone, the reflex is to put the explanation in it — the mechanism, the consequence, the
+affected files, every one of them body material.
 
 | | |
 |---|---|
-| **A title is a name, not a summary** | It identifies the work in a list. The body explains it |
-| **Length is the tell** | Past roughly eight words it has stopped naming and started explaining |
+| **A title identifies; the body explains** | It has to be findable in a list, not understood from the list |
+| **Length is the tell** | Past roughly eight words it has stopped naming and started explaining. `hooks/tracker-verify` reports at twelve — it takes the cases judgement would not argue about |
 | **No clause after the deliverable** | *"…and nothing catches it"*, *"…so X applies without being taught"* — cut at the deliverable |
 | **Do not list the files** | Six artifacts in a title is the body's table, inlined |
 | **No invented vocabulary** | A term coined in the conversation that produced it means nothing in a list |
@@ -92,10 +91,10 @@ it is too long. `fix: a spawned issue records no parent` passes both.
 | `scope:` | The output is a decision or a decomposition — the specification, not the thing it specifies |
 | `feat:` · `fix:` · `docs:` · `chore:` | New construction · repair · documentation · housekeeping |
 
-**`scope:` is the one that has to exist.** Without it a scoping issue takes `feat:` and
-inherits a capability-sized title, which is the first failure above. Whether the rest of the
-conventional set earns its keep is open until a month of real use answers it. **Not `spec:`**
-— one word for one meaning, or the type stops sorting anything.
+**`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
+inherits a capability-sized title, which is the first failure above. **Not `spec:`**: one
+word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
+its keep stays open until a month of real use answers it.
 
 **Retitle before children exist, not after.** A title referenced from comments, documents and
 other issues costs more to change than the wrong title costs to keep. Size it at filing.
