@@ -84,7 +84,7 @@ moves next; this column only reports.
 | m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
 | m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../reference-roadz/engineering-report/SKILL.md) | ⚪ |
-| m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, and when to decide rather than ask* | [skill](../../skills/chat-response/SKILL.md) | 🔵 |
+| m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, when to decide rather than ask, and the labelled block that makes a multi-topic reply answerable by number* | [skill](../../skills/chat-response/SKILL.md) | 🔵 |
 | m45 | `spec-interview` | 🔥 | **A spec that matches what was agreed.** *Every question named up front so the scope has a visible end, labelled sets to reach the decisions, then the full re-read that catches a document contradicting itself* | [skill](../../skills/spec-interview/SKILL.md) | 🔵 |
 | m46 | Work navigation | 🔥 | **A discovery does not derail the work or get lost.** *Records it in the parent's `Spawned` section, asks the user to ascend or descend, and branches where the dependency actually is — the patch series model* | [spec](mechanisms/m46-work-navigation.md) | ⚪ |
 | | | | ↳ *The dev-log and arc-log are authored by m17, in Knowledge* | | |

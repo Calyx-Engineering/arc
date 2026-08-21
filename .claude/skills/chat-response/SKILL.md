@@ -1,6 +1,6 @@
 ---
 name: chat-response
-description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
+description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 > **Copy — do not edit.** The source is [`skills/chat-response/SKILL.md`](../../../skills/chat-response/SKILL.md),

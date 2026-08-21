@@ -29,7 +29,7 @@ These matter more than any finding in the documents.
 | **Cite TimeScope by mechanism, never by name** | He does not remember its details. Say what it is and how it works in the same breath |
 | **He is right about his own domain** | On EE substance, when he says an analysis is wrong, it is wrong. Do not re-litigate — ask what was missed |
 | **Watch for saturation** | He will say when a context is degrading. He is a reliable judge of it; hand off rather than push through |
-| **Number discussion topics** | A reply covering several topics labels each D1, D2… so he can answer by number instead of restating |
+| **Number discussion topics** | A reply covering several topics labels each D1, D2… so he can answer by number instead of restating. `skills/chat-response` carries the block's shape and the unit; `D` degrades from `spec-interview`'s inventory letters |
 | **Do not dig without an exit** | Escalating questions with no relief valve is the friction m41 exists for. Offer to back out to the critical point |
 
 ### Rejected, so they are not re-proposed
