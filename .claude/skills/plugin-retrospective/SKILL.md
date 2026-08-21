@@ -7,7 +7,6 @@ description: Use when returning to a Calyx plugin repo after a stretch of real w
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # plugin-retrospective
 
 **Scope note.** Retrospectives in general are a broad practice — team, project, incident,

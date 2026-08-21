@@ -105,7 +105,10 @@ Saved at a break, **before** writing this file.
 **The saved copy is stale the moment it is written.** It stops at the save. When reading a
 transcript for a decision, read the live source, not the copy.
 
-| Saved this session | |
+**This table is curated — the transcripts worth reading, not every file in the directory.**
+Nothing compares it against that directory; `/arc-next` uses mtimes.
+
+| Worth reading | |
 |---|---|
 | `&lt;filename&gt;.jsonl` | &lt;what it covers&gt; |
 

@@ -143,11 +143,14 @@ Derived from what was actually missing at the failed cold starts:
 | Section | Holds | Why |
 |---|---|---|
 | **Where we are** | Current issue, branch, worktree, what was just done | The 2026-08-03 wrong-branch disaster |
+| **Do these in order** | The numbered actions the next session executes, top to bottom | A session that knows exactly where things stand and still opens by asking what to do. Where-we-are is state; this is instruction, and without it the mechanism delivers half of what it exists for |
 | **The tree** | Issues opened, their parents, their status (§ arc-tree below) | Hardware work branches; a flat list loses structure |
 | **Load-bearing decisions** | What must not be re-litigated | Prevents a fresh session re-opening settled questions |
 | **Open threads** | Agreed but unfiled follow-ups | Friction §2.7 — *"i asked you to update #12 … that didn't happen"* |
-| **Next action** | One line, concrete | Removes the "what now?" round-trip |
+| **What was ruled out** | Causes checked and eliminated, with what eliminated them | A handoff that records only conclusions makes the next session re-derive the eliminations. Observed: one session ruled out every settings file and proposed the fix; none of it reached the next, which repeated the work from scratch |
+| **Next action** | One line, concrete — the first row of *do these in order* | Removes the "what now?" round-trip |
 | **Do-not** | Live traps — wrong branch, don't commit, don't squash | Friction §2.1, §2.5 |
+| **Transcripts** | Where session files are saved, and **the few worth reading** | The handoff records conclusions; the transcript is the only place the reasoning survives. **Curated, not a directory listing** — an arc accumulates far more files than are worth naming, and listing all of them is this mechanism's own growth failure |
 
 ### Update cadence
 
@@ -171,6 +174,24 @@ then execute its ordered actions*. So it is a command rather than a message.
 | **`commands/arc-next.md`** | Reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
 | **The loop is one action** | New session, `/arc-next`. Nothing to copy, nothing to keep straight |
 | **Two stated failure modes** | No handoff — stop and say so, because guessing the arc's state is the failure this mechanism exists to prevent. No ordered actions — report what the handoff does carry and ask, rather than filling the gap by inference |
+
+#### The handoff is checked against the tree before it is acted on
+
+**A handoff describes the state at the moment it was written.** Anything done afterwards — in
+another window, or by the user between sessions — is absent from it, and acting on a stale
+handoff is worse than having none, because it is specific and wrong.
+
+So the entry point checks it before executing anything, against the branch, the tree, the
+commit log, open PRs, the age of the handoff, the state of its first ordered action, and
+whether a session ran after it was written. **A disagreement stops the run and is reported**
+— never reconciled silently, and never guessed past. `commands/arc-next.md` carries the
+current list.
+
+| A check must | Because |
+|---|---|
+| **Cost one command, with one mechanical answer** | A check performed by judgement is one that gets performed differently each time, and the response here is to halt a run |
+| **Compare two things that are both maintained the same way** | Measuring a **curated** artifact against a **complete** one reports a disagreement that is not there. Observed: the transcript check compared the handoff's curated *Transcripts* table against the whole directory — twelve files, four listed — and so tripped on every cold start once the arc had run more sessions than the table named. It compares modification times instead |
+| **Say what it cannot see** | The transcript check cannot see a session that saved no transcript. Naming the blind spot is what stops the next reader re-deriving it, and what shows which other check covers it |
 
 **A pasted prompt remains valid** and is still the way to carry something that has no home in
 the handoff — a standing approval, or an instruction for how the next session should run.
@@ -253,6 +274,8 @@ than duplicate its ordering — duplicated order drifts.
 
 ## Related
 
+- [`handoff`](../../../skills/handoff/SKILL.md) — **the skill that implements this.** The read path, the write, the ordered actions, and the transcript save
+- [`commands/arc-next.md`](../../../commands/arc-next.md) — the entry point, and the staleness checks that run before a handoff is acted on
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 — **the in-session case of this argument.** State outside the context does not degrade with context length; this mechanism applies that between sessions, that check applies it within one
 - [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism

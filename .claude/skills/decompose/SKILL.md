@@ -9,7 +9,6 @@ checks: [intent-read, parts-listed, one-artifact-each, dependency-ordered, deliv
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # Decomposition
 
 **Decomposition happens by hand every time, and its quality varies with how much context the

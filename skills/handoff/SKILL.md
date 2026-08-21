@@ -126,6 +126,12 @@ retrospective and any transcript mining read later.
 The destination is per-machine setup, so name it in the repo's `CLAUDE.md` or the handoff's
 own *transcripts* note rather than leaving it to be supplied each time.
 
+**The handoff's *Transcripts* table is curated, not a directory listing.** It names the few
+worth reading and says why; an arc accumulates far more than that, and listing all of them is
+the growth failure this document warns about below. **So nothing may compare that table
+against the directory** — `/arc-next` asks whether a session ran after the handoff by mtime,
+which is the only question it needs answered.
+
 #### A saved transcript is stale the moment it is written
 
 It stops at the save. Everything decided afterwards — including the decision to save — exists

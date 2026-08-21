@@ -9,7 +9,6 @@ checks: [documents-loaded, clause-named, record-read, close-step-order, closing-
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # Camp
 
 > **A colleague, not a command.** A command is invoked and does one thing. A role is relied

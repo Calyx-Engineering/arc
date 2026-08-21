@@ -7,7 +7,6 @@ description: Use when a capability needs a specification and the decisions do no
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # Interviewing for a spec, then writing one
 
 Two distinct activities that fail in different ways.

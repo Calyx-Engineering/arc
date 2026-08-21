@@ -14,7 +14,6 @@ skips:
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # Writing issues and pull requests
 
 > **Every mechanism here fails silently.** A wrong closing keyword, a stale hand-made link,

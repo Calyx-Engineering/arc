@@ -23,16 +23,25 @@ Run these before executing anything. They cost one command each.
 | Check | Stale when |
 |---|---|
 | **The date in the handoff's title** | More than 24 hours before today. Age alone is not proof of staleness, but past a day the odds that something happened outside it are high enough to say so |
-| **Transcripts newer than the handoff** | A file in the transcript directory the handoff's *Transcripts* table does not list. A session ran and its decisions are not in here |
+| **Transcripts newer than the handoff** | `find <transcript-dir> -name '*.jsonl' -newer HANDOFF.md` prints anything. A session ran after this handoff was written and its decisions are not in here |
 | `git branch --show-current` | The branch differs from the one *Where we are* names |
 | `git status --short` | The tree is dirty and the handoff does not say work was left uncommitted |
 | `git log --oneline -5` | The last commit is not one the handoff accounts for |
 | `gh pr list --state open` | An open PR the handoff calls merged, or says nothing about |
 | The issue in *Do these in order* row 1 | `gh issue view <NN> --json state` returns `CLOSED` |
 
-Transcript filenames are `YYYY-MM-DD-...`, so a sort does the comparison. **Compare against
-the handoff's own list, not against the date** — a handoff names the transcript saved just
-before it was written, so a same-day file is expected rather than evidence of a lost session.
+**Compare modification times, never the handoff's *Transcripts* table.** That table is
+curated — it names the few transcripts worth reading, not every file on disk — so measuring a
+complete directory against it reports a lost session on every cold start once the arc has run
+more sessions than the table lists. The check wants one fact: *did a session run after this
+handoff was written.* An mtime answers it and nothing else does.
+
+The saved transcript never trips this. The order at a break is fixed — save the transcript,
+then write the handoff — so the newest file is always older than `HANDOFF.md` by construction.
+
+**What it cannot see: a session that ran and saved no transcript.** Nothing on disk records
+it. The other six checks are what catch that one — a commit, a branch, or a PR the handoff
+does not account for.
 
 **If any check disagrees, stop and report the specific contradiction** — what the handoff
 says, what the repository says. Do not reconcile it silently and do not proceed on a guess.

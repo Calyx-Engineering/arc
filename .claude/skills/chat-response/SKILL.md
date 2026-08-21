@@ -7,7 +7,6 @@ description: Use when writing any conversational reply to the user — answering
 > which is what the plugin ships. This copy exists only so the skill is live in this repo
 > before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
-
 # chat-response
 
 ## The principle everything follows from
