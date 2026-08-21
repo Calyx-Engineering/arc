@@ -36,7 +36,7 @@ The north star did not move. Three things changed underneath it:
 
 | | |
 |---|---|
-| **§4 maps this issue to no m43 section** | The table shows `—` for wave 5. There is no spec section to satisfy, and looking for one is the wrong instinct |
+| **The arc-log's §4 maps this issue to no m43 section** | The table shows `—` for wave 5. There is no spec section to satisfy, and looking for one is the wrong instinct |
 | **m43 §3.1.2 cites this issue by number** | [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) are the *worked example* of an *escalate* that was correct to do. The spec relies on this cluster existing |
 | **The issue's `m38` link is dead** | It points at `docs/product-architecture/mechanisms/m38-chat-response.md`, which does not exist. m38 is one of the three mechanisms whose skill *is* its spec — `CLAUDE.md` names the exception explicitly |
 

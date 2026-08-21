@@ -93,7 +93,7 @@ flowchart TB
 **Read this table to check nothing was dropped.** Every numbered section of
 [m43](../product-architecture/mechanisms/m43-camp-assistant.md) appears exactly once.
 
-| Spec | What it defines | Issue |
+| m43 § | What it defines | Issue |
 |---|---|---|
 | §2 · §6 | The persona, its voice, how it is reached | [#40](https://github.com/Calyx-Engineering/arc/issues/40) |
 | §3.1 | **The intent check** — hold the arc's intent, the authority ladder | [#42](https://github.com/Calyx-Engineering/arc/issues/42) |

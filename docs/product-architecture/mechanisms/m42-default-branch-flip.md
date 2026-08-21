@@ -113,7 +113,9 @@ documentation line, an actual conversation with a recorded answer.
 **The single-user condition is what makes it safe**, and it is the first thing that stops
 being true as a project grows.
 
-### Every prompt names what kind of thing it is talking about
+---
+
+## Every prompt names what kind of thing it is talking about
 
 The offer is printed by a script, and a script loads no skill — so the phrasing rule lives
 here and in the strings, not only in `skills/chat-response`.
