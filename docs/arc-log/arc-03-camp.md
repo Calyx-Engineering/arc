@@ -281,7 +281,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites. **Its PR also renames the five obligations**, so it edits artifacts delivered by [#41](https://github.com/Calyx-Engineering/arc/issues/41) [#43](https://github.com/Calyx-Engineering/arc/issues/43) [#44](https://github.com/Calyx-Engineering/arc/issues/44) [#45](https://github.com/Calyx-Engineering/arc/issues/45) [#47](https://github.com/Calyx-Engineering/arc/issues/47) — classified *escalate*, admitted by the user |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | Ready |
+| 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **In progress** — `arc/03-camp-issue-31-name-the-thing`. The rule lands in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready |
 | 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready |

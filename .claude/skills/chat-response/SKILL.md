@@ -61,6 +61,27 @@ alone does not say whether to expect a discussion or a diff, and a number the re
 and find is the work the reply exists to save. A run is linked individually:
 `#31 · #32 · #33`, not `#31–#35`. Code blocks and commit text stay plain.
 
+**Every other identifier says what kind of thing it is.** A bare branch, path, setting or
+mechanism token makes the reader classify it before they can reach the question it sits in —
+worst in a question asked *of* them, where classification blocks the answer.
+
+| ✗ | ✓ |
+|---|---|
+| Flip the default to `arc/03-camp`? | Point the default branch at arc branch `arc/03-camp`? |
+| `m42` blocks this | The default-branch flip (`m42`) blocks this |
+
+**One or two words, never five.** *"the default branch"* is one word of overhead; *"the
+arc-scoped integration branch named `arc/03-camp`"* is a worse sentence than the one it
+replaced — if the qualifier runs long, reword rather than prepend a definition. The identifier
+still appears wherever the user must act on it; it stops being the *only* thing that appears.
+
+**Issue and PR numbers are the one exemption**, and it does not extend to mechanisms, branches
+or paths: `m42` is not `#42`.
+
+**Artifacts that print their own prompts are bound too.** A script loads no skill, so the
+phrasing goes in its strings — `tools/arc-default-branch.sh` and
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) are the worked example.
+
 
 ## What compression must never break
 

@@ -113,6 +113,29 @@ documentation line, an actual conversation with a recorded answer.
 **The single-user condition is what makes it safe**, and it is the first thing that stops
 being true as a project grows.
 
+### Every prompt names what kind of thing it is talking about
+
+The offer is printed by a script, and a script loads no skill — so the phrasing rule lives
+here and in the strings, not only in `skills/chat-response`.
+
+> *"i know through sentence context i should realize `arc/03-camp` is the **name** of a
+> branch, but its a lot of extra cognitive load to search through all of my memory to figure
+> out what type of thing `arc/03-camp` could be… then finally make an assesment on your
+> question."* — 2026-08-18, [#31](https://github.com/Calyx-Engineering/arc/issues/31)
+
+| ✗ | ✓ |
+|---|---|
+| Flip the default to `arc/03-camp`? | Point the default branch at arc branch `arc/03-camp`? |
+| `main` is protected | trunk branch `main` is protected |
+| `arc/03-camp` is not pushed | arc branch `arc/03-camp` is not pushed |
+
+**The qualifier is one or two words** — *arc branch*, *trunk branch*, *the default branch*.
+If it needs more, the sentence is built wrong and should be reworded rather than prefixed
+with a definition. The identifier itself stays wherever someone has to type or verify it.
+
+**This binds every line the script prints**, not only the question. A PASS line the user
+skims is where they learn what kind of thing the token is.
+
 ---
 
 ## What is not decided
