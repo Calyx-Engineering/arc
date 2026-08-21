@@ -390,6 +390,27 @@ reader at an unrelated object. If an issue exists, its number is the one that na
 named before the identifier exists. Guessing without confirming reproduces the exact failure
 above — a branch pointing at an unrelated object.
 
+```mermaid
+flowchart TB
+    START["<b>Work with no issue</b><br/>branch to PR directly"] --> Q{{"<b>Does an issue exist?</b>"}}
+    Q ==>|yes| ISS["<b>arc/nn-slug-issue-NN-hint</b><br/>the issue number names it"]
+    Q ==>|no| PRED["<b>Predict</b><br/>max(latest issue, latest PR) + 1"]
+    PRED --> BR["<b>Branch</b><br/>arc/nn-slug-prNN-hint"]
+    BR --> OPEN["<b>Open the PR immediately</b><br/>the window someone else<br/>can take the number is seconds"]
+    OPEN --> CHK{{"<b>PR number ==<br/>branch number?</b>"}}
+    CHK ==>|yes| DONE["<b>Done</b><br/>nothing more to do"]
+    CHK ==>|no| FIX["<b>Close the PR</b><br/>re-branch, re-open<br/><i>one number burned</i>"]
+    FIX --> OPEN
+    CHK -.->|"<b>never</b>"| REN["<b>Rename the branch</b>"]
+    REN -.-> DEAD["<b>The PR closes</b><br/>a rename reads as a delete<br/>to an open PR"]
+    classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
+    classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
+    classDef x fill:#4a2020,stroke:#d95b5b,color:#fff
+    class START,ISS,PRED,BR,OPEN,DONE,FIX n
+    class Q,CHK s
+    class REN,DEAD x
+```
+
 | | |
 |---|---|
 | 1 | **Predict.** The next number is the higher of the latest issue and the latest PR, plus one — they share a counter |
