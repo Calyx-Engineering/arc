@@ -1,7 +1,9 @@
 # Mechanism — Work Navigation
 
-**Status:** specified. The decisions are settled; the artifacts that carry them are named
-below and built separately.
+**Status:** specified, and carried. The decisions are settled and [§11](#11-artifacts)'s
+artifacts each hold their part, as of [#78](https://github.com/Calyx-Engineering/arc/issues/78).
+**Not exercised** — nothing in this repository runs a skill, so every rule below is checked as
+text and never as behaviour.
 **Home:** Arc — Authoring.
 **Src:** 🔥 observed, 2026-08-20.
 **Covers:** m46.

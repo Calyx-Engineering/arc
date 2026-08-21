@@ -100,7 +100,7 @@ moves next; this column only reports.
 | | **KNOWLEDGE** | | | | |
 | m15 | Context ladder / handoff | 🔥 | **Cold starts stop costing 20 minutes.** *Which documents a fresh session opens, in what order, and when to stop* | [spec](mechanisms/m15-handoff-spine.md) | ⚪ |
 | m16 | Record routing | 🔥 | **Analysis stays findable.** *Decides which file a finding goes in, and promotes it when it outlives the arc* | [tiers](mechanisms/knowledge-tiers.md) · [structure](mechanisms/m16-hardware-record-structure.md) | ⚪ |
-| m17 | K1 upkeep | ⚙️ | **The dev-log and arc-log get written, not remembered.** *A dev-log per issue authored at decision points, the arc-log status table updated as work lands, both gated at PR time* | [spec](mechanisms/m17-k1-upkeep.md) | ⚪ |
+| m17 | K1 upkeep | ⚙️ | **The dev-log and arc-log get written, not remembered.** *A dev-log per merged unit authored at decision points, the arc-log status table updated as work lands, both gated at PR time* | [spec](mechanisms/m17-k1-upkeep.md) | ⚪ |
 | m19 | Knowledge mining trigger | 🔥 | **Reasoning in transcripts reaches the record.** *Fires at PR time and runs the mining agent with the knowledge filter* | [spec](mechanisms/m30-transcript-mining.md) | ⚪ |
 | m23 | Test obligation capture | 🔥 | **Designs get tested when the part arrives.** *Proposes the test item at design time, months before it can be run* | [spec](mechanisms/m23-test-obligation-capture.md) | ⚪ |
 | | **DELEGATION** | | | | |

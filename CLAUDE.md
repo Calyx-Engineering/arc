@@ -142,22 +142,14 @@ arc/03-camp-pr115-transcript-staleness
 
 | | |
 |---|---|
-| **The number is mandatory, in both forms** | The branch name is often the only reference visible — an editor's status bar truncates early, and it is the one place the work is named while its PR is being read in a browser |
+| **The number is mandatory, in both forms** | The branch name is often the only reference visible — an editor's status bar truncates early, and it is where the work is named while its PR is read in a browser |
 | **So is the `pr` label** | Issues and PRs share one counter. A bare number points at whichever object happens to hold it |
-| **Never `pr<NN>` on an issue-backed branch** | Different numbers from the same counter. Naming a branch after the wrong one points the reader at an unrelated object |
-| **The hint is short** | A twenty-word slug truncates to nothing. The PR title carries the real name |
+| **Never `pr<NN>` on an issue-backed branch** | Two different numbers from the same counter. The wrong one points the reader at an unrelated object |
+| **No issue means the number does not exist yet** | It is issued when the PR opens. `tools/new-direct-pr.sh <hint> "<title>"` predicts it, branches, commits a stub dev-log, pushes, and opens the **draft PR before the work** — which is what makes the race window seconds wide |
+| **A missed prediction is recorded, never retried** | **Renaming an open PR's branch closes the PR** — tested, [PR #109](https://github.com/Calyx-Engineering/arc/pull/109) went `OPEN` → `CLOSED`. Say it in the PR body, the dev-log and the friction log instead |
 
-**No issue means the number does not exist yet.** It is issued when the PR opens, so predict it
-— the higher of the latest issue and the latest PR, plus one — branch, commit a stub dev-log,
-push, and open the PR **as a draft before doing the work**, which is what makes the race window
-seconds wide rather than hours. `tools/new-direct-pr.sh <hint> "<title>"` is that whole sequence
-in one command.
-
-**A missed prediction is recorded, never retried.** Say it in the PR body near the top, in the
-dev-log, and in the arc's friction log. **Renaming the branch closes the PR** — tested, [PR #109](https://github.com/Calyx-Engineering/arc/pull/109)
-went `OPEN` → `CLOSED`. Closing and re-opening burns a real number for a cosmetic gain.
-
-Full reasoning in [m46 §9](docs/product-architecture/mechanisms/m46-work-navigation.md#9-branch-naming).
+Mechanics in [`skills/issue-write`](skills/issue-write/SKILL.md); full reasoning in
+[m46 §9](docs/product-architecture/mechanisms/m46-work-navigation.md#9-branch-naming).
 
 ## Soak — before a plugin change is pushed
 
