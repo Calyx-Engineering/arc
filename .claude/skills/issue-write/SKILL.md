@@ -165,9 +165,38 @@ arc/<nn>-<slug>-pr<NN>-<hint>        no issue — the PR number is the only iden
 not say which object it names.
 
 **The number does not exist yet when you branch — predict it, then confirm.** The next number
-is the higher of the latest issue and the latest PR, plus one. Branch with it, open the PR
-immediately, and check the two agree. If they drifted, **close the PR and re-open on a
-corrected branch** — one number burned, nothing merged.
+is the higher of the latest issue and the latest PR, plus one.
+
+```sh
+tools/new-direct-pr.sh <hint-slug> "<PR title>"
+```
+
+**Steps 1 to 4 are one command, and they have to be** — by hand the sequence takes minutes with
+a real race running underneath it, which makes *the window is seconds wide* false.
+
+| | |
+|---|---|
+| 1 | Branch with the predicted number |
+| 2 | Commit a **stub** dev-log — a PR needs a commit to exist, and a merged unit needs a dev-log anyway. Writing the real one first is what reintroduces the delay |
+| 3 | **Open it as a draft, before doing the work** |
+| 4 | Confirm the PR's number against the branch's — **a mismatch is recorded, never retried** |
+| 5 | Then work, fill in the dev-log, and mark it ready |
+
+**The draft comes before the work.** Branching, building for an hour and opening the PR at the
+end leaves the number unclaimed for that hour, and puts the check *after* everything has landed
+on a possibly-wrong branch.
+
+**A miss is never retried.** Retrying burns a real number to buy a tidier branch name, and the
+name was only ever a pointer — an explained mismatch points just as well. **The notification is
+the fix**, in three places:
+
+| | |
+|---|---|
+| **The PR body, near the top** | *"Branch says `pr112`, this is PR #114."* Unexplained, the branch is silently wrong. Explained, it is merely inexact |
+| **The dev-log** | It already exists — it was the first commit. One line under the problem statement |
+| **The friction log**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md` — [`record-route`](../record-route/SKILL.md) routes it. A race is a fact about the repository and reaches nobody unless written down |
+
+**Rename nothing, close nothing.** See the warning above.
 
 > **Never rename the branch of an open PR. It closes the PR.** Tested: the rename succeeds,
 > the branch moves, and GitHub closes the PR whose head just disappeared.

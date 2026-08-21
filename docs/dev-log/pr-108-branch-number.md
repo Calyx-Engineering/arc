@@ -79,3 +79,8 @@ probe ran afterwards as 109, which cost one burned number and nothing else.
   never reads. **Not swept here**; naming it is what §6.1.3 asks for
 - The three badly-named branches are already merged and deleted. Renaming history is not worth
   the cost
+- **§9.1 shipped without a diagram**, against `spec-interview`'s own rule that a core-function
+  section opens with one. Caught by the user, not by the write-up's full read. Added in
+  [PR #110](https://github.com/Calyx-Engineering/arc/pull/110) — **which then exposed that this PR did not follow its own
+  process.** §9.1 said *open the PR immediately*; this PR branched, built everything, and
+  opened it over an hour later. The prediction held, so nothing failed and nothing showed

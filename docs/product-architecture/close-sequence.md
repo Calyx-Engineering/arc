@@ -73,7 +73,7 @@ onward.
 | # | Step | Owned by |
 |---|---|---|
 | 1 | The next issue, from the arc-log's order and its merged dependencies | Camp names it |
-| 2 | Branch created from the arc branch, `arc/<nn>-<slug>-issue-<NN>-<slug>` | The main thread, after approval |
+| 2 | Branch created from the arc branch, `arc/<nn>-<slug>-issue-<NN>-<slug>` — or `-pr<NN>-` where there is no issue, via `tools/new-direct-pr.sh` ([m46 §9](mechanisms/m46-work-navigation.md)) | The main thread, after approval |
 | 3 | The record loaded — arc intent, the issue, the handoff if one exists | Camp |
 | 4 | The issue checklist becomes the session's working state | [`skills/work-watch`](../../skills/work-watch/SKILL.md) |
 
