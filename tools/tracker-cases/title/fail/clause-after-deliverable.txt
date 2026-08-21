@@ -1,0 +1,1 @@
+feat: index transcripts so sessions stay findable

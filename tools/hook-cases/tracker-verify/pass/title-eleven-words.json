@@ -1,0 +1,2 @@
+# eleven words naming a deliverable — the skill judges this, the hook does not
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"feat: record automatically that a plugin change was exercised on real work","tool_input":{"command":"gh issue create --title x"}}

@@ -2,11 +2,12 @@
 name: issue-write
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [arc-intent, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
+checks: [arc-intent, title-size, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
   - arc-intent (the current arc has no arc-log)
+  - title-size (editing a body, not a title)
 ---
 
 # Writing issues and pull requests
@@ -42,29 +43,63 @@ A body that survives this is usually a short paragraph plus one or two tables.
 
 ## Titles
 
-**A title states what the reader gets when the issue merges, and is understandable to someone
-with no prior context.**
+**A title names the deliverable, at the size merging actually delivers it.** The reader is
+scanning a milestone list weeks later — no body, no conversation, no arc context.
 
-The reader is scanning a milestone list weeks later. They have not read the body, were not in
-the conversation, and are deciding whether this issue is the one they want.
+**The check is the closing keyword's, asked one step earlier:**
 
-| Fails | Why | Instead |
+> **Does merging this ship the thing the title names?**
+
+`Closes` asks it of a change; the title asks it of the issue.
+
+### Two failures, one rule
+
+| | **Claims more than merging delivers** | **Describes the deliverable instead of naming it** |
 |---|---|---|
-| *"The scoping loop"* | Names a concept from inside one conversation | *"Work a spec interview in labelled question sets"* |
-| *"Labelled question blocks"* | Invented term. Nothing indicates what changes | *"Number multi-topic questions so they can be answered by reference"* |
-| *"The tracker as in-session working state"* | Abstract. No deliverable named | *"Keep the issue checklist current while the work runs"* |
-| *"Name the thing, not just its identifier"* | An instruction with no subject | *"Say what a branch or issue is when first referenced in chat"* |
+| **Looks like** | `feat: Camp — the delivery assistant`, on an issue that delivered a scoping decision | `feat: carry work navigation in issue-write, decompose, chat-response, record-route, CLAUDE.md and m21 (m46)` |
+| **Costs** | The parent stays open across every child, so the milestone shows one perpetually incomplete item instead of steady progress | Word salad — harder to scan than the vague title it replaced |
+| **Instead** | `scope: Camp — obligations, documents, and the build decomposition` | `feat: work navigation artifacts (m46)` |
 
-**The test: read the title alone, out loud, to someone who has not seen the body.** If they
-cannot say what would change when it merges, it fails.
+**Only the second is visible in the title alone.** *"the delivery assistant"* is a fine name
+for something that ships in one merge — what makes it a false promise is the body underneath
+it. `verify-tracker-body.sh title` needs the body file to catch the first, and even then only
+where the body says outright that it decomposes. The first failure is judgement; the second is
+mechanical.
 
-| Rule | |
+### A name, not a summary
+
+**The second failure is what *comprehensible cold* over-corrects into.** Told a title must
+stand alone, the reflex is to put the explanation in it — the mechanism, the consequence, the
+affected files, every one of them body material.
+
+| | |
 |---|---|
-| **Name the deliverable, not the insight** | The reasoning that produced the issue is body material |
+| **A title identifies; the body explains** | It has to be findable in a list, not understood from the list |
+| **Length is the tell** | Past roughly eight words it has stopped naming and started explaining. `verify-tracker-body.sh title` reports at twelve — the mechanical check takes only the cases judgement would not argue about |
+| **No clause after the deliverable** | *"…and nothing catches it"*, *"…so X applies without being taught"* — cut at the deliverable |
+| **Do not list the files** | Six artifacts in a title is the body's table, inlined |
 | **No invented vocabulary** | A term coined in the conversation that produced it means nothing in a list |
 | **A verb the work performs** | *"Add"*, *"keep"*, *"say"*, *"verify"* — not a bare noun phrase |
-| **A scoping issue says so** | `scope:` prefix, and name what gets specified |
-| **Comprehensible cold** | Assume no body, no conversation, no arc context |
+
+**The test: read the title alone, out loud, to someone who has not seen the body.** If they
+cannot say what would change when it merges, it is too vague. If they need a second breath,
+it is too long. `fix: a spawned issue records no parent` passes both.
+
+### Types
+
+| | |
+|---|---|
+| `scope:` | The output is a decision or a decomposition — the specification, not the thing it specifies |
+| `feat:` · `fix:` · `docs:` · `chore:` | New construction · repair · documentation · housekeeping |
+
+**`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
+inherits a capability-sized title, which is the first failure above. **Not `spec:`**: one
+word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
+its keep stays open until a month of real use answers it.
+
+**Retitle before children exist, not after** — once a title is referenced from comments,
+documents and other issues, changing it costs more than the wrong title does. Size it at
+filing.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
@@ -118,7 +153,7 @@ Closes #42
 Parsers do not understand prose. `Closes the block-diagram item of #26` creates **no link** —
 the Development sidebar stays empty and the issue looks orphaned.
 
-When a PR closes exactly one issue, cite it in the title: `<type>: <summary> (#42)`. When it
+When a PR closes exactly one issue, cite it in the title: `<type>: <name> (#42)`. When it
 closes several, omit the number from the title and list them in the body. The title number
 is cosmetic — the body still needs its own line.
 
@@ -127,7 +162,7 @@ is cosmetic — the body still needs its own line.
 An issue PR inside an arc is titled:
 
 ```text
-arc-02: feat: the handoff — a cold start that costs one read (#13)
+arc-02: feat: the handoff (#13)
 ```
 
 **Without it a flat PR list has no thread back to the arc.** Five PRs sharing no visible
@@ -207,18 +242,21 @@ Three of the six evaluation cases are mechanically catchable. Before and after w
 | A date inconsistent with reality | Compare against the current date |
 | A referenced commit or issue that does not exist | Check it resolves |
 | A closing keyword anywhere but the last line | `tools/verify-tracker-body.sh body <file>` |
+| A title that promises what merging will not deliver | `tools/verify-tracker-body.sh title "<title>" [file]` |
 
-The first four patterns are *scaffolding survived*. The fifth is the opposite shape — text
-that is complete and correct-looking and binds something it should not. It needs its own
-check because reading for the first four does not surface it.
+The first four patterns are *scaffolding survived*. The last two are the opposite shape —
+text that is complete and correct-looking and promises something it should not. Each needs
+its own check, because reading for the first four does not surface either.
 
 ```sh
+tools/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
 tools/verify-tracker-body.sh body body.md      # before the write
 tools/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
 ```
 
-Both report and neither blocks. `binding` is the only check that catches a keyword which
-bound *despite* the intent; every other diagnostic here is for a link that failed to form.
+All three report and none blocks. `binding` is the only one that has to run after the write
+— it reads the API. `title` and `body` are decidable from text, so running them afterwards
+means the wrong thing is already in the tracker.
 
 `hooks/tracker-verify` runs the mechanical half at branch create, PR open, and PR merge.
 The judgement half — *does this match what we agreed* — is this skill's.

@@ -12,8 +12,8 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, pr-write, pr-merge
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-scope, pr-base
-# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-scope (not an issue), pr-base (no arc branch checked out)
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-length (not an issue, or verify-tracker-body.sh is not beside the hook), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (no arc branch checked out)
 #
 # Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
 
@@ -75,13 +75,33 @@ scan_dates() {
   done
 }
 
-# A title promising more than merging delivers. The conjunctions are the tell: an issue
-# titled "X and Y" is two issues, and the second is the one that quietly does not get done.
-# Judging whether the scope is genuinely one unit is skills/decompose's; this catches the
-# mechanical signal a human would skim past.
+# The title rules live in `tools/verify-tracker-body.sh`, not here. A title is decidable
+# from text alone, so the same rules have to run BEFORE the write as well — and two copies
+# of a threshold is one copy that goes stale. Run as a subprocess, never sourced: that file
+# sets `-u`, and a guardrail that has to fail open cannot inherit it.
+#
+# Absent, the title checks simply do not run. Fail open is the rule; a missing helper is
+# not a reason to break every Bash call.
+TITLE_LIB="$(dirname "$0")/../tools/verify-tracker-body.sh"
+
 scan_title() {
-  local title="$1" what="$2"
-  printf '%s' "$title" | grep -qiE ' (and|plus) .* (and|plus) |, and | as well as '     && add "$what's title names more than one deliverable. If merging it leaves part undone, it is more than one issue."
+  local title="$1" what="$2" body="${3:-}" bodyfile="" line
+  [ -f "$TITLE_LIB" ] || return 0
+
+  # `title-findings` reads the body from a file, because a body arrives here as a shell
+  # variable full of newlines and a second argument would truncate at the first one.
+  if [ -n "$body" ]; then
+    bodyfile="$(mktemp 2>/dev/null)" && printf '%s' "$body" > "$bodyfile"
+  fi
+
+  while IFS= read -r line; do
+    [ -n "$line" ] && add "$what — $line"
+  done <<FINDINGS
+$(bash "$TITLE_LIB" title-findings "$title" "$bodyfile" 2>/dev/null)
+FINDINGS
+
+  [ -n "$bodyfile" ] && rm -f "$bodyfile"
+  return 0
 }
 
 # A body supplied directly in the payload skips the tracker read. This is how the scanners
@@ -94,7 +114,7 @@ FIXTURE_TITLE="$(printf '%s' "$INPUT" | sed -n 's/.*"arc_test_title" *: *"\([^"]
 if [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE" ]; then
   [ -n "$FIXTURE_BODY" ] && scan_placeholders "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_BODY" ] && scan_dates "$FIXTURE_BODY" "the body"
-  [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue"
+  [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue" "$FIXTURE_BODY"
   [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
   exit 0
 fi
@@ -114,7 +134,7 @@ case "$CMD" in
     scan_dates "$BODY" "issue #$NUM"
 
     ITITLE="$(cd "$CWD" && gh issue view "$NUM" --json title -q .title 2>/dev/null)"
-    [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM"
+    [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM" "$BODY"
     ;;
 
   *"gh pr"*)

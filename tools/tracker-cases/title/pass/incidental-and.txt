@@ -1,0 +1,1 @@
+fix: branch and worktree guard fires before the first edit

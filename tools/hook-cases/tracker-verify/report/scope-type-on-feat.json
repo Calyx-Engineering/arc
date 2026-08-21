@@ -1,0 +1,2 @@
+# a decomposition filed under feat: — it inherits a capability-sized title
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"feat: Camp — the delivery assistant","arc_test_body":"## Required\n- [ ] a decomposition into buildable issues\n","tool_input":{"command":"gh issue create --title x"}}

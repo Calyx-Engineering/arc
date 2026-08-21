@@ -81,7 +81,7 @@ moves next; this column only reports.
 | m40 | Autonomy switch | 📐 | **The workflow matches how the work actually runs.** *Guided means the engineer drives each issue and the agent assists; autonomous means the agent runs between checkpoints. One switch, not a hardware/software fork* | — | ⚪ |
 | m41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/m41-relief-valve.md) | ⚪ |
 | | **AUTHORING** | | | | |
-| m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, and the link mechanics that fail silently* | [skill](../reference-roadz/issue-writing/SKILL.md) | ⚪ |
+| m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
 | m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../reference-roadz/engineering-report/SKILL.md) | ⚪ |
 | m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, and when to decide rather than ask* | [skill](../../skills/chat-response/SKILL.md) | 🔵 |

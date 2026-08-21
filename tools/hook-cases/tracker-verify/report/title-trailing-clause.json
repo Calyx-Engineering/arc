@@ -1,0 +1,2 @@
+# a clause after the deliverable — body material inlined into the title
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"feat: index transcripts so sessions stay findable","tool_input":{"command":"gh issue create --title x"}}

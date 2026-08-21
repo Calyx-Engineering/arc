@@ -1,0 +1,2 @@
+# a serial list inside one name is not two deliverables, and scope: is the right type
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"scope: Camp — obligations, documents, and the build decomposition","arc_test_body":"## Required\n- [ ] a decomposition into buildable issues\n","tool_input":{"command":"gh issue create --title x"}}
