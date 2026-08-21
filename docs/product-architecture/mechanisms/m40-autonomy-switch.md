@@ -113,6 +113,38 @@ and it needs no setting — which is why the mode row carries two values and not
 The handoff cues the *current* session; the arc-log is the plan. When they disagree the handoff
 is stale, and `/arc-next`'s staleness checks are what catch it.
 
+### 3.1 How a plan reaches a session
+
+**The arc-log does not enter auto by itself.** A plan is a statement of intent; entering is a
+decision, and §4 admits only three ways to make one. The route is short and every step is
+visible:
+
+```mermaid
+flowchart LR
+    P["<b>arc-log §10.1</b><br/>this wave runs autonomous<br/><i>the plan</i>"] --> A(["<b>the user approves<br/>the plan</b><br/>— explicit —"])
+    A --> H["<b>HANDOFF.md</b><br/><i>Execution mode</i> row<br/>set to autonomous"]
+    H --> S["<b>/arc-next</b><br/>reads the row<br/>before acting"]
+    S --> X["<b>executes the<br/>ordered actions</b>"]
+    X --> B{{"<b>wave boundary</b>"}}
+    B --> W["<b>write the handoff</b><br/>mode row set from<br/>§10.1's <i>next</i> wave"]
+    W -.-> H
+    classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
+    classDef u fill:#3d2b4f,stroke:#b07fd6,color:#fff
+    classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
+    class P,H,S,X,W n
+    class A u
+    class B s
+```
+
+| | |
+|---|---|
+| **The approval is the entry** | Approving a plan that states the mode is one of §4's three explicit routes. The plan alone is not |
+| **The handoff carries it forward** | At a break, the mode row is set from the arc-log's assignment for the **next** wave — not from whatever mode this window happened to run in |
+| **Every session after that reads, never remembers** | The row is state. A session that has to recall the mode has already lost it |
+
+**So a plan executes correctly because the chain has one decision in it and three reads** — not
+because a document declared something and everyone downstream was expected to comply.
+
 ---
 
 ## 4 Entering and leaving

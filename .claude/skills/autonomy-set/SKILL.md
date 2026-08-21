@@ -94,6 +94,18 @@ Any one signal is enough:
 **Resuming needs the user to point back at the work** — *"continue"*, *"next issue"*, `/arc-next`,
 or naming the issue. **It does not resume because the conversation stopped.**
 
+### What is not a conversation
+
+**Executing a named ordered action is the work, not an exchange.** Do not suspend on:
+
+| | |
+|---|---|
+| A tool result, a test failure, a merge conflict | The work talking back, not the user |
+| A decision the plan already made | Re-asking it is the approval-seeking auto exists to remove |
+| Your own uncertainty | Suspension is a signal from the user, not a feeling. This is the same trap `work-watch` names for defensive committing |
+
+**If nothing in the exchange came from the user, you are not suspended.**
+
 ---
 
 ## Announce every transition, in one line
