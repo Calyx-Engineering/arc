@@ -155,6 +155,7 @@ flowchart LR
 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff omits the next session's ordered actions and the transcript save | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | `skills/handoff` says nothing about the prompt that starts the next chat, so the prompt duplicated the handoff. **Wave 3.1** |
 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | An edit is reported done without checking everywhere the claim appears | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | One claim lives in a table, a diagram label and a summary row. Editing one and reporting done left the others contradicting it, four times consecutively. **Wave 2.4** |
 | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | A friction log for the arc, and the switch that enables it | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | The autonomous loop's merge step was blocked on two consecutive issues and the wrong cause was recorded both times. Nothing in the ladder held *friction with the tooling*, so it was on its way to being lost until a retrospective mined it back |
+| [PR #100](https://github.com/Calyx-Engineering/arc/pull/100) | The autonomy switch's missing half — the permission allow-list, and the failure path for step 10 | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | Writing the friction log found the cause of its own first entry: autonomous mode was declared in a document the harness never reads. **No issue** — branch to PR directly |
 
 ---
 
@@ -282,8 +283,21 @@ flowchart TB
 | 7 | **Final review, iterated three times**, fixing what each pass finds |
 | 8 | **Open the PR** — the north star from step 3 goes in the body **verbatim**, so step 9 tests the diff against it rather than re-deriving it |
 | 9 | **One more review, from every reasonable angle** — and against the north star in the body. If the diff does not reach it, the issue is not done |
-| 10 | **Claude merges the PR** — not the user. Only when satisfied, everything resolved, everything clean |
+| 10 | **Claude merges the PR** — not the user. Only when satisfied, everything resolved, everything clean. **If the merge is denied, retry once, then hand it over and say what was tried** — see the prerequisite below |
 | 11 | **Continue to the next row, or stop** — whichever the execution order says |
+
+**Autonomous mode has a prerequisite this arc-log cannot satisfy by declaring it.** Merging a
+PR is an outward-facing, hard-to-reverse action, and the standing rule is to confirm first
+*unless durably authorized*. **A markdown file is not authorization** — the harness never
+reads it. Step 10 was reached three times and executed zero times before
+`.claude/settings.json` carried a `permissions.allow` list for `gh pr merge`, `gh pr create`
+and `git push`.
+
+| | |
+|---|---|
+| **The user writes that file, not Claude** | `CLAUDE.md` says `settings.json` outside the hooks block is never edited autonomously, and an agent that can widen its own permissions has no switch at all |
+| **Where the evidence is** | [`arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md) entries 1 and 2 |
+| **Where the durable version goes** | m40, via [#73](https://github.com/Calyx-Engineering/arc/issues/73). *The agent cannot install its own switch* is a design constraint m40 does not yet state |
 
 #### 6.1.2 Establishing the intent — two passes
 
@@ -481,7 +495,8 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | — | — | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch — what auto changes, and how it ends | **Left this arc** — moved to the *Onboarding — m47* milestone. Its portability requirement is onboarding's to carry, and nothing was written |
 | 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
-| — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **In progress** — spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order. **Takes no step number**; the order is frozen |
+| — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **Merged** — [PR #99](https://github.com/Calyx-Engineering/arc/pull/99). Spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order. **Takes no step number**; the order is frozen |
+| — | — | *no issue* | The autonomy switch's missing half | **In progress** — [PR #100](https://github.com/Calyx-Engineering/arc/pull/100). Spawned by [#98](https://github.com/Calyx-Engineering/arc/issues/98); a fix small enough to go branch-to-PR |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
 ### 10.1 What each wave is
