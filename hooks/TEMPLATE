@@ -3,9 +3,20 @@
 #
 # <One paragraph: the friction this catches, and the mechanism it carries.>
 #
+# camp-reports: <event>, <event>
+# checks: <check-name>, <check-name>
+# skips: <check-name> (<condition>)
+#
+# The three lines above are the `camp-reports:` declaration. They are why this hook is
+# visible when it fires — one declaration drives both the spoken report and the event-log
+# entry. Name every check, including the ones that always pass: only reporting failures
+# makes a silent hook indistinguishable from a working one.
+# Format: docs/product-architecture/camp-reports.md
+#
 # Copy this file to start a new hook. Everything above `# ---- hook body ----` and
-# everything below it is boilerplate that must not be removed: the kill switch and the
-# fail-open wrapper are the two things that make a mistake here survivable.
+# everything below it is boilerplate that must not be removed: the kill switch, the
+# fail-open wrapper and the declaration are what make a mistake here survivable and
+# visible.
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the

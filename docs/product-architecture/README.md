@@ -47,7 +47,7 @@ unread on disk.
 
 ## Mechanisms
 
-Thirty-one mechanisms across the six pieces.
+Thirty-five mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -78,18 +78,21 @@ moves next; this column only reports.
 | m42 | Default branch flip | 🔥 | **Closing keywords bind inside an arc.** *Offers to point the default branch at the arc for its lifetime, on preconditions it checks itself; restores at close* | [spec](mechanisms/m42-default-branch-flip.md) | ⚪ |
 | m14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/m14-commit-rhythm.md) | ⚪ |
 | m22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | [spec](mechanisms/m22-configuration-management.md) | ⚪ |
-| m40 | Autonomy switch | 📐 | **The workflow matches how the work actually runs.** *Guided means the engineer drives each issue and the agent assists; autonomous means the agent runs between checkpoints. One switch, not a hardware/software fork* | — | ⚪ |
+| m40 | Autonomy switch | 🔥 | **The mode is state the user can see, not an instruction to remember.** *Three states — manual, autonomous, and autonomous suspended for a conversation. Entering is always explicit; returning to manual never has to be. The permission sits beside every prohibition it overrides, because the prohibition is read every turn and a cross-reference is read once* | [spec](mechanisms/m40-autonomy-switch.md) | 🔵 |
 | m41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/m41-relief-valve.md) | ⚪ |
 | | **AUTHORING** | | | | |
-| m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, and the link mechanics that fail silently* | [skill](../reference-roadz/issue-writing/SKILL.md) | ⚪ |
+| m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
-| m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../reference-roadz/engineering-report/SKILL.md) | ⚪ |
-| m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, and when to decide rather than ask* | [skill](../../.claude/skills/chat-response/SKILL.md) | 🔵 |
+| m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../../skills/engineering-report/SKILL.md) | 🔵 |
+| m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, when to decide rather than ask, and the labelled block that makes a multi-topic reply answerable by number* | [skill](../../skills/chat-response/SKILL.md) | 🔵 |
+| m45 | `spec-interview` | 🔥 | **A spec that matches what was agreed.** *Every question named up front so the scope has a visible end, labelled sets to reach the decisions, then the full re-read that catches a document contradicting itself* | [skill](../../skills/spec-interview/SKILL.md) | 🔵 |
+| m46 | Work navigation | 🔥 | **A discovery does not derail the work or get lost.** *Records it in the parent's `Spawned` section, asks the user to ascend or descend, and branches where the dependency actually is — the patch series model* | [spec](mechanisms/m46-work-navigation.md) | ⚪ |
 | | | | ↳ *The dev-log and arc-log are authored by m17, in Knowledge* | | |
 | | **CAMPAIGN** | | | | |
+| m47 | Onboarding | 🔥 | **Arc's behaviours survive the repository boundary.** *Configures a fresh repository once — the rules that must load without a skill firing, Camp's documents, the hooks, the default-branch decision. Zero re-teaching* | [spec](mechanisms/m47-onboarding.md) | ⚪ |
 | m09 | Kickoff + scope gate | ⚙️ | **Scope is agreed before a branch exists.** *A hard stop at the start of an arc* | [spec](mechanisms/m09-kickoff-scope-gate.md) | ⚪ |
 | m20 | Arc decomposition, checkpoints | 📐 | **Work arrives in reviewable chunks.** *Sequences issues and places checkpoints after the riskiest work — risk-weighted, not calendar-weighted* | [spec](mechanisms/m20-arc-decomposition.md) | ⚪ |
-| m43 | Camp — the delivery assistant | 🔥 | **A colleague, not a command.** *A personality you can place expectations on: explains what Arc is doing and should be doing, answers where the arc stands, decomposes work, and speaks up unasked — governed by an operating agreement you approve* | [spec](mechanisms/m43-camp-assistant.md) | ⚪ |
+| m43 | Camp — the delivery assistant | 🔥 | **A colleague, not a command.** *Holds the arc's intent and asks whether proposed work still serves it, answers where the arc stands, and makes Arc's operation visible — governed by an operating agreement you approve* | [spec](mechanisms/m43-camp-assistant.md) | ⚪ |
 | m21 | Arc-tree — spawn diagram | 🔥 | **Arc shape is visible.** *Family tree of which issue spawned which, so scope growth shows early* | [spec](mechanisms/m21-arc-tree.md) | ⚪ |
 | m24 | Verification planning | 📐 | **Requirements get proven.** *Turns unproven requirements into a validation milestone, and reports results back* | [spec](mechanisms/m24-verification-planning.md) | ⚪ |
 | m27 | Worktree waves | ⚙️ | **Parallel work without collisions.** *Partitions issues into disjoint-file tracks and sequences their merges. Disjointness is the go/no-go* | [spec](mechanisms/m27-worktree-waves.md) | ⚪ |
@@ -97,7 +100,7 @@ moves next; this column only reports.
 | | **KNOWLEDGE** | | | | |
 | m15 | Context ladder / handoff | 🔥 | **Cold starts stop costing 20 minutes.** *Which documents a fresh session opens, in what order, and when to stop* | [spec](mechanisms/m15-handoff-spine.md) | ⚪ |
 | m16 | Record routing | 🔥 | **Analysis stays findable.** *Decides which file a finding goes in, and promotes it when it outlives the arc* | [tiers](mechanisms/knowledge-tiers.md) · [structure](mechanisms/m16-hardware-record-structure.md) | ⚪ |
-| m17 | K1 upkeep | ⚙️ | **The dev-log and arc-log get written, not remembered.** *A dev-log per issue authored at decision points, the arc-log status table updated as work lands, both gated at PR time* | [spec](mechanisms/m17-k1-upkeep.md) | ⚪ |
+| m17 | K1 upkeep | ⚙️ | **The dev-log and arc-log get written, not remembered.** *A dev-log per merged unit authored at decision points, the arc-log status table updated as work lands, both gated at PR time* | [spec](mechanisms/m17-k1-upkeep.md) | ⚪ |
 | m19 | Knowledge mining trigger | 🔥 | **Reasoning in transcripts reaches the record.** *Fires at PR time and runs the mining agent with the knowledge filter* | [spec](mechanisms/m30-transcript-mining.md) | ⚪ |
 | m23 | Test obligation capture | 🔥 | **Designs get tested when the part arrives.** *Proposes the test item at design time, months before it can be run* | [spec](mechanisms/m23-test-obligation-capture.md) | ⚪ |
 | | **DELEGATION** | | | | |
@@ -108,8 +111,9 @@ moves next; this column only reports.
 | | **SELF-IMPROVEMENT** | | | | |
 | m31 | Self-improvement loop | 🔥 | **Tooling fixes land without leaving the work.** *Files the issue, makes the fix locally uncommitted, opens the diff* | [spec](mechanisms/m31-self-improvement-loop.md) | ⚪ |
 | m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | ⚪ |
-| m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../.claude/skills/plugin-retrospective/SKILL.md) | 🔵 |
+| m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../skills/plugin-retrospective/SKILL.md) | 🔵 |
 | m39 | Mechanism numbering | 📐 | **A new mechanism gets a number that is actually free.** *The number space spans all three plugins; a registry issues the next one and records the claim* | — | ⚪ |
+| m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | ⚪ |
 
 Numbering is inherited from the retrospective's product plan and kept stable so existing
 specs and evidence still resolve. That plan ran to 37 across all three plugins, so new
@@ -188,22 +192,34 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
-| `hooks/tracker-verify` | hook | m12 | Automatic, on branch create, PR open, PR merge | `skills/issue-write` for repair |
-| `skills/work-watch` | skill | m14 · m23 · m41 | Always, as work proceeds | `skills/issue-write` to file what it catches |
+| `hooks/tracker-verify` | hook | m12 · m43 | Automatic, on issue create, PR open, PR merge | `skills/issue-write` for repair |
+| `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
+| `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
+| `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry |
+| `skills/relief-valve` | skill | m41 | Run by `work-watch` when the precondition trips | — |
 | `skills/config-check` | skill | m22 | Invoked, when a revision is cut | — |
-| `skills/autonomy-set` | skill | m40 | Invoked, at kickoff and when work changes character | — |
+| `skills/autonomy-set` | skill | m40 | Invoked, at kickoff, on a mode word, at a wave boundary, and when an exchange turns into a conversation | `HANDOFF.md`'s *Execution mode* row for the state · `skills/work-watch` for the capture points auto commits at |
 | | **AUTHORING** | | | |
 | `skills/issue-write` | skill | m11 · m13 | Invoked, when writing or editing an issue or PR | — |
 | `skills/engineering-report` | skill | m18 | Invoked, when writing a report | `skills/record-route` for where it lands |
 | `skills/chat-response` | skill | m38 | Always, every reply | — |
+| `skills/spec-interview` | skill | m45 · m41 | Invoked, when a capability needs specifying before it can be built | `skills/issue-write` for the inventory checklist and the decomposition that follows |
 | | **CAMPAIGN** | | | |
 | `skills/kickoff` | skill | m09 · m20 | Invoked, at the start of an arc | `skills/issue-write` to file the decomposition · `skills/autonomy-set` |
-| `agents/camp` | agent | m21 | Invoked, at checkpoints and on request | `skills/record-route` for the arc-log |
-| `skills/wave-plan` | skill | m27 | Invoked, when work may run in parallel | `agents/camp` for the partition · `skills/delegate` |
+| `skills/camp` | skill | m21 · m43 | Addressed by name, or `/camp` | `.claude/arc/camp/` for its agreement and voice · `skills/decompose` |
+| `skills/decompose` | skill | m43 | Invoked, when a spec or idea must become a set of issues | `skills/arc-intent` to classify the set · `skills/issue-write` to file it |
+| `skills/arc-intent` | skill | m43 | On issue spawn, at PR open, when asked, and when the relief valve fires | `docs/arc-log/` for the stated intent |
+| `commands/camp.md` | command | m43 | Typed as `/camp` | `skills/camp` |
+| `.claude/arc/camp/` | record | m43 | Read by `skills/camp` on every invocation | — |
+| `camp-reports.md` | reference | m43 | Read by anything that declares what it checks | — |
+| `close-sequence.md` | reference | m43 | Read by `skills/camp` when an issue is closing or starting | `skills/record-route` · `skills/issue-write` · `hooks/tracker-verify` |
+| `templates/SKILL.md` | template | m43 | Copied when a new skill is written | `camp-reports.md` |
+| `skills/wave-plan` | skill | m27 | Invoked, when work may run in parallel | `skills/camp` for the partition · `skills/delegate` |
 | `skills/gate-run` | skill | m28 | Invoked, at a feature-complete state | — |
 | `skills/verification-plan` | skill | m24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
 | | **KNOWLEDGE** | | | |
 | `skills/handoff` | skill | m15 | Read at cold start, written at session end | `skills/record-route` for where it lives |
+| `commands/arc-next.md` | command | m15 | Typed as `/arc-next`, at the start of a session | `skills/handoff` for the read path |
 | `skills/record-route` | skill | m16 · m17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
 | `reference/knowledge-tiers` | reference | — | Read by anything that reads or writes the record | — |
 | `hooks/mining-trigger` | hook | m19 | Automatic, at PR open | `agents/transcript-miner` |
@@ -217,21 +233,22 @@ function list, then read its Needs column to find what else must exist before it
 | `hooks/session-index` | hook | m32 | Automatic, at worktree creation | — |
 | `skills/plugin-retrospective` | skill | m33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | m39 | Called when a mechanism is captured | The suite registry |
+| `.claude/arc/log.md` | record | m44 | Appended whenever any artifact fires | Every artifact that declares `camp-reports:` |
 
-**Twenty-four artifacts for thirty-one mechanisms.** Four merges, each because the
+**Mostly one artifact per mechanism.** Four merges, each because the
 mechanisms fire together:
 
 | Artifact | Merges | Why |
 |---|---|---|
-| `skills/work-watch` | m14 · m23 · m41 | One always-on sweep, three things it watches for. See below |
+| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | One always-on sweep, six things it watches for. See below |
 | `skills/issue-write` | m11 · m13 | Write the issue and verify the write landed — one moment |
 | `skills/kickoff` | m09 · m20 | Scope agreement and decomposition happen in one sitting |
 | `skills/delegate` | m25 · m26 | Choosing the tier and shaping the brief are the same decision |
 
 ### `skills/work-watch` — the design-time evaluator
 
-Three mechanisms watch work as it proceeds and nudge. Splitting them into three always-on
-checks means three separate sweeps competing for the same attention — and
+Six mechanisms watch work as it proceeds. Splitting them into six always-on
+checks means four separate sweeps competing for the same attention — and
 [test-obligation-capture](mechanisms/m23-test-obligation-capture.md) rejects the split
 outright: *"one of the things the design-time evaluator watches for, alongside commit
 timing. Not a separate always-on process — a check in the same sweep."*
@@ -240,10 +257,18 @@ timing. Not a separate always-on process — a check in the same sweep."*
 |---|---|---|
 | The work reached a reviewable point | A commit | m14 |
 | A design decision implies later physical verification | A test item | m23 |
-| Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 |
+| Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 — runs `skills/relief-valve` |
+| An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
+| A decision is settled and the next topic is opening | Writing it down before moving | m15 · m13 — a gate on your own moving on. Nudges only when the surface itself has stopped holding the state |
+| Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default |
 
-All three **propose and never act**, and all three share one open question: how often it
-may fire before the nudging becomes the annoyance.
+The first three **propose and never act**, and share one open question: how often they may
+fire before the nudging becomes the annoyance.
+
+**The fourth blocks instead of proposing.** Edit completeness gates the agent's own report
+that an edit is done — a `grep` for the replaced string, zero hits or it is not finished. It
+is m13's shape B in files, which m13 had recorded as already handled; arc 03 disproved that
+four times in one session.
 
 **Names are provisional.** Paths firm up when the plugin skeleton exists.
 
@@ -251,10 +276,11 @@ may fire before the nudging becomes the annoyance.
 every record-reading and record-writing artifact depends on, not a capability of its own.
 It is in the list because the dependency is real and something must ship it.
 
-**`agents/camp` is unresolved.** An arc needs something that holds its shape — the spawn
-tree, what is next, what must not be re-litigated. Whether that is an agent, a skill
-writing to the arc-log, or a role the main thread adopts is not decided. The name pairs
-with Lodestar's Star.
+**Camp is a skill, not an agent.** An arc needs something that holds its shape — the spawn
+tree, what is next, what must not be re-litigated. [m43](mechanisms/m43-camp-assistant.md)
+settled the form: documents, skills and hooks. An agent would have to read the conversation
+continuously, which is the one cost Arc cannot carry; only the relief valve needed it, and
+that half degrades to a skill. The name pairs with Lodestar's Star.
 
 **`skills/handoff` is separate from `skills/record-route` on purpose.** Record routing answers
 *where does this go*; the handoff is a durable artifact that survives window death —

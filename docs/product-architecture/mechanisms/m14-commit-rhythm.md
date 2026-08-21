@@ -2,7 +2,7 @@
 
 **Status:** specified.
 **Home:** Arc — Workspace guard.
-**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.5.
+**Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.5.
 
 ---
 
@@ -102,7 +102,7 @@ Each of these cost real time and belongs in whatever ships:
 
 | Rule | Evidence |
 |---|---|
-| **Never commit unasked** | Standing instruction; violated repeatedly |
+| **Never commit unasked, in manual** | Standing instruction; violated repeatedly. **Autonomous mode is the exception and it is a switch, not a mood** — [m40](m40-autonomy-switch.md) |
 | **Check files are saved first** | *"darn there were unsaved changes … you should always check that the files are saved before committing"* — see §Unsaved buffers below |
 | **Never squash merge** | *"i never squash merge"* — destroys reviewability |
 | **Verify the commit identity** | *"we are supposed to be on my davidcalyx ID … it makes no sense to be committing as davidcalyx and commenting as heliman"* |
@@ -154,7 +154,7 @@ stays low.
 |---|---|---|
 | **Capture-point detection** | Agent judgment, not a rule engine | Recognise the signals above; say "this looks like a capture point" |
 | **Pre-commit checklist** | Hook or mandatory step | Files saved · identity correct · nothing unintentionally staged or dropped · issue link will resolve |
-| **Never-commit-unasked** | Standing rule | Propose, wait |
+| **Never-commit-unasked** | Standing rule, **scoped to manual** | Propose and wait in manual; in auto, commit at the capture points above. The mode is read, never recalled — [m40](m40-autonomy-switch.md) |
 | **Post-commit verification** | Hook | Confirm the issue closed and the link formed; fail loudly if not |
 
 **Why judgment rather than rules.** "Semi-mature" is not mechanically detectable — it is
@@ -176,6 +176,6 @@ either fire constantly or miss the interesting cases.
 
 ## Related
 
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.5, §2.8
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.5, §2.8
 - [handoff-spine.md](m15-handoff-spine.md) — session-end capture points coincide
 - ROADZ `CLAUDE.md` — tracker link mechanics

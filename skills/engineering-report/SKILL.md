@@ -1,6 +1,10 @@
 ---
 name: engineering-report
 description: Use when writing, revising, or restructuring an engineering report — a findings document under report/ or equivalent that records what was investigated, measured, or decided. Invoke before drafting or editing any report document, including companion notes and data notes.
+camp-reports: [report-written, report-revised]
+checks: [destination, structure, actions-routed-to-tracker]
+skips:
+  - actions-routed-to-tracker (the report names no action)
 ---
 
 # Engineering reports

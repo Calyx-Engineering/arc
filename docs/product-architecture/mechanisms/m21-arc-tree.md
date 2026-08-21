@@ -1,7 +1,8 @@
 # Mechanism — Arc-Tree
 
-**Status:** partial — the data source is established practice; the artifact that renders it
-is unresolved.
+**Status:** partial — the data source is established practice, and the artifact is settled
+as `skills/camp` by [m43](m43-camp-assistant.md). What renders the tree, and whether it is
+generated on demand or maintained live, is open.
 **Home:** Arc — Campaign.
 **Src:** 🔥 observed.
 **Covers:** m21.
@@ -42,26 +43,28 @@ flowchart TD
 
 ---
 
-## The unresolved part — what carries it
+## What carries it — settled
 
-m21 alone does not justify an agent. The open question is bigger than a diagram:
-**does an arc need something that holds its shape?**
+m21 alone does not justify a dedicated artifact. The question it belongs to is bigger than a
+diagram: **does an arc need something that holds its shape?**
 
 > *"some sort of agent i can talk to about the status of my arc (milestone) and support
 > moving through the issues"* — David, 2026-08-17
 
 That is more than rendering a tree. It is answering *where are we, what is next, what must
-not be re-litigated* — and moving work along. Three candidate forms:
+not be re-litigated* — and moving work along. Three forms were considered:
 
 | Form | For | Against |
 |---|---|---|
-| **An agent** — `agents/camp` | Conversational. Reads the arc-log, the tree, and open issues without filling the main thread | Heaviest to build. Needs a defined packet |
-| **A skill** writing to the arc-log | Cheapest. The arc-log already holds the status table | Not conversational — you read a file rather than ask a question |
+| **An agent** — `agents/camp` | Conversational. Reads the arc-log, the tree, and open issues without filling the main thread | Heaviest to build. Needs a defined packet, and reads the conversation continuously |
+| **A skill** — `skills/camp` ← **selected** | Cheapest. Addressed by name or `/camp`, and reads the record on demand | Cannot watch the conversation unprompted — the relief valve fires on countable signals instead |
 | **A role the main thread adopts** | No new artifact. TimeScope's spine works this way | The spine's known failure: a window holding that much context saturates |
 
-**Leaning toward an agent,** named to pair with Lodestar's Star. TimeScope's spine failed
-because a *window* cannot hold arc state; an agent that reads durable state on demand does
-not have that failure.
+**Settled by [m43](m43-camp-assistant.md): a skill**, named to pair with Lodestar's Star.
+TimeScope's spine failed because a *window* cannot hold arc state, and a skill reading
+durable state on demand does not have that failure. An agent was rejected on cost — it would
+read the conversation continuously, and only the relief valve needed that, so the valve
+degrades to a skill instead.
 
 ---
 
@@ -79,17 +82,84 @@ good as that classification, so the mechanism may need to check it rather than t
 sub-issues are a real API relationship. Reading prose is fragile; sub-issues require the
 relationship to be recorded at creation.
 
+---
+
+## A node is a work item, not an issue
+
+**Settled 2026-08-20.** The tree's node is the unit of work, which is usually an issue and
+sometimes only a PR — a small fix taken branch-to-PR spawns no issue, and reading issue
+bodies alone makes it invisible.
+
+| Shape | Renders as |
+|---|---|
+| **Issue with its PR — the 1-to-1 case** | **One node.** The issue, with its PR noted on it |
+| **Issue with several PRs** | One node per PR beneath the issue. The split is the interesting part |
+| **PR with no issue** | **One node.** The PR itself |
+
+**The 1-to-1 collapse is the rule that keeps the tree readable.** Most issues have exactly
+one PR, so drawing both doubles every node and adds nothing — the pair is one piece of work
+that happens to have two identifiers. Only draw the second node when the ratio is not 1-to-1,
+because that is when it carries information.
+
+**A 0-to-1 is always drawn.** It is real work with a real parent, and it is the case the
+issue-only reader loses entirely.
+
+### What it reads
+
+| Source | Carries |
+|---|---|
+| An issue's `Spawned` section | Its children, whether those are issues or PRs |
+| A PR body's `Spawned by #NN` | Its parent, when no issue records it |
+
+Both are written by [`skills/issue-write`](../../../skills/issue-write/SKILL.md). **The tree
+reads; it never infers a relationship nobody recorded.**
+
 **What else the agent would own**, if it is an agent: the handoff, the status table, moving
 between issues. Those are m15 and m17, which have their own artifacts — so the agent may
 be a reader of them rather than an owner.
 
 ---
 
-## Related
+## Rendering the three relations
 
-- [handoff-spine](m15-handoff-spine.md) — the same "what does a cold session need" question
-- [k1-upkeep](m17-k1-upkeep.md) — the arc-log this renders into
-- [friction-log §2.7](../../retrospectives/2026-08-plugin-line/friction-log.md#27-follow-up-actions-forgotten) — spawned work that was never filed
+**[m46 §4](m46-work-navigation.md#4-three-relations-not-two) gives a discovery three possible
+relations to its parent. The tree draws all three, and only one of them is a new node.**
+
+| Relation | In the tree | Why |
+|---|---|---|
+| **Tangent** | A child node, plain edge | It would have existed anyway. The parent is where it was *found*, not why it exists |
+| **Tangent with dependency** | A child node, **labelled edge** | Same shape, different fact: it would not exist without the parent. The label is the only place that survives |
+| **Descent** | **No node.** An annotation on the parent | It changed what the parent *is*. Drawing it as a child would claim two units where there is one |
+
+```mermaid
+flowchart TB
+    P["<b>#45</b><br/>announce completed actions"]
+    P --- T["a tangent<br/><i>would have existed anyway</i>"]
+    P -->|spawned| D1["<b>PR #74</b><br/>numbers are links"]
+    D1 -->|spawned| D2["<b>PR #75</b><br/>a PR needs no issue<br/><i>+ the tree must see it</i>"]
+    D2 -->|spawned| D3["<b>#76</b><br/>work navigation"]
+    classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
+    classDef t fill:#2b2b3d,stroke:#6b6b8a,color:#c9c9d4
+    classDef g fill:#3d2b4f,stroke:#b07fd6,color:#fff
+    class P,D1,D3 n
+    class T t
+    class D2 g
+```
+
+**The italic line inside `PR #75` is a descent.** *The tree must see a no-issue PR* was its own
+piece of work, recorded in a `Spawned` row, and it stayed in that PR because a rule and the
+thing that reads it are one story. It is drawn where it landed.
+
+| | |
+|---|---|
+| **The plain edge and the `spawned` label are different claims** | *This was found here* against *this would not exist without what was found here*. The second is the arc's most common relation and has no distinct branch shape, so the tree is the only place it can be seen at all |
+| **A descent is why a node's title changed** | [`issue-write`](../../../skills/issue-write/SKILL.md) makes retitling mandatory when a unit descends, so the node's own name already records that it grew. The annotation says what it grew into |
+| **The tree never infers the relation** | Same rule as the rest of this mechanism. A `Spawned` row that does not say *tangent* or *descent* renders as a plain edge, and that is the honest drawing |
+
+**This is the axis the git graph cannot carry.** m46's worked example branched five units from
+one base, because none needed another's code — so the git graph is flat and the spawned tree is
+four levels deep. **Both are correct**, and forcing either to match the other loses the
+information that made them differ.
 
 ---
 
@@ -117,3 +187,19 @@ tells you how the work went. Worth having, not worth blocking on.
 
 **Backlog, not scope:** related-issue relationships. Spawned is what matters; related is a
 different diagram and does not belong in this one.
+
+---
+
+## Related
+
+**Artifacts** — what carries this mechanism:
+
+- [`skills/camp`](../../../skills/camp/SKILL.md) — the settled carrier, per [m43](m43-camp-assistant.md). **It does not render the tree yet** — that is the open half this mechanism's status names
+- [`skills/issue-write`](../../../skills/issue-write/SKILL.md) — writes both sources the tree reads: the `Spawned` section and `Spawned by #NN`
+
+**Mechanisms:**
+
+- [handoff-spine](m15-handoff-spine.md) — the same "what does a cold session need" question
+- [k1-upkeep](m17-k1-upkeep.md) — the arc-log this renders into
+- [m46](m46-work-navigation.md) — how the relations this renders are created, and the `Spawned` rows it reads
+- [friction-transcript-log §2.7](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#27-follow-up-actions-forgotten) — spawned work that was never filed

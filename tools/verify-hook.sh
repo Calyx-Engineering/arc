@@ -159,6 +159,20 @@ if [ -d "$CASES_DIR/$SPEAKS_UP" ]; then
 fi
 [ "$KS_PREEXISTING" -eq 0 ] && rm -f "$KS"
 
+# ---- declaration check ----------------------------------------------------------
+# Reports, never fails. A hook with no `camp-reports:` header still works — it is simply
+# invisible when it fires, which is a gap worth naming at exactly the moment someone is
+# already looking at the hook. Making it a failure would turn the convention into a cost
+# paid while trying to fix something else.
+#
+# Deliberately outside the PASSED/FAILED tally and the exit code.
+if ! grep -q '^# camp-reports:' "$HOOK"; then
+  echo
+  echo "  note  $HOOK has no \`camp-reports:\` declaration."
+  echo "        It will not report when it fires, and will write nothing to the event log."
+  echo "        Format: docs/product-architecture/camp-reports.md"
+fi
+
 echo
 echo "$PASSED passed, $FAILED failed"
 [ "$FAILED" -eq 0 ] || exit 1

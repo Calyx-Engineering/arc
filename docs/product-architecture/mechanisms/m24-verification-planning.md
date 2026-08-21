@@ -33,7 +33,7 @@ retrospective had two stories each and hand-written test plans as issues.
 
 **The practice has never been observed.** All evidence behind the plan is discovery-phase.
 How a verification campaign actually gets planned, run and recorded is one of the named gaps
-in [friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview).
+in [friction-transcript-log §5](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview).
 
 ---
 
@@ -53,4 +53,4 @@ in [friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5
 
 - [test-obligation-capture](m23-test-obligation-capture.md) — the bottom-up twin
 - [human-gate](m28-human-gate.md) — the gate this plans toward
-- [friction-log §5](../../retrospectives/2026-08-plugin-line/friction-log.md#5-what-still-needs-the-interview) — the gap
+- [friction-transcript-log §5](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview) — the gap

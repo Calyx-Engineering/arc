@@ -71,4 +71,5 @@ m28's problem too, and it is flagged as an open question in the suite architectu
 - [doc 04](../../suite-architecture/04-arc-execution-and-roles.md) — checkpoint design
 - [kickoff-scope-gate](m09-kickoff-scope-gate.md) — the other half of `skills/kickoff`
 - [arc-tree](m21-arc-tree.md) — what discovered decomposition produces
+- [m46](m46-work-navigation.md) — navigates discovery at any point; this sequences known work at kickoff
 - [human-gate](m28-human-gate.md) — the checkpoint's hardware-latency problem

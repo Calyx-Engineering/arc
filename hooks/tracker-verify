@@ -11,6 +11,10 @@
 # This reads back what landed and reports a mismatch. Judging "does this match what we
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
+# camp-reports: issue-write, pr-write, pr-merge
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-length (not an issue, or verify-tracker-body.sh is not beside the hook), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (no arc branch checked out)
+#
 # Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
 
 # ---- kill switch ----------------------------------------------------------------
@@ -71,13 +75,46 @@ scan_dates() {
   done
 }
 
+# The title rules live in `tools/verify-tracker-body.sh`, not here. A title is decidable
+# from text alone, so the same rules have to run BEFORE the write as well — and two copies
+# of a threshold is one copy that goes stale. Run as a subprocess, never sourced: that file
+# sets `-u`, and a guardrail that has to fail open cannot inherit it.
+#
+# Absent, the title checks simply do not run. Fail open is the rule; a missing helper is
+# not a reason to break every Bash call.
+TITLE_LIB="$(dirname "$0")/../tools/verify-tracker-body.sh"
+
+scan_title() {
+  local title="$1" what="$2" body="${3:-}" bodyfile="" line
+  [ -f "$TITLE_LIB" ] || return 0
+
+  # `title-findings` reads the body from a file, because a body arrives here as a shell
+  # variable full of newlines and a second argument would truncate at the first one.
+  if [ -n "$body" ]; then
+    bodyfile="$(mktemp 2>/dev/null)" && printf '%s' "$body" > "$bodyfile"
+  fi
+
+  while IFS= read -r line; do
+    [ -n "$line" ] && add "$what — $line"
+  done <<FINDINGS
+$(bash "$TITLE_LIB" title-findings "$title" "$bodyfile" 2>/dev/null)
+FINDINGS
+
+  [ -n "$bodyfile" ] && rm -f "$bodyfile"
+  return 0
+}
+
 # A body supplied directly in the payload skips the tracker read. This is how the scanners
 # are exercised offline — a hook whose only test path needs the network is a hook nobody
 # runs the day it matters.
 FIXTURE_BODY="$(field arc_test_body)"
-if [ -n "$FIXTURE_BODY" ]; then
-  scan_placeholders "$FIXTURE_BODY" "the body"
-  scan_dates "$FIXTURE_BODY" "the body"
+# `field` splits on commas, and a title's commas are exactly what this check reads. Pull
+# the value out whole instead.
+FIXTURE_TITLE="$(printf '%s' "$INPUT" | sed -n 's/.*"arc_test_title" *: *"\([^"]*\)".*/\1/p')"
+if [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE" ]; then
+  [ -n "$FIXTURE_BODY" ] && scan_placeholders "$FIXTURE_BODY" "the body"
+  [ -n "$FIXTURE_BODY" ] && scan_dates "$FIXTURE_BODY" "the body"
+  [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue" "$FIXTURE_BODY"
   [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
   exit 0
 fi
@@ -95,6 +132,9 @@ case "$CMD" in
     [ -n "$BODY" ] || exit 0
     scan_placeholders "$BODY" "issue #$NUM"
     scan_dates "$BODY" "issue #$NUM"
+
+    ITITLE="$(cd "$CWD" && gh issue view "$NUM" --json title -q .title 2>/dev/null)"
+    [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM" "$BODY"
     ;;
 
   *"gh pr"*)
@@ -114,6 +154,19 @@ case "$CMD" in
     # human sees the arc as one unit. Settable and unrelated to the base-branch problem —
     # every PR in this repo's first two arcs simply never had one set.
     printf '%s' "$META" | grep -q '"milestone":null'       && add "PR #$NUM has no milestone. It will not appear in the milestone view, which is where the arc reads as one unit."
+
+    # An issue branch's PR belongs to its arc, not to the default branch. Targeting the
+    # default branch from inside an arc merges the issue ahead of the arc it belongs to,
+    # and the arc PR then has nothing left to carry.
+    HEADBR="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+    case "$HEADBR" in
+      arc/*-issue-*)
+        ARCBASE="$(printf '%s' "$HEADBR" | sed -n 's#^\(arc/[^-]*-[^-]*\)-issue-.*#\1#p')"
+        if [ -n "$DEFAULT" ] && [ "$BASE" = "$DEFAULT" ]; then
+          add "PR #$NUM targets \`$DEFAULT\` from an issue branch. It belongs to its arc — base it on \`${ARCBASE:-the arc branch}\` so the arc PR carries it."
+        fi
+        ;;
+    esac
 
     # An issue PR inside an arc takes the arc's prefix, so a flat PR list groups by arc and
     # non-arc fixes group separately. Traceability for a human reading the list, which no

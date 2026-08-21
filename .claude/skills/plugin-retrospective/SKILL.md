@@ -3,6 +3,10 @@ name: plugin-retrospective
 description: Use when returning to a Calyx plugin repo after a stretch of real work elsewhere, to mine that work's transcripts for friction and turn it into concrete plugin improvements. Also use when the user says "let's do a plugin retrospective", "what did that arc teach us about the tooling", or wants to defer plugin iteration until after a work push rather than context-switching mid-task. Covers extraction, clustering, the review interview, and writing findings up as mechanism specs. Not a general project or team retrospective — this one improves the tooling.
 ---
 
+> **Copy — do not edit.** The source is [`skills/plugin-retrospective/SKILL.md`](../../../skills/plugin-retrospective/SKILL.md),
+> which is what the plugin ships. This copy exists only so the skill is live in this repo
+> before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
+
 # plugin-retrospective
 
 **Scope note.** Retrospectives in general are a broad practice — team, project, incident,

@@ -1,0 +1,23 @@
+{
+  "name": "calyx-engineering",
+  "owner": {
+    "name": "Calyx Engineering",
+    "url": "https://github.com/Calyx-Engineering"
+  },
+  "description": "Calyx Engineering's plugin line.",
+  "plugins": [
+    {
+      "name": "arc",
+      "source": "./",
+      "description": "AI-driven engineering delivery — workspace guard, issue and report authoring, the campaign, the record, delegation, and the loop that improves them.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Calyx Engineering"
+      },
+      "homepage": "https://github.com/Calyx-Engineering/arc",
+      "license": "UNLICENSED",
+      "category": "workflow",
+      "tags": ["engineering", "hardware", "workflow", "delivery"]
+    }
+  ]
+}

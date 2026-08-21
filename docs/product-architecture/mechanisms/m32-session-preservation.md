@@ -2,7 +2,7 @@
 
 **Status:** specified. Prerequisite for [transcript-mining](m30-transcript-mining.md); pairs with [handoff-spine](m15-handoff-spine.md).
 **Home:** Arc — Self-improvement.
-**Spawned from:** [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4.
+**Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4.
 
 ---
 
@@ -179,6 +179,6 @@ index makes transcripts findable; it does not make them durable.**
 
 ## Related
 
-- [friction-log.md](../../retrospectives/2026-08-plugin-line/friction-log.md) §2.4 — session context loss
+- [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — session context loss
 - [transcript-mining.md](m30-transcript-mining.md) — consumer of this data
 - [handoff-spine.md](m15-handoff-spine.md) — the live-state counterpart

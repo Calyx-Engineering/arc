@@ -7,21 +7,42 @@
 
 **Milestone:** &lt;link&gt;  ·  **Branch:** `arc/&lt;NN&gt;-&lt;slug&gt;`  ·  **Started:** &lt;YYYY-MM-DD&gt;
 
-## Why this arc exists
+## 1 Why this arc exists
 
 The root problem no single issue owns — the reason these issues are one effort rather than a
 list. Name the outcomes that drive the sequence.
 
-## Target architecture
+## 2 Target architecture
 
 A Mermaid diagram of the end state. The north star every issue aims at.
 
-## Load-bearing decisions
+## 3 How this arc is executed
+
+> Delete this section only if every issue is worked beside a human. **Any autonomy at all
+> means the plan for it belongs here** — what runs unattended, where it stops, and what is
+> least certain.
+
+| Wave or issue | Mode | Why |
+|---|---|---|
+| | **Autonomous, then stop** / **Reviewed first** | |
+
+### 3.1 What is least certain, and why
+
+| | |
+|---|---|
+| | |
+
+**Autonomy is per-arc, not per-repo** — m40. Decide the mode from how specified the work is,
+not from how much time there is.
+
+---
+
+## 4 Load-bearing decisions
 
 The choices that constrain every issue under this arc — what must not be re-litigated
 per-issue. Per-issue trade-offs stay in that issue's dev-log.
 
-## The tree
+## 5 The tree
 
 How the arc's scope actually grew. Planned issues are the roots; issues that work
 *generated* hang off whatever caused them. Classify by **cause, not subject** — a doc
@@ -34,7 +55,7 @@ flowchart TD
     A["#&lt;N&gt; &lt;title&gt;"] --> B["#&lt;N&gt; &lt;title&gt;"]
 ```
 
-## Status
+## 6 Status
 
 Live table. Move it as work lands.
 
@@ -46,21 +67,25 @@ Live table. Move it as work lands.
 build order emerges as understanding does. If a sequence *is* known up front, say so in
 Load-bearing decisions rather than adding structure this table doesn't have.
 
-## Related analysis
+## 7 Related analysis
 
 What K2 material this arc produced, so a fresh session knows what exists without walking the
 tree. Links only. (Delete if none.)
 
 - [&lt;topic&gt;](../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md)
 
-## Future capabilities — designed for, not in scope
+## 8 Future capabilities — designed for, not in scope
 
 What the architecture must not block but this arc won't build. Name the seams that keep it
 cheap later. (Delete if none.)
 
-## At arc close
+## 9 At arc close
 
 - [ ] Status table reflects reality
 - [ ] Tree regenerated
 - [ ] K2 and K3 swept — durable product facts graduated to the wiki, ladder entries replaced
       with links rather than copies
+- [ ] **Milestone closed by hand.** GitHub does not close it when its last issue closes
+- [ ] **Default branch restored** — `tools/arc-default-branch.sh restore`. A crashed session
+      leaves it pointed at a branch that may later be deleted, and nothing about that state
+      is visible in ordinary work

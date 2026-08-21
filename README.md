@@ -27,6 +27,52 @@ plugin skeleton, the hook harness, and the branch guard are the first working pa
 
 ---
 
+## Installing
+
+**Two routes, and both add a marketplace.** They differ only in where the marketplace comes from.
+Full process — versioning, what a release consists of, what gates one — in
+[`docs/release/release-process.md`](docs/release/release-process.md).
+
+> **The repository is private.** Both routes use your existing git credentials. Run
+> `gh auth setup-git` once so Claude Code can clone without prompting.
+
+### Local — a clone on disk
+
+**Documented first because it is the one you use while changing Arc.** Edit, reinstall, retry
+— seconds instead of a release.
+
+```bash
+git clone https://github.com/Calyx-Engineering/arc.git
+```
+
+Then, in Claude Code:
+
+```text
+/plugin marketplace add /absolute/path/to/arc
+/plugin install arc@calyx-engineering
+```
+
+The path is the repository root — the directory holding `.claude-plugin/`. After editing, run
+`/plugin marketplace update` and reinstall to pick the change up.
+
+### Marketplace — straight from GitHub
+
+```text
+/plugin marketplace add Calyx-Engineering/arc
+/plugin install arc@calyx-engineering
+```
+
+`/plugin marketplace update` picks up a new version. **Claude Code only sees an update when
+`version` in the manifest changes**, so a release that forgot to bump it installs the same thing.
+
+### Either way
+
+- If the install summary says `Run /reload-plugins to activate.`, run it.
+- Skills arrive namespaced by the plugin — `arc:camp`, not `camp`.
+- **Arc ships hooks that can deny a tool call.** Read the next section before you need it.
+
+---
+
 ## Turning hooks off
 
 Arc ships hooks that can deny a tool call. If one misbehaves, from any terminal:
@@ -89,7 +135,7 @@ self-improvement piece holds the mechanisms that regenerate it.
 | [docs/product-architecture/](docs/product-architecture/) | **What Arc is.** Start with its `README.md` |
 | [docs/product-architecture/mechanisms/](docs/product-architecture/mechanisms/) | Mechanism specs |
 | [docs/suite-architecture/](docs/suite-architecture/) | **What the three-plugin suite is.** Boundaries, build order, mechanism numbering. Mirrored files live here |
-| [docs/retrospectives/2026-08-plugin-line/friction-log.md](docs/retrospectives/2026-08-plugin-line/friction-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
+| [docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md](docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
 | [docs/reference-timescope/](docs/reference-timescope/) | TimeScope's working files — source material for extraction, do not edit |
 | [docs/reference-roadz/](docs/reference-roadz/) | ROADZ's `issue-writing` and `engineering-report` skills — same |
 | [hooks/](hooks/) | The hooks, and the `TEMPLATE` every new one starts from |

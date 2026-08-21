@@ -1,7 +1,11 @@
 ---
 name: chat-response
-description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, or considering asking for a decision. Governs length, structure, when to decide rather than ask, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
+description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
+
+> **Copy — do not edit.** The source is [`skills/chat-response/SKILL.md`](../../../skills/chat-response/SKILL.md),
+> which is what the plugin ships. This copy exists only so the skill is live in this repo
+> before Arc is installed here. **Edit the source, then re-run `tools/sync-local-skills.sh`.**
 
 # chat-response
 
@@ -49,6 +53,32 @@ with what they can ask for, not with the answer to what they did not ask.
 
 **Match the question's altitude.** A yes/no question gets yes or no first. A "how
 should we…" question gets a recommendation first.
+
+**Every issue and PR number is a link, and says which it is.** `issue [#42](…/issues/42)` or
+`PR [#42](…/pull/42)` — never a bare `#42`. Issues and PRs share one counter, so the number
+alone does not say whether to expect a discussion or a diff, and a number the reader has to go
+and find is the work the reply exists to save. A run is linked individually:
+`#31 · #32 · #33`, not `#31–#35`. Code blocks and commit text stay plain.
+
+**Every other identifier says what kind of thing it is.** A bare branch, path, setting or
+mechanism token makes the reader classify it before they can reach the question it sits in —
+worst in a question asked *of* them, where classification blocks the answer.
+
+| ✗ | ✓ |
+|---|---|
+| Flip the default to `arc/03-camp`? | Point the default branch at arc branch `arc/03-camp`? |
+| `m42` blocks this | The default-branch flip (`m42`) blocks this |
+
+**One or two words, never five.** If the qualifier runs long the sentence is built wrong —
+reword it rather than prepend a definition. The identifier still appears wherever the user must
+act on it; it stops being the *only* thing that appears.
+
+**Issue and PR numbers are the one exemption**, and it does not extend to mechanisms, branches
+or paths: `m42` is not `#42`.
+
+**Artifacts printing their own prompts are bound too** — a script loads no skill, so the
+phrasing goes in its strings. The default-branch script `tools/arc-default-branch.sh` is the
+worked example.
 
 
 ## What compression must never break
@@ -112,9 +142,127 @@ break, or state the assumption inline and continue.
 
 ## Asking the user things
 
-When a question *is* warranted:
+When a question *is* warranted, in one of two shapes:
 
-**One decision per question.** Bundled questions get partial answers.
+| | |
+|---|---|
+| **One decision** | The bold single-decision form below |
+| **Several, on one subject** | The question block. Same rule about leading the message — the block *is* the top of the reply |
+
+### A decision leads the message
+
+**A question that changes what happens next opens the reply.** Never at the end, never after
+the reasoning.
+
+> **The reader must not have to finish the message to learn a decision was wanted.** A
+> question in the last line reads as commentary, and the answer you get back is the answer to
+> whatever they read first.
+
+| | |
+|---|---|
+| **First, and marked** | One line at the top saying a decision is needed, before any reasoning |
+| **Bold and set apart** | It is a break in the conversation, not a sentence inside a paragraph |
+| **Every option named** | The user answers without reconstructing where they are |
+| **Reasoning goes below it**, or in the next reply | It is there if wanted, and skippable if not |
+
+```text
+**Decision needed.**
+
+**Row it into the `Spawned` section and PR after your review, or open the PR now?**
+
+Reasoning below.
+```
+
+**This applies to any decision that moves the work** — which branch, fold in or split off,
+file now or table it. Not to a passing clarification.
+
+**One decision per numbered question.** Bundled decisions get partial answers.
+
+#### Ascend or descend — the standalone prompt
+
+**The most frequent instance of the rule above**, and the one that gets buried the most. It
+fires when a unit's own work is finished and something was spawned beneath it: the next move is
+either down into that, or back up to whatever this unit was spawned from. **Which one is the
+user's call and cannot be inferred.**
+
+```text
+**Decision needed.**
+
+**Descend into the spawned process update, or ascend to issue #45 (the handoff blockage)?**
+```
+
+| | |
+|---|---|
+| **Its own message. Nothing else in it** | Not a closing line under a status report, not a sentence after the summary of what just merged. The reply that reports the work and the reply that asks where to go next are two messages |
+| **Fires only when there is somewhere to descend to** | At depth zero there is no decision, so there is no prompt. A unit that spawned nothing ends and the work returns to the parent without asking |
+| **Name both destinations concretely** | *"issue #45 (the handoff blockage)"*, not *"the parent"*. The user has been reading a diff, not holding the work tree in their head |
+| **The words match the action** | *Ascend* and *descend*, on the work tree. Not *"go back"* or *"keep going"*, which do not say what they move relative to |
+
+**Never *"what next?"*** It hands the reconstruction back to the person the prompt exists to
+serve — they have to rebuild where they are before they can answer where to go.
+
+### Several topics — the question block
+
+**When a reply needs answers on more than one subject, label them and let the user answer by
+number.** Restating a question to answer it is work the label removes.
+
+```text
+## V3 — How much personality is actually there?
+
+| Register | Sounds like |
+|---|---|
+| Terse operator | "PR #33 opened. Milestone set." |
+| Colleague | "PR #33 is up — the keywords bound this time." |
+| Character | "Camp here. Got #33 out the door." |
+
+I lean colleague — enough warmth to be a party you talk to, not so much
+that it costs a line of reading every time.
+
+## V4 — Does unsolicited speech carry a prefix?
+
+`**Camp here —**` costs four words every time and makes it obvious the
+line is Arc's rather than the main thread's.
+
+I lean yes. The cost is small and the ambiguity it removes is not.
+```
+
+Answered as *"V3 — agreed, colleague. V4 — yes"*. Seven words for two decisions.
+
+| The block | |
+|---|---|
+| **The label** | The user answers without restating the question |
+| **Alternatives** | The design work is done. The user judges rather than invents |
+| **A recommendation** | Rejectable in one word. A bare question is not |
+| **One block per message** | Never a second block while the first has an unanswered question in it. Parallel blocks produce answers to some and silence on others |
+
+**A question with no recommendation hands the design back to the user.** That is
+[m41](../../../docs/product-architecture/mechanisms/m41-relief-valve.md)'s friction in a different
+form — the depth is not in the questioning but in the answering.
+
+#### The unit, stated once
+
+Three things nest, and naming them apart is what stops *"one decision per question"* and
+*"two or three questions per set"* reading as a contradiction:
+
+| | |
+|---|---|
+| **A message** carries at most one block | |
+| **A block** carries two or three numbered questions, all on one subject | Four is where a block stops being answerable in one pass |
+| **A question** carries exactly one decision | Bundle two and you get an answer to one |
+
+#### The labels
+
+**Where a question inventory exists, the block's letter is the inventory's letter** —
+[`spec-interview`](../spec-interview/SKILL.md) assigns one per subject and numbers the
+questions inside it. Reusing it is what lets a nudge say *three of five settled*.
+
+| | |
+|---|---|
+| `V1` `A1` `I1` | A block belonging to a named subject. The letter is the subject's |
+| `D1` `D2` | A discussion with no inventory behind it. **`D` is what the scheme degrades to**, not a separate convention |
+
+**Never a bare number.** `D1`, not *"question 1"* — issue numbers, mechanism numbers and pass
+numbers all appear in the same sentences.
 
 **Say what you would do.** "I'd go with A because X — object if you disagree" beats an
 even-handed survey. The user can overrule a recommendation; they cannot overrule a
@@ -140,6 +288,31 @@ not process. Prime with examples:
 | Emoji as decoration | Nothing — status markers in tables are fine |
 | A summary of the reply at the end of the reply | End at the last useful sentence |
 
+
+## A clarification constrains the request; it does not replace it
+
+When the user follows up on work you just did, the follow-up is **an additional constraint on
+the same requirement** unless they say otherwise. Both hold.
+
+> **Requirement:** *"if calling out gh issue numbers then list each and as links"*
+> **Clarification:** *"you left a massive bullet list — it takes up 20% of the screen"*
+>
+> Wrong: collapse to `#31–#35`. Satisfies the second, silently drops *list each*.
+> Right: `#31 · #32 · #33 · #34 · #35`, each linked, inline. Satisfies both.
+
+**The failure is quiet.** The user sees the thing they complained about is gone and has to
+re-check the original requirement themselves — which is the work they delegated.
+
+| Before editing | |
+|---|---|
+| **Restate the original requirement** | In its own words, not as remembered |
+| **Restate the new constraint** | What specifically is wrong with the current form |
+| **Find the form that satisfies both** | If none exists, say so and ask — do not silently pick one |
+
+A follow-up that *replaces* a requirement says so: *"actually, drop the links"*. Absent that,
+assume it narrows.
+
+---
 
 ## Scope
 

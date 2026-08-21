@@ -2,7 +2,7 @@
 
 **Status:** proposed.
 **Home:** Bench (the EE instance); the pattern generalises.
-**Spawned from:** [friction-log.md](../retrospectives/2026-08-plugin-line/friction-log.md) §2.6.
+**Spawned from:** [friction-transcript-log.md](../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.6.
 
 ---
 
@@ -219,6 +219,6 @@ but every rule in it is electrical engineering.
 
 ## Related
 
-- [friction-log.md](../retrospectives/2026-08-plugin-line/friction-log.md) §2.6 — the entry this corrects
+- [friction-transcript-log.md](../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.6 — the entry this corrects
 - Lodestar docs — case 1's missing duty-cycle story is the requirements gap, observed live
 - ROADZ `.claude/wiki/speaker-power.md` — an existing example of captured device physics

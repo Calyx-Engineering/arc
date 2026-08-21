@@ -1,0 +1,2 @@
+# a title naming exactly what merging delivers
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_title":"feat: reach Camp by name or slash command","tool_input":{"command":"gh issue create --title x"}}
