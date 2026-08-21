@@ -15,10 +15,8 @@
 # lifecycle, not something that should fire on a tool call. Arc offers; the human accepts.
 #
 # PHRASING. Every line this script prints names what kind of thing an identifier is —
-# "arc branch arc/03-camp", never a bare "arc/03-camp". A bare token makes the reader
-# classify it before they can answer the question it sits in, and this script asks the
-# user to make a decision. The qualifier is one or two words; if it needs more, the
-# sentence is built wrong. m42 states the rule.
+# "arc branch arc/03-camp", never a bare "arc/03-camp". The qualifier is one or two
+# words; if it needs more, the sentence is built wrong. m42 states the rule.
 #
 # Carries m42.
 
