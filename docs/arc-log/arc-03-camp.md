@@ -18,8 +18,8 @@ stay open.
 |---|---|
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
-| **Build order** | See §9 *Status — execution order*. It is numbered 1–21 |
-| **Autonomous** | Every wave. The modes are defined in §6 and assigned in §9.1. **Breaks at wave boundaries are context, not approval** |
+| **Build order** | See §10 *Status — execution order*. Numbered 1–23; **22 is vacant** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) left the arc and took step 6.2 with it |
+| **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval** |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -117,23 +117,15 @@ classified *escalate* under the intent check's own ladder, and correct to do. **
 
 Two more were spawned later, by the work itself — see below.
 
-**Each traces to a mechanism, and only one of them to m43.** The *traces to* column is what an
-autonomous session reads before starting the issue — the spec to read is that mechanism's, not
-this arc's.
+| Issue | |
+|---|---|
+| [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting **is** when naming it |
+| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers |
+| [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping an involved piece of work |
+| [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply |
+| [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
 
-| Issue | | Traces to |
-|---|---|---|
-| [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting **is** when naming it | **m38** `chat-response`, and [m42](../product-architecture/mechanisms/m42-default-branch-flip.md)'s prompts |
-| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **m11** `issue-writing` |
-| [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping an involved piece of work | **m45** [`spec-interview`](../../skills/spec-interview/SKILL.md) |
-| [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **m38** `chat-response` |
-| [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **[m13](../product-architecture/mechanisms/m13-issue-write-back.md)** issue write-back |
-
-| Also in wave 5 | | Traces to |
-|---|---|---|
-| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a misplaced closing keyword | **[m12](../product-architecture/mechanisms/m12-issue-linking.md)** issue linking |
-| [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43 §5.1** — the only wave 5 issue that does |
-| [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **None.** Pre-release repo hygiene; the local-copy arrangement is deleted at first release |
+**What each of these traces to is §9**, beside the execution order.
 
 ### 4.2 Spawned during execution
 
@@ -214,7 +206,7 @@ different plans, and the difference belongs here rather than in a chat message.
 | **Per wave** | The user approves at the end of the wave. They start it, Claude runs the wave, they review it in detail |
 | **Autonomous** | Claude does not wait for approval. It runs the wave, and performs the review at the end of it |
 
-**Which mode each wave runs in is recorded once, in §9.1** — beside the description of what
+**Which mode each wave runs in is recorded once, in §10.1** — beside the description of what
 that wave is. It is not repeated here, because two tables of wave modes drift.
 
 **Why this arc runs autonomously throughout.** The spec exists and the foundation was proven
@@ -222,7 +214,7 @@ at the stop, so execution does not need step-by-step approval.
 
 **The stop is the point.** Sixteen issues run unattended ends in either a good arc or sixteen
 PRs on a wrong foundation, and the second is not visible until it is expensive. The numbered
-table under §9 *Status — execution order* marks where it is.
+table under §10 *Status — execution order* marks where it is.
 
 ### 6.1 Autonomous mode — what it actually means
 
@@ -230,7 +222,7 @@ table under §9 *Status — execution order* marks where it is.
 > user, or by the handoff naming it. Absent either, Claude proposes and waits for the user.
 
 **In autonomous mode, Claude reads this arc-log whole** — not the section that looks relevant. The
-§9 *Status — execution order* table is the work queue, and it is followed top to bottom.
+§10 *Status — execution order* table is the work queue, and it is followed top to bottom.
 
 **And the spec of the mechanism the issue traces to.** Every piece of work in this repo traces
 back to a mechanism, and a fair number of those have a written spec. An issue's intent is not
@@ -238,7 +230,7 @@ recoverable from its own body when the body assumes that spec.
 
 | | |
 |---|---|
-| **Where the mapping is** | §4.1's *traces to* column for wave 5; §4's table for the m43 issues |
+| **Where the mapping is** | §9 *What each issue traces to* — every issue in the arc, ordered by number |
 | **Where the spec is** | [`docs/product-architecture/README.md`](../product-architecture/README.md)'s registry — the mechanism's row carries its spec link, or a dash where none exists |
 | **When** | Once, when the issue is picked up. Not once per window, and not m43 by default |
 | **A dash is not a gap to fill** | Read the artifacts the issue names instead |
@@ -344,7 +336,7 @@ A break marked in the execution order **stops autonomous execution.** In order:
 | | |
 |---|---|
 | 1 | Write the updated handoff |
-| 2 | **Re-evaluate it** — it must cue the next `/arc-next` into **the mode §9.1 assigns the next wave**, not whatever mode this window happened to run in, and initialise enough state for the next window to continue from §9 |
+| 2 | **Re-evaluate it** — it must cue the next `/arc-next` into **the mode §10.1 assigns the next wave**, not whatever mode this window happened to run in, and initialise enough state for the next window to continue from §10 |
 | 3 | A status update of **50 words or less** on issues and merges, **leading with any problem** |
 
 ### 6.2 What is least certain, and why
@@ -394,7 +386,54 @@ Settled during scoping. **These apply across every issue in the arc.**
 
 ---
 
-## 9 Status — execution order
+## 9 What each issue traces to
+
+**Every issue in this repo traces back to a mechanism.** This table is what a session reads
+before starting one — the spec to read is that mechanism's, and it is **m43's only when the
+*Traces to* column says m43.** Wave 5 is what makes that worth stating: eight of its nine
+issues trace elsewhere, and reading m43 for them costs a thousand lines and returns nothing.
+
+**Ordered by issue number**, not by build order — the table below it is the build order. The
+registry in [`docs/product-architecture/README.md`](../product-architecture/README.md) is the
+authority for every mechanism's spec link.
+
+| Issue | Delivers | Traces to | Where the spec is |
+|---|---|---|---|
+| [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and the decomposition | **m43** · **m44** | [m43](../product-architecture/mechanisms/m43-camp-assistant.md) whole — this issue produced it |
+| [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch, file or setting is when naming it | **m38** `chat-response` · **m42** | [`skills/chat-response`](../../skills/chat-response/SKILL.md) · [m42](../product-architecture/mechanisms/m42-default-branch-flip.md) |
+| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **m11** `issue-writing` | [`issue-writing`](../reference-roadz/issue-writing/SKILL.md) — the skill is its own spec |
+| [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **m45** `spec-interview` | [`skills/spec-interview`](../../skills/spec-interview/SKILL.md) — the skill is its own spec |
+| [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **m38** `chat-response` | [`skills/chat-response`](../../skills/chat-response/SKILL.md) — the skill is its own spec |
+| [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md) |
+| [#37](https://github.com/Calyx-Engineering/arc/issues/37) | The event log | **m44** event log | [m44](../product-architecture/mechanisms/m44-event-log.md) · m43 §8 |
+| [#39](https://github.com/Calyx-Engineering/arc/issues/39) | Camp's three documents | **m43** | m43 §5 |
+| [#40](https://github.com/Calyx-Engineering/arc/issues/40) | Reaching Camp by name or `/camp` | **m43** | m43 §2 · §6 |
+| [#41](https://github.com/Calyx-Engineering/arc/issues/41) | Status and flow — status and the close sequence | **m43** | m43 §3.2 |
+| [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the arc's intent | **m43** | m43 §3.1 |
+| [#43](https://github.com/Calyx-Engineering/arc/issues/43) | The nudge — four hooks | **m43** | m43 §3.4 |
+| [#44](https://github.com/Calyx-Engineering/arc/issues/44) | The relief valve skill | **m41** relief valve · **m43** | [m41](../product-architecture/mechanisms/m41-relief-valve.md) · m43 §3.6 |
+| [#45](https://github.com/Calyx-Engineering/arc/issues/45) | The report — announcing actions, and the templates | **m43** | m43 §3.5 |
+| [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity — three levels, two settings | **m43** | m43 §7 |
+| [#47](https://github.com/Calyx-Engineering/arc/issues/47) | Decomposition | **m43** · **m20** | m43 §3.3 · [m20](../product-architecture/mechanisms/m20-arc-decomposition.md) |
+| [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **None** | Pre-release repo hygiene. The local-copy arrangement is deleted at first release |
+| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **m12** issue linking | [m12](../product-architecture/mechanisms/m12-issue-linking.md) |
+| [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43** | m43 §5.1 — the only wave 5 issue that reads m43 |
+| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 has no spec** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) owns writing it · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
+| [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's ordered actions and transcript save | **m15** context ladder / handoff | [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
+| [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md), via [`skills/work-watch`](../../skills/work-watch/SKILL.md) |
+| [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch | **m40** autonomy switch | **No spec.** This issue is the one that would write it, and it left this arc for *Onboarding — m47* |
+| [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) — this issue produced it |
+| [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) |
+
+| | |
+|---|---|
+| **A skill can be its own spec** | m11, m38 and m45 have no `mechanisms/` file. `CLAUDE.md` states the exception: a capability that is already a single skill is specified by that skill |
+| **m40 has no spec at all** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. [#73](https://github.com/Calyx-Engineering/arc/issues/73) is the issue that would write it, and it left this arc |
+| **One issue traces to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) is pre-release repo hygiene, not a mechanism |
+
+---
+
+## 10 Status — execution order
 
 **Work top to bottom, in this order.**
 
@@ -417,9 +456,9 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 11 | 3.5 | [#43](https://github.com/Calyx-Engineering/arc/issues/43) | The nudge — four hooks | **Merged** — [PR #70](https://github.com/Calyx-Engineering/arc/pull/70) |
 | 12 | 3.6 | [#46](https://github.com/Calyx-Engineering/arc/issues/46) | Verbosity | **Merged** — [PR #71](https://github.com/Calyx-Engineering/arc/pull/71) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **In progress** — `arc/03-camp-issue-42-intent`. Ships `skills/arc-intent`, fired from four call sites. **Its PR also renames the five obligations**, so it edits artifacts delivered by [#41](https://github.com/Calyx-Engineering/arc/issues/41) [#43](https://github.com/Calyx-Engineering/arc/issues/43) [#44](https://github.com/Calyx-Engineering/arc/issues/44) [#45](https://github.com/Calyx-Engineering/arc/issues/45) [#47](https://github.com/Calyx-Engineering/arc/issues/47) — classified *escalate*, admitted by the user |
+| 13 | 4.1 | [#42](https://github.com/Calyx-Engineering/arc/issues/42) | The intent check — holding the intent | **Merged** — [PR #95](https://github.com/Calyx-Engineering/arc/pull/95). Ships `skills/arc-intent`, fired from four call sites, and renamed the five obligations across the artifacts [#41](https://github.com/Calyx-Engineering/arc/issues/41) [#43](https://github.com/Calyx-Engineering/arc/issues/43) [#44](https://github.com/Calyx-Engineering/arc/issues/44) [#45](https://github.com/Calyx-Engineering/arc/issues/45) [#47](https://github.com/Calyx-Engineering/arc/issues/47) delivered |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
-| 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **In progress** — `arc/03-camp-issue-31-name-the-thing`. The rule lands in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints |
+| 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **PR open** — [PR #96](https://github.com/Calyx-Engineering/arc/pull/96), awaiting merge. The rule landed in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints. **Also carries this arc-log's autonomous-mode definition** |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | Ready |
 | 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready |
@@ -433,7 +472,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
-### 9.1 What each wave is
+### 10.1 What each wave is
 
 **The modes are defined in §6.** This table is the assignment — the only place a wave's mode
 is stated.
@@ -450,7 +489,7 @@ is stated.
 **Wave 5 is last of the substantive work, not optional.** It was spawned during scoping and is
 scheduled here because it depends on nothing in Camp — but it ships in this arc.
 
-### 9.2 Where a window breaks
+### 10.2 Where a window breaks
 
 **A break is context, not approval.** Ten issues do not fit one window. The mode says who
 reviews the work; the break says where the window ends — and the two are independent, so
@@ -478,7 +517,7 @@ A new chat starts from that prompt and picks up where the last one stopped.
 **Stopping to hand off is not stopping for approval** — it is what makes a long arc survive
 its own context. Write a fresh handoff and stop whenever the context degrades, boundary or not.
 
-### 9.3 The stop — cleared 2026-08-19
+### 10.3 The stop — cleared 2026-08-19
 
 Waves 1 and 2 merged and were reviewed together. **Wave 3 may start.**
 
@@ -490,7 +529,7 @@ Waves 1 and 2 merged and were reviewed together. **Wave 3 may start.**
 Waves 1 and 2 ran in one session. A session cannot clear its own context, so the wave boundary
 was dependency rather than a fresh start.
 
-#### 9.3.1 What the review found
+#### 10.3.1 What the review found
 
 Three defects, all in artifacts whose verification had passed. **The pattern is that structural
 checks passed while the artifact itself was wrong** — worth carrying into how later positions
@@ -514,7 +553,7 @@ a renormalize took a repeat sync from `4 copied` to `0 copied, 9 checked`. Fixed
 acceptance criterion written as runtime behaviour has been tested. The event log has three
 hand-written entries and no producer.
 
-## 10 Wave 3 review — 2026-08-19
+## 11 Wave 3 review — 2026-08-19
 
 **Six issues, eight PRs open, none merged.** The review at a wave's end is the reviewer's, per
 the autonomous mode. Findings below are mine, on my own work.
@@ -537,7 +576,7 @@ are merged in sequence and each rebased on the last. **Nothing in the plan made 
 against real fixtures by `tools/verify-hook.sh`, which is the first acceptance criterion in
 this arc tested rather than asserted.
 
-## 11 Soak
+## 12 Soak
 
 **Per `CLAUDE.md`: a plugin change runs against real work before it leaves the machine.**
 Committed is not exercised. Unsoaked means a commit here with no soak line from any repo.
@@ -555,7 +594,7 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 line records the mechanism being followed by hand against real work. That is weaker than
 execution and is worth exactly what it says.
 
-## 12 At arc close
+## 13 At arc close
 
 - [ ] Status table reflects reality
 - [ ] Default branch restored — `tools/arc-default-branch.sh restore`
@@ -576,7 +615,7 @@ not running: `hooks/tracker-verify` already holds the milestone check that
 
 ---
 
-## 13 Related
+## 14 Related
 
 - [m43](../product-architecture/mechanisms/m43-camp-assistant.md) — the Camp spec
 - [m44](../product-architecture/mechanisms/m44-event-log.md) — the event log
