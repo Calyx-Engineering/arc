@@ -13,7 +13,7 @@
 #
 # camp-reports: issue-write, pr-write, pr-merge
 # checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-scope, issue-title-length, issue-title-list, issue-title-clause, issue-scope-type, pr-base
-# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-scope (not an issue), issue-title-length (not an issue), issue-title-list (not an issue), issue-title-clause (not an issue), issue-scope-type (no title and body together), pr-base (no arc branch checked out)
+# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-* (not an issue, or tools/verify-tracker-body.sh is not beside the hook), issue-scope-type (no body to read), pr-base (no arc branch checked out)
 #
 # Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
 
@@ -75,62 +75,33 @@ scan_dates() {
   done
 }
 
-# A title is a promise about what merging delivers, and it breaks in two directions: it
-# claims more than merges, or it explains instead of naming. Judging whether the scope is
-# genuinely one unit is skills/decompose's; this catches the mechanical signals a human
-# skims past.
+# The title rules live in `tools/verify-tracker-body.sh`, not here. A title is decidable
+# from text alone, so the same rules have to run BEFORE the write as well — and two copies
+# of a threshold is one copy that goes stale. Run as a subprocess, never sourced: that file
+# sets `-u`, and a guardrail that has to fail open cannot inherit it.
 #
-# The type prefix and a trailing mechanism tag are bookkeeping, not part of the name. Strip
-# both before counting, or every title spends two of its words on them.
+# Absent, the title checks simply do not run. Fail open is the rule; a missing helper is
+# not a reason to break every Bash call.
+TITLE_LIB="$(dirname "$0")/../tools/verify-tracker-body.sh"
+
 scan_title() {
-  local title="$1" what="$2" name words commas multi=0
-  # The third expression drops a free-standing dash or bullet — punctuation the title uses
-  # to join two halves of one name, which `wc -w` would otherwise count as a word.
-  name="$(printf '%s' "$title" | sed -e 's/^[a-z][a-z]*\(([^)]*)\)\{0,1\}!\{0,1\}: *//' -e 's/ *([^)]*) *$//' -e 's/ [^[:alnum:]] / /g')"
-  words="$(printf '%s' "$name" | wc -w | tr -d ' ')"
+  local title="$1" what="$2" body="${3:-}" bodyfile="" line
+  [ -f "$TITLE_LIB" ] || return 0
 
-  # Roughly eight words is the guidance in skills/issue-write. The hook reports at twelve
-  # so it names only what nobody would defend — run against this repo's open issues, a
-  # threshold of ten flagged three titles that were doing their job. Judgement lives in the
-  # skill; the hook takes the cases judgement would not argue about.
-  [ "$words" -gt 12 ] \
-    && add "$what's title is $words words. Past a dozen it is summarising the body rather than naming the deliverable."
-
-  # Word count misses the worst real case, because a list of artifacts costs one word per
-  # comma: six file names came to eleven words and read as a table inlined into a title.
-  # Three separators is the signal — a serial list inside a single name needs two at most.
-  commas="$(printf '%s' "$name" | tr -cd ',' | wc -c | tr -d ' ')"
-  [ "$commas" -ge 3 ] \
-    && add "$what's title lists $((commas + 1)) items. Naming the affected artifacts in a title is the body's table, inlined."
-
-  # A clause after the deliverable is body material: the mechanism, the consequence, the
-  # reason it matters. Each of these joined an already-complete title to its explanation.
-  printf '%s' "$name" | grep -qiE '[ ,](so|because|which|while|until|without) ' \
-    && add "$what's title carries a clause after the deliverable. The explanation belongs in the body."
-
-  # Two deliverables in one title means the second is the one that quietly does not get
-  # done. A serial list inside a single name reads identically to a regex -- "X, Y, and Z"
-  # against "do X, and do Y" -- so the second comma is what tells them apart, and the
-  # length gate keeps a short name out of the check entirely.
-  if [ "$words" -gt 6 ]; then
-    printf '%s' "$name" | grep -qiE ' (and|plus) .* (and|plus) | as well as ' && multi=1
-    [ "$commas" -lt 2 ] && printf '%s' "$name" | grep -qiE ', and ' && multi=1
-    [ "$multi" -eq 1 ] \
-      && add "$what's title names more than one deliverable. If merging it leaves part undone, it is more than one issue."
+  # `title-findings` reads the body from a file, because a body arrives here as a shell
+  # variable full of newlines and a second argument would truncate at the first one.
+  if [ -n "$body" ]; then
+    bodyfile="$(mktemp 2>/dev/null)" && printf '%s' "$body" > "$bodyfile"
   fi
-}
 
-# An issue whose output is a decision or a decomposition takes `scope:`. Under `feat:` it
-# inherits a capability-sized title, and every child it spawns then reads as part of an
-# unfinished promise rather than a finished piece of work -- the parent stays open across
-# the whole effort. The body is the only place that intent is visible at write time, since
-# the children do not exist yet.
-scan_scope_type() {
-  local title="$1" body="$2" what="$3" type
-  type="$(printf '%s' "$title" | grep -oiE '^(feat|fix)(\([^)]*\))?!?:')"
-  [ -n "$type" ] || return 0
-  printf '%s' "$body" | grep -qiE 'decompos' || return 0
-  add "$what is titled \`$type\` and its body describes a decomposition. \`scope:\` is the type whose deliverable is the decision, not the capability it decomposes."
+  while IFS= read -r line; do
+    [ -n "$line" ] && add "$what — $line"
+  done <<FINDINGS
+$(bash "$TITLE_LIB" title-findings "$title" "$bodyfile" 2>/dev/null)
+FINDINGS
+
+  [ -n "$bodyfile" ] && rm -f "$bodyfile"
+  return 0
 }
 
 # A body supplied directly in the payload skips the tracker read. This is how the scanners
@@ -143,8 +114,7 @@ FIXTURE_TITLE="$(printf '%s' "$INPUT" | sed -n 's/.*"arc_test_title" *: *"\([^"]
 if [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE" ]; then
   [ -n "$FIXTURE_BODY" ] && scan_placeholders "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_BODY" ] && scan_dates "$FIXTURE_BODY" "the body"
-  [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue"
-  [ -n "$FIXTURE_TITLE" ] && [ -n "$FIXTURE_BODY" ] && scan_scope_type "$FIXTURE_TITLE" "$FIXTURE_BODY" "the issue"
+  [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue" "$FIXTURE_BODY"
   [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
   exit 0
 fi
@@ -164,8 +134,7 @@ case "$CMD" in
     scan_dates "$BODY" "issue #$NUM"
 
     ITITLE="$(cd "$CWD" && gh issue view "$NUM" --json title -q .title 2>/dev/null)"
-    [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM"
-    [ -n "$ITITLE" ] && scan_scope_type "$ITITLE" "$BODY" "issue #$NUM"
+    [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM" "$BODY"
     ;;
 
   *"gh pr"*)

@@ -235,18 +235,21 @@ Three of the six evaluation cases are mechanically catchable. Before and after w
 | A date inconsistent with reality | Compare against the current date |
 | A referenced commit or issue that does not exist | Check it resolves |
 | A closing keyword anywhere but the last line | `tools/verify-tracker-body.sh body <file>` |
+| A title that promises what merging will not deliver | `tools/verify-tracker-body.sh title "<title>" [file]` |
 
-The first four patterns are *scaffolding survived*. The fifth is the opposite shape — text
-that is complete and correct-looking and binds something it should not. It needs its own
-check because reading for the first four does not surface it.
+The first four patterns are *scaffolding survived*. The last two are the opposite shape —
+text that is complete and correct-looking and promises something it should not. Each needs
+its own check, because reading for the first four does not surface either.
 
 ```sh
+tools/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
 tools/verify-tracker-body.sh body body.md      # before the write
 tools/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
 ```
 
-Both report and neither blocks. `binding` is the only check that catches a keyword which
-bound *despite* the intent; every other diagnostic here is for a link that failed to form.
+All three report and none blocks. `binding` is the only one that has to run after the write
+— it reads the API. `title` and `body` are decidable from text, so running them afterwards
+means the wrong thing is already in the tracker.
 
 `hooks/tracker-verify` runs the mechanical half at branch create, PR open, and PR merge.
 The judgement half — *does this match what we agreed* — is this skill's.

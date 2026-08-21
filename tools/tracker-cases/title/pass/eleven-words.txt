@@ -1,0 +1,1 @@
+feat: record automatically that a plugin change was exercised on real work

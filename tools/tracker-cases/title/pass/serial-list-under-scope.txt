@@ -1,0 +1,3 @@
+scope: Camp — obligations, documents, and the build decomposition
+## Required
+- [ ] a decomposition into buildable issues
