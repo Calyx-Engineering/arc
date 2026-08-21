@@ -266,8 +266,8 @@ flowchart TB
 | 5 | **Implement the initial pass** — fix the intent, not the symptom it happens to describe |
 | 6 | **Refine four times** — the axes are below |
 | 7 | **Final review, iterated three times**, fixing what each pass finds |
-| 8 | **Open the PR** |
-| 9 | **One more review, from every reasonable angle** |
+| 8 | **Open the PR** — the north star from step 3 goes in the body **verbatim**, so step 9 tests the diff against it rather than re-deriving it |
+| 9 | **One more review, from every reasonable angle** — and against the north star in the body. If the diff does not reach it, the issue is not done |
 | 10 | **Claude merges the PR** — not the user. Only when satisfied, everything resolved, everything clean |
 | 11 | **Continue to the next row, or stop** — whichever the execution order says |
 
@@ -279,6 +279,8 @@ flowchart TB
 |---|---|---|
 | **1** | The issue body alone, and any verbatim quote it carries | The problem in one sentence, and a first north star |
 | **2** | Every issue it links to, the m43 section §4 maps it to, and every artifact it names | **What changed from pass 1** — and if nothing changed, that it did not |
+
+**Not every issue maps to a spec section.** §4's table shows `—` for wave 5 — tracker and chat mechanics carry no m43 section, and pass 2 reads the artifacts they name instead. An absent mapping is not a gap to hunt for.
 
 **The verbatim quote is the intent.** Where an issue carries one — most of this arc's do — the
 north star is tested against the quote, never against the title.
@@ -295,11 +297,11 @@ stop; it is a thing to say plainly in the dev-log and in the PR body.
 
 #### 6.1.3 The refining axes
 
-Run every pass against all of them.
+**Read the dev-log before each pass** — the north star and the plan, as written, never as remembered. An axis answered from memory drifts with the work it is meant to check.
 
 | |
 |---|
-| Does this follow the intent of the issue? |
+| Does this reach the north star recorded in the dev-log? |
 | Does this make skills or other artifacts larger than they should be? |
 | Can it be trimmed without sacrificing performance? |
 | Is there anything new that needs inventing to make this work better? |
