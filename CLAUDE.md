@@ -125,9 +125,39 @@ Trunk-based. `main` stays deployable and coherent at every commit.
 - **Arc branches** (`arc/NN-short-slug`) — a planned, multi-session push toward a
   numbered milestone. Merges to `main` only when that milestone is actually
   deployable or dogfoodable.
-- **Topic branches** — anything smaller or exploratory. Short-lived, merge back quickly.
+- **Work branches** — one unit of work off an arc branch. **Two forms, and both carry a
+  number.**
 - No permanent `develop` branch. Revisit when Arc has external consumers, or when
   commits must leave this machine before they have been exercised.
+
+### A work branch carries the number of whichever identifier exists first
+
+```text
+arc/<nn>-<slug>-issue-<NN>-<hint>    an issue exists — use its number
+arc/<nn>-<slug>-pr<NN>-<hint>        no issue — the PR number is the only identifier
+
+arc/03-camp-issue-78-work-nav
+arc/03-camp-pr115-transcript-staleness
+```
+
+| | |
+|---|---|
+| **The number is mandatory, in both forms** | The branch name is often the only reference visible — an editor's status bar truncates early, and it is the one place the work is named while its PR is being read in a browser |
+| **So is the `pr` label** | Issues and PRs share one counter. A bare number points at whichever object happens to hold it |
+| **Never `pr<NN>` on an issue-backed branch** | Different numbers from the same counter. Naming a branch after the wrong one points the reader at an unrelated object |
+| **The hint is short** | A twenty-word slug truncates to nothing. The PR title carries the real name |
+
+**No issue means the number does not exist yet.** It is issued when the PR opens, so predict it
+— the higher of the latest issue and the latest PR, plus one — branch, commit a stub dev-log,
+push, and open the PR **as a draft before doing the work**, which is what makes the race window
+seconds wide rather than hours. `tools/new-direct-pr.sh <hint> "<title>"` is that whole sequence
+in one command.
+
+**A missed prediction is recorded, never retried.** Say it in the PR body near the top, in the
+dev-log, and in the arc's friction log. **Renaming the branch closes the PR** — tested, [PR #109](https://github.com/Calyx-Engineering/arc/pull/109)
+went `OPEN` → `CLOSED`. Closing and re-opening burns a real number for a cosmetic gain.
+
+Full reasoning in [m46 §9](docs/product-architecture/mechanisms/m46-work-navigation.md#9-branch-naming).
 
 ## Soak — before a plugin change is pushed
 

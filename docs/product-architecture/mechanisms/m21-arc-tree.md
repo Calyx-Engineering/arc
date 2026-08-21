@@ -120,12 +120,46 @@ be a reader of them rather than an owner.
 
 ---
 
-## Related
+## Rendering the three relations
 
-- [handoff-spine](m15-handoff-spine.md) — the same "what does a cold session need" question
-- [k1-upkeep](m17-k1-upkeep.md) — the arc-log this renders into
-- [m46](m46-work-navigation.md) — how the relations this renders are created, and the `Spawned` rows it reads
-- [friction-transcript-log §2.7](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#27-follow-up-actions-forgotten) — spawned work that was never filed
+**[m46 §4](m46-work-navigation.md#4-three-relations-not-two) gives a discovery three possible
+relations to its parent. The tree draws all three, and only one of them is a new node.**
+
+| Relation | In the tree | Why |
+|---|---|---|
+| **Tangent** | A child node, plain edge | It would have existed anyway. The parent is where it was *found*, not why it exists |
+| **Tangent with dependency** | A child node, **labelled edge** | Same shape, different fact: it would not exist without the parent. The label is the only place that survives |
+| **Descent** | **No node.** An annotation on the parent | It changed what the parent *is*. Drawing it as a child would claim two units where there is one |
+
+```mermaid
+flowchart TB
+    P["<b>#45</b><br/>announce completed actions"]
+    P ---|tangent| T["a tangent<br/><i>would have existed anyway</i>"]
+    P -->|spawned| D1["<b>PR #74</b><br/>numbers are links"]
+    D1 -->|spawned| D2["<b>PR #75</b><br/>a PR needs no issue<br/><i>+ the tree must see it</i>"]
+    D2 -->|spawned| D3["<b>#76</b><br/>work navigation"]
+    classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
+    classDef t fill:#2b2b3d,stroke:#6b6b8a,color:#c9c9d4
+    classDef g fill:#3d2b4f,stroke:#b07fd6,color:#fff
+    class P,D1,D3 n
+    class T t
+    class D2 g
+```
+
+**The italic line inside `PR #75` is a descent.** *The tree must see a no-issue PR* was its own
+piece of work, recorded in a `Spawned` row, and it stayed in that PR because a rule and the
+thing that reads it are one story. It is drawn where it landed.
+
+| | |
+|---|---|
+| **The plain edge and the `spawned` label are different claims** | *This was found here* against *this would not exist without what was found here*. The second is the arc's most common relation and has no distinct branch shape, so the tree is the only place it can be seen at all |
+| **A descent is why a node's title changed** | [`issue-write`](../../../skills/issue-write/SKILL.md) makes retitling mandatory when a unit descends, so the node's own name already records that it grew. The annotation says what it grew into |
+| **The tree never infers the relation** | Same rule as the rest of this mechanism. A `Spawned` row that does not say *tangent* or *descent* renders as a plain edge, and that is the honest drawing |
+
+**This is the axis the git graph cannot carry.** m46's worked example branched five units from
+one base, because none needed another's code — so the git graph is flat and the spawned tree is
+four levels deep. **Both are correct**, and forcing either to match the other loses the
+information that made them differ.
 
 ---
 
@@ -153,3 +187,19 @@ tells you how the work went. Worth having, not worth blocking on.
 
 **Backlog, not scope:** related-issue relationships. Spawned is what matters; related is a
 different diagram and does not belong in this one.
+
+---
+
+## Related
+
+**Artifacts** — what carries this mechanism:
+
+- [`skills/camp`](../../../skills/camp/SKILL.md) — the settled carrier, per [m43](m43-camp-assistant.md)
+- [`skills/issue-write`](../../../skills/issue-write/SKILL.md) — writes both sources the tree reads: the `Spawned` section and `Spawned by #NN`
+
+**Mechanisms:**
+
+- [handoff-spine](m15-handoff-spine.md) — the same "what does a cold session need" question
+- [k1-upkeep](m17-k1-upkeep.md) — the arc-log this renders into
+- [m46](m46-work-navigation.md) — how the relations this renders are created, and the `Spawned` rows it reads
+- [friction-transcript-log §2.7](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#27-follow-up-actions-forgotten) — spawned work that was never filed

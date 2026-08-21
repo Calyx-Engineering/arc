@@ -1,6 +1,6 @@
 ---
 name: record-route
-description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Decides which file it belongs in across the K1–K4 ladder, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
+description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Decides which file it belongs in across the K1–K4 ladder, requires a dev-log of every merged unit whether or not an issue exists, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
 camp-reports: [record-routed, arc-log-updated, dev-log-written]
 checks: [tier, destination-exists, arc-log-status-current, dev-log-exists]
 skips:
@@ -24,9 +24,9 @@ Ask in this order. The first yes wins.
 
 | Ask | Goes to |
 |---|---|
-| Is it *why we chose this*, for one issue? | `docs/dev-log/issue-<N>-<slug>.md` — K1 |
+| Is it *why we chose this*, for one **unit of work**? | `docs/dev-log/issue-<N>-<slug>.md`, or `docs/dev-log/pr-<NN>-<slug>.md` when no issue exists — K1 |
 | Is it a decision that constrains **every** issue in the arc? | `docs/arc-log/arc-<slug>.md`, Load-bearing decisions — K1 |
-| Is it working-out for one issue — measurements, a failed attempt, datasheet reasoning? | `docs/scratch/issue-<N>-<slug>/<topic>.md` — K2 |
+| Is it working-out for one unit — measurements, a failed attempt, datasheet reasoning? | `docs/scratch/issue-<N>-<slug>/<topic>.md`, or `pr-<NN>-<slug>/` — K2 |
 | Does it span the whole arc — BOM, pinout, a budget? | `docs/arc-work/<arc-slug>/<topic>.md` — K2 |
 | Is it friction with **Arc itself** — a step that failed, a correction given twice, time lost to the tooling? | `docs/arc-work/<arc-slug>/friction-log.md` — K2. **Only where the operating agreement switches it on**; off is the default |
 | Does it document a product capability, for other people to read? | `docs/report/<capability-slug>/` — K3 |
@@ -41,8 +41,34 @@ costs the attention of every future reader, and three hundred reports means none
 report; most feed none. `report/issue-01-.../` is the wrong name — what that folder
 documents is *PWM dimming as a capability*, and the issue was only the vehicle.
 
-**Scratch is created on demand, not per issue.** Unlike the dev-log, which every issue
+**Scratch is created on demand, not per unit.** Unlike the dev-log, which every merged unit
 gets. An empty scratch folder is worse than none — it implies work that never happened.
+
+### The unit is what merges, not what has an issue
+
+**Every unit that merges gets a dev-log, whether or not an issue exists.** A fix taken
+branch-to-PR is a unit of work like any other, and the record does not care which identifier it
+carries.
+
+| The unit | Its dev-log |
+|---|---|
+| An issue | `docs/dev-log/issue-<NN>-<slug>.md` |
+| A PR with no issue | `docs/dev-log/pr-<NN>-<slug>.md` |
+
+The number names **whichever identifier exists first** — the same rule the branch name follows,
+so the branch and its dev-log carry the same token.
+
+> **This is not a judgement call, and deliberately so.** A gate on *is this big enough to be
+> worth recording* fails in exactly the case that matters — the small fix that turns out not to
+> be small, whose reasoning was cheapest to write down before anyone knew it would be needed.
+
+**One dev-log per unit.** Whatever changes the unit — a discovery folded in, a rewrite, a change
+of direction — goes in that unit's dev-log. Work that becomes a *different* unit is documented
+in that one instead, and the `Spawned` rows link the two.
+
+**A no-issue PR's dev-log is written before the PR exists**, as its first commit: a PR needs a
+commit to exist, and the dev-log is what that commit is. It starts as a stub and is filled in
+before the PR is marked ready. `tools/new-direct-pr.sh` does this as one of its steps.
 
 ---
 
@@ -53,7 +79,7 @@ compactness that makes these files readable every session.
 
 | Moment | Write |
 |---|---|
-| **Plan time** | Create the dev-log. Problem, and the decisions known so far |
+| **Plan time** | Create the dev-log. Problem, and the decisions known so far. **For a no-issue PR this is earlier still** — the stub is the branch's first commit |
 | **A decision point** | The decision and what was rejected, while the reasoning is live |
 | **Something is created** | Add it to the dev-log's Spawned section *then* — a document nothing points at is a document nobody finds |
 | **PR time** | Fill in the Retrospective. Move the arc-log status table |
@@ -80,7 +106,7 @@ does not know where the work stands. Usually that means detail crowded out the c
 
 ## Templates
 
-- [dev-log](../../templates/dev-log.md) — one per issue, every issue
+- [dev-log](../../templates/dev-log.md) — one per **merged unit**, every unit. `issue-<NN>-<slug>.md`, or `pr-<NN>-<slug>.md` where no issue exists
 - [arc-log](../../templates/arc-log.md) — one per arc
 
 Copy the template rather than writing from memory. Both carry their own rules in the
