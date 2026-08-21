@@ -165,9 +165,20 @@ arc/<nn>-<slug>-pr<NN>-<hint>        no issue — the PR number is the only iden
 not say which object it names.
 
 **The number does not exist yet when you branch — predict it, then confirm.** The next number
-is the higher of the latest issue and the latest PR, plus one. Branch with it, open the PR
-immediately, and check the two agree. If they drifted, **close the PR and re-open on a
-corrected branch** — one number burned, nothing merged.
+is the higher of the latest issue and the latest PR, plus one.
+
+| | |
+|---|---|
+| 1 | Branch with the predicted number |
+| 2 | Write the dev-log and commit — a PR needs a commit to exist, and a merged unit needs a dev-log anyway |
+| 3 | **Open it as a draft, before doing the work** |
+| 4 | Confirm the PR's number against the branch's |
+| 5 | Then work, and mark it ready |
+
+**The draft comes before the work.** Branching, building for an hour and opening the PR at the
+end leaves the number unclaimed for that hour, and puts the check *after* everything has landed
+on a possibly-wrong branch. If the numbers disagree at step 4, close and re-branch — one number
+burned and no work lost.
 
 > **Never rename the branch of an open PR. It closes the PR.** Tested: the rename succeeds,
 > the branch moves, and GitHub closes the PR whose head just disappeared.

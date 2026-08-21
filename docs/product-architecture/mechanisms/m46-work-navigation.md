@@ -396,17 +396,18 @@ flowchart TB
     Q ==>|yes| ISS["<b>arc/nn-slug-issue-NN-hint</b><br/>the issue number names it"]
     Q ==>|no| PRED["<b>Predict</b><br/>max(latest issue, latest PR) + 1"]
     PRED --> BR["<b>Branch</b><br/>arc/nn-slug-prNN-hint"]
-    BR --> OPEN["<b>Open the PR immediately</b><br/>the window someone else<br/>can take the number is seconds"]
+    BR --> LOG["<b>Write the dev-log, commit</b><br/>§6.1 requires one, and a PR<br/>needs a commit to exist"]
+    LOG --> OPEN["<b>Open it as a DRAFT</b><br/><i>before the work, not after</i><br/>this is what makes the<br/>window seconds not hours"]
     OPEN --> CHK{{"<b>PR number ==<br/>branch number?</b>"}}
-    CHK ==>|yes| DONE["<b>Done</b><br/>nothing more to do"]
-    CHK ==>|no| FIX["<b>Close the PR</b><br/>re-branch, re-open<br/><i>one number burned</i>"]
-    FIX --> OPEN
+    CHK ==>|yes| WORK["<b>Do the work</b><br/>mark ready when done"]
+    CHK ==>|no| FIX["<b>Close the PR</b><br/><i>one number burned,<br/>and no work lost —<br/>this is why the draft is first</i>"]
+    FIX --> PRED
     CHK -.->|"<b>never</b>"| REN["<b>Rename the branch</b>"]
     REN -.-> DEAD["<b>The PR closes</b><br/>a rename reads as a delete<br/>to an open PR"]
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
     classDef x fill:#4a2020,stroke:#d95b5b,color:#fff
-    class START,ISS,PRED,BR,OPEN,DONE,FIX n
+    class START,ISS,PRED,BR,LOG,OPEN,WORK,FIX n
     class Q,CHK s
     class REN,DEAD x
 ```
@@ -414,9 +415,19 @@ flowchart TB
 | | |
 |---|---|
 | 1 | **Predict.** The next number is the higher of the latest issue and the latest PR, plus one — they share a counter |
-| 2 | **Branch with it**, and open the PR immediately. The window in which someone else can take the number is the only risk, and it is seconds wide |
-| 3 | **Confirm.** The PR's number against the branch's. Equal, and nothing more is needed |
-| 4 | **Correct, if it drifted** | See below |
+| 2 | **Branch with it**, and write the dev-log — [§6.1](#61-merged-work-always-has-a-dev-log) requires one anyway, and a PR needs at least one commit to exist |
+| 3 | **Open it as a draft, before the work.** This is what makes the window seconds wide instead of hours |
+| 4 | **Confirm** the PR's number against the branch's. Equal, and nothing more is needed |
+| 5 | **Then do the work**, and mark the PR ready when it is done |
+
+**The draft comes before the work, not after it.** Branching, building for an hour and opening
+the PR at the end leaves the number unclaimed for that whole hour — and puts the confirmation
+step *after* everything has already landed on a possibly-wrong branch. Correcting then costs
+the whole branch; correcting at step 4 costs nothing.
+
+> **This was got wrong on its own first use.** [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) specified *open the PR
+> immediately*, then branched, implemented, and opened it over an hour later. The prediction
+> happened to hold, which is exactly why the gap was invisible.
 
 ```sh
 I=$(gh issue list --state all --limit 1 --json number --jq '.[0].number')
