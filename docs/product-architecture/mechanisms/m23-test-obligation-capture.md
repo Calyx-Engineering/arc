@@ -2,7 +2,7 @@
 
 **Status:** specified. Already run by hand throughout ROADZ rev B.
 **Home:** Arc — Knowledge.
-**Form:** hook + skill. Composes with [`issue-writing`](../../reference-roadz/issue-writing/SKILL.md)
+**Form:** hook + skill. Composes with [`issue-write`](../../../skills/issue-write/SKILL.md)
 and [commit-rhythm](m14-commit-rhythm.md).
 
 ---
