@@ -1,6 +1,6 @@
 ---
 name: spec-interview
-description: Use when a capability needs a specification and the decisions do not exist yet — scoping a new mechanism, defining an assistant or agent, or any work where an issue says "define X" rather than "build X". Covers the interview that produces the decisions, and the write-up that turns them into a document. Invoke before writing any spec longer than a page.
+description: Use when a capability needs a specification and the decisions do not exist yet — scoping a new mechanism, defining an assistant or agent, or any work where an issue says "define X" rather than "build X". Covers the question inventory that gives the interview a visible end, the interview that produces the decisions, and the write-up that turns them into a document. Invoke before writing any spec longer than a page.
 ---
 
 > **Copy — do not edit.** The source is [`skills/spec-interview/SKILL.md`](../../../skills/spec-interview/SKILL.md),

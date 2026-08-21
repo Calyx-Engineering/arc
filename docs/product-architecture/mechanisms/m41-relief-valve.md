@@ -182,4 +182,5 @@ rhythm, in which case the numbers move to the operating agreement per repo.
 - [m14](m14-commit-rhythm.md) — the same propose-never-act posture, and the sweep this check shares
 - [m43](m43-camp-assistant.md) — Camp, which shares this precondition and is the deferred third party
 - [#36](https://github.com/Calyx-Engineering/arc/issues/36) — replaces the provisional thresholds with mined evidence
-- [`chat-response`](../../../.claude/skills/chat-response/SKILL.md) — governs asking versus deciding; this fires when that guidance is not enough
+- [`chat-response`](../../../skills/chat-response/SKILL.md) — governs asking versus deciding; this fires when that guidance is not enough
+- [`spec-interview`](../../../skills/spec-interview/SKILL.md) — a scoping session names every question before the first one, so depth has a denominator. **This mechanism's offer is unanswerable without it**
