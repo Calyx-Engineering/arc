@@ -232,7 +232,9 @@ selftest() {
     [ -d "$base/title/$kind" ] || continue
     for f in "$base/title/$kind"/*.txt; do
       [ -e "$f" ] || continue
-      title="$(head -n1 "$f")"
+      # Strip a trailing CR. `.gitattributes` pins these to LF, but a fixture that arrived
+      # any other way would otherwise carry a carriage return into every word count.
+      title="$(head -n1 "$f" | tr -d '\r')"
       tail -n +2 "$f" > "$tmp"
       out="$(check_title "$title" "$tmp" 2>&1)"; rc=$?
       [ "$rc" -eq 0 ] && verdict=pass || verdict=fail
