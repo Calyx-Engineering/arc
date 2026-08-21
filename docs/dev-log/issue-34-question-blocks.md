@@ -46,7 +46,7 @@ Tracker and chat mechanics in a Camp-scoped arc: ***escalate***, decided already
 
 | | | Status |
 |---|---|---|
-| 1 | **Reconcile the unit** — one block, two or three numbered questions, one decision each | Done, `f0a...` in the feat commit |
+| 1 | **Reconcile the unit** — one block, two or three numbered questions, one decision each | Done, `c912415` |
 | 2 | `chat-response` — the block convention, with alternatives and a recommendation | Done |
 | 3 | The label scheme, and that it is `spec-interview`'s letters where an inventory exists | Done |
 | 4 | One block per message; never a second before the first is answered | Done |
