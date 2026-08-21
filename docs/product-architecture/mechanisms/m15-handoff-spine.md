@@ -254,6 +254,7 @@ than duplicate its ordering — duplicated order drifts.
 ## Related
 
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
+- [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 — **the in-session case of this argument.** State outside the context does not degrade with context length; this mechanism applies that between sessions, that check applies it within one
 - [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism
 - TimeScope `docs/arc-log/arc-local-first-storage.md` — the software precedent
 - ROADZ `CLAUDE.md` — arc-tracking GitHub mechanics
