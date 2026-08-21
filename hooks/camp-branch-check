@@ -7,7 +7,7 @@
 # when the fix is one command.
 #
 # camp-reports: branch-create
-# checks: branch-name-convention, issue-number-present, base-is-arc
+# checks: branch-name-convention, issue-or-pr-number-present, base-is-arc
 # skips: base-is-arc (branch was created without an explicit base)
 #
 # The three lines above are the `camp-reports:` declaration. They are why this hook is
@@ -74,20 +74,27 @@ FINDINGS=""
 add() { FINDINGS="$FINDINGS
   - $1"; }
 
+# Two work-branch forms, and the number names whichever identifier exists first — m46 §9.
+# A no-issue branch carries the PR number instead, and the `pr` label is what tells a reader
+# which counter the number came from. Issues and PRs share one, so an unlabelled number
+# points at whichever object happens to hold it.
 case "$NAME" in
   arc/*-issue-*)
-    # The convention. Nothing to say.
+    # An issue branch. The convention. Nothing to say.
+    ;;
+  arc/*-pr[0-9]*)
+    # A no-issue branch, named for the PR it will open. Also the convention.
     ;;
   arc/*)
-    add "\`$NAME\` is an arc branch, not a work branch. Work belongs on \`$NAME-issue-<N>-<slug>\`"
+    add "\`$NAME\` is an arc branch, not a work branch. Work belongs on \`$NAME-issue-<N>-<slug>\`, or \`$NAME-pr<NN>-<slug>\` where there is no issue"
     ;;
   *)
-    add "\`$NAME\` does not match \`arc/<nn>-<slug>-issue-<N>-<slug>\`, so nothing links it to an issue"
+    add "\`$NAME\` matches neither \`arc/<nn>-<slug>-issue-<N>-<slug>\` nor \`arc/<nn>-<slug>-pr<NN>-<slug>\`, so nothing links it to an issue or a PR"
     ;;
 esac
 
 [ -n "$FINDINGS" ] && report "**Camp here —** branch \`$NAME\` created.
-  Checked: name convention, issue number present$FINDINGS
+  Checked: name convention, issue or PR number present$FINDINGS
   Declared but skipped: base-is-arc (no explicit base in the command)"
 
 exit 0
