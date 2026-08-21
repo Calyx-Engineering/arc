@@ -94,6 +94,18 @@ Tuning belongs in the repository's operating agreement, not in this file.
           Back out to the decision?
 ```
 
+**Where a question inventory exists, quote it.** [`spec-interview`](../spec-interview/SKILL.md)
+puts one in the issue before the first set, and a nudge that names the remaining count is the
+only form that answers *how much longer is this?*
+
+```text
+[light]   Three of five sets settled, N and X left — but we are four
+          questions into naming. Pick and move, or settle it?
+```
+
+**A count with no denominator asks the person to judge depth with no scale.** That is the
+failure this skill exists for, reproduced inside its own nudge.
+
 > **A fired precondition always produces a nudge.** Direction sets the strength, never
 > whether it speaks — the precondition already established that something is worth
 > remarking on.
@@ -159,4 +171,5 @@ limitation recorded only in a document nobody opens at runtime is not a stated l
 - [m43 §3.6](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the behaviour, and why the observer form is deferred
 - [`work-watch`](../work-watch/SKILL.md) — the sweep this runs inside
 - [`arc-intent`](../arc-intent/SKILL.md) — the intent check, which answers the direction question this fires
+- [`spec-interview`](../spec-interview/SKILL.md) — the question inventory that gives a scoping session's depth a denominator
 - [#36](https://github.com/Calyx-Engineering/arc/issues/36) — replaces the provisional thresholds with mined evidence

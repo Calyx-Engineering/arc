@@ -1,6 +1,6 @@
 ---
 name: spec-interview
-description: Use when a capability needs a specification and the decisions do not exist yet — scoping a new mechanism, defining an assistant or agent, or any work where an issue says "define X" rather than "build X". Covers the interview that produces the decisions, and the write-up that turns them into a document. Invoke before writing any spec longer than a page.
+description: Use when a capability needs a specification and the decisions do not exist yet — scoping a new mechanism, defining an assistant or agent, or any work where an issue says "define X" rather than "build X". Covers the question inventory that gives the interview a visible end, the interview that produces the decisions, and the write-up that turns them into a document. Invoke before writing any spec longer than a page.
 ---
 
 > **Copy — do not edit.** The source is [`skills/spec-interview/SKILL.md`](../../../skills/spec-interview/SKILL.md),
@@ -24,7 +24,50 @@ Two distinct activities that fail in different ways.
 
 ## Part 1 — the interview
 
+### Name every question before asking the first one
+
+**The inventory comes before the first set.** Every subject the spec cannot be written without,
+listed and lettered, in one message.
+
+```text
+Before I start, here is everything I think we have to settle:
+
+- [ ] V — voice: prefix, length, register
+- [ ] W — when Camp speaks unasked
+- [ ] D — the documents and who owns them
+- [ ] N — what happens when a nudge is ignored
+- [ ] X — verbosity levels
+```
+
+**Five sets is a scope the human can see the end of. Fifteen is a scope they will abandon.**
+If the inventory runs long, that is the finding — say so and propose cutting, rather than
+starting an interview nobody can finish.
+
+| | |
+|---|---|
+| **The inventory can grow** | An answer that opens a new subject adds a row. Say it is being added; a list that silently lengthens is worse than no list |
+| **It is not a plan** | Order is negotiable, and the human reordering it is the point of showing it |
+| **Absent, depth has no scale** | *"Three questions into naming"* means nothing without a denominator. This is what makes the exit below answerable rather than a matter of patience |
+
+### The inventory lives in the issue, not in the conversation
+
+**Put it in the issue body as a checklist, and check the boxes as sets close.** A chat window
+ends; the tracker does not.
+
+| | |
+|---|---|
+| **Progress is visible without the transcript** | Anyone can see three of five settled. So can the next session |
+| **It survives the window** | The scoping that produced [#27](https://github.com/Calyx-Engineering/arc/issues/27) spanned several. A count held only in chat dies with the chat |
+| **Check the box when the set closes, and read it back** | `gh issue view <N> --json body` — a tracker write reports success whether or not it landed. [`issue-write`](../issue-write/SKILL.md) carries the mechanics |
+| **This is the interview's own checklist, not the work's** | [#35](https://github.com/Calyx-Engineering/arc/issues/35) owns keeping an implementation checklist current. Same surface, different list, and a spec issue commonly has both |
+
+**Where there is no issue yet, file one — the inventory is its body.** A scoping session large
+enough to need an inventory is large enough to be tracked.
+
 ### Work in labelled question sets
+
+**One inventory row is one set.** Its letter is the set's letter, and the questions inside it
+take numbers.
 
 **Two to three questions per set, one set per exchange, each labelled with a letter and a
 number.**
@@ -40,7 +83,7 @@ question, no ambiguity about which answer belongs to what.
 
 | Rule | |
 |---|---|
-| **A letter per subject** | V for voice, W for when-to-watch. The letter is a handle for the whole subject |
+| **A letter per subject** | The one it was given in the inventory. The letter is a handle for the whole subject, and reusing it is what lets a nudge say *three of five* |
 | **Two or three questions, never more** | Four is where a set stops being answerable in one pass |
 | **Give a recommendation with each** | *"I lean three levels"* — the human agrees or overrides, which is faster than choosing from scratch |
 | **State the tradeoff, not the survey** | One sentence per option. If it needs a table, the question is too big |
@@ -65,7 +108,12 @@ Escalating depth with no relief valve is the failure
 [m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md) exists for. Before a
 set that goes deeper than the last:
 
-> *"We are three questions into naming. Want me to pick and move, or is this worth settling?"*
+> *"That is D settled — three of five. N and X left. We are three questions into naming
+> though; want me to pick and move, or is this worth settling?"*
+
+**Quote the inventory when you offer it.** *"Three questions into naming"* asks the human to
+judge depth with no scale. *"Three of five sets settled, two left"* is the same offer with the
+denominator attached, and it is the only form that answers *how much longer is this?*
 
 **Depth that still serves the goal is not a defect** — it is the work being hard. Ask whether
 the direction still holds before asking whether the depth is excessive.
@@ -292,3 +340,19 @@ cannot be walked against a working artifact; *"names what closing requires"* can
 | **Decompose after the spec is right, not during** | An issue filed against a drifting spec inherits the drift |
 | **The interview transcript is K4** | Back it up before compaction. It is the only unfiltered record of what was agreed |
 | **Where the document and the conversation disagree, the conversation wins** | Until the human has confirmed the document. A spec is a lossy copy until it has been read whole |
+
+### Where this sits
+
+**Between the two mechanisms that already exist.** Neither covers the middle, which is why the
+loop ran unnamed through [#27](https://github.com/Calyx-Engineering/arc/issues/27).
+
+| | |
+|---|---|
+| [m09](../../docs/product-architecture/mechanisms/m09-kickoff-scope-gate.md) — kickoff and the scope gate | Gates scope at an arc's start. **This is how the scope being gated gets made** |
+| **This skill** | Rough idea → a spec complete enough to split |
+| [m20](../../docs/product-architecture/mechanisms/m20-arc-decomposition.md) — decomposition | Consumes what this produces. **You cannot split work whose shape is not settled** |
+| [m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the relief valve | The friction this bounds. The inventory is what makes m41's offer answerable rather than a matter of patience |
+
+**Not every piece of work needs this.** Small work is scoped by writing it. The test is whether
+you can name more than two or three subjects that must be settled first — below that, the
+inventory costs more than it returns.

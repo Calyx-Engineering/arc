@@ -485,7 +485,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 14 | 5.1 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting is when naming it | **Merged** — [PR #96](https://github.com/Calyx-Engineering/arc/pull/96). The rule landed in `skills/chat-response`, in [m42](../product-architecture/mechanisms/m42-default-branch-flip.md), and in the strings `tools/arc-default-branch.sh` prints. **Also carries this arc-log's autonomous-mode definition**, and it is the first run of that loop |
 | 15 | 5.2 | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **In progress** — `arc/03-camp-issue-32-size-the-title` |
-| 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | Ready |
+| 16 | 5.3 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **In progress** — `arc/03-camp-issue-33-scoping-loop` |
 | 17 | 5.4 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | Ready |
 | 18 | 5.5 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | Ready |
 | 19 | 5.6 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **Merged** — [PR #88](https://github.com/Calyx-Engineering/arc/pull/88). Pulled forward out of order |
@@ -496,7 +496,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **Merged** — [PR #99](https://github.com/Calyx-Engineering/arc/pull/99). Spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order. **Takes no step number**; the order is frozen |
-| — | — | *no issue* | The autonomy switch's missing half | **In progress** — [PR #100](https://github.com/Calyx-Engineering/arc/pull/100). Spawned by [#98](https://github.com/Calyx-Engineering/arc/issues/98); a fix small enough to go branch-to-PR |
+| — | — | *no issue* | The autonomy switch's missing half | **Merged** — [PR #100](https://github.com/Calyx-Engineering/arc/pull/100). Spawned by [#98](https://github.com/Calyx-Engineering/arc/issues/98); a fix small enough to go branch-to-PR. **Step 10 executed for the first time on this PR** |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
 ### 10.1 What each wave is
