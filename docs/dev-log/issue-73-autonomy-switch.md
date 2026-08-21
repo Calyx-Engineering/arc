@@ -122,6 +122,42 @@ are both a wrong diagnosis reached from a single session's denials.
 
 ## Decisions & trade-offs
 
+| | |
+|---|---|
+| **The permission is duplicated into four artifacts** | A knowing exception to *one fact, one place*. A cross-reference is read once and the rule beside it is read whenever the rule is — and that asymmetry is the entire bug. `tools/verify-autonomy.sh` is what makes duplication acceptable rather than reckless: it fails when an artifact states one of these prohibitions with no auto arm in the **same row** |
+| **Three states** | Two cannot express a conversation. A wave that cancels on the first clarifying question is not runnable; an agent that executes through a question is not talking to anyone. Suspension is what the user described in criterion 3, and it is also what the session that filed this issue did correctly with no artifact telling it to |
+| **Matching is per-row, not per-file** | The check greps the line, not the document. A clause a paragraph away is a cross-reference wearing the costume of one, and would pass a file-level check while failing in the way that matters |
+| **The mode lives in the handoff, not a new file** | The row already exists and already says *"never infer it"*. A second store is two files holding one fact, which is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s condition created on purpose |
+| **The spec states what it cannot do** | Three previous attempts were built on conflating *the mode failed* with *the harness refused*. m40 §7 and the skill both say auto does not change what the harness permits, and both say what to do on a denial: retry once, record, hand over, never diagnose from one session |
+| **Scope grew from spec to spec-and-build** | The issue's own constraint said scoping only. Five attempts have shipped a document and no behaviour; `verify-autonomy.sh` fails when the spec exists without its skill, so that specific failure cannot repeat quietly |
+| **[#73](https://github.com/Calyx-Engineering/arc/issues/73) reclaims step 22 / wave 6.2** | The frozen-order decision says do not renumber. It vacated that slot when it left, so taking it back disturbs nothing — the alternative is a numbered plan with a permanent hole and an unnumbered row beside it |
+
 ## Rejected approaches
 
+| | |
+|---|---|
+| **A cross-reference from each prohibition to m40** | The obvious, tidy version. It is also exactly what has been tried: the arc-log's §6.1 *is* a central definition that everything was supposed to defer to, and nothing did, because it is read once |
+| **Deleting *never commit unasked*** | It is correct, and manual is the default. Removing it to make auto work would trade a failure the user notices at a wave boundary for one he notices in his source-control graph every day |
+| **A `.claude/arc/mode.md` state file** | A second source of truth for one fact. It would also be invisible to the user unless they went looking, which defeats the reason the mode is state at all |
+| **Making auto cancel on any question** | What [#73](https://github.com/Calyx-Engineering/arc/issues/73)'s body implies. One clarification would end a wave, so the mode would be unusable exactly when the work is going well enough to ask about |
+| **Trimming the skill under 180 lines** | It is 191. `work-watch` and `handoff` are both over 230, so the limit is aspirational and tracked by [#90](https://github.com/Calyx-Engineering/arc/issues/90). Cutting the not-a-conversation guard to hit a number other skills already exceed would remove the part that stops a cautious session suspending on its own tool results |
+
 ## Retrospective
+
+**The bug was never in what auto mode said.** Five attempts each wrote a clearer description of
+autonomous execution, and each was defeated by a rule they did not know they were arguing with.
+Finding it took one `grep` for the wording — *never commit unasked*, *user merges* — after the
+user said he suspected it was there.
+
+| | |
+|---|---|
+| **What made it invisible** | The prohibitions and the permission never appear in the same document. `CLAUDE.md` and `work-watch` do not mention auto; the arc-log does not mention them. Neither side had a reason to look at the other |
+| **Why the read-frequency framing matters** | Once it is stated, the fix is forced. There is exactly one way to make a permission as fresh as a prohibition, and it is not a link |
+| **The check is the part that survives** | The four copies will drift. `verify-autonomy.sh` is what turns that from a silent regression into a failed run, and its per-row matching is what stops the drift being papered over with a nearby cross-reference |
+
+**Two things this cannot prove.** Nothing here runs a skill, so the three acceptance criteria
+are exercised by use rather than by test. And the harness boundary is unchanged — the merge on
+this PR will very likely be denied autonomously and succeed the moment the user asks, exactly
+as [PR #114](https://github.com/Calyx-Engineering/arc/pull/114) did. **That is the switch
+working as specified, not failing** — m40 §7 says so in advance so the next session does not
+record it as a fourth wrong diagnosis.
