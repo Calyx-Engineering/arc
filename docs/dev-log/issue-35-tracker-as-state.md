@@ -45,17 +45,42 @@ Tracker and chat mechanics in a Camp-scoped arc: ***escalate***, decided already
 
 | | | Status |
 |---|---|---|
-| 1 | `work-watch` check 6 — the tracker as working state, read not only written | — |
-| 2 | The settled-decision rule, generalised out of `spec-interview` | — |
-| 3 | The tangent-becomes-an-issue-now rule, and its boundary with m46 | — |
-| 4 | Why it is structural rather than attentional — the argument the issue makes | — |
-| 5 | Propagate the check count, again — five places outside the skill | — |
-| 6 | Four refining passes, three review passes | — |
+| 1 | `work-watch` **check 5** — the tracker as working state, read not only written. The friction check became 6 | Done, `371c716` |
+| 2 | The settled-decision rule, generalised out of `spec-interview` | Done, `371c716` |
+| 3 | The tangent-becomes-an-issue-now rule, and its boundary with m46 | Done, `371c716` |
+| 4 | Why it is structural rather than attentional — the argument the issue makes | Done, `371c716` |
+| 5 | Propagate the check count, again — five places outside the skill | Done, swept to zero stale |
+| 6 | Four refining passes, three review passes | Done |
+| + | **m15 and m13 back-reference check 5** — it claims m15's argument and is m13's other half | Done |
+| + | **The posture block, restated for six** | Done — it said *"four of the six nudge"* and *"check 4 is not a nudge"*, describing neither |
 
 ## Decisions & trade-offs
 
-_Filled as they are made._
+| | |
+|---|---|
+| **Check 5, not check 6** | It belongs beside check 4 — both are gates that fire on an act and govern your own behaviour. The friction check renumbered because grouping by kind beats preserving a number one issue old |
+| **It notices; it does not create the surface** | A check that files the checklist owns the work's shape. This one only fires when the surface in use has stopped being current, whatever that surface is |
+| **The fourth firing case is a nudge, and is named as one** | *Re-anchoring cost the transcript* cannot be repaired by writing one more thing down — the surface itself has failed, and only the human can decide whether to rebuild it. Papering that over as a gate would have been the tidier lie |
+| **The boundary with m46 is stated in the skill, not inferred** | m46 owns where a discovery goes and whether to ascend to it. This check fires the moment one appears and nothing is written down. Two mechanisms, one moment |
 
 ## Retrospective
 
-_At PR time._
+**Two of the three Required rows already existed, each scoped to one moment.** *Write the
+decision before the next topic* is `spec-interview`'s load-bearing rule — inside an interview.
+*File the tangent now* is m46's and `issue-write`'s — inside work navigation. Neither held
+outside its own moment, and the general case is what was missing.
+
+**The check count moved twice in one day.** [#98](https://github.com/Calyx-Engineering/arc/issues/98)
+took it four → five and taught where the count is duplicated; this took it five → six and the
+sweep found zero stale. The lesson transferred; the duplication did not get fixed, and there
+are still six places asserting a number the skill owns.
+
+| Found by | |
+|---|---|
+| *Is it consistent with every file?* | The posture block said *"four of the six nudge"* and *"check 4 is not a nudge"* — accurate for neither the old set nor the new |
+| *Have references to every modified file been checked?* | m15 and m13 pointed at nothing. Third time in this wave: m41 in [#33](https://github.com/Calyx-Engineering/arc/issues/33), m46 in wave 3, these two here |
+| *Am I on topic?* | The fourth firing row said *"Say so"* under a heading claiming the check never asks the human anything. Named it a nudge rather than dropping it |
+
+**What is still untested.** Nothing here has run. The behaviour held through
+[#27](https://github.com/Calyx-Engineering/arc/issues/27)'s scoping by accident; whether
+naming it makes it reliable is unknown until a long session uses it.
