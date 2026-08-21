@@ -253,6 +253,8 @@ than duplicate its ordering — duplicated order drifts.
 
 ## Related
 
+- [`handoff`](../../../skills/handoff/SKILL.md) — **the skill that implements this.** The read path, the write, the ordered actions, and the transcript save
+- [`commands/arc-next.md`](../../../commands/arc-next.md) — the entry point, and the staleness checks that run before a handoff is acted on
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 — **the in-session case of this argument.** State outside the context does not degrade with context length; this mechanism applies that between sessions, that check applies it within one
 - [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism
