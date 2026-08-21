@@ -208,6 +208,89 @@ table under *Status* marks where it is.
 **One session, no reset between issues.** A session cannot clear its own context, so waves 1–2
 are four issues in one continuous run — the wave boundary is dependency, not a fresh start.
 
+### Autonomous mode — what it actually means
+
+> **Manual is the default.** Autonomous is entered only by an explicit instruction from the
+> user, or by the handoff naming it. Absent either, propose and wait.
+
+**In autonomous mode, read this arc-log whole** — not the section you think you need. The
+*Status — execution order* table is the work queue, and it is followed top to bottom.
+
+```mermaid
+flowchart TB
+    START["<b>/arc-next</b><br/>a new window, or<br/>called inside one"] --> MODE{{"<b>Which mode?</b><br/>the handoff's<br/><i>Execution mode</i> row"}}
+    MODE ==>|"manual — the default"| MAN{{"<b>MANUAL</b><br/>propose<br/>wait for approval"}}
+    MODE ==>|"autonomous"| READ["<b>Read the arc-log whole</b><br/>the execution order<br/>and this definition"]
+    subgraph L[" One issue — read to merge "]
+        direction TB
+        ISSUE["<b>Take the next row</b><br/>read the issue from gh<br/>create the branch"] --> PLAN["<b>Plan</b><br/>the execution plan<br/>in the dev-log"]
+        PLAN --> IMPL["<b>Initial pass</b><br/>fix the issue's intent,<br/>not its symptom"]
+        IMPL --> REF["<b>Refine · 4 passes</b><br/>every axis, every pass"]
+        REF --> REV["<b>Review · 3 passes</b><br/>fixing what<br/>each pass finds"]
+        REV --> PR["<b>Open the PR</b><br/>milestone + Closes"]
+        PR --> FIN{{"<b>Final review</b><br/>all reasonable angles"}}
+        FIN -->|"not clean"| REV
+        FIN -->|"clean"| MERGE["<b>Merge it yourself</b>"]
+    end
+    READ --> ISSUE
+    MERGE --> NEXT{{"<b>Break point on<br/>the next row?</b>"}}
+    NEXT -->|"no"| ISSUE
+    NEXT ==>|"yes"| BRK{{"<b>BREAK</b><br/>handoff written, mode cued<br/>50-word status, problems first"}}
+    classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
+    classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
+    class START,READ,ISSUE,PLAN,IMPL,REF,REV,PR,MERGE n
+    class MODE,MAN,FIN,NEXT,BRK s
+    style L fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
+```
+
+#### One issue, start to merge
+
+| | |
+|---|---|
+| 1 | **Read the issue from `gh`** — the one the execution order names, not the one that seems next |
+| 2 | **Create the branch** |
+| 3 | **Understand the issue's intent, and fix that durably.** Not the symptom it happens to describe |
+| 4 | **Write the execution plan in the dev-log**, before implementing |
+| 5 | **Implement the initial pass** |
+| 6 | **Refine four times** — the axes are below |
+| 7 | **Final review, iterated three times**, fixing what each pass finds |
+| 8 | **Open the PR** |
+| 9 | **One more review, from every reasonable angle** |
+| 10 | **Merge it yourself** — only when satisfied, everything resolved, everything clean |
+| 11 | **Continue to the next row, or stop** — whichever the execution order says |
+
+#### The refining axes
+
+Run every pass against all of them.
+
+| |
+|---|
+| Does this follow the intent of the issue? |
+| Does this make skills or other artifacts larger than they should be? |
+| Can it be trimmed without sacrificing performance? |
+| Is there anything new that needs inventing to make this work better? |
+| Have references to every modified file been checked? |
+| Is it consistent with every file in the repo? |
+| Are there other files that should be touched to make this work better? |
+| Am I on topic? |
+| Are there tests that need writing to evaluate this? |
+| Have all evaluating tests been run? |
+
+#### Commit cadence
+
+**Over-committing bloats the log and the tree.** Commit at least once for the plan, once for
+the initial implementation, and once per refinement and review loop.
+
+#### At a break point
+
+A break marked in the execution order **stops autonomous execution.** In order:
+
+| | |
+|---|---|
+| 1 | Write the updated handoff |
+| 2 | **Re-evaluate it** — it must cue the next `/arc-next` into the right mode, autonomous from here on, and initialise enough state for the next window to continue with the next wave |
+| 3 | A status update of **50 words or less** on issues and merges, **leading with any problem** |
+
 ### What is least certain, and why
 
 | | |

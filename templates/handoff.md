@@ -20,6 +20,21 @@
 The last row exists because a dev-log is written at plan time, so the first session on an
 issue arrives before one exists. Delete the row once the dev-log does.
 
+## Execution mode
+
+**Required. Manual is the default** — a handoff that omits this row hands the next session
+no mode, and it will stop at the first action needing approval.
+
+| | |
+|---|---|
+| Mode | **Manual** · **Autonomous** |
+| Defined in | `docs/arc-log/arc-&lt;slug&gt;.md` § *How this arc is executed* — **read it before acting on the rows below** |
+| Autonomous until | &lt;the break point in the execution order where it stops&gt; |
+
+Autonomous means the next session runs the execution order without per-issue approval,
+merges its own PRs, and stops only at a marked break. Never infer it — if this row does not
+say autonomous, it is manual.
+
 ## Do these in order
 
 The numbered actions the next session executes top to bottom. **An action, not a topic** —
