@@ -42,6 +42,16 @@ stale.
 
 **Verbosity governs display, never what reaches `.claude/arc/log.md`.**
 
+### Friction log — Arc's own rough edges · [`record-route`](../../skills/record-route/SKILL.md)
+
+- [ ] **on** — friction with Arc itself is appended to `docs/arc-work/<arc-slug>/friction-log.md`
+- [x] **off** — friction with Arc itself is not recorded
+
+**Off is right for almost every repository.** This logs the *tooling* failing, not the work —
+a step that did not run, a correction given twice, time lost to Arc rather than to the
+problem. Switch it on in a repository where Arc itself is being built or evaluated. The log
+is read in by a retrospective; it does not replace one.
+
 ---
 
 ## 2 What Camp does unasked

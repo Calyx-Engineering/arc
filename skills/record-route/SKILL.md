@@ -28,6 +28,7 @@ Ask in this order. The first yes wins.
 | Is it a decision that constrains **every** issue in the arc? | `docs/arc-log/arc-<slug>.md`, Load-bearing decisions — K1 |
 | Is it working-out for one issue — measurements, a failed attempt, datasheet reasoning? | `docs/scratch/issue-<N>-<slug>/<topic>.md` — K2 |
 | Does it span the whole arc — BOM, pinout, a budget? | `docs/arc-work/<arc-slug>/<topic>.md` — K2 |
+| Is it friction with **Arc itself** — a step that failed, a correction given twice, time lost to the tooling? | `docs/arc-work/<arc-slug>/friction-log.md` — K2 |
 | Does it document a product capability, for other people to read? | `docs/report/<capability-slug>/` — K3 |
 | Is it a durable fact about the product, true after this arc ends? | `.claude/wiki/<topic>.md` — K2, permanent |
 

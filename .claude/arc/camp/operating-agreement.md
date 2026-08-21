@@ -39,6 +39,14 @@ stale.
 
 **Verbosity governs display, never what reaches `.claude/arc/log.md`.**
 
+### Friction log — Arc's own rough edges · [`record-route`](../../../skills/record-route/SKILL.md)
+
+- [x] **on** — friction with Arc itself is appended to `docs/arc-work/<arc-slug>/friction-log.md`
+- [ ] **off** — friction with Arc itself is not recorded
+
+**On here, and off in the template.** This repository is where Arc is built, which is the case
+the switch exists for. The log is read in by a retrospective; it does not replace one.
+
 ---
 
 ## 2 What Camp does unasked
