@@ -147,7 +147,7 @@ re-opening a settled question.
 ### Number the sections when they will be cited
 
 **A spec whose parts get referenced from issues, PRs and other specs numbers its sections.**
-`m43 §3.2` resolves; *"the obligation 1 section"* does not.
+`m43 §3.2` resolves; *"the status and flow section"* does not.
 
 | | |
 |---|---|

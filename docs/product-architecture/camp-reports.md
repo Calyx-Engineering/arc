@@ -97,8 +97,8 @@ Two settings, chosen by what produced the event — not by which artifact fired.
 
 | The event is | Setting | Default |
 |---|---|---|
-| A completed action reported — obligation 4 | **Report verbosity** | `normal` |
-| A problem caught as it happens — obligation 3 | **Nudge verbosity** | `loud` |
+| A completed action reported | **Report verbosity** | `normal` |
+| A problem caught as it happens | **Nudge verbosity** | `loud` |
 
 A nudge fires because a condition appears wrong and should be hard to miss. A report fires on
 every completion and should be brief.
@@ -174,5 +174,5 @@ someone is trying to fix something else.
 ## Related
 
 - [`templates/event-log.md`](../../templates/event-log.md) — the entry format this produces
-- [m43 §3.5](mechanisms/m43-camp-assistant.md) — obligation 4, which this implements
+- [m43 §3.5](mechanisms/m43-camp-assistant.md) — the report, which this implements
 - [m44](mechanisms/m44-event-log.md) — the log, and why verbosity cannot reach it

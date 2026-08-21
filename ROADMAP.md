@@ -43,8 +43,9 @@ record survive a cold start.
 | `skills/relief-valve` | m41 | The depth check's mechanical precondition, run inside that sweep | Build |
 | `skills/camp` | m21 · m43 | Something to ask "where is this arc, what is next" | Build |
 | `skills/decompose` | m43 | A spec or idea into a proposed set of issues | Build |
+| `skills/arc-intent` | m43 | Work drifts from the arc's intent while every step looks reasonable | Build |
 
-**Eleven artifacts. Four are ports of working practice, one is already here, six are new.**
+**Sixteen artifacts. Four are ports of working practice, one is already here, eleven are new.**
 
 ### What waits
 

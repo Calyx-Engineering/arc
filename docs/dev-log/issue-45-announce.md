@@ -15,7 +15,7 @@ because a user only corrects machinery they knew was running.
 | | |
 |---|---|
 | **A standalone reference, not a section inside a skill** | `docs/product-architecture/camp-reports.md`. The templates, seven artifacts and `verify-hook.sh` all point at it. Putting the format inside `skills/camp` would make Camp the authority on a convention that applies to hooks, which Camp neither owns nor reads |
-| **Three fields — `camp-reports`, `checks`, `skips`** | `checks` alone cannot express a conditional check, and a conditional check that silently does not run is the exact ambiguity obligation 4 exists to remove |
+| **Three fields — `camp-reports`, `checks`, `skips`** | `checks` alone cannot express a conditional check, and a conditional check that silently does not run is the exact ambiguity the report exists to remove |
 | **YAML frontmatter in skills, a comment block in hooks** | Hooks are bash. A comment block directly under the description is greppable with `grep -q '^# camp-reports:'`, which is all the detection needs |
 | **Check names taken from what each artifact actually does** | `tracker-verify`'s five names were read out of its `add` calls; `branch-guard`'s two out of its deny branches. A plausible-looking list would have made the declaration decorative |
 | **`skips` entries carry the condition, not just the name** | *"`arc-prefix` (base is not an arc branch)"*. A skipped check with no reason is indistinguishable from a broken one |

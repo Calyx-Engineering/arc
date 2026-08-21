@@ -30,6 +30,11 @@ before naming the next. Every step is already owned by an artifact.
 **Steps 1 to 7 are Camp's to name. Steps 8 and 9 are the user's to perform.** An issue is not
 closed because the work is done; it is closed because someone merged it.
 
+**The intent check fires inside step 5, not as a tenth step.** `issue-write` runs
+[`skills/arc-intent`](../../skills/arc-intent/SKILL.md) before it writes the PR body — *does
+what this delivers serve the arc.* It is a checkpoint that already existed, which is why it
+adds no step and cannot change the count.
+
 ### Step 6 is the one that fails silently
 
 A closing keyword on a PR into an arc branch **reports success and binds nothing** — the
@@ -94,7 +99,7 @@ confirming it landed.**
 | Reading it back at the next session's start | `skills/handoff`, invoked by Camp |
 
 **Camp never authors the handoff.** It fires the mechanism that does and verifies the result —
-the same posture as obligation 4, where the artifact does the work and Camp reports on it.
+the same posture as the report, where the artifact does the work and Camp reports on it.
 
 ### When it fires, and when it does not
 
@@ -139,6 +144,6 @@ An answer is three or four lines — which issues are open, what merged, what is
 
 ## Related
 
-- [m43 §3.2](mechanisms/m43-camp-assistant.md) — obligation 1, which this implements
+- [m43 §3.2](mechanisms/m43-camp-assistant.md) — status and flow, which this implements
 - [m42](mechanisms/m42-default-branch-flip.md) — why step 6 fails silently
 - [`camp-reports.md`](camp-reports.md) — the declaration every acting artifact carries

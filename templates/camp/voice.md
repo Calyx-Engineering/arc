@@ -80,8 +80,8 @@ Two settings, because reports and nudges are different kinds of noise:
 
 | | Fires | So it should be |
 |---|---|---|
-| **Reports** — obligation 4 | On every completion | Brief |
-| **Nudges** — obligation 3 | Because something looks wrong | Hard to miss |
+| **Reports** — the report | On every completion | Brief |
+| **Nudges** | Because something looks wrong | Hard to miss |
 
 **Which level is selected lives in [`operating-agreement.md`](operating-agreement.md)
 section 1**, where the checked box is the value. This file says what the levels mean; the

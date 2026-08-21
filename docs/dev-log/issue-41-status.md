@@ -23,7 +23,7 @@ much context the session still holds.
 | **Camp names the steps; it performs none of them** | The steps are already owned. Camp's contribution is that the *order is invariant* and that each is confirmed landed before the next is named |
 | **Step 6 is verified, never trusted** | `Closes #NN` on a PR into an arc branch reports success and binds nothing — [m42](../product-architecture/mechanisms/m42-default-branch-flip.md). The check is `gh pr view <N> --json closingIssuesReferences`, and an empty array means not closed regardless of what the body says |
 | **Camp refuses to call an issue closeable while step 6 is unverified** | An acceptance criterion, and the only one phrased as a refusal. A silently unbound keyword is the failure this whole sequence exists to catch |
-| **Status and flow are one artifact, not two** | Obligation 0 cannot evaluate direction without knowing where the work stands, so status is the substrate flow reads. Splitting them duplicates the assembly step |
+| **Status and flow are one artifact, not two** | The intent check cannot evaluate direction without knowing where the work stands, so status is the substrate flow reads. Splitting them duplicates the assembly step |
 | **Holds no state of its own** | Assembled per invocation from the arc-log, the dev-log, open issues and the handoff. Any cached status is a second source that drifts from the record — the exact failure the gitignored handoff avoids |
 | **A handoff fires at a session break, not at an issue boundary** | Moving to the next issue in the same session reads only the record, because no handoff was written. Firing one anyway produces a file that duplicates live context |
 

@@ -164,17 +164,23 @@ writes only to its notes.
 Ordered by initiator. The distinction is load-bearing: obligations that fire without a
 request are what the operating agreement exists to govern.
 
-| | Obligation | Initiator |
-|---|---|---|
-| **0** | Hold the arc's intent; test proposed work against it | Asked, at checkpoints, and **unsolicited** on issue spawn |
-| 1 | Report where the arc stands, and what comes next | Asked |
-| 2 | Decompose an idea or a base issue into issues | Asked |
-| 3 | Catch problems at the moment they happen | **Unsolicited** |
-| 4 | Report completed work per the agreement | **Unsolicited** |
+| § | Obligation | | Initiator |
+|---|---|---|---|
+| 3.1 | **The intent check** | Hold the arc's intent; test proposed work against it | Asked, at checkpoints, and **unsolicited** on issue spawn |
+| 3.2 | **Status and flow** | Report where the arc stands, and what comes next | Asked |
+| 3.3 | **Decomposition** | Decompose an idea or a base issue into issues | Asked |
+| 3.4 | **The nudge** | Catch problems at the moment they happen | **Unsolicited** |
+| 3.5 | **The report** | Report completed work per the agreement | **Unsolicited** |
 
-### 3.1 Obligation 0 — holding the arc's intent
+**Call them by name.** The numbers were an insertion order — *the intent check* arrived last
+and took `0` because it ranks first, which is a fact about this document's history and not
+about the role. The section number is the identifier; the name is what anyone says out loud.
+The names are not new: `operating-agreement.md` already ships *Intent check*, *Report* and
+*Nudge verbosity*.
 
-Obligation 0 tests proposed work against the arc's stated intent, before the work is done:
+### 3.1 The intent check — holding the arc's intent
+
+The intent check tests proposed work against the arc's stated intent, before the work is done:
 
 ```mermaid
 flowchart TD
@@ -190,7 +196,7 @@ flowchart TD
     class U u
 ```
 
-Obligation 0 is a project-management function. It fixes the arc's stated intent and tests
+The intent check is a project-management function. It fixes the arc's stated intent and tests
 proposed work against it **before** the work is done.
 
 | | |
@@ -209,7 +215,7 @@ each individual step appears reasonable. This is one level above the conversatio
 #### 3.1.1 The intent lives in the `arc-log`
 
 No new artifact. The `arc-log` already carries *why this arc exists* and its *load-bearing
-decisions* — obligation 0 is the skill that reads them and answers against them.
+decisions* — the intent check is the skill that reads them and answers against them.
 
 #### 3.1.2 The authority ladder
 
@@ -223,7 +229,7 @@ filed during an arc scoped to Camp. Outside its stated intent, and correct to do
 Classification: *escalate*; user decision: proceed. A blocking mechanism would have produced
 the wrong outcome.
 
-**Obligation 0 never blocks — it asks.** A drift flag raised against a deliberate change of
+**The intent check never blocks — it asks.** A drift flag raised against a deliberate change of
 direction is worse than silence, and the mechanism cannot distinguish the two on its own.
 
 #### 3.1.3 When it fires
@@ -277,26 +283,26 @@ observation the user can wave off in one word, not an intervention.
 
 ##### 3.1.3.2 Rejected — firing from the event log
 
-Obligation 0 evaluates direction, not history. [m44](m44-event-log.md)'s event log serves the
-retrospective and the human reader; obligation 0 does not read it.
+The intent check evaluates direction, not history. [m44](m44-event-log.md)'s event log serves the
+retrospective and the human reader; the intent check does not read it.
 
 #### 3.1.4 Not a capability catalogue
 
 *"What can Arc do"* is a real question with two audiences, and neither is served by a
-standalone listing inside obligation 0 — a help command is read once and never again.
+standalone listing inside the intent check — a help command is read once and never again.
 
 | Question | Served by |
 |---|---|
 | What Arc can do, in general — for the user | Onboarding (backlogged; see below) |
 | What Arc can do, in general — for the agent | The plugin's own file layout |
-| What Arc just did here | The report — obligation 4 |
+| What Arc just did here | The report — the report |
 | What it should have done, and whether it did | The same report, one line further |
 
-**Obligation 0's per-action half collapses into obligation 4.** The artifact that ran the
+**The intent check's per-action half collapses into the report.** The artifact that ran the
 checks already holds what it checked and what it skipped, so no additional mechanism is
-required. The arc-level question is obligation 1.
+required. The arc-level question is status and flow.
 
-Obligation 0 is what remains after that routing: **holding the intent**, not describing the
+The intent check is what remains after that routing: **holding the intent**, not describing the
 tooling.
 
 #### 3.1.5 The report always says what was checked
@@ -322,7 +328,7 @@ With no single Camp agent, no subject exists for *"why is this being done"* — 
 `governed-by:` header plus a cross-artifact sweep was scaffolding for a question the
 reporting rule above already answers.
 
-### 3.2 Obligation 1 — where the arc stands, and what comes next
+### 3.2 Status and flow — where the arc stands, and what comes next
 
 The full crossing — from an issue that looks finished to a session working on the next one:
 
@@ -403,7 +409,7 @@ landed.**
 | Reading it back at the next session's start | [m15](m15-handoff-spine.md), invoked by Camp |
 
 **Camp never authors the handoff.** It fires the mechanism that does and verifies the result —
-the same posture as obligation 4, where the artifact does the work and Camp reports on it.
+the same posture as the report, where the artifact does the work and Camp reports on it.
 
 **A handoff is not the whole context load, and only sometimes exists.** Two distinct reads
 happen when work resumes:
@@ -431,10 +437,10 @@ they landed, and holds no state of its own.
 fresh session asks Camp and receives the same answer the previous one would have.
 
 **The cheapest obligation with immediate payoff**, which is why it ships in the first pass
-alongside the intent-holding it supports: obligation 0 cannot evaluate direction without knowing where
+alongside the intent-holding it supports: the intent check cannot evaluate direction without knowing where
 the work currently stands.
 
-### 3.3 Obligation 2 — decomposition
+### 3.3 Decomposition
 
 ```mermaid
 flowchart TB
@@ -484,7 +490,7 @@ cannot start. Sequencing is what the arc-log records as load-bearing.
 | | Owner |
 |---|---|
 | Whether the set is right | **The user.** Camp proposes; approval is a separate act |
-| What lands in this arc versus later | **The user.** Scope is obligation 0's territory, and the goal is user-owned |
+| What lands in this arc versus later | **The user.** Scope is the intent check's territory, and the goal is user-owned |
 | Whether an issue is worth doing at all | **The user** |
 
 **Camp files nothing unapproved.** The output is a proposed set, presented as a list with what
@@ -497,13 +503,13 @@ stated preference, and the boundary is not defined. It belongs in the operating 
 work-size clause once first use produces examples.
 
 **The boundary against [m20](m20-arc-decomposition.md).** m20 sequences an arc's issues at
-kickoff; obligation 2 decomposes a single idea or spec at any point. They overlap when the
+kickoff; decomposition decomposes a single idea or spec at any point. They overlap when the
 idea being decomposed *is* the arc, and which owns that case is unsettled.
 
 **Whether decomposition proposes its own arc.** A large enough idea is an arc rather than a
 set of issues. Camp does not currently make that call.
 
-### 3.4 Obligation 3 — catching problems at the moment they happen
+### 3.4 The nudge — catching problems at the moment they happen
 
 ```mermaid
 flowchart TB
@@ -579,7 +585,7 @@ there and replaced with mined evidence by
 [#36](https://github.com/Calyx-Engineering/arc/issues/36).
 
 **One precondition serves both mechanisms.** m41 asks whether the depth is excessive;
-obligation 0 asks whether the work still serves the arc. No second trigger, no second
+the intent check asks whether the work still serves the arc. No second trigger, no second
 over-firing budget.
 
 Mechanical trigger, judged response. **The skill catches the cases the agent is capable of
@@ -587,7 +593,7 @@ noticing; the agent — later — catches the ones it is not.**
 
 ---
 
-### 3.5 Obligation 4 — an audit trail in conversation
+### 3.5 The report — an audit trail in conversation
 
 ```mermaid
 flowchart TB
@@ -682,7 +688,7 @@ independence is exactly the expensive property, requiring continuous reading of 
 every turn.
 
 **Neither form blocks.** Direction sets the nudge's strength, not whether it fires — specified
-under [obligation 0](#when-it-fires).
+under [the intent check](#when-it-fires).
 
 ---
 
@@ -709,18 +715,18 @@ every turn: an observer of the main conversation consumes both sides of every me
 continuously while producing output only occasionally.
 
 Continuous observation is therefore the only form that cannot be afforded by default, and it
-is required by obligation 3 alone.
+is required by the nudge alone.
 
 ### 4.2 What Camp is, concretely
 
 | | Form | Cost |
 |---|---|---|
 | Identity | `voice.md` + the operating agreement | Free |
-| Obligations 0 and 1 | Skills, invoked | Per use |
-| Obligation 2 | A skill, invoked | Per use |
-| Obligation 4 | The artifact speaks in Camp's voice | Free |
-| Obligation 3, event half | Hooks | Free until they fire |
-| Obligation 3, conversational half | A skill now, an agent later | Bounded |
+| The intent check and status and flow | Skills, invoked | Per use |
+| Decomposition | A skill, invoked | Per use |
+| The report | The artifact speaks in Camp's voice | Free |
+| The nudge, event half | Hooks | Free until they fire |
+| The nudge, conversational half | A skill now, an agent later | Bounded |
 
 ### 4.3 The relocation preserves the role
 
@@ -801,7 +807,7 @@ recorded rather than re-explained each session.
 | Section | Holds |
 |---|---|
 | **Register and verbosity** | Colleague · terse · character, and how loud |
-| **What Camp does unasked** | The triggers for obligations 3 and 4 |
+| **What Camp does unasked** | The triggers for the nudge and the report |
 | **Work size and shape** | Issue granularity, *and* the form work takes — checklist versus prose, table versus paragraph |
 | **Response shape** | Where long is wanted, where short |
 | **Standing corrections** | Things not to repeat — see below |
@@ -977,8 +983,8 @@ Reports and unsolicited nudges are different kinds of noise.
 
 | | Default |
 |---|---|
-| **Reports** — obligation 4 | `normal` |
-| **Nudges** — obligation 3 | `loud` |
+| **Reports** — the report | `normal` |
+| **Nudges** — the nudge | `loud` |
 
 A nudge fires because a condition appears wrong and should be hard to miss. A report fires on
 every completion and should be brief.
@@ -1046,7 +1052,7 @@ the main thread. Because Camp answers from the record, its answers survive sessi
 **Fails safe.** Under uncertainty the main thread answers and notes that Camp could have. A
 misrouted question is immediately visible.
 
-**Deferred:** Camp determining unprompted *conversational* intervention. Obligation 3's event
+**Deferred:** Camp determining unprompted *conversational* intervention. The nudge's event
 triggers are specified and ship in the first pass; the continuous half does not.
 
 ---
@@ -1059,12 +1065,12 @@ sequencing is roadmap and lives in the tracker, not here.**
 | Part | State |
 |---|---|
 | `voice.md` · operating agreement · `notes.md` | **Specified.** The identity; nothing operates without it |
-| Obligation 0 — hold the arc's intent | **Specified** |
-| Obligation 1 — where the arc stands, and what is next | **Specified** |
-| Obligation 2 — decompose an idea | **Partial.** The loop is specified; its judgement calls are not |
-| Obligation 3, event half | **Specified.** Hooks on identifiable moments |
-| Obligation 3, conversational half | **Partial by design.** A skill on countable signals, limited as stated in [3.6](#36-the-relief-valve--a-skill-now-an-agent-later) |
-| Obligation 4 — report per the agreement | **Specified** |
+| The intent check — hold the arc's intent | **Specified** |
+| Status and flow — where the arc stands, and what is next | **Specified** |
+| Decomposition — decompose an idea | **Partial.** The loop is specified; its judgement calls are not |
+| The nudge, event half | **Specified.** Hooks on identifiable moments |
+| The nudge, conversational half | **Partial by design.** A skill on countable signals, limited as stated in [3.6](#36-the-relief-valve--a-skill-now-an-agent-later) |
+| The report — report per the agreement | **Specified** |
 | The monitoring agent | **Deferred.** Continuous conversation reading is the one unaffordable form |
 
 **Two parts ship knowingly incomplete**, and both say so where they are specified rather than
@@ -1085,9 +1091,9 @@ Camp could walk the user through configuring it — the operating agreement, the
 verbosity level, whether the default-branch flip is available.
 
 **Camp's first useful act being to configure itself is the clearest possible demonstration of
-obligation 0.** It also puts the m42 warning in front of the user at the moment it matters.
+the intent check.** It also puts the m42 warning in front of the user at the moment it matters.
 
-**Deferred past the first pass**, not abandoned — obligation 0 ships without it.
+**Deferred past the first pass**, not abandoned — the intent check ships without it.
 
 **What it would carry:**
 
@@ -1100,7 +1106,7 @@ obligation 0.** It also puts the m42 warning in front of the user at the moment 
 
 ## 12 What is not designed
 
-**Obligation 3's over-firing budget.** The event half and `work-watch`'s three proposing
+**The nudge's over-firing budget.** The event half and `work-watch`'s three proposing
 checks share one threshold, and nothing sets it. First use produces the number. Its fourth
 check — edit completeness — is exempt: it fires on an act, not a pause.
 
@@ -1111,7 +1117,7 @@ for what was countable *before* the frustration surfaced.
 **Whether Camp speaks for `work-watch`.** `work-watch` does the noticing; Camp may be the
 voice. One voice, several sources — attractive, unproven.
 
-**Obligation 2's judgement calls.** The loop is specified; how fine an issue should be, and
+**Decomposition's judgement calls.** The loop is specified; how fine an issue should be, and
 the boundary against [m20](m20-arc-decomposition.md), are named as undesigned in
 [3.3.3](#333-what-is-not-designed).
 
@@ -1124,4 +1130,4 @@ the boundary against [m20](m20-arc-decomposition.md), are named as undesigned in
 - [m15](m15-handoff-spine.md) · [m17](m17-k1-upkeep.md) — the record Camp reads and never owns
 - [m25](m25-agent-roster.md) — the roster Camp's deferred monitoring agent would join
 - [m44](m44-event-log.md) — the event log Camp's verbosity makes necessary
-- [m46](m46-work-navigation.md) — where a discovery goes; obligation 0 decides whether it belongs in this arc at all
+- [m46](m46-work-navigation.md) — where a discovery goes; the intent check decides whether it belongs in this arc at all
