@@ -21,6 +21,7 @@ stay open.
 | **Build order** | See §10 *Status — execution order*. Numbered 1–23; **22 is vacant** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) left the arc and took step 6.2 with it |
 | **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval.** Step 10 needs `.claude/settings.json` — §6.1.1 |
 | **Waves 1–5** | **Done and merged.** Wave 6 is [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#78](https://github.com/Calyx-Engineering/arc/issues/78) |
+| **After wave 5** | Four no-issue PRs — [PR #107](https://github.com/Calyx-Engineering/arc/pull/107) [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) [PR #110](https://github.com/Calyx-Engineering/arc/pull/110) [PR #113](https://github.com/Calyx-Engineering/arc/pull/113) — and [#105](https://github.com/Calyx-Engineering/arc/issues/105) · [#106](https://github.com/Calyx-Engineering/arc/issues/106) filed **out of** the arc. See §12.2 |
 | **Friction with Arc itself** | Goes in [`docs/arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md), **as it happens**. Read in by the retrospective at the end; it does not replace one. Governed by a switch in Camp's operating agreement, **on in this repository and off everywhere else** — [#98](https://github.com/Calyx-Engineering/arc/issues/98) |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
@@ -157,6 +158,9 @@ flowchart LR
 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | An edit is reported done without checking everywhere the claim appears | [#60](https://github.com/Calyx-Engineering/arc/issues/60) | One claim lives in a table, a diagram label and a summary row. Editing one and reporting done left the others contradicting it, four times consecutively. **Wave 2.4** |
 | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | A friction log for the arc, and the switch that enables it | [#32](https://github.com/Calyx-Engineering/arc/issues/32) | The autonomous loop's merge step was blocked on two consecutive issues and the wrong cause was recorded both times. Nothing in the ladder held *friction with the tooling*, so it was on its way to being lost until a retrospective mined it back |
 | [PR #100](https://github.com/Calyx-Engineering/arc/pull/100) | The autonomy switch's missing half — the permission allow-list, and the failure path for step 10 | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | Writing the friction log found the cause of its own first entry: autonomous mode was declared in a document the harness never reads. **No issue** — branch to PR directly |
+| [PR #107](https://github.com/Calyx-Engineering/arc/pull/107) | A spec names the artifacts that implement it | [#105](https://github.com/Calyx-Engineering/arc/issues/105) | Four mechanisms pointed at nothing from the skill implementing them, each found only when something edited the pair together. **No issue** |
+| [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) | A no-issue branch carries its PR number | The user | Three no-issue branches in one session, none with a number. m46 §9 required one and nothing routed anyone to it. **No issue** |
+| [PR #110](https://github.com/Calyx-Engineering/arc/pull/110) | The branch-naming flow, drawn and corrected | [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) | Drawing the flow exposed that [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) had not followed the process it wrote. **No issue** |
 
 ---
 
@@ -513,6 +517,9 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **Merged** — [PR #99](https://github.com/Calyx-Engineering/arc/pull/99). Spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order. **Takes no step number**; the order is frozen |
 | — | — | *no issue* | The autonomy switch's missing half | **Merged** — [PR #100](https://github.com/Calyx-Engineering/arc/pull/100). Spawned by [#98](https://github.com/Calyx-Engineering/arc/issues/98); a fix small enough to go branch-to-PR. **Step 10 executed for the first time on this PR** |
+| — | — | *no issue* | A spec names the artifacts that implement it | **Merged** — [PR #107](https://github.com/Calyx-Engineering/arc/pull/107). Adds §6.1.3 to this file |
+| — | — | *no issue* | A no-issue branch carries its PR number | **Merged** — [PR #108](https://github.com/Calyx-Engineering/arc/pull/108). m46 §9.1, and `hooks/camp-branch-check` learns the second form |
+| — | — | *no issue* | The branch-naming flow, drawn and corrected | **Merged** — [PR #110](https://github.com/Calyx-Engineering/arc/pull/110). Ships `tools/new-direct-pr.sh` |
 | — | — | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and decomposition | **Closed** — produced m43, m44 and this plan |
 
 ### 10.1 What each wave is
@@ -639,13 +646,38 @@ The user identified it: *"you dont get it when i ask you because then i'm explic
 
 **[PR #100](https://github.com/Calyx-Engineering/arc/pull/100) added `.claude/settings.json`, and every PR after it merged unattended.** Five of the wave's seven.
 
-### 12.2 What this wave did not fix
+### 12.2 The stretch after the wave — four no-issue PRs
+
+**Wave 5 closed, and the work continued as direct PRs.** [PR #107](https://github.com/Calyx-Engineering/arc/pull/107) [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) [PR #110](https://github.com/Calyx-Engineering/arc/pull/110), plus
+[#105](https://github.com/Calyx-Engineering/arc/issues/105) and [#106](https://github.com/Calyx-Engineering/arc/issues/106) filed out of the arc. All merged.
+
+| | |
+|---|---|
+| **The trigger was a repeated correction** | *"we've talked about naming the branches for a direct pr before. its still failing on you — so we have to change the rule because you're not doing it."* Three no-issue branches in one session, none carrying a number |
+| **The rule existed and was unreachable** | m46 §9 gives both forms. It is read when an issue traces to m46, and every one of these was a no-issue PR. Six artifacts declared the issue form; one declared both |
+| **It was also not followable** | The PR number is issued when the PR opens. §9 required a number that does not exist at branch time and said nothing about how to get one |
+| **Drawing the fix exposed a second defect** | The corrected §9.1 said *open the PR immediately, the window is seconds*. [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) branched, built everything and opened it an hour later. **Prose can say *immediately* and be read past; an arrow cannot** |
+| **The claim then forced a tool** | `tools/new-direct-pr.sh` collapses predict-branch-stub-push-open into one command, which is what makes *seconds* true rather than aspirational |
+
+**Three probes, three numbers burned, and two beliefs disproved.**
+
+| Probe | |
+|---|---|
+| [PR #109](https://github.com/Calyx-Engineering/arc/pull/109) | **Renaming an open PR's branch closes the PR.** `OPEN` → `CLOSED`, head still naming a branch that no longer exists. It was about to be documented as the preferred correction |
+| [PR #111](https://github.com/Calyx-Engineering/arc/pull/111) | **A PR's `head` cannot be changed.** The PATCH returned 200 and ignored the field; a second PR from the same head was rejected outright. The shared-`temp/`-branch idea fails twice |
+| [PR #112](https://github.com/Calyx-Engineering/arc/pull/112) | The script's live path, end to end. Five composed steps that had only ever been dry-run |
+
+> **Two of the three probes disproved something already written down as true.** Both claims came
+> from documentation rather than from a run. That is the pattern worth carrying out of this
+> stretch, and it is the same one entry 1 of the friction log records.
+
+### 12.3 What this wave did not fix
 
 | | |
 |---|---|
 | **Six places outside `work-watch` assert its check count** | Moved four → five → six in one day. Swept clean both times, and never de-duplicated |
 | **Issues are not re-read against the tree before being picked up** | Four of five needed their scope re-derived at pass 2. The loop's pass 2 catches it, at the cost of a plan written and then rewritten |
-| **Nothing here has run** | `hooks/hooks.json` resolves `${CLAUDE_PLUGIN_ROOT}`. Fixtures and selftests are real executions; the deployed path is not |
+| **Almost nothing here has run** | `hooks/hooks.json` resolves `${CLAUDE_PLUGIN_ROOT}`, so no hook fires and no skill is invoked. **`tools/` is the exception** — `new-direct-pr.sh`, `verify-hook.sh`, `verify-tracker-body.sh` and `sync-local-skills.sh` all run here for real, which is why the only genuinely soaked change in this arc is a script |
 
 ## 13 Soak
 
@@ -660,6 +692,9 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 | `.claude/settings.json` — the permission allow-list ([PR #100](https://github.com/Calyx-Engineering/arc/pull/100)) | Five subsequent merges, unattended | **Fired correctly.** §6.1.1 step 10 executed for the first time in three attempts across two arcs |
 | `skills/spec-interview` — the question inventory ([#33](https://github.com/Calyx-Engineering/arc/issues/33)) | — | **Unsoaked.** No scoping interview has run since it merged |
 | `skills/work-watch` — checks 5 and 6 ([#35](https://github.com/Calyx-Engineering/arc/issues/35), [#98](https://github.com/Calyx-Engineering/arc/issues/98)) | — | **Unsoaked.** Nothing in this repository runs a skill |
+| `hooks/camp-branch-check` — the `pr<NN>` form ([PR #108](https://github.com/Calyx-Engineering/arc/pull/108)) | `tools/verify-hook.sh`, 13 cases | **Fired correctly.** A `pr<NN>` branch passes, a slug-only branch reports. Not soaked in a live session — no hook runs here |
+| `tools/new-direct-pr.sh` ([PR #110](https://github.com/Calyx-Engineering/arc/pull/110)) | [PR #112](https://github.com/Calyx-Engineering/arc/pull/112) end to end, then [PR #113](https://github.com/Calyx-Engineering/arc/pull/113) in real use | **Fired correctly, twice.** Prediction held both times; draft, base and title prefix all correct. **This is the only wave-5-era change soaked by using it rather than by hand** |
+| m46 §9.1 · `skills/issue-write` — the branch rule ([PR #108](https://github.com/Calyx-Engineering/arc/pull/108), [PR #110](https://github.com/Calyx-Engineering/arc/pull/110)) | [PR #113](https://github.com/Calyx-Engineering/arc/pull/113), this close-out | **Fired correctly.** The branch was named by the rule, by the script, before the work started |
 
 > **The first four of these are the first soak lines in this repository, across three arcs.**
 > `arc-02` and everything in `arc-03` before [#42](https://github.com/Calyx-Engineering/arc/issues/42)
@@ -677,7 +712,9 @@ execution and is worth exactly what it says.
 - [ ] Status table reflects reality
 - [ ] Default branch restored — `tools/arc-default-branch.sh restore`
 - [ ] Arc PR into `main` carries a `Closes` line for every issue
-- [ ] Soak line appended for every plugin change made during this arc — **wave 5 done**, see *Soak* above. Waves 1–4 are still unsoaked
+- [ ] Soak line appended for every plugin change made during this arc — **wave 5 and the direct-PR stretch done**, see *Soak* above. Waves 1–4 are still unsoaked
+- [ ] `docs/arc-work/03-camp/friction-log.md` swept — findings that outlive the arc graduated to specs or issues, per its own header
+- [ ] [#105](https://github.com/Calyx-Engineering/arc/issues/105) and [#106](https://github.com/Calyx-Engineering/arc/issues/106) confirmed still open on *Self-improvement* — they are this arc's output, filed deliberately outside it
 - [ ] K2 swept — durable product facts graduated
 
 **Why nothing has run, and what closes it.** `hooks/hooks.json` registers all four hooks
