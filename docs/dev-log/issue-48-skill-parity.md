@@ -2,7 +2,7 @@
 
 > Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#68](https://github.com/Calyx-Engineering/arc/issues/68)  ·  **PR:** —
+**Issue:** [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#68](https://github.com/Calyx-Engineering/arc/issues/68)  ·  **PR:** [#114](https://github.com/Calyx-Engineering/arc/pull/114)
 
 ## Problem
 
