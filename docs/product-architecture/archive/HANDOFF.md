@@ -20,7 +20,7 @@ for comparison.
 | File | What it is | Reviewed? |
 |---|---|---|
 | [product-plan.md](product-plan.md) | **The conclusion.** Four plugins, 37 mechanisms, build order | §1–5 yes · §6–7 **no** |
-| [friction-transcript-log.md](../retrospectives/2026-08-plugin-line/friction-transcript-log.md) | The evidence. Eight frictions with quotes | Yes, fully |
+| [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) | The evidence. Eight frictions with quotes | Yes, fully |
 | [mechanisms/](mechanisms/) | Eleven specs | Written, not line-reviewed |
 | [what-the-tools-do.md](what-the-tools-do.md) | Earlier framing — jobs the tools perform | Superseded, still useful |
 | [archive/](archive/) | Superseded framings, kept for reference | Not current — do not cite |

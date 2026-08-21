@@ -14,6 +14,7 @@ would otherwise have to reconstruct.
 |---|---|
 | **What was being done** | The issue or step, so the trigger is locatable |
 | **What happened** | Observed, not diagnosed. Quote the real output |
+| **What is established, and what is not** | The diagnosis, kept apart from the observation — and naming outright what has *not* been isolated. Entry 1 exists because these two were merged once |
 | **What it cost** | Minutes, a wrong belief, a handed-off task. *"None"* is a valid answer and worth writing |
 | **What would have prevented it** | The mechanism, not the fix to this instance |
 | **Where it went** | An issue number, a spec section, or **nothing yet** |
@@ -56,10 +57,10 @@ Both handed the merge to the user. [#32](https://github.com/Calyx-Engineering/ar
 
 The first three rows say *the `--delete-branch` flag is the cause*, and that went into this
 log, the arc-log and the handoff. **The fourth row falsifies it** — [#31](https://github.com/Calyx-Engineering/arc/issues/31) ran the flagless
-form and was refused. It was one `grep` of a transcript that was already saved, run during
-the review pass, after the wrong version was committed.
+form and was refused too. One `grep` of a transcript this file's own handoff already named
+produced it, during the review pass, after the wrong version was committed.
 
-### What is actually established
+### What is established, and what is not
 
 | | |
 |---|---|

@@ -260,7 +260,7 @@ it.
 
 ### 4.4 Learn — mining transcripts for what to codify
 
-**The evidence.** [friction-transcript-log.md](../retrospectives/2026-08-plugin-line/friction-transcript-log.md) was produced by reading 28 ROADZ
+**The evidence.** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) was produced by reading 28 ROADZ
 transcripts, filtering to David's 474 messages, then to 75 carrying a correction. It
 corrected three architecture errors in one pass that four rounds of reasoning from
 design documents had not.

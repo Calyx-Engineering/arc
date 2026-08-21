@@ -275,8 +275,7 @@ case "${1:-}" in
   title)    [ $# -ge 2 ] && [ $# -le 3 ] || usage; check_title "$2" "${3:-}" ;;
   # Raw findings, one per line, exit 0 always. `hooks/tracker-verify` reads this so the
   # rules have one home; a hook must never inherit a non-zero exit from a helper.
-  title-findings) [ $# -ge 2 ] && [ $# -le 3 ] || usage; title_findings "$2" "${3:-}" ;;
-  binding)  [ $# -eq 3 ] || usage; check_binding "$2" "$3" ;;
+  title-findings) [ $# -ge 2 ] && [ $# -le 3 ] || usage; title_findings "$2" "${3:-}" ;;  binding)  [ $# -eq 3 ] || usage; check_binding "$2" "$3" ;;
   selftest) selftest ;;
   *)        usage ;;
 esac
