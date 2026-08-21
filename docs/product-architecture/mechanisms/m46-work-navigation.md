@@ -380,8 +380,39 @@ reader at an unrelated object. If an issue exists, its number is the one that na
 | | |
 |---|---|
 | **The number is mandatory** | It is what makes the branch sayable and matchable against what is under review |
+| **So is the `pr` label** | Issues and PRs share one counter. An unlabelled number points at whichever object happens to hold it |
 | **The hint is short** | A twenty-word slug truncates to nothing |
 | **The PR title carries the real name** | And is **retitled as the unit grows** |
+
+### 9.1 The PR number does not exist when the branch is created
+
+**Predict it, then confirm.** The number is issued when the PR opens, so a no-issue branch is
+named before the identifier exists. Guessing without confirming reproduces the exact failure
+above — a branch pointing at an unrelated object.
+
+| | |
+|---|---|
+| 1 | **Predict.** The next number is the higher of the latest issue and the latest PR, plus one — they share a counter |
+| 2 | **Branch with it**, and open the PR immediately. The window in which someone else can take the number is the only risk, and it is seconds wide |
+| 3 | **Confirm.** The PR's number against the branch's. Equal, and nothing more is needed |
+| 4 | **Correct, if it drifted** | See below |
+
+```sh
+I=$(gh issue list --state all --limit 1 --json number --jq '.[0].number')
+P=$(gh pr list --state all --limit 1 --json number --jq '.[0].number')
+N=$(( (I > P ? I : P) + 1 ))
+```
+
+**Two corrections, and the second always works.**
+
+| | |
+|---|---|
+| **Rename the branch** | `gh api repos/{owner}/{repo}/branches/{branch}/rename`. GitHub retargets open PRs. **Preferred where it is available** |
+| **Close, re-branch, re-open** | Nothing is merged yet, so the cost is one PR number burned. Needs no API beyond what opening a PR already needs |
+
+**Do not leave a mismatch.** A branch naming a PR that is not the one it opened is worse than
+a branch naming nothing — it is confidently wrong, which is what the number was added to
+prevent.
 
 **GitHub's issue and PR numbers share one counter**, so the PR number is already unique
 across both. A second index would create two tokens for one thing.

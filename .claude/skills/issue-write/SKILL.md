@@ -152,6 +152,25 @@ silently closes live work and nobody notices until someone looks for it.
 PR directly — filing an issue to close it in the same hour is ceremony. File one when the work
 needs scheduling, discussion, or a place to accumulate before it starts.
 
+**A no-issue PR's branch still carries a number.** The branch name is often the only reference
+visible — an editor's status bar truncates early, and it is where the work is named while the
+PR is being read in a browser.
+
+```text
+arc/<nn>-<slug>-issue-<NN>-<hint>    an issue exists — use its number
+arc/<nn>-<slug>-pr<NN>-<hint>        no issue — the PR number is the only identifier
+```
+
+**The `pr` label is not decoration.** Issues and PRs share one counter, so a bare number does
+not say which object it names.
+
+**The number does not exist yet when you branch — predict it, then confirm.** The next number
+is the higher of the latest issue and the latest PR, plus one. Branch with it, open the PR
+immediately, and check the two agree. If they drifted, rename the branch
+(`gh api .../branches/{branch}/rename`) or close and re-open on a corrected one.
+[m46 §9.1](../../docs/product-architecture/mechanisms/m46-work-navigation.md) carries the
+detail. **A branch naming a PR that is not its own is worse than one naming nothing.**
+
 ### Placement
 
 The keyword needs the number immediately after it, on its own line, at the end of the body:
