@@ -215,3 +215,49 @@ is to halt the run and hand back to the user.
 ### Where it went
 
 - **Nothing yet.** m15's, and one row of `commands/arc-next.md`. **Unfiled — ask**
+
+---
+
+## 4 · The merge step is denied again, with the allow-list in place
+
+**2026-08-21 · [#48](https://github.com/Calyx-Engineering/arc/issues/48), [PR #114](https://github.com/Calyx-Engineering/arc/pull/114), §6.1.1 step 10**
+
+### What happened
+
+Two attempts, the second the bare form step 10 prescribes as the retry:
+
+```text
+$ gh pr merge 114 --merge
+Permission for this action was denied by the Claude Code auto mode classifier.
+Reason: Blocked by classifier.
+```
+
+`.claude/settings.json` is unchanged from the version [PR #100](https://github.com/Calyx-Engineering/arc/pull/100) added and still
+carries `"Bash(gh pr merge:*)"`. Read back at the moment of the denial, not from memory.
+
+### What is established, and what is not
+
+| | |
+|---|---|
+| **Established: the allow-list alone is not sufficient** | The arc-log's §12.1 says *"every PR after it merged unattended. Five of the wave's seven."* The same file, the same command shape, denied |
+| **Established: it is not the compound-command form** | The first attempt chained `gh pr view` before it; the second was the bare command. Both denied |
+| **Not established — and deliberately not guessed** | Whether the difference is the session, the mode, project-settings trust, or something the classifier reads from context. **Three sessions have now recorded a denial and two of the three diagnoses were wrong.** Entry 1 exists because of exactly this |
+| **What would settle it** | One question to the user, and a `grep` of the transcript from the session where five merges succeeded — which the handoff names |
+
+### What it cost
+
+[PR #114](https://github.com/Calyx-Engineering/arc/pull/114) handed to the user, and wave 6.3 ([#78](https://github.com/Calyx-Engineering/arc/issues/78)) blocked behind it —
+[#78](https://github.com/Calyx-Engineering/arc/issues/78) touches every skill this PR re-synced, so branching it from an unmerged
+[PR #114](https://github.com/Calyx-Engineering/arc/pull/114) guarantees a conflict.
+
+### What would have prevented it
+
+| | |
+|---|---|
+| **§6.1.1 step 10 still has no failure path beyond "hand it over"** | Named as unfiled at the end of entry 1, and unchanged since |
+| **A soak line records that a mechanism was followed, not that it keeps working** | The allow-list's soak line reads *"Fired correctly. §6.1.1 step 10 executed for the first time in three attempts across two arcs."* True when written, and it does not survive to here |
+
+### Where it went
+
+- **[PR #114](https://github.com/Calyx-Engineering/arc/pull/114)** — the merge is the user's
+- **m40 / [#73](https://github.com/Calyx-Engineering/arc/issues/73)** — third data point for the durable switch. **Unfiled**
