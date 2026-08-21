@@ -62,7 +62,19 @@ the arc-log records the user's proceed in §4.1. Not re-raised.
 
 ## Decisions & trade-offs
 
-_Filled as they are made._
+| | |
+|---|---|
+| **The title rules live in `tools/verify-tracker-body.sh`, not in the hook** | The hook is `PostToolUse` — by the time it speaks the wrong title is in the tracker, and the north star says *caught before the write*. That tool already carries the same argument for keyword placement. The hook calls it as a subprocess rather than sourcing it: the tool sets `-u`, and a guardrail that must fail open cannot inherit that |
+| **The mechanical threshold is twelve words; the guidance is eight** | Run against this repo's twenty-five open issues, a threshold of ten flagged three titles that were doing their job. Judgement lives in the skill and takes the borderline; the check takes what nobody would defend |
+| **A comma count, not a word count, catches the worst case** | `feat: carry work navigation in issue-write, decompose, …` is eleven words, under any defensible length gate. Six file names cost one word each. Three separators is the signal, and a serial list inside one name needs at most two |
+| **[#73](https://github.com/Calyx-Engineering/arc/issues/73) keeps its `spec:` prefix** | The skill decides the type is `scope:`, and the same section says *retitle before children exist, not after*. [#73](https://github.com/Calyx-Engineering/arc/issues/73) is referenced from three sections of the arc-log and from a pointer comment on the issue itself. Leaving it is the rule being followed, not a contradiction of it |
+
+## Rejected approaches
+
+| | |
+|---|---|
+| **A shared shell library sourced by both** | Would add a third file that has to ship, and sourcing leaks `set -u` into a hook whose whole contract is failing open. A subprocess costs one fork and cannot leak anything |
+| **Altering the issue's own worked-correct title to fit the regex** | `scope: Camp — obligations, documents, and the build decomposition` tripped the multi-deliverable check on its Oxford comma. Fixing the check was right; trimming the example to suit it would have been the tail wagging the dog |
 
 ## Retrospective
 

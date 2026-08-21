@@ -57,7 +57,7 @@ scanning a milestone list weeks later — no body, no conversation, no arc conte
 | | **Claims more than merging delivers** | **Describes the deliverable instead of naming it** |
 |---|---|---|
 | **Looks like** | `feat: Camp — the delivery assistant`, on an issue that delivered a scoping decision | `feat: carry work navigation in issue-write, decompose, chat-response, record-route, CLAUDE.md and m21 (m46)` |
-| **Costs** | The parent stays open across every child. The milestone shows one perpetually incomplete item instead of steady progress | Word salad — harder to scan than the vague title it replaced |
+| **Costs** | The parent stays open across every child, so the milestone shows one perpetually incomplete item instead of steady progress | Word salad — harder to scan than the vague title it replaced |
 | **Instead** | `scope: Camp — obligations, documents, and the build decomposition` | `feat: work navigation artifacts (m46)` |
 
 ### A name, not a summary
@@ -69,7 +69,7 @@ affected files, every one of them body material.
 | | |
 |---|---|
 | **A title identifies; the body explains** | It has to be findable in a list, not understood from the list |
-| **Length is the tell** | Past roughly eight words it has stopped naming and started explaining. `hooks/tracker-verify` reports at twelve — it takes the cases judgement would not argue about |
+| **Length is the tell** | Past roughly eight words it has stopped naming and started explaining. `verify-tracker-body.sh title` reports at twelve — the mechanical check takes only the cases judgement would not argue about |
 | **No clause after the deliverable** | *"…and nothing catches it"*, *"…so X applies without being taught"* — cut at the deliverable |
 | **Do not list the files** | Six artifacts in a title is the body's table, inlined |
 | **No invented vocabulary** | A term coined in the conversation that produced it means nothing in a list |
@@ -91,8 +91,9 @@ inherits a capability-sized title, which is the first failure above. **Not `spec
 word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
 its keep stays open until a month of real use answers it.
 
-**Retitle before children exist, not after.** A title referenced from comments, documents and
-other issues costs more to change than the wrong title costs to keep. Size it at filing.
+**Retitle before children exist, not after** — once a title is referenced from comments,
+documents and other issues, changing it costs more than the wrong title does. Size it at
+filing.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the

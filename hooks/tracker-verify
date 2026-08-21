@@ -12,8 +12,8 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, pr-write, pr-merge
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-scope, issue-title-length, issue-title-list, issue-title-clause, issue-scope-type, pr-base
-# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-* (not an issue, or tools/verify-tracker-body.sh is not beside the hook), issue-scope-type (no body to read), pr-base (no arc branch checked out)
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-length (not an issue, or verify-tracker-body.sh is not beside the hook), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (no arc branch checked out)
 #
 # Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
 
