@@ -10,7 +10,14 @@
 # exercised in other repos, never against itself. See CLAUDE.md, "Soak".
 #
 # Usage:  tools/sync-local-skills.sh [--check]
-#         --check  exit 1 if any copy is stale, changing nothing
+#         --check  report and exit 1, changing nothing
+#
+# What --check fails on: a copy edited directly, a shipping skill with no copy, a copy whose
+# source was deleted, and a shipping skill the product definition's artifact table does not
+# name with a mechanism number. It reports without failing on a skill or command that lives
+# only in .claude/ by intent.
+#
+# tools/verify-sync-parity.sh exercises all of that against throwaway fixture trees.
 
 set -uo pipefail
 
@@ -138,6 +145,9 @@ for d in .claude/skills/*/; do
   fi
 done
 
+# Commands are copied verbatim, so they carry no banner and there is no marker separating a
+# copy from a repo-local command. Reported either way, and never a failure — the alternative
+# is failing on a file the repo is entitled to have.
 for f in .claude/commands/*.md; do
   [ -f "$f" ] || continue
   c=$(basename "$f")

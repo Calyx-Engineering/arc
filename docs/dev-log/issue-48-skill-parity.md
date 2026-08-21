@@ -77,6 +77,39 @@ nothing has to be kept in step by hand.
 
 ## Decisions & trade-offs
 
+| | |
+|---|---|
+| **The banner is the marker, so there is no exception list** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) items 2 and 3 both allow "or declared deliberate", which reads as a second list to maintain — the exact thing [#68](https://github.com/Calyx-Engineering/arc/issues/68) is about. The sync already writes a do-not-edit banner into every copy, so a `.claude/skills/` directory *with* the banner and no source is a deleted skill (fail) and one *without* it is repo-local (report). Nothing to keep in step by hand |
+| **`plugin-retrospective` moved, rather than m33's row being pointed at `.claude/`** | Two of three declarations already said `skills/` — the ROADMAP and the registry's artifact table. Only m33's Spec link and the file's location disagreed, so the tree was the outlier |
+| **The registry check lives in the sync script** | It is not syncing, and the script now does two jobs. There is no other runner, [#48](https://github.com/Calyx-Engineering/arc/issues/48)'s fifth box is otherwise satisfied by assertion, and both checks answer one question: is this skill accounted for. Worth naming as a seam if `tools/` ever grows a general checker |
+| **Link re-basing, which the north star did not ask for** | **Derived.** The copies sit one directory deeper than their sources, so 28 links across 11 of 12 copies resolved to `.claude/docs/` and 404'd — in the tree that actually loads. A check that calls those copies current is the same untrustworthiness as one that exits 0 with no copy on disk, so it is inside the star rather than beside it |
+| **`SYNC_ROOT`, one line, so the script is testable** | The alternative is a test that creates and deletes fixture directories inside the real `skills/` and `.claude/skills/`. An interrupted run then leaves residue in the trees being checked |
+
 ## Rejected approaches
 
+| | |
+|---|---|
+| **Adding the two missing names to `SKILLS`** | What [#48](https://github.com/Calyx-Engineering/arc/issues/48) item 4 literally asks. It closes today's gap and re-opens on the next skill — which is how this one opened |
+| **An `EXCEPT` list for skills not worth copying locally** | The old comment's stance — "not every shipped skill, only the ones that shape how work is done here". A second hardcoded list, one line below the one being deleted |
+| **Testing by mutating the real trees** | How the four cases were first run by hand. Fine interactively, wrong committed: an interrupted run leaves `skills/ghost/` behind in the tree the check is meant to police |
+| **Adding `tools/verify-sync-parity.sh` to the registry's artifact table** | No `tools/` script is in it — not `verify-hook.sh`, not `verify-tracker-body.sh`. Adding one alone would be the inconsistency, and the table having no home for `tools/` is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s to resolve. Named, not swept, per arc-log §6.1.3 |
+
 ## Retrospective
+
+**The check was wrong in more ways than the issue described.** [#48](https://github.com/Calyx-Engineering/arc/issues/48)
+named one failure and carried a *Known defect* section for a second that had already been
+fixed. Running the check first, before reading further, is what separated the two — and found
+a third the issue does not mention at all.
+
+| What the old check reported clean | |
+|---|---|
+| `skills/engineering-report` had no copy | The [#68](https://github.com/Calyx-Engineering/arc/issues/68) defect, live in the tree |
+| 28 links across 11 of 12 copies resolved to `.claude/docs/` | Never noticed, because the copies are read by Claude Code and not by a human following links |
+| `plugin-retrospective` sat where the ROADMAP and the registry both said it did not | Invisible in both directions — no source to compare, no list entry to miss |
+
+**The `--check` that exits 0 while something is broken is the shape to watch for.** Three
+different mechanisms produced it here, and the arc-log's wave 5 review records the same shape
+twice more — a rule contradicted by its own example, a structural check passing on a wrong
+artifact. The fix each time is a test that fails when the check is removed, which is what
+`tools/verify-sync-parity.sh` is for: nine cases, and four deliberate mutations of the script
+each failing exactly the case meant to catch them.
