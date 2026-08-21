@@ -223,8 +223,9 @@ flowchart TB
     MODE ==>|"autonomous"| READ["<b>Read the arc-log whole</b><br/>the execution order<br/>and this definition"]
     subgraph L[" One issue — read to merge "]
         direction TB
-        ISSUE["<b>Take the next row</b><br/>read the issue from gh<br/>create the branch"] --> PLAN["<b>Plan</b><br/>the execution plan<br/>in the dev-log"]
-        PLAN --> IMPL["<b>Initial pass</b><br/>fix the issue's intent,<br/>not its symptom"]
+        ISSUE["<b>Take the next row</b><br/>read the issue from gh<br/>create the branch"] --> INTENT["<b>Intent and north star</b><br/>what the issue is really for,<br/>written into the dev-log<br/><i>before any plan exists</i>"]
+        INTENT --> PLAN["<b>Plan</b><br/>the execution plan,<br/>in the dev-log,<br/>tested against the north star"]
+        PLAN --> IMPL["<b>Initial pass</b><br/>fix the intent,<br/>not the symptom"]
         IMPL --> REF["<b>Refine · 4 passes</b><br/>every axis, every pass"]
         REF --> REV["<b>Review · 3 passes</b><br/>fixing what<br/>each pass finds"]
         REV --> PR["<b>Open the PR</b><br/>milestone + Closes"]
@@ -238,7 +239,7 @@ flowchart TB
     NEXT ==>|"yes"| BRK{{"<b>BREAK</b><br/>handoff written, mode cued<br/>50-word status, problems first"}}
     classDef n fill:#1e3a5f,stroke:#4a9eff,color:#fff
     classDef s fill:#4a3520,stroke:#d98f2b,color:#fff
-    class START,READ,ISSUE,PLAN,IMPL,REF,REV,PR,MERGE n
+    class START,READ,ISSUE,INTENT,PLAN,IMPL,REF,REV,PR,MERGE n
     class MODE,MAN,FIN,NEXT,BRK s
     style L fill:#0d1b2a,stroke:#2c4a6b,color:#8fb8e0
 ```
@@ -249,9 +250,9 @@ flowchart TB
 |---|---|
 | 1 | **Read the issue from `gh`** — the one the execution order names, not the one that seems next |
 | 2 | **Create the branch** |
-| 3 | **Understand the issue's intent, and fix that durably.** Not the symptom it happens to describe |
-| 4 | **Write the execution plan in the dev-log**, before implementing |
-| 5 | **Implement the initial pass** |
+| 3 | **Establish the issue's intent and its north star, in the dev-log — before any plan exists.** What the issue is really for, and what the work is steering by. A plan written first steers by the issue's wording instead |
+| 4 | **Write the execution plan in the dev-log**, tested against the north star above |
+| 5 | **Implement the initial pass** — fix the intent, not the symptom it happens to describe |
 | 6 | **Refine four times** — the axes are below |
 | 7 | **Final review, iterated three times**, fixing what each pass finds |
 | 8 | **Open the PR** |
