@@ -3,7 +3,7 @@
 > **Append-only.** Every Arc artifact firing, recorded regardless of verbosity. Newest at the
 > bottom. **Never edit or reorder an existing entry** — a correction is a new entry.
 >
-> Format and rules: this file · Spec: [m44](../docs/product-architecture/mechanisms/m44-event-log.md)
+> Format and rules: this file · Spec: [m44](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m44-event-log.md)
 
 **Arc:** `arc/&lt;NN&gt;-&lt;slug&gt;` · **Rotated:** &lt;YYYY-MM-DD&gt; · **Previous:** &lt;link or "none"&gt;
 
@@ -101,8 +101,8 @@ one.
 
 | | Where instead |
 |---|---|
-| What was **decided** | The [arc-log](../docs/arc-log/) — this file records what *occurred* |
-| Why a choice was made | The issue's [dev-log](../docs/dev-log/) |
+| What was **decided** | The [arc-log](../../docs/arc-log/) — this file records what *occurred* |
+| Why a choice was made | The issue's [dev-log](../../docs/dev-log/) |
 | Conversation | Nowhere. The transcript is its own record |
 
 **Development drift is the gap between this file and the arc-log**, which is why a

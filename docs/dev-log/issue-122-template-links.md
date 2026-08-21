@@ -9,7 +9,12 @@
 **18 relative links across five templates resolve to nothing once the template is copied.** Eleven
 are in `templates/camp/operating-agreement.md`, which lands at `.claude/arc/camp/` and is the
 document [m43](../product-architecture/mechanisms/m43-camp-assistant.md) requires a user to read
-and approve. **They are dead in this repository right now.**
+and approve.
+
+**They do not reproduce in this repository, and that is why they survived.**
+`.claude/arc/camp/`'s copies use `../../../docs/` and resolve; the templates use `../../`. Someone
+corrected the copies by hand and left the template wrong, so every reader since has seen a working
+document and an unread template.
 
 Found by [#119](https://github.com/Calyx-Engineering/arc/issues/119), the first pre-release review.
 It is the one blocking finding, so [#120](https://github.com/Calyx-Engineering/arc/issues/120)
@@ -65,8 +70,35 @@ decorative.
 | 2 | **Repair the 18** | 15 to absolute URLs, 3 to the correct depth |
 | 3 | **`tools/verify-template-links.sh`** | The destination map, and every link resolved from where it lands. Fails on a template with no map row — the same shape as `verify-all.sh` failing on a hook with no case directory |
 | 4 | **Into `tools/verify-all.sh`** | A ninth gate. A check nobody runs is what produced this |
-| 5 | **Repair `.claude/arc/camp/*`** | The live copies in this repo carry all eleven |
+| 5 | ~~Repair `.claude/arc/camp/*`~~ | **Dropped.** They were already correct — see above. Verified by resolving each, not by grepping for the prefix |
 
 ## Retrospective
 
-*Written at PR time.*
+**18 links repaired, a ninth gate added, and one of my own claims corrected.**
+
+| | |
+|---|---|
+| **The rule is per-link, not per-template** | Fifteen became absolute URLs; three were depth fixes. A single rule would have got fourteen of them wrong in a way that looks right — the trap this issue exists to close |
+| **The gate has a destination map, and fails on a template it has no row for** | Same shape as `verify-all.sh` failing on a hook with no case directory. A template nobody mapped is one nobody checks, and it reads as coverage |
+| **Both mutations were run, and the output pasted** | A link broken at the destination: caught, with the resolved path named. A template added with no map row: caught by name. **A gate that has never failed is a gate nobody has tested** |
+| **`templates/README.md` carries the rule** | The gate enforces it; the README says why, with the correct and incorrect forms side by side. It is the one file here that is not a template, and the gate names it as the single exception rather than keeping a list |
+
+### The correction
+
+**I reported the eleven links as dead in this repository. They are not.** `.claude/arc/camp/`'s
+copies use `../../../docs/` and resolve; `grep -c "\.\./\.\./docs/"` matched them as a substring
+and I read the count as confirmation.
+
+**The finding is unchanged and still blocking** — the templates are what ships, and a consuming
+repo copying them gets broken links. But the reason it survived is the opposite of what I wrote:
+**the copies were corrected by hand and the template was left wrong**, so every reader since has
+seen a working document. Corrected in [#122](https://github.com/Calyx-Engineering/arc/issues/122),
+the review's §7.1, and [#119](https://github.com/Calyx-Engineering/arc/issues/119)'s dev-log.
+
+> **A substring match is not a resolution.** The check that settled it was `[ -e "$p" ]` from the
+> directory that holds the link — which is exactly what the new gate does, and what I should have
+> run before writing the claim rather than after.
+
+### Spawned
+
+- Nothing new. The remaining review findings are [#123](https://github.com/Calyx-Engineering/arc/issues/123)–[#126](https://github.com/Calyx-Engineering/arc/issues/126), already filed

@@ -41,7 +41,7 @@ say autonomous, it is manual.
 request scoped to anything other than the next ordered action is answered rather than executed
 — nothing is committed, pushed or merged as a side effect of answering. It resumes when the
 user points back at the work, never because the conversation stopped.
-[`autonomy-set`](../skills/autonomy-set/SKILL.md) holds the rules; [m40](../docs/product-architecture/mechanisms/m40-autonomy-switch.md) is the spec.
+[`autonomy-set`](https://github.com/Calyx-Engineering/arc/blob/main/skills/autonomy-set/SKILL.md) holds the rules; [m40](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m40-autonomy-switch.md) is the spec.
 
 ## Do these in order
 

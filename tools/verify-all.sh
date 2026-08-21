@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-sync-parity verify-tracker-body verify-hook"
+KNOWN="verify-autonomy verify-sync-parity verify-tracker-body verify-hook verify-template-links"
 
 RUN=0
 FAILED=0
@@ -77,6 +77,7 @@ run_gate "skill parity" bash tools/sync-local-skills.sh --check
 run_gate "sync parity cases" bash tools/verify-sync-parity.sh
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
+run_gate "template links" bash tools/verify-template-links.sh
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
