@@ -222,6 +222,11 @@ table under §9 *Status — execution order* marks where it is.
 **In autonomous mode, Claude reads this arc-log whole** — not the section that looks relevant. The
 §9 *Status — execution order* table is the work queue, and it is followed top to bottom.
 
+**And [m43](../product-architecture/mechanisms/m43-camp-assistant.md) whole, once per window.**
+This arc exists to build that spec; an issue's intent is not recoverable from its own body when
+the body assumes the spec. Once at `/arc-next`, not once per issue — it is long, and re-reading
+it five times is the cost this ordering avoids.
+
 ```mermaid
 flowchart TB
     START["<b>/arc-next</b><br/>a new window, or<br/>called inside one"] --> MODE{{"<b>Which mode?</b><br/>the handoff's<br/><i>Execution mode</i> row"}}
@@ -256,7 +261,7 @@ flowchart TB
 |---|---|
 | 1 | **Read the issue from `gh`** — the one the execution order names, not the one that seems next |
 | 2 | **Create the branch** |
-| 3 | **Establish the issue's intent and its north star, in the dev-log — before any plan exists.** What the issue is really for, and what the work is steering by. A plan written first steers by the issue's wording instead |
+| 3 | **Establish the issue's intent and its north star, in the dev-log — before any plan exists.** Two passes, below. A plan written first steers by the issue's wording instead |
 | 4 | **Write the execution plan in the dev-log**, tested against the north star above |
 | 5 | **Implement the initial pass** — fix the intent, not the symptom it happens to describe |
 | 6 | **Refine four times** — the axes are below |
@@ -266,7 +271,29 @@ flowchart TB
 | 10 | **Claude merges the PR** — not the user. Only when satisfied, everything resolved, everything clean |
 | 11 | **Continue to the next row, or stop** — whichever the execution order says |
 
-#### 6.1.2 The refining axes
+#### 6.1.2 Establishing the intent — two passes
+
+**One pass produces a paraphrase of the title.** The second is where the intent appears.
+
+| Pass | Reads | Writes into the dev-log |
+|---|---|---|
+| **1** | The issue body alone, and any verbatim quote it carries | The problem in one sentence, and a first north star |
+| **2** | Every issue it links to, the m43 section §4 maps it to, and every artifact it names | **What changed from pass 1** — and if nothing changed, that it did not |
+
+**The verbatim quote is the intent.** Where an issue carries one — most of this arc's do — the
+north star is tested against the quote, never against the title.
+
+**Fire `skills/arc-intent` here.** It classifies proposed work Agreed, Derived or Escalate
+against the arc's stated intent, and this is its call site in the loop. An *escalate* is not a
+stop; it is a thing to say plainly in the dev-log and in the PR body.
+
+| The north star must | |
+|---|---|
+| **Say something the title does not** | A restatement means the issue was read, not understood |
+| **Name what makes the fix durable** | What it has to survive — a reworded heading, a fresh session, a different repository |
+| **Name what is out of scope** | Four refining passes will otherwise grow the work into whatever looks adjacent |
+
+#### 6.1.3 The refining axes
 
 Run every pass against all of them.
 
@@ -283,12 +310,12 @@ Run every pass against all of them.
 | Are there tests that need writing to evaluate this? |
 | Have all evaluating tests been run? |
 
-#### 6.1.3 Commit cadence
+#### 6.1.4 Commit cadence
 
 **Over-committing bloats the log and the tree.** Commit at least once for the plan, once for
 the initial implementation, and once per refinement and review loop.
 
-#### 6.1.4 At a break point
+#### 6.1.5 At a break point
 
 A break marked in the execution order **stops autonomous execution.** In order:
 
@@ -303,10 +330,9 @@ A break marked in the execution order **stops autonomous execution.** In order:
 | | |
 |---|---|
 | **Skills cannot be executed here** | Nothing in this repo runs a skill. A session writes one, checks it against the spec diagram, and marks it done — with no evidence it *behaves* right. True of every skill Arc has shipped |
-| **The intent check is judgement** | *"Does this serve the arc's intent"* has no mechanical test. It will build; whether it fires usefully is unknown until used |
+| **The intent check is judgement** | *"Does this serve the arc's intent"* has no mechanical test. It will build; whether it fires usefully is unknown until used. §6.1.2 makes the autonomous loop fire it on every issue, which is the first real exercise it gets |
 | **The relief valve's thresholds are estimates** | 8 turns, 3 questions, 45 minutes. Placed so the mechanism is buildable, corrected by [#36](https://github.com/Calyx-Engineering/arc/issues/36) |
 | **The close sequence is unproven** | [#41](https://github.com/Calyx-Engineering/arc/issues/41)'s nine steps were written from informal practice. Executing it will find gaps the spec side could not see |
-| **Context depth** | Arc 02 ran five pre-specified issues autonomously and held. This is ten, several with judgement. Expect degradation around the middle |
 | **Degradation is observed, not forecast** | A session at this point lost the ability to follow direction: it went autonomous against instruction and reported an issue number that was never created. Recovery was the user escaping out. **Hand off at a wave boundary before the middle of a wave, not after** |
 
 **Autonomy is per-arc, not per-repo** — m40. The mode above is this arc's, decided from how

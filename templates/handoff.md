@@ -50,9 +50,11 @@ the rest renumber.
 
 1. **`CLAUDE.md`** — how this repo works
 2. **`docs/arc-log/arc-&lt;slug&gt;.md`** — the arc's shape and its load-bearing decisions
-3. **`docs/dev-log/issue-&lt;N&gt;-&lt;slug&gt;.md`** — this issue's *why*. **If it does not exist,
+3. **The arc's governing spec, if it has one** — the mechanism this arc exists to build,
+   named in the arc-log. **Whole, once per window**, not once per issue
+4. **`docs/dev-log/issue-&lt;N&gt;-&lt;slug&gt;.md`** — this issue's *why*. **If it does not exist,
    writing it is step one of the work** — do not infer the scope from elsewhere
-4. Whatever those name — **only when the work touches it**
+5. Whatever those name — **only when the work touches it**
 
 Do not read the whole record. Older arcs and closed issues are history, not context.
 
