@@ -214,7 +214,7 @@ Answered as *"V3 — agreed, colleague. V4 — yes"*. Seven words for two decisi
 | **One block per message** | Never a second block while the first has an unanswered question in it. Parallel blocks produce answers to some and silence on others |
 
 **A question with no recommendation hands the design back to the user.** That is
-[m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md)'s friction in a different
+[m41](../../../docs/product-architecture/mechanisms/m41-relief-valve.md)'s friction in a different
 form — the depth is not in the questioning but in the answering.
 
 #### The unit, stated once

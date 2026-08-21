@@ -201,7 +201,7 @@ the fix**, in three places:
 > **Never rename the branch of an open PR. It closes the PR.** Tested: the rename succeeds,
 > the branch moves, and GitHub closes the PR whose head just disappeared.
 
-[m46 §9.1](../../docs/product-architecture/mechanisms/m46-work-navigation.md) carries the
+[m46 §9.1](../../../docs/product-architecture/mechanisms/m46-work-navigation.md) carries the
 detail. **A branch naming a PR that is not its own is worse than one naming nothing.**
 
 ### Placement
@@ -249,7 +249,7 @@ This is not a corner case in a nested-branch workflow — it is *every* issue PR
 | The default branch | **A defect.** The link should have formed |
 | An arc or integration branch | **Expected.** The link cannot form; it defers to the arc PR |
 
-**The fix is [m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md):
+**The fix is [m42](../../../docs/product-architecture/mechanisms/m42-default-branch-flip.md):
 point the default branch at the arc for its lifetime.** Where that is in force, keywords bind
 normally and the rest of this section does not apply. Where it is not — more than one
 collaborator, protected trunk — the following holds.
@@ -437,7 +437,7 @@ endpoint, not the starting point.** Reviewers read it before the diff.
 ## The evaluation set
 
 Six real cases with checkable outcomes, in
-[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md). **Any change to
+[m13](../../../docs/product-architecture/mechanisms/m13-issue-write-back.md). **Any change to
 this skill is tested against them.** Cases 1–2 are *never written*; cases 3–6 are *written
 wrong and reported right*.
 

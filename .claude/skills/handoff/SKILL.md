@@ -234,7 +234,7 @@ always reasoning that belongs in a dev-log, or detail that belongs in K2.
 
 ## Template
 
-[templates/handoff.md](../../templates/handoff.md). Copy it rather than writing from memory
+[templates/handoff.md](../../../templates/handoff.md). Copy it rather than writing from memory
 — the section list is the mechanism, and a handoff missing *do not*, *open threads* or *do
 these in order* fails in exactly the way those sections exist to prevent.
 

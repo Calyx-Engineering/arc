@@ -83,7 +83,7 @@ moves next; this column only reports.
 | | **AUTHORING** | | | | |
 | m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
-| m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../reference-roadz/engineering-report/SKILL.md) | ⚪ |
+| m18 | `engineering-report` | ⚙️ | **Reports that get read.** *Layering, length budgets, and confidence marking* | [skill](../../skills/engineering-report/SKILL.md) | 🔵 |
 | m38 | `chat-response` | ⚙️ | **Answers, not essays.** *Length, structure, when to decide rather than ask, and the labelled block that makes a multi-topic reply answerable by number* | [skill](../../skills/chat-response/SKILL.md) | 🔵 |
 | m45 | `spec-interview` | 🔥 | **A spec that matches what was agreed.** *Every question named up front so the scope has a visible end, labelled sets to reach the decisions, then the full re-read that catches a document contradicting itself* | [skill](../../skills/spec-interview/SKILL.md) | 🔵 |
 | m46 | Work navigation | 🔥 | **A discovery does not derail the work or get lost.** *Records it in the parent's `Spawned` section, asks the user to ascend or descend, and branches where the dependency actually is — the patch series model* | [spec](mechanisms/m46-work-navigation.md) | ⚪ |
@@ -111,7 +111,7 @@ moves next; this column only reports.
 | | **SELF-IMPROVEMENT** | | | | |
 | m31 | Self-improvement loop | 🔥 | **Tooling fixes land without leaving the work.** *Files the issue, makes the fix locally uncommitted, opens the diff* | [spec](mechanisms/m31-self-improvement-loop.md) | ⚪ |
 | m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | ⚪ |
-| m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../.claude/skills/plugin-retrospective/SKILL.md) | 🔵 |
+| m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../skills/plugin-retrospective/SKILL.md) | 🔵 |
 | m39 | Mechanism numbering | 📐 | **A new mechanism gets a number that is actually free.** *The number space spans all three plugins; a registry issues the next one and records the claim* | — | ⚪ |
 | m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | ⚪ |
 

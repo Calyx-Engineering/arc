@@ -16,15 +16,19 @@ set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
 
-# Skills worth having live locally. Not every shipped skill — only the ones that
-# shape how work is done in this repo.
-SKILLS="chat-response spec-interview issue-write work-watch record-route handoff camp relief-valve decompose arc-intent"
+# What to copy is derived from the trees, never listed. A hardcoded list makes a new skill
+# invisible: `skills/relief-valve` was written, synced, and reported "5 copied, 7 checked"
+# while copying nothing, and --check exited 0 with no copy on disk (#68). Every skill ships,
+# so every skill is copied — an exception list would be the same defect one line lower.
+SKILLS=$(for d in skills/*/; do [ -f "$d/SKILL.md" ] && basename "$d"; done | sort)
+COMMANDS=$(for f in commands/*.md; do [ -f "$f" ] && basename "$f" .md; done | sort)
 
-# Commands have the same problem for the same reason: `commands/` is discovered through
-# ${CLAUDE_PLUGIN_ROOT}, which resolves only for an installed plugin, and Claude Code
-# discovers `.claude/commands/`. Copied verbatim — a command is short enough that a banner
-# would be a third of the file, and `description:` is the first thing a reader sees.
-COMMANDS="camp arc-next"
+# The line the sync writes into every copy. Also the marker the reverse check reads: a
+# directory under .claude/skills/ carrying it is a copy, so a missing source means the
+# source was deleted. Without it the directory is a repo-local skill and is left alone.
+BANNER_MARK='**Copy — do not edit.**'
+
+REGISTRY=docs/product-architecture/README.md
 
 CHECK=0
 [ "${1:-}" = "--check" ] && CHECK=1
@@ -48,19 +52,33 @@ for s in $SKILLS; do
 > before Arc is installed here. **Edit the source, then re-run \`tools/sync-local-skills.sh\`.**
 "
 
-  # Rebuild what the copy should be: source with the banner after its frontmatter.
-  expected=$(awk -v b="$banner" '
+  # Rebuild what the copy should be: source with its outbound links re-based, then the
+  # banner after its frontmatter.
+  #
+  # The copy sits one directory deeper than the source — `.claude/skills/x/` against
+  # `skills/x/` — so every link that leaves the skills tree needs one more `../`. Sibling
+  # links (`../other-skill/SKILL.md`) resolve in both trees and are left alone; only the
+  # `../../` form, which means "repo root" from a source, is re-based. Without this a third
+  # of the links in the live copies 404, and the check calls them current.
+  #
+  # Re-based before the banner is inserted, never after: the banner's own link is already
+  # written at the copy's depth.
+  expected=$(sed 's#](\.\./\.\./#](../../../#g' "$src" | awk -v b="$banner" '
     BEGIN { fm = 0 }
     { print }
     /^---$/ { fm++; if (fm == 2) print b }
-  ' "$src")
+  ')
 
   if [ -f "$dst" ] && [ "$expected" = "$(cat "$dst")" ]; then
     continue
   fi
 
   if [ "$CHECK" = "1" ]; then
-    echo "stale: $dst" >&2
+    if [ -f "$dst" ]; then
+      echo "stale: $dst" >&2
+    else
+      echo "no copy: $dst" >&2
+    fi
     stale=1
     continue
   fi
@@ -86,7 +104,11 @@ for c in $COMMANDS; do
   fi
 
   if [ "$CHECK" = "1" ]; then
-    echo "stale: $dst" >&2
+    if [ -f "$dst" ]; then
+      echo "stale: $dst" >&2
+    else
+      echo "no copy: $dst" >&2
+    fi
     stale=1
     continue
   fi
@@ -97,11 +119,48 @@ for c in $COMMANDS; do
   copied=$((copied + 1))
 done
 
+# The other direction: a copy whose source is gone. The forward pass cannot see it — it
+# iterates the sources — so a deleted skill leaves its copy live in this repo forever.
+for d in .claude/skills/*/; do
+  [ -d "$d" ] || continue
+  s=$(basename "$d")
+  [ -f "skills/$s/SKILL.md" ] && continue
+
+  if [ -f "$d/SKILL.md" ] && grep -qF "$BANNER_MARK" "$d/SKILL.md"; then
+    echo "orphan copy — source deleted: skills/$s/SKILL.md" >&2
+    stale=1
+  else
+    echo "repo-local skill, not a copy: $d"
+  fi
+done
+
+for f in .claude/commands/*.md; do
+  [ -f "$f" ] || continue
+  c=$(basename "$f")
+  [ -f "commands/$c" ] || echo "repo-local command, not a copy: $f"
+done
+
+# #48's last requirement, made mechanical: every shipping skill is reachable from the
+# product definition by its shipping path, with a mechanism number against it. A skill the
+# registry does not name is one nothing traces to.
+for s in $SKILLS; do
+  row=$(grep -F "| \`skills/$s\` |" "$REGISTRY" 2>/dev/null)
+  if [ -z "$row" ]; then
+    echo "not in the registry's artifact table: skills/$s" >&2
+    stale=1
+  elif ! printf '%s' "$row" | grep -qE 'm[0-9]{2}'; then
+    echo "no mechanism number in the registry row: skills/$s" >&2
+    stale=1
+  fi
+done
+
 if [ "$CHECK" = "1" ]; then
   [ "$stale" = "1" ] && { echo "run tools/sync-local-skills.sh" >&2; exit 1; }
   echo "local copies are current"
   exit 0
 fi
+
+[ "$stale" = "1" ] && exit 1
 
 echo "$copied copied, $(($(echo $SKILLS | wc -w) + $(echo $COMMANDS | wc -w))) checked"
 exit 0

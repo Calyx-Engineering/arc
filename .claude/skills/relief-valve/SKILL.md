@@ -163,7 +163,7 @@ The deferred form is better because it is **outside** the stuck conversation:
 
 That removes the conflict of interest rather than asking the agent to overcome it. Independence
 is the expensive property, and it is the one cost Arc cannot currently carry — see
-[m43 §4](../../docs/product-architecture/mechanisms/m43-camp-assistant.md).
+[m43 §4](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md).
 
 **This limitation is stated here, in the shipping artifact, and not only in the spec.** A
 limitation recorded only in a document nobody opens at runtime is not a stated limitation.
@@ -172,8 +172,8 @@ limitation recorded only in a document nobody opens at runtime is not a stated l
 
 ## Related
 
-- [m41](../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the precondition and its thresholds
-- [m43 §3.6](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the behaviour, and why the observer form is deferred
+- [m41](../../../docs/product-architecture/mechanisms/m41-relief-valve.md) — the precondition and its thresholds
+- [m43 §3.6](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the behaviour, and why the observer form is deferred
 - [`work-watch`](../work-watch/SKILL.md) — the sweep this runs inside
 - [`arc-intent`](../arc-intent/SKILL.md) — the intent check, which answers the direction question this fires
 - [`spec-interview`](../spec-interview/SKILL.md) — the question inventory that gives a scoping session's depth a denominator
