@@ -166,3 +166,52 @@ can widen its own permissions.
 - **This PR** — the user wrote `.claude/settings.json`; it is committed here
 - **m40 / [#73](https://github.com/Calyx-Engineering/arc/issues/73)** — *the agent cannot install its own switch* is a design
   constraint, not an implementation detail. **Unfiled — ask before filing**
+
+---
+
+## 3 · The handoff's staleness check fires on every cold start once the arc has more transcripts than the handoff lists
+
+**2026-08-21 · `/arc-next` into [#48](https://github.com/Calyx-Engineering/arc/issues/48), the staleness checks**
+
+### What happened
+
+`commands/arc-next.md` requires seven checks before executing the handoff, one of them:
+
+```text
+| **Transcripts newer than the handoff** | A file in the transcript directory the handoff's
+*Transcripts* table does not list. A session ran and its decisions are not in here |
+```
+
+`R:\arc-transcripts\` holds **twelve** files. The handoff's table lists **four**. Eight
+unlisted files, one of them from the same day.
+
+Read as written, the check trips. And the command's instruction on a tripped check is not
+soft: *"stop and report the specific contradiction … Do not reconcile it silently and do not
+proceed on a guess."* An autonomous run would have stopped before its first action, with
+nothing to report but the handoff's table being a short list.
+
+### What is established, and what is not
+
+| | |
+|---|---|
+| **The handoff's table is curated, and correct to be** | It names the transcripts a next session might need to read. Listing all twelve would be the growth failure `skills/handoff` warns about two sections earlier |
+| **The check's stated comparison is against that table** | *"Compare against the handoff's own list, not against the date"* — the paragraph meant to prevent a false positive is what causes this one |
+| **What the check actually wants is mtime** | A transcript written *after* the handoff means a session ran and is unrecorded. That is one `ls -l` and it is unambiguous. Here the newest transcript is 11:49 and the handoff 11:50 — no contradiction, and no ambiguity to resolve |
+| **Not established** | Whether any other of the seven checks has the same shape. Only this one was exercised against a real disagreement |
+
+### What it cost
+
+One extra command, and a near-miss on a mandated stop. **The cost is asymmetric:** the check
+is cheap when it passes and expensive when it false-positives, because the prescribed response
+is to halt the run and hand back to the user.
+
+### What would have prevented it
+
+| | |
+|---|---|
+| **A check compares two things that are both maintained** | The handoff's table is curated by hand for reading; the transcript directory grows on its own. Comparing a curated list against a complete directory is a false-positive generator by construction |
+| **Say what the check is for, not only what to look at** | *"a session ran after this handoff was written"* has one mechanical reading. *"a file the table does not list"* has two, and the wrong one is the default |
+
+### Where it went
+
+- **Nothing yet.** m15's, and one row of `commands/arc-next.md`. **Unfiled — ask**
