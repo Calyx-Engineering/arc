@@ -62,7 +62,7 @@ m43 §3.1.2. Not re-raised.
 |---|---|
 | **The script is fixed, not only the guidance** | `tools/arc-default-branch.sh` emits its own sentences and loads no skill. Every line it prints to a human now names the object type |
 | **Two words is the budget** | *"the default branch"*, not *"the arc-scoped integration branch named `arc/03-camp`"*. A qualifier that runs long means the sentence is built wrong and should be reworded instead. The limit ships with the rule, or the rule produces worse sentences than it replaces |
-| **The identifier stays** | This is a qualifier, not a substitution. `arc/03-camp` still appears wherever someone has to type or verify it — it stops being the *only* thing that appears |
+| **The identifier stays** | This is a qualifier, not a substitution. The branch name `arc/03-camp` still appears wherever someone has to type or verify it — it stops being the *only* thing that appears |
 | **Issue numbers are exempt, and only issue numbers** | `#31` is central enough to daily use that a qualifier is noise. Mechanism identifiers, branches and paths get no such exemption — `m42` is not `#42` |
 | **The rule goes in `chat-response`, not `issue-write`** | The cost lands on a reader who must classify before answering, which is a conversational cost. A tracker body is read at leisure and carries its own links |
 | **The fourth checklist item is a standing obligation, not a sweep** | *Any artifact that asks the user something* is satisfied as those artifacts are built. Sweeping every existing skill for hypothetical prompts would touch most of `skills/` for no observed defect |
@@ -100,7 +100,7 @@ be worse than none, because it would be trusted.
   hook-carried checks Arc ships have never run in this repository
 - **The hooks are a second emitter with the same defect, and were deliberately not touched.**
   `camp-branch-check` says *"`$NAME` does not match `arc/<nn>-<slug>-issue-<N>-<slug>`"* and
-  *"`$BRANCH` names no issue"* — both open on a bare identifier. `tracker-verify` has three
-  more. Fixing them means the hook ceremony in `CLAUDE.md` — kill-switch line, `verify-hook.sh`
+  *"`$BRANCH` names no issue"* — both open on a bare identifier. The hook `tracker-verify` has
+  three more. Fixing them means the hook ceremony in `CLAUDE.md` — kill-switch line, `verify-hook.sh`
   output, one hook per commit — which is a larger change than this issue scoped, and the
   north star recorded above puts a sweep out of scope. **Worth its own issue**

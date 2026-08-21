@@ -78,7 +78,8 @@ act on it; it stops being the *only* thing that appears.
 or paths: `m42` is not `#42`.
 
 **Artifacts printing their own prompts are bound too** — a script loads no skill, so the
-phrasing goes in its strings. `tools/arc-default-branch.sh` is the worked example.
+phrasing goes in its strings. The default-branch script `tools/arc-default-branch.sh` is the
+worked example.
 
 
 ## What compression must never break
