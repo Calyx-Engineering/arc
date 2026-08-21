@@ -117,13 +117,23 @@ classified *escalate* under the intent check's own ladder, and correct to do. **
 
 Two more were spawned later, by the work itself — see below.
 
-| Issue | |
-|---|---|
-| [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting **is** when naming it |
-| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers |
-| [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping an involved piece of work |
-| [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply |
-| [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state |
+**Each traces to a mechanism, and only one of them to m43.** The *traces to* column is what an
+autonomous session reads before starting the issue — the spec to read is that mechanism's, not
+this arc's.
+
+| Issue | | Traces to |
+|---|---|---|
+| [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch or setting **is** when naming it | **m38** `chat-response`, and [m42](../product-architecture/mechanisms/m42-default-branch-flip.md)'s prompts |
+| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **m11** `issue-writing` |
+| [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping an involved piece of work | **m45** [`spec-interview`](../../skills/spec-interview/SKILL.md) |
+| [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **m38** `chat-response` |
+| [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **[m13](../product-architecture/mechanisms/m13-issue-write-back.md)** issue write-back |
+
+| Also in wave 5 | | Traces to |
+|---|---|---|
+| [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a misplaced closing keyword | **[m12](../product-architecture/mechanisms/m12-issue-linking.md)** issue linking |
+| [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43 §5.1** — the only wave 5 issue that does |
+| [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **None.** Pre-release repo hygiene; the local-copy arrangement is deleted at first release |
 
 ### 4.2 Spawned during execution
 
@@ -222,10 +232,20 @@ table under §9 *Status — execution order* marks where it is.
 **In autonomous mode, Claude reads this arc-log whole** — not the section that looks relevant. The
 §9 *Status — execution order* table is the work queue, and it is followed top to bottom.
 
-**And [m43](../product-architecture/mechanisms/m43-camp-assistant.md) whole, once per window.**
-This arc exists to build that spec; an issue's intent is not recoverable from its own body when
-the body assumes the spec. Once at `/arc-next`, not once per issue — it is long, and re-reading
-it five times is the cost this ordering avoids.
+**And the spec of the mechanism the issue traces to.** Every piece of work in this repo traces
+back to a mechanism, and a fair number of those have a written spec. An issue's intent is not
+recoverable from its own body when the body assumes that spec.
+
+| | |
+|---|---|
+| **Where the mapping is** | §4.1's *traces to* column for wave 5; §4's table for the m43 issues |
+| **Where the spec is** | [`docs/product-architecture/README.md`](../product-architecture/README.md)'s registry — the mechanism's row carries its spec link, or a dash where none exists |
+| **When** | Once, when the issue is picked up. Not once per window, and not m43 by default |
+| **A dash is not a gap to fill** | Read the artifacts the issue names instead |
+
+**m43 is read whole only when the issue traces to it.** Wave 5 is what proves the point: eight
+of its nine issues trace to m11, m12, m13, m38 or m45, and reading m43 for them costs a
+thousand lines and returns nothing.
 
 ```mermaid
 flowchart TB
@@ -278,9 +298,9 @@ flowchart TB
 | Pass | Reads | Writes into the dev-log |
 |---|---|---|
 | **1** | The issue body alone, and any verbatim quote it carries | The problem in one sentence, and a first north star |
-| **2** | Every issue it links to, the m43 section §4 maps it to, and every artifact it names | **What changed from pass 1** — and if nothing changed, that it did not |
+| **2** | Every issue it links to, the spec of the mechanism it traces to, and every artifact it names | **What changed from pass 1** — and if nothing changed, that it did not |
 
-**Not every issue maps to a spec section.** §4's table shows `—` for wave 5 — tracker and chat mechanics carry no m43 section, and pass 2 reads the artifacts they name instead. An absent mapping is not a gap to hunt for.
+**Not every mechanism has a spec.** The registry's *Spec* column carries a dash where none is written — m40 is the example. Pass 2 then reads the artifacts the issue names instead. An absent spec is not a gap to hunt for.
 
 **The verbatim quote is the intent.** Where an issue carries one — most of this arc's do — the
 north star is tested against the quote, never against the title.
