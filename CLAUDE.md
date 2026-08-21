@@ -20,7 +20,7 @@ These matter more than any finding in the documents.
 |---|---|
 | **The ask is the first line** | Any decision, approval or blocking question opens the reply, before the reasoning that produced it. **Reasoning that discovers an ask must be reordered before sending** — a reply in thinking-order buries the ask at the end. `skills/chat-response` and m46 §7.1 both state the rule and were loaded when it was broken four times in one session; [#89](https://github.com/Calyx-Engineering/arc/issues/89) tracks the missing trigger |
 | **Short chat responses** | He reads slowly and deliberately. Lead with the answer; he pulls for detail. See `.claude/skills/chat-response/` |
-| **Never commit unasked** | He reviews by diff in VS Code's source-control graph. An unrequested commit destroys that surface |
+| **Never commit unasked — in manual, which is the default** | He reviews by diff in VS Code's source-control graph. An unrequested commit destroys that surface. **In autonomous mode, commit at the cadence the plan names, push, open the PR and merge it** — `skills/autonomy-set` holds the switch and `HANDOFF.md`'s *Execution mode* row holds the state. Absent or not saying autonomous means manual |
 | **Edit in place, do not paste into chat** | Fixes go into the file; the diff is the review surface. Rewriting a whole file loses his in-progress review comments — edit, never rewrite |
 | **No development narrative** | Never "an earlier draft said…" or "you corrected me…". State the current conclusion. Applies to documents *and* chat |
 | **Wording fixes go in immediately** | Discuss structural changes first, then apply; never stop to ask about word choice |

@@ -18,7 +18,7 @@ stay open.
 |---|---|
 | **New issues** | [#39](https://github.com/Calyx-Engineering/arc/issues/39)–[#47](https://github.com/Calyx-Engineering/arc/issues/47), nine of them, plus [#48](https://github.com/Calyx-Engineering/arc/issues/48) last. Four more spawned during execution — see the tree |
 | **Already filed** | [#37](https://github.com/Calyx-Engineering/arc/issues/37) the event log · [#31](https://github.com/Calyx-Engineering/arc/issues/31)–[#35](https://github.com/Calyx-Engineering/arc/issues/35) tracker mechanics · [#55](https://github.com/Calyx-Engineering/arc/issues/55) · [#56](https://github.com/Calyx-Engineering/arc/issues/56) spawned mid-arc |
-| **Build order** | See §10 *Status — execution order*. Numbered 1–23; **22 is vacant** — [#73](https://github.com/Calyx-Engineering/arc/issues/73) left the arc and took step 6.2 with it |
+| **Build order** | See §10 *Status — execution order*. Numbered 1–23. **22 was vacant while [#73](https://github.com/Calyx-Engineering/arc/issues/73) was out of the arc; it returned and reclaimed the slot** |
 | **Autonomous** | Every wave. The modes are defined in §6 and assigned in §10.1. **Breaks at wave boundaries are context, not approval.** Step 10 needs `.claude/settings.json` — §6.1.1 |
 | **Waves 1–5** | **Done and merged.** Wave 6 is [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#78](https://github.com/Calyx-Engineering/arc/issues/78) |
 | **After wave 5** | Four no-issue PRs — [PR #107](https://github.com/Calyx-Engineering/arc/pull/107) [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) [PR #110](https://github.com/Calyx-Engineering/arc/pull/110) [PR #113](https://github.com/Calyx-Engineering/arc/pull/113) — and [#105](https://github.com/Calyx-Engineering/arc/issues/105) · [#106](https://github.com/Calyx-Engineering/arc/issues/106) filed **out of** the arc. See §12.2 |
@@ -385,15 +385,24 @@ A break marked in the execution order **stops autonomous execution.** In order:
 | **The close sequence is unproven** | [#41](https://github.com/Calyx-Engineering/arc/issues/41)'s nine steps were written from informal practice. Executing it will find gaps the spec side could not see |
 | **Degradation is observed, not forecast** | A session at this point lost the ability to follow direction: it went autonomous against instruction and reported an issue number that was never created. Recovery was the user escaping out. **Hand off at a wave boundary before the middle of a wave, not after** |
 
-**Autonomy is per-arc, not per-repo** — m40. The mode above is this arc's, decided from how
-specified the work is. **m40 has no spec file**; writing it is
-[#73](https://github.com/Calyx-Engineering/arc/issues/73), which left this arc for the
-*Onboarding — m47* milestone because its hard requirement is that the behaviour survive a
-repository boundary.
+**Autonomy is per-arc, not per-repo** — [m40](../product-architecture/mechanisms/m40-autonomy-switch.md).
+The mode above is this arc's, decided from how specified the work is.
 
-**§6.1 is the interim stand-in, and it is arc-scoped.** It defines autonomous mode well enough
-to run this arc and no further — it dies with the arc-log it lives in. Anything tracing to m40
-reads §6.1 first and [#73](https://github.com/Calyx-Engineering/arc/issues/73) second.
+**m40 is now specified, and it supersedes §6.1.** [#73](https://github.com/Calyx-Engineering/arc/issues/73)
+returned to this arc and delivered the spec and
+[`skills/autonomy-set`](../../skills/autonomy-set/SKILL.md). **Read m40 first from here on**;
+§6.1 stays only because this arc's issues were executed under it and the record must say what
+they ran on.
+
+**What changed, and it is not cosmetic.** §6.1 has two states; m40 has three. The third —
+**autonomous, suspended** — is what an exchange looks like when the user is talking rather than
+the plan executing: the mode stays set, nothing is committed, pushed or merged as a side effect
+of answering, and it resumes when the user points back at the work. §6.1 could not express
+that, so a conversation during an autonomous run either got ignored or ended the run.
+
+**And the mode is state, not memory.** It lives in `HANDOFF.md`'s *Execution mode* row and is
+re-read before a commit, a push or a merge — never recalled. §6.1 declared the mode in this
+file, which the harness never reads and a session forgets.
 
 ---
 
@@ -463,10 +472,10 @@ write.
 | [#55](https://github.com/Calyx-Engineering/arc/issues/55) | Reject a closing keyword written anywhere but a body's last line | **m12** issue linking | [m12](../product-architecture/mechanisms/m12-issue-linking.md) |
 | [#68](https://github.com/Calyx-Engineering/arc/issues/68) | A new skill is invisible to the parity check until someone edits the script | **None** | Pre-release repo hygiene, like [#48](https://github.com/Calyx-Engineering/arc/issues/48) — whose fourth requirement cannot be met durably without it |
 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to actionable clauses | **m43** | m43 §5.1 — the only wave 5 issue that reads m43 |
-| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | **m40 had no spec, and still does not.** This issue wrote §6 *How this arc is executed* instead — the interim stand-in [#73](https://github.com/Calyx-Engineering/arc/issues/73) will replace · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
+| [#60](https://github.com/Calyx-Engineering/arc/issues/60) | The arc's approval mode, and where a window breaks | **m40** autonomy switch · **m15** | m40 had no spec when this ran, so it wrote §6 *How this arc is executed* instead. [#73](https://github.com/Calyx-Engineering/arc/issues/73) has since written [m40](../product-architecture/mechanisms/m40-autonomy-switch.md), which supersedes it · [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
 | [#61](https://github.com/Calyx-Engineering/arc/issues/61) | The handoff's ordered actions and transcript save | **m15** context ladder / handoff | [m15](../product-architecture/mechanisms/m15-handoff-spine.md) |
 | [#62](https://github.com/Calyx-Engineering/arc/issues/62) | Edits reported done without checking everywhere the claim appears | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md), via [`skills/work-watch`](../../skills/work-watch/SKILL.md) |
-| [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch | **m40** autonomy switch | **No spec.** This issue is the one that would write it, and it left this arc for *Onboarding — m47*. Read §6.1 *Autonomous mode* first — it is the interim definition and the input this issue starts from |
+| [#73](https://github.com/Calyx-Engineering/arc/issues/73) | The autonomy switch — specified and built | **m40** autonomy switch | [m40](../product-architecture/mechanisms/m40-autonomy-switch.md) — **this issue produced it**, with [`skills/autonomy-set`](../../skills/autonomy-set/SKILL.md) and `tools/verify-autonomy.sh`. It returned from *Onboarding — m47*; retitled from `spec:` because the scope became spec-and-build |
 | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) — this issue produced it |
 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | **m46** work navigation | [m46](../product-architecture/mechanisms/m46-work-navigation.md) |
 | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **m17** the record ladder · **m47** onboarding | [`skills/record-route`](../../skills/record-route/SKILL.md) — the skill routes it · [m47](../product-architecture/mechanisms/m47-onboarding.md) §3 carries the switch's question |
@@ -474,7 +483,7 @@ write.
 | | |
 |---|---|
 | **A skill can be its own spec** | m11, m38 and m45 have no `mechanisms/` file. `CLAUDE.md` states the exception: a capability that is already a single skill is specified by that skill |
-| **m40 has no spec at all** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. §6.1 *Autonomous mode* is this arc's interim stand-in; [#73](https://github.com/Calyx-Engineering/arc/issues/73) owns the durable version and left this arc |
+| **m40 is specified now** | [#60](https://github.com/Calyx-Engineering/arc/issues/60) and [#73](https://github.com/Calyx-Engineering/arc/issues/73) both trace to it. §6.1 was this arc's interim stand-in and [m40](../product-architecture/mechanisms/m40-autonomy-switch.md) supersedes it — read m40 first |
 | **Two issues trace to nothing** | [#48](https://github.com/Calyx-Engineering/arc/issues/48) and [#68](https://github.com/Calyx-Engineering/arc/issues/68) are pre-release repo hygiene, not mechanisms. The arrangement they check is deleted at first release |
 
 ---
@@ -513,7 +522,7 @@ number collides with `#4`. The `#` column is the global order and is for sequenc
 | 20 | 5.7 | [#56](https://github.com/Calyx-Engineering/arc/issues/56) | Strip the operating agreement to clauses a user can act on | **Merged** — [PR #57](https://github.com/Calyx-Engineering/arc/pull/57) |
 | | | | **▬ BREAK — new window. Handoff written and confirmed before it closes ▬** | |
 | 21 | 6.1 | [#48](https://github.com/Calyx-Engineering/arc/issues/48) | Shipping skills match their local copies | **Merged** — [PR #114](https://github.com/Calyx-Engineering/arc/pull/114). Also delivers [#68](https://github.com/Calyx-Engineering/arc/issues/68), which the PR could not bind — `tools/verify-tracker-body.sh body` allows one closing keyword, so it was closed by hand. Ships `tools/verify-sync-parity.sh` |
-| — | — | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | Specify the autonomy switch — what auto changes, and how it ends | **Left this arc** — moved to the *Onboarding — m47* milestone. Its portability requirement is onboarding's to carry, and nothing was written |
+| 22 | 6.2 | [#73](https://github.com/Calyx-Engineering/arc/issues/73) | The autonomy switch — specified and built | **PR open** — [PR #116](https://github.com/Calyx-Engineering/arc/pull/116). Left for *Onboarding — m47* and **returned 2026-08-21** after three to five failed surface fixes; it reclaims its own slot, so nothing renumbers. Ships [m40](../product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set` and `tools/verify-autonomy.sh` |
 | 23 | 6.3 | [#78](https://github.com/Calyx-Engineering/arc/issues/78) | Build the six artifacts that carry work navigation | Spawned by [#76](https://github.com/Calyx-Engineering/arc/issues/76). Last — it touches skills every earlier wave edits |
 | — | — | [#76](https://github.com/Calyx-Engineering/arc/issues/76) | Specify work navigation | **Spec written** — produced [m46](../product-architecture/mechanisms/m46-work-navigation.md), spawned by [PR #75](https://github.com/Calyx-Engineering/arc/pull/75) |
 | — | — | [#98](https://github.com/Calyx-Engineering/arc/issues/98) | The arc friction log, its switch, and the onboarding question | **Merged** — [PR #99](https://github.com/Calyx-Engineering/arc/pull/99). Spawned by [#32](https://github.com/Calyx-Engineering/arc/issues/32) and run immediately, out of the wave order. **Takes no step number**; the order is frozen |
@@ -699,6 +708,8 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 | m46 §9.1 · `skills/issue-write` — the branch rule ([PR #108](https://github.com/Calyx-Engineering/arc/pull/108), [PR #110](https://github.com/Calyx-Engineering/arc/pull/110)) | [PR #113](https://github.com/Calyx-Engineering/arc/pull/113), this close-out | **Fired correctly.** The branch was named by the rule, by the script, before the work started |
 | `commands/arc-next.md` — the staleness check ([PR #115](https://github.com/Calyx-Engineering/arc/pull/115)) | — | **Unsoaked.** It lands after the run that found it. The next `/arc-next` is its first exercise, and the check it replaced was itself only ever exercised once |
 | `tools/sync-local-skills.sh` — the derived lists, both directions, the link re-basing ([#48](https://github.com/Calyx-Engineering/arc/issues/48), [#68](https://github.com/Calyx-Engineering/arc/issues/68)) | Its own tree, at the moment it was rewritten | **Found two real defects the old check reported clean.** `skills/engineering-report` had no copy, and 28 links across 11 copies pointed at `.claude/docs/`. Nine fixture cases in `tools/verify-sync-parity.sh`, and four mutations of the script each failed the case meant to catch them |
+| m40 · `skills/autonomy-set` · the four auto arms ([#73](https://github.com/Calyx-Engineering/arc/issues/73)) | — | **Unsoaked, and it is the one that matters.** The three acceptance criteria are behavioural and nothing here runs a skill. `tools/verify-autonomy.sh` covers the textual half — that no artifact states a prohibition without its auto arm — which is the half that failed five times. **The first real exercise is the next autonomous run** |
+| `tools/sync-local-skills.sh` — the parity check ([#48](https://github.com/Calyx-Engineering/arc/issues/48), [#68](https://github.com/Calyx-Engineering/arc/issues/68)) | [#73](https://github.com/Calyx-Engineering/arc/issues/73), by adding a skill | **Fired correctly, unprompted.** `autonomy-set` could not ship half-installed — the check demanded both the local copy and a registry row with a mechanism number, and failed until it had them |
 
 > **The first four of these are the first soak lines in this repository, across three arcs.**
 > `arc-02` and everything in `arc-03` before [#42](https://github.com/Calyx-Engineering/arc/issues/42)

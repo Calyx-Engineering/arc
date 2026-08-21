@@ -35,6 +35,14 @@ Autonomous means the next session runs the execution order without per-issue app
 merges its own PRs, and stops only at a marked break. Never infer it — if this row does not
 say autonomous, it is manual.
 
+**This row is the state, not a note about it.** A mid-session switch rewrites it immediately.
+
+**Autonomous suspends for a conversation and does not end.** A question, a correction, or a
+request scoped to anything other than the next ordered action is answered rather than executed
+— nothing is committed, pushed or merged as a side effect of answering. It resumes when the
+user points back at the work, never because the conversation stopped.
+[`autonomy-set`](../skills/autonomy-set/SKILL.md) holds the rules; [m40](../docs/product-architecture/mechanisms/m40-autonomy-switch.md) is the spec.
+
 ## Do these in order
 
 The numbered actions the next session executes top to bottom. **An action, not a topic** —

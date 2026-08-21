@@ -24,11 +24,15 @@ before naming the next. Every step is already owned by an artifact.
 | 5 | PR opened, titled with the arc prefix, milestone set | [`skills/issue-write`](../../skills/issue-write/SKILL.md) | `gh pr view` |
 | 6 | `Closes #NN` present, and **verified to have bound** | [`hooks/tracker-verify`](../../hooks/tracker-verify) | **See below** |
 | 7 | Soak line appended, if the change touched the plugin | The repo's `CLAUDE.md` soak rule | The arc-log |
-| 8 | **User merges** | The user | — |
-| 9 | Branch deleted once merged | The user, after Camp confirms | — |
+| 8 | **The PR is merged** | **Whoever the mode says** — the user in manual, the agent in autonomous ([m40](mechanisms/m40-autonomy-switch.md)) | `gh pr view --json state` |
+| 9 | Branch deleted once merged | The same — the user in manual, the agent in autonomous. **Never `--delete-branch` on the merge**; delete separately | `git branch -a` |
 
-**Steps 1 to 7 are Camp's to name. Steps 8 and 9 are the user's to perform.** An issue is not
-closed because the work is done; it is closed because someone merged it.
+**Steps 1 to 7 are Camp's to name. Steps 8 and 9 are performed by whoever the mode says** — the
+user in manual, the agent in autonomous. An issue is not closed because the work is done; it is
+closed because someone merged it.
+
+**The harness may refuse the merge whatever the mode says.** Retry at most once, then hand it
+over and say what was tried — [m40 §7](mechanisms/m40-autonomy-switch.md).
 
 **The intent check fires inside step 5, not as a tenth step.** `issue-write` runs
 [`skills/arc-intent`](../../skills/arc-intent/SKILL.md) before it writes the PR body — *does
