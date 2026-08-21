@@ -161,8 +161,12 @@ not say which object it names.
 
 **The number does not exist yet when you branch — predict it, then confirm.** The next number
 is the higher of the latest issue and the latest PR, plus one. Branch with it, open the PR
-immediately, and check the two agree. If they drifted, rename the branch
-(`gh api .../branches/{branch}/rename`) or close and re-open on a corrected one.
+immediately, and check the two agree. If they drifted, **close the PR and re-open on a
+corrected branch** — one number burned, nothing merged.
+
+> **Never rename the branch of an open PR. It closes the PR.** Tested: the rename succeeds,
+> the branch moves, and GitHub closes the PR whose head just disappeared.
+
 [m46 §9.1](../../docs/product-architecture/mechanisms/m46-work-navigation.md) carries the
 detail. **A branch naming a PR that is not its own is worse than one naming nothing.**
 

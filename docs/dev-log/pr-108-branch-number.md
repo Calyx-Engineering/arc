@@ -30,26 +30,46 @@ form; nothing routed anyone to it.
 | | |
 |---|---|
 | **Predict-then-confirm, not rename-always** | Two proposals: rename every branch after the PR opens, or predict the number and correct only on a miss. **Predict-then-confirm** — its failure is visible immediately and cheap, and the happy path needs no API at all |
-| **The rename is an option, not the mechanism** | The user's call. It is the preferred correction where available; *close, re-branch, re-open* is the fallback that always works, because nothing is merged yet |
+| **The rename is not usable as a correction** | It was to be the preferred one, on the user's call to test it. **The test disproved it** — see below. *Close, re-branch, re-open* is the only correction |
 | **`CLAUDE.md` was rejected as the home** | It was the first proposal and it is wrong — `CLAUDE.md` is repo-specific and this process must be portable. The hook and the skill both ship with the plugin |
 | **The `pr` label is mandatory, not decorative** | Issues and PRs share one counter. A bare number names whichever object happens to hold it — the failure m46 §9 already warns about for issue-versus-PR confusion |
 
-## The rename API — tested, partially
+## The rename API — tested, and it fails
 
-**`gh api repos/{owner}/{repo}/branches/{branch}/rename` works.** Verified live against a
-throwaway branch, which came back renamed.
+**The user asked for this to be tested rather than assumed. It was, and the assumption was
+wrong.**
 
-**Whether it retargets an *open* PR is not verified.** Testing it needs a second PR, and
-opening one before this PR would have taken number 108 — the number this branch is named for.
-Recorded here rather than asserted: the API exists and renames; the retarget claim comes from
-GitHub's documentation, not from a test run here.
+[PR #109](https://github.com/Calyx-Engineering/arc/pull/109) was opened as a throwaway for exactly this question, on branch
+`arc/03-camp-pr109-rename-probe`. Then:
+
+```sh
+gh api repos/Calyx-Engineering/arc/branches/arc%2F03-camp-pr109-rename-probe/rename   -X POST -f new_name='arc/03-camp-pr109-renamed'
+# → arc/03-camp-pr109-renamed
+```
+
+| Checked after | Result |
+|---|---|
+| Branch list | Only `arc/03-camp-pr109-renamed` exists |
+| [PR #109](https://github.com/Calyx-Engineering/arc/pull/109) state | `OPEN` → **`CLOSED`**, `closedAt` 15:06:36Z |
+| [PR #109](https://github.com/Calyx-Engineering/arc/pull/109) head | Still `arc/03-camp-pr109-rename-probe` — a branch that no longer exists |
+
+**A rename behaves like a delete to an open PR**, and GitHub closes a PR whose head branch
+disappears. The API is fine on a branch with no PR against it; the combination is what fails.
+
+**This is the argument for predicting the number rather than assigning it afterwards** — there
+is no cheap repair once the PR exists. Had the sequencing been rename-always, every no-issue
+PR would have been closed on creation.
+
+**A first attempt at this test was abandoned deliberately**: running it before opening
+[PR #108](https://github.com/Calyx-Engineering/arc/pull/108) would have consumed number 108, which this branch is named for. The
+probe ran afterwards as 109, which cost one burned number and nothing else.
 
 ## Rejected approaches
 
 | | |
 |---|---|
 | **Slug only, number in the PR title and dev-log** | Proposed first, rejected by the user: *"number and pr label required"*. The branch name is the reference that stays visible while the PR is read |
-| **Rename after opening, every time** | Uses an unverified API on every branch instead of only on a miss, and has no fallback if the retarget does not happen |
+| **Rename after opening, every time** | Uses an unverified API on every branch instead of only on a miss, and has no fallback if the retarget does not happen. **The test then showed it does not retarget at all — it closes the PR**, so this approach would have failed on every single use |
 
 ## What this did not fix
 

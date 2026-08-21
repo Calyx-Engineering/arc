@@ -403,12 +403,22 @@ P=$(gh pr list --state all --limit 1 --json number --jq '.[0].number')
 N=$(( (I > P ? I : P) + 1 ))
 ```
 
-**Two corrections, and the second always works.**
+**One correction. Close the PR, re-branch, re-open.** Nothing is merged yet, so the cost is
+one PR number burned.
 
-| | |
-|---|---|
-| **Rename the branch** | `gh api repos/{owner}/{repo}/branches/{branch}/rename`. GitHub retargets open PRs. **Preferred where it is available** |
-| **Close, re-branch, re-open** | Nothing is merged yet, so the cost is one PR number burned. Needs no API beyond what opening a PR already needs |
+> **Do not rename the branch of an open PR. It closes the PR.**
+>
+> Tested 2026-08-21 on [PR #109](https://github.com/Calyx-Engineering/arc/pull/109), opened as a throwaway for exactly this question.
+> `gh api repos/{owner}/{repo}/branches/{branch}/rename` returned the new name, the branch
+> exists only under it — and the PR went `OPEN` → `CLOSED` with its head still naming the
+> branch that no longer exists.
+
+**The rename API itself works**, and is fine on a branch with no PR open against it. It is the
+combination that fails: a rename behaves like a delete to an open PR, and GitHub closes a PR
+whose head branch disappears.
+
+**This is why the number is predicted rather than assigned afterwards.** There is no cheap
+repair once the PR exists.
 
 **Do not leave a mismatch.** A branch naming a PR that is not the one it opened is worse than
 a branch naming nothing — it is confidently wrong, which is what the number was added to
