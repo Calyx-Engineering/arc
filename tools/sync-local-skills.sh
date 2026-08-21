@@ -14,7 +14,11 @@
 
 set -uo pipefail
 
-cd "$(dirname "$0")/.." || exit 1
+# The repo root, unless SYNC_ROOT names another tree. That override exists so
+# tools/verify-sync-parity.sh can run this script for real against throwaway fixtures
+# instead of mutating the tree it is checking — the same reasoning as verify-hook.sh's
+# fixture repos. Nothing else sets it.
+cd "${SYNC_ROOT:-$(dirname "$0")/..}" || exit 1
 
 # What to copy is derived from the trees, never listed. A hardcoded list makes a new skill
 # invisible: `skills/relief-valve` was written, synced, and reported "5 copied, 7 checked"
