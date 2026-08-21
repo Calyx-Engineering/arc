@@ -324,7 +324,22 @@ stop; it is a thing to say plainly in the dev-log and in the PR body.
 | **Name what makes the fix durable** | What it has to survive — a reworded heading, a fresh session, a different repository |
 | **Name what is out of scope** | Four refining passes will otherwise grow the work into whatever looks adjacent |
 
-#### 6.1.3 The refining axes
+#### 6.1.3 A spec you touch names the artifacts that implement it
+
+**The skill-to-spec direction gets written; the reverse does not.** m41, m15, m13 and m46 each
+pointed at nothing from the mechanism their skill carries, and each was found only when
+something happened to edit the pair together.
+
+| | |
+|---|---|
+| **Touching a spec means fixing its `Related`** | Name the skill, hook or tool that implements it — not only the neighbouring mechanisms |
+| **Top or bottom, never the middle** | m21's sits mid-document with a section after it, which reads as the end |
+| **Do not sweep specs outside the issue's scope** | A spec you are not otherwise editing is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s work, not this issue's. Naming the gap is enough |
+
+[`spec-interview`](../../skills/spec-interview/SKILL.md) carries the same rule for a spec being
+written from scratch.
+
+#### 6.1.4 The refining axes
 
 **Read the dev-log before each pass** — the north star and the plan, as written, never as remembered. An axis answered from memory drifts with the work it is meant to check.
 
@@ -341,12 +356,12 @@ stop; it is a thing to say plainly in the dev-log and in the PR body.
 | Are there tests that need writing to evaluate this? |
 | Have all evaluating tests been run? |
 
-#### 6.1.4 Commit cadence
+#### 6.1.5 Commit cadence
 
 **Over-committing bloats the log and the tree.** Commit at least once for the plan, once for
 the initial implementation, and once per refinement and review loop.
 
-#### 6.1.5 At a break point
+#### 6.1.6 At a break point
 
 A break marked in the execution order **stops autonomous execution.** In order:
 
