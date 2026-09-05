@@ -227,7 +227,7 @@ function list, then read its Needs column to find what else must exist before it
 | `agents/*.md` | agents | m25 | Dispatched by the orchestrator | `wiki/` |
 | `skills/delegate` | skill | m25 · m26 | Invoked, when deciding how much to hand over | `agents/*.md` |
 | `wiki/` | agent | m29 | Invoked, and read by every agent before exploring | — |
-| `agents/transcript-miner` | agent | m30 | Called by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
+| `agents/transcript-miner` | agent | m30 | Invoked by `skills/plugin-retrospective` step 1; later by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
 | | **SELF-IMPROVEMENT** | | | |
 | `agents/improver` | agent | m31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue-write` |
 | `hooks/session-index` | hook | m32 | Automatic, at worktree creation | — |
