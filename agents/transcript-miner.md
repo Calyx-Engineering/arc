@@ -20,7 +20,8 @@ Diagnosis is the human's, in the retrospective interview. Your job is evidence.
 | **Transcripts never leave the machine** | They contain client and employer material. Never send transcript content to any network service. Findings may be shareable when the source is not |
 | **Quote, never paraphrase** | A cluster without a verbatim quote is an inference, not a finding. Paraphrase drifts toward a diagnosis |
 | **Every quote carries a locator** | Source file and timestamp to the minute. A date alone lands the reader in a whole day's work — which is why the friction log stamps time of day. Without it the packet cannot be gone back to, only believed |
-| **Do not propose mechanisms** | m30 stops at ranked clusters. Naming the fix is the interview's job, and a premature name anchors it |
+| **Propose a mechanism per cluster, and hold it loosely** | m30's packet carries a `Proposed mechanism` column and says *"Both propose; the human decides."* Name the smallest mechanism that would have prevented the cluster, and mark it a proposal. It is an input to the interview, never its conclusion |
+| **Never name a mechanism a cluster does not support** | If the evidence does not say what would have prevented it, write `unclear — needs the interview`. A confident wrong name anchors the diagnosis, which is the failure this column risks |
 | **Report what you could not do** | A directory you could not read, a file that failed to parse — say so. A silent gap looks like an absence of friction |
 
 ## Pipeline
@@ -33,6 +34,12 @@ Diagnosis is the human's, in the retrospective interview. Your job is evidence.
 |---|---|
 | **Curated saves** | A repository saves transcripts under a named folder — `R:rc-transcripts`, `R:\work_lantern\_transcripts`. Files are named `<date>-<arc>-<issue-or-pr>-<topic>.jsonl`, so the filename itself carries the branch and issue context the raw store lacks. **Read these first**, and use their names as the context locator for every quote drawn from them |
 | **The raw store** | `~/.claude/projects/<path-slug>/*.jsonl`, one directory per working directory. Everything not yet curated |
+
+**Prefer a session index over globbing, when one exists.** `hooks/session-index` (m32) is meant to
+record where each session's transcript went, with its branch and issue. It is not built — issue #16.
+Until it is, globbing plus curated filenames is the fallback, and every packet says which was used.
+A glob cannot see a deleted worktree's orphaned directory as anything but a path, so the fallback
+is weaker in exactly the case that matters.
 
 The repository names its own save location — `skills/handoff` requires a *transcripts* note.
 Read that note rather than assuming a path. Say which sources you used.
@@ -115,13 +122,24 @@ Recurrence first — recurrence is what a mechanism repays.
 ## The packet
 
 Return **only this**, as compact markdown. No preamble, no methodology recap beyond the
-counts row, no proposed fixes.
+counts row.
 
 ```markdown
 ## Scope
-Directories scanned · files · MB · user messages · after filter · clusters
+Sources · files · MB · user messages · after pass A · after pass B · clusters
+
+## Ranked
+
+| Friction | Times | Cost | Proposed mechanism | Effort |
+| :--- | ---: | :--- | :--- | :--- |
+| C1 — <short name> | <N> | <in the user's terms> | <smallest thing that would have prevented it> | adaptation / invention |
+
+**Effort is one of two words.** *Adaptation* — something proven elsewhere, ported. *Invention* —
+no precedent exists. The distinction is what makes the table rankable by payback.
 
 ## Clusters
+
+The evidence behind each row above, same order.
 
 ### C1 — <short name> · <N> hits
 **What happened:** one or two sentences, mechanical, no diagnosis.
@@ -138,6 +156,9 @@ and the locator for that moment. Not a diagnosis — what was on screen.
 ## Not covered
 Anything unreadable, unparsed, or out of scope.
 ```
+
+**The ranked table comes first and must be complete** — every cluster gets a row, even when the
+detail below is truncated. It is the part that gets read.
 
 Cap the packet at roughly 400 lines. If there are more clusters than fit, include every
 cluster's name and hit count, and full detail only for the top ten — say that you did.

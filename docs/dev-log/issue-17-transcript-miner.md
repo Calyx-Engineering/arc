@@ -34,6 +34,13 @@ here rather than being discovered later:
 | Intensity was invisible to the filter | A second pass matches caps runs, profanity, repeated punctuation and exasperation tokens, ranked **above** phrasing hits when choosing a quote. The corpus's strongest signals matched pass A only by accident |
 | Quotes could not be gone back to | Every quote carries source file and timestamp to the minute, plus one line of surrounding context per cluster. The friction log's own rule: a date alone lands the reader in a whole day's work |
 
+**The proposed-mechanism column was almost dropped, and that was wrong.** The first draft forbade
+the agent from naming a mechanism, reasoning from `plugin-retrospective` that diagnosis belongs to
+the interview. m30's packet format carries `Proposed mechanism` and `Effort` columns and states
+*"Both propose; the human decides."* The spec wins. The agent now proposes, marks it a proposal, and
+writes `unclear — needs the interview` rather than guessing — which keeps the anchoring risk the
+first draft was worried about without dropping the column.
+
 **Model: opus, one agent.** m30 suggests mid for extraction and top for clustering, possibly two
 agents. Deferred — clustering is the judgement, and splitting adds a handoff before there is
 evidence the cost matters.
@@ -47,6 +54,14 @@ the 13 shipping skills either.
 |---|---|
 | **A skill instead of an agent** | It would pull megabytes into the orchestrator's context — the exact failure the design exists to prevent |
 | **Keeping it repo-local in `.claude/agents/`** | The corrections that matter happen in the consuming repository, not here. An agent installed only in Arc can never read them |
+
+## Not delivered
+
+**#17 asked the agent to read the session index rather than glob blind. It globs.**
+`hooks/session-index` (m32) does not exist — that is [#16](https://github.com/Calyx-Engineering/arc/issues/16),
+also in this milestone. The agent prefers curated saves and says which source it used, but a glob
+still cannot distinguish a live worktree directory from an orphaned one, which is the case the index
+exists for. **This requirement closes when #16 ships, not here.**
 
 ## Retrospective
 
