@@ -137,33 +137,53 @@ issues pass `verify-hook.sh`, and the activation log records real firings.
 
 ## 7 Handoff — intent survives a cold start
 
-A cold start reads the handoff, reports status correctly, then does the wrong work — facts
-survive, intent does not. **Handoff-1 builds the score before Handoff-2 changes anything**, because
-every previous attempt changed the document with no way to tell whether it helped.
+**What working means, settled 2026-09-06:** the first action is correct with no correction, **and**
+the session can state *why* the current approach was chosen without being told. Never re-proposing
+something already ruled out is wanted, not required.
+
+A cold start reads the handoff, reports status correctly, then does the wrong work — and sometimes
+reaches **the opposite conclusion to what the document says**. Facts survive; intent does not. It
+also never starts on its own: the handoff is read only when asked for in natural language, which is
+a firing failure Fire owns.
+
+**The leading hypothesis is that rationale is stripped along with narrative.** *"We tried X, then
+Y"* is disposable. *"The 3.3V rail cannot source 500mA"* is load-bearing, and nothing distinguishes
+them — so a fresh session holds a decision with none of its constraints and reverses it the moment
+circumstances look different. Unproven; Handoff-1 tests it.
+
+**The manual process it replaced worked.** Before the handoff existed, a cold start began by reading
+the previous session's transcript, and the results were good — that is what inspired the handoff in
+the first place. **The document is a distillation of that transcript, and distillation is where the
+rationale is lost.** Handoff-2's fix has to close that gap, not restyle the summary.
+
+**Handoff-1 builds the score before Handoff-2 changes anything.** Every previous attempt changed the
+document with no way to tell whether it helped — the format was rewritten three or four times, once
+to the point of listing skills to load by name.
 
 ```mermaid
 flowchart LR
-    M["Handoff-1<br/>score 8 real cold starts:<br/>turns to correct work,<br/>right deliverable?"] --> CK{"reproduces<br/>5 good, 3 bad?"}
+    M["Handoff-1<br/>score 8 real cold starts:<br/>first action correct?<br/>states why unprompted?"] --> CK{"reproduces<br/>5 good, 3 bad?"}
     CK -->|no| M
     CK -->|yes| FIX["Handoff-2<br/>make the north star bind"]
     FIX --> RE["Handoff-1 re-scores<br/>the same 8 openings"]
     IND["Handoff-3 not destroyed on rewrite<br/>Handoff-4 time of day<br/>Handoff-5 saturation<br/>Handoff-6 · #16 session index"] --> RE
 ```
 
-**Handoff-3 to Handoff-6 do not wait on Handoff-1.** They are independent defects in the same
-document.
+**Handoff-3 to Handoff-5 do not wait on Handoff-1.** They are independent defects in the same
+document. **Handoff-6 is not independent** — a cold start cannot read the previous transcript if it
+cannot find it.
 
 | # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| Handoff-1 | **NEW** `feat: measure handoff spin-up time and accuracy` | Read the transcript that **wrote** each handoff, then score the session that read it | A miner mode or a second agent | It separates the 5 openings that worked from the 3 that did not |
-| Handoff-2 | **NEW** `fix: a north star is read at cold start and does not bind` | Handoff-1's baseline | A trigger when an approach is replaced inside an accepted unit; the invariant quoted in the handoff; *out of scope* stating **why** | Handoff-1's score improves on the same openings |
+| Handoff-1 | **NEW** `feat: measure handoff spin-up time and accuracy` | Read the transcript that **wrote** each handoff, then score the session that read it | A miner mode or a second agent | It separates the 5 openings that worked from the 3 that did not, and says for each bad one whether the wrong answer was something the document mentioned |
+| Handoff-2 | **NEW** `fix: a north star is read at cold start and does not bind` | Handoff-1's baseline | Carry the constraint behind each decision, not only the decision — rationale kept where narrative is cut; a trigger when an approach is replaced inside an accepted unit; *out of scope* stating **why** | On the same 8 openings: first action correct, and the session states why the approach was chosen unprompted |
 | Handoff-3 | **NEW** `fix: a file the user authored is overwritten with no copy kept` | `HANDOFF.md` is gitignored, so a rewrite destroys the state the session was given. Same shape as a diagram the user spent hours on being replaced rather than archived | Preserve before overwriting: copy to `forensics/` at **cold start**, and archive a user-authored file before replacing it | A rewrite leaves the prior version on disk |
 | Handoff-4 | **NEW** `fix: the handoff header carries no time of day` | A cold start cannot tell an hour-old handoff from a week-old one | Date-and-time header, re-stamped every write | A case asserts the stamp changed |
 | Handoff-5 | **NEW** `feat: the session notices its own saturation before the user does` | Twice the saturating load was building a skill, not doing the work | **A seventh `work-watch` check** — its six do not cover this | An eval case on a long session. Touches [#106](https://github.com/Calyx-Engineering/arc/issues/106) |
-| Handoff-6 | [#16](https://github.com/Calyx-Engineering/arc/issues/16) index transcript locations | 2 live worktrees, 4 directories, 2 orphans | `hooks/session-index` | `verify-hook.sh` cases. Also closes [#17](https://github.com/Calyx-Engineering/arc/issues/17)'s moved requirement |
+| Handoff-6 | [#16](https://github.com/Calyx-Engineering/arc/issues/16) index transcript locations | 2 live worktrees, 4 directories, 2 orphans. **Prerequisite for Handoff-2** if the fix reaches back to the transcript | `hooks/session-index` | `verify-hook.sh` cases. Also closes [#17](https://github.com/Calyx-Engineering/arc/issues/17)'s moved requirement |
 
 **Done when:** Handoff-1 reproduces the known-good and known-bad openings, and Handoff-2 moves the
-score.
+score against the definition above.
 
 ---
 
@@ -236,66 +256,65 @@ Not this arc. Filed so they are not re-derived.
 
 ---
 
-## 11 Running these in a loop
+## 11 What needs you
 
-**A loop needs a bounded context and something to converge against.** 31 of 36 issues have both
-once Loop lands, and the bounded context is the point — the orchestrator never holds the whole
-arc, because each iteration starts fresh from this file and one issue.
+**30 of 36 issues run without you.** This section is every point where they do not — one issue you
+run with me, one number a run cannot invent, and the six whose output is a judgement rather than a
+passing test. How a run behaves is
+[`run-instructions.md`](run-instructions.md), which is what an iteration reads — not this file.
 
-| Converges against | Covers |
-|---|---|
-| `tools/verify-hook.sh` | Fire-7 to Fire-10, Handoff-6, Tracker-2 |
-| `claude plugin eval --threshold` | Fire-2 to Fire-6, Fire-12, Handoff-3 to Handoff-5, Tracker-3 |
-| `tools/verify-all.sh` | Fire-11, Upkeep-1 to Upkeep-4 |
-| `gh` read-back | Tracker-4, Tracker-5, Tracker-6 |
+### 11.1 [#138](https://github.com/Calyx-Engineering/arc/issues/138) — you guide it
 
-**Six do not loop, for one reason: the output is a judgement, not a passing test.** Loop-1 (you
-guide it), Fire-1 (a decision), Handoff-1's design half, Handoff-2 (graded by an instrument built
-in the same run), Tracker-1 (reading prose is judgement), Upkeep-5 (a risk decision).
+**Not a question to answer. A work session to run together**, manual, first in the arc.
 
-**Each looping issue needs its cases written before the loop starts.** `verify-all.sh` fails on a
-hook with no case directory, and an eval case is the spec of the behaviour being fixed. **Writing
-the cases is where the thinking is, and a loop cannot do it.**
+What is already known: since Arc was installed here, **no merge has ever run without an explicit
+per-merge request.** There is no standing grant to recover — the route does not exist yet and has to
+be built. Diagnosis happens inside the issue, not before it.
 
-## 12 The planning session — 110 minutes
-
-**Agreement only, no work.** Everything above is already decided; what is missing is your sign-off
-and four numbers an autonomous run cannot invent.
-
-| Minutes | The question | What you decide |
-|---|---|---|
-| 20 | **How does a merge run without you asking for it in the same breath?** You solved this in ROADZ and it left no artifact | The route, written into `CLAUDE.md` — [#138](https://github.com/Calyx-Engineering/arc/issues/138) |
-| 15 | **Is "land it and measure it" the right precondition, or is something else blocking more?** | Whether Loop is the right first workstream |
-| 20 | **Do skills fail to *fire*, or fire and get ignored?** The evidence says fire; if you think otherwise the workstream changes shape | The diagnosis, and **how often a skill must fire to count as working** |
-| 20 | **What does a handoff that worked look like to you?** Right now the only signal is how annoyed you were | **Turns to correct work**, and whether pursuing the wrong deliverable is a fail or a partial |
-| 15 | **Which issue-writing rules are worth a gate, and which are style?** Seven issues; not all deserve enforcement | Which of the seven stay |
-| 10 | **Is invisible drift worth another gate on every PR?** | Whether Upkeep runs this arc |
-| 10 | **The three clusters I put out of scope** | Confirmed out, or pulled back in |
-
-### 12.1 The four numbers
-
-Judgements about acceptable behaviour, not facts about the code. **Without them every workstream
-stalls at its own acceptance criterion.**
+### 11.2 The one number left
 
 | | Needed for | Candidate |
 |---|---|---|
 | **Skill firing threshold** | Every Fire issue | `--threshold 0.8` over 3 runs. Below 1.0 because firing is probabilistic; a suite demanding perfection fails on noise |
-| **Turns to correct work** | Handoff-1 | 8 real openings to calibrate against |
-| **Spin-up accuracy** | Handoff-1 | Whether pursuing a *different* deliverable is a fail or a partial. On 09-04 the session was fluent and wrong |
-| **Report budget** | Every workstream | 600 words is set. Whether a diagram counts against it is not |
 
----
+**Two of the four are now settled** by the definition in [§7](#7-handoff--intent-survives-a-cold-start)
+— turns to correct work is **zero**, and spin-up is accurate only if the session can state *why*
+unprompted. **The report budget is 200 words**; whether a diagram counts against it is a call
+[`run-instructions.md`](run-instructions.md) already makes — it does not.
 
-## 13 Filing
+### 11.3 The six that stop for you during execution
+
+**A loop needs something to converge against.** These six produce a judgement instead, so each one
+stops and hands you the output.
+
+| | What you are handed |
+|---|---|
+| Loop-1 | The merge route — [§11.1](#111-138--you-guide-it) |
+| Fire-1 | A decision about what a skill `description:` must contain, from the baseline the cases produce |
+| Handoff-1 | The baseline scores, and whether they reproduce the split you remember — 5 openings that worked, 3 that did not |
+| Handoff-2 | A score produced by an instrument built in the same arc. Whether it moved is your read, not the number's |
+| Tracker-1 | Whether a read-back caught what it should have. Reading prose against an issue is judgement |
+| Upkeep-5 | A risk decision — what ships when Arc goes public |
+
+**The cases for every other issue are written before its loop starts.** `verify-all.sh` fails on a
+hook with no case directory, and an eval case is the spec of the behaviour being fixed. **Writing
+the cases is where the thinking is, and a loop cannot do it** — budget it as real time, not setup.
+
+## 12 Filing
 
 **Every new issue goes into the `Dogfood` milestone**, is written through `skills/issue-write`, and
 records its parent. `Fire-3` is this file's reference, not the issue number — the issue's `Related`
 table carries the link back.
 
+**Each workstream gets a parent issue, and its issues are attached as ordered sub-issues.** That
+list is the execution queue — see
+[arc-log §3.1](../../arc-log/arc-04-dogfood.md#31-how-a-run-knows-which-issue-is-next). An issue that
+cannot start until another closes carries a `Blocked by #NN` line the driver can read.
+
 **Branches come from `createLinkedBranch`, never `git checkout -b`** — otherwise no branch↔issue
 link forms, and the mutation cannot link a branch that already exists.
 
-## 14 Counts
+## 13 Counts
 
 | | |
 |---|---|
@@ -303,5 +322,5 @@ link forms, and the mutation cannot link a branch that already exists.
 | Already filed | 13 |
 | **To file** | **23** — 20 in scope, 3 filed then moved out |
 | Per workstream | Loop 3 · Fire 12 · Handoff 6 · Tracker 7 · Upkeep 5 · out 3 |
-| Runs in a loop | 31 of 36 |
+| Stop for you | **6 of 36** — [§11.3](#113-the-six-that-stop-for-you-during-execution) |
 | Blocked on Loop | Fire and Handoff entirely; Tracker and Upkeep for their merges |

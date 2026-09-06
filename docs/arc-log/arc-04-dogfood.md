@@ -53,43 +53,60 @@ per workstream.** Decomposition and acceptance criteria are in
 | Mode | **Manual** until the merge route is fixed. Autonomous per workstream after |
 | The unit of a run | **One issue, not one workstream.** A workstream is 5–12 issues; running it in one context is how C11 happened — twice, the load that saturated a session was building a skill rather than doing the engineering |
 | Where it stops | At a workstream boundary. Handoff also stops once, at Handoff-1's scores |
-| What a run reads | **The issue, and only what the issue names.** Not the plan — that is the human's forest view, and making it an execution input puts it back in the sync-drift path |
+| What a run reads | **[`run-instructions.md`](../arc-work/04-dogfood/run-instructions.md), then the issue, and only what the issue names.** Not the plan — that is the human's forest view, and making it an execution input puts it back in the sync-drift path |
 | Sub-agents | **Read and return only.** For large reads that collapse to a small answer — Fire-1's baseline, Handoff-1's scoring. A sub-agent that edits files and reports *done* is the failure this arc exists to fix |
 
-### 3.1 The inside of an iteration
+### 3.1 How a run knows which issue is next
 
-**`CLAUDE.md` says how to branch, commit, soak and edit hooks safely. It does not say how to do the
-work well.** This is the sequence that was missing when
-[#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of its five
-requirements, and it is what the user has been supplying by hand by asking for another look.
+**The driver is a shell script — `tools/arc-loop.sh`, not yet written.** It picks the next issue,
+starts a fresh `claude -p` session with
+[`run-instructions.md`](../arc-work/04-dogfood/run-instructions.md) and that issue's body, and
+repeats when the session exits. **It is the only thing that survives between runs** — every session
+is cold, and the script holds the position in the queue. Not the orchestrator: a session that picks
+and dispatches accumulates the whole workstream in its context, which is the failure this avoids.
+
+**The driver picks; the run never does.** A run that selects its own work has read the whole
+milestone to do it, which is the context blow-up this loop exists to avoid.
+
+**The queue is GitHub sub-issues.** One parent issue per workstream, its issues attached as ordered
+children. Verified on this repo: `addSubIssue`, `removeSubIssue` and **`reprioritizeSubIssue`** all
+exist, so order is native and no label, project board or queue file is needed.
 
 | | |
 |---|---|
-| 1 | Read the issue. **Write the test or eval case first** — it is the spec, and writing it after the fix is grading your own homework |
-| 2 | Implement |
-| 3 | Run the gate. **The exit code, not a claim** |
-| 4 | **Read every changed file end to end against the issue.** Whole files, never the diff — the defect is in the section the diff does not show |
-| 5 | **Second pass.** What did step 4 introduce |
-| 6 | Every unchecked box either ticked with evidence, or named as not done with the reason |
-| 7 | Dev-log, commit, PR |
+| **Next issue** | First open sub-issue of the current workstream's parent |
+| **Order** | The sub-issue list order — `reprioritizeSubIssue` sets it |
+| **Blocked** | An issue whose `Blocked by #NN` issues are still open is skipped, not started |
+| **Workstream done** | No open children left. The driver dispatches a report run, then stops |
+| **Where the report lands** | A comment on the parent, and [§6](#6-status) |
+| **Scope of one invocation** | **One workstream.** `tools/arc-loop.sh <parent-issue>` runs its children, dispatches the report run, exits. The next workstream is a second invocation, after the user has read the report — the stop is mechanical, not remembered |
+| **The driver holds no state** | Position is *which sub-issues are still open*, which lives in GitHub. Kill it mid-workstream and restarting resumes at the first open child with nothing lost |
 
-**If this survives the arc it graduates to a mechanism.** It is written here rather than in
-`CLAUDE.md` because it is unproven — arc-scoped until the evidence says otherwise.
+**Labels were rejected** — five arc-scoped labels pollute a space the user reads, for something that
+expires with the arc. **Projects was rejected** for this arc — a board that outlives the arc is a
+larger decision and is not needed to run the loop.
 
-### 3.2 The report at a workstream boundary
+### 3.2 The inside of an iteration
 
-**200 words maximum**, written into [§6](#6-status) as a block under that workstream. Durable
-there in a way a PR comment is not.
+**`CLAUDE.md` says how to branch, commit, soak and edit hooks safely. It does not say how to do the
+work well.** That sequence was missing when [#17](https://github.com/Calyx-Engineering/arc/issues/17)
+shipped missing two of its five requirements, and it is what the user has been supplying by hand by
+asking for another look.
 
-| Section | |
-|---|---|
-| What was done | Two or three sentences |
-| Files changed, and why | A table — path, one line |
-| Evidence | Gate output. `verify-all.sh` exit, eval scores before and after |
-| What did not get done | Named, with the reason. **Silence here is the failure this arc exists to fix** |
-| A diagram | Where a flow or relationship changed. Does not count against the 200 |
+**It lives in [`run-instructions.md`](../arc-work/04-dogfood/run-instructions.md)** — the file a
+loop iteration reads ahead of its issue. Restating it here would give it two sources, and the one
+nobody executes is the one that drifts.
 
-### 3.3 What is least certain, and why
+**If it survives the arc it graduates to a mechanism.** It is arc-scoped for now because it is
+unproven.
+
+### 3.3 The report at a workstream boundary
+
+**200 words maximum**, written into [§6](#6-status) as a block under that workstream. Durable there
+in a way a PR comment is not. Sections in
+[`run-instructions.md` §6](../arc-work/04-dogfood/run-instructions.md#6-what-you-write).
+
+### 3.4 What is least certain, and why
 
 | | |
 |---|---|
@@ -108,6 +125,10 @@ there in a way a PR comment is not.
 | **The default branch was flipped to `arc/04-dogfood` mid-arc** | Started on `main` deliberately, which tested the manual route and proved it — [#132](https://github.com/Calyx-Engineering/arc/issues/132) and [#17](https://github.com/Calyx-Engineering/arc/issues/17) were closed and linked by hand. Flipped at T+107 so later PRs bind natively. **Not retroactive:** [PR #137](https://github.com/Calyx-Engineering/arc/pull/137) and [PR #139](https://github.com/Calyx-Engineering/arc/pull/139) stay unlinked forever, which is why the manual links were necessary. All four m42 preconditions passed |
 | **A merge runs only on an explicit request** | Tested twice this arc. The harness denies `gh pr merge` after a general approval and allows it after a direct request naming the merge. Not a defect to reverse-engineer — [#138](https://github.com/Calyx-Engineering/arc/issues/138) documents the route |
 | **Branches are created through `createLinkedBranch`** | `git checkout -b` produces no branch↔issue link, and the mutation cannot link a branch that already exists. Proven both ways on [#132](https://github.com/Calyx-Engineering/arc/issues/132) and [#17](https://github.com/Calyx-Engineering/arc/issues/17) |
+| **A working handoff is defined by behaviour, not by content** | Settled by interview 2026-09-06. First action correct with no correction, **and** the session can state *why* the current approach was chosen without being told. Not re-proposing ruled-out work is wanted, not required. Every previous attempt changed the document instead, with no way to tell whether it helped |
+| **Rationale is not narrative** | Leading hypothesis for why a correct handoff produces the opposite conclusion: *"we tried X then Y"* is cut as development narrative and the constraint that produced the decision goes with it. In hardware the constraint is what makes the next decision correct. Unproven — Handoff-1 tests it |
+| **The manual process the handoff replaced worked** | A cold start that began by reading the previous session's transcript produced good results, and inspired the handoff. The document is a distillation of that transcript — **distillation is where the rationale is lost**, which is the same finding as the row above, arrived at from the other direction |
+| **No standing merge grant has ever existed here** | Since Arc was installed, no merge has run without an explicit per-merge request. [#138](https://github.com/Calyx-Engineering/arc/issues/138) is building a route, not recovering a lost one |
 | **Issue writing is in scope** | The user's call: *"good issue writing and naming has become a critical core to the development workflow."* Six issues carry it |
 
 ## 5 The tree
