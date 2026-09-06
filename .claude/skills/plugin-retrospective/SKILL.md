@@ -127,13 +127,23 @@ Two kinds of output, two destinations.
 
 | Output | Goes to |
 |---|---|
-| **The friction log** — evidence, clusters, verbatim quotes | `docs/retrospectives/<YYYY-MM>-<slug>/friction-log.md` |
+| **The retrospective** — evidence, clusters, verbatim quotes | `docs/retrospectives/<YYYY-MM>-<slug>/README.md` |
 | **Mechanism specs** — one file each | `docs/product-architecture/mechanisms/` |
 
-**The friction log is dated and never edited afterwards.** It is evidence, and evidence
+**The retrospective is dated and never edited afterwards.** It is evidence, and evidence
 freezes when the run ends. Every retrospective produces one, so they need a home that does
-not clog the product definition — the first run's log sat in the architecture root and had
+not clog the product definition — the first run's sat in the architecture root and had
 to be moved.
+
+**`README.md`, and never `friction-log.md`.** Two reasons, both learned the hard way:
+
+| | |
+|---|---|
+| **It is not a log** | A log is appended to as friction happens — that is the running `friction-log.md` a *work* repository keeps. This is written once, at the end of a run. Naming both the same thing makes a reader open the wrong one |
+| **`README.md` matches the convention already in use** | `report/<capability-slug>/README.md`, `docs/product-architecture/README.md`. The folder name carries the run; the filename's job is *this is the document*, and GitHub renders it on the folder |
+
+**The `# H1` carries the identity, not the filename** — `# Retrospective — <slug>, <date>`. A file
+that escapes its folder still says what it is.
 
 **Specs are living.** They change as mechanisms get built. That is why they live apart from
 the evidence that produced them.
