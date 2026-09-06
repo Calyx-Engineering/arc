@@ -68,12 +68,14 @@ and dispatches accumulates the whole workstream in its context, which is the fai
 **The driver picks; the run never does.** A run that selects its own work has read the whole
 milestone to do it, which is the context blow-up this loop exists to avoid.
 
-**The queue is GitHub sub-issues.** One parent issue per workstream, its issues attached as ordered
-children. Verified on this repo: `addSubIssue`, `removeSubIssue` and **`reprioritizeSubIssue`** all
+**The queue is GitHub sub-issues.** One parent issue per workstream, labelled `workstream`, its
+issues attached as ordered children. One label, not five — it is a structural type every arc reuses,
+and it is how the driver finds the parents without hardcoding numbers. Verified on this repo: `addSubIssue`, `removeSubIssue` and **`reprioritizeSubIssue`** all
 exist, so order is native and no label, project board or queue file is needed.
 
 | | |
 |---|---|
+| **Finding the parents** | `gh issue list --label workstream --milestone <name>` |
 | **Next issue** | First open sub-issue of the current workstream's parent |
 | **Order** | The sub-issue list order — `reprioritizeSubIssue` sets it |
 | **Blocked** | An issue whose `Blocked by #NN` issues are still open is skipped, not started |

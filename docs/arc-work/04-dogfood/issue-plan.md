@@ -47,13 +47,13 @@ workstream** — every row above except the last reverts to assertion.
 **Named, not numbered** — the repo's own convention, and letters already mean the retrospective's
 cluster groups. Issues are referenced `Fire-3`, `Handoff-1`.
 
-| Workstream | What it fixes | Issues | Autonomous |
-|---|---|---|---|
-| **[Loop](#5-loop--land-it-and-measure-it)** | Work cannot be landed or measured without you | 3 | No — one issue you guide |
-| **[Fire](#6-fire--skills-and-hooks-fire-when-they-should)** | Correct rules are not read when they are needed | 12 | Yes |
-| **[Handoff](#7-handoff--intent-survives-a-cold-start)** | Facts survive a cold start; intent does not | 6 | Yes, one checkpoint |
-| **[Tracker](#8-tracker--the-record-is-written-correctly)** | The durable record is written wrongly, undetected | 7 | Yes |
-| **[Upkeep](#9-upkeep--drift-fails-instead-of-hiding)** | Small wrongnesses nothing fails on | 5 | Yes |
+| Parent | Workstream | What it fixes | Issues | Autonomous |
+|---|---|---|---|---|
+| [#144](https://github.com/Calyx-Engineering/arc/issues/144) | **[Loop](#5-loop--the-merge-route-and-the-eval-suite)** | Work cannot be landed or measured without you | 3 | No — one issue you guide |
+| [#145](https://github.com/Calyx-Engineering/arc/issues/145) | **[Fire](#6-fire--skills-and-hooks-fire-when-they-should)** | Correct rules are not read when they are needed | 12 | Yes |
+| [#146](https://github.com/Calyx-Engineering/arc/issues/146) | **[Handoff](#7-handoff--intent-survives-a-cold-start)** | Facts survive a cold start; intent does not | 6 | Yes, one checkpoint |
+| [#147](https://github.com/Calyx-Engineering/arc/issues/147) | **[Tracker](#8-tracker--the-record-is-written-correctly)** | The durable record is written wrongly, undetected | 7 | Yes |
+| [#148](https://github.com/Calyx-Engineering/arc/issues/148) | **[Upkeep](#9-upkeep--drift-fails-instead-of-hiding)** | Small wrongnesses nothing fails on | 5 | Yes |
 
 ```mermaid
 flowchart LR
@@ -69,7 +69,7 @@ flowchart LR
 
 ---
 
-## 5 Loop — land it and measure it
+## 5 Loop — the merge route and the eval suite
 
 Every other workstream ends with a PR that cannot be merged and a change whose effect cannot be
 measured. These three build the two instruments that fix that, and are not touched again.
@@ -84,7 +84,7 @@ flowchart LR
 | # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
 | Loop-1 | [#138](https://github.com/Calyx-Engineering/arc/issues/138) an approved merge cannot run | **You guide this.** You solved it in ROADZ and it left no artifact | The route in `CLAUDE.md` and `skills/autonomy-set` | A merge runs from a standing grant, twice, in one session |
-| Loop-2 | **NEW** `feat: an eval suite that tests whether a skill fires` | No `evals/` exists. Establish a baseline firing rate per skill | `evals/`, the manifest key, `--threshold` in `tools/verify-all.sh` | The suite reports a per-skill score and fails below threshold |
+| Loop-2 | [#149](https://github.com/Calyx-Engineering/arc/issues/149) an eval suite that tests whether a skill fires | No `evals/` exists. Establish a baseline firing rate per skill | `evals/`, the manifest key, `--threshold` in `tools/verify-all.sh` | The suite reports a per-skill score and fails below threshold |
 | Loop-3 | [#141](https://github.com/Calyx-Engineering/arc/issues/141) the miner scans repositories it was not given | Scope follows a shared prefix, not the briefed set | Anchor to briefed slugs; report what was skipped | A briefed pair is read exactly, skipped directories named |
 
 **Done when:** a merge lands without a per-merge ask, and `verify-all.sh` includes a
@@ -112,19 +112,19 @@ flowchart LR
 
 | # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| Fire-1 | **NEW** `scope: why a skill does not fire, and what would make it` | Eval cases from the real misses — bare name, name plus instruction, situation with no name | A decision about what a `description:` must contain | The cases exist and produce a baseline per skill |
-| Fire-2 | **NEW** `fix: an instruction wrapped around a skill name suppresses the match` | The two missed Camp openings | `description:` frontmatter, per Fire-1 | Those openings score above threshold |
-| Fire-3 | **NEW** `fix: a session opening does not load handoff or camp` | 8 openings instructed a handoff read; `arc:handoff` fired at none | Same, plus what `commands/arc-next` carries | Opening cases fire both |
-| Fire-4 | **NEW** `fix: response length is not held after it is set` | Recurred inside the retrospective itself | `chat-response` | A long-answer case scores within budget |
-| Fire-5 | **NEW** `fix: reports are written as narrative, not as conclusion` | 5 post-install corrections | `engineering-report` | A report case grades conclusion-first |
-| Fire-6 | **NEW** `fix: numbered topics are dropped mid-reply` | Zero pre-install hits | `chat-response` | A multi-topic case grades numbering |
-| Fire-7 | **NEW** `fix: work continues on the wrong branch` | 2 post-install corrections | `hooks/branch-guard` | `verify-hook.sh` cases. **Loops** |
-| Fire-8 | **NEW** `fix: camp-branch-check rejects conforming branches` | **P1.** Fired 5 times, correct 0 | Read the repo's declared convention; extract the number rather than match a shape | `verify-hook.sh` cases including ROADZ's real branches. **Loops** |
-| Fire-9 | **NEW** `fix: nothing fires when an issue closes` | `tracker-verify` matches create, edit, PR merge only | Add `gh issue close` | `verify-hook.sh` cases. **Loops** |
-| Fire-10 | **NEW** `feat: an activation log` | Three friction-log rows are one absence: **Arc has no record of itself** | Every hook appends one line before exit | A session produces one line per firing. **Loops after Fire-9** |
+| Fire-1 | [#155](https://github.com/Calyx-Engineering/arc/issues/155) why a skill does not fire, and what would make it | Eval cases from the real misses — bare name, name plus instruction, situation with no name | A decision about what a `description:` must contain | The cases exist and produce a baseline per skill |
+| Fire-2 | [#156](https://github.com/Calyx-Engineering/arc/issues/156) an instruction wrapped around a skill name suppresses the match | The two missed Camp openings | `description:` frontmatter, per Fire-1 | Those openings score above threshold |
+| Fire-3 | [#157](https://github.com/Calyx-Engineering/arc/issues/157) a session opening does not load handoff or camp | 8 openings instructed a handoff read; `arc:handoff` fired at none | Same, plus what `commands/arc-next` carries | Opening cases fire both |
+| Fire-4 | [#158](https://github.com/Calyx-Engineering/arc/issues/158) response length is not held after it is set | Recurred inside the retrospective itself | `chat-response` | A long-answer case scores within budget |
+| Fire-5 | [#159](https://github.com/Calyx-Engineering/arc/issues/159) reports are written as narrative, not as conclusion | 5 post-install corrections | `engineering-report` | A report case grades conclusion-first |
+| Fire-6 | [#160](https://github.com/Calyx-Engineering/arc/issues/160) numbered topics are dropped mid-reply | Zero pre-install hits | `chat-response` | A multi-topic case grades numbering |
+| Fire-7 | [#161](https://github.com/Calyx-Engineering/arc/issues/161) work continues on the wrong branch | 2 post-install corrections | `hooks/branch-guard` | `verify-hook.sh` cases. **Loops** |
+| Fire-8 | [#162](https://github.com/Calyx-Engineering/arc/issues/162) camp-branch-check rejects conforming branches | **P1.** Fired 5 times, correct 0 | Read the repo's declared convention; extract the number rather than match a shape | `verify-hook.sh` cases including ROADZ's real branches. **Loops** |
+| Fire-9 | [#163](https://github.com/Calyx-Engineering/arc/issues/163) nothing fires when an issue closes | `tracker-verify` matches create, edit, PR merge only | Add `gh issue close` | `verify-hook.sh` cases. **Loops** |
+| Fire-10 | [#166](https://github.com/Calyx-Engineering/arc/issues/166) an activation log | Three friction-log rows are one absence: **Arc has no record of itself** | Every hook appends one line before exit | A session produces one line per firing. **Loops after Fire-9** |
 
-| Fire-11 | **NEW** `feat: a claim records where it came from, and strong beats weak` | A demand list carried three kill-path signals read off **a photograph of a board we do not hold**, treated as specified for weeks. Separately, a bench measurement the user had verified was discounted in favour of an inference from a dead instrument | A provenance vocabulary, strength-ordered — `measured > datasheet > vendor > schematic > photograph > conversation > inferred` — in `record-route` and `engineering-report`. **A table row carries its source, and a strong claim is not overridden by a weak one** | A table without provenance is reported. An eval case where a user-stated measurement conflicts with an inference |
-| Fire-12 | **NEW** `fix: a failure is blamed on the environment before a second hypothesis is tested` | *"you keep assuming **I** did something wrong when you're just stopping at the first issue and not trying to figure it out yourself"* — the highest single-day cost in the corpus | **An eighth `work-watch` check.** A failure attributed to the user's setup requires one tested alternative first | An eval case: an instrument returns nothing, the user has stated a measurement. The session must test its own command path before asserting the bench is wrong |
+| Fire-11 | [#164](https://github.com/Calyx-Engineering/arc/issues/164) a claim records where it came from, and strong beats weak | A demand list carried three kill-path signals read off **a photograph of a board we do not hold**, treated as specified for weeks. Separately, a bench measurement the user had verified was discounted in favour of an inference from a dead instrument | A provenance vocabulary, strength-ordered — `measured > datasheet > vendor > schematic > photograph > conversation > inferred` — in `record-route` and `engineering-report`. **A table row carries its source, and a strong claim is not overridden by a weak one** | A table without provenance is reported. An eval case where a user-stated measurement conflicts with an inference |
+| Fire-12 | [#165](https://github.com/Calyx-Engineering/arc/issues/165) a failure is blamed on the environment before a second hypothesis is tested | *"you keep assuming **I** did something wrong when you're just stopping at the first issue and not trying to figure it out yourself"* — the highest single-day cost in the corpus | **An eighth `work-watch` check.** A failure attributed to the user's setup requires one tested alternative first | An eval case: an instrument returns nothing, the user has stated a measurement. The session must test its own command path before asserting the bench is wrong |
 
 **Fire-12 and Handoff-5 both add a `work-watch` check and must be sequenced.**
 [#106](https://github.com/Calyx-Engineering/arc/issues/106) exists because that check count is
@@ -175,11 +175,11 @@ cannot find it.
 
 | # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| Handoff-1 | **NEW** `feat: measure handoff spin-up time and accuracy` | Read the transcript that **wrote** each handoff, then score the session that read it | A miner mode or a second agent | It separates the 5 openings that worked from the 3 that did not, and says for each bad one whether the wrong answer was something the document mentioned |
-| Handoff-2 | **NEW** `fix: a north star is read at cold start and does not bind` | Handoff-1's baseline | Carry the constraint behind each decision, not only the decision — rationale kept where narrative is cut; a trigger when an approach is replaced inside an accepted unit; *out of scope* stating **why** | On the same 8 openings: first action correct, and the session states why the approach was chosen unprompted |
-| Handoff-3 | **NEW** `fix: a file the user authored is overwritten with no copy kept` | `HANDOFF.md` is gitignored, so a rewrite destroys the state the session was given. Same shape as a diagram the user spent hours on being replaced rather than archived | Preserve before overwriting: copy to `forensics/` at **cold start**, and archive a user-authored file before replacing it | A rewrite leaves the prior version on disk |
-| Handoff-4 | **NEW** `fix: the handoff header carries no time of day` | A cold start cannot tell an hour-old handoff from a week-old one | Date-and-time header, re-stamped every write | A case asserts the stamp changed |
-| Handoff-5 | **NEW** `feat: the session notices its own saturation before the user does` | Twice the saturating load was building a skill, not doing the work | **A seventh `work-watch` check** — its six do not cover this | An eval case on a long session. Touches [#106](https://github.com/Calyx-Engineering/arc/issues/106) |
+| Handoff-1 | [#150](https://github.com/Calyx-Engineering/arc/issues/150) measure handoff spin-up time and accuracy | Read the transcript that **wrote** each handoff, then score the session that read it | A miner mode or a second agent | It separates the 5 openings that worked from the 3 that did not, and says for each bad one whether the wrong answer was something the document mentioned |
+| Handoff-2 | [#151](https://github.com/Calyx-Engineering/arc/issues/151) a north star is read at cold start and does not bind | Handoff-1's baseline | Carry the constraint behind each decision, not only the decision — rationale kept where narrative is cut; a trigger when an approach is replaced inside an accepted unit; *out of scope* stating **why** | On the same 8 openings: first action correct, and the session states why the approach was chosen unprompted |
+| Handoff-3 | [#152](https://github.com/Calyx-Engineering/arc/issues/152) a file the user authored is overwritten with no copy kept | `HANDOFF.md` is gitignored, so a rewrite destroys the state the session was given. Same shape as a diagram the user spent hours on being replaced rather than archived | Preserve before overwriting: copy to `forensics/` at **cold start**, and archive a user-authored file before replacing it | A rewrite leaves the prior version on disk |
+| Handoff-4 | [#153](https://github.com/Calyx-Engineering/arc/issues/153) the handoff header carries no time of day | A cold start cannot tell an hour-old handoff from a week-old one | Date-and-time header, re-stamped every write | A case asserts the stamp changed |
+| Handoff-5 | [#154](https://github.com/Calyx-Engineering/arc/issues/154) the session notices its own saturation before the user does | Twice the saturating load was building a skill, not doing the work | **A seventh `work-watch` check** — its six do not cover this | An eval case on a long session. Touches [#106](https://github.com/Calyx-Engineering/arc/issues/106) |
 | Handoff-6 | [#16](https://github.com/Calyx-Engineering/arc/issues/16) index transcript locations | 2 live worktrees, 4 directories, 2 orphans. **Prerequisite for Handoff-2** if the fix reaches back to the transcript | `hooks/session-index` | `verify-hook.sh` cases. Also closes [#17](https://github.com/Calyx-Engineering/arc/issues/17)'s moved requirement |
 
 **Done when:** Handoff-1 reproduces the known-good and known-bad openings, and Handoff-2 moves the
@@ -236,8 +236,8 @@ flowchart LR
 |---|---|---|---|
 | Upkeep-1 | [#143](https://github.com/Calyx-Engineering/arc/issues/143) verify the mechanism table against its specs | `tools/verify-mechanisms.sh` | Fixture cases, in `verify-sync-parity.sh`'s shape |
 | Upkeep-2 | [#142](https://github.com/Calyx-Engineering/arc/issues/142) delete the local skill copies | Unblocked — [#132](https://github.com/Calyx-Engineering/arc/issues/132) is closed | `verify-all.sh` still clean; the artifact-table gate survives |
-| Upkeep-3 | **NEW** `fix: the arc-work path assumes a flat slug` | A rule, not a per-repo guess | A module-shaped slug resolves |
-| Upkeep-4 | **NEW** `fix: the dev-log template calls itself a decision log` | Collides with `ddr/` | Wording checked |
+| Upkeep-3 | [#167](https://github.com/Calyx-Engineering/arc/issues/167) the arc-work path assumes a flat slug | A rule, not a per-repo guess | A module-shaped slug resolves |
+| Upkeep-4 | [#168](https://github.com/Calyx-Engineering/arc/issues/168) the dev-log template calls itself a decision log | Collides with `ddr/` | Wording checked |
 | Upkeep-5 | [#134](https://github.com/Calyx-Engineering/arc/issues/134) review what ships before making Arc public | **At arc close.** Blocks use at Dedrone | The audit completes |
 
 **Done when:** `verify-all.sh` gains `verify-mechanisms.sh`, the duplicate skill tree is gone, and no existing gate was lost with it.
@@ -250,9 +250,9 @@ Not this arc. Filed so they are not re-derived.
 
 | Issue | Why out |
 |---|---|
-| **NEW** `fix: an obligation stated in conversation is dropped` | **The largest post-install cluster, 11 hits.** A process gap, not a rule that failed to fire. [#140](https://github.com/Calyx-Engineering/arc/issues/140) covers its PR-time half only |
-| **NEW** `fix: commits land before review, and not at the stopping points` | Process gap |
-| **NEW** `chore: behavior rules do not follow the user to another machine` | Overlaps [#134](https://github.com/Calyx-Engineering/arc/issues/134) |
+| [#169](https://github.com/Calyx-Engineering/arc/issues/169) an obligation stated in conversation is dropped | **The largest post-install cluster, 11 hits.** A process gap, not a rule that failed to fire. [#140](https://github.com/Calyx-Engineering/arc/issues/140) covers its PR-time half only |
+| [#170](https://github.com/Calyx-Engineering/arc/issues/170) commits land before review, and not at the stopping points | Process gap |
+| [#171](https://github.com/Calyx-Engineering/arc/issues/171) behavior rules do not follow the user to another machine | Overlaps [#134](https://github.com/Calyx-Engineering/arc/issues/134) |
 
 ---
 
@@ -318,9 +318,10 @@ link forms, and the mutation cannot link a branch that already exists.
 
 | | |
 |---|---|
-| Issues | **36** |
-| Already filed | 13 |
-| **To file** | **23** — 20 in scope, 3 filed then moved out |
+| Issues | **36** — all filed |
+| Workstream parents | **5**, labelled `workstream` |
+| In the milestone | 33 children plus 5 parents |
+| Out of the milestone | 3 — [#169](https://github.com/Calyx-Engineering/arc/issues/169), [#170](https://github.com/Calyx-Engineering/arc/issues/170), [#171](https://github.com/Calyx-Engineering/arc/issues/171) |
 | Per workstream | Loop 3 · Fire 12 · Handoff 6 · Tracker 7 · Upkeep 5 · out 3 |
 | Stop for you | **6 of 36** — [§11.3](#113-the-six-that-stop-for-you-during-execution) |
 | Blocked on Loop | Fire and Handoff entirely; Tracker and Upkeep for their merges |
