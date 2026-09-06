@@ -2,7 +2,7 @@
 
 Instructions for Claude sessions working **on** this repo (building Arc). This file is
 not part of what Arc ships — the plugin's own artifacts (`.claude-plugin/`, `skills/`,
-hooks, commands, once they exist) are the product; this file governs how we work on it.
+`hooks/`, `agents/`, `templates/`) are the product; this file governs how we work on it.
 
 ## Start here
 
@@ -22,18 +22,14 @@ These matter more than any finding in the documents.
 
 | | |
 |---|---|
-| **The ask is the first line** | Any decision, approval or blocking question opens the reply, before the reasoning that produced it. **Reasoning that discovers an ask must be reordered before sending** — a reply in thinking-order buries the ask at the end. `skills/chat-response` and m46 §7.1 both state the rule and were loaded when it was broken four times in one session; [#89](https://github.com/Calyx-Engineering/arc/issues/89) tracks the missing trigger |
-| **Short chat responses** | He reads slowly and deliberately. Lead with the answer; he pulls for detail. See `.claude/skills/chat-response/` |
+| **He reads slowly and deliberately** | Length costs him more than it costs most readers. The rules that follow from it are `chat-response`'s |
 | **Edit in place, do not paste into chat** | Fixes go into the file; the diff is the review surface. Rewriting a whole file loses his in-progress review comments — edit, never rewrite |
-| **No development narrative** | Never "an earlier draft said…" or "you corrected me…". State the current conclusion. Applies to documents *and* chat |
 | **Wording fixes go in immediately** | Discuss structural changes first, then apply; never stop to ask about word choice |
 | **Verify before asserting** | Several documented beliefs have been disproved by direct test |
 | **When he says you did something, check what you sent** | Do not reason about why he might have perceived it. Re-read the actual output first. Explaining a report away is how a real error gets excused instead of fixed |
 | **Cite TimeScope by mechanism, never by name** | He does not remember its details. Say what it is and how it works in the same breath |
 | **He is right about his own domain** | On EE substance, when he says an analysis is wrong, it is wrong. Do not re-litigate — ask what was missed |
 | **Watch for saturation** | He will say when a context is degrading. He is a reliable judge of it; hand off rather than push through |
-| **Number discussion topics** | A reply covering several topics labels each D1, D2… so he can answer by number instead of restating. `skills/chat-response` carries the block's shape and the unit; `D` degrades from `spec-interview`'s inventory letters |
-| **Do not dig without an exit** | Escalating questions with no relief valve is the friction m41 exists for. Offer to back out to the critical point |
 
 ### Rejected, so they are not re-proposed
 
@@ -61,19 +57,13 @@ that architecture — is Arc's.
 When Arc should do something and does not, **document the mechanism, never the artifact.**
 Which file carries a capability is decided when it gets built, not when the gap is noticed.
 
-1. Write a mechanism spec in `docs/product-architecture/mechanisms/` — the friction, a
-   verbatim quote if there is one, what should have happened, and the trigger. Mark it
-   `partial` and name what is undesigned. Thin is correct at capture time.
-2. Add the row to the product definition's mechanism table with ⚪ status and a spec link.
-   New mechanisms take the next free identifier from the suite registry.
-3. File an issue, so it is tracked as work rather than only described.
+**The routing table is the product definition's** — its *Capturing a gap* section, including
+what is *not* a definition change. Three steps: a `partial` spec in
+`docs/product-architecture/mechanisms/`, a ⚪ row in the mechanism table, an issue.
 
 **Exception: when the capability is already a single skill, that skill is its own spec.**
-m11, m18 and m38 link to their `SKILL.md`, not to
-a `mechanisms/` file — a separate spec would paraphrase the skill and the two would drift.
-
-Full routing table — including what is *not* a definition change — in the product
-definition's "Capturing a gap" section.
+m11, m18 and m38 link to their `SKILL.md` — a separate spec would paraphrase the skill and the
+two would drift.
 
 ## Vocabulary — three ladders, deliberately distinct
 
@@ -81,7 +71,7 @@ A bare number is never ambiguous. Never write "tier 2" alone.
 
 | Ladder | Values | Measures |
 |---|---|---|
-| **Mechanisms** | m09–m41 | Which capability. Not a ladder — an identifier, zero-padded to two digits |
+| **Mechanisms** | m09–m47 | Which capability. Not a ladder — an identifier, zero-padded to two digits |
 | **Knowledge tiers** | K1–K4 | Depth of recorded knowledge |
 | **Delegation tiers** | T0-Inline · T1-Squad · T2-Wave | How work is dispatched to agents |
 | **Star authority ladder** | Agreed · Derived · Escalate | How much authority Star answers with (Lodestar's) |
@@ -100,8 +90,9 @@ first. Cite the section (`m43 §3.1`); say the name.
 
 ## Repo conventions
 
-- **Docs, not code, for now.** Nothing functional exists yet. Don't assume runtime
-  behavior described in `docs/` is built — check before citing it as current.
+- **Documented is not built.** Skills, hooks, templates and tools exist and `v0.1.0` is
+  released, but most of the mechanism table is still ⚪. Don't assume runtime behaviour
+  described in `docs/` is built — check before citing it as current.
 - **Markdown:** `.markdownlint.json` governs — long lines OK (MD013 off), inline HTML OK
   (MD033 off), duplicate headings OK across sibling sections only (MD024 siblings_only).
 - **Diagrams:** prefer Mermaid over prose when a flow or relationship is easier shown
@@ -128,33 +119,21 @@ Trunk-based. `main` stays deployable and coherent at every commit.
 - **Arc branches** (`arc/NN-short-slug`) — a planned, multi-session push toward a
   numbered milestone. Merges to `main` only when that milestone is actually
   deployable or dogfoodable.
-- **Work branches** — one unit of work off an arc branch. **Two forms, and both carry a
-  number.** Below.
+- **Work branches** — one unit of work off an arc branch. Two forms, both carrying a number.
 - **Topic branches** — anything smaller or exploratory, and anything outside an arc.
   Short-lived, merge back quickly. No number, because there is no unit to name.
 - No permanent `develop` branch. Revisit when Arc has external consumers, or when
   commits must leave this machine before they have been exercised.
 
-### A work branch carries the number of whichever identifier exists first
+**Work branch names, and the mechanics that go with them, are
+[`skills/issue-write`](skills/issue-write/SKILL.md)'s** — the two forms, the mandatory number,
+`tools/new-direct-pr.sh`, and why a branch is never renamed once its PR is open. Reasoning in
+[m46 §9](docs/product-architecture/mechanisms/m46-work-navigation.md#9-branch-naming).
 
 ```text
-arc/<nn>-<slug>-issue-<NN>-<hint>    an issue exists — use its number
-arc/<nn>-<slug>-pr<NN>-<hint>        no issue — the PR number is the only identifier
-
 arc/03-camp-issue-78-work-nav
 arc/03-camp-pr115-transcript-staleness
 ```
-
-| | |
-|---|---|
-| **The number is mandatory, in both forms** | The branch name is often the only reference visible — an editor's status bar truncates early, and it is where the work is named while its PR is read in a browser |
-| **So is the `pr` label** | Issues and PRs share one counter. A bare number points at whichever object happens to hold it |
-| **Never `pr<NN>` on an issue-backed branch** | Two different numbers from the same counter. The wrong one points the reader at an unrelated object |
-| **No issue means the number does not exist yet** | It is issued when the PR opens. `tools/new-direct-pr.sh <hint> "<title>"` predicts it, branches, commits a stub dev-log, pushes, and opens the **draft PR before the work** — which is what makes the race window seconds wide |
-| **A missed prediction is recorded, never retried** | **Renaming an open PR's branch closes the PR** — tested, [PR #109](https://github.com/Calyx-Engineering/arc/pull/109) went `OPEN` → `CLOSED`. Say it in the PR body, the dev-log and the friction log instead |
-
-Mechanics in [`skills/issue-write`](skills/issue-write/SKILL.md); full reasoning in
-[m46 §9](docs/product-architecture/mechanisms/m46-work-navigation.md#9-branch-naming).
 
 ## Soak — before a plugin change is pushed
 
@@ -168,35 +147,31 @@ the machine. Committed is not the same as exercised.
 
 **Unsoaked** = a commit here with no soak line from any repo.
 
-## Local skill copies — temporary, until the first release
+## Local skill copies — the deletion condition has been met
 
-Arc is not installed in its own repository, so **nothing in `skills/` is live here.** Claude
-Code discovers `.claude/skills/`, and that is all it discovers.
+**Arc is installed here** — `~/.claude/plugins/cache/calyx-engineering/arc/0.1.0/`, 13 skills.
+`.claude/skills/` also holds 13. **Every skill is in this repository's context twice**, which is
+the duplication defect [#138](https://github.com/Calyx-Engineering/arc/issues/138) is about, at
+thirteen times the scale.
 
-Until there is a release, `.claude/skills/` holds a **copy of every shipping skill**, each
-carrying a do-not-edit banner. **Every skill is copied — there is no exception list**, because
-a list of what to copy is what made a new skill invisible to the check in the first place.
+This arrangement existed because Claude Code discovered only `.claude/skills/` here. It now
+discovers the plugin. **The stated condition for deleting the copies was *this repository having
+installed the released plugin*, and it has** — [#142](https://github.com/Calyx-Engineering/arc/issues/142)
+does the deletion.
+
+Until it lands:
 
 | | |
 |---|---|
 | **The source is `skills/`** | That is what the plugin ships. Edit there, never in the copy |
 | **Re-copy after editing** | `tools/sync-local-skills.sh` |
-| **Check before a PR** | `tools/verify-all.sh` runs this and every other gate. On its own, `tools/sync-local-skills.sh --check` exits 1 if a copy is stale, if a shipping skill has no copy, if a copy's source was deleted, or if a skill is missing from the product definition's artifact table |
+| **Check before a PR** | `tools/verify-all.sh`. On its own, `tools/sync-local-skills.sh --check` exits 1 if a copy is stale, if a shipping skill has no copy, if a copy's source was deleted, or if a skill is missing from the product definition's artifact table |
 | **A skill that is genuinely repo-local** | Lives in `.claude/skills/` with no banner. The check names it and passes |
 | **After changing the sync** | `tools/verify-sync-parity.sh` — nine cases against throwaway fixture trees |
 
-**The condition for deleting this arrangement is that *this repository* has installed the released
-plugin — not that a release exists.**
-
-| | |
-|---|---|
-| **Releasing does not delete the copies** | `v0.1.0` is cut and the copies stay. A tag changes nothing about what Claude Code discovers here |
-| **Another repo installing Arc does not either** | The copies exist because *this* repo is not an Arc consumer |
-| **The test is one command** | `/plugin` lists what is installed. If `arc` is not there, `.claude/skills/` is still the only thing Claude Code discovers in this repo, and deleting it removes every skill from this session |
-
-Once it is installed here, `skills/` becomes purely the dev tree — exercised in other repos,
-never against itself. Testing a change with the version of itself being changed is the trap this
-avoids, and it is the same reasoning as the soak rule below.
+After #142, `skills/` becomes purely the dev tree, exercised through the installed plugin rather
+than through a copy of itself. Testing a change with the version of itself being changed is the
+trap that avoids, and it is the same reasoning as the soak rule above.
 
 ## Safe hook editing
 
@@ -221,8 +196,8 @@ skill.** David is not a hook author and does not audit bash — he checks that y
 change it is validating, and `HOOKS_OFF` would disable it along with everything else. A
 script works with hooks off and produces output you can see.
 
-**`tools/verify-all.sh` runs every gate in one command** — the four verifiers and the skill
-parity check, one exit code, the failing one named. It **fails on a hook with no case
+**`tools/verify-all.sh` runs every gate in one command** — nine of them, one exit code, the
+failing one named. It **fails on a hook with no case
 directory**, so the rule above is enforced rather than remembered. `--list` prints what it
 runs and, as importantly, what it cannot: no hook fires in a live session here and no skill is
 invoked, so a green run is not a claim about either.
