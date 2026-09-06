@@ -1,385 +1,307 @@
-# Execution plan — arc 04 dogfood
+# Arc 04 — dogfood
 
-Built against [the north-star brief](north-star-brief.md) and
-[the retrospective](../../retrospectives/2026-09-dogfood/README.md).
+**Arc was installed on real hardware work for twelve days and produced 84 corrections.** This arc
+fixes what that exposed.
 
-**Five groups. Each one stops for review.** Group 0 exists because the other four cannot land
-their own work or verify it without it.
+## 1 Objective
 
-**The next session agrees §"The problem" and §"Working looks like" for each group — nothing else.**
-Everything below that line is already decided and does not need discussing.
+**Make Arc hold up under real use, and prove it with a number rather than an opinion.**
 
----
+Three arcs shipped behaviour that had never been executed. Then `v0.1.0` was installed in a live
+hardware project and the gap showed: skills that do not fire, a handoff that restores facts but
+not intent, issues written wrongly with nothing detecting it.
 
-## The skill-behaviour test harness
+## 2 What success looks like
 
-`claude plugin eval` runs cases against the installed plugin and grades them.
+**Every row is a measured fact today, and a number after.** Nothing here is a feeling about
+whether Arc got better.
 
-| | |
+| Today, measured | After this arc |
 |---|---|
-| `tool_used: Skill` | A first-class grader. **It tests whether a skill fired** — which is the retrospective's largest finding stated as a test |
-| `--runs <n>`, default 3 | Firing is probabilistic. One run proves nothing |
-| `--threshold <0..1>` | **Exits 1 below threshold.** A gate, so a loop and a PR check both have a target |
-| `--ablation with-without` | Scores against a no-plugin baseline |
+| `arc:handoff` fired at **0 of 8** session openings that asked for it | Every opening case fires, at or above threshold, across 3 runs |
+| One session ran **920 turns with 4 skill invocations**, two of them 4 seconds after you demanded them | Skills fire on the situation, scored by `claude plugin eval` |
+| `camp-branch-check` fired **5 times and was correct 0 times** | It reads the repository's declared convention and passes on conforming branches |
+| No way to tell whether a handoff worked except how annoyed the next session made you | The 8 real cold starts are scored; a change to the handoff moves that number |
+| [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped **missing 2 of its 5 requirements**, found only by a manual re-review | An issue's checklist is resolved before its PR opens |
+| A PR needs you in the room to merge | A workstream lands its own work and reports the result |
 
-**Arc has no `evals/` directory.** Building one is G0's second issue and the precondition for
-G1 and G2 being executable without the user.
+**If the eval suite cannot be made to score skill firing, this arc has failed at its first
+workstream** — every row above except the last reverts to assertion.
 
----
+## 3 Scope
 
-## The next session — 110 minutes, and what it must produce
+| In | Out |
+|---|---|
+| Skills and hooks that fire wrongly or not at all | Anything found before 2026-08-24 — Arc did not exist yet |
+| The handoff, and the instrument that measures it | New capability. Nothing here is a feature |
+| Issue and PR writing | The knowledge half of transcript mining — m30 stays `partial` |
+| Gates that catch invisible drift | Three clusters filed and deliberately deferred |
 
-**Agreement only. No work.** Everything below this section is already decided; what is missing is
-the user's sign-off on *what the problem is* and *what working looks like*, plus four numbers that
-an autonomous run cannot invent for itself.
-
-| Minutes | Subject | Output |
-|---|---|---|
-| 20 | **[#138](https://github.com/Calyx-Engineering/arc/issues/138)** — the merge route. The user guides this; he has solved it before | The working route, written into `CLAUDE.md` |
-| 15 | G0 — the problem, working looks like | Agreed, or corrected |
-| 20 | G1 — the problem, working looks like | Agreed, plus **the firing threshold** |
-| 20 | G2 — the problem, working looks like | Agreed, plus **what a successful spin-up is**, numerically |
-| 15 | G3 — the problem, working looks like | Agreed |
-| 10 | G4 — the problem, working looks like | Agreed |
-| 10 | The five moved out of the milestone | Confirmed out, or pulled back |
-
-### The four numbers an autonomous run cannot choose
-
-Each one is a judgement about acceptable behaviour, not a fact about the code. **Without them,
-every group stalls at its own acceptance criterion.**
-
-| | Needed for | Candidate |
-|---|---|---|
-| **Skill firing threshold** | G1, every issue | `--threshold 0.8` over 3 runs. Below 1.0 because firing is probabilistic; a suite that demands perfection fails on noise |
-| **Turns to correct work** | G2.1 | A resumed session reaches correct work on the right deliverable within **N turns**. The corpus has 8 real openings to calibrate against |
-| **Spin-up accuracy** | G2.1 | Whether pursuing a *different* deliverable is a fail or a partial. On 09-04 the session was fluent and wrong — the instrument must score that as a failure |
-| **Report budget** | Every group | 600 words is set. Whether a diagram counts against it is not |
-
-### What each group must state, in the user's words
-
-The plan proposes both; the session either accepts or replaces them.
-
-| Group | The problem | Working looks like |
-|---|---|---|
-| **G0** | Work cannot be landed or verified without the user | A group finishes, its PR merges, and an exit code says whether it worked |
-| **G1** | Skills fire on a bare demand, not on a situation | Every shipping skill scores above threshold on cases built from the real misses |
-| **G2** | A correct, freshly-read north star does not bind | A resumed session reaches correct work on the right deliverable, measured |
-| **G3** | Issues are written wrongly and nothing catches it | An issue written by a session passes every gate with no hand correction |
-| **G4** | Documents drift in ways nothing detects | `verify-all.sh` fails on drift that is invisible today |
+**Evidence:** [the retrospective](../../retrospectives/2026-09-dogfood/README.md).
+**Execution model:** [arc-log §3](../../arc-log/arc-04-dogfood.md#3-how-this-arc-is-executed).
 
 ---
 
-## Can each group run autonomously after the planning session
+## 4 The five workstreams
 
-**Yes for G1, G3 and G4, once G0 has landed.** Their acceptance criteria are exit codes —
-`verify-hook.sh`, `claude plugin eval --threshold`, `verify-all.sh`, `gh` read-back — so the run
-can tell whether it succeeded without asking.
+**Named, not numbered** — the repo's own convention, and letters already mean the retrospective's
+cluster groups. Issues are referenced `Fire-3`, `Handoff-1`.
 
-**G2 needs one checkpoint inside the group.** 2.1 builds the instrument that grades 2.2, both in
-the same run, which means grading my own work with a ruler I just made. The checkpoint is small:
-**2.1's scores on the eight known cold starts, before 2.2 begins.** If it reproduces the five that
-worked and the three that failed, the rest of the group proceeds unattended.
+| Workstream | What it fixes | Issues | Autonomous |
+|---|---|---|---|
+| **[Loop](#5-loop--land-it-and-measure-it)** | Work cannot be landed or measured without you | 3 | No — one issue you guide |
+| **[Fire](#6-fire--skills-and-hooks-fire-when-they-should)** | Correct rules are not read when they are needed | 12 | Yes |
+| **[Handoff](#7-handoff--intent-survives-a-cold-start)** | Facts survive a cold start; intent does not | 6 | Yes, one checkpoint |
+| **[Tracker](#8-tracker--the-record-is-written-correctly)** | The durable record is written wrongly, undetected | 7 | Yes |
+| **[Upkeep](#9-upkeep--drift-fails-instead-of-hiding)** | Small wrongnesses nothing fails on | 5 | Yes |
 
-**G0 is not autonomous by design** — [#138](https://github.com/Calyx-Engineering/arc/issues/138) is
-the issue the user guides, and it is the one that makes autonomy possible at all.
+```mermaid
+flowchart LR
+    L["Loop<br/>land it · measure it"] --> F["Fire"]
+    L --> H["Handoff"]
+    L --> T["Tracker"]
+    L --> U["Upkeep"]
+    F -.->|"Fire-1 may<br/>collapse 5 issues"| F
+    H -.->|"Handoff-1 before<br/>Handoff-2"| H
+```
 
-| Group | Autonomous | Stops for |
-|---|---|---|
-| G0 | No | [#138](https://github.com/Calyx-Engineering/arc/issues/138) is guided |
-| G1 | **Yes** | Group end. **Unless 1.1 concludes the group collapses** — that changes the scope and is worth a sentence before continuing |
-| G2 | **Yes, with one checkpoint** | 2.1's scores, then group end |
-| G3 | **Yes** | Group end |
-| G4 | **Yes** | Group end |
+**Loop gates everything.** The other four are independent and may run in any order.
 
 ---
 
-## Group 0 — Close the loop
+## 5 Loop — land it and measure it
 
-Every other group ends with a PR that cannot be merged and a change whose effect cannot be
+Every other workstream ends with a PR that cannot be merged and a change whose effect cannot be
 measured. These three build the two instruments that fix that, and are not touched again.
 
 ```mermaid
 flowchart LR
-    A["0.1 · #138<br/>merge route"] --> L["a group can<br/>land its own work"]
-    B["0.2 · eval suite"] --> M["a change produces<br/>a score, not an opinion"]
-    C["0.3 · #141<br/>miner scope"] --> M
+    A["Loop-1 · #138<br/>merge route"] --> M["a workstream can<br/>land its own work"]
+    B["Loop-2<br/>eval suite"] --> S["a change produces<br/>a score, not an opinion"]
+    C["Loop-3 · #141<br/>miner scope"] --> S
 ```
 
-**The problem.** Work cannot be landed or verified without the user. A merge is denied unless he
-asks for it in the same turn, and no skill's behaviour can be tested at all.
-
-**Working looks like.** A group finishes, its PR merges, and `claude plugin eval --threshold`
-returns an exit code that says whether the change worked — with the user reading a report rather
-than operating the session.
-
-| # | Issue | Evaluate | Fix | Test |
+| # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| 0.1 | [#138](https://github.com/Calyx-Engineering/arc/issues/138) an approved merge cannot run | **The user guides this one.** He has solved it in ROADZ and the route left no artifact | Document the working route in `CLAUDE.md` and `skills/autonomy-set` | A merge runs from a standing grant, twice, in one session |
-| 0.2 | **NEW** `feat: an eval suite that tests whether a skill fires` | No `evals/` exists. Establish the current firing rate per skill as a baseline number | `evals/` with one case per shipping skill; `experimental.evals` in the manifest; `--threshold` wired into `tools/verify-all.sh` | The suite runs, reports a per-skill score, and fails below threshold |
-| 0.3 | [#141](https://github.com/Calyx-Engineering/arc/issues/141) the miner scans repositories it was not given | Scope is a shared prefix, not the briefed set | Anchor to briefed slugs; report skipped directories | A run against a briefed pair reads exactly those, and names what it skipped |
+| Loop-1 | [#138](https://github.com/Calyx-Engineering/arc/issues/138) an approved merge cannot run | **You guide this.** You solved it in ROADZ and it left no artifact | The route in `CLAUDE.md` and `skills/autonomy-set` | A merge runs from a standing grant, twice, in one session |
+| Loop-2 | **NEW** `feat: an eval suite that tests whether a skill fires` | No `evals/` exists. Establish a baseline firing rate per skill | `evals/`, the manifest key, `--threshold` in `tools/verify-all.sh` | The suite reports a per-skill score and fails below threshold |
+| Loop-3 | [#141](https://github.com/Calyx-Engineering/arc/issues/141) the miner scans repositories it was not given | Scope follows a shared prefix, not the briefed set | Anchor to briefed slugs; report what was skipped | A briefed pair is read exactly, skipped directories named |
 
-**Exit:** a merge lands without a per-merge ask, and `verify-all.sh` includes a skill-behaviour
-gate. **0.2 blocks G1 and G2. 0.1 blocks every group's close.**
+**Done when:** a merge lands without a per-merge ask, and `verify-all.sh` includes a
+skill-behaviour gate. **Loop-2 blocks Fire and Handoff. Loop-1 blocks every close.**
 
 ---
 
-## Group 1 — Make all the skills fire appropriately
+## 6 Fire — skills and hooks fire when they should
 
-Correct rules exist and are not read at the moment they are needed. **1.1 runs first and may
-collapse the group** — if one cause explains all six symptoms, 1.2 to 1.6 stop being separate work.
+Correct rules exist and are not read at the moment they are needed. **Fire-1 runs first and may
+collapse the workstream** — if one cause explains all six symptoms, Fire-2 to Fire-6 stop being
+separate work.
 
 ```mermaid
 flowchart LR
-    E["1.1<br/>baseline: which skills<br/>fire, and when"] --> F["1.2 wrapped name<br/>1.3 session opening<br/>1.4 length · 1.5 reports<br/>1.6 numbering"]
+    E["Fire-1<br/>baseline: which skills<br/>fire, and when"] --> F["Fire-2 wrapped name<br/>Fire-3 session opening<br/>Fire-4 length · Fire-5 reports<br/>Fire-6 numbering"]
     F --> T["claude plugin eval<br/>--threshold"]
     T -.->|"below"| F
-    H["1.7 branch-guard<br/>1.8 camp-branch-check<br/>1.9 issue close<br/>1.10 activation log"] --> V["verify-hook.sh"]
+    H["Fire-7 branch-guard<br/>Fire-8 camp-branch-check<br/>Fire-9 issue close<br/>Fire-10 activation log"] --> V["verify-hook.sh"]
     V -.->|"fail"| H
+    P["Fire-11 provenance<br/>Fire-12 second hypothesis"] --> T
 ```
 
-**Two independent lanes.** Skills wait on 1.1; the hooks do not.
+**Two independent lanes.** The skills wait on Fire-1; the hooks do not.
 
-**The problem.** A skill fires on a bare explicit demand and not on a situation, and an
-instruction wrapped around a skill's name suppresses the match. Measured: `arc:camp` fired at 2 of
-4 openings that addressed it by name; **`arc:handoff` fired 3 times in the corpus and never at a
-session opening**, against 8 openings that instructed a handoff read. One session ran 920 turns
-with 4 skill invocations, two of them 4 seconds after the user demanded them.
-
-**The group covers hooks as well as skills.** Four of its ten issues are hooks — a hook that fires
-on every conforming branch and is wrong every time is the same failure as a skill that never fires.
-`camp-branch-check` was correct 0 times out of 5.
-
-**21 of 47 post-install corrections are downstream of this.** If it is one cause, the five
-symptom issues below are not separate work.
-
-**Working looks like.** For every shipping skill, `claude plugin eval` scores firing at or above
-an agreed threshold across 3 runs, on cases written from the transcripts where it did not fire —
-including openings whose address carries further instruction.
-
-| # | Issue | Evaluate | Fix | Test |
+| # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| 1.1 | **NEW** `scope: why a skill does not fire, and what would make it` | Eval cases from the real misses. Vary one thing at a time: bare name, name plus instruction, situation with no name | A decision, not code — what a `description:` must contain | The cases exist and produce a baseline score per skill |
-| 1.2 | **NEW** `fix: an instruction wrapped around a skill name suppresses the match` | The two missed Camp openings | `description:` frontmatter, per 1.1's decision | Those two openings score above threshold |
-| 1.3 | **NEW** `fix: a session opening does not load handoff or camp` | 8 openings, 0 handoff fires | Same, plus whatever `commands/arc-next` should carry | Opening cases fire both |
-| 1.4 | **NEW** `fix: response length is not held after it is set` | C6, and it recurred inside the retrospective | `chat-response` | A long-answer case scores within budget |
-| 1.5 | **NEW** `fix: reports are written as narrative, not as conclusion` | C3 | `engineering-report` | A report case is graded on conclusion-first structure |
-| 1.6 | **NEW** `fix: numbered topics are dropped mid-reply` | C13, zero pre-install hits | `chat-response` | A multi-topic case is graded on numbering |
-| 1.7 | **NEW** `fix: work continues on the wrong branch` | C10 | `hooks/branch-guard` | `tools/verify-hook.sh` cases. Loops |
-| 1.8 | **NEW** `fix: camp-branch-check rejects conforming branches` | **P1.** Fired 5 times, correct 0 times | Read the repo's declared convention; extract the number rather than match a shape | `verify-hook.sh` cases including ROADZ's real branch names. Loops |
-| 1.9 | **NEW** `fix: nothing fires when an issue closes` | `tracker-verify` matches create, edit, PR merge only | Add `gh issue close` to the command match | `verify-hook.sh` cases. Loops |
-| 1.10 | **NEW** `feat: an activation log` | Three friction-log rows are one absence: **Arc has no record of itself** | Every hook appends one line before exit | A session produces a log with one line per firing. Loops after 1.9 |
+| Fire-1 | **NEW** `scope: why a skill does not fire, and what would make it` | Eval cases from the real misses — bare name, name plus instruction, situation with no name | A decision about what a `description:` must contain | The cases exist and produce a baseline per skill |
+| Fire-2 | **NEW** `fix: an instruction wrapped around a skill name suppresses the match` | The two missed Camp openings | `description:` frontmatter, per Fire-1 | Those openings score above threshold |
+| Fire-3 | **NEW** `fix: a session opening does not load handoff or camp` | 8 openings instructed a handoff read; `arc:handoff` fired at none | Same, plus what `commands/arc-next` carries | Opening cases fire both |
+| Fire-4 | **NEW** `fix: response length is not held after it is set` | Recurred inside the retrospective itself | `chat-response` | A long-answer case scores within budget |
+| Fire-5 | **NEW** `fix: reports are written as narrative, not as conclusion` | 5 post-install corrections | `engineering-report` | A report case grades conclusion-first |
+| Fire-6 | **NEW** `fix: numbered topics are dropped mid-reply` | Zero pre-install hits | `chat-response` | A multi-topic case grades numbering |
+| Fire-7 | **NEW** `fix: work continues on the wrong branch` | 2 post-install corrections | `hooks/branch-guard` | `verify-hook.sh` cases. **Loops** |
+| Fire-8 | **NEW** `fix: camp-branch-check rejects conforming branches` | **P1.** Fired 5 times, correct 0 | Read the repo's declared convention; extract the number rather than match a shape | `verify-hook.sh` cases including ROADZ's real branches. **Loops** |
+| Fire-9 | **NEW** `fix: nothing fires when an issue closes` | `tracker-verify` matches create, edit, PR merge only | Add `gh issue close` | `verify-hook.sh` cases. **Loops** |
+| Fire-10 | **NEW** `feat: an activation log` | Three friction-log rows are one absence: **Arc has no record of itself** | Every hook appends one line before exit | A session produces one line per firing. **Loops after Fire-9** |
 
-**1.1 first, and stop there if it says the others are symptoms.** The rest of the group is written
-assuming they are independent; 1.1 is what tests that assumption.
+| Fire-11 | **NEW** `feat: a claim records where it came from, and strong beats weak` | A demand list carried three kill-path signals read off **a photograph of a board we do not hold**, treated as specified for weeks. Separately, a bench measurement the user had verified was discounted in favour of an inference from a dead instrument | A provenance vocabulary, strength-ordered — `measured > datasheet > vendor > schematic > photograph > conversation > inferred` — in `record-route` and `engineering-report`. **A table row carries its source, and a strong claim is not overridden by a weak one** | A table without provenance is reported. An eval case where a user-stated measurement conflicts with an inference |
+| Fire-12 | **NEW** `fix: a failure is blamed on the environment before a second hypothesis is tested` | *"you keep assuming **I** did something wrong when you're just stopping at the first issue and not trying to figure it out yourself"* — the highest single-day cost in the corpus | **An eighth `work-watch` check.** A failure attributed to the user's setup requires one tested alternative first | An eval case: an instrument returns nothing, the user has stated a measurement. The session must test its own command path before asserting the bench is wrong |
 
-**Exit:** every shipping skill has at least one eval case and scores above threshold; the four
-hook issues pass `verify-hook.sh`; the activation log records real firings.
+**Fire-12 and Handoff-5 both add a `work-watch` check and must be sequenced.**
+[#106](https://github.com/Calyx-Engineering/arc/issues/106) exists because that check count is
+restated in several places; two issues editing it in parallel will collide. Handoff-5 first.
+
+**Done when:** every shipping skill has an eval case and scores above threshold, the four hook
+issues pass `verify-hook.sh`, and the activation log records real firings.
 
 ---
 
-## Group 2 — Make the handoff work
+## 7 Handoff — intent survives a cold start
 
 A cold start reads the handoff, reports status correctly, then does the wrong work — facts
-survive, intent does not. **2.1 builds the score before 2.2 changes anything**, because every
-previous attempt changed the document with no way to tell whether it helped.
+survive, intent does not. **Handoff-1 builds the score before Handoff-2 changes anything**, because
+every previous attempt changed the document with no way to tell whether it helped.
 
 ```mermaid
 flowchart LR
-    M["2.1<br/>score 8 real cold starts:<br/>turns to correct work,<br/>right deliverable?"] --> CK{"reproduces<br/>5 good, 3 bad?"}
+    M["Handoff-1<br/>score 8 real cold starts:<br/>turns to correct work,<br/>right deliverable?"] --> CK{"reproduces<br/>5 good, 3 bad?"}
     CK -->|no| M
-    CK -->|yes| FIX["2.2<br/>make the north star bind"]
-    FIX --> RE["2.1 re-scores<br/>same 8 openings"]
-    IND["2.3 handoff not destroyed<br/>2.4 time of day<br/>2.5 saturation<br/>2.6 · #16 session index"] --> RE
+    CK -->|yes| FIX["Handoff-2<br/>make the north star bind"]
+    FIX --> RE["Handoff-1 re-scores<br/>the same 8 openings"]
+    IND["Handoff-3 not destroyed on rewrite<br/>Handoff-4 time of day<br/>Handoff-5 saturation<br/>Handoff-6 · #16 session index"] --> RE
 ```
 
-**2.3 to 2.6 do not wait on 2.1.** They are independent defects in the same document.
+**Handoff-3 to Handoff-6 do not wait on Handoff-1.** They are independent defects in the same
+document.
 
-**The problem.** *"you have consistently failed in picking up the handoff… i dont think its ever
-worked well once."* A correct, freshly-read north star did not bind: on 09-04 the session read
-`HANDOFF.md` end to end, reported status correctly, then redesigned the measurement twice without
-either redesign being checked against the deliverable. The session was abandoned.
-
-**Correction-counting cannot measure this** — the cost lands at spin-up, before there is anything
-specific to object to, so the cluster produces corrections in inverse proportion to its damage.
-
-**Working looks like.** A resumed session reaches correct work on the right deliverable within an
-agreed number of turns, measured — not asserted — across the real cold starts in the corpus.
-
-| # | Issue | Evaluate | Fix | Test |
+| # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| 2.1 | **NEW** `feat: measure handoff spin-up time and accuracy` | Read the transcript that **wrote** each handoff, then score the session that read it: turns to first correct work, and whether it pursued the right deliverable | The instrument, as a miner mode or a second agent | It scores the 8 real openings and separates the 5 that worked from the 3 that did not |
-| 2.2 | **NEW** `fix: a north star is read at cold start and does not bind` | 2.1's baseline | A trigger when an approach is replaced inside an accepted unit; the invariant quoted in the handoff, not only in the dev-log; *out of scope* stating **why**, so exclusion and deferral stop looking alike | 2.1's score improves against the same openings |
-| 2.3 | **NEW** `fix: rewriting HANDOFF.md destroys the only copy of it` | It is gitignored, so it has no history | Copy to `forensics/` at **cold start**, not at session end | A rewrite leaves the prior version on disk |
-| 2.4 | **NEW** `fix: the handoff header carries no time of day` | A cold start cannot tell an hour-old handoff from a week-old one | Date-and-time header, re-stamped on every write | A case asserts the stamp changed |
-| 2.5 | **NEW** `feat: the session notices its own saturation before the user does` | C11. Twice the saturating load was building a skill, not doing the work | **A seventh `work-watch` check** — its six are commit-point, test-obligation, depth, edit-completeness, working-surface, friction. None covers this | An eval case on a long session. **Touches [#106](https://github.com/Calyx-Engineering/arc/issues/106)** — the check count is restated in several places |
-| 2.6 | [#16](https://github.com/Calyx-Engineering/arc/issues/16) index transcript locations | 2 live worktrees, 4 directories, 2 orphans | `hooks/session-index` | `verify-hook.sh` cases. Also closes [#17](https://github.com/Calyx-Engineering/arc/issues/17)'s moved requirement |
+| Handoff-1 | **NEW** `feat: measure handoff spin-up time and accuracy` | Read the transcript that **wrote** each handoff, then score the session that read it | A miner mode or a second agent | It separates the 5 openings that worked from the 3 that did not |
+| Handoff-2 | **NEW** `fix: a north star is read at cold start and does not bind` | Handoff-1's baseline | A trigger when an approach is replaced inside an accepted unit; the invariant quoted in the handoff; *out of scope* stating **why** | Handoff-1's score improves on the same openings |
+| Handoff-3 | **NEW** `fix: a file the user authored is overwritten with no copy kept` | `HANDOFF.md` is gitignored, so a rewrite destroys the state the session was given. Same shape as a diagram the user spent hours on being replaced rather than archived | Preserve before overwriting: copy to `forensics/` at **cold start**, and archive a user-authored file before replacing it | A rewrite leaves the prior version on disk |
+| Handoff-4 | **NEW** `fix: the handoff header carries no time of day` | A cold start cannot tell an hour-old handoff from a week-old one | Date-and-time header, re-stamped every write | A case asserts the stamp changed |
+| Handoff-5 | **NEW** `feat: the session notices its own saturation before the user does` | Twice the saturating load was building a skill, not doing the work | **A seventh `work-watch` check** — its six do not cover this | An eval case on a long session. Touches [#106](https://github.com/Calyx-Engineering/arc/issues/106) |
+| Handoff-6 | [#16](https://github.com/Calyx-Engineering/arc/issues/16) index transcript locations | 2 live worktrees, 4 directories, 2 orphans | `hooks/session-index` | `verify-hook.sh` cases. Also closes [#17](https://github.com/Calyx-Engineering/arc/issues/17)'s moved requirement |
 
-**2.1 before 2.2.** Redesigning the handoff without a way to tell whether it improved is how every
-previous attempt was done.
-
-**Exit:** 2.1 reproduces the known-good and known-bad openings, and 2.2 moves the score.
+**Done when:** Handoff-1 reproduces the known-good and known-bad openings, and Handoff-2 moves the
+score.
 
 ---
 
-## Group 3 — Write issues correctly
+## 8 Tracker — the record is written correctly
 
 The tracker is the only durable record of what the work was, and it is written wrongly in ways
-nothing detects. **Most of this group adds cases to checks that already exist** rather than
-building new machinery.
+nothing detects. **Most of this adds cases to checks that already exist** rather than building new
+machinery.
 
 ```mermaid
 flowchart LR
-    R["3.2 spawn edge · 3.3 Spawned contents<br/>3.5 type label · 3.6 template"] --> C["verify-tracker-body.sh<br/>hooks/tracker-verify"]
+    R["Tracker-2 spawn edge · Tracker-3 Spawned contents<br/>Tracker-5 type label · Tracker-6 template"] --> C["verify-tracker-body.sh<br/>hooks/tracker-verify"]
+    W["Tracker-4 failed edit writes<br/>the original back"] --> C
     C --> P["an issue passes every gate<br/>with no hand correction"]
-    W["3.4 failed edit writes<br/>the original back"] --> C
-    J["3.1 · #140<br/>read the work back"] --> CS["a step in<br/>close-sequence.md"]
+    J["Tracker-1 · #140<br/>read the work back"] --> CS["a step in<br/>close-sequence.md"]
     CS --> P
 ```
 
-**3.1 is the one that is not a check.** Reading prose back for staleness is judgement, which is
-why it becomes a required step rather than a script.
+**Tracker-1 is the one that is not a check.** Reading prose back for staleness is judgement, which
+is why it becomes a required step rather than a script.
 
-**The problem.** *"good issue writing and naming has become a critical core to the development
-workflow."* Spawn edges go unrecorded, `Spawned` fills with things that are not work, a failed
-edit writes the original body back, and nothing reads the work against the issue before a PR.
-Three of these recurred during the retrospective itself.
-
-**Working looks like.** An issue written by a session passes `verify-tracker-body.sh` on title and
-body, records its parent at both ends, and a PR cannot open until the work has been read back
-against the issue's checklist.
-
-| # | Issue | Evaluate | Fix | Test |
+| # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| 3.1 | [#140](https://github.com/Calyx-Engineering/arc/issues/140) read the work back against the issue before a PR | **P1.** [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing 2 of 5 requirements | A step in `close-sequence.md` between 4b and 5; unchecked boxes resolved, not named | An eval case where a stale section survives a change |
-| 3.2 | [#83](https://github.com/Calyx-Engineering/arc/issues/83) a spawned issue records no parent | 4 issues filed with no edge; recurred on [#134](https://github.com/Calyx-Engineering/arc/issues/134) | `tracker-verify` reports it | `verify-hook.sh` cases. Loops |
-| 3.3 | [#135](https://github.com/Calyx-Engineering/arc/issues/135) `Spawned` accepts things that are not work | 8 corrections, last one 09-05 | The negative case stated; section order enforced | `verify-tracker-body.sh body` |
-| 3.4 | [#87](https://github.com/Calyx-Engineering/arc/issues/87) a failed edit writes the original body back | Silent | Read-back after write | Cases from m13's evaluation set |
-| 3.5 | [#84](https://github.com/Calyx-Engineering/arc/issues/84) issues carry no type label | — | Label at creation | `gh issue view` read-back |
-| 3.6 | [#85](https://github.com/Calyx-Engineering/arc/issues/85) issue template | — | The template | It exists and `issue-write` points at it |
-| 3.7 | [#136](https://github.com/Calyx-Engineering/arc/issues/136) link and close without the flip | m12 unbuilt; m42 shipped instead | Both stay options | **Priority low. May leave the arc** |
+| Tracker-1 | [#140](https://github.com/Calyx-Engineering/arc/issues/140) read the work back against the issue before a PR | **P1.** [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing 2 of 5 requirements | A step in `close-sequence.md`; unchecked boxes resolved, not named | An eval case where a stale section survives a change |
+| Tracker-2 | [#83](https://github.com/Calyx-Engineering/arc/issues/83) a spawned issue records no parent | Recurred on [#134](https://github.com/Calyx-Engineering/arc/issues/134) | `tracker-verify` reports it | `verify-hook.sh` cases. **Loops** |
+| Tracker-3 | [#135](https://github.com/Calyx-Engineering/arc/issues/135) `Spawned` accepts things that are not work | 8 corrections, last on 09-05 | The negative case stated; section order enforced | `verify-tracker-body.sh body` |
+| Tracker-4 | [#87](https://github.com/Calyx-Engineering/arc/issues/87) a failed edit writes the original body back | Silent | Read-back after write | m13's evaluation set |
+| Tracker-5 | [#84](https://github.com/Calyx-Engineering/arc/issues/84) issues carry no type label | — | Label at creation | `gh issue view` read-back |
+| Tracker-6 | [#85](https://github.com/Calyx-Engineering/arc/issues/85) issue template | — | The template | `issue-write` points at it |
+| Tracker-7 | [#136](https://github.com/Calyx-Engineering/arc/issues/136) link and close without the flip | m12 unbuilt; m42 shipped instead | Both stay options | **Low priority. May leave the arc** |
 
-**Exit:** an issue written end to end by a session passes every gate with no hand correction.
+**Done when:** an issue written end to end by a session passes every gate with no hand correction.
 
 ---
 
-## Group 4 — Housekeeping
+## 9 Upkeep — drift fails instead of hiding
 
 Small wrongnesses that share one property: nothing fails when they happen. **Each becomes a gate,
 or the thing causing it gets deleted.**
 
 ```mermaid
 flowchart LR
-    G["4.1 · #143 mechanism table<br/>4.3 arc-work path<br/>4.4 dev-log naming<br/>4.5 provenance"] --> VA["verify-all.sh<br/>gains 2 gates"]
-    D["4.2 · #142<br/>duplicate skill tree"] --> DEL["deleted — the plugin<br/>now loads from source"]
-    VA --> AUD["4.6 · #134<br/>what ships, at arc close"]
+    G["Upkeep-1 · #143 mechanism table<br/>Upkeep-3 arc-work path<br/>Upkeep-4 dev-log naming"] --> VA["verify-all.sh<br/>gains verify-mechanisms"]
+    D["Upkeep-2 · #142<br/>duplicate skill tree"] --> DEL["deleted — the plugin<br/>now loads from source"]
+    VA --> AUD["Upkeep-5 · #134<br/>what ships, at arc close"]
     DEL --> AUD
 ```
 
-**The problem.** Documents and paths that are wrong in ways nothing detects. The mechanism table
-drifts from its specs by hand, local skill copies duplicate every skill in the session's list, and
-the plugin has never been reviewed for what it would expose if published.
-
-**Working looks like.** `tools/verify-all.sh` fails on drift that is currently invisible, and the
-plugin is safe to install at another employer.
-
-| # | Issue | Fix | Test |
+| # | Issue | Fix | Done when |
 |---|---|---|---|
-| 4.1 | [#143](https://github.com/Calyx-Engineering/arc/issues/143) verify the mechanism table against its specs | `tools/verify-mechanisms.sh` | Fixture cases, in `verify-sync-parity.sh`'s shape |
-| 4.2 | [#142](https://github.com/Calyx-Engineering/arc/issues/142) delete the local skill copies | Now unblocked — [#132](https://github.com/Calyx-Engineering/arc/issues/132) is closed | `verify-all.sh` still clean; the artifact-table gate survives |
-| 4.3 | **NEW** `fix: the arc-work path assumes a flat slug` | A rule, not a per-repo guess | A module-shaped slug resolves |
-| 4.4 | **NEW** `fix: the dev-log template calls itself a decision log` | Collides with `ddr/` | `verify-template-links.sh` unaffected; wording checked |
-| 4.5 | **NEW** `feat: an analysis table records where each row came from` | A provenance column, strength-ordered | A table without one is reported |
-| 4.6 | [#134](https://github.com/Calyx-Engineering/arc/issues/134) review what ships before making Arc public | **At arc close.** Blocks use at Dedrone | The audit checklist completes |
+| Upkeep-1 | [#143](https://github.com/Calyx-Engineering/arc/issues/143) verify the mechanism table against its specs | `tools/verify-mechanisms.sh` | Fixture cases, in `verify-sync-parity.sh`'s shape |
+| Upkeep-2 | [#142](https://github.com/Calyx-Engineering/arc/issues/142) delete the local skill copies | Unblocked — [#132](https://github.com/Calyx-Engineering/arc/issues/132) is closed | `verify-all.sh` still clean; the artifact-table gate survives |
+| Upkeep-3 | **NEW** `fix: the arc-work path assumes a flat slug` | A rule, not a per-repo guess | A module-shaped slug resolves |
+| Upkeep-4 | **NEW** `fix: the dev-log template calls itself a decision log` | Collides with `ddr/` | Wording checked |
+| Upkeep-5 | [#134](https://github.com/Calyx-Engineering/arc/issues/134) review what ships before making Arc public | **At arc close.** Blocks use at Dedrone | The audit completes |
 
-**Exit:** `verify-all.sh` gains two gates and loses none.
+**Done when:** `verify-all.sh` gains `verify-mechanisms.sh`, the duplicate skill tree is gone, and no existing gate was lost with it.
 
 ---
 
-## Filed, then moved out of the milestone
+## 10 Filed, then moved out of the milestone
 
 Not this arc. Filed so they are not re-derived.
 
-| Issue | Cluster | Why out |
-|---|---|---|
-| **NEW** `fix: an obligation stated in conversation is dropped` | C2 — **the largest post-install cluster, 11** | A process gap, not a rule that failed to fire. [#140](https://github.com/Calyx-Engineering/arc/issues/140) covers its PR-time half only |
-| **NEW** `fix: commits land before review, and not at the stopping points` | C9 | Group C |
-| **NEW** `fix: a failed instrument reading is blamed on the bench` | C5 — highest single-day cost in the corpus | Group D |
-| **NEW** `fix: draw.io edits are lost to unsaved desktop state` | C8 | Group D |
-| **NEW** `chore: behavior rules do not follow the user to another machine` | C12 | Group D. Overlaps [#134](https://github.com/Calyx-Engineering/arc/issues/134) |
+| Issue | Why out |
+|---|---|
+| **NEW** `fix: an obligation stated in conversation is dropped` | **The largest post-install cluster, 11 hits.** A process gap, not a rule that failed to fire. [#140](https://github.com/Calyx-Engineering/arc/issues/140) covers its PR-time half only |
+| **NEW** `fix: commits land before review, and not at the stopping points` | Process gap |
+| **NEW** `chore: behavior rules do not follow the user to another machine` | Overlaps [#134](https://github.com/Calyx-Engineering/arc/issues/134) |
 
 ---
 
-## Filing
+## 11 Running these in a loop
+
+**A loop needs a bounded context and something to converge against.** 31 of 36 issues have both
+once Loop lands, and the bounded context is the point — the orchestrator never holds the whole
+arc, because each iteration starts fresh from this file and one issue.
+
+| Converges against | Covers |
+|---|---|
+| `tools/verify-hook.sh` | Fire-7 to Fire-10, Handoff-6, Tracker-2 |
+| `claude plugin eval --threshold` | Fire-2 to Fire-6, Fire-12, Handoff-3 to Handoff-5, Tracker-3 |
+| `tools/verify-all.sh` | Fire-11, Upkeep-1 to Upkeep-4 |
+| `gh` read-back | Tracker-4, Tracker-5, Tracker-6 |
+
+**Six do not loop, for one reason: the output is a judgement, not a passing test.** Loop-1 (you
+guide it), Fire-1 (a decision), Handoff-1's design half, Handoff-2 (graded by an instrument built
+in the same run), Tracker-1 (reading prose is judgement), Upkeep-5 (a risk decision).
+
+**Each looping issue needs its cases written before the loop starts.** `verify-all.sh` fails on a
+hook with no case directory, and an eval case is the spec of the behaviour being fixed. **Writing
+the cases is where the thinking is, and a loop cannot do it.**
+
+## 12 The planning session — 110 minutes
+
+**Agreement only, no work.** Everything above is already decided; what is missing is your sign-off
+and four numbers an autonomous run cannot invent.
+
+| Minutes | The question | What you decide |
+|---|---|---|
+| 20 | **How does a merge run without you asking for it in the same breath?** You solved this in ROADZ and it left no artifact | The route, written into `CLAUDE.md` — [#138](https://github.com/Calyx-Engineering/arc/issues/138) |
+| 15 | **Is "land it and measure it" the right precondition, or is something else blocking more?** | Whether Loop is the right first workstream |
+| 20 | **Do skills fail to *fire*, or fire and get ignored?** The evidence says fire; if you think otherwise the workstream changes shape | The diagnosis, and **how often a skill must fire to count as working** |
+| 20 | **What does a handoff that worked look like to you?** Right now the only signal is how annoyed you were | **Turns to correct work**, and whether pursuing the wrong deliverable is a fail or a partial |
+| 15 | **Which issue-writing rules are worth a gate, and which are style?** Seven issues; not all deserve enforcement | Which of the seven stay |
+| 10 | **Is invisible drift worth another gate on every PR?** | Whether Upkeep runs this arc |
+| 10 | **The three clusters I put out of scope** | Confirmed out, or pulled back in |
+
+### 12.1 The four numbers
+
+Judgements about acceptable behaviour, not facts about the code. **Without them every workstream
+stalls at its own acceptance criterion.**
+
+| | Needed for | Candidate |
+|---|---|---|
+| **Skill firing threshold** | Every Fire issue | `--threshold 0.8` over 3 runs. Below 1.0 because firing is probabilistic; a suite demanding perfection fails on noise |
+| **Turns to correct work** | Handoff-1 | 8 real openings to calibrate against |
+| **Spin-up accuracy** | Handoff-1 | Whether pursuing a *different* deliverable is a fail or a partial. On 09-04 the session was fluent and wrong |
+| **Report budget** | Every workstream | 600 words is set. Whether a diagram counts against it is not |
+
+---
+
+## 13 Filing
 
 **Every new issue goes into the `Dogfood` milestone**, is written through `skills/issue-write`, and
-records its parent. The plan's own section number — `1.4`, `2.1` — is not the issue number and does
-not survive filing; the issue's `Related` table carries the link back.
+records its parent. `Fire-3` is this file's reference, not the issue number — the issue's `Related`
+table carries the link back.
 
 **Branches come from `createLinkedBranch`, never `git checkout -b`** — otherwise no branch↔issue
 link forms, and the mutation cannot link a branch that already exists.
 
-## Order
-
-```mermaid
-flowchart TD
-    G0["G0 — Close the loop<br/>#138 merge · evals · #141"] --> G1["G1 — Skills fire<br/>10 issues"]
-    G0 --> G2["G2 — Handoff<br/>6 issues"]
-    G0 --> G3["G3 — Issues written correctly<br/>7 issues"]
-    G0 --> G4["G4 — Housekeeping<br/>6 issues"]
-    G1 -.->|"1.1 may collapse 1.2-1.6"| G1
-    G2 -.->|"2.1 before 2.2"| G2
-```
-
-**G0 gates everything.** G1–G4 are independent of each other and may run in any order.
-
-## Running these in a loop
-
-**A loop needs two things: a bounded context, and something to converge against.** Almost every
-issue here has both once G0 lands, and the point of the loop is the first one — the orchestrator
-never holds 37 issues at once, because each iteration starts fresh from this file and the issue.
-
-| Convergence target | Covers |
-|---|---|
-| `tools/verify-hook.sh` | Every hook issue — 1.7, 1.8, 1.9, 1.10, 2.6, 3.2 |
-| `claude plugin eval --threshold` | Every skill issue — 1.2 to 1.6, 2.3 to 2.5, 3.3 |
-| `tools/verify-all.sh` | Every gate and document issue — 4.1 to 4.5 |
-| `gh` read-back | The tracker issues — 3.4, 3.5, 3.6 |
-
-**Six do not loop, and the reason is the same for all of them: the output is a judgement, not a
-passing test.**
-
-| | Why |
-|---|---|
-| [#138](https://github.com/Calyx-Engineering/arc/issues/138) | The user guides it. He has the answer; a loop would rediscover it badly |
-| 1.1 | Its deliverable is a decision about what a `description:` must contain. A loop cannot tell a good decision from a confident one |
-| 2.1 — the design half | Choosing what "spin-up succeeded" means is a judgement. **Scoring against it, once chosen, loops** |
-| 2.2 | It is graded by 2.1, which this session will have just written. Grading a change with an instrument built in the same run needs a human look |
-| 3.1 | Reading prose back for staleness is the judgement a script cannot do — that is why the issue exists |
-| 4.6 | A publication audit is a risk decision |
-
-**Each looping issue needs its cases written before the loop starts.** `verify-all.sh` fails on a
-hook with no case directory, and an eval case is the spec of the behaviour being fixed. **Writing
-the cases is the part a loop cannot do, and it is where the thinking is.**
-
-## The report at each group boundary
-
-**600 words maximum.** Written to `docs/dev-log/` and summarised in the group's PR.
-
-| Section | |
-|---|---|
-| What was done | One paragraph |
-| Files changed, and why | A table — path, one line |
-| Evidence | The gate output. `verify-all.sh` exit, eval scores before and after |
-| What did not get done | Named, with the reason. Silence here is the failure this arc exists to fix |
-| A diagram | Where a flow or relationship changed |
-
-## Counts
+## 14 Counts
 
 | | |
 |---|---|
-| Issues in the plan | **37** |
+| Issues | **36** |
 | Already filed | 13 |
-| **To file** | **24** — 19 in scope, 5 filed-then-moved-out |
-| Per group | G0 3 · G1 10 · G2 6 · G3 7 · G4 6 · out 5 |
-| **Runs in a loop** | **31 of 37.** Not 1.1, 2.1's design half, 2.2, 3.1, 4.6 or [#138](https://github.com/Calyx-Engineering/arc/issues/138) — see below |
-| Blocked on G0 | G1 and G2 entirely; G3 and G4 for their merges |
+| **To file** | **23** — 20 in scope, 3 filed then moved out |
+| Per workstream | Loop 3 · Fire 12 · Handoff 6 · Tracker 7 · Upkeep 5 · out 3 |
+| Runs in a loop | 31 of 36 |
+| Blocked on Loop | Fire and Handoff entirely; Tracker and Upkeep for their merges |

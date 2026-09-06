@@ -44,21 +44,58 @@ unsoaked, and unsoaked is the state three arcs shipped in.
 
 ## 3 How this arc is executed
 
-**Manual.** Every commit, push, PR and merge is the user's call.
+**Manual until [#138](https://github.com/Calyx-Engineering/arc/issues/138) lands, then autonomous
+per workstream.** Decomposition and acceptance criteria are in
+[the plan](../arc-work/04-dogfood/issue-plan.md); this section is how a run behaves.
 
 | | |
 |---|---|
-| Mode | **Manual** |
-| Why | The arc's subject is friction the tooling caused. Running it unattended means the tooling grading its own homework |
-| Merges | The user's, explicitly. See §4 |
+| Mode | **Manual** until the merge route is fixed. Autonomous per workstream after |
+| The unit of a run | **One issue, not one workstream.** A workstream is 5–12 issues; running it in one context is how C11 happened — twice, the load that saturated a session was building a skill rather than doing the engineering |
+| Where it stops | At a workstream boundary. Handoff also stops once, at Handoff-1's scores |
+| What a run reads | **The issue, and only what the issue names.** Not the plan — that is the human's forest view, and making it an execution input puts it back in the sync-drift path |
+| Sub-agents | **Read and return only.** For large reads that collapse to a small answer — Fire-1's baseline, Handoff-1's scoring. A sub-agent that edits files and reports *done* is the failure this arc exists to fix |
 
-### 3.1 What is least certain, and why
+### 3.1 The inside of an iteration
+
+**`CLAUDE.md` says how to branch, commit, soak and edit hooks safely. It does not say how to do the
+work well.** This is the sequence that was missing when
+[#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of its five
+requirements, and it is what the user has been supplying by hand by asking for another look.
 
 | | |
 |---|---|
-| **Whether C7 causes the other five clusters** | Six clusters — response length, narrative prose, `Spawned` misuse, wrong branch, skills-not-loaded, dropped numbering — are all *a rule that exists in a skill and did not fire*. **44 of 112 corrections.** If C7 is the cause, fixing the other five individually fixes nothing. Untested |
-| **Whether the handoff can be fixed at all** | The user's position is that the format has never worked once. A populated, correct, freshly-read north star did not bind — that is a worse defect than a missing field |
-| **How much fits in two days** | The arc is time-boxed to roughly two days. Most of the milestone will not be built in it |
+| 1 | Read the issue. **Write the test or eval case first** — it is the spec, and writing it after the fix is grading your own homework |
+| 2 | Implement |
+| 3 | Run the gate. **The exit code, not a claim** |
+| 4 | **Read every changed file end to end against the issue.** Whole files, never the diff — the defect is in the section the diff does not show |
+| 5 | **Second pass.** What did step 4 introduce |
+| 6 | Every unchecked box either ticked with evidence, or named as not done with the reason |
+| 7 | Dev-log, commit, PR |
+
+**If this survives the arc it graduates to a mechanism.** It is written here rather than in
+`CLAUDE.md` because it is unproven — arc-scoped until the evidence says otherwise.
+
+### 3.2 The report at a workstream boundary
+
+**200 words maximum**, written into [§6](#6-status) as a block under that workstream. Durable
+there in a way a PR comment is not.
+
+| Section | |
+|---|---|
+| What was done | Two or three sentences |
+| Files changed, and why | A table — path, one line |
+| Evidence | Gate output. `verify-all.sh` exit, eval scores before and after |
+| What did not get done | Named, with the reason. **Silence here is the failure this arc exists to fix** |
+| A diagram | Where a flow or relationship changed. Does not count against the 200 |
+
+### 3.3 What is least certain, and why
+
+| | |
+|---|---|
+| **Whether one cause explains six clusters** | Response length, narrative prose, `Spawned` misuse, wrong branch, skills-not-loaded and dropped numbering are all *a rule that exists in a skill and did not fire* — 21 of 47 post-install corrections. Fire-1 tests it. If it is one cause, five issues stop being separate work |
+| **Whether the handoff can be fixed at all** | The user's position is that it has never worked once. A populated, correct, freshly-read north star did not bind — a worse defect than a missing field |
+| **Whether skill firing can be scored at all** | Everything autonomous rests on `claude plugin eval` producing a usable number. Untested here |
 
 ## 4 Load-bearing decisions
 
@@ -99,21 +136,29 @@ left unticked: the miner reads the index instead of globbing.
 
 ## 6 Status
 
-| Issue | Dev-log | Status |
-| :--- | :--- | :--- |
+**The only status surface.** [The plan](../arc-work/04-dogfood/issue-plan.md) holds decomposition
+and acceptance criteria and carries no status — one fact, one place.
+
+Each workstream's 200-word boundary report lands here when it closes.
+
+| Workstream | Issues | Status |
+|---|---|---|
+| **Loop** | 3 | Not started. [#138](https://github.com/Calyx-Engineering/arc/issues/138) and [#141](https://github.com/Calyx-Engineering/arc/issues/141) filed, the eval suite not |
+| **Fire** | 12 | Not started. None filed |
+| **Handoff** | 6 | Not started. [#16](https://github.com/Calyx-Engineering/arc/issues/16) filed |
+| **Tracker** | 7 | Not started. All seven filed |
+| **Upkeep** | 5 | Not started. [#142](https://github.com/Calyx-Engineering/arc/issues/142), [#143](https://github.com/Calyx-Engineering/arc/issues/143), [#134](https://github.com/Calyx-Engineering/arc/issues/134) filed |
+
+### Closed before the workstreams existed
+
+| Issue | Dev-log | |
+|---|---|---|
 | [#132](https://github.com/Calyx-Engineering/arc/issues/132) local edits never reach the installed plugin | [issue-132-plugin-reload](../dev-log/issue-132-plugin-reload.md) | **Merged** — [PR #137](https://github.com/Calyx-Engineering/arc/pull/137). Closed and linked by hand |
 | [#17](https://github.com/Calyx-Engineering/arc/issues/17) transcript-miner, friction mode | [issue-17-transcript-miner](../dev-log/issue-17-transcript-miner.md) | **Merged** — [PR #139](https://github.com/Calyx-Engineering/arc/pull/139). Closed and linked by hand |
-| — the retrospective itself | [pr-133-dogfood-retrospective](../dev-log/pr-133-dogfood-retrospective.md) | **Open** — [PR #133](https://github.com/Calyx-Engineering/arc/pull/133), draft. Extraction done, interview not run |
-| [#138](https://github.com/Calyx-Engineering/arc/issues/138) an approved merge cannot run | — | **Next.** Unblocked by [#17](https://github.com/Calyx-Engineering/arc/issues/17) |
-| [#140](https://github.com/Calyx-Engineering/arc/issues/140) read the work back before a PR | — | Not started |
-| [#135](https://github.com/Calyx-Engineering/arc/issues/135) `Spawned` accepts things that are not work | — | Not started |
-| [#83](https://github.com/Calyx-Engineering/arc/issues/83) a spawned issue records no parent | — | Not started |
-| [#87](https://github.com/Calyx-Engineering/arc/issues/87) a failed edit writes the original body back | — | Not started |
-| [#84](https://github.com/Calyx-Engineering/arc/issues/84) issues carry no type label | — | Not started |
-| [#85](https://github.com/Calyx-Engineering/arc/issues/85) issue template | — | Not started |
-| [#16](https://github.com/Calyx-Engineering/arc/issues/16) index transcript locations | — | **End of milestone.** ~half a day |
-| [#136](https://github.com/Calyx-Engineering/arc/issues/136) link and close without the flip | — | **Priority low.** May be pushed out |
-| [#134](https://github.com/Calyx-Engineering/arc/issues/134) review what ships before public | — | **At arc close.** Blocks use at another employer |
+| — the retrospective and the plan | [pr-133-dogfood-retrospective](../dev-log/pr-133-dogfood-retrospective.md) | **Open** — [PR #133](https://github.com/Calyx-Engineering/arc/pull/133), draft |
+
+**23 issues remain to be filed.** Filing happens after the planning session, not before — the
+session can still change what the workstreams are.
 
 ## 7 Related analysis
 
