@@ -10,7 +10,8 @@ Read [docs/product-architecture/README.md](docs/product-architecture/README.md) 
 every cold start. It is the authority on what Arc is made of — its six pieces, its
 mechanisms, the artifacts that carry them, and the state each is in.
 
-Then [ROADMAP.md](ROADMAP.md) for what is being built now and in what order.
+**Not `ROADMAP.md`** — last updated 2026-08-21, and it does not know arc 04 exists.
+[#175](https://github.com/Calyx-Engineering/arc/issues/175) decides whether it is maintained or retired.
 
 **Execution mode is manual** — files change; nothing is committed, pushed or merged unless
 asked. It changes only when `HANDOFF.md`'s *Execution mode* row says autonomous, and that row
