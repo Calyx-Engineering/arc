@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links miner-scope"
 
 RUN=0
 FAILED=0
@@ -74,6 +74,7 @@ fi
 
 # ---- the gates ---------------------------------------------------------------------
 run_gate "skill registry" bash tools/verify-skill-registry.sh
+run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
