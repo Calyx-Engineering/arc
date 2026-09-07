@@ -44,10 +44,24 @@ is weaker in exactly the case that matters.
 The repository names its own save location — `skills/handoff` requires a *transcripts* note.
 Read that note rather than assuming a path. Say which sources you used.
 
-**Glob across every matching raw directory, never one.** Worktrees get their own slug, and
-deleted worktrees leave orphaned directories a scoped search misses silently. In the
-reference run that was 45 MB of the richest material. Slugs vary in case — match
-case-insensitively.
+**The brief names the repositories. `tools/miner-scope.sh` decides which directories that
+means.** Do not glob by hand.
+
+```sh
+tools/miner-scope.sh <briefed-slug> [<briefed-slug>...]
+```
+
+| It prints | |
+|---|---|
+| `IN` | Read it. The briefed slug itself, and any worktree of it — `<slug>--claude-worktrees-…`, matched case-insensitively, because worktrees get their own slug and a deleted one leaves an orphaned directory a scoped search misses silently. That was 45 MB of the richest material, once |
+| `NEAR` | **Do not read it.** It shares a stem with a briefed slug and was not briefed. Name it in *Not covered* — this is the case that made a run briefed on two repositories read three |
+| `SKIP` | Unrelated. Nothing to say about it |
+
+**A briefed slug that matches no directory exits 1.** That is a wrong brief, not an empty
+result, and it must never be reported as an absence of friction.
+
+**Cross-repository mining stays available** — brief more than one slug. It stops being an
+accident of globbing.
 
 **Curated and raw overlap.** Deduplicate on message text plus timestamp; count a correction
 once. Prefer the curated copy as the citation, because its filename names the work.
@@ -154,8 +168,13 @@ and the locator for that moment. Not a diagnosis — what was on screen.
 ### C2 — ...
 
 ## Not covered
-Anything unreadable, unparsed, or out of scope.
+Every NEAR directory `tools/miner-scope.sh` reported, by name, and that it was not read.
+Then anything unreadable, unparsed, or out of scope.
 ```
+
+**A NEAR directory is named whether or not you think it mattered.** A skipped directory named
+in the packet is information; a skipped directory nobody mentions is indistinguishable from one
+that does not exist, and the reader cannot tell a correct scope from a lucky one.
 
 **The ranked table comes first and must be complete** — every cluster gets a row, even when the
 detail below is truncated. It is the part that gets read.
