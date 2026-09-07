@@ -102,6 +102,26 @@ FINDINGS
   return 0
 }
 
+# Where the arc itself will merge. Not the GitHub default: `tools/arc-default-branch.sh`
+# points the default at the active arc for the arc's lifetime (m42), so mid-arc the default
+# is the arc branch and every rule that means "the trunk" resolves to the wrong thing — the
+# defect in #210. The flip records the trunk in the git dir before it moves anything; with
+# no record, a default that is not arc-shaped IS the trunk, and an arc-shaped one means the
+# flip is on, where `main` is the same answer `arc-default-branch.sh` itself defaults to.
+resolve_trunk() {
+  local gd
+  gd="$(git -C "$CWD" rev-parse --git-common-dir 2>/dev/null)"
+  case "$gd" in ''|/*|[A-Za-z]:*) ;; *) gd="$CWD/$gd" ;; esac
+  if [ -n "$gd" ] && [ -f "$gd/arc-default-branch-trunk" ]; then
+    head -1 "$gd/arc-default-branch-trunk" 2>/dev/null | tr -d ' \r'
+    return 0
+  fi
+  case "$1" in
+    arc/*) printf 'main' ;;
+    *)     printf '%s' "$1" ;;
+  esac
+}
+
 # A body supplied directly in the payload skips the tracker read. This is how the scanners
 # are exercised offline — a hook whose only test path needs the network is a hook nobody
 # runs the day it matters.
@@ -175,6 +195,8 @@ case "$CMD" in
       printf '%s' "$META" | grep -q '"closingIssuesReferences":\[\]' && LINKED=0
     fi
 
+    TRUNK="$(resolve_trunk "$DEFAULT")"
+
     scan_placeholders "$BODY" "PR #$NUM"
     scan_dates "$BODY" "PR #$NUM"
 
@@ -200,7 +222,9 @@ case "$CMD" in
         # the check off silently.
         ARCBASE="$(printf '%s' "$HEADBR" | sed 's#-issue-[0-9][0-9]*.*##')"
         if [ -n "$ARCBASE" ] && [ -n "$BASE" ] && [ "$BASE" != "$ARCBASE" ]; then
-          add "PR #$NUM targets \`$BASE\` from an issue branch of \`$ARCBASE\`. It belongs to its arc — base it on \`$ARCBASE\` so the arc PR carries it."
+          WHAT="\`$BASE\`"
+          [ "$BASE" = "$TRUNK" ] && WHAT="trunk branch \`$BASE\`"
+          add "PR #$NUM targets $WHAT from an issue branch of \`$ARCBASE\`. It belongs to its arc — base it on \`$ARCBASE\` so the arc PR carries it."
         fi
         ;;
     esac
@@ -233,11 +257,15 @@ case "$CMD" in
       fi
     fi
 
-    # The arc PR is the one that actually closes things. An arc merging into the default
-    # branch with no closing keywords leaves every issue it consumed open.
-    if [ "$WANTS_CLOSE" -eq 0 ] && [ -n "$DEFAULT" ] && [ "$BASE" = "$DEFAULT" ]; then
+    # The arc PR is the one that actually closes things. An arc merging into the trunk with
+    # no closing keywords leaves every issue it consumed open.
+    #
+    # `TRUNK`, not `DEFAULT`. While the flip is on, a `DEFAULT` comparison gets both halves
+    # wrong: it misses the arc PR, which targets the trunk, and it fires on every issue PR
+    # merging into the arc — where closure correctly defers to the arc PR. #210.
+    if [ "$WANTS_CLOSE" -eq 0 ] && [ -n "$TRUNK" ] && [ "$BASE" = "$TRUNK" ]; then
       case "$CMD" in
-        *"gh pr merge"*) add "PR #$NUM merges to \`$DEFAULT\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
+        *"gh pr merge"*) add "PR #$NUM merges to trunk branch \`$TRUNK\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
       esac
     fi
     ;;

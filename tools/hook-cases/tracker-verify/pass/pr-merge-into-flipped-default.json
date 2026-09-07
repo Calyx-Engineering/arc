@@ -1,0 +1,2 @@
+# an issue PR merging into its arc while m42 has flipped the default onto that arc — not an arc PR, no keyword expected
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"arc/02-foundation","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closure defers to the arc PR.\n","tool_input":{"command":"gh pr merge 200 --squash"}}
