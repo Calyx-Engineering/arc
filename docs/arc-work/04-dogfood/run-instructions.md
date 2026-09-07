@@ -78,21 +78,38 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. Four things this arc pins dow
 | **An issue run** | Does the work. Writes the dev-log and the PR body. That is its whole record — it never writes the boundary report, because it only ever saw one issue |
 | **A report run** | Does no work. Reads the workstream's merged PRs and dev-logs, writes the boundary report, stops |
 
-### The boundary report
+### The boundary report — 200 words maximum
 
-**Written at the end of a workstream, by a report run, and it is the thing David reads.** The loop
-stops there. Nothing advances to the next workstream without him.
+**Six numbered sections, in this order.** Numbered so the user can answer by number, and because
+an unnumbered report reads as one block and gets skimmed.
 
-**200 words maximum**, into [arc-log §6](../../arc-log/arc-04-dogfood.md#6-status) as a block under
-that workstream — durable there in a way a PR comment is not — and surfaced in chat.
-
-| Section | |
+| | Holds |
 |---|---|
-| What was done | Two or three sentences |
-| Files changed, and why | A table — path, one line |
-| Evidence | Gate output. `verify-all.sh` exit, eval scores before and after |
-| What did not get done | Named, with the reason |
-| A diagram | Where a flow or relationship changed. Does not count against the 200 |
+| **1 Delivered** | What the workstream actually produced, in the user's terms. Two sentences. Not a list of commits |
+| **2 Spawned** | Every issue this workstream filed, by number, one clause each. If none, say none |
+| **3 Unexpected** | What was not foreseen — a wrong premise, a blocked dependency, a defect found in passing. **The section most likely to be omitted, and the one worth most** |
+| **4 Unplanned but needed** | Functional changes nobody scoped that the work could not proceed without, and why |
+| **5 Evidence** | Gate output. `verify-all.sh` exit, scores before and after |
+| **6 Not done** | Named, with the reason |
+
+A diagram may follow and does not count against the 200.
+
+**Frame it, or nobody can tell where it starts and stops.** In the arc-log a report sits between
+a status table and the next workstream's block, and an unframed one reads as more of the page.
+
+```markdown
+---
+
+### <Workstream> — boundary report
+
+**Workstream:** <name> · **Closed:** <date> · **<N> words**, diagram excluded
+
+…the six sections, then the diagram…
+
+*End of <Workstream>'s boundary report.*
+
+---
+```
 
 **Silence about what did not get done is the failure this arc exists to fix.** A report run that
 finds an issue closed without its boxes resolved says so — it is reading the record, not

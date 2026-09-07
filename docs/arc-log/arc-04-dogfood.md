@@ -172,24 +172,23 @@ Each workstream's 200-word boundary report lands here when it closes.
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | Not started |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 7 | Not started |
 
-### Loop — boundary report, 2026-09-07 · closed
+---
 
-**All four closed.** [#138](https://github.com/Calyx-Engineering/arc/issues/138) cut the mode rule from five statements to one and inverted the verifier that enforced the duplication. [#142](https://github.com/Calyx-Engineering/arc/issues/142) deleted 13 duplicate skills. [#141](https://github.com/Calyx-Engineering/arc/issues/141) gave the miner an exact scope rule. [#149](https://github.com/Calyx-Engineering/arc/issues/149) measured skill firing from transcripts, after `plugin eval` proved gated **and never to have been run**.
+### Loop — boundary report
 
-| File | Why |
-|---|---|
-| `CLAUDE.md` | 231 → 141 lines |
-| `work-watch` · `autonomy-set` · m40 | One authority for the rule |
-| `verify-autonomy.sh` | Per-row checks → a census |
-| `verify-skill-registry.sh` · `miner-scope.sh` · `skill-firing.sh` | New. 3, 9 and 7 cases |
-| `skill-firing-baseline.md` | New. What Fire is scored against |
-| `.claude/skills/` · two sync tools | Deleted |
+**Workstream:** Loop · **Closed:** 2026-09-07 · **176 words**, diagram excluded
 
-**Evidence.** `verify-all.sh` — 10 gates, exit 0. Four PRs merged with no denial, the first here to run without a per-merge request. **Baseline:** `handoff` 0/11 at an opening, `work-watch` 1 fire in 11, `chat-response` 4/11. Every skill fired at least once, so the defect is frequency.
+**1 Delivered.** A merge that runs without the user asking for it, and a number for how often each skill fires. Both were preconditions for every other workstream and neither existed.
 
-**Not done.** `plugin eval` regression testing — [#181](https://github.com/Calyx-Engineering/arc/issues/181), out of the milestone, waiting on early-access enrolment. Nothing depends on it.
+**2 Spawned.** [#173](https://github.com/Calyx-Engineering/arc/issues/173) onboarding collision detector · [#174](https://github.com/Calyx-Engineering/arc/issues/174) response verbosity setting · [#175](https://github.com/Calyx-Engineering/arc/issues/175) cold-start reading path · [#177](https://github.com/Calyx-Engineering/arc/issues/177) command copies · [#181](https://github.com/Calyx-Engineering/arc/issues/181) `plugin eval` regression gate · [#183](https://github.com/Calyx-Engineering/arc/issues/183) `tracker-verify` false positive · [#185](https://github.com/Calyx-Engineering/arc/issues/185) report budget check.
 
-**Six spawned.** [#183](https://github.com/Calyx-Engineering/arc/issues/183) matters: `tracker-verify` called a conforming PR base wrong, four times, four wrong.
+**3 Unexpected.** [#149](https://github.com/Calyx-Engineering/arc/issues/149) was designed around `claude plugin eval` and **the command had never been run** — it is gated behind early access, and 18 issues rested on it. The measurement already existed in the transcripts. Separately, `tracker-verify` called a conforming PR base wrong four times out of four.
+
+**4 Unplanned but needed.** `CLAUDE.md` 231 → 141 lines — the duplication *was* the defect. `verify-autonomy.sh` inverted, because it enforced the thing being removed. Three new tools: `verify-skill-registry`, `miner-scope`, `skill-firing`.
+
+**5 Evidence.** 10 gates, exit 0. Four PRs merged unasked. Baseline: `handoff` 0/11 at an opening, `work-watch` 1 fire in 11, `chat-response` 4/11 — every skill fired at least once, so the defect is frequency.
+
+**6 Not done.** `plugin eval` regression testing — [#181](https://github.com/Calyx-Engineering/arc/issues/181), out of the milestone. Nothing waits on it.
 
 ```mermaid
 flowchart LR
@@ -200,6 +199,11 @@ flowchart LR
     E["#181 plugin eval"]:::blocked -.->|"early access"| I["regression gate"]:::blocked
     classDef blocked fill:#fff3cd,stroke:#e0a800
 ```
+
+*End of Loop's boundary report.*
+
+---
+
 
 ### Closed before the workstreams existed
 
