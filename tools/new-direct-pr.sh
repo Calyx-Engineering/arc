@@ -20,6 +20,12 @@
 # REPORTS, NEVER GUESSES. If the predicted number and the real one differ, the script says so
 # and tells you what to record. It does not retry — m46 §9.1: a miss is a race that already
 # happened, and buying a tidier branch name costs a real number.
+#
+# `git checkout -b` IS CORRECT HERE, and is not the thing #206 was about. `createLinkedBranch`
+# links a branch TO AN ISSUE; a direct PR has no issue, so there is nothing to link and the
+# mutation has no input to take. The arc's "never `git checkout -b`" rule is about issue
+# branches. Nothing in this script needs the read-back that rule now carries — the link this
+# PR does get is the ordinary PR↔base one, which `gh pr create` returns a URL for.
 
 set -u
 

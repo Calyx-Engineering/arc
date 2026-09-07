@@ -2,11 +2,12 @@
 name: issue-write
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [arc-intent, title-size, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
+checks: [arc-intent, title-size, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
   - arc-intent (the current arc has no arc-log)
+  - read-back-dispositions (the write is an issue, not a PR)
   - title-size (editing a body, not a title)
 ---
 
@@ -40,6 +41,18 @@ to go — what it prevents is filing silently while the arc's stated scope says 
 | **No development narrative** | Not "we tried X then found Y". State Y |
 
 A body that survives this is usually a short paragraph plus one or two tables.
+
+### A PR body carries one section the rules above do not
+
+**The read-back's dispositions.** Step 5 of
+[`close-sequence.md`](../../docs/product-architecture/close-sequence.md) reads every changed file
+against the issue and returns findings; the body says what happened to each — acted on, or
+declined with the reason. **A pass that returned nothing is recorded as having returned
+nothing.** That step has no gate, because prose truth is not mechanically checkable, so the body
+is the only place it is recorded at all — and silence there is indistinguishable from a step
+nobody ran.
+
+---
 
 ## Titles
 

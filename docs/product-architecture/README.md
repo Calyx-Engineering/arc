@@ -73,7 +73,7 @@ moves next; this column only reports.
 | ID | Mechanism | Src | Payoff | Spec | Status |
 |---|---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | | |
-| m10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/m10-branch-guard.md) | ⚪ |
+| m10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/m10-branch-guard.md) | 🔵 |
 | m12 | Issue linking | 🔥 | **Everything links, nothing strays.** *Branch↔issue and PR↔issue links form; the PR targets the arc branch* | [spec](mechanisms/m12-issue-linking.md) | ⚪ |
 | m42 | Default branch flip | 🔥 | **Closing keywords bind inside an arc.** *Offers to point the default branch at the arc for its lifetime, on preconditions it checks itself; restores at close* | [spec](mechanisms/m42-default-branch-flip.md) | ⚪ |
 | m14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/m14-commit-rhythm.md) | ⚪ |
@@ -219,7 +219,7 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/verification-plan` | skill | m24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
 | | **KNOWLEDGE** | | | |
 | `skills/handoff` | skill | m15 | Read at cold start, written at session end | `skills/record-route` for where it lives |
-| `commands/arc-next.md` | command | m15 | Typed as `/arc-next`, at the start of a session | `skills/handoff` for the read path |
+| `commands/arc-next.md` | command | m15 | Typed as `/arc-next` — one of two openings into the read path, and the only one that needs typing. The wordings in `skills/handoff`'s description are the other | `skills/handoff`, which carries the read path, the staleness checks and the ordered actions. The command holds no rule of its own |
 | `skills/record-route` | skill | m16 · m17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
 | `reference/knowledge-tiers` | reference | — | Read by anything that reads or writes the record | — |
 | `hooks/mining-trigger` | hook | m19 | Automatic, at PR open | `agents/transcript-miner` |

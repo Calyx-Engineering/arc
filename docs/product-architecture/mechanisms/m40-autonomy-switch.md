@@ -104,14 +104,14 @@ and it needs no setting — which is why the mode row carries two values and not
 | **The user can see it** | A mode the user cannot observe is a wrong belief that surfaces only after an unwanted push |
 | **It survives the window** | The same argument that makes the handoff a document rather than a chat — [m15](m15-handoff-spine.md) |
 | **A mid-session change rewrites it immediately** | Not at the next break. The row *is* the state, so it is wrong the moment it lags |
-| **A fresh session reads it before acting** | `/arc-next` already does. Absent or unreadable means manual |
+| **A fresh session reads it before acting** | The cold-start read path already does — `skills/handoff`, whether it was opened by `/arc-next` or by wording. Absent or unreadable means manual |
 
 **A dedicated `mode` file was rejected.** Two files holding one fact disagree — the condition
 [#105](https://github.com/Calyx-Engineering/arc/issues/105) exists to fix, created on purpose.
 
 **Which mode a wave runs in is the arc-log's**, stated once beside the description of the wave.
 The handoff cues the *current* session; the arc-log is the plan. When they disagree the handoff
-is stale, and `/arc-next`'s staleness checks are what catch it.
+is stale, and the staleness checks in `skills/handoff`'s read path are what catch it.
 
 ### 3.1 How a plan reaches a session
 
@@ -123,7 +123,7 @@ visible:
 flowchart LR
     P["<b>arc-log §10.1</b><br/>this wave runs autonomous<br/><i>the plan</i>"] --> A(["<b>the user approves<br/>the plan</b><br/>— explicit —"])
     A --> H["<b>HANDOFF.md</b><br/><i>Execution mode</i> row<br/>set to autonomous"]
-    H --> S["<b>/arc-next</b><br/>reads the row<br/>before acting"]
+    H --> S["<b>the cold-start read path</b><br/>skills/handoff<br/>reads the row before acting"]
     S --> X["<b>executes the<br/>ordered actions</b>"]
     X --> B{{"<b>wave boundary</b>"}}
     B --> W["<b>write the handoff</b><br/>mode row set from<br/>§10.1's <i>next</i> wave"]
@@ -337,7 +337,7 @@ everything else to the skill.
 `tools/verify-autonomy.sh` enforces it as a census: the prohibition appears only in
 `autonomy-set`, and `CLAUDE.md` states the mode exactly once with its override. **Scope is what
 a session loads every turn** — `CLAUDE.md`, skills, templates, hooks, agents, commands. `docs/`
-is opened deliberately rather than loaded, so m14 §3 and `close-sequence.md` steps 8 and 9 keep
+is opened deliberately rather than loaded, so m14 §3 and `close-sequence.md` steps 9 and 10 keep
 the older shape.
 
 **This is no longer an exception to *one fact, one place*.** It is that rule, applied.
@@ -350,7 +350,7 @@ the older shape.
 
 | | Delivered by |
 |---|---|
-| A document defining an execution plan with the switch set **executes correctly** | §3 — the arc-log states the wave's mode, the handoff cues the session, `/arc-next` reads it before acting |
+| A document defining an execution plan with the switch set **executes correctly** | §3 — the arc-log states the wave's mode, the handoff cues the session, and the cold-start read path in [`handoff`](../../../skills/handoff/SKILL.md) reads it before acting |
 | *"switch to autonomous"* enters auto; *"switch back to manual"* leaves it | §4, and [`skills/autonomy-set`](../../../skills/autonomy-set/SKILL.md) |
 | It **returns to manual on its own when conversation starts** | §4's suspension, on signals that need no setting |
 
@@ -372,5 +372,5 @@ times; the behavioural half is exercised by using it.
 - [m15](m15-handoff-spine.md) — the handoff, which holds the mode
 - [m43](m43-camp-assistant.md) — Camp, which announces the transitions
 - [m47](m47-onboarding.md) — how the behaviour reaches a fresh repository
-- [`close-sequence.md`](../close-sequence.md) — steps 8 and 9, now mode-dependent
+- [`close-sequence.md`](../close-sequence.md) — steps 9 and 10, now mode-dependent
 - `docs/arc-work/03-camp/friction-log.md` entries 1, 2 and 4 — the evidence

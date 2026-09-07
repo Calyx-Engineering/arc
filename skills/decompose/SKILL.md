@@ -113,7 +113,7 @@ From m43 §3, the Camp spec.
 3  Announcing completed actions      needs 1, 2
    Merging makes Arc's operation visible in conversation.
 4  Status and the close sequence     needs 2
-   Merging makes the nine closing steps identical every issue.
+   Merging makes the ten closing steps identical every issue.
 5  Holding the arc's intent          needs 4
    Merging lets Camp test proposed work against the arc's goal.
 
