@@ -17,6 +17,16 @@
 # that counted short as held would report the fix working every time the model failed to
 # answer. Replies below the floor are counted in neither column and printed as their own
 # number, so a run with many of them is visibly not a measurement.
+#
+# AND WHY IT IS RELATIVE TO THE BUDGET. A flat 15 words is a sane floor against a 60-word
+# budget and nonsense against a 20-word one, where it is three quarters of the whole
+# allowance. #213 added a rule telling the model to aim at two-thirds of a tight budget —
+# about 13 words for 20 — and a flat floor then discarded every turn that obeyed it, as THIN,
+# out of the rate. The instrument was deleting the successes of the rule it was grading:
+# the same runs score 0.38 at a flat 15 and 0.45 at min(15, budget // 2).
+#
+# So the floor is min(RL_THIN_FLOOR, budget // 2), per case, and the effective value is
+# printed beside each case rather than only the configured one.
 import io
 import json
 import os
@@ -169,6 +179,15 @@ def replay(path, first, last):
     return [(i, q, prose_words("\n".join(b)), prose_words(b[-1] if b else "")) for i, q, b in rows]
 
 
+def thin_floor(budget, configured):
+    """The floor actually applied to this case.
+
+    Half the budget is the most a floor can be and still mean "too short to be an attempt".
+    Above that it starts rejecting replies for being the length they were asked to be.
+    """
+    return max(1, min(configured, budget // 2))
+
+
 def verdicts(rows, budget, floor):
     """UNDER / OVER / THIN / CUT per turn, and the first turn that breached.
 
@@ -217,7 +236,7 @@ def report(name, budget, floor, scored, breach, set_on, extra=None):
         "%d turns after it was stated" % held,
         ("t%d" % breach) if breach is not None else "none",
         thin, cut))
-    print("  within budget (%d %s): %s" % (budget, "words", rate))
+    print("  within budget (%d %s): %s   thin floor %d words" % (budget, "words", rate, floor))
     print()
     return under, over, thin
 
@@ -225,7 +244,7 @@ def report(name, budget, floor, scored, breach, set_on, extra=None):
 def main():
     evaldir = os.environ["RL_EVAL_DIR"]
     mode = os.environ.get("RL_MODE", "replay")
-    floor = int(os.environ.get("RL_THIN_FLOOR", "15"))
+    configured_floor = int(os.environ.get("RL_THIN_FLOOR", "15"))
     threshold = float(os.environ.get("RL_THRESHOLD", "0.67"))
     strict = os.environ.get("RL_STRICT") == "1"
 
@@ -241,8 +260,8 @@ def main():
     drift, missing = [], []
     tot_under = tot_over = tot_thin = 0
 
-    print("response-length — %d case(s) under %s, mode %s, thin floor %d words"
-          % (len(cases), evaldir, mode, floor))
+    print("response-length — %d case(s) under %s, mode %s, thin floor min(%d, budget/2)"
+          % (len(cases), evaldir, mode, configured_floor))
     print()
 
     for cp in cases:
@@ -256,6 +275,7 @@ def main():
         if unit != "words":
             missing.append("%s  (unit %r is not scored; only words is)" % (name, unit))
             continue
+        floor = thin_floor(budget, configured_floor)
 
         root = os.environ.get("RL_ROOT_DIR", "")
         hits = []

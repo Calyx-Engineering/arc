@@ -7,6 +7,11 @@
 #   tools/response-length.sh --probe      re-run the turns live against the installed plugin
 #   tools/response-length.sh selftest     fixtures only, no corpus needed
 #
+#   RL_PROBE_OUT=path   keep the probe's raw replies instead of losing them with the temp
+#                       directory, so a billed run can be re-scored after the scorer changes
+#                       ONE RUN PER PATH: the runner writes the case's entry whole, so
+#                       --runs N leaves only the last. Give each run its own path.
+#
 # WHY THIS EXISTS. tools/skill-cases.sh and tools/skill-probe.sh both measure ONE thing:
 # whether a Skill was invoked. #155 established that firing is neither necessary nor sufficient
 # for the rule to be followed — chat-response fired on a 2251-character reply, and a 60-word
@@ -55,7 +60,7 @@ while [ "$#" -gt 0 ]; do
     --runs) RUNS="${2:-1}"; shift ;;
     --case) ONLY="${2:-}"; shift ;;
     --threshold) RL_THRESHOLD="${2:-0.67}"; export RL_THRESHOLD; shift ;;
-    -h|--help) sed -n "2,38p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,41p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -94,6 +99,15 @@ if [ "$SELFTEST" = "1" ]; then
     as "$(words 60)"
     hu 2026-09-01T10:03 '"once more"'
     as "$(words 3)"
+    hu 2026-09-01T10:04 '"and shorter"'
+    # 12 words against a 20-word budget. Under a flat 15-word floor this is discarded as THIN
+    # — which deletes exactly the behaviour #213's undershoot rule asks for. The floor is
+    # min(15, budget/2) = 10 here, so it counts.
+    as "$(words 12)"
+    hu 2026-09-01T10:05 '"last one"'
+    # Keeps the fixture rate under the 0.67 default, so the FAIL-verdict case still tests a
+    # verdict rather than the threshold's own arithmetic.
+    as "$(words 40)"
   } > "$P/bbb22222.jsonl"
 
   mk() {  # mk <slug> <budget> <session> <first> <last> ; turns are copied from the fixture
@@ -103,11 +117,13 @@ if [ "$SELFTEST" = "1" ]; then
     printf '# grader\n' > "$E/$1/graders/within-budget.md"
   }
 
-  mk held 20 bbb22222 1 4
+  mk held 20 bbb22222 1 6
   printf 'keep it to 20 words or less. now explain the thing\n' > "$E/held/turns/1.md"
   printf 'go on\n'    > "$E/held/turns/2.md"
   printf 'and again\n' > "$E/held/turns/3.md"
   printf 'once more\n' > "$E/held/turns/4.md"
+  printf 'and shorter\n' > "$E/held/turns/5.md"
+  printf 'last one\n' > "$E/held/turns/6.md"
 
   mk absent 20 zzz99999 1 2
   printf 'not on this machine\n' > "$E/absent/turns/1.md"
@@ -131,7 +147,11 @@ if [ "$SELFTEST" = "1" ]; then
   t "a reply over the budget scores OVER"             "OVER +t3 +60 words"
   # The whole point of the floor: 3 words is not evidence the budget was held.
   t "a reply under the thin floor scores THIN"        "THIN +t4 +3 words"
-  t "the thin reply is not counted in the rate"       "within budget \(20 words\): 2/3"
+  t "the thin reply is not counted in the rate"       "within budget \(20 words\): 3/5"
+  # A flat 15-word floor would call this THIN and drop it, which is how the instrument came to
+  # discard the behaviour #213's undershoot rule asks for. min(15, budget/2) = 10 keeps it.
+  t "the floor is relative to the budget, not flat"   "UNDER +t5 +12 words"
+  t "the effective floor is reported per case"        "thin floor 10 words"
   t "the first breach turn is named"                  "first breach t3"
   t "how long the budget held is reported"            "held 2 turns after it was stated"
   t "the turn the budget was stated on is marked"     "budget stated here"
@@ -227,7 +247,19 @@ fi
 
 command -v claude >/dev/null 2>&1 || { echo "claude CLI not on PATH — nothing to probe" >&2; exit 2; }
 
-OUT="$(mktemp -d)/probe.json"
+# RL_PROBE_OUT keeps the raw replies. Without it the JSON dies with the temp directory and a
+# billed run cannot be re-scored later — which is what #158's runs cost when their numbers had
+# to be revisited, and what #160's cost again until tools/topic-numbering.sh grew the same
+# option. The probe runner opens the path "w" unconditionally, so anything that exists and is
+# not already probe JSON stops the run before a turn is billed.
+OUT="${RL_PROBE_OUT:-$(mktemp -d)/probe.json}"
+if [ -n "${RL_PROBE_OUT:-}" ]; then
+  mkdir -p "$(dirname "$OUT")" 2>/dev/null
+  if [ -e "$OUT" ] && ! python -c "import json,sys;json.load(open(sys.argv[1]))" "$OUT" 2>/dev/null; then
+    echo "RL_PROBE_OUT=$OUT exists and is not probe JSON — refusing to overwrite it" >&2
+    exit 2
+  fi
+fi
 echo "response-length --probe — ${RUNS} run(s) per case, live against the INSTALLED plugin"
 echo "Run tools/plugin-reload.sh first or this measures the version before your edit."
 echo
