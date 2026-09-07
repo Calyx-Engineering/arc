@@ -7,7 +7,7 @@ repository is the only state that survives you — nothing you hold in context r
 
 | | Does | Reads |
 |---|---|---|
-| **An issue run** | One issue, start to finish, then stops. Its record is three things: **the issue's own checklist, ticked with evidence**, the dev-log, and the PR body. It never writes a boundary report, having seen one issue | **§1–§5**, then §7 |
+| **An issue run** | One issue — or one **batch** the driver hands it, §1 — start to finish, then stops. Its record is three things: **the issue's own checklist, ticked with evidence**, the dev-log, and the PR body. It never writes a boundary report, having seen one issue | **§1–§5**, then §7 |
 | **A report run** | No work at all. Reads a closed workstream's merged PRs and dev-logs, writes its boundary report, and hands back | **§6**, then §7 |
 
 **§7 applies to both.** If you are an issue run, §6 is not yours; if you are a report run, §2's
@@ -20,6 +20,7 @@ review passes are not.
 | **The issue body** | The spec. Its `Required` checklist is the acceptance criteria, and the only definition of done |
 | **What the issue names** | The files, mechanisms and skills it links — and nothing beyond them |
 | **`CLAUDE.md`** | Loaded for you. Branching, commit rules, soak, safe hook editing, how David works |
+| **A batch, if the driver hands you one** | Two or three issues that share one deliverable — the same hook, the same skill. One branch named for the first, one PR closing every one, **one commit per issue, in the order given**. Finish an issue's checklist before starting the next. `CLAUDE.md`'s one-hook-per-commit holds inside a batch |
 
 **Do not read [`issue-plan.md`](issue-plan.md).** It is the human's forest view of all five
 workstreams. Pulling it in puts the whole arc in your context, which is the exact failure this
@@ -49,11 +50,19 @@ repeated pass asking the same one finds nothing.
 **Passes 1 to 3 are the ones a run skips under time pressure. They are the reason this file
 exists.** Pass 4 is why the PR opens as a draft — it can still take commits.
 
+**Passes 1 to 3 are read by a sub-agent, not by you.** Each pass dispatches one read-only
+sub-agent carrying the issue body and the list of changed files. It reads the whole files and
+returns findings; you act on them. The passes are unchanged — the same three questions, whole
+files, never the diff. What changes is where the reading lands: a run that read every file itself
+carried 140K tokens of context into every later turn, and 180 turns of that was the cost of
+[#158](https://github.com/Calyx-Engineering/arc/issues/158). §3 permits exactly this — a large
+read that collapses to a small answer.
+
 ## 3 Sub-agents — read and return only
 
 | | |
 |---|---|
-| **Use one for** | A large read that collapses to a small answer — scanning transcripts, sweeping a directory, scoring a corpus |
+| **Use one for** | A large read that collapses to a small answer — scanning transcripts, sweeping a directory, scoring a corpus, **and §2's passes 1 to 3** |
 | **Never for** | Implementation |
 
 **A sub-agent that edits files and reports *done* is the failure this arc exists to fix.** You
@@ -66,9 +75,10 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. Four things this arc pins dow
 | | |
 |---|---|
 | **Branch** | `arc/04-dogfood-issue-<NN>-<hint>`, cut from `arc/04-dogfood`. From `createLinkedBranch`, never `git checkout -b` — otherwise no branch↔issue link forms, and the mutation cannot link a branch that already exists |
+| **Worktree** | `tools/arc-loop.sh` put you in a worktree of your own — the prompt names it, `git worktree list` confirms it. Check your branch out **there**. Never `cd` to the main tree: another run, or the orchestrator, is working in it |
 | **Dev-log** | `docs/dev-log/issue-<NN>-<slug>.md` |
 | **A run commits** | A loop cannot ask, so the driver dispatches into autonomous mode and `HANDOFF.md`'s row says so. **If it does not, `hooks/mode-guard` denies the commit** — that is correct, and the fix is the mode row, never a workaround |
-| **A run merges its own PR** | In autonomous mode, and only there. `hooks/mode-guard` reads `HANDOFF.md` before the merge as it does before the commit, so manual stops it at the same place |
+| **A run merges its own PR** | In autonomous mode, and only there. `hooks/mode-guard` reads `HANDOFF.md` before the merge as it does before the commit, so manual stops it at the same place. The row it reads is the one in **your worktree** |
 
 ## 5 When you stop
 
@@ -161,7 +171,7 @@ defending it.
 | Retry a failed tracker write silently | Report the mismatch — `skills/issue-write` |
 | Rename the branch of an open PR | It closes the PR. Tested |
 | Commit to the default branch | `CLAUDE.md` — everything happens on a branch |
-| Take on a second issue | One issue is the unit. Stop |
+| Take on an issue you were not given | What the driver handed you — one issue, or one batch — is the unit. Stop |
 | Choose your own issue | The driver picks — [arc-log §3.1](../../arc-log/arc-04-dogfood.md#31-how-a-run-knows-which-issue-is-next). A run that selects its own work has read the whole milestone to do it |
 | Commit, push, PR or merge when the mode says manual | Propose and wait. `hooks/mode-guard` denies it, and a denial is the rule working, not an obstacle |
 | Set the mode to autonomous | Only the user raises it. You may set it to manual — that removes authority rather than granting it |
