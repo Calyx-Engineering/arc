@@ -10,6 +10,7 @@
 #   tools/arc-loop.sh 145 --dry-run          print what it would dispatch, run nothing
 #   tools/arc-loop.sh 145 --max 3            stop after three issues
 #   tools/arc-loop.sh 145 --issues 183,210   one run, this batch, then stop — the playlist's call
+#   tools/arc-loop.sh 145 --issues 183,210 --track S1.F1   …and the session is titled "arc/04 — S1.F1 · #183 #210"
 #   tools/arc-loop.sh --status               every run under .arc-work/runs/, live or finished
 #
 # Scope of one invocation is ONE workstream. When its children are all closed
@@ -27,6 +28,8 @@
 #              workstream's spend. This script polls for the run's exit file.
 #   BATCHED    --issues hands one run several issues sharing one deliverable: one branch, one PR,
 #              one commit per issue. Batching is by shared file, never by count.
+#   RESUMED    A run that ends on a rate or usage limit is not lost: the loop waits, then
+#              `claude -p --continue` in the same worktree carries the same session on.
 #
 # THE MODE ROW lives in the worktree. hooks/mode-guard reads HANDOFF.md from the payload's cwd,
 # and HANDOFF.md is gitignored, so a fresh worktree has none and every commit is denied. The
@@ -60,9 +63,14 @@ INSTRUCTIONS="docs/arc-work/04-dogfood/run-instructions.md"
 # permission to write, and produced an analysis it could not save.
 PERMISSION_MODE="${ARC_LOOP_PERMISSION_MODE:-auto}"
 MODEL="${ARC_LOOP_MODEL:-}"
+# A run that ends on a rate or usage limit is resumed, not restarted: wait, then
+# `claude -p --continue` in its worktree. Twelve waits of ten minutes covers a reset window.
+RETRY_WAIT="${ARC_LOOP_RETRY_WAIT:-600}"
+MAX_RETRY="${ARC_LOOP_MAX_RETRY:-12}"
 DRY=0
 MAX=0
 ISSUES=""
+TRACK=""
 STATUS=0
 PARENT="${1:-}"
 shift || true
@@ -73,6 +81,7 @@ while [ $# -gt 0 ]; do
     --max) shift; MAX="${1:-0}" ;;
     --issues) shift; ISSUES="$(printf '%s' "${1:-}" | tr ', ' '\n\n' | grep -E '^[0-9]+$' | tr '\n' ' ')" ;;
     --model) shift; MODEL="${1:-}" ;;
+    --track) shift; TRACK="${1:-}" ;;
     --status) STATUS=1 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
@@ -167,6 +176,8 @@ case "$BASE" in
   arc/*) ;;
   *) die "\`$BASE\` is not an arc branch — check the arc out first" ;;
 esac
+# "arc/04" — the first line of every prompt, which is the title every session list shows.
+ARC="$(printf '%s' "$BASE" | sed -E 's#^(arc/[0-9]+).*#\1#')"
 
 # --- the parent must actually be a workstream -------------------------------
 labels=$(gh issue view "$PARENT" -R "$REPO" --json labels --jq '[.labels[].name]|join(",")') \
@@ -231,6 +242,49 @@ Written by \`tools/arc-loop.sh\`, which a human ran — m40 §4. Removed with th
 EOF
 }
 
+# launch_run <run-dir> <worktree> <model-flag> <prompt-file> <extra-flags>
+# The launcher script. `bash -l` so the profile puts claude on PATH. The exit code lands in a
+# file because the launcher outlives this shell and nothing is waiting on it.
+launch_run() {
+  local dir="$1" wt="$2" model_flag="$3" prompt="$4" extra="$5" pid
+  cat > "$dir/run.sh" <<EOF
+#!/usr/bin/env bash
+cd "$wt" || { echo 1 > "$dir/exit"; exit 1; }
+date -u +%FT%TZ >> "$dir/started"
+claude -p $extra --permission-mode "$PERMISSION_MODE" --output-format json $model_flag \\
+  < "$prompt" > "$dir/out.json" 2>> "$dir/err.log"
+echo \$? > "$dir/exit"
+date -u +%FT%TZ >> "$dir/ended"
+EOF
+  rm -f "$dir/exit"
+  pid="$(powershell -NoProfile -Command \
+    "(Start-Process -FilePath bash -ArgumentList '-l','$dir/run.sh' -WindowStyle Hidden -PassThru).Id" 2>/dev/null | tr -d '\r')"
+  [ -n "$pid" ] || die "Start-Process returned no pid — the run did not launch"
+  echo "$pid" > "$dir/pid"
+  echo "  launched pid $pid — worktree $wt, log $dir/err.log${extra:+ ($extra)}"
+}
+
+# limit_hit <run-dir> — did the run end on a rate or usage limit rather than on its own?
+limit_hit() {
+  python - "$1" <<'PY'
+import json, sys, os, re
+d = sys.argv[1]
+txt = ""
+for name in ("out.json", "err.log"):
+    p = os.path.join(d, name)
+    if os.path.exists(p):
+        txt += open(p, encoding="utf-8", errors="replace").read()[-4000:]
+err = False
+try:
+    r = json.loads(open(os.path.join(d, "out.json"), encoding="utf-8").read())
+    err = bool(r.get("is_error")); txt = (r.get("result") or "") + txt
+except Exception:
+    err = True
+pat = re.compile(r"rate.?limit|usage.?limit|limit (?:reached|exceeded)|hit your limit|\b429\b|\b529\b|overloaded", re.I)
+sys.exit(0 if (err and pat.search(txt)) else 1)
+PY
+}
+
 # run_batch <issue> [issue...] — one worktree, one detached `claude -p`, blocks until it exits.
 # Returns the run's exit code. The worktree is removed only if every issue closed.
 run_batch() {
@@ -253,8 +307,11 @@ run_batch() {
   git worktree add --detach -q "$wt" "origin/$BASE" || die "git worktree add failed"
   write_worktree_mode "$wt" "$@"
 
-  # The prompt goes to a file: a detached process has no stdin from us.
+  # The prompt goes to a file: a detached process has no stdin from us. Its first line is the
+  # session's name in every session list, so it says what the run is rather than what the
+  # instructions file is called.
   {
+    echo "$ARC — ${TRACK:+$TRACK · }$(printf '#%s ' "$@")"; echo
     cat "$INSTRUCTIONS"; echo; echo "---"; echo
     echo "# You are an issue run"; echo
     if [ $# -eq 1 ]; then
@@ -275,33 +332,36 @@ run_batch() {
     done
   } > "$dir/prompt.md"
 
-  # The launcher. `bash -l` so the profile puts claude on PATH. The exit code lands in a file
-  # because the launcher outlives this shell and nothing is waiting on it.
-  cat > "$dir/run.sh" <<EOF
-#!/usr/bin/env bash
-cd "$wt" || { echo 1 > "$dir/exit"; exit 1; }
-date -u +%FT%TZ > "$dir/started"
-claude -p --permission-mode "$PERMISSION_MODE" --output-format json $model_flag \\
-  < "$dir/prompt.md" > "$dir/out.json" 2> "$dir/err.log"
-echo \$? > "$dir/exit"
-date -u +%FT%TZ > "$dir/ended"
-EOF
   printf '%s\n' "$@" > "$dir/issues"
   printf '%s\n' "$BASE" > "$dir/base"
-  rm -f "$dir/exit" "$dir/ended"
 
-  pid="$(powershell -NoProfile -Command \
-    "(Start-Process -FilePath bash -ArgumentList '-l','$dir/run.sh' -WindowStyle Hidden -PassThru).Id" 2>/dev/null | tr -d '\r')"
-  [ -n "$pid" ] || die "Start-Process returned no pid — the run did not launch"
-  echo "$pid" > "$dir/pid"
-  echo "  launched pid $pid — worktree $wt, log $dir/err.log"
-
-  while [ ! -f "$dir/exit" ]; do
-    alive "$pid" || { echo "  run $id died without an exit code — see $dir/err.log" >&2; return 1; }
-    sleep 30
+  # Launch, wait, and on a rate limit wait again and resume. The resumed run is the SAME
+  # session — `claude -p --continue` in the worktree picks up its own transcript — so it carries
+  # on from where the limit stopped it rather than starting the issue over.
+  local attempt=0
+  launch_run "$dir" "$wt" "$model_flag" "$dir/prompt.md" ""
+  while :; do
+    pid="$(cat "$dir/pid")"
+    while [ ! -f "$dir/exit" ]; do
+      alive "$pid" || { echo "  run $id died without an exit code — see $dir/err.log" >&2; return 1; }
+      sleep 30
+    done
+    echo "  run $id exited $(cat "$dir/exit")"
+    summarise "$dir"
+    limit_hit "$dir" || break
+    if [ "$attempt" -ge "$MAX_RETRY" ]; then
+      echo "  rate limit again after $MAX_RETRY resumes — giving up; worktree kept" >&2
+      break
+    fi
+    attempt=$((attempt + 1))
+    echo "  rate limit — waiting ${RETRY_WAIT}s, then resuming the same session ($attempt/$MAX_RETRY)"
+    mv -f "$dir/out.json" "$dir/out.$attempt.json"
+    sleep "$RETRY_WAIT"
+    printf '%s\n' "You were interrupted by a rate limit. Continue the run from where it stopped." \
+      "Read the issue checklists on GitHub for the current state before acting; do not redo ticked boxes." \
+      > "$dir/resume.md"
+    launch_run "$dir" "$wt" "$model_flag" "$dir/resume.md" "--continue"
   done
-  echo "  run $id exited $(cat "$dir/exit")"
-  summarise "$dir"
 
   # Keep the worktree if anything is still open: the branch and its uncommitted state are the
   # evidence of where the run stopped.
@@ -320,7 +380,8 @@ EOF
 
 run_report() {
   local prompt
-  prompt=$(cat "$INSTRUCTIONS"; echo; echo "---"; echo;
+  prompt=$(echo "$ARC — report · #$PARENT $parent_title"; echo;
+           cat "$INSTRUCTIONS"; echo; echo "---"; echo;
            cat <<EOF
 # You are a report run
 
