@@ -1,0 +1,2 @@
+# a payload with no file_path — nothing to classify
+{"tool_name":"Edit","cwd":"__FIXTURE_ARC__","tool_input":{"old_string":"a","new_string":"b"}}

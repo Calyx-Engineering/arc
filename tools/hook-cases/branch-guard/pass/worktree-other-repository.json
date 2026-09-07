@@ -1,0 +1,2 @@
+# absolute path in a different repository — the mirrored-file edit, not this hook's business
+{"tool_name":"Edit","cwd":"__FIXTURE_ISSUE__","tool_input":{"file_path":"__FIXTURE_MAIN__/src/index.ts"}}
