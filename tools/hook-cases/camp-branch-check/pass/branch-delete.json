@@ -1,2 +1,2 @@
 # deleting a branch is not creating one
-{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git branch -d old-topic"}}
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git branch -d old-topic"}}

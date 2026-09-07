@@ -1,0 +1,2 @@
+# a repo whose convention labels numbers `ticket`, which Arc does not know — paired with report/declared-label-missing
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/labelled","tool_name":"Bash","tool_input":{"command":"git checkout -b feat/ticket-9-sync-retry"}}

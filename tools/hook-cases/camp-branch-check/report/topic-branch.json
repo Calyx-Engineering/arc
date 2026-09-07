@@ -1,2 +1,2 @@
-# a branch naming no issue
-{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git checkout -b fix-the-thing"}}
+# a branch naming no issue, in a namespace the convention does not declare
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git checkout -b fix-the-thing"}}

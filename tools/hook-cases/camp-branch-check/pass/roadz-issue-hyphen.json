@@ -1,0 +1,2 @@
+# ROADZ, real: the current `<module>/rev-<X>-issue-<NN>-<slug>` form
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/roadz","tool_name":"Bash","tool_input":{"command":"git switch -c interface-pcba/rev-b-issue-15-audio-out-isolation"}}

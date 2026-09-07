@@ -1,2 +1,2 @@
 # an arc branch created as if it were a work branch
-{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git switch -c arc/04-next"}}
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git switch -c arc/04-next"}}

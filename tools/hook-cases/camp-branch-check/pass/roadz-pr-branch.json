@@ -1,0 +1,2 @@
+# ROADZ, real: a no-issue branch carrying its PR number
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/roadz","tool_name":"Bash","tool_input":{"command":"git checkout -b interface-pcba/rev-b-pr58-arc-setup"}}

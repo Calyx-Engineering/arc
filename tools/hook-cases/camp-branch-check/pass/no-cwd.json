@@ -1,0 +1,2 @@
+# no cwd in the payload — the hook falls back to where it is running, it does not go silent
+{"tool_name":"Bash","tool_input":{"command":"git checkout -b arc/03-camp-issue-43-hooks"}}

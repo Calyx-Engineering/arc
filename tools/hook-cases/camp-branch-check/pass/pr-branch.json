@@ -1,2 +1,2 @@
 # a no-issue branch named for the PR it will open — m46 §9's second form
-{"tool_name":"Bash","cwd":"__FIXTURE_ARC__","tool_input":{"command":"git checkout -b arc/02-foundation-pr108-branch-number"}}
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git checkout -b arc/02-foundation-pr108-branch-number"}}
