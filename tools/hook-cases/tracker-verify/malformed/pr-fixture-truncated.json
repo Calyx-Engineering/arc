@@ -1,0 +1,2 @@
+# a PR fixture payload cut off mid-value — must stay silent, not crash
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-found
