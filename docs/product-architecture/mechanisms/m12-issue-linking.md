@@ -1,6 +1,7 @@
 # Mechanism — Tracker Linking Without the Default-Branch Trick
 
-**Status:** specified. Its key assumption was tested and disproved 2026-08-16.
+**Status:** specified. Its key assumption was tested and disproved 2026-08-16, and the
+`linkedBranches` read was re-measured and corrected 2026-09-07 — see [the link's lifecycle](#the-links-lifecycle--measured-2026-09-07).
 **Home:** Arc — Workspace guard.
 **Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.8, and David's requirement, 2026-08-16.
 
@@ -77,11 +78,12 @@ Tested against the live repo:
 | Capability | Endpoint | Status |
 |---|---|---|
 | Read PR → closing issues | `gh pr view N --json closingIssuesReferences` | ✅ works |
-| Read issue → linked branches | GraphQL `issue.linkedBranches` | ✅ works |
+| Read issue → linked branches | GraphQL `issue.linkedBranches` | ⚠️ works, **but only until a PR is opened on the branch** — see [the lifecycle](#the-links-lifecycle--measured-2026-09-07) |
 | Sub-issues | `repos/{o}/{r}/issues/{n}/sub_issues` | ✅ responds |
 | Force re-parse | Re-save the PR body (`gh pr edit --body`) | ✅ documented in ROADZ CLAUDE.md |
 | Create branch↔issue link | GraphQL `createLinkedBranch` | ✅ **Tested and works** — see below |
-| Remove a link | GraphQL `deleteLinkedBranch`, or delete the branch | ✅ Deleting the branch clears the link automatically |
+| Remove a link | GraphQL `deleteLinkedBranch`, or delete the branch | ✅ Deleting the branch clears the link automatically — silently, with no timeline event |
+| Verify a link, either side | `tools/verify-linked-branch.sh <NN> <branch>` | ✅ reads both fields and says which holds the link |
 
 ### `createLinkedBranch` — tested 2026-08-16
 
@@ -97,17 +99,80 @@ mutation {
 }
 ```
 
-**Two properties that shape the design:**
+**Three properties that shape the design:**
 
 1. **It creates the branch.** This is not "link an existing branch to an issue" — it is
    "create a branch, linked." No API was found to attach a link to a branch that already
    exists.
 2. **Deleting the branch removes the link.** No dangling records; cleanup is automatic.
+3. **Opening a PR on the branch moves the link.** It does not survive in `linkedBranches`.
+   Measured 2026-09-07 — the next section.
 
 **Consequence for the workflow:** branch creation should go through this mutation
 **instead of `git checkout -b`**, then fetch locally. One call yields the branch and the
 link together. Retrofitting a link onto an existing branch is not possible, so this must
 happen at creation time.
+
+### The link's lifecycle — measured 2026-09-07
+
+`createLinkedBranch` returns a `linkedBranch` node on success. **That return value is not
+evidence the tracker holds a link** — it reports what the mutation was asked to do. The run for
+[#155](https://github.com/Calyx-Engineering/arc/issues/155) took it as evidence, read
+`issue.linkedBranches`, got `totalCount: 0` while the branch was still on the remote, and
+concluded the mutation was broken. It was not. **The link had already moved.**
+
+Measured live on [#206](https://github.com/Calyx-Engineering/arc/issues/206) in this repo:
+
+| Moment | `issue.linkedBranches` | PR `closingIssuesReferences` |
+|---|---|---|
+| After `createLinkedBranch` | the branch, **within one second** | no PR yet |
+| After commits are pushed to it | the branch | no PR yet |
+| After a **force**-push | the branch | no PR yet |
+| **After a PR is opened on the ref** | **empty** | **the issue** |
+| After that PR is closed again | empty | the issue |
+| After the ref is deleted | empty | the issue |
+
+**Opening a PR from a linked branch promotes the link.** GitHub converts the branch record into
+that PR's closing reference, and the branch record is gone from `linkedBranches`. Three
+properties of the promotion:
+
+1. **It is one-way.** Closing the PR does not give the branch record back.
+2. **It needs no closing keyword.** The probe PR's body was edited down to *"Throwaway probe. No
+   issue reference in this body at all"* and `closingIssuesReferences` still read `[206]`. That
+   is how a promoted link is told apart from a parsed one.
+3. **It is the only `ConnectedEvent` either side gets.** `createLinkedBranch` emits **no**
+   timeline event at all, and neither does deleting the ref. So a timeline read cannot
+   distinguish a branch link from a PR link — #155's other inference, and also wrong.
+
+**Consequence: an empty `linkedBranches` is a defect before a PR exists and correct after one
+does.** Any check that reads one field at one moment reports the opposite of the truth half the
+time. `tools/verify-linked-branch.sh` reads both and names which one holds the link; its
+selftest is a gate in `tools/verify-all.sh`.
+
+#### The check is only decisive at branch creation
+
+`closedByPullRequestsReferences` is fed by a **keyword-parsed** reference as well as a promoted
+one, and every arc PR is required to end with `Closes #NN`. So the moment that keyword exists,
+the two are indistinguishable from the tracker. Measured on
+[#17](https://github.com/Calyx-Engineering/arc/issues/17), whose branch was made with
+`git checkout -b` and which reads as linked through PR
+[#139](https://github.com/Calyx-Engineering/arc/pull/139)'s keyword.
+
+| What the read finds | What it proves |
+|---|---|
+| The branch in `issue.linkedBranches` | The mutation formed the link. **Decisive** |
+| A closing PR on that branch whose body has **no** keyword | The link came from the branch — nothing else could have put it there. **Decisive** |
+| A closing PR on that branch **with** a keyword | Only that the PR closes the issue. Says nothing about whether the branch was ever linked |
+
+**So the read-back after `createLinkedBranch` is the load-bearing one**, and the same check at PR
+time verifies the issue↔PR binding rather than the branch↔issue one. `verify-linked-branch.sh`
+prints which of the three it found rather than collapsing them to one verdict.
+
+**What this does to the ROADZ survey below is unmeasured.** Its conclusion — `git checkout -b`
+never made a link — is unaffected, because a branch that was never linked has nothing to promote.
+But the survey counted `linkedBranches` alone, and any ROADZ issue whose link *had* been promoted
+would have been counted as unlinked. Re-running it needs both fields. Not re-run here; this is the
+arc repo.
 
 ### The measured state of ROADZ
 
@@ -158,14 +223,23 @@ issue side.
 
 ### 4. Verify at the moments that already exist
 
-| Moment | Check |
-|---|---|
-| Branch created | Branch↔issue link established |
-| PR created | `closingIssuesReferences` non-empty; base is the arc branch, not `main` |
-| PR merged | Issue actually closed |
-| Arc checkpoint | Sweep all arc issues for missing links |
+| Moment | Check | Field that holds the answer |
+|---|---|---|
+| Branch created | Branch↔issue link established — `tools/verify-linked-branch.sh <NN> <branch>` | `issue.linkedBranches` |
+| PR created | `closingIssuesReferences` non-empty; base is the arc branch, not `main` | `closingIssuesReferences` — the branch record is gone by now, and that is correct |
+| PR merged | Issue actually closed | `issue.state` |
+| Arc checkpoint | Sweep all arc issues for missing links | **both** — an issue before its PR has only the branch record, one after it has only the PR. A `git checkout -b` branch is **not** distinguishable here once its PR carries the keyword |
 
 The arc checkpoint sweep is the one that catches drift accumulated across days.
+
+**The sweep asks a weaker question than a per-branch check, and permanently so.** Promotion
+survives its PR being closed, so an issue that ever had a closing PR reads as linked forever —
+[#206](https://github.com/Calyx-Engineering/arc/issues/206) carries closed probe PR
+[#219](https://github.com/Calyx-Engineering/arc/pull/219), which closed nothing. Nothing detaches
+it: the whole mutation list was grepped 2026-09-07 and holds `createLinkedBranch` and
+`deleteLinkedBranch` only, both of which act on branch records, not on closing references. A sweep
+therefore finds issues linked to **nothing at all**; asking whether a particular branch is linked
+means naming that branch, and getting a decisive answer means asking before the PR exists.
 
 ### 5. Retire the default-branch switch
 

@@ -44,7 +44,7 @@ repeated pass asking the same one finds nothing.
 | 5 | **Pass 2 — what did pass 1 introduce?** Its own edits are unreviewed |
 | 6 | **Pass 3 — audit the checklist, box by box, against what is actually in the tree.** Step 2 ticked the boxes; this pass asks whether each tick has evidence behind it, and unticks any that does not. Every box ends ticked with its evidence, or named as not done with the reason. **A tick is a claim about the tree, not a record of intent** — a checklist ticked from memory leaves the tracker describing work that did not happen, and a silently unticked box is how [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of five requirements |
 | 7 | **Dev-log, commit, open the PR as a draft** |
-| 8 | **Pass 4 — read it as a reviewer who was not here.** The diff, the title, the body, the closing keyword, the base branch, the milestone, the branch↔issue and PR↔issue links. This class of defect is invisible until the unit is a PR |
+| 8 | **Pass 4 — read it as a reviewer who was not here.** The diff, the title, the body, the closing keyword, the base branch, the milestone, the branch↔issue and PR↔issue links — `bash tools/verify-linked-branch.sh <NN> <branch>`, which by now answers from the PR, so it confirms the closure binding and not the branch link, §4. This class of defect is invisible until the unit is a PR |
 | 9 | **Fix what pass 4 found, then mark it ready** |
 
 **Passes 1 to 3 are the ones a run skips under time pressure. They are the reason this file
@@ -70,11 +70,12 @@ cannot verify work you did not see, and step 4 is not satisfiable on a report.
 
 ## 4 Where the work goes
 
-Branch, commit and PR mechanics are `CLAUDE.md`'s. Four things this arc pins down:
+Branch, commit and PR mechanics are `CLAUDE.md`'s. What this arc pins down:
 
 | | |
 |---|---|
 | **Branch** | `arc/04-dogfood-issue-<NN>-<hint>`, cut from `arc/04-dogfood`. From `createLinkedBranch`, never `git checkout -b` — otherwise no branch↔issue link forms, and the mutation cannot link a branch that already exists |
+| **Then read the link back** | `bash tools/verify-linked-branch.sh <NN> <branch>`, straight after the mutation and **before the PR exists — that is the only moment the answer is decisive.** The mutation's own return value is not evidence; it reports what it was asked to do, not what the tracker holds. Once the PR is open the link has moved into its `closingIssuesReferences`, where a `Closes #NN` keyword produces the same reading a real branch link does. [#206](https://github.com/Calyx-Engineering/arc/issues/206) |
 | **Worktree** | `tools/arc-loop.sh` put you in a worktree of your own — the prompt names it, `git worktree list` confirms it. Check your branch out **there**. Never `cd` to the main tree: another run, or the orchestrator, is working in it |
 | **Dev-log** | `docs/dev-log/issue-<NN>-<slug>.md` |
 | **A run commits** | A loop cannot ask, so the driver dispatches into autonomous mode and `HANDOFF.md`'s row says so. **If it does not, `hooks/mode-guard` denies the commit** — that is correct, and the fix is the mode row, never a workaround |
