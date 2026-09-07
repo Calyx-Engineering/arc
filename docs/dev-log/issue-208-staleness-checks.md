@@ -1,6 +1,6 @@
 # Issue #208 — the cold-start staleness checks are unreachable from skills/handoff
 
-**Issue:** https://github.com/Calyx-Engineering/arc/issues/208  ·  **PR:** https://github.com/Calyx-Engineering/arc/pull/PENDING
+**Issue:** [#208](https://github.com/Calyx-Engineering/arc/issues/208)  ·  **PR:** [#220](https://github.com/Calyx-Engineering/arc/pull/220)
 
 ## Problem
 
