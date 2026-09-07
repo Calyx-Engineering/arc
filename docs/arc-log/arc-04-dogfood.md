@@ -165,7 +165,10 @@ left unticked: the miner reads the index instead of globbing.
 ## 6 Status
 
 **The only status surface.** [The plan](../arc-work/04-dogfood/issue-plan.md) holds decomposition
-and acceptance criteria and carries no status — one fact, one place.
+and acceptance criteria and carries no status — one fact, one place. The arc's tracker object is
+[#196](https://github.com/Calyx-Engineering/arc/issues/196), whose ordered children are the
+workstreams below; how the whole thing runs is
+[`execution-process.md`](../arc-work/04-dogfood/execution-process.md).
 
 Each workstream's 200-word boundary report lands here when it closes.
 
@@ -285,6 +288,7 @@ flowchart LR
 - [ ] Unbuilt clusters filed as issues outside this milestone, not lost with the session
 - [ ] K2 and K3 swept
 - [ ] **Milestone closed by hand.** GitHub does not close it when its last issue closes
+- [ ] **The execution process graduates, or is deleted with a reason.** [`execution-process.md`](../arc-work/04-dogfood/execution-process.md) §8 carries the table: the run kinds, queue and driver to **m25**; `mode-guard` and the asymmetry to **m40**; the boundary sequence and report shape to m20 or m43, undecided; `skill-firing` to m33's territory, undecided. **It graduates on §7 being shorter, not on the document existing**
 - [ ] **Default branch restored** — `tools/arc-default-branch.sh restore`. **It was flipped to `arc/04-dogfood` on 2026-09-05 and must be pointed back at `main`.** A crashed session leaves it on a branch that may later be deleted, and nothing about that state is visible in ordinary work
 
 ## 10 Soak

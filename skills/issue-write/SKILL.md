@@ -91,6 +91,14 @@ it is too long. `fix: a spawned issue records no parent` passes both.
 |---|---|
 | `scope:` | The output is a decision or a decomposition — the specification, not the thing it specifies |
 | `feat:` · `fix:` · `docs:` · `chore:` | New construction · repair · documentation · housekeeping |
+| `arc:` · `workstream:` | **Containers, not work.** They hold an ordered list of children and a boundary; nothing merges them. `arc: 04 dogfood — …`, `workstream: Fire — …` |
+
+**A container's title is exempt from the checks below**, and `verify-tracker-body.sh title`
+returns clean for both prefixes. Every check asks *does merging this ship the thing the title
+names* — a question a container cannot answer, because it never merges. Its children do.
+
+**A container closes when the user says so**, not when its children close. All children closed is
+mechanical completion; the boundary is a review, and closing removes the surface it happens on.
 
 **`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
 inherits a capability-sized title, which is the first failure above. **Not `spec:`**: one

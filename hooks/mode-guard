@@ -26,6 +26,12 @@
 # "Absent means manual" is an answer, not an unexpected failure. Every denial names its own
 # fix, so a wrong one costs a message rather than a wedged session.
 #
+# THE SWITCH IS ASYMMETRIC, AND THIS HOOK DOES NOT ENFORCE THAT HALF. Claude may set the mode
+# row to Manual and may never set it to Autonomous; only the user raises it, and tools/arc-loop.sh
+# may write it because a human ran the script. This hook sees a file change, not who asked for it,
+# so the asymmetry stays a rule — m40 §4. What it enforces is that the row is read at the moment
+# of the action rather than recalled.
+#
 # WHAT THIS CANNOT DO. HOOKS_OFF disables it. It fails open on its own errors. It sees Bash
 # and nothing else. It stops the command, never the decision. There is no second layer: a
 # static deny in settings.json would block autonomous mode permanently, and lifting one is
