@@ -114,7 +114,8 @@ Saved at a break, **before** writing this file.
 transcript for a decision, read the live source, not the copy.
 
 **This table is curated — the transcripts worth reading, not every file in the directory.**
-Nothing compares it against that directory; `/arc-next` uses mtimes.
+Nothing compares it against that directory; the read path's staleness check uses mtimes —
+[`handoff`](https://github.com/Calyx-Engineering/arc/blob/main/skills/handoff/SKILL.md).
 
 | Worth reading | |
 |---|---|

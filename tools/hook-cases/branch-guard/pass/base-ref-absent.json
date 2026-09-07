@@ -1,0 +1,2 @@
+# work branch whose base ref does not exist — freshness has nothing to compare, so it is silent
+{"tool_name":"Edit","cwd":"__FIXTURE_ISSUE__","tool_input":{"file_path":"src/lib.ts"}}
