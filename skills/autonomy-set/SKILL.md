@@ -27,7 +27,7 @@ prohibition won. **The permission now lives beside every prohibition it override
 |---|---|
 | **Absent, unreadable, or not saying autonomous** | **Manual.** Never infer |
 | **A mid-session change** | Rewrite the row **immediately**, not at the next break. The row is the state |
-| **The arc-log disagrees with it** | The arc-log is the plan; the handoff is this session. A disagreement means the handoff is stale — `/arc-next`'s checks catch it |
+| **The arc-log disagrees with it** | The arc-log is the plan; the handoff is this session. A disagreement means the handoff is stale — the staleness checks in [`handoff`](../handoff/SKILL.md)'s read path catch it |
 
 **Re-read it when the answer matters** — before a commit, before a push, before opening or
 merging a PR. Recalling it is the failure mode, not a shortcut.
