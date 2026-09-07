@@ -1,6 +1,6 @@
 ---
 name: camp
-description: Use when the user addresses Camp by name, or runs /camp, and when a question is answered from the committed record rather than from the conversation — where the arc stands, what was decided, what comes next, what closing an issue still requires. Not for questions about code, files, or execution; those are the main thread's. Whether proposed work belongs in this arc is arc-intent's.
+description: Use when the user says "hey Camp" or "hi Camp", names Camp anywhere in the message, or asks "where are we at", "where we are", "what to do next", "up to speed" or "pick up from where we left off", or runs /camp — and when a question is answered from the committed record rather than from the conversation — where the arc stands, what was decided, what comes next, what closing an issue still requires. Fires when the name or the question is wrapped inside other instructions rather than being the whole message. A greeting to Camp followed by "please read handoff", a goal for the day, or three further requests is still a Camp turn — load Camp first, then the main thread takes the rest. Not for questions about code, files, or execution; those are the main thread's. Whether proposed work belongs in this arc is arc-intent's.
 camp-reports: [amendment-proposed, note-written, status-answered, close-step-named, handoff-fired]
 checks: [documents-loaded, clause-named, record-read, close-step-order, closing-keyword-bound, handoff-current]
 ---
