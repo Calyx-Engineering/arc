@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# mode-guard — PreToolUse hook (matcher: Bash).
+#
+# The execution mode was a word in a gitignored file that nothing read at the moment it
+# mattered. On 2026-09-07, in manual mode, three PRs were committed, pushed, opened and
+# merged without the user asking — hours after #138 consolidated that rule into a single
+# sentence and shipped a verifier for it. That verifier checks the rule is STATED once:
+# text, not behaviour. It was green while the behaviour was broken. This hook is the
+# behaviour half — HANDOFF.md's Execution mode row is read before every commit, push, PR
+# and merge, so the mode is read rather than recalled. #189.
+#
+# camp-reports: PreToolUse
+# checks: gating-command, mode-row
+# skips: mode-row (the command is not one the mode governs)
+#
+# DENY-BIASED ON PURPOSE. A false deny costs one message and names its own fix. A false
+# allow is the failure this exists to prevent. So the command match runs against the whole
+# payload rather than a parsed field: pulling "command" out of JSON with sed truncates at
+# the first comma, and a truncated command that silently allows is the wrong way to be wrong.
+#
+# ABSENT MODE IS DENIED, AND THAT IS NOT A FAIL-OPEN VIOLATION. Two different conditions:
+#
+#   the hook fails                      crash, missing tool, malformed input  ->  exit 0
+#   the hook reads and finds no mode    a documented state: absent is manual  ->  deny
+#
+# "Absent means manual" is an answer, not an unexpected failure. Every denial names its own
+# fix, so a wrong one costs a message rather than a wedged session.
+#
+# WHAT THIS CANNOT DO. HOOKS_OFF disables it. It fails open on its own errors. It sees Bash
+# and nothing else. It stops the command, never the decision. There is no second layer: a
+# static deny in settings.json would block autonomous mode permanently, and lifting one is
+# an edit no agent may make. This is the only mechanism, and its gaps are accepted.
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- fail-open wrapper ----------------------------------------------------------
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+[ -n "$INPUT" ] || exit 0
+
+json_string() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
+}
+
+deny() {
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$(json_string "$1")}}"
+  exit 0
+}
+
+field() {
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+# 1. Is this a command the mode governs? Anything else is none of this hook's business.
+case "$INPUT" in
+  *"git commit"*|*"git push"*|*"gh pr create"*|*"gh pr merge"*|*"gh pr ready"*) ;;
+  *) exit 0 ;;
+esac
+
+# 2. Where the mode lives: the payload's cwd, else wherever this is running.
+CWD="$(field cwd)"
+{ [ -n "$CWD" ] && [ -d "$CWD" ]; } || CWD="$PWD"
+HANDOFF="$CWD/HANDOFF.md"
+
+if [ ! -f "$HANDOFF" ]; then
+  deny "No HANDOFF.md, so the execution mode is unset — and unset means manual. Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add HANDOFF.md with a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** |, or ask the user to switch to autonomous and name the boundary."
+fi
+
+# 3. The mode row is the first table row whose first cell names the mode.
+ROW="$(grep -m1 -iE '^\|[^|]*\bmode\b[^|]*\|' "$HANDOFF" 2>/dev/null)"
+
+if [ -z "$ROW" ]; then
+  deny "HANDOFF.md has no Execution mode row, so the mode is unset — and unset means manual. Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** | under an Execution mode heading."
+fi
+
+# The second cell, stripped of markdown emphasis and whitespace, lowercased.
+MODE="$(printf '%s' "$ROW" | awk -F'|' '{print $3}' | tr -d '*` ' | tr '[:upper:]' '[:lower:]')"
+
+case "$MODE" in
+  autonomous)
+    exit 0
+    ;;
+  manual)
+    deny "The execution mode is manual — HANDOFF.md says so, and this hook reads it rather than recalling it. In manual, nothing is committed, pushed, opened as a PR or merged unless the user asks. Propose the change and stop: say what you did, and let the diff be read. To proceed the user asks, or sets HANDOFF.md's Execution mode row to Autonomous and names the boundary it runs to."
+    ;;
+  *)
+    # A row exists and says something this hook does not model. Not a crash, and not
+    # permission — an unreadable mode is the same as no mode.
+    deny "HANDOFF.md's Execution mode row does not say manual or autonomous, so the mode is unreadable — and unreadable means manual. The row read: $ROW — set that cell to Manual or Autonomous."
+    ;;
+esac
+
+exit 0

@@ -58,7 +58,7 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. Four things this arc pins dow
 |---|---|
 | **Branch** | `arc/04-dogfood-issue-<NN>-<hint>`, cut from `arc/04-dogfood`. From `createLinkedBranch`, never `git checkout -b` — otherwise no branch↔issue link forms, and the mutation cannot link a branch that already exists |
 | **Dev-log** | `docs/dev-log/issue-<NN>-<slug>.md` |
-| **A run commits** | A loop cannot ask. Commit at the end of the unit, push, open the PR. The manual-mode rule against unasked commits does not apply to a run dispatched into this loop |
+| **A run commits** | A loop cannot ask, so the driver dispatches into autonomous mode and `HANDOFF.md`'s row says so. **If it does not, `hooks/mode-guard` denies the commit** — that is correct, and the fix is the mode row, never a workaround |
 | **A run does not merge** | Until [#138](https://github.com/Calyx-Engineering/arc/issues/138) lands, merging needs a route that does not exist. Open the PR and stop |
 
 ## 5 When you stop

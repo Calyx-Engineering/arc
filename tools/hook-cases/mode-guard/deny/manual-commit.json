@@ -1,0 +1,2 @@
+# manual mode, a commit — the failure this hook exists for
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"git commit -m \"work\"","description":"Commit"}}

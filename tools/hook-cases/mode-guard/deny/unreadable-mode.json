@@ -1,0 +1,2 @@
+# a mode row saying something this hook does not model — unreadable means manual
+{"tool_name":"Bash","cwd":"__FIXTURE_BADMODE__","tool_input":{"command":"git commit -m \"work\"","description":"Commit"}}
