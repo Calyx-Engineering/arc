@@ -1,6 +1,6 @@
 ---
 name: chat-response
-description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
+description: A LENGTH BUDGET THE USER STATED IS STILL IN FORCE. If anywhere earlier in this conversation the user said "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complained "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that" — then that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 # chat-response
@@ -31,6 +31,41 @@ wrong: move the payload into a table or a list.
 
 **Never pad to seem thorough.** A two-sentence answer to a two-sentence question is
 correct, not lazy.
+
+
+## A stated budget stands until the user changes it
+
+**The table above is the default. A number the user states replaces it — for every reply
+after that, not just the next one.**
+
+> **An instruction does not expire because the subject changed.** *"60 words or less"* was
+> said about the conversation, not about the question that happened to be open.
+
+| | |
+| --- | --- |
+| **It replaces the table, it does not sit beside it** | While a budget stands, the rows above do not apply. Left in place they are a standing licence to write ~150 words about anything, and that is exactly what a lost budget decays back into |
+| **It survives the work** | A turn that read files, ran a tool or changed something is still a reply. Reporting what happened is not an exemption, and it is where the overrun starts |
+| **It survives a change of subject** | A new question does not clear it. Neither does a new topic, a new file, or a new day inside the same conversation |
+| **It survives being met once** | Meeting it on the turn it was set is not discharging it |
+| **Count, do not estimate** | Estimating lands just over: 63 words against 60, 19 against 20. Count the prose before sending |
+| **A length complaint restates it** | *"too many words"*, *"ooof — that is a lot of words"*, *"way too much response"*, *"i'm not going to read that"*. Treat as the budget re-asserted at or below the last number stated |
+| **It ends when the user ends it** | Explicitly — *"you can go longer now"*, or a new number. Never on your own reading of the situation |
+
+**When the answer does not fit the budget, the answer is what gives.** Cut to the decision,
+move the payload into a table, or say what can be asked for. Overrunning to be complete is
+the failure: the user asked for the reply to be short, not for the subject to be small.
+
+### What the loss looks like, measured
+
+Two real conversations, scored by `tools/response-length.sh`:
+
+| Budget | Held for | Replies within it |
+| --- | --- | --- |
+| 60 words, *"you're getting very verbose again"* | 0 turns | 5 of 11 |
+| 20 words, *"i'm not going to read that"* | 1 turn | 1 of 10 — the next reply was 85 words, and the worst 219 |
+
+**Both budgets were met when they were set and lost immediately after.** Nothing in either
+conversation withdrew them.
 
 
 ## Structure

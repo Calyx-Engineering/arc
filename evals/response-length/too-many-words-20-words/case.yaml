@@ -1,0 +1,14 @@
+budget: 20
+unit: words
+source:
+  session: 166e0c2c
+  first_turn: 11
+  last_turn: 21
+  set_on: 11
+why: >
+  The tightest budget in the corpus and the fastest loss. The user quotes the reply he refused
+  to read, says "too many words", and asks for the problem in 20 words. He gets 16. The next
+  reply is 85 words and the one after that 93 — and the worst in the case is 219, eleven
+  times the budget.
+  It is also the recurrence the issue names: this session was the retrospective that recorded
+  the defect, and the defect happened inside it.

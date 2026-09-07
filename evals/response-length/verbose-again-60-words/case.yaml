@@ -1,0 +1,12 @@
+budget: 60
+unit: words
+source:
+  session: 508d625d
+  first_turn: 72
+  last_turn: 82
+  set_on: 72
+why: >
+  The clearest standing budget in the corpus, and the word "again" is the defect stated by
+  the user: it had already been set once and lost. Eleven consecutive turns, verbatim.
+  Nothing after turn 72 withdraws or changes the budget, so every one of the ten turns that
+  follow is still governed by it.

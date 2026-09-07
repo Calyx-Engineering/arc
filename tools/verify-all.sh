@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links miner-scope skill-firing skill-cases"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links miner-scope skill-firing skill-cases response-length"
 
 RUN=0
 FAILED=0
@@ -77,6 +77,7 @@ run_gate "skill registry" bash tools/verify-skill-registry.sh
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
+run_gate "response length cases" bash tools/response-length.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -110,9 +111,12 @@ if [ "$LIST" = "1" ]; then
                               evals/skill-firing per prompt — both are history rather than a
                               test; re-running a case against a changed skill needs
                               claude plugin eval, gated behind early access — #181
-    the eval cases themselves the gate above runs skill-cases.sh SELFTEST, on fixtures. Scoring
-                              the real cases needs the transcripts, which live on one machine —
-                              run bash tools/skill-cases.sh there
+    the eval cases themselves the gates above run the SELFTESTS of skill-cases.sh and
+                              response-length.sh, on fixtures. Scoring the real cases needs the
+                              transcripts, which live on one machine — run bash
+                              tools/skill-cases.sh and bash tools/response-length.sh there
+    reply length against a    response-length.sh --probe re-runs a case's turns live and counts
+    changed skill             the words. It bills per turn, so it is not a gate here
 CANNOT
   exit 0
 fi
