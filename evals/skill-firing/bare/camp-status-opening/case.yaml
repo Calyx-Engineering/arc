@@ -1,0 +1,9 @@
+shape: bare
+expect:
+  - camp
+source:
+  session: bfd1177f
+  turn: 1
+  opening: true
+why: >
+  The whole message is the demand, and the name is the verb's object.

@@ -1,0 +1,11 @@
+shape: situation
+expect:
+  - record-route
+source:
+  session: 9cefd799
+  turn: 3
+  opening: true
+why: >
+  A durable write with no skill named. The user says "log this in the friction log";
+  record-route's description says "a decision, a measurement, an analysis, a rejected
+  approach, a finding, a report" and never the word log. Nothing fired.
