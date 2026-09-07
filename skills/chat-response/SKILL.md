@@ -1,6 +1,6 @@
 ---
 name: chat-response
-description: A LENGTH BUDGET THE USER STATED IS STILL IN FORCE. If anywhere earlier in this conversation the user said "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complained "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that" — then that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
+description: A LENGTH BUDGET THE USER STATED IS STILL IN FORCE. If anywhere earlier in this conversation the user said "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complained "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that" — then that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. A TIGHT BUDGET NEEDS AN UNDERSHOOT: at 25 words or fewer, aim at two-thirds of the number and stop — about 13 words when told 20. A tight budget is not missed by a word: measured, the median reply that breaks a 20-word ceiling runs to 58 words, because one more sentence that felt necessary is the whole budget again. The margin has to be built in before the sentence is written. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 # chat-response
@@ -47,7 +47,8 @@ after that, not just the next one.**
 | **It survives the work** | A turn that read files, ran a tool or changed something is still a reply. Reporting what happened is not an exemption, and it is where the overrun starts |
 | **It survives a change of subject** | A new question does not clear it. Neither does a new topic, a new file, or a new day inside the same conversation |
 | **It survives being met once** | Meeting it on the turn it was set is not discharging it |
-| **Count, do not estimate** | Estimating lands just over: 63 words against 60, 19 against 20. Count the prose before sending |
+| **Count, do not estimate** | Estimating lands just over: 63 words against 60. Count the prose before sending |
+| **A tight budget needs an undershoot** | At 25 words or fewer, aim at two-thirds of the number — about 13 when told 20. Counting is not enough at that size: one sentence that felt necessary is the whole budget again. See below |
 | **A length complaint restates it** | *"too many words"*, *"ooof — that is a lot of words"*, *"way too much response"*, *"i'm not going to read that"*. Treat as the budget re-asserted at or below the last number stated |
 | **It ends when the user ends it** | Explicitly — *"you can go longer now"*, or a new number. Never on your own reading of the situation |
 
@@ -66,6 +67,29 @@ Two real conversations, scored by `tools/response-length.sh`:
 
 **Both budgets were met when they were set and lost immediately after.** Nothing in either
 conversation withdrew them.
+
+#### The small number is the hard one, and counting does not fix it
+
+A 60-word budget is held once the rule is in force. A 20-word one is not. Measured across six
+probe runs of the 20-word case, the budget **held for exactly one turn every time and broke on
+the same turn every time** — met where it was stated, gone on the next reply.
+
+| Budget | Median prose after it was set | Within it |
+| --- | --- | --- |
+| 60 words | — | 18 of 22 |
+| 20 words, the rule alone | 55 words | 6 of 32 |
+| 20 words, aiming at two-thirds | 30 words | 15 of 33 |
+
+**The breach is not a near miss.** The median reply that breaks a 20-word ceiling runs to 58
+words — nearly three times over, not one word over. One more sentence that felt necessary is
+the whole budget again, so there is nothing to trim afterwards.
+
+**So aim lower than the number.** At 25 words or fewer, write to two-thirds of it — about 13
+when told 20 — and stop. The margin has to be built in before the sentence is written.
+
+**It halves the overrun and does not close it**, which is worth saying rather than hiding:
+0.19 to 0.45 across three runs each. A 20-word budget is still the one that gets lost. Scored
+by `tools/response-length.sh`.
 
 
 ## Structure

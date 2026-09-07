@@ -64,6 +64,14 @@ That is the mechanism #155 was circling. A rule in a skill **body** is only in f
 the skill fired, which for a conversational rule is almost none. A rule in the **description**
 is in force always. For a standing constraint, the description is the only surface that works.
 
+> **Disputed at 20 words, 2026-09-07 — see [#213](https://github.com/Calyx-Engineering/arc/issues/213).**
+> That last sentence holds for the 60-word case it was measured on and does not generalise.
+> Across eight probe runs of both cases, every run where `chat-response` fired scored 0.36–0.91
+> and every run where it did not scored 0.09–0.27, with no overlap. At a 20-word ceiling the
+> runs that held are the runs where the **body** was in context. #213 also disagrees with the
+> 20-word figures below — 6/32 · 0.19 against the 21/37 · 0.57 recorded here — and neither
+> measurement has been shown to be the right one. **Do not cite either as the 20-word rate.**
+
 ### The suite passes at n = 7. The single-run number that said otherwise was an artifact
 
 **Corrected 2026-09-07.** This section first read *13/20 · 0.65, the suite does not pass*, from

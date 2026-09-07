@@ -13,7 +13,9 @@
 #
 #   TN_PROBE_OUT=path   keep the probe's raw replies instead of losing them with the temp
 #                       directory. Without it a billed run cannot be re-scored later, which
-#                       is how six runs had to be re-taken when the scorer was corrected
+#                       is how six runs had to be re-taken when the scorer was corrected.
+#                       ONE RUN PER PATH: the runner writes the case's entry whole, so
+#                       --runs N leaves only the last. Give each run its own path.
 #   RL_PROBE_BUDGET=n   per-turn cost cap, passed through to the shared probe runner
 #
 # WHY THIS EXISTS. #160: numbered discussion topics are used at the start of a reply and
