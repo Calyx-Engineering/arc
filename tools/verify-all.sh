@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links miner-scope"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links miner-scope skill-firing"
 
 RUN=0
 FAILED=0
@@ -75,6 +75,7 @@ fi
 # ---- the gates ---------------------------------------------------------------------
 run_gate "skill registry" bash tools/verify-skill-registry.sh
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
+run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -103,8 +104,10 @@ if [ "$LIST" = "1" ]; then
                               hook standalone against the WORKING TREE; a live firing uses the
                               installed copy, which is only current after tools/plugin-reload.sh
     any skill                 no gate here invokes one. Every skill-carried rule is checked as
-                              text, never as behaviour. claude plugin eval can execute a skill;
-                              the suite is #149
+                              text, never as behaviour. tools/skill-firing.sh measures how often
+                              each skill fired in real sessions, which is history rather than a
+                              test; re-running a case against a changed skill needs
+                              claude plugin eval, gated behind early access — #181
 CANNOT
   exit 0
 fi
