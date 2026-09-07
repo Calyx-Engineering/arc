@@ -64,23 +64,39 @@ That is the mechanism #155 was circling. A rule in a skill **body** is only in f
 the skill fired, which for a conversational rule is almost none. A rule in the **description**
 is in force always. For a standing constraint, the description is the only surface that works.
 
-### The 20-word case still fails, and the suite does not pass
+### The suite passes at n = 7. The single-run number that said otherwise was an artifact
 
-Scored together the two cases are **13/20 · 0.65**, just under the 0.67 threshold. The 20-word
-case is what holds it down.
+**Corrected 2026-09-07.** This section first read *13/20 · 0.65, the suite does not pass*, from
+one probe run per case. Repeat runs disagree, and the reason the first number was wrong matters
+more than the number.
 
-It did improve, and by a lot — the overruns collapsed from 85 / 178 / 193 / 219 words to
-26 / 92 / 24 / 23. But the replies cluster at 23–30 words against a 20-word ceiling, so they
-score OVER while being roughly a seventh of their former length. One turn (t16, 187 words)
-broke down completely.
+| Case | Runs | Within budget |
+|---|---|---|
+| `verbose-again-60-words` | 3 | **32/33 · 0.97** — two runs with no breach in 11 turns |
+| `too-many-words-20-words` | 4 | **21/37 · 0.57** |
+| **Both** | 7 | **53/70 · 0.76** — above the 0.67 threshold |
 
-**A 20-word budget is not reliably held.** A 60-word one is.
+Matched before-run, same cap, skill reverted and plugin reloaded: **1/11 · 0.09**.
+
+**Two things made n = 1 unsafe here.** The `$0.30` per-turn cap was *truncating* replies, and a
+truncated reply is a short one — it scored as *held*, so the instrument credited its own
+budget limit as success. And at a 20-word ceiling the rate swings **0.33–0.80 across identical
+runs**, so one run cannot rank anything.
+
+**Median prose is the stable statistic: 132–160 words before, 19–21 after.** A rate at a hard
+ceiling is not.
+
+The 20-word case is still the weaker of the two, and the original observation holds — replies
+cluster just over a 20-word ceiling while being a seventh of their former length. **A 60-word
+budget is reliably held; a 20-word one is not.** That conclusion did not change. What changed is
+that the suite as a whole passes, and that a single probe run is not evidence.
 
 ## Limits on the above
 
 | | |
 |---|---|
-| **n = 1 per case** | One probe run each. Enough to see 0 turns become 11; not enough to rank two wordings of a description against each other |
+| **~~n = 1 per case~~ n = 7, after a repeat** | **Superseded.** One probe run each was the original limit, and it produced a wrong conclusion — see the corrected section above. Seven runs across the two cases. Still not enough to rank two wordings of a description against each other |
+| **The `$0.30` per-turn cap corrupts the measurement** | It truncates replies, and a truncated reply scores as within budget. Any probe run under a cost cap credits the cap as success. Raise it or discount short replies at the boundary |
 | **The probe is billed** | ~$1.20–1.90 per case, growing per turn as the conversation does. This is why it is not in `verify-all.sh` |
 | **The corpus is local** | Transcripts live under `~/.claude/projects` on one machine. Only the selftest is portable, which is the part wired into the gate |
 | **Two citations were corrected after the probe ran** | The skill and one `case.yaml` claimed "140 words" and "194" where the instrument measures 85 and 193. Corrected to the measured values. Both are inside the skill **body**, which never loaded, so the measurement is unaffected |
