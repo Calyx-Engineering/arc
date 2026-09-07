@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-linked-branch miner-scope skill-firing skill-cases response-length topic-numbering"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch miner-scope skill-firing skill-cases response-length topic-numbering"
 
 RUN=0
 FAILED=0
@@ -82,6 +82,9 @@ run_gate "topic numbering cases" bash tools/topic-numbering.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
+run_gate "close-sequence count" bash tools/verify-close-sequence.sh
+run_gate "handoff staleness checks" bash tools/verify-handoff-checks.sh
+run_gate "workspace guard" bash tools/verify-workspace-guard.sh
 run_gate "linked-branch cases" bash tools/verify-linked-branch.sh selftest
 
 # One per hook that has a case directory. A hook without cases is reported rather than

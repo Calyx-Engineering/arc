@@ -1,0 +1,2 @@
+# absolute path in no repository at all — ~/.claude and friends stay writable
+{"tool_name":"Write","cwd":"__FIXTURE_ISSUE__","tool_input":{"file_path":"__FIXTURE_NOREPO__/settings.json"}}

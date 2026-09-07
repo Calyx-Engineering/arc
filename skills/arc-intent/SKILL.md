@@ -131,7 +131,7 @@ arc exists*, in a diff.
 | Moment | Fired by | The question |
 |---|---|---|
 | **An issue is spawned** | [`decompose`](../decompose/SKILL.md) | Does this belong in the arc, or outside it |
-| **An issue closes · a PR opens** | [`issue-write`](../issue-write/SKILL.md), inside [close-sequence](../../docs/product-architecture/close-sequence.md) step 5 | Is what this delivers the work the arc asked for |
+| **An issue closes · a PR opens** | [`issue-write`](../issue-write/SKILL.md), inside [close-sequence](../../docs/product-architecture/close-sequence.md) step 6 | Is what this delivers the work the arc asked for |
 | **The user asks** | [`camp`](../camp/SKILL.md) | Always available |
 | **The relief valve fires on depth** | [`relief-valve`](../relief-valve/SKILL.md) | Direction and depth, asked together |
 

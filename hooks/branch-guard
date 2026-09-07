@@ -11,12 +11,14 @@
 # under it. Docs and agent-facing files stay writable everywhere, because maintaining the
 # record IS the coordination work those branches exist for.
 #
-# One check, not three. Worktree identity and base freshness are follow-ups — one working
-# check beats three half-finished.
+# Three checks, m10's three. Branch kind is the one that maps to the session-costing 08-03
+# failure; worktree identity catches an edit made in a window opened for something else, and
+# base freshness catches a branch cut before other work merged. Each denies on its own
+# condition only, and each is silent when it cannot classify what it is looking at.
 #
 # camp-reports: edit-denied
-# checks: branch-kind, path-is-source
-# skips: worktree-identity (not built), base-freshness (not built)
+# checks: branch-kind, path-is-source, worktree-identity, base-freshness
+# skips: worktree-identity (the path is relative, or lands outside this repository), base-freshness (not a work branch, the branch name carries no base, the base ref is absent, or this base commit was already reported)
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
@@ -69,9 +71,9 @@ BRANCH="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 # for that to keep being true, and a guard should not depend on its own catch-all.
 case "$BRANCH" in
   main|master|develop)       KIND=trunk ;;
-  *-issue-[0-9]*|issue-[0-9]*|*-pr[0-9]*|pr[0-9]*) exit 0 ;;   # a work branch — an issue branch or a direct PR
+  *-issue-[0-9]*|issue-[0-9]*|*-pr[0-9]*|pr[0-9]*) KIND=work ;;   # an issue branch or a direct PR
   arc/*)                     KIND=arc ;;
-  *)                         exit 0 ;;   # a topic branch — also fine
+  *)                         KIND=topic ;;
 esac
 
 FILE="$(field file_path)"
@@ -80,19 +82,106 @@ FILE="$(field file_path)"
 # Normalise separators so one set of patterns covers Windows and POSIX paths.
 NORM="$(printf '%s' "$FILE" | tr '\\' '/')"
 
+lower() { printf '%s' "$1" | tr 'A-Z' 'a-z'; }
+
+# ---- check 1: branch kind -------------------------------------------------------
 # Writable on a coordination branch: the record, the process, and the plugin's own
 # agent-facing surface. This is what those branches exist to maintain.
+if [ "$KIND" = trunk ] || [ "$KIND" = arc ]; then
+  case "$NORM" in
+    */docs/*|docs/*) ;;
+    */.claude/*|.claude/*) ;;
+    */.claude-plugin/*|.claude-plugin/*) ;;
+    *.md) ;;
+    */.gitignore|.gitignore) ;;
+    *)
+      # Everything else on a coordination branch is source work.
+      if [ "$KIND" = arc ]; then
+        deny "Source edit blocked: you are on \`$BRANCH\`, an arc branch. Arc branches are coordination only — issue branches nest under them and merge back in. Create \`$BRANCH-issue-<N>-<slug>\` and edit there. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here — maintaining the record is what this branch is for.)"
+      else
+        deny "Source edit blocked: you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here.)"
+      fi
+      ;;
+  esac
+fi
+
+# ---- check 2: worktree identity -------------------------------------------------
+# A run gets a worktree of its own while another run works in the main tree, so an edit
+# whose absolute path lands in a *different worktree of the same repository* is being made
+# in someone else's window. `arc-loop.sh` opens those worktrees; the failure is a session
+# reaching back into the tree it was moved out of.
+#
+# Same repository is the whole restriction, and it is what keeps this narrow. A different
+# clone is a legitimate target — CLAUDE.md requires 04-arc-execution-and-roles.md to be
+# edited in lodestar and arc in the same session — and a path in no repository at all
+# (~/.claude/settings.json) is none of this hook's business. Both stay allowed. A relative
+# path resolves against the session's own cwd, so it cannot land elsewhere.
 case "$NORM" in
-  */docs/*|docs/*)                 exit 0 ;;
-  */.claude/*|.claude/*)           exit 0 ;;
-  */.claude-plugin/*|.claude-plugin/*) exit 0 ;;
-  *.md)                            exit 0 ;;
-  */.gitignore|.gitignore)         exit 0 ;;
+  /*|[A-Za-z]:/*)
+    TDIR="$(dirname "$NORM")"
+    # A new file's directory may not exist yet. Walk up to the nearest one that does.
+    while [ -n "$TDIR" ] && [ ! -d "$TDIR" ]; do
+      TPARENT="$(dirname "$TDIR")"
+      [ "$TPARENT" = "$TDIR" ] && break
+      TDIR="$TPARENT"
+    done
+    # A path on a root that does not exist walks up to `.`, which is a directory — the
+    # hook's own cwd, not the target's. Anything that stopped being absolute is unresolved.
+    case "$TDIR" in /*|[A-Za-z]:/*|[A-Za-z]:) ;; *) TDIR= ;; esac
+    if [ -n "$TDIR" ] && [ -d "$TDIR" ]; then
+      CWD_TOP="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
+      TGT_TOP="$(git -C "$TDIR" rev-parse --show-toplevel 2>/dev/null)"
+      if [ -n "$CWD_TOP" ] && [ -n "$TGT_TOP" ] && [ "$(lower "$CWD_TOP")" != "$(lower "$TGT_TOP")" ]; then
+        # The common dir is the shared `.git` of a repository's worktrees. Equal means one
+        # repository seen from two worktrees; unequal means two repositories, and those are
+        # not this hook's business.
+        CWD_COMMON="$(git -C "$CWD" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+        TGT_COMMON="$(git -C "$TDIR" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+        if [ -n "$CWD_COMMON" ] && [ "$(lower "$CWD_COMMON")" = "$(lower "$TGT_COMMON")" ]; then
+          deny "Edit blocked: \`$FILE\` is in \`$TGT_TOP\`, a different worktree of this repository. This session's worktree is \`$CWD_TOP\` — another run, or the orchestrator, is working in that one. Edit the copy under your own worktree, or open a session there."
+        fi
+      fi
+    fi
+    ;;
 esac
 
-# Everything else on a coordination branch is source work.
-if [ "$KIND" = arc ]; then
-  deny "Source edit blocked: you are on \`$BRANCH\`, an arc branch. Arc branches are coordination only — issue branches nest under them and merge back in. Create \`$BRANCH-issue-<N>-<slug>\` and edit there. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here — maintaining the record is what this branch is for.)"
-else
-  deny "Source edit blocked: you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here.)"
+# ---- check 3: base freshness ----------------------------------------------------
+# A work branch cut before other work merged carries a base that has moved on. The name
+# gives the base away: `arc/04-dogfood-issue-161-slug` was cut from `arc/04-dogfood`.
+if [ "$KIND" = work ]; then
+  BASE="$(printf '%s' "$BRANCH" | sed -E 's/-(issue-[0-9]+|pr[0-9]+).*$//')"
+  # No prefix before the segment (`issue-42-slug`) leaves the name unchanged — there is no
+  # base to name, so there is nothing to compare.
+  if [ -n "$BASE" ] && [ "$BASE" != "$BRANCH" ]; then
+    # `origin/` first: what merged is a fact about the remote, and a local base ref can be
+    # stale itself. Either way, an absent ref means silence.
+    BASE_REF=
+    for ref in "refs/remotes/origin/$BASE" "refs/heads/$BASE"; do
+      if git -C "$CWD" rev-parse --verify -q "$ref" >/dev/null 2>&1; then BASE_REF="$ref"; break; fi
+    done
+    if [ -n "$BASE_REF" ]; then
+      BEHIND="$(git -C "$CWD" rev-list --count "HEAD..$BASE_REF" 2>/dev/null)"
+      case "$BEHIND" in ''|*[!0-9]*) BEHIND=0 ;; esac
+      if [ "$BEHIND" -gt 0 ]; then
+        # Said once per base commit, not on every edit. m10 named the noise directly: firing
+        # on every stale branch would be constant, and a guard nobody can work through gets
+        # switched off. The stamp is keyed on the base's sha, so the next merge into the base
+        # speaks up again.
+        BASE_SHA="$(git -C "$CWD" rev-parse --short "$BASE_REF" 2>/dev/null)"
+        GITDIR="$(git -C "$CWD" rev-parse --absolute-git-dir 2>/dev/null)"
+        SLUG="$(printf '%s' "$BRANCH" | tr '/' '-')"
+        STAMP="$GITDIR/arc-branch-guard/$SLUG-$BASE_SHA"
+        if [ -n "$GITDIR" ] && [ ! -f "$STAMP" ]; then
+          # Deny only once the reminder is recorded. A stamp that cannot be written would
+          # otherwise deny the same edit forever, which is the dead session the fail-open
+          # rule exists to prevent.
+          if mkdir -p "$(dirname "$STAMP")" 2>/dev/null && : > "$STAMP" 2>/dev/null; then
+            deny "Base moved: \`$BASE_REF\` is $BEHIND commit(s) ahead of \`$BRANCH\`, so this branch was cut before that work merged. Run \`git merge $BASE_REF\` (or rebase) before continuing. Said once per base commit — repeat the edit to proceed without merging."
+          fi
+        fi
+      fi
+    fi
+  fi
 fi
+
+exit 0

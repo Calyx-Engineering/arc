@@ -56,16 +56,17 @@ skips:
 
 ### In a hook — a comment block
 
-Hooks are shell scripts, so the declaration is a comment. **Placed directly under the
-one-line description**, before the kill switch.
+Hooks are shell scripts, so the declaration is a comment. **Above the kill switch**, in the
+header block — after the one-line description and whatever rationale the hook carries, so the
+declaration is the last thing read before the code.
 
 ```bash
 #!/usr/bin/env bash
 # branch-guard — PreToolUse hook (matcher: Edit|Write|NotebookEdit). Carries m10.
 #
-# camp-reports: edit-denied, edit-allowed
-# checks: branch-is-coordination, path-is-source
-# skips: worktree-identity (not built), base-freshness (not built)
+# camp-reports: edit-denied
+# checks: branch-kind, path-is-source, worktree-identity, base-freshness
+# skips: worktree-identity (the path is relative, or lands outside this repository), base-freshness (not a work branch, the branch name carries no base, the base ref is absent, or this base commit was already reported)
 ```
 
 ---

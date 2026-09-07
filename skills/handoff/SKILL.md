@@ -2,9 +2,16 @@
 name: handoff
 description: Use when the user asks for the handoff to be read or written, in any wording — "read HANDOFF.md first", "read HANDOFF.md if it exists", "please read handoff", "ingest handoff", "get up to speed", "get back up to speed", "pick up from where we left off", "where did we leave off", "do these in order", "write the handoff", "give me the prompt for the next chat" — or runs /arc-next. Also fires when the request describes this work without naming it: copying or saving a session transcript to the arc's transcript directory, or being told the handoff was updated elsewhere. Fires when the read is wrapped inside other instructions rather than being the whole message: a read followed by a branch name and three further requests, or a read buried under "run autonomously", is still a handoff turn. Loading this skill does not answer the rest of the turn and does not replace another skill. When the same message also greets Camp or asks where things stand, that is a Camp turn as well — load camp too, on the same turn, rather than choosing between them. Covers the reading order, the staleness checks before acting on a handoff, what it holds, the ordered actions the next session executes, saving the transcript, and what belongs in the committed record instead.
 camp-reports: [handoff-written, handoff-read, transcript-saved]
-checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed]
+checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open]
 skips:
   - graduated-to-record (nothing in the handoff outlives the arc)
+  - handoff-age (the write path — no handoff is being acted on)
+  - transcripts-newer (the write path — no handoff is being acted on)
+  - branch-matches (the write path — no handoff is being acted on)
+  - tree-accounted (the write path — no handoff is being acted on)
+  - commits-accounted (the write path — no handoff is being acted on)
+  - open-prs-accounted (the write path — no handoff is being acted on)
+  - first-action-issue-open (the write path — no handoff is being acted on)
 ---
 
 # The handoff
@@ -53,6 +60,59 @@ not a detour from it.
 If you finished this list and still do not know what to do next, **that is a finding, not a
 personal failing** — record it in the handoff's open threads. The mechanism is being tested
 every time it is used.
+
+### Check the handoff is still true, before acting on it
+
+**A handoff is written at a stop point and describes the state at that moment.** Anything
+done afterwards — including in another window, or by the user between sessions — is absent
+from it. Acting on a stale handoff is worse than having none, because it is specific and
+wrong.
+
+Run these before executing anything. They cost one command each.
+
+| Check | Stale when |
+|---|---|
+| **The date in the handoff's title** | More than 24 hours before today. Age alone is not proof of staleness, but past a day the odds that something happened outside it are high enough to say so |
+| **Transcripts newer than the handoff** | `find <transcript-dir> -name '*.jsonl' -newer HANDOFF.md` prints anything. A session ran after this handoff was written and its decisions are not in here |
+| `git branch --show-current` | The branch differs from the one *Where we are* names |
+| `git status --short` | The tree is dirty and the handoff does not say work was left uncommitted |
+| `git log --oneline -5` | The last commit is not one the handoff accounts for |
+| `gh pr list --state open` | An open PR the handoff calls merged, or says nothing about |
+| The issue in *Do these in order* row 1 | `gh issue view <NN> --json state` returns `CLOSED` |
+
+**Compare modification times, never the handoff's *Transcripts* table.** That table is
+curated — it names the few transcripts worth reading, not every file on disk — so measuring a
+complete directory against it reports a lost session on every cold start once the arc has run
+more sessions than the table lists. The check wants one fact: *did a session run after this
+handoff was written.* An mtime answers it and nothing else does.
+
+The saved transcript never trips this. The order at a break is fixed — save the transcript,
+then write the handoff — so the newest file is always older than `HANDOFF.md` by construction.
+
+**What it cannot see: a session that ran and saved no transcript.** Nothing on disk records
+it. The other six checks are what catch that one — a commit, a branch, or a PR the handoff
+does not account for.
+
+**If any check disagrees, stop and report the specific contradiction** — what the handoff
+says, what the repository says. Do not reconcile it silently and do not proceed on a guess.
+The handoff is the spine; a spine that disagrees with the tree is the one thing this
+mechanism cannot let pass.
+
+Two exceptions, which are not staleness: a handoff that *says* work was left uncommitted and
+the tree is dirty in exactly that way, and a branch that does not exist yet because row 1
+creates it.
+
+### Then execute
+
+Execute *Do these in order*, top to bottom. The rows are instructions, not topics —
+start the first one without asking what to do.
+
+**If `HANDOFF.md` does not exist**, say so and stop. There is nothing to resume from, and
+guessing the arc's state is the failure the handoff exists to prevent.
+
+**If the handoff has no *Do these in order* section**, report where the arc stands from what
+it does carry, and ask for the next step. A handoff missing its ordered actions is a finding
+worth naming, not a gap to fill by inference.
 
 ---
 
@@ -129,8 +189,8 @@ own *transcripts* note rather than leaving it to be supplied each time.
 **The handoff's *Transcripts* table is curated, not a directory listing.** It names the few
 worth reading and says why; an arc accumulates far more than that, and listing all of them is
 the growth failure this document warns about below. **So nothing may compare that table
-against the directory** — `/arc-next` asks whether a session ran after the handoff by mtime,
-which is the only question it needs answered.
+against the directory** — the staleness check in the read path above asks whether a session
+ran after the handoff by mtime, which is the only question it needs answered.
 
 #### A saved transcript is stale the moment it is written
 
