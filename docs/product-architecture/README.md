@@ -219,7 +219,7 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/verification-plan` | skill | m24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
 | | **KNOWLEDGE** | | | |
 | `skills/handoff` | skill | m15 | Read at cold start, written at session end | `skills/record-route` for where it lives |
-| `commands/arc-next.md` | command | m15 | Typed as `/arc-next`, at the start of a session | `skills/handoff` for the read path |
+| `commands/arc-next.md` | command | m15 | Typed as `/arc-next` — one of two openings into the read path, and the only one that needs typing. The wordings in `skills/handoff`'s description are the other | `skills/handoff`, which carries the read path, the staleness checks and the ordered actions. The command holds no rule of its own |
 | `skills/record-route` | skill | m16 · m17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
 | `reference/knowledge-tiers` | reference | — | Read by anything that reads or writes the record | — |
 | `hooks/mining-trigger` | hook | m19 | Automatic, at PR open | `agents/transcript-miner` |
