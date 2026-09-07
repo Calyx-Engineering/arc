@@ -11,6 +11,6 @@ why: >
   is a fail on its own, and this is the case that says so without a second defect confusing it.
   ITS FINDINGS TABLE IS UNSOURCED, and that is scored too — #164. Its right-hand column links a
   companion note per row, which is where the claim was worked out rather than where it came
-  from. Two of those notes are `test-` and two are `analysis-` — measured against inferred, on
+  from. Four of those notes are `analysis-` and two are `test-` — inferred against measured, on
   adjacent rows of the same table, with nothing saying which is which. That is #164's defect on
   the document #159 uses as its clean-except-one-line case.

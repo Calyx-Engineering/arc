@@ -16,6 +16,11 @@ So `report-shape/` keys its cases by document and line range rather than by sess
 carries the excerpt it grades — which is why it is the only suite that still scores when its
 corpus is absent. Its corpus is a repository, not a transcript directory.
 
+**Its `excerpt.md` files do not lint, and must not be made to.** They are verbatim cuts from
+larger documents, so they carry a trailing blank line the cut fell on, a heading inside a
+blockquote, and an anchor pointing at a section below the cut. Editing any of that would break
+both the verbatim claim and the drift check, which is the point of storing them at all.
+
 **It is also the only suite scoring more than one question.** `report-shape/` has three columns —
 the opening, provenance on a claim table, and whether a disagreement between two sources is
 stated out loud — and **every column with anything in its denominator has to clear the

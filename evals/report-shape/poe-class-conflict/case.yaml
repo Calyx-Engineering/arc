@@ -1,8 +1,6 @@
 corpus: roadz-sound-system
 document: docs/report/issue-44-poe-pse-onboard/README.md
 lines: 237-262
-conflict:
-  favours: measured
 why: >
   The conflict exemplar. A measured class 4 signature contradicts the vendor's own label, model
   suffix and silkscreen, all of which say 802.3af — and 802.3af does not permit class 4. The

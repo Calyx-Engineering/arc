@@ -19,19 +19,19 @@ wins*. Both failures are silent overrides, and silence is what makes them expens
 
 | File | |
 | --- | --- |
-| `tools/report-grade.py`, `.sh` | Two more columns on the instrument #159 built. `ROWS` / `NONE` / `TABLE` per claim table; `RESOLVED` / `SILENT` / `ONESIDED` / `MISMATCH` where two sources disagree. 43 selftests, up from 27 |
+| `tools/report-grade.py`, `.sh` | Two more columns on the instrument #159 built. `ROWS` / `NONE` / `TABLE` per claim table; `RESOLVED` / `WEAKWINS` / `SILENT` / `ONESIDED` where two sources disagree |
 | `evals/report-shape/` | Three more cases: `pin-allocation-ledger` (the exemplar), `poe-device-under-test` (uniform-source, reported not scored), `poe-class-conflict` (the conflict). The three #159 cases gained a table verdict as well |
 | `skills/engineering-report/SKILL.md` | **Where each claim came from** — the vocabulary, the three rules, and why it is not the confidence split |
 | `skills/record-route/SKILL.md` | **Every record carries where its claims came from** — the same vocabulary at every tier, and a `description:` clause so the skill fires on *"where did that number come from"* |
 
 ## The result
 
-```
+```text
 tables: sourced by row 1, unsourced 3, one source in the lead-in 1 (not scored), no table 1
-conflicts: resolved out loud 1, silent 0, one source only 0 (not scored), resolved elsewhere 0
+conflicts: resolved out loud 2, silent 0, one source only 3 (not scored), weaker source asserted 1 (reported)
 
 table rows carry a source        1/4  0.25
-conflicts resolved out loud      1/1  1.00
+conflicts resolved out loud      2/2  1.00
 ```
 
 **Both halves of *Done when* are met.** Three tables without provenance are reported by name, and
@@ -44,7 +44,7 @@ of this exact defect: `rp2040-pin-allocation.md` grew a `Provenance` column afte
 incident. The three fails are an option comparison with six prices and no basis, a consequences
 table derived from a standard it does not cite, and — the sharpest one — a findings table whose
 per-row links point at **where the claim was worked out** rather than where it came from. Two of
-those links are `test-` notes and two are `analysis-`: measured against inferred, on adjacent
+those links are `test-` notes and four are `analysis-`: measured against inferred, on adjacent
 rows, with nothing saying which is which. That is on the document #159 uses as its
 clean-except-one-line case.
 
@@ -56,7 +56,7 @@ clean-except-one-line case.
 | **Every column with a denominator must clear the threshold** | A verdict on the average of three questions lets a repaired opening report an unsourced table as progress — the two halves reporting each other's work as their own. The selftest proves it at 0.55, where the opening column clears and the table column does not |
 | **The grader matches aliases, not only the seven words** | *"From the product label"*, *"the scope reported"*, *"most likely explanation"* are provenance. An instrument matching only the vocabulary would score every pre-existing report as unsourced, and the baseline would measure adoption of a word list rather than the defect |
 | **`TABLE` is scored in neither column** | One source stated once above a uniform-source table is real provenance — weaker than a column, and not what #164 names. As a pass it licenses dropping the column; as a fail it reports a correctly sourced table as unsourced. Same reasoning as `BOLDONLY` in `topic-numbering.py` |
-| **`MISMATCH` is reported, never scored** | Resolving toward a stronger source than the case expected is either a mis-authored case or a real finding, and the scorer cannot tell which |
+| **The direction is derived from the text, never from the ordering** | See *What pass 1 found* — this was wrong, and wrong in the one way that mattered |
 | **The skills carry the issue's vocabulary, not the field's** | See *Unexpected* |
 
 ## Unexpected
@@ -70,6 +70,40 @@ conversation > inferred`, and three of the issue's are absent from his.
 The skills ship the issue's list, plus the rule for extending it: a project may add a term it
 genuinely has, but it **places the new term in the order**, or it has added a word and not a
 rule. Reconciling the two vocabularies is a decision and is spawned, not made here.
+
+## What pass 1 found
+
+**The conflict column asserted a direction it never derived, and passed the incident it was
+built for.** `grade_conflict` returned the strongest provenance term *present* and printed it as
+*"resolves in favour of"*. That is the vocabulary's own ordering restated, not a reading of the
+document. Probed:
+
+```text
+"The measured gain is 41.7x on the bench. However the estimated gain from the
+ instrument is 24.7x, and we are taking the estimate as correct."
+
+  before:  RESOLVED  resolves in favour of: measured     <- a pass
+  after:   WEAKWINS  asserted over the rest: inferred
+```
+
+That sentence **is** the 2026-08-28 incident this issue was written about. An instrument has to
+be able to fail the thing it was built for. The direction now comes from which side of the first
+contrast marker each source sits on, and that fixture is in the selftest as a regression guard.
+
+**`conflict.favours` in `case.yaml` was a recorded expected outcome**, which this PR's own
+`evals/README.md` forbids in the same commit that wrote the rule. It was not inert: it gated
+whether the conflict column ran at all, so omitting it made a silent conflict ungraded, and it
+decided whether a resolved conflict counted. Removed. A case declares a document and a region;
+the scorer derives everything else.
+
+**Two matcher defects.** `extrapolat` could never match — the alternation is wrapped in
+`(?:...)` and no word boundary follows `extrapolat` in *extrapolated*. It was the headline
+word of `inferred`'s own definition in both skills. And `ROWS` needed only **half** a table's
+rows sourced; nothing in either skill says half, and a half-sourced table is the defect.
+
+**The conflict scan read table rows as prose**, so a correctly sourced ledger — a different
+source on every row, which is exactly what this issue asks for — was reported as a silent
+conflict. Rows are now excluded.
 
 ## What testing the tests found
 
@@ -85,6 +119,14 @@ selftest.
 `mode-guard` read `HANDOFF.md` before the commit and allowed it. The worktree's row says
 **Autonomous** until #159 and #164 merge.
 
+## Spawned
+
+| Finding | Where it routes |
+| --- | --- |
+| **The vocabulary has no term for an instrument reading that is not a measurement.** `measured` collapses *a number the bench produced* and *a number a fooled instrument produced* — and that distinction is the whole of the 2026-08-28 incident. `pr-68-gain-sweep-tool.md` records it (*"the scope reported 2.473 Vpp where the tone was 1.456 Vpp"*), and the region grades `ONESIDED` because only `measured` is visible in it | Needs an issue. It is why that document could not become the box-5 case |
+| **The two vocabularies do not reconcile** — see *Unexpected* | Needs an issue |
+| **Four scorers duplicate fence-tracking and case-reading** — also raised on #159 | Needs an issue |
+
 ## Retrospective
 
 **The instrument can see whether a source is named. It cannot see whether the source is true.**
@@ -92,8 +134,11 @@ A row saying `measured` against a bench that never ran scores clean. The strengt
 a weak source *visible*, which is all it was ever going to do — the photograph incident did not
 happen because anyone lied about the photograph, it happened because nobody wrote it down.
 
-**The instance that cost the most has no artifact to score.** The 2026-08-28 dead-instrument
-override happened in conversation and never reached a document, so it is a selftest fixture
-rather than a case. A document instrument cannot reach a defect that never became a document,
-and #164's Required box asked for exactly that shape. It is recorded in `poe-class-conflict`'s
-case file as a limit rather than papered over with an invented case.
+**The Required box asking for a user-stated measurement against an inference is not met, and
+the box is left unticked.** `poe-class-conflict` is a real conflict — measured against a vendor
+label, with an inference named alongside and declined — but the measurement is the report's own,
+not the user's. The 2026-08-28 instance is the right shape and never reached a document, so it
+is a selftest fixture. The nearest written record, `pr-68-gain-sweep-tool.md`, was cut as a
+candidate case and dropped: it grades `ONESIDED`, because the vocabulary has no way to call an
+instrument reading anything but `measured`. Recorded in *Spawned*, and the box says so rather
+than a case being invented to close it.
