@@ -160,6 +160,7 @@ show_status() {
     echo "run $id  issues $(tr '\n' ' ' < "$d/issues") $state"
     [ -f "$d/exit" ] && summarise "$d"
   done
+  return 0
 }
 
 [ "$STATUS" = 1 ] && { show_status; exit 0; }
