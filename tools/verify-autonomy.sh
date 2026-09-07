@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
-# verify-autonomy.sh — every prohibition auto mode overrides states its auto arm beside it.
+# verify-autonomy.sh — the mode rule is stated once, and everything else points at it.
 #
 #   tools/verify-autonomy.sh
 #
-# WHY THIS EXISTS. Auto mode was declared in prose five times and never ran once. The cause was
-# a read-frequency asymmetry, not a missing document: the repo's CLAUDE.md and an always-on
-# work-watch restate "never commit unasked" every turn, while the arc-log's execution section
-# is read once at session start. The fresher instruction wins, and it was never the permission.
+# WHY THIS EXISTS. Auto mode was declared in prose five times and never ran once. m40 read that
+# as a read-frequency problem and put the permission beside every prohibition — four copies of
+# one clause, deliberately. This script enforced that.
 #
-# m40's fix is to put the permission in the same row as each prohibition — four copies of one
-# clause, deliberately. This script is what keeps the four honest. It is the reason duplicating
-# them is acceptable rather than reckless.
+# THE INVARIANT IS INVERTED, 2026-09-06, #138. Five prohibitions each carrying an override is
+# still five prohibitions, and the harness permits an outward-facing action only when it is
+# durably authorized. arc stated the rule five times and had four merges denied. ROADZ states it
+# once, in CLAUDE.md, with the override inside the sentence, and had none denied across twelve.
+#
+# So: skills/autonomy-set is the authority. CLAUDE.md may state the mode once, as a state, with
+# the override in the same sentence. No other read-every-turn artifact restates the prohibition
+# at all.
+#
+# SCOPE. This polices what is in a session's context every turn — CLAUDE.md, shipping skills,
+# templates, hooks, agents, commands. It does not police docs/, which is opened deliberately
+# rather than loaded. m14 and close-sequence still carry the old shape for that reason.
 #
 # WHAT IT CANNOT DO. Nothing in this repository runs a skill, so no check here proves the agent
 # behaves. It tests the half that is decidable from text — which is the half that actually
@@ -53,27 +61,40 @@ check_row() {
   fi
 }
 
-echo "verify-autonomy — the permission sits beside the prohibition"
+echo "verify-autonomy — the mode rule is stated once, everything else points"
 echo
 
-# ---- the four artifacts m40 §9 names ---------------------------------------------
-check_row "CLAUDE.md scopes never-commit-unasked to manual" \
-  CLAUDE.md "Never commit unasked"
+# ---- one authority, and no restatements anywhere it is read every turn ------------
+# The failure being prevented is aggregate weight, so the check is a census, not a per-row read.
+BANNED='never commit unasked|the user merges'
+SCOPE="CLAUDE.md skills templates hooks agents commands"
 
-check_row "work-watch's mechanical rule names auto" \
-  skills/work-watch/SKILL.md "Never commit unasked"
+strays="$(grep -rniE "$BANNED" $SCOPE 2>/dev/null           | grep -v '^skills/autonomy-set/'           | grep -v '^\.claude/' || true)"
+if [ -z "$strays" ]; then
+  pass "the prohibition is stated only by autonomy-set"
+else
+  fail "the prohibition is stated only by autonomy-set"        "each of these restates a rule skills/autonomy-set owns. Point at it instead — #138"        "$strays"
+fi
 
-check_row "m14 scopes the standing instruction" \
-  docs/product-architecture/mechanisms/m14-commit-rhythm.md "Standing instruction"
+# autonomy-set has to actually carry what everything else now points at.
+if grep -qiE 'manual is the default' skills/autonomy-set/SKILL.md 2>/dev/null; then
+  pass "autonomy-set states the rule it owns"
+else
+  fail "autonomy-set states the rule it owns"        "everything else points here. If the rule is not here it is nowhere"
+fi
 
-check_row "m14's proposed-shape row scopes it too" \
-  docs/product-architecture/mechanisms/m14-commit-rhythm.md "Never-commit-unasked"
-
-check_row "close-sequence step 8 is mode-dependent" \
-  docs/product-architecture/close-sequence.md "| 8 |"
-
-check_row "close-sequence step 9 is mode-dependent" \
-  docs/product-architecture/close-sequence.md "| 9 |"
+# CLAUDE.md states the mode as a state, once, with the override in the same sentence.
+mode_lines="$(grep -c 'Execution mode is manual' CLAUDE.md 2>/dev/null)"
+mode_lines="${mode_lines:-0}"
+mode_row="$(grep -A1 'Execution mode is manual' CLAUDE.md 2>/dev/null | head -2 | tr '
+' ' ')"
+if [ "$mode_lines" = "1" ] && printf '%s' "$mode_row" | grep -qiE 'unless asked|autonomous'; then
+  pass "CLAUDE.md states the mode once, with its override"
+elif [ "$mode_lines" = "0" ]; then
+  fail "CLAUDE.md states the mode once, with its override"        "the mode statement is gone. A session with no stated mode stops at the first action"
+else
+  fail "CLAUDE.md states the mode once, with its override"        "found $mode_lines statements, or the override is not in the same sentence"        "row: $(printf '%s' "$mode_row" | cut -c1-110)"
+fi
 
 # ---- the spec and its skill both exist -------------------------------------------
 # A spec with no artifact is what shipped five times. Both, or neither is exercised.

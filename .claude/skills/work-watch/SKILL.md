@@ -91,7 +91,6 @@ point is what this fixes.
 
 | Rule | |
 |---|---|
-| **Never commit unasked** | **In manual, which is the default** — propose and wait. **In autonomous mode, commit at the capture points check 1 defines**, without asking. Read the mode from `HANDOFF.md`'s *Execution mode* row, never from memory — [`autonomy-set`](../autonomy-set/SKILL.md) |
 | **Check files are saved first** | See below — this is upstream of half the problem |
 | **Never squash merge** | It destroys reviewability |
 | **Verify the commit identity** | Committing as one account and commenting as another makes no sense and has happened |
@@ -100,6 +99,10 @@ point is what this fixes.
 | **Never amend or rebase a pushed branch** | See below — it is the one rule here whose damage is permanent |
 
 The last two are **silent** — they report success and do the wrong thing.
+
+**Whether you commit at all is the execution mode's call, not this skill's** —
+[`autonomy-set`](../autonomy-set/SKILL.md). These rules govern *how* a commit is made once the
+mode allows one.
 
 ### Never amend or rebase a branch that has been pushed
 
