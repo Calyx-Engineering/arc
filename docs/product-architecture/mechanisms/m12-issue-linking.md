@@ -83,7 +83,7 @@ Tested against the live repo:
 | Force re-parse | Re-save the PR body (`gh pr edit --body`) | ✅ documented in ROADZ CLAUDE.md |
 | Create branch↔issue link | GraphQL `createLinkedBranch` | ✅ **Tested and works** — see below |
 | Remove a link | GraphQL `deleteLinkedBranch`, or delete the branch | ✅ Deleting the branch clears the link automatically — silently, with no timeline event |
-| Verify a link, either side | `tools/verify-linked-branch.sh <NN> <branch>` | ✅ reads both fields and says which holds the link |
+| Verify a link, either side | `tools/verify-linked-branch.sh <NN> <branch>` | ⚠️ reads both fields and says which holds the link — but **decisive only before the PR opens**, for the reason in the row above. Not an API capability; a script in this repo |
 
 ### `createLinkedBranch` — tested 2026-08-16
 

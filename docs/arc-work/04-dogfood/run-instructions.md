@@ -37,7 +37,7 @@ repeated pass asking the same one finds nothing.
 
 | | |
 |---|---|
-| 1 | **Read the issue, then label it `in-progress`.** `gh issue edit <NN> --add-label in-progress`. Then **write the test or eval case** — it is the spec, and writing it after the fix is grading your own homework |
+| 1 | **Read the issue, then label it `in-progress`.** `gh issue edit <NN> --add-label in-progress`. **Then cut the branch and read the link back** — `createLinkedBranch`, then `bash tools/verify-linked-branch.sh <NN> <branch>`, §4. It is the only moment that reading is decisive; by step 8 a PR exists and the answer has moved. Then **write the test or eval case** — it is the spec, and writing it after the fix is grading your own homework |
 | 2 | **Implement, ticking each box as it is satisfied.** Not at the end — the tracker is where someone watching an unattended run learns where it got to, and a box ticked in a batch at step 6 tells them nothing while it matters. **Read the body back after each write:** [#87](https://github.com/Calyx-Engineering/arc/issues/87) is open, a failed edit silently restores the original, and one write per box is one exposure per box |
 | 3 | **Run the gate. The exit code, not a claim.** `bash tools/verify-all.sh` always, plus whatever the issue's *Done when* names — `bash tools/verify-hook.sh`, `bash tools/skill-firing.sh`, a `gh` read-back |
 | 4 | **Pass 1 — is every requirement met?** Read every changed file end to end against the issue. **Whole files, never the diff** — the defect is in the section the diff does not show |

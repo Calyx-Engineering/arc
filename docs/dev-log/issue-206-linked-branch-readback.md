@@ -70,7 +70,7 @@ every arc PR. The tool predicted its own reading and got it.
 the link had already moved. Its second inference — *"the only `connected` event is timestamped
 with PR #205's cross-reference, so it is the PR link, not the branch link"* — is backwards: that
 `ConnectedEvent` **is** the promoted branch link, and a branch link never has one of its own.
-Running the new verifier against #155 today reports `PASS promoted link — PR #205`.
+Running the new verifier against #155 today reports `PASS PR link — PR #205 … cannot be told apart` — PR #205's body carries `Closes #155`, so the tracker can no longer say whether that branch was ever linked. The link was not lost; it is no longer provable.
 
 ## Decisions & trade-offs
 
@@ -103,10 +103,15 @@ Running the new verifier against #155 today reports `PASS promoted link — PR #
   consequence is that `verify-linked-branch.sh 206` with no branch argument passes forever
   regardless of the real state. The script's header and m12 §4 both now say the one-argument form
   only asks whether an issue is linked to *nothing at all*.
-- **Out of scope, unfixed:** `docs/arc-work/04-dogfood/issue-plan.md` repeats the bare
-  `createLinkedBranch` mandate with no read-back beside it. The issue named run-instructions §4,
-  m12 and `new-direct-pr.sh`, and a run does not read the issue plan (§1). Left for whoever edits
-  that file next.
+- **The sweep, in full.** `grep -rn createLinkedBranch --include=*.md` finds six files. Four need
+  nothing: m12 and this dev-log are the fix, `issue-155-skill-firing-shapes.md` is the report being
+  answered, and m42 §44 only notes that no PR-side mutation exists. Two carried the bare mandate:
+
+  | | |
+  |---|---|
+  | `run-instructions.md` §4 | Fixed — the read-back row |
+  | `docs/arc-log/arc-04-dogfood.md` line 134 | Fixed — the same clause, since the arc's own decision record stating the mandate without it is the defect |
+  | `docs/arc-work/04-dogfood/issue-plan.md` line 314 | **Left.** Out of what the issue named, and a run does not read the issue plan (§1). Whoever edits that file next
 - **Finding, not filed as an issue:** the fourth `Required` box's premise is false —
   `tools/new-direct-pr.sh` does not use `createLinkedBranch`. It uses `git checkout -b`, which is
   correct there: a direct PR has no issue, so there is no `issueId` and no link to form. Recorded

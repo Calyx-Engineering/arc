@@ -103,6 +103,27 @@ classify() {
   return 1
 }
 
+# ---- the keyword test ------------------------------------------------------------
+# A closing reference on a PR whose body carries NO closing keyword can only have come from the
+# branch, so this decides which verdict `classify` is allowed to give. GitHub parses FOUR
+# reference forms, and recognising only `#NN` classifies the other three as `nokeyword` — which
+# prints the one verdict this tool presents as decisive, wrongly:
+#
+#   Closes #206
+#   Closes GH-206
+#   Closes owner/repo#206
+#   Closes https://github.com/owner/repo/issues/206
+#
+# The keyword vocabulary matches `tools/verify-tracker-body.sh`, deliberately: one list, tuned in
+# one place.
+#
+#   $1  issue number   $2  body text
+body_has_keyword() {
+  local issue="$1" body="$2"
+  printf '%s\n' "$body" | grep -Eqi \
+    "(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+[^[:space:]]*(#|gh-|issues/)${issue}([^0-9]|$)"
+}
+
 # ---- the repair ------------------------------------------------------------------
 # Which repair is safe depends on whether a PR already sits on the ref. GitHub closes a pull
 # request whose head branch is deleted, so the obvious advice is the destructive one at exactly
@@ -164,11 +185,6 @@ live() {
   [ -n "$nwo" ] || { echo "cannot read the repository from here" >&2; exit 2; }
   owner="${nwo%%/*}"; repo="${nwo##*/}"
 
-  # `$issue` is interpolated into the jq filter. Safe, and only because the dispatch at the foot
-  # of this file admits digits alone — `*[!0-9]*` rejects everything else before it reaches here.
-  local kwtest
-  kwtest="(?i)(close[sd]?|fix(e[sd])?|resolve[sd]?)[ \\t]+#${issue}([^0-9]|\$)"
-
   local refs prs on_ref
   refs="$(gh_read "linkedBranches" \
     -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){issue(number:$n){linkedBranches(first:50){nodes{ref{name}}}}}}' \
@@ -178,7 +194,19 @@ live() {
   prs="$(gh_read "closing PRs" \
     -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){issue(number:$n){closedByPullRequestsReferences(first:50,includeClosedPrs:true){nodes{number headRefName body}}}}}' \
     -F o="$owner" -F r="$repo" -F n="$issue" \
-    --jq ".data.repository.issue.closedByPullRequestsReferences.nodes[]? | \"\\(.number) \\(.headRefName) \\(if ((.body // \"\") | test(\"$kwtest\")) then \"keyword\" else \"nokeyword\" end)\"")" || exit $?
+    --jq '.data.repository.issue.closedByPullRequestsReferences.nodes[]? | "\(.number) \(.headRefName) \(.body // "" | @base64)"')" || exit $?
+
+  # The body arrives base64-encoded so that one PR stays on one line whatever the body contains.
+  # The keyword test itself is shell rather than jq, so the selftest can exercise it — GitHub
+  # parses four reference forms and the first draft of this file recognised one.
+  prs="$(printf '%s\n' "$prs" | while IFS=' ' read -r num ref b64; do
+    [ -n "${num:-}" ] || continue
+    if body_has_keyword "$issue" "$(printf '%s' "${b64:-}" | base64 -d 2>/dev/null)"; then
+      printf '%s %s keyword\n' "$num" "$ref"
+    else
+      printf '%s %s nokeyword\n' "$num" "$ref"
+    fi
+  done)"
 
   # ADVICE ONLY, SO ITS FAILURE MUST NOT SUPPRESS A VERDICT THE OTHER TWO ALREADY DECIDED. It
   # degrades to `unknown`, which repair_note reads as "assume a PR heads it" — the safe side.
@@ -244,6 +272,15 @@ selftest() {
     ok "$name"
   }
 
+  kw_is() {
+    local want="$1" name="$2" issue="$3" body="$4"
+    run=$((run + 1))
+    local status
+    if body_has_keyword "$issue" "$body"; then status=0; else status=1; fi
+    if [ "$status" = "$want" ]; then ok "keyword: $name"; else
+      bad "keyword: $name — wanted $([ "$want" = 0 ] && echo found || echo "not found"), got the other"; fi
+  }
+
   # A structural case, not a behavioural one. `gh_read`'s `exit 2` is inert unless every call
   # site propagates it, that propagation cannot be exercised without a network, and the first
   # draft of this file shipped without it. So the check is that the call sites still carry it.
@@ -296,6 +333,20 @@ arc/x-issue-9-a" ""
   note_is "DO NOT delete this ref"    "delete the ref and re-run" "an open PR on the ref"      "arc/x-issue-9-a" "42"
   note_is "DO NOT delete this ref"    "delete the ref and re-run" "the ref read failed"        "arc/x-issue-9-a" "unknown"
   note_is "delete the ref and re-run" "DO NOT delete this ref"    "the ref is free"            "arc/x-issue-9-a" ""
+
+  # All four reference forms GitHub parses. Missing one of them turns a keyworded PR into the
+  # `nokeyword` reading, which is the strongest claim this tool makes.
+  kw_is 0 "hash form"      206 "Some prose.
+
+Closes #206"
+  kw_is 0 "GH- form"       206 "Closes GH-206"
+  kw_is 0 "owner/repo form" 206 "Fixes Calyx-Engineering/arc#206"
+  kw_is 0 "URL form"       206 "Resolves https://github.com/Calyx-Engineering/arc/issues/206"
+  kw_is 0 "lowercase verb" 206 "resolved #206"
+  kw_is 1 "no keyword"     206 "Throwaway probe. No issue reference in this body at all."
+  kw_is 1 "bare mention"   206 "Follows on from #206, but does not close it"
+  kw_is 1 "another issue"  206 "Closes #2061"
+  kw_is 1 "empty body"     206 ""
 
   # The guard that cannot be exercised offline.
   source_has '^[[:space:]]+--jq .*\)" \|\| exit \$\?$' 2 "both verdict reads propagate a failed gh_read"
