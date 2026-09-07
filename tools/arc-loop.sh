@@ -12,6 +12,7 @@
 #   tools/arc-loop.sh 145 --issues 183,210   one run, this batch, then stop — the playlist's call
 #   tools/arc-loop.sh 145 --issues 183,210 --track S1.F1   …and the session is titled "arc/04 — S1.F1 · #183 #210"
 #   tools/arc-loop.sh --status               every run under .arc-work/runs/, live or finished
+#   tools/arc-loop.sh --report               the same as a markdown table with totals — for the arc-log
 #
 # Scope of one invocation is ONE workstream. When its children are all closed
 # the script dispatches a report run and exits; the next workstream is a
@@ -72,9 +73,11 @@ MAX=0
 ISSUES=""
 TRACK=""
 STATUS=0
+REPORT=0
 PARENT="${1:-}"
 shift || true
 [ "$PARENT" = "--status" ] && { STATUS=1; PARENT=""; }
+[ "$PARENT" = "--report" ] && { REPORT=1; PARENT=""; }
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY=1 ;;
@@ -83,6 +86,7 @@ while [ $# -gt 0 ]; do
     --model) shift; MODEL="${1:-}" ;;
     --track) shift; TRACK="${1:-}" ;;
     --status) STATUS=1 ;;
+    --report) REPORT=1 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
   shift
@@ -164,7 +168,40 @@ show_status() {
   return 0
 }
 
+# Every finished run, as the table the arc-log's boundary report wants. Runs before this
+# script kept usage (#155–#158) are not here; docs/dev-log/pr-215-loop-v2.md has them.
+show_report() {
+  python - "$RUNS" <<'PY'
+import json, sys, os, glob
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+rows = []
+for d in sorted(glob.glob(os.path.join(sys.argv[1], "*", ""))):
+    out = os.path.join(d, "out.json")
+    if not os.path.exists(out) or os.path.getsize(out) == 0: continue
+    try: r = json.loads(open(out, encoding="utf-8", errors="replace").read())
+    except json.JSONDecodeError: continue
+    ip = os.path.join(d, "issues")
+    issues = open(ip, encoding="utf-8").read().split() if os.path.exists(ip) else []
+    u = r.get("usage") or {}
+    tot = u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0) + u.get("cache_creation_input_tokens", 0)
+    rows.append(dict(run=os.path.basename(os.path.dirname(d)), issues=" ".join("#" + i for i in issues), n=len(issues),
+        turns=r.get("num_turns") or 0, mins=(r.get("duration_ms") or 0) / 60000, tot=tot,
+        cache=(100 * u.get("cache_read_input_tokens", 0) / tot) if tot else 0, out=u.get("output_tokens", 0),
+        usd=r.get("total_cost_usd") or 0, ok=not r.get("is_error")))
+if not rows:
+    print("no finished runs"); sys.exit(0)
+print("| Run | Issues | Turns | Min | Input (M) | Cache | Output (K) | USD | Per issue (M) |")
+print("|---|---|---|---|---|---|---|---|---|")
+for x in rows:
+    flag = "" if x["ok"] else " (error)"
+    print(f"| {x['run']}{flag} | {x['issues']} | {x['turns']} | {x['mins']:.0f} | {x['tot']/1e6:.1f} | {x['cache']:.0f}% | {x['out']/1e3:.0f} | {x['usd']:.2f} | {x['tot']/1e6/max(1, x['n']):.1f} |")
+N = sum(x["n"] for x in rows); T = sum(x["tot"] for x in rows)
+print(f"| **Total** | {N} issues, {len(rows)} runs | {sum(x['turns'] for x in rows)} | {sum(x['mins'] for x in rows):.0f} | {T/1e6:.1f} | | {sum(x['out'] for x in rows)/1e3:.0f} | {sum(x['usd'] for x in rows):.2f} | {T/1e6/max(1, N):.1f} |")
+PY
+}
+
 [ "$STATUS" = 1 ] && { show_status; exit 0; }
+[ "$REPORT" = 1 ] && { show_report; exit 0; }
 
 [ -n "$PARENT" ] || die "usage: tools/arc-loop.sh <workstream-parent-issue> [--dry-run] [--max N] [--issues 183,210] | --status"
 [ -f "$INSTRUCTIONS" ] || die "missing $INSTRUCTIONS — run from the repository root"
