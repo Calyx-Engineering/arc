@@ -1,0 +1,12 @@
+shape: wrapped
+expect:
+  - handoff
+
+source:
+  session: 98413f37
+  turn: 1
+  opening: true
+why: >
+  `if it exists` makes the read conditional, and a long review brief follows it. This is also
+  the only opening that asks for a transcript ingest, which is handoff's own
+  "Saving the transcript" section — two of the skill's obligations in one turn, neither loaded.

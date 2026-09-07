@@ -115,6 +115,9 @@ if [ "$SELFTEST" = "1" ]; then
   t "a missing transcript is reported, not scored"             "NOT SCORED"
   t "the per-shape rate is printed"                            "^wrapped +1/2"
   t "the per-skill rate is printed"                            "^handoff +1/2"
+  # source.opening was recorded by every case and read by nothing until #157. The Done when
+  # there is about openings, so the rate has to be printable without re-deriving it by hand.
+  t "the opening rate is printed"                              "^all opening cases +3/4"
   [ "$st" = "0" ] && { echo "  PASS  a clean run exits 0"; Pc=$((Pc+1)); } \
                   || { echo "  FAIL  a clean run exits 0 (got $st)"; Fc=$((Fc+1)); }
 

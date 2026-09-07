@@ -64,7 +64,7 @@ def read_case(p):
     a dependency and a class of silent mis-reads in exchange for flexibility no case uses.
     An unrecognised line is ignored; a missing source fails loudly at the call site.
     """
-    shape, expect, session, turn = "?", [], "", 0
+    shape, expect, session, turn, opening = "?", [], "", 0, False
     section = None
     for raw in io.open(p, encoding="utf-8"):
         line = raw.rstrip("\n")
@@ -86,7 +86,10 @@ def read_case(p):
             m = re.match(r"turn:\s*(\d+)", s)
             if m:
                 turn = int(m.group(1))
-    return shape, expect, session, turn
+            m = re.match(r"opening:\s*(\S+)", s)
+            if m:
+                opening = m.group(1).lower() == "true"
+    return shape, expect, session, turn, opening
 
 
 def find_session(stem):
@@ -135,11 +138,13 @@ if not cases:
 
 shapes, rows, drift, missing = {}, [], [], []
 per_skill = {}
+per_skill_opening = {}
+opening_cases = [0, 0]
 
 for cp in cases:
     d = os.path.dirname(cp)
     slug = os.path.basename(d)
-    shape, raw_expect, stem, turn = read_case(cp)
+    shape, raw_expect, stem, turn, opening = read_case(cp)
     expect = [e for e in raw_expect if e != "none"]
     if not stem or not turn:
         missing.append("%s/%s  (case.yaml names no source.session or source.turn)" % (shape, slug))
@@ -178,6 +183,13 @@ for cp in cases:
             continue
         hit, tot = per_skill.get(e, (0, 0))
         per_skill[e] = (hit + (1 if e in got else 0), tot + 1)
+        if opening:
+            hit, tot = per_skill_opening.get(e, (0, 0))
+            per_skill_opening[e] = (hit + (1 if e in got else 0), tot + 1)
+
+    if opening:
+        opening_cases[1] += 1
+        opening_cases[0] += 1 if ok else 0
 
     s = shapes.setdefault(shape, [0, 0])
     s[1] += 1
@@ -205,6 +217,14 @@ print("%-24s%10s" % ("skill expected", "fired"))
 for s in sorted(per_skill):
     hit, tot = per_skill[s]
     print("%-24s%10s" % (s, "%d/%d" % (hit, tot)))
+
+if opening_cases[1]:
+    print()
+    print("%-24s%10s" % ("opening cases only", "fired"))
+    for s_ in sorted(per_skill_opening):
+        hit, tot = per_skill_opening[s_]
+        print("%-24s%10s" % (s_, "%d/%d" % (hit, tot)))
+    print("%-24s%10s" % ("all opening cases", "%d/%d" % (opening_cases[0], opening_cases[1])))
 
 print()
 print("A FAIL above is the measurement, not a broken run — this is a baseline, not a gate.")
