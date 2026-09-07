@@ -337,7 +337,7 @@ everything else to the skill.
 `tools/verify-autonomy.sh` enforces it as a census: the prohibition appears only in
 `autonomy-set`, and `CLAUDE.md` states the mode exactly once with its override. **Scope is what
 a session loads every turn** — `CLAUDE.md`, skills, templates, hooks, agents, commands. `docs/`
-is opened deliberately rather than loaded, so m14 §3 and `close-sequence.md` steps 8 and 9 keep
+is opened deliberately rather than loaded, so m14 §3 and `close-sequence.md` steps 9 and 10 keep
 the older shape.
 
 **This is no longer an exception to *one fact, one place*.** It is that rule, applied.
@@ -372,5 +372,5 @@ times; the behavioural half is exercised by using it.
 - [m15](m15-handoff-spine.md) — the handoff, which holds the mode
 - [m43](m43-camp-assistant.md) — Camp, which announces the transitions
 - [m47](m47-onboarding.md) — how the behaviour reaches a fresh repository
-- [`close-sequence.md`](../close-sequence.md) — steps 8 and 9, now mode-dependent
+- [`close-sequence.md`](../close-sequence.md) — steps 9 and 10, now mode-dependent
 - `docs/arc-work/03-camp/friction-log.md` entries 1, 2 and 4 — the evidence

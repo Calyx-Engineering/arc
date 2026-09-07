@@ -137,7 +137,8 @@ tested.
 Hooks **fail open** — on unexpected failure, exit 0; deny only the specific condition. Write from
 the skeleton so the kill switch cannot be omitted.
 
-**`tools/verify-all.sh` runs all nine gates.** `--list` prints what it cannot cover: no hook fires
-in a live session here and no skill is invoked, so a green run is not a claim about either.
+**`tools/verify-all.sh` runs every gate this repo has.** `--list` prints what it cannot cover:
+no hook fires in a live session here and no skill is invoked, so a green run is not a claim
+about either.
 
 Full reasoning in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md).
