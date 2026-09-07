@@ -172,9 +172,21 @@ Each workstream's 200-word boundary report lands here when it closes.
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | Not started |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 7 | Not started |
 
+### 6.1 Closed before the workstreams existed
+
+| Issue | Dev-log | |
+|---|---|---|
+| [#132](https://github.com/Calyx-Engineering/arc/issues/132) local edits never reach the installed plugin | [issue-132-plugin-reload](../dev-log/issue-132-plugin-reload.md) | **Merged** — [PR #137](https://github.com/Calyx-Engineering/arc/pull/137). Closed and linked by hand |
+| [#17](https://github.com/Calyx-Engineering/arc/issues/17) transcript-miner, friction mode | [issue-17-transcript-miner](../dev-log/issue-17-transcript-miner.md) | **Merged** — [PR #139](https://github.com/Calyx-Engineering/arc/pull/139). Closed and linked by hand |
+| — the retrospective and the plan | [pr-133-dogfood-retrospective](../dev-log/pr-133-dogfood-retrospective.md) | **Open** — [PR #133](https://github.com/Calyx-Engineering/arc/pull/133), draft |
+
+**All 36 are filed**, plus five workstream parents and three held out of the milestone. The
+planning session collapsed to two subjects and both were settled in conversation — the merge
+route, and what a working handoff is.
+
 ---
 
-### Loop — boundary report
+### 6.2 Loop — boundary report
 
 **Workstream:** Loop · **Closed:** 2026-09-07 · **176 words**, diagram excluded
 
@@ -205,18 +217,6 @@ flowchart LR
 ---
 
 
-### Closed before the workstreams existed
-
-| Issue | Dev-log | |
-|---|---|---|
-| [#132](https://github.com/Calyx-Engineering/arc/issues/132) local edits never reach the installed plugin | [issue-132-plugin-reload](../dev-log/issue-132-plugin-reload.md) | **Merged** — [PR #137](https://github.com/Calyx-Engineering/arc/pull/137). Closed and linked by hand |
-| [#17](https://github.com/Calyx-Engineering/arc/issues/17) transcript-miner, friction mode | [issue-17-transcript-miner](../dev-log/issue-17-transcript-miner.md) | **Merged** — [PR #139](https://github.com/Calyx-Engineering/arc/pull/139). Closed and linked by hand |
-| — the retrospective and the plan | [pr-133-dogfood-retrospective](../dev-log/pr-133-dogfood-retrospective.md) | **Open** — [PR #133](https://github.com/Calyx-Engineering/arc/pull/133), draft |
-
-**All 36 are filed**, plus five workstream parents and three held out of the milestone. The
-planning session collapsed to two subjects and both were settled in conversation — the merge
-route, and what a working handoff is.
-
 ## 7 Related analysis
 
 - [`friction-log.md`](https://github.com/Lantern-Systems/roadz-sound-system/blob/main/docs/arc-work/interface-pcba-rev-b/friction-log.md) — ROADZ's hand-written log, 296 lines, the higher-signal half of the evidence
@@ -241,7 +241,7 @@ route, and what a working handoff is.
 - [ ] **Milestone closed by hand.** GitHub does not close it when its last issue closes
 - [ ] **Default branch restored** — `tools/arc-default-branch.sh restore`. **It was flipped to `arc/04-dogfood` on 2026-09-05 and must be pointed back at `main`.** A crashed session leaves it on a branch that may later be deleted, and nothing about that state is visible in ordinary work
 
-## 13 Soak
+## 10 Soak
 
 **Per `CLAUDE.md`: a plugin change runs against real work before it leaves the machine.**
 Committed is not exercised. Unsoaked means a commit here with no soak line from any repo.
