@@ -1,6 +1,6 @@
 # Issue #156 — an instruction wrapped around a skill name suppresses the match
 
-**Issue:** [#156](https://github.com/Calyx-Engineering/arc/issues/156)  ·  **PR:** [#PR](https://github.com/Calyx-Engineering/arc/pull/PR)
+**Issue:** [#156](https://github.com/Calyx-Engineering/arc/issues/156)  ·  **PR:** [#207](https://github.com/Calyx-Engineering/arc/pull/207)
 
 ## Problem
 
