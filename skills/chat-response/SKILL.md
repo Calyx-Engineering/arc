@@ -1,6 +1,6 @@
 ---
 name: chat-response
-description: A LENGTH BUDGET THE USER STATED IS STILL IN FORCE. If anywhere earlier in this conversation the user said "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complained "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that" — then that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
+description: A LENGTH BUDGET THE USER STATED IS STILL IN FORCE. If anywhere earlier in this conversation the user said "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complained "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that" — then that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 # chat-response
@@ -294,6 +294,25 @@ questions inside it. Reusing it is what lets a nudge say *three of five settled*
 
 **Never a bare number.** `D1`, not *"question 1"* — issue numbers, mechanism numbers and pass
 numbers all appear in the same sentences.
+
+#### It applies to the whole reply, not only to a block
+
+**Every top-level section of a multi-topic reply carries a label.** The
+block is the shape the rule is easiest to see in; the rule is about the reply. Six subjects
+answered under six unlabelled headings is the same defect in a different wrapper — the user
+still cannot answer by number.
+
+**Partial numbering is worse than none.** Labels on the first two topics and none on the rest
+tell the reader that numbering is available and then withhold it: they cannot tell which topics
+they are allowed to answer by number, so they restate all of them. `tools/topic-numbering.sh`
+grades it as a fail, not as part marks.
+
+| Measured | |
+| --- | --- |
+| Three consecutive turns of one design discussion | **0 of 3 replies labelled**, sixteen topics between them |
+| Two turns earlier, same conversation | Topics numbered `D1` and `D2`. The user's entire next message was *"D1 - new / D2 - off"* — four words for two decisions |
+
+Scored by `tools/topic-numbering.sh` against `evals/topic-numbering`.
 
 **Say what you would do.** "I'd go with A because X — object if you disagree" beats an
 even-handed survey. The user can overrule a recommendation; they cannot overrule a

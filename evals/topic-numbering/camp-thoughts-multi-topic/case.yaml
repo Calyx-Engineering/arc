@@ -1,0 +1,13 @@
+min_topics: 2
+source:
+  session: 0c28d2ed
+  first_turn: 130
+  last_turn: 132
+why: >
+  Three consecutive turns of one design discussion, each answered with a reply built out of
+  several sibling sections, and not one of them labelled: six topics on t130, seven on t131,
+  three on t132. The user cannot answer any of them by number.
+  The same session shows the mechanism working two turns earlier — the reply to t127 numbered
+  its topics D1 and D2, and t128 is the user's whole answer: "D1 - new / D2 - off". Four words
+  for two decisions. That is what the dropped labels cost, measured in the one conversation
+  that did both.

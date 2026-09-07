@@ -1,7 +1,11 @@
-# response-length-probe.py — the live-run half of tools/response-length.sh --probe.
+# response-length-probe.py — the live-run half of tools/response-length.sh --probe, and of
+# tools/topic-numbering.sh --probe.
 #
 # Replays a case's turns as ONE conversation against the plugin as installed, and records what
-# came back. Scoring is tools/response-length.py's; this file only produces the replies.
+# came back. Nothing here is length-specific: it produces the replies, and the scorer asks the
+# question — tools/response-length.py counts their words, tools/topic-numbering.py reads their
+# section labels. A second copy would be a second place for the allow/deny lists and the
+# cut-detection to drift, so both probes call this one.
 #
 # WHY ONE SESSION AND NOT ELEVEN. The defect is that a budget stated on turn 1 stops being
 # applied by turn 5. Eleven independent single-turn runs cannot see that at all — each one

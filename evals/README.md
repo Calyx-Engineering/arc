@@ -1,8 +1,25 @@
 # Eval cases
 
-Cases for `claude plugin eval`, authored against real sessions. The suite that exists today is
-**`skill-firing/`** — [#155](https://github.com/Calyx-Engineering/arc/issues/155)'s question of
-why a skill does not fire.
+Cases for `claude plugin eval`, authored against real sessions. Three suites, each asking a
+different question about a reply, and each with its own scorer:
+
+| Suite | Question | Scored by |
+|---|---|---|
+| **`skill-firing/`** | Did the skill fire? — [#155](https://github.com/Calyx-Engineering/arc/issues/155) | `tools/skill-cases.sh`, `tools/skill-probe.sh` |
+| **`response-length/`** | Was the reply within the budget the user stated? — [#158](https://github.com/Calyx-Engineering/arc/issues/158) | `tools/response-length.sh` |
+| **`topic-numbering/`** | Could the user answer this multi-topic reply by number? — [#160](https://github.com/Calyx-Engineering/arc/issues/160) | `tools/topic-numbering.sh` |
+
+**Firing is not adherence.** #155 settled that a skill can fire and the rule still be broken,
+and that the rule can hold on a turn the skill never fired. The second and third suites exist
+because the first one cannot answer their question.
+
+**The last two need no model to grade them.** Word count and label presence are arithmetic, so
+neither waits on [#181](https://github.com/Calyx-Engineering/arc/issues/181). Each carries a
+`selftest` on fixtures, and it is the selftest — not the real cases — that is wired into
+`tools/verify-all.sh`, because the transcripts are on one machine.
+
+Everything below is `skill-firing/`'s. `response-length/` and `topic-numbering/` key their
+`turns/<n>.md` by source turn number and are documented in their scorers' headers.
 
 ## Running them
 
