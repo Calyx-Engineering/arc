@@ -43,5 +43,27 @@ ROADZ was fixed on install day, [`44dbb06`](https://github.com/Lantern-Systems/r
 | **Scope is the local half only** | Fix the overlaps here, verify what ships does not reintroduce them. Detecting the collision at install is [#173](https://github.com/Calyx-Engineering/arc/issues/173), filed to *Onboarding — m47*, out of this milestone |
 | **`--delete-branch` was a wrong diagnosis, twice recorded** | Blamed in 2026-08, disproved, and this arc's merge of PR #133 used the flag and passed |
 
+## What changed
+
+| File | |
+|---|---|
+| `CLAUDE.md` | 231 → 148 lines. Mode stated once in ROADZ's shape; five preference rows, the branch mechanics, the gap-routing steps and the local-copies rationale removed as things the plugin or the product definition owns |
+| `skills/work-watch` | The `Never commit unasked` row deleted. A pointer under the mechanical-rules table says whether you commit is the mode's call |
+| `skills/autonomy-set` | *The rule appears beside every prohibition* replaced by *This skill is the only place the rule is stated*. New: on a denial, name which of the three gates stopped it |
+| `docs/…/m40-autonomy-switch.md` | §9 reversed, original reasoning kept in full. §10's "nothing runs a skill" corrected — Arc is installed here |
+| `tools/verify-autonomy.sh` | Six per-row checks replaced by a census. Both failure modes tested |
+
+`templates/handoff.md` was left alone — it defines what *suspended* means, which is the state's semantics rather than a standing prohibition.
+
+**Out of scope, deliberately:** `m14` §3 and `close-sequence.md` steps 8–9 keep the old shape. They are in `docs/`, opened deliberately rather than loaded every turn, and the verifier's header says so.
+
 ## Retrospective
+
+**Five of six requirements landed as text changes. The sixth is a behavioural test that cannot be run by asking for it** — a merge has to be attempted without the user requesting that merge, which means the test runs exactly once per session and the user has to not participate.
+
+**Two conflations were caught during the work.** Transcript-copy denials were folded into the evidence and pulled back out — same error string, different gate. And the ROADZ regression claim was withdrawn: ROADZ never had a merge problem, because it was fixed there on install day.
+
+**The user was right and the first search was wrong.** Three widening passes were needed — literal `gh pr merge`, then every denial on the machine, then the user's actual instruction, which was to search for *my* mentions of `CLAUDE.md` and read the surrounding discussion. The third pass found it in one query.
+
+**The largest contributor may still be unaddressed.** Arc is installed in this repository and `.claude/skills/` still holds 13 copies, so every skill is in context twice. [#142](https://github.com/Calyx-Engineering/arc/issues/142) was Upkeep housekeeping; it is now second in Loop behind this issue.
 
