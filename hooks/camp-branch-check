@@ -10,14 +10,14 @@
 # checks: declared-convention-read, issue-or-pr-number-present
 # skips: base-is-arc (not built)
 #
-# A repo that declares no branching convention silences this hook entirely — there is no report
-# to carry a skip line, so that silence is not a `skips` entry.
-#
 # The three lines above are the `camp-reports:` declaration. They are why this hook is
 # visible when it fires — one declaration drives both the spoken report and the event-log
 # entry. Name every check, including the ones that always pass: only reporting failures
 # makes a silent hook indistinguishable from a working one.
 # Format: docs/product-architecture/camp-reports.md
+#
+# A repo that declares no branching convention silences this hook entirely. That is not a
+# `skips` entry: there is no report to carry the skip line.
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
