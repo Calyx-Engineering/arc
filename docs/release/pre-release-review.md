@@ -125,7 +125,7 @@ does not catch:
 
 | | |
 |---|---|
-| **The copy under `.claude/skills/`** | Sits one level deeper than its source, so a link correct in `skills/` is broken in the copy unless re-based. `sync-local-skills.sh` re-bases; **check the result, not the intent** |
+| **A copy under `.claude/skills/`** | Deleted 2026-09-07 by [#142](https://github.com/Calyx-Engineering/arc/issues/142) — Arc is installed in this repository, so a copy shadows the plugin's skill rather than standing in for it. `tools/verify-skill-registry.sh` fails if one reappears |
 | **A template** | Is copied somewhere else before anyone follows its links. Copy it to a scratch directory and resolve from **there** — ten template links shipped one directory too shallow because they were only ever checked in place |
 | **A spec's anchor links** | `#4-three-relations-not-two` breaks silently when a heading is reworded. A link to a missing anchor renders as a link to the top of the page |
 
@@ -229,7 +229,7 @@ three · `plugin.json`.
 | # | Finding | Where | Issue | |
 |---|---|---|---|---|
 | 1 | **18 template links resolve to nothing where the template lands** — and half have no correct depth, because they point into `docs/` which a consuming repo does not have | 5 templates | [#122](https://github.com/Calyx-Engineering/arc/issues/122) | **Blocking** |
-| 2 | A skill's `references/` directory is not copied, so the copy's link is dead and `--check` passes | `sync-local-skills.sh` | [#123](https://github.com/Calyx-Engineering/arc/issues/123) | |
+| 2 | A skill's `references/` directory is not copied, so the copy's link is dead and `--check` passes | `sync-local-skills.sh` — **moot**, deleted with the copies by [#142](https://github.com/Calyx-Engineering/arc/issues/142) | [#123](https://github.com/Calyx-Engineering/arc/issues/123) | |
 | 3 | The artifact table lists 11 artifacts that do not exist and omits 4 that do, with nothing marking which | product definition | [#124](https://github.com/Calyx-Engineering/arc/issues/124) | |
 | 4 | Nothing reports a skill with no `camp-reports:` / `checks:` declaration. Hooks have such a reporter; skills do not | 3 skills | [#125](https://github.com/Calyx-Engineering/arc/issues/125) | |
 | 5 | `camp-session-start` is a `PreToolUse` hook named for a different event. Registration is correct; the name is not | `hooks/` | [#126](https://github.com/Calyx-Engineering/arc/issues/126) | |

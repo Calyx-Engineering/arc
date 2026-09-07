@@ -42,7 +42,7 @@ stale.
 
 **Verbosity governs display, never what reaches `.claude/arc/log.md`.**
 
-### Friction log — Arc's own rough edges · [`record-route`](../../skills/record-route/SKILL.md)
+### Friction log — Arc's own rough edges · [`record-route`](https://github.com/Calyx-Engineering/arc/blob/main/skills/record-route/SKILL.md)
 
 - [ ] **on** — friction with Arc itself is appended to `docs/arc-work/<arc-slug>/friction-log.md`
 - [x] **off** — friction with Arc itself is not recorded

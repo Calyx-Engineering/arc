@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-sync-parity verify-tracker-body verify-hook verify-template-links"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links"
 
 RUN=0
 FAILED=0
@@ -73,8 +73,7 @@ if [ -n "$unknown" ]; then
 fi
 
 # ---- the gates ---------------------------------------------------------------------
-run_gate "skill parity" bash tools/sync-local-skills.sh --check
-run_gate "sync parity cases" bash tools/verify-sync-parity.sh
+run_gate "skill registry" bash tools/verify-skill-registry.sh
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -98,11 +97,13 @@ if [ "$LIST" = "1" ]; then
   cat <<'CANNOT'
 
   cannot run — and no gate here should be read as covering them:
-    hooks in a live session   hooks/hooks.json resolves ${CLAUDE_PLUGIN_ROOT}, which
-                              resolves only for an installed plugin. The cases above run
-                              each hook standalone; none proves it fires in Claude Code
-    any skill                 nothing in this repository invokes one. Every skill-carried
-                              rule is checked as text, never as behaviour
+    hooks in a live session   Arc is installed here, so hooks do fire — camp-branch-check and
+                              tracker-verify were both observed. The cases above still run each
+                              hook standalone against the WORKING TREE; a live firing uses the
+                              installed copy, which is only current after tools/plugin-reload.sh
+    any skill                 no gate here invokes one. Every skill-carried rule is checked as
+                              text, never as behaviour. claude plugin eval can execute a skill;
+                              the suite is #149
 CANNOT
   exit 0
 fi
