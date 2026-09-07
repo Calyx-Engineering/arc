@@ -33,10 +33,23 @@ field() {
   printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
 }
 
-# Speak, without blocking. exit 2 surfaces stderr to the transcript; the edit still runs.
+json_string() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
+}
+
+# Speak, without blocking.
+#
+# THIS WAS exit 2, AND exit 2 DENIES. The pattern came from camp-branch-check, which is a
+# PostToolUse hook — there the tool has already run, so exit 2 only surfaces stderr and the
+# comment was true. Copied to a PreToolUse hook it inverts: exit 2 is the deny signal, and
+# this hook silently ate the first Edit of every session. The marker is written before this
+# runs, so the retry succeeded and the denial looked like a hiccup rather than a bug.
+#
+# An explicit "allow" decision with the message attached is the shape that reports without
+# blocking. It is what hooks/TEMPLATE carries, inverted from deny.
 report() {
-  printf '%s\n' "$1" >&2
-  exit 2
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":$(json_string "$1")}}"
+  exit 0
 }
 
 # ---- hook body ------------------------------------------------------------------
@@ -73,8 +86,12 @@ case "$BRANCH" in
   main|master|develop)
     add "you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit"
     ;;
-  arc/*-issue-*)
+  *-issue-[0-9]*|issue-[0-9]*)
     # An issue branch. This is the correct place to work, and it names its issue.
+    ;;
+  *-pr[0-9]*|pr[0-9]*)
+    # A direct PR's branch. It carries the PR's number instead of an issue's, which is the
+    # whole point of the form — there is no issue behind it. Nothing to say.
     ;;
   arc/*)
     add "you are on \`$BRANCH\`, an arc branch. It is coordination only — create \`$BRANCH-issue-<N>-<slug>\` for the work"
