@@ -1,0 +1,2 @@
+# a wrong base while m42's flip is on — the finding must still name the trunk, which is not the default
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"main","arc_test_default":"arc/02-foundation","arc_test_title":"fix: the thing","arc_test_body":"Closes #10\n","tool_input":{"command":"gh pr edit 200 --body-file body.md"}}
