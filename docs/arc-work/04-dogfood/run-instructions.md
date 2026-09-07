@@ -36,12 +36,12 @@ repeated pass asking the same one finds nothing.
 
 | | |
 |---|---|
-| 1 | **Read the issue. Write the test or eval case first.** It is the spec — writing it after the fix is grading your own homework |
-| 2 | **Implement** |
+| 1 | **Read the issue, then label it `in-progress`.** `gh issue edit <NN> --add-label in-progress`. Then **write the test or eval case** — it is the spec, and writing it after the fix is grading your own homework |
+| 2 | **Implement, ticking each box as it is satisfied.** Not at the end — the tracker is where someone watching an unattended run learns where it got to, and a box ticked in a batch at step 6 tells them nothing while it matters. **Read the body back after each write:** [#87](https://github.com/Calyx-Engineering/arc/issues/87) is open, a failed edit silently restores the original, and one write per box is one exposure per box |
 | 3 | **Run the gate. The exit code, not a claim.** `bash tools/verify-all.sh` always, plus whatever the issue's *Done when* names — `bash tools/verify-hook.sh`, `bash tools/skill-firing.sh`, a `gh` read-back |
 | 4 | **Pass 1 — is every requirement met?** Read every changed file end to end against the issue. **Whole files, never the diff** — the defect is in the section the diff does not show |
 | 5 | **Pass 2 — what did pass 1 introduce?** Its own edits are unreviewed |
-| 6 | **Pass 3 — the checklist, box by box, written back to the issue.** Every box ticked with the evidence for it, or named as not done with the reason. **Edit the issue body** — a checklist ticked only in your head leaves the tracker describing work that did not happen. A silently unticked box is how [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of five requirements |
+| 6 | **Pass 3 — audit the checklist, box by box, against what is actually in the tree.** Step 2 ticked the boxes; this pass asks whether each tick has evidence behind it, and unticks any that does not. Every box ends ticked with its evidence, or named as not done with the reason. **A tick is a claim about the tree, not a record of intent** — a checklist ticked from memory leaves the tracker describing work that did not happen, and a silently unticked box is how [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of five requirements |
 | 7 | **Dev-log, commit, open the PR as a draft** |
 | 8 | **Pass 4 — read it as a reviewer who was not here.** The diff, the title, the body, the closing keyword, the base branch, the milestone, the branch↔issue and PR↔issue links. This class of defect is invisible until the unit is a PR |
 | 9 | **Fix what pass 4 found, then mark it ready** |
@@ -74,8 +74,8 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. Four things this arc pins dow
 
 | | |
 |---|---|
-| **Done** | Every box in `Required` resolved — ticked with evidence, or named as not done with the reason. Pass 4 done, PR marked ready, and merged if the mode allows it |
-| **Blocked** | The issue cannot be done as written. **Say why and stop.** Do not redesign the issue, and do not do an adjacent issue instead |
+| **Done** | Every box in `Required` resolved — ticked with evidence, or named as not done with the reason. Pass 4 done, PR marked ready, and merged if the mode allows it. **Then `gh issue edit <NN> --remove-label in-progress`** |
+| **Blocked** | The issue cannot be done as written. **Say why and stop.** Do not redesign the issue, and do not do an adjacent issue instead. **Remove the label here too** — a run that stops still stops, and a label left behind says work is underway when nothing is |
 | **Scope grew** | Record it in the issue's `Spawned` table and finish what you were given. A discovery is not permission to widen the unit |
 
 ## 6 A report run — the workstream boundary
