@@ -95,6 +95,27 @@ mutation run — delete a guard, expect red — is what proved it.
 | `tracker-verify` on the PR | *"targets `arc/04-dogfood` from an issue branch. It belongs to its arc — base it on `arc/04-dogfood`."* The PR **is** based on `arc/04-dogfood`. This is [#183](https://github.com/Calyx-Engineering/arc/issues/183), reproduced |
 | `tracker-verify` on the PR | No milestone, and no `arc-04:` prefix. Both correct, both fixed |
 
+## What pass 4 found
+
+**`createLinkedBranch` reported success and `issue.linkedBranches` reads empty while the branch
+still exists.**
+
+```
+mutation → {"linkedBranch":{"id":"LB_kwDPAAAAAT_xdbnOAPCC_Q",
+                            "ref":{"name":"arc/04-dogfood-issue-155-skill-firing-shapes"}}}
+query    → {"linkedBranches":{"totalCount":0,"nodes":[]}}
+```
+
+The branch is on the remote. The only `connected` event in #155's timeline is timestamped with
+PR [#205](https://github.com/Calyx-Engineering/arc/pull/205)'s cross-reference, so it is the PR
+link, not the branch link. [#194](https://github.com/Calyx-Engineering/arc/issues/194) reads 0 as
+well, so this is not specific to this issue.
+
+[m12](../product-architecture/mechanisms/m12-issue-linking.md) records `issue.linkedBranches` as
+**tested and works**. It does not read back here. **The run instructions mandate
+`createLinkedBranch` to form a link that nothing verifies formed** — which is the same shape as
+the defect this arc exists to fix. Not actioned here; recorded on the issue.
+
 ## Retrospective
 
 **The premise was half right, and the wrong half was the load-bearing one.** *Bare fires* held at

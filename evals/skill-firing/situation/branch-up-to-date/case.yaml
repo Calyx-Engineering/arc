@@ -6,4 +6,6 @@ source:
   turn: 1
   opening: true
 why: >
-  Control. A bare repository question. Nothing should fire, and nothing did.
+  Control. A bare repository question that matches no skill's trigger. Silence is the pass,
+  so this case fails if anything fires — a suite scored only on firing more is satisfied by
+  firing everything.

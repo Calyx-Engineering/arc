@@ -16,6 +16,9 @@ init --bare` returns `` `plugin eval` is currently in early access `` — and **
 it**, so a gate wired to it reports PASS having run nothing.
 [#181](https://github.com/Calyx-Engineering/arc/issues/181) tracks access.
 
+`plugin.json` sets no `experimental.evals` key, because `evals/` is already the default eval
+directory. There is nothing to configure until there is a second suite.
+
 **Consequence for this suite:** `prompt.md` is verbatim and portable, but the `case.yaml` field
 names below are this repository's, not a schema validated against `plugin eval`. Porting is a
 rename, not a re-authoring.
