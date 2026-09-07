@@ -1,0 +1,92 @@
+# Issue #159 — reports are written as narrative, not as conclusion
+
+**Issue:** [#159](https://github.com/Calyx-Engineering/arc/issues/159)  ·  **PR:** [#219](https://github.com/Calyx-Engineering/arc/pull/219)
+
+## Problem
+
+Cluster C3 of the 2026-09 retrospective: reports, READMEs and one spec written as an account of
+the exploration rather than as the current state of knowledge. Five post-install corrections.
+
+`skills/engineering-report` has said *Findings first* since it was written. Nothing has ever
+checked a document against it, and
+[#155](https://github.com/Calyx-Engineering/arc/issues/155) recorded Fire-5 as **unmeasured** for
+exactly that reason — the skill fired once in fifteen sessions, and no session has it firing
+while a report stayed narrative. Until an instrument existed, *"fire it more"* was untested as
+the remedy.
+
+## What changed
+
+| File | |
+| --- | --- |
+| `tools/report-grade.py`, `.sh` | Grades a report's **opening** — first line through the end of the first `##` section — as `CONCLUSION`, `NARRATIVE`, `DEFERRED`, `PREAMBLE`, or unscored. `--file` grades one document and exits on its verdict. 27 selftests |
+| `evals/report-shape/` | Three cases, each an excerpt copied verbatim from a real report in the ROADZ corpus, with the document and line range it came from |
+| `evals/README.md` | A fourth suite, and why it is keyed by document rather than by session and turn |
+| `skills/engineering-report/SKILL.md` | A new **The opening — conclusion first** section; the `description:` trigger clause rebuilt against #155 §1; a *No framing preamble* row in *Point of view*; a grader line in *Before finishing* |
+| `tools/verify-all.sh` | The new selftest is a gate. 15 gates, all clean |
+
+## The result
+
+```
+opens with the conclusion        1/3  0.33
+threshold                        0.67
+verdict                          FAIL
+```
+
+| Case | Verdict | |
+| --- | --- | --- |
+| `cellular-recommendation-first` | `CONCLUSION` | Status header carries the decision, first section is *Recommendation*, nothing between them |
+| `light-dimming-findings-first` | `PREAMBLE` | Everything right except one line — *"Findings and conclusions. The derivations are in the companion notes listed in §6."* |
+| `poe-pse-question-first` | `NARRATIVE` | All three flags. *"Conclusion in Section 9"* on the status line, *"Investigation only"* below it, and `## Question` as the first section |
+
+**The baseline fails, and that is the deliverable.** The three documents were written before any
+of this existed. A passing number was reachable only by picking well-shaped documents or by
+lowering the threshold; both produce a figure that means nothing. Fire-5 was *unmeasured* and is
+now measured.
+
+## Decisions and trade-offs
+
+| Decision | Why |
+| :--- | :--- |
+| **A fourth instrument, not a fourth mode of an existing one** | The three that exist score a *reply* out of a transcript. A report is a file, edited over days, and the turn it was written on says nothing about the shape it ended in |
+| **The case carries the excerpt, and the corpus is checked against it** | The other three suites cannot score at all without their transcripts. This one scores from `excerpt.md` anywhere, and when the corpus *is* present the excerpt is diffed against its source lines and a mismatch fails the run. Portability without dropping the verbatim claim |
+| **The opening only. Nothing below the first `##` is read** | A conclusion in section 9 does not repair an opening. The reader who stops after the first screen never reaches it, and that reader is who the rule exists for |
+| **`UNCLEAR` is reported, never guessed** | A first heading in neither class — *"Load switch rise time"* — could be a findings section named after its subject or a background section named the same way. Crediting it would score an unread opening as a pass. Same reasoning as `BOLDONLY` in `topic-numbering.py` |
+| **The verdict is the worst flag, and every flag prints** | `NARRATIVE > DEFERRED > PREAMBLE`. Opening on the wrong section is a bigger failure than a spare sentence above the right one, and reporting only the worst would hide the other two on a document carrying all three |
+| **A region that does not start at line 1 is `NOTOPENING`** | An excerpt cut from the middle of a document is evidence about a table or a section. Grading it for conclusion-first would score the absence of a status header — the part it simply does not contain — as a defect |
+
+## Unplanned but needed
+
+| | |
+| --- | --- |
+| **`--file`** | The skill now states a rule and names a grader. A check nobody can run against their own document is a check nobody runs, so `--file <path>` grades one document and its exit code *is* the verdict — the opposite of the suite's contract, which reports drift. Three selftests cover both directions and the missing-file case |
+| **`NOTOPENING`** | Added when #164's cases entered the same suite. Without it, three excerpts cut from the middle of documents were being graded for an opening they do not contain, and two of them landed in the denominator |
+
+## What testing the tests found
+
+**The fixture line ranges were wrong and the drift check caught it.** Nine fixtures declared
+`lines: 1-6` against files of seven to nine lines, so every clean run reported drift and exited
+1. The selftest asserted *"a clean run exits 0"* and went red — which is the drift check doing
+its job on its own fixtures before it ever saw a real document.
+
+**Three checks exist because a strict version would be unusable.** A `**Scope:**` line is the
+status header §1 requires. A `> [!WARNING]` callout is a finding about how far results reach —
+the PoE report's damaged-DUT caveat is the reason the skill has a safety section at all. A first
+section named after its subject is not a background section. Each has a fixture, and the real
+`cellular-recommendation-first` case would fail without the first of them.
+
+## Hooks that fired
+
+`mode-guard` read `HANDOFF.md` before the commit and allowed it — the worktree's row says
+**Autonomous** until #159 and #164 merge.
+
+## Retrospective
+
+**The instrument answers a question the other three cannot, and it says so out loud.** Its own
+output ends with *"A rate here is a property of the DOCUMENTS, not of a skill"* — because #155
+settled that firing and adherence move independently, and a number that gets read as a skill
+score would undo that finding.
+
+**What it still cannot do.** There is no probe mode. `--probe` works on the other two scorers
+because a turn can be re-run against the installed plugin; a document cannot be re-written on
+demand. So this suite measures history and will keep measuring history until a report is written
+*with* the skill loaded and scored with `--file`. That is the soak, and it is the next report.

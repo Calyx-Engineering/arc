@@ -1,0 +1,12 @@
+corpus: roadz-sound-system
+document: docs/report/issue-44-poe-pse-onboard/README.md
+lines: 1-33
+why: >
+  The clearest instance of the defect, and it fails all three ways at once. The status header
+  says "Conclusion in Section 9" — a pointer where the conclusion should be. A framing sentence
+  says what the document is rather than what is true. And the first section is "Question", so a
+  reader who stops after the first screen has the investigation's premise and none of its
+  answer.
+  It is not a bad report. Section 9 is a real conclusion and the safety callout is exactly
+  right. What is wrong is the order, which is what this instrument measures and nothing else
+  in the repo does.

@@ -1,6 +1,6 @@
 ---
 name: engineering-report
-description: Use when writing, revising, or restructuring an engineering report — a findings document under report/ or equivalent that records what was investigated, measured, or decided. Invoke before drafting or editing any report document, including companion notes and data notes.
+description: Use when the user asks for a report, a README, a write-up or a findings document to be written or changed, in any wording — "write the report", "write this up", "write up the findings", "update the readme", "add it to the report", "document this", "put it in the notes". Also fires when the request describes this work without naming it: recording what was investigated, measured, decided or ruled out, for a reader who was not there. Fires when the ask is wrapped inside other instructions rather than being the whole message — a report asked for alongside a commit, an issue and three further requests is still this skill's turn. Fires again when the user objects to a document already written: "too much in there", "way too long", "lacking all context", "what does this even mean", "this reads like what you did, not what is true", "i cant tell what the answer is". Covers what goes at the top and what a framing preamble costs, where each claim came from, the confidence split, length, and what never belongs in a report.
 camp-reports: [report-written, report-revised]
 checks: [destination, structure, actions-routed-to-tracker]
 skips:
@@ -22,6 +22,63 @@ in doubt, it is analysis, which is K2. See
 
 ---
 
+## The opening — conclusion first
+
+> **The first section states what is true. Everything a reader needs to act is above the fold,
+> or the report failed.**
+
+This is the rule the whole skill turns on, and it is the one most often broken.
+[#159](https://github.com/Calyx-Engineering/arc/issues/159): five post-install corrections,
+cluster C3 of the 2026-09 retrospective, every one of them a document that led with how the
+answer was reached instead of the answer.
+
+**Write the last section first.** A report drafted in the order the work happened comes out in
+that order, and reordering it afterwards is an edit nobody makes. The finding exists before the
+document does — put it at the top and let the method follow.
+
+### The four shapes that fail
+
+| Shape | What it looks like | Why it fails |
+|---|---|---|
+| **Background first** | The first section is *Question*, *Context*, *Problem*, *Scope*, *Method*, *Approach* or *Investigation* | The reader who stops after the first screen has the premise and none of the answer |
+| **Deferred conclusion** | *"Status: complete. Conclusion in Section 9."* | A pointer where the answer should be. If it fits on the status line, so did the finding |
+| **Framing preamble** | *"This document describes…"*, *"Findings and conclusions."*, *"Investigation only."* | **A fail on its own, with nothing else wrong.** The reader opened the document; they know what it is. It costs a line at the exact point attention is highest |
+| **Development narrative** | *"We first tried X, then found Y"* | State Y. See [Point of view](#point-of-view) |
+
+**A framing preamble is not a small thing.** It is the shape that survives review, because it
+reads as courtesy rather than as a defect, and it sits in the one place where the finding should
+be. If a sentence would still be true of a different report on a different subject, delete it.
+
+### What is not a preamble
+
+| | |
+|---|---|
+| **The status header** | Subject, related issue, author, date, status, scope — `**Status:** …` lines. Required, and §1 says so |
+| **A safety or validity callout** | `> [!WARNING] Every measurement here was taken on a damaged unit.` That is a finding about how far the results reach, and it belongs high |
+| **A first section named after its subject** | *"Load switch rise time"* over a finding is fine. The heading does not have to say *Findings* — the section has to be one |
+
+### The trigger
+
+**Load this skill before the first line of a report is written, not at review.** An opening is
+decided by the order the document is drafted in, and by then the order exists. The situations
+that are this skill's turn even when nothing is called a report:
+
+- A findings document, a README, a companion note, a data note, a spec write-up
+- The user objecting to a document already written — *"too much in there"*, *"lacking all
+  context"*, *"what does this mean"*
+- Restructuring, re-ordering or shortening a document that already exists
+
+### How it is scored
+
+[`tools/report-grade.sh`](../../tools/report-grade.sh) reads a report's opening — its first line
+through the end of its first `##` section — and returns `CONCLUSION`, `NARRATIVE`, `DEFERRED`
+or `PREAMBLE`. It is arithmetic, no model in the loop, and it grades **the document, not the
+session**: whether this skill fired while the report was written is a separate question with a
+separate instrument, which [#155](https://github.com/Calyx-Engineering/arc/issues/155) settled
+move independently. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+
+---
+
 ## Point of view
 
 | Rule | |
@@ -30,6 +87,7 @@ in doubt, it is analysis, which is K2. See
 | **Rejected alternatives are alternatives, not history** | Present them as options with verdicts, not as a sequence of attempts |
 | **No development narrative** | Never "we first tried X, then found Y". State Y |
 | **No first-person journey** | "the hoped-for benefit", "this corrects an earlier version" — all wrong in a report |
+| **No framing preamble** | The document does not describe itself. [The opening](#the-opening--conclusion-first) |
 
 **Corrections are restated as properties of the thing, not as a changelog.** A superseded
 claim becomes a fact about the component or the method:
@@ -110,7 +168,9 @@ link to what replaced it.
 ### 2. Findings first
 
 The top answers **what is true, and what does it cost?** A reader who stops after the first
-screen has the conclusion. Never open with background or method.
+screen has the conclusion. Never open with background or method, and never with a sentence
+explaining what the document is — the four failing shapes, what is exempt, and how it is
+scored are in [The opening](#the-opening--conclusion-first).
 
 ### 3. Safety, health, compliance and test — your analysis, not a question
 
@@ -229,6 +289,8 @@ printed pack or a stitched PDF.
 - Confidence split present, with a populated *not established*
 - No actions, checklists or next steps anywhere in the report
 - No development narrative, no "previously we thought"
+- **The opening grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0.
+  A `NARRATIVE`, `DEFERRED` or `PREAMBLE` verdict names which of the four shapes it hit
 - All internal links resolve
 - Filenames carry a class prefix and no numbers; README lists companions in reading order
 
