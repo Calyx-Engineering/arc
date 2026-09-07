@@ -91,7 +91,8 @@ next_issue() {
 run_issue() {
   local n="$1" prompt
   prompt=$(cat "$INSTRUCTIONS"; echo; echo "---"; echo;
-           echo "# The issue you are executing: #$n"; echo;
+           echo "# You are an issue run"; echo;
+           echo "Sections 1 to 5 above are yours; section 6 is not. The issue is #$n."; echo;
            gh issue view "$n" -R "$REPO" --json title,body --jq '"## " + .title + "\n\n" + .body')
   if [ "$DRY" = 1 ]; then
     echo "  would dispatch issue run for #$n ($(printf '%s' "$prompt" | wc -c) bytes)"
@@ -106,11 +107,11 @@ run_report() {
            cat <<EOF
 # You are a report run
 
-Do no work. Every issue under #$PARENT ($parent_title) is closed.
+Every issue under #$PARENT ($parent_title) is closed.
 
-Read that workstream's merged PRs and their dev-logs, then write the boundary
-report described in section 6 above. 200 words maximum. Post it as a comment on
-#$PARENT and add it to the arc-log's status section. Name what did not get done.
+**Do no work.** Section 6 above is yours; sections 1 to 5 are not. Follow 6.1's
+seven steps in order and write the report to 6.2's shape. The workstream is
+$parent_title.
 EOF
   )
   if [ "$DRY" = 1 ]; then
