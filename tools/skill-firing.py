@@ -2,7 +2,15 @@
 #
 # Reads the transcripts named by FIRING_DIRS and reports, per shipping skill, how often it
 # fired, in how many sessions, and in how many of those it fired at the session's opening.
-import json, os, io, glob
+import json, os, io, glob, sys
+
+# The corpus carries em dashes and the user's own punctuation, and a Windows console defaults to
+# cp1252 — printing a verbatim prompt there raises UnicodeEncodeError or mangles it. Ask for
+# UTF-8 and fall back rather than lose the run over the report's own formatting.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 root = os.environ["FIRING_ROOT_DIR"]
 skdir = os.environ["FIRING_SKILLS"]
@@ -21,14 +29,34 @@ unknown = {}
 sessions = 0
 
 
-def is_user_turn(o):
-    # A message the user wrote, not a tool result carried on a user envelope.
+def is_prompt_turn(o):
+    """A turn that a prompt opened — typed by the user, or dispatched by the loop.
+
+    Everything below arrives on a "user" envelope and none of it is a turn:
+
+      tool_result       the result of a tool call             content[].type == "tool_result"
+      skill injection   a SKILL.md body, injected on a fire   isMeta
+      local command     a slash command's echo and stdout     no promptSource, no origin
+      interrupt         a cancelled tool call                 text "[Request interrupted…"
+      task notification a background agent finishing          origin.kind == "task-notification"
+
+    Counting those inflates the denominator, and the inflation is not uniform: a session where
+    a skill fires early gets its later turns pushed past the opening window by the injection
+    that firing caused. Measuring "at opening" against it biases every number downward.
+    """
+    if o.get("type") != "user" or o.get("isMeta"):
+        return False
     c = (o.get("message") or {}).get("content")
-    if isinstance(c, str):
-        return True
     if isinstance(c, list):
-        return not any(isinstance(x, dict) and x.get("type") == "tool_result" for x in c)
-    return False
+        if any(isinstance(x, dict) and x.get("type") == "tool_result" for x in c):
+            return False
+        joined = "".join(x.get("text", "") for x in c if isinstance(x, dict) and x.get("type") == "text")
+        if joined.startswith("[Request interrupted"):
+            return False
+    kind = (o.get("origin") or {}).get("kind")
+    if kind == "task-notification":
+        return False
+    return o.get("promptSource") == "sdk" or kind == "human"
 
 
 for d in dirs:
@@ -48,7 +76,7 @@ for d in dirs:
         sid = os.path.basename(f)
         userseen = 0
         for o in parsed:
-            if o.get("type") == "user" and is_user_turn(o):
+            if is_prompt_turn(o):
                 userseen += 1
             if o.get("type") != "assistant":
                 continue
@@ -73,7 +101,7 @@ for d in dirs:
 head = "corpus: %d sessions in %d directorie(s)" % (sessions, len(dirs))
 if since:
     head += ", since " + since
-head += "  |  opening = first %d user turns" % opening
+head += "  |  opening = first %d prompt turns" % opening
 print(head)
 print()
 print("%-24s%7s%12s%14s" % ("skill", "fires", "sessions", "at opening"))
