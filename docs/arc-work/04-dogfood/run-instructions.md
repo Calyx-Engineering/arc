@@ -1,8 +1,17 @@
-# Arc 04 dogfood — executing one issue
+# Arc 04 dogfood — how a run behaves
 
-**You are one iteration of a loop.** Fresh session, no memory of the iterations before you. One
-issue, start to finish, then stop. The repository is the only state that survives you — nothing
-you hold in context reaches the next run.
+**You are one iteration of a loop.** Fresh session, no memory of the iterations before you. The
+repository is the only state that survives you — nothing you hold in context reaches the next run.
+
+**The driver tells you which kind of run you are, and they share almost nothing.**
+
+| | Does | Reads |
+|---|---|---|
+| **An issue run** | One issue, start to finish, then stops. Its record is three things: **the issue's own checklist, ticked with evidence**, the dev-log, and the PR body. It never writes a boundary report, having seen one issue | **§1–§5**, then §7 |
+| **A report run** | No work at all. Reads a closed workstream's merged PRs and dev-logs, writes its boundary report, and hands back | **§6**, then §7 |
+
+**§7 applies to both.** If you are an issue run, §6 is not yours; if you are a report run, §2's
+review passes are not.
 
 ## 1 What you read
 
@@ -29,10 +38,10 @@ repeated pass asking the same one finds nothing.
 |---|---|
 | 1 | **Read the issue. Write the test or eval case first.** It is the spec — writing it after the fix is grading your own homework |
 | 2 | **Implement** |
-| 3 | **Run the gate. The exit code, not a claim.** `bash tools/verify-all.sh` always, plus whatever the issue's *Done when* names — `claude plugin eval --threshold`, `bash tools/verify-hook.sh`, a `gh` read-back |
+| 3 | **Run the gate. The exit code, not a claim.** `bash tools/verify-all.sh` always, plus whatever the issue's *Done when* names — `bash tools/verify-hook.sh`, `bash tools/skill-firing.sh`, a `gh` read-back |
 | 4 | **Pass 1 — is every requirement met?** Read every changed file end to end against the issue. **Whole files, never the diff** — the defect is in the section the diff does not show |
 | 5 | **Pass 2 — what did pass 1 introduce?** Its own edits are unreviewed |
-| 6 | **Pass 3 — the checklist, box by box.** Every box ticked with the evidence for it, or named as not done with the reason. A silently unticked box is how [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of five requirements |
+| 6 | **Pass 3 — the checklist, box by box, written back to the issue.** Every box ticked with the evidence for it, or named as not done with the reason. **Edit the issue body** — a checklist ticked only in your head leaves the tracker describing work that did not happen. A silently unticked box is how [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of five requirements |
 | 7 | **Dev-log, commit, open the PR as a draft** |
 | 8 | **Pass 4 — read it as a reviewer who was not here.** The diff, the title, the body, the closing keyword, the base branch, the milestone, the branch↔issue and PR↔issue links. This class of defect is invisible until the unit is a PR |
 | 9 | **Fix what pass 4 found, then mark it ready** |
@@ -59,40 +68,65 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. Four things this arc pins dow
 | **Branch** | `arc/04-dogfood-issue-<NN>-<hint>`, cut from `arc/04-dogfood`. From `createLinkedBranch`, never `git checkout -b` — otherwise no branch↔issue link forms, and the mutation cannot link a branch that already exists |
 | **Dev-log** | `docs/dev-log/issue-<NN>-<slug>.md` |
 | **A run commits** | A loop cannot ask, so the driver dispatches into autonomous mode and `HANDOFF.md`'s row says so. **If it does not, `hooks/mode-guard` denies the commit** — that is correct, and the fix is the mode row, never a workaround |
-| **A run does not merge** | Until [#138](https://github.com/Calyx-Engineering/arc/issues/138) lands, merging needs a route that does not exist. Open the PR and stop |
+| **A run merges its own PR** | In autonomous mode, and only there. `hooks/mode-guard` reads `HANDOFF.md` before the merge as it does before the commit, so manual stops it at the same place |
 
 ## 5 When you stop
 
 | | |
 |---|---|
-| **Done** | Every box in `Required` resolved — ticked with evidence, or named as not done with the reason. Pass 4 done, PR marked ready |
+| **Done** | Every box in `Required` resolved — ticked with evidence, or named as not done with the reason. Pass 4 done, PR marked ready, and merged if the mode allows it |
 | **Blocked** | The issue cannot be done as written. **Say why and stop.** Do not redesign the issue, and do not do an adjacent issue instead |
 | **Scope grew** | Record it in the issue's `Spawned` table and finish what you were given. A discovery is not permission to widen the unit |
 
-## 6 What you write
+## 6 A report run — the workstream boundary
 
-**There are two kinds of run.** The driver tells you which one you are.
+**Only for a report run.** An issue run never reaches this section. Its record is the issue's own
+checklist ticked with evidence (§2 step 6), the dev-log and the PR body (§2 step 7) — the issue
+body has to end up saying what was actually done, or the tracker and the work disagree.
+
+### 6.1 At the boundary, in this order
+
+**The boundary is a handover, not a finish line.** Seven steps, and the last three are what makes
+it a review rather than an announcement.
 
 | | |
 |---|---|
-| **An issue run** | Does the work. Writes the dev-log and the PR body. That is its whole record — it never writes the boundary report, because it only ever saw one issue |
-| **A report run** | Does no work. Reads the workstream's merged PRs and dev-logs, writes the boundary report, stops |
+| 1 | The workstream's last issue closes and its PR merges |
+| 2 | **Read the workstream's record**, and only that: every child issue's body, every merged PR, every dev-log. **The issue bodies are the point** — a box left unticked, or ticked with no evidence, is what section 6.2's *Not done* is for. Do not read the issue plan, and do not open the code |
+| 3 | Write the report into the arc-log's status section, as `#### <n>.<m>.1` onward |
+| 4 | Post the same report as a comment on the **workstream parent issue** — that is where it gets read |
+| 5 | **Set `HANDOFF.md`'s Execution mode row to Manual.** The named boundary was reached, so the grant is spent. Dropping to manual is yours to do; raising it never is |
+| 6 | **Leave the parent issue open.** All children closed is mechanical completion, not review. Closing it removes the surface the report is read on and buries the report in a closed issue |
+| 7 | Stop. The next workstream is a separate invocation and a separate grant |
 
-### The boundary report — 200 words maximum
+**Step 5 before step 7, not after.** A run that finishes the work and then keeps going has not
+reached a boundary — it has passed one.
 
-**Six numbered sections, in this order.** Numbered so the user can answer by number, and because
-an unnumbered report reads as one block and gets skimmed.
+### 6.2 The boundary report — 200 words maximum
+
+**Seven sections, in this order, as `####` headings numbered under the report's own number** —
+`#### 6.2.1 Delivered`, `#### 6.2.2 Spawned`. They are sections, not list items: a heading is
+citable, appears in the document outline, and can be answered by number. A bold lead-in inside
+a paragraph is none of those.
 
 | | Holds |
 |---|---|
-| **1 Delivered** | What the workstream actually produced, in the user's terms. Two sentences. Not a list of commits |
-| **2 Spawned** | Every issue this workstream filed, by number, one clause each. If none, say none |
+| **1 Delivered** | What the workstream produced, in the user's terms. **A numbered list**, one line each. Not a list of commits |
+| **2 Spawned** | Every issue this workstream filed. **A table**: the number, one clause, and **where it routed** — this workstream, another one, elsewhere in the arc, or out of it. Routing is the half a reader needs and the half most often left out. If none, say none |
 | **3 Unexpected** | What was not foreseen — a wrong premise, a blocked dependency, a defect found in passing. **The section most likely to be omitted, and the one worth most** |
 | **4 Unplanned but needed** | Functional changes nobody scoped that the work could not proceed without, and why |
 | **5 Evidence** | Gate output. `verify-all.sh` exit, scores before and after |
 | **6 Not done** | Named, with the reason |
+| **7 What it changed** | The diagram, where one helps. Optional — see below |
 
-A diagram may follow and does not count against the 200.
+**A list is a list.** Items separated by `·` inside a paragraph are prose wearing a list's
+clothes: they cannot be scanned, and they cannot be answered by number. **Sections 1, 3 and 6 are
+lists; 2, 4 and 5 are tables; 7 is the diagram.** Nothing in a report is a run-on sentence of
+items.
+
+**Section 7 is optional and does not count against the 200.** Where there is no diagram, the
+report has six sections. Where there is one, it gets a heading — loose after section 6 it reads
+as a picture of what was not done.
 
 **Number the heading and frame the block.** The arc-log numbers every heading, `## 6`, `### 6.1`;
 a report landing there as an unnumbered `###` breaks the document's own convention and cannot be
@@ -106,7 +140,7 @@ it reads as more of the page.
 
 **Workstream:** <name> · **Closed:** <date> · **<N> words**, diagram excluded
 
-…the six sections, then the diagram…
+…sections 1 to 6, then 7 if there is a diagram…
 
 *End of <Workstream>'s boundary report.*
 
@@ -129,3 +163,6 @@ defending it.
 | Commit to the default branch | `CLAUDE.md` — everything happens on a branch |
 | Take on a second issue | One issue is the unit. Stop |
 | Choose your own issue | The driver picks — [arc-log §3.1](../../arc-log/arc-04-dogfood.md#31-how-a-run-knows-which-issue-is-next). A run that selects its own work has read the whole milestone to do it |
+| Commit, push, PR or merge when the mode says manual | Propose and wait. `hooks/mode-guard` denies it, and a denial is the rule working, not an obstacle |
+| Set the mode to autonomous | Only the user raises it. You may set it to manual — that removes authority rather than granting it |
+| Close a workstream parent | It stays open until the user closes it. All children closed is completion, not review — §6.1 |

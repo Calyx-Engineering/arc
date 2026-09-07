@@ -104,9 +104,14 @@ unproven.
 
 ### 3.3 The report at a workstream boundary
 
-**200 words maximum**, written into [§6](#6-status) as a block under that workstream. Durable there
-in a way a PR comment is not. Sections in
-[`run-instructions.md` §6](../arc-work/04-dogfood/run-instructions.md#6-what-you-write).
+**200 words maximum**, written into [§6](#6-status) under that workstream's own number. Durable
+there in a way a PR comment is not, and posted on the workstream parent issue, which is where it
+is read.
+
+**The boundary is a handover.** The mode drops to manual, the parent issue stays open until the
+user closes it, and the next workstream is a separate grant. Sections, shapes and the ordered
+sequence are in
+[`run-instructions.md` §6](../arc-work/04-dogfood/run-instructions.md#6-a-report-run--the-workstream-boundary).
 
 ### 3.4 What is least certain, and why
 
@@ -166,50 +171,91 @@ Each workstream's 200-word boundary report lands here when it closes.
 
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|
-| **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 4 | **Closed, 4 of 4.** Report below |
-| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | Not started. **Unblocked** — the baseline exists |
-| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | Not started. **Unblocked** |
+| **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | Not started. Unblocked — the baseline exists |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | Not started. Unblocked |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | Not started |
-| **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 7 | Not started |
+| **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | Not started |
 
-### 6.1 Closed before the workstreams existed
+### 6.1 The retrospective and the plan
 
-| Issue | Dev-log | |
+The arc's scoping phase. Two of its three units were tooling the retrospective could not run without.
+
+| Unit | Dev-log | |
 |---|---|---|
 | [#132](https://github.com/Calyx-Engineering/arc/issues/132) local edits never reach the installed plugin | [issue-132-plugin-reload](../dev-log/issue-132-plugin-reload.md) | **Merged** — [PR #137](https://github.com/Calyx-Engineering/arc/pull/137). Closed and linked by hand |
 | [#17](https://github.com/Calyx-Engineering/arc/issues/17) transcript-miner, friction mode | [issue-17-transcript-miner](../dev-log/issue-17-transcript-miner.md) | **Merged** — [PR #139](https://github.com/Calyx-Engineering/arc/pull/139). Closed and linked by hand |
-| — the retrospective and the plan | [pr-133-dogfood-retrospective](../dev-log/pr-133-dogfood-retrospective.md) | **Open** — [PR #133](https://github.com/Calyx-Engineering/arc/pull/133), draft |
+| The retrospective, the plan, `run-instructions.md` and the driver | [pr-133-dogfood-retrospective](../dev-log/pr-133-dogfood-retrospective.md) | **Merged** — [PR #133](https://github.com/Calyx-Engineering/arc/pull/133) |
 
-**All 36 are filed**, plus five workstream parents and three held out of the milestone. The
-planning session collapsed to two subjects and both were settled in conversation — the merge
-route, and what a working handoff is.
+**The planning session collapsed from 110 minutes to about 15.** Five of its seven questions were
+asking the user to re-approve decisions already made. The two that were real — the merge route,
+and what a working handoff is — were settled in conversation.
 
 ---
 
 ### 6.2 Loop — boundary report
 
-**Workstream:** Loop · **Closed:** 2026-09-07 · **176 words**, diagram excluded
+**Workstream:** Loop · **Closed:** 2026-09-07 · **199 words**, diagram excluded
 
-**1 Delivered.** A merge that runs without the user asking for it, and a number for how often each skill fires. Both were preconditions for every other workstream and neither existed.
+#### 6.2.1 Delivered
 
-**2 Spawned.** [#173](https://github.com/Calyx-Engineering/arc/issues/173) onboarding collision detector · [#174](https://github.com/Calyx-Engineering/arc/issues/174) response verbosity setting · [#175](https://github.com/Calyx-Engineering/arc/issues/175) cold-start reading path · [#177](https://github.com/Calyx-Engineering/arc/issues/177) command copies · [#181](https://github.com/Calyx-Engineering/arc/issues/181) `plugin eval` regression gate · [#183](https://github.com/Calyx-Engineering/arc/issues/183) `tracker-verify` false positive · [#185](https://github.com/Calyx-Engineering/arc/issues/185) report budget check.
+Three preconditions for every other workstream. None existed.
 
-**3 Unexpected.** [#149](https://github.com/Calyx-Engineering/arc/issues/149) was designed around `claude plugin eval` and **the command had never been run** — it is gated behind early access, and 18 issues rested on it. The measurement already existed in the transcripts. Separately, `tracker-verify` called a conforming PR base wrong four times out of four.
+1. Commits, pushes, PRs and merges run when the mode allows them
+2. They stop when it does not
+3. A number for how often each skill fires
 
-**4 Unplanned but needed.** `CLAUDE.md` 231 → 141 lines — the duplication *was* the defect. `verify-autonomy.sh` inverted, because it enforced the thing being removed. Three new tools: `verify-skill-registry`, `miner-scope`, `skill-firing`.
+#### 6.2.2 Spawned
 
-**5 Evidence.** 10 gates, exit 0. Four PRs merged unasked. Baseline: `handoff` 0/11 at an opening, `work-watch` 1 fire in 11, `chat-response` 4/11 — every skill fired at least once, so the defect is frequency.
+| Issue | | Routed to |
+|---|---|---|
+| [#173](https://github.com/Calyx-Engineering/arc/issues/173) | Onboarding detects duplicated rules | **Out** — m47 |
+| [#174](https://github.com/Calyx-Engineering/arc/issues/174) | Agreement tunes verbosity | Upkeep |
+| [#175](https://github.com/Calyx-Engineering/arc/issues/175) | Cold-start reading path | Upkeep |
+| [#177](https://github.com/Calyx-Engineering/arc/issues/177) | Delete command copies | Upkeep |
+| [#181](https://github.com/Calyx-Engineering/arc/issues/181) | `plugin eval` gate — blocked | **Out** — no milestone |
+| [#183](https://github.com/Calyx-Engineering/arc/issues/183) | `tracker-verify` false positive | Fire |
+| [#185](https://github.com/Calyx-Engineering/arc/issues/185) | Report budget unchecked | Upkeep |
+| [#190](https://github.com/Calyx-Engineering/arc/issues/190) | Verifiers into `tests/` | Upkeep |
 
-**6 Not done.** `plugin eval` regression testing — [#181](https://github.com/Calyx-Engineering/arc/issues/181), out of the milestone. Nothing waits on it.
+#### 6.2.3 Unexpected
+
+- [#149](https://github.com/Calyx-Engineering/arc/issues/149) rested on `claude plugin eval`, and **the command had never been run**. The measurement was already in the transcripts
+- In manual mode, [PR #186](https://github.com/Calyx-Engineering/arc/pull/186), [#187](https://github.com/Calyx-Engineering/arc/pull/187) and [#188](https://github.com/Calyx-Engineering/arc/pull/188) merged **unasked**, hours after [#138](https://github.com/Calyx-Engineering/arc/issues/138) consolidated that rule
+- [#138](https://github.com/Calyx-Engineering/arc/issues/138) built only the permitting half of the switch
+
+#### 6.2.4 Unplanned but needed
+
+| | |
+|---|---|
+| [#189](https://github.com/Calyx-Engineering/arc/issues/189) | `mode-guard` reads the mode before every commit, push, PR and merge. The switch is asymmetric: Claude may set Manual, never Autonomous |
+| `CLAUDE.md` | 231 → 141 lines |
+| `verify-autonomy.sh` | Inverted — it enforced what was removed |
+
+#### 6.2.5 Evidence
+
+| | |
+|---|---|
+| `verify-all.sh` | 11 gates, exit 0 |
+| `mode-guard` | 14 passed, 0 failed |
+| Baseline | `handoff` 0/11 at an opening · `work-watch` 1 in 11 |
+
+#### 6.2.6 Not done
+
+- `plugin eval` regression — [#181](https://github.com/Calyx-Engineering/arc/issues/181), awaiting early access
+- `mode-guard` has never fired live — needs a session restart
+
+#### 6.2.7 What it changed
 
 ```mermaid
 flowchart LR
-    A["#138 mode rule<br/>5 statements → 1"] --> M["merge runs<br/>unasked"]
-    B["#142 delete 13<br/>skill copies"] --> M
-    C["#141 miner scope<br/>IN / NEAR / SKIP"] --> D["a briefed run reads<br/>only what it was given"]
-    G["#149 skill-firing<br/>baseline from transcripts"] --> H["Fire · 13<br/>Handoff · 6"]
+    A["#138 mode rule<br/>5 statements → 1"] --> M["commit, push, PR and merge<br/>happen when permitted,<br/>and only then"]
+    B["#142 delete 13<br/>duplicate skills"] --> M
+    N["#189 mode-guard<br/>reads the mode<br/>before each of them"] --> M
+    C["#141 miner scope"] --> D["a briefed run reads<br/>only what it was given"]
+    G["#149 skill-firing<br/>baseline"] --> H["Fire · 13<br/>Handoff · 6<br/>unblocked"]
     E["#181 plugin eval"]:::blocked -.->|"early access"| I["regression gate"]:::blocked
-    classDef blocked fill:#fff3cd,stroke:#e0a800
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
 ```
 
 *End of Loop's boundary report.*
