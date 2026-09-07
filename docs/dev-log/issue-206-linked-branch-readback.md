@@ -2,7 +2,7 @@
 
 > Decision log, not a spec.
 
-**Issue:** [#206](https://github.com/Calyx-Engineering/arc/issues/206)  ·  **PR:** written in once the PR exists, never predicted — the first draft of this line guessed #220, which turned out to be another issue's merged PR
+**Issue:** [#206](https://github.com/Calyx-Engineering/arc/issues/206)  ·  **PR:** [#223](https://github.com/Calyx-Engineering/arc/pull/223) — written in after it opened. The first draft of this line predicted #220, which turned out to be another issue's merged PR
 
 ## Problem
 
@@ -59,6 +59,11 @@ two:
 **So the read-back after the mutation is the load-bearing one**, and the same check at pass 4
 verifies the closure binding instead. The tool prints which of the three it found rather than
 collapsing them into one `PASS`.
+
+**The lifecycle then reproduced on this issue's own branch.** Before PR #223 existed the check
+read `PASS branch link`. After it opened, the same command reads
+`PASS PR link — PR #223 … cannot be told apart`, because this PR body carries `Closes #206` like
+every arc PR. The tool predicted its own reading and got it.
 
 **So #155's read was correct and its conclusion was not.** Its pass 4 ran after PR #205 existed
 (PR opened 06:55:14Z, the finding committed 06:58:59Z, the branch not deleted until 07:11:49Z), so
