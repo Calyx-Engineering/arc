@@ -1,7 +1,7 @@
 # Mechanism — Branch / Worktree Guard
 
-**Status:** partial — one of three checks has a working precedent; the other two are
-undesigned.
+**Status:** built — all three checks fire in `hooks/branch-guard` ([#161](https://github.com/Calyx-Engineering/arc/issues/161)).
+Where the guard learns the branch convention is still open.
 **Home:** Arc — Workspace guard.
 **Src:** 🔥 observed.
 **Covers:** m10.
@@ -31,14 +31,16 @@ to recover; the others cost minutes each but recur.
 
 Each failure above is a different check:
 
-| Check | Catches | Precedent |
+| Check | Catches | Built as |
 |---|---|---|
-| **Branch** — is this the right branch for the work? | Work landing on the wrong parent — the 08-03 incident | TimeScope's `block_source_edits.js` |
-| **Worktree** — is this window the one opened for this issue? | Editing in a worktree opened for something else | None |
-| **Base freshness** — was this branch cut before other work merged? | A silently stale branch | None |
+| **Branch** — is this the right branch for the work? | Work landing on the wrong parent — the 08-03 incident | Branch kind against a writable-path list |
+| **Worktree** — is this window the one opened for this issue? | Editing in a worktree opened for something else | An absolute path landing in another worktree of the *same* repository |
+| **Base freshness** — was this branch cut before other work merged? | A silently stale branch | `HEAD..<base>` count — `origin/<base>` if it is there, the local ref otherwise — said once per base commit |
 
-**Ship the branch check first.** One working check beats three half-finished, and the branch
-check is the one that maps to the session-costing failure.
+**The branch check shipped first**, and the other two followed in
+[#161](https://github.com/Calyx-Engineering/arc/issues/161) once each had a condition narrow
+enough to deny on. All three deny only their own condition; anything the guard cannot classify
+is allowed.
 
 ---
 
@@ -149,21 +151,32 @@ bash.**
 
 ---
 
+## Decided in the build
+
+**Worktree identity — decided by narrowing, not by a session signal.** Nothing ties a Claude
+Code session to the worktree it was opened for, and the guard does not need it to: the payload's
+`cwd` names the tree the session is in, so an absolute path landing in a *different worktree of
+the same repository* is the failure, and that is what it denies. A different clone stays allowed —
+mirrored files are edited in two repos in one session by design.
+
+**Base freshness without noise — said once per base commit.** A stale branch is only worth a
+word when the base actually moved, and only once: the deny is stamped under the worktree's git
+dir, keyed on the base's sha, so the next merge into the base speaks again and nothing else does.
+The stamp is written before the deny, so a stamp that cannot be written means silence rather than
+a branch nobody can edit.
+
+---
+
 ## What is not decided
 
 **Where the guard learns what is correct.** Branch naming is per-repo — ROADZ names arcs
 after the product component being revised, TimeScope uses a free slug. The guard needs that
 convention from somewhere: repo config, the arc-log, or inference from the current branch.
 
-**Worktree identity.** No signal ties a Claude Code session to the worktree it was opened
-for. The transcript directory slug encodes the working directory, which may be enough.
-
-**Base freshness without noise.** A branch cut before other work merged is only a problem
-if that work matters. Firing on every stale branch would be constant.
-
-**Whether it denies or warns.** Denying a source edit on the wrong branch is correct for
-software. In guided hardware work the "source" is a CAD file edited outside the session,
-which the hook never sees.
+**Whether it denies or warns in a hardware repo.** Denying a source edit on the wrong branch
+is correct for software, and that is what ships. In guided hardware work the "source" is a CAD
+file edited outside the session, which the hook never sees — so what the guard should do there
+is still open.
 
 ---
 

@@ -73,7 +73,7 @@ moves next; this column only reports.
 | ID | Mechanism | Src | Payoff | Spec | Status |
 |---|---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | | |
-| m10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/m10-branch-guard.md) | ⚪ |
+| m10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/m10-branch-guard.md) | 🔵 |
 | m12 | Issue linking | 🔥 | **Everything links, nothing strays.** *Branch↔issue and PR↔issue links form; the PR targets the arc branch* | [spec](mechanisms/m12-issue-linking.md) | ⚪ |
 | m42 | Default branch flip | 🔥 | **Closing keywords bind inside an arc.** *Offers to point the default branch at the arc for its lifetime, on preconditions it checks itself; restores at close* | [spec](mechanisms/m42-default-branch-flip.md) | ⚪ |
 | m14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/m14-commit-rhythm.md) | ⚪ |
