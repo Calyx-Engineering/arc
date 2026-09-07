@@ -1,6 +1,6 @@
 # Issue #164 — a claim records where it came from
 
-**Issue:** [#164](https://github.com/Calyx-Engineering/arc/issues/164)  ·  **PR:** [#219](https://github.com/Calyx-Engineering/arc/pull/219)
+**Issue:** [#164](https://github.com/Calyx-Engineering/arc/issues/164)  ·  **PR:** [#224](https://github.com/Calyx-Engineering/arc/pull/224)
 
 ## Problem
 

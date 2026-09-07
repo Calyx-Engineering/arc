@@ -1,6 +1,6 @@
 # Issue #159 — reports are written as narrative, not as conclusion
 
-**Issue:** [#159](https://github.com/Calyx-Engineering/arc/issues/159)  ·  **PR:** [#219](https://github.com/Calyx-Engineering/arc/pull/219)
+**Issue:** [#159](https://github.com/Calyx-Engineering/arc/issues/159)  ·  **PR:** [#224](https://github.com/Calyx-Engineering/arc/pull/224)
 
 ## Problem
 
