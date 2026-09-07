@@ -138,6 +138,14 @@ sequence are in
 | **No standing merge grant has ever existed here** | Since Arc was installed, no merge has run without an explicit per-merge request. [#138](https://github.com/Calyx-Engineering/arc/issues/138) is building a route, not recovering a lost one |
 | **Issue writing is in scope** | The user's call: *"good issue writing and naming has become a critical core to the development workflow."* Six issues carry it |
 
+### 4.1 Judgement calls made unattended — 2026-09-07, workstream #145
+
+**These were decided without the user, during an overnight autonomous run of [#145](https://github.com/Calyx-Engineering/arc/issues/145).** The grant was explicit — *"try to answer any questions yourself… what is most important is that any subjective things are documented so i can probe them later."* Every row is a call that could reasonably have gone the other way. **Each is reversible; none is load-bearing until reviewed.**
+
+| Call | Made because | Reverse by |
+|---|---|---|
+| **[#156](https://github.com/Calyx-Engineering/arc/issues/156) merged with its `Done when` unverified** | `claude plugin eval` is gated and exits non-zero, so no behavioural evidence was obtainable. The change is purely additive — all eight prior trigger phrases survive — and the half that *is* measurable improved: bare-shape coverage 3/6 → 6/6 under `tools/skill-cases.sh`. The unmeasurable half needs a live session opening, which no gate can supply. Blocking on it would have stalled [#157](https://github.com/Calyx-Engineering/arc/issues/157)–[#160](https://github.com/Calyx-Engineering/arc/issues/160) identically; [#181](https://github.com/Calyx-Engineering/arc/issues/181) tracks the gate | Revert [PR #207](https://github.com/Calyx-Engineering/arc/pull/207). One file of substance, `skills/camp/SKILL.md`'s `description:` |
+
 ## 5 The tree
 
 Classified by cause. [PR #133](https://github.com/Calyx-Engineering/arc/pull/133) is the
