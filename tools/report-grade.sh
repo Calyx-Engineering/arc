@@ -219,6 +219,70 @@ if [ "$SELFTEST" = "1" ]; then
   printf 'The measured gain is 41.7x on the bench. However the estimated gain from the instrument is 24.7x, and we are taking the estimate as correct.\n' \
     > "$E/conflictweak/excerpt.md"; pad conflictweak conflictweak.md 39
 
+
+  # ---- fixtures for the review-pass fixes. Each goes RED if its fix is reverted. -------
+  # Six of the nine pass-1 fixes shipped with no fixture behind them, which is how a fix that
+  # made things worse got through a green selftest.
+
+  mk uncleardeferred uncleardeferred.md 1-7
+  # The reorder. An unclassified heading must not hide a deferred conclusion: before the fix
+  # this scored UNCLEAR, unscored, exit 0 — on the shape the skill explicitly blesses.
+  printf '# A title\n\n**Status:** done. Conclusion in Section 9.\n\n## Load switch rise time\n\n336 us.\n' \
+    > "$E/uncleardeferred/excerpt.md"; sync uncleardeferred uncleardeferred.md
+
+  mk investigation investigation.md 1-5
+  # The roman-numeral lookahead. "Investigation" lost its I and became unclassifiable, and it is
+  # named in the skill's own list of failing shapes.
+  printf '# A title\n\n## Investigation\n\nWhat we looked at.\n' \
+    > "$E/investigation/excerpt.md"; sync investigation investigation.md
+
+  mk statushead statushead.md 1-5
+  # `status` and `state` were in the findings class, so a section headed Status scored as a
+  # conclusion. Unclassified is the right answer: it is neither.
+  printf '# A title\n\n## Status\n\nComplete.\n' \
+    > "$E/statushead/excerpt.md"; sync statushead statushead.md
+
+  mk crossref crossref.md 1-9
+  # A cross-reference is not a deferred conclusion. "The findings in Section 3 are unchanged"
+  # points at related work, not at where this document's own answer should be.
+  printf '# A title\n\n**Status:** current\n\nThe findings in Section 3 are unchanged by this revision.\n\n## Findings\n\nThe part is fast enough.\n' \
+    > "$E/crossref/excerpt.md"; sync crossref crossref.md
+
+  mk halfsourced halfsourced.md 40-44
+  # Half a table sourced is the defect, not a pass. Adjacent rows, one measured and one not,
+  # with nothing saying which is which.
+  printf '| Signal | Claim |\n|---|---|\n| A | measured on the bench at 3.1 V |\n| B | 4.2 V |\n' \
+    > "$E/halfsourced/excerpt.md"; pad halfsourced halfsourced.md 39
+
+  mk extrapolated extrapolated.md 40-43
+  # `extrapolat` could never match inside \b(?:...)\b. It is the headline word of `inferred`.
+  printf 'The schematic gives 3.3 V. But the 5 V figure is extrapolated from the 3.3 V curve.\n' \
+    > "$E/extrapolated/excerpt.md"; pad extrapolated extrapolated.md 39
+
+  mk pipedprose pipedprose.md 40-43
+  # Dropping every line containing a pipe deleted |Vgs|, |Z| and |S21| — and with them whole
+  # conflicts, silently, into ONESIDED. Only a line that STARTS with a pipe is a table row.
+  printf 'The datasheet limit is |Vgs| < 20 V. However the measured rail is 3.0 V.\n' \
+    > "$E/pipedprose/excerpt.md"; pad pipedprose pipedprose.md 39
+
+  mk fencedconflict fencedconflict.md 40-46
+  # A fenced sample naming two sources is sample text. grade_conflict was the only reader in the
+  # file that did not track fences.
+  printf 'Prose with one source: the schematic.\n\n```\nmeasured = 1\ndatasheet = 2\n```\n' \
+    > "$E/fencedconflict/excerpt.md"; pad fencedconflict fencedconflict.md 39
+
+  mk agreement agreement.md 40-43
+  # CONTRAST used to include `against the` and `wins`. A sentence about agreement is not a
+  # contrast, and it put a false RESOLVED in the numerator.
+  printf 'We plotted the measured curve against the datasheet curve; they agree.\n' \
+    > "$E/agreement/excerpt.md"; pad agreement agreement.md 39
+
+  mk unreadable unreadable.md 40-43
+  # A contrast with a source on only one side of it. There is no direction to read, so none is
+  # claimed — and "no direction derivable" must not default to the pass verdict.
+  printf 'The measured signature is class 4 and a photograph shows three kill lines. But that is a separate issue.\n' \
+    > "$E/unreadable/excerpt.md"; pad unreadable unreadable.md 39
+
   out="$(score "$C" "$E" 2>&1)"; st=$?
   P=0; F=0
   t() {
@@ -242,10 +306,10 @@ if [ "$SELFTEST" = "1" ]; then
   t "a bold-label Scope line is status header, not prose" "CONCLUSION +scopeline$"
   t "a warning callout is content, not a preamble"        "CONCLUSION +callout$"
   t "a heading inside a fence is not the first section"   "CONCLUSION +fenced$"
-  t "fails are counted by kind"                           "narrative 1, deferred 1, preamble 1"
+  t "fails are counted by kind"                           "narrative 2, deferred 2, preamble 1"
   t "a region that is not an opening is not scored"       "NOTOPENING +midtable +\(region 40-44 does not start at line 1\)"
-  t "unscored verdicts are counted apart, by kind"        "not scored 13 \(unclear heading 1, no section 1, not an opening 11\)"
-  t "the rate counts every fail in the denominator"       "opens with the conclusion +4/7"
+  t "unscored verdicts are counted apart, by kind"        "not scored 20 \(unclear heading 2, no section 1, not an opening 17\)"
+  t "the rate counts every fail in the denominator"       "opens with the conclusion +5/10"
   t "a rate below the threshold is a FAIL verdict"        "^verdict +FAIL"
   t "the score is not what the exit code reports"         "Not the score"
   t "a provenance column scores ROWS"                     "table source: ROWS +column: Provenance"
@@ -262,11 +326,21 @@ if [ "$SELFTEST" = "1" ]; then
   t "a weaker source asserted out loud is WEAKWINS"       "conflict:     WEAKWINS in play: measured, inferred"
   t "the weaker source it asserts is named"                "asserted over the rest: inferred"
   t "a sourced ledger is not read as a silent conflict"    "table source: ROWS +terms carried in every row"
-  t "table verdicts are counted by kind"                  "tables: sourced by row 2, unsourced 2, one source in the lead-in 1 \(not scored\), no table 15"
-  t "conflict verdicts are counted by kind"               "conflicts: resolved out loud 1, silent 2, one source only 16 \(not scored\), weaker source asserted 1 \(reported\)"
-  t "the table column has its own rate"                   "table rows carry a source +2/4"
-  t "the conflict column has its own rate"                "conflicts resolved out loud +1/3"
-  t "a matching corpus is not reported as drift"          "report-grade — 20 case"
+  t "table verdicts are counted by kind"                  "tables: sourced by row 2, unsourced 3, one source in the lead-in 1 \(not scored\), no table 24"
+  t "conflict verdicts are counted by kind"               "conflicts: resolved out loud 2, silent 3, one source only 22 \(not scored\), weaker source asserted 2 \(reported\)"
+  t "the table column has its own rate"                   "table rows carry a source +2/5"
+  t "the conflict column has its own rate"                "conflicts resolved out loud +2/5"
+  t "an unclassified heading does not hide a deferral" "DEFERRED   +uncleardeferred +flags: deferred"
+  t "Investigation is reachable as a first word"       "NARRATIVE  +investigation +flags: background-first"
+  t "a section headed Status is not a conclusion"      "UNCLEAR    +statushead"
+  t "a cross-reference is not a deferred conclusion"   "CONCLUSION +crossref$"
+  t "half a table sourced is a fail, not a pass"       "table source: NONE    1 of 2 row"
+  t "extrapolated is recognised as inferred"           "conflict:     WEAKWINS in play: schematic, inferred"
+  t "a pipe inside prose does not delete the line"     "conflict:     RESOLVED in play: measured, datasheet"
+  t "a fenced sample is not a conflict"                "NOTOPENING +fencedconflict +\(region 40-46"
+  t "a sentence about agreement is not a contrast"     "NOTOPENING +agreement +\(region 40-43"
+  t "no derivable direction is not scored as a pass"   "conflict:     UNREADABLE in play: measured, photograph"
+  t "a matching corpus is not reported as drift"       "report-grade — 30 case"
   if printf '%s' "$out" | grep -q "EXCERPT DRIFT"; then
     echo "  FAIL  a matching excerpt is not reported as drift"; F=$((F+1))
   else
@@ -291,7 +365,7 @@ if [ "$SELFTEST" = "1" ]; then
   # portability the suite is built for. --strict is what turns it into a failure.
   aout="$(RG_CORPUS_DIR="$T/nowhere" RG_EVAL_DIR="$E" python "$HERE/report-grade.py" 2>&1)"; ast=$?
   if printf '%s' "$aout" | grep -q "CORPUS NOT CHECKED" && [ "$ast" = "0" ] \
-     && printf '%s' "$aout" | grep -qE "opens with the conclusion +4/7"; then
+     && printf '%s' "$aout" | grep -qE "opens with the conclusion +5/10"; then
     echo "  PASS  an absent corpus is reported, and the cases still score"; P=$((P+1))
   else
     echo "  FAIL  an absent corpus is reported, and the cases still score (exit $ast)"; F=$((F+1))
@@ -314,6 +388,15 @@ if [ "$SELFTEST" = "1" ]; then
   else
     echo "  FAIL  --file exits 1 on a narrative opening (exit $bst)"; F=$((F+1))
   fi
+  # A weaker source asserted out loud does not move the exit code and must still not be called
+  # clean — that is how an author is told the 2026-08-28 incident is fine.
+  wout="$(bash "$HERE/report-grade.sh" --file "$E/conflictweak/excerpt.md" 2>&1)"; wst=$?
+  if printf '%s' "$wout" | grep -q "LOOK  a weaker source is asserted"      && ! printf '%s' "$wout" | grep -q "Clean on all three" && [ "$wst" = "0" ]; then
+    echo "  PASS  --file never calls a WEAKWINS document clean"; P=$((P+1))
+  else
+    echo "  FAIL  --file never calls a WEAKWINS document clean (exit $wst)"; F=$((F+1))
+  fi
+
   mout="$(bash "$HERE/report-grade.sh" --file "$T/nosuchfile.md" 2>&1)"; mst=$?
   [ "$mst" = "2" ] && { echo "  PASS  --file on a missing file exits 2"; P=$((P+1)); }                    || { echo "  FAIL  --file on a missing file exits 2 (got $mst)"; F=$((F+1)); }
 

@@ -62,6 +62,12 @@ a region; the scorer derives the rest.
 | `WEAKWINS` | The same, but the **weaker** source is the one asserted. Reported, scored in neither column |
 | `SILENT` | Two or more in play and nothing says they disagree. **The fail #164 names** |
 | `ONESIDED` | Fewer than two. Nothing to resolve. Not scored |
+| `UNREADABLE` | A contrast marker with a source on only one side of it. No direction to read, so none is claimed. Not scored |
+
+**`UNREADABLE` exists because "no direction derivable" used to return `RESOLVED`** — the pass
+verdict — putting an unread sentence in the numerator. That is the inverse of how `UNCLEAR`,
+`TABLE` and `BOLDONLY` are handled everywhere else in this repo: the ambiguous middle is
+reported, never credited.
 
 **The direction is derived, never assumed.** The first contrast marker splits the region:
 provenance named before it is being set aside, provenance named after it is being asserted. An
@@ -79,9 +85,11 @@ the thing it was built for.** It now scores `WEAKWINS`, asserting `inferred`.
 explicitly*, so a weak source that wins out loud has obeyed the rule. Whether the reason was good
 is a judgement, and this grader does not make judgements — it points.
 
-**Table rows are excluded from the conflict scan.** A correctly sourced ledger names a different
-source on every row; that is the shape #164 asks for, and reading it as prose reported the
-exemplar of the rule as a silent conflict.
+**Table rows are excluded from the conflict scan, and so are fenced blocks.** A correctly sourced
+ledger names a different source on every row; that is the shape #164 asks for, and reading it as
+prose reported the exemplar of the rule as a silent conflict. **A line counts as a table row only
+if it starts with a pipe** — dropping every line that merely contains one deleted `|Vgs| < 20 V`,
+`|Z|` and `|S21|`, and with them whole conflicts, silently, into `ONESIDED`.
 
 **`SILENT` is the whole defect.** A weak claim standing beside a strong one, with nothing
 recording which won, is how a photograph outranked a schematic for weeks. The rule is not *cite
@@ -91,9 +99,16 @@ is whether anything in the section states the disagreement at all.
 ## What this grader cannot see
 
 **Whether two sources are about the same thing.** The conflict column detects co-occurrence plus
-a stated disagreement. A region that mentions two sources incidentally with an ordinary *but*
-between them is reported as a conflict — which is why only `RESOLVED` and `SILENT` are scored,
-and why the region is the case's chosen excerpt rather than a whole file.
+a stated disagreement. A region that mentions two sources incidentally, with an ordinary *but*
+between them, is reported as a conflict — and `RESOLVED` **is** the scored bucket, so that lands
+in the numerator rather than out of it. Two things hold it down and neither removes it: the
+region is the case's chosen excerpt rather than a whole file, and a contrast marker that fires on
+agreement has been taken out of the list (`wins`, `against the`). Over a whole file, via `--file`,
+this column does not gate at all.
+
+**A sourced table with a totals or spacer row.** `ROWS` by the inline path requires every row to
+name a source, so `| **Total** | **$180** |` under two sourced rows scores `NONE`. The strict rule
+is deliberate — half-sourced is the defect — and this is its cost.
 
 **Whether the source named is the true one.** It reads what the document claims about its own
 provenance; it cannot check a row that says `measured` against a bench that never ran. The

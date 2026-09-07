@@ -28,7 +28,7 @@ Inside the opening, three parts are told apart:
 | `CONCLUSION` | The first `##` section is a findings section, no framing preamble, no deferred conclusion. The only pass |
 | `NARRATIVE` | The first `##` section is background-class. A fail |
 | `DEFERRED` | The opening points elsewhere for the conclusion — *"Conclusion in Section 9"*. A fail |
-| `PREAMBLE` | Prose in the opening explains what the document is, **or** tells the story of how the answer was reached. A fail |
+| `PREAMBLE` | Prose in the opening explains what the document is. A fail |
 | `UNCLEAR` | The first section's heading is in neither class. Not scored, and reported by name |
 | `NOSECTION` | No `##` heading in the region. Not scored |
 | `NOTOPENING` | The case's region does not start at line 1, so it is not an opening. Not scored |
@@ -52,6 +52,15 @@ document is, both of which are visible whatever the heading is called. Returning
 made both invisible on the shape the skill explicitly blesses — *a first section named after its
 subject* — so a document following the skill's own advice could carry two failing shapes and
 still exit 0.
+
+**Three of the skill's four failing shapes are graded here. Development narrative is not.** A
+pattern for it was written and removed: `opening()` collects prose only until the first `##`, so
+the first section's *body* — where *"We first tried a linear regulator, then found the switcher
+was needed"* actually lives — is never in the text it would scan. In the few lines it could see,
+it failed ordinary report prose instead: *"At first glance the two adapters are identical"*,
+*"It turns out the PSE budgets by declared class"*. Blind where it mattered and wrong where it
+fired. The skill still names four shapes; this grader covers three, and says which one it does
+not.
 
 **A framing preamble is a fail on its own.** [#159](https://github.com/Calyx-Engineering/arc/issues/159)
 requires it explicitly, and `light-dimming-findings-first` is the case that isolates it: a

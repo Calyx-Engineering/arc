@@ -43,7 +43,7 @@ document does — put it at the top and let the method follow.
 | **Background first** | The first section is *Question*, *Context*, *Problem*, *Scope*, *Method*, *Approach* or *Investigation* | The reader who stops after the first screen has the premise and none of the answer |
 | **Deferred conclusion** | *"Status: complete. Conclusion in Section 9."* | A pointer where the answer should be. If it fits on the status line, so did the finding |
 | **Framing preamble** | *"This document describes…"*, *"Findings and conclusions."*, *"Investigation only."* | **A fail on its own, with nothing else wrong.** The reader opened the document; they know what it is. It costs a line at the exact point attention is highest |
-| **Development narrative** | *"We first tried X, then found Y"* | State Y. See [Point of view](#point-of-view) |
+| **Development narrative** | *"We first tried X, then found Y"* | State Y. See [Point of view](#point-of-view). **This is the one shape the grader does not check** — it reads the opening, and a narrative in the first section's body is below what it sees. Yours are the only eyes on it |
 
 **A framing preamble is not a small thing.** It is the shape that survives review, because it
 reads as courtesy rather than as a defect, and it sits in the one place where the finding should
@@ -79,14 +79,29 @@ separate question with a separate instrument, which
 | Verdict | |
 |---|---|
 | `CONCLUSION` | The pass |
-| `NARRATIVE` · `DEFERRED` · `PREAMBLE` | The fails. Every flag prints, so a document that hits three shapes shows all three |
+| `NARRATIVE` · `DEFERRED` · `PREAMBLE` | The fails. Every flag prints, so a document that hits two shapes shows both |
 | `UNCLEAR` | The first heading is in neither class. **Not scored, and it exits 0** — read it yourself |
 | `NOSECTION` | No `##` heading. Not scored |
+| `NOTOPENING` | A suite case whose region does not start at line 1. Never seen from `--file` |
 
-`bash tools/report-grade.sh --file <path>` grades one document on all three of this skill's
-scored questions — the opening, provenance on every claim table, and whether a stated
-disagreement between sources resolves toward the stronger one — and exits 1 if any of them
-fails. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+**Three of the four failing shapes are checked.** Development narrative is not — see the table
+above.
+
+`bash tools/report-grade.sh --file <path>` grades one document on all three questions and prints
+each. **Only the opening decides the exit code.**
+
+| | |
+|---|---|
+| `FIX`, exit 1 | The opening. There is one opening per document and it either states the finding or it does not |
+| `LOOK`, exit 0 | Everything else. The table and conflict checks are **region-scoped by construction** — the suite runs them over a chosen excerpt, and over a whole file they cannot tell a claim table from any other table. They are worth reading and they do not gate |
+
+**Exit 0 is not a verdict that the document is fine.** Read every `LOOK` line. The three that
+appear: an unsourced claim table; two sources named with nothing saying they disagree; and
+`WEAKWINS` — a weaker source asserted over a stronger one **and said so**, which obeys the rule
+and is exactly the shape of the incident
+[#164](https://github.com/Calyx-Engineering/arc/issues/164) was written about.
+
+Cases in [`evals/report-shape/`](../../evals/report-shape/).
 
 ---
 
@@ -362,9 +377,9 @@ printed pack or a stitched PDF.
 - Confidence split present, with a populated *not established*
 - No actions, checklists or next steps anywhere in the report
 - No development narrative, no "previously we thought"
-- **It grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0. The
-  opening, every claim table, and any stated disagreement between two sources, in one run. The
-  flags name which shape was hit; an `UNCLEAR` opening exits 0 and still needs your eyes
+- **The opening grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0.
+  **That is the opening only**: read every `LOOK` line as well, and read the first section's body
+  yourself for development narrative, which no check covers
 - **Every claim table carries a source**, per row. Where two sources disagree, the document says
   which won — [Where each claim came from](#where-each-claim-came-from)
 - All internal links resolve

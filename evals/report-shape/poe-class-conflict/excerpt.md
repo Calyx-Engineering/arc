@@ -1,3 +1,23 @@
+## 5 · Classification measurement — results
+
+| Pairs | V (V) | I (mA) | Class |
+|---|---|---|---|
+| Mode A | 16.907 | 40.63 | **4** |
+| Mode B | 16.907 | 40.63 | **4** |
+| Mode A, second point | 18.924 | 40.57 | **4** |
+
+Live PSE confirmation (Section 5 of the bench procedure) was **not run — no 802.3af switch was
+available at the time.** A switch was used later for the output test in Section 7, so this is now
+runnable.
+
+### The second point proves it is a real classification circuit
+
+The extra point at 18.924 V was a good call. Current went *down* 0.06 mA over a 2.017 V rise —
+essentially flat. A resistor would have given 45.48 mA at that voltage. Flat current across the
+classification window is the signature of a **current source**, which is what a compliant PD
+classification circuit is. This rules out the cheap alternative of a fixed resistor faking a
+class.
+
 ## 6 · Anomaly — af-labeled product presenting a class 4 signature
 
 **This is the finding with a downstream cost, and it needs a decision from #38.**

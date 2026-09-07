@@ -46,7 +46,15 @@
 #
 # EVERY FLAG IS PRINTED AND THE VERDICT IS THE WORST ONE. NARRATIVE > DEFERRED > PREAMBLE.
 # Opening on the wrong section is a bigger failure than a spare sentence above the right one,
-# and reporting only the worst would hide the other two on a document that has all three.
+# and reporting only the worst would hide the other on a document that has both. DEFERRED and
+# PREAMBLE are read BEFORE UNCLEAR is allowed to withhold a verdict: an unreadable heading says
+# nothing about a pointer on the status line or a sentence explaining what the document is.
+#
+# --file GRADES ALL THREE COLUMNS AND ONLY THE OPENING GATES. A document has one opening and it
+# either states the finding or it does not. The other two are region-scoped by construction —
+# run over whole files they failed 116 of the first 120 markdown files in this repository,
+# README.md and CLAUDE.md among them, and a pre-commit check that fails on almost everything is
+# a check that gets switched off.
 #
 # UNCLEAR IS REPORTED, NEVER GUESSED. A first heading in neither the findings class nor the
 # background class could be a findings section named after its subject, or a background section
@@ -109,23 +117,31 @@ PREAMBLE_PAT = [
                re.I),
 ]
 
-# The fourth failing shape: the report telling the story of how it got there. It is listed in
-# skills/engineering-report beside the other three, and for a while nothing here looked for it —
-# the skill named four shapes and the tool could see three.
-NARRATIVE_PAT = [
-    re.compile(r"\bwe\s+(first|then|initially|originally|next|later)\s+"
-               r"(tried|found|thought|started|assumed|looked|went|built)\b", re.I),
-    re.compile(r"\b(we|i)\s+(first|initially|originally)\s+\w+", re.I),
-    re.compile(r"\b(at first|to begin with|our first attempt|the first attempt|"
-               r"it turns out|it turned out|as it turned out)\b", re.I),
-    re.compile(r"\bthis\s+(corrects|supersedes|replaces)\s+an\s+earlier\b", re.I),
-    re.compile(r"\b(previously|earlier)\s+we\s+(thought|said|believed|assumed)\b", re.I),
-]
+# DEVELOPMENT NARRATIVE IS THE ONE SHAPE THIS TOOL DOES NOT CHECK, and the honest thing is to
+# say so rather than to look as if it does. A NARRATIVE_PAT list was here and was removed:
+#
+#   IT COULD NOT SEE THE SHAPE IT NAMED. opening() collects prose only while the first `##` has
+#   not been reached, so the first section's BODY is never in the text this would scan. The
+#   canonical instance — "## Findings" followed by "We first tried a linear regulator, then
+#   found the switcher was needed" — scored CONCLUSION, clean.
+#
+#   AND IT OVER-FIRED ON WHAT IT COULD SEE. In the handful of lines above the first heading it
+#   failed ordinary report prose: "At first glance the two adapters are identical", "It turns
+#   out the PSE budgets by declared class", "I originally sized C25 at 100 nF; the correct value
+#   is 10 nF". Each became a scored PREAMBLE fail.
+#
+# Blind where it mattered and wrong where it fired. skills/engineering-report still names four
+# failing shapes; this tool checks three of them, and both the skill and the grader say which
+# one is left to a person.
 
 # The conclusion, somewhere else. A pointer where the answer should be.
 DEFERRED_PAT = [
-    re.compile(r"\b(conclusion|conclusions|recommendation|answer|finding|findings|verdict|"
-               r"result|results)\s+(?:is\s+|are\s+)?in\s+(?:section|sec\.?|§)\s*\d", re.I),
+    # `finding`, `findings`, `result` and `results` were in this list and are deliberately not.
+    # "The findings in Section 3 are unchanged by this revision" is a cross-reference to related
+    # work, not a pointer standing where this document's own answer should be. The four that
+    # remain name the answer itself.
+    re.compile(r"\b(conclusion|conclusions|recommendation|answer|verdict)"
+               r"\s+(?:is\s+|are\s+)?in\s+(?:section|sec\.?|§)\s*\d", re.I),
     re.compile(r"\bsee\s+(?:section|sec\.?|§)\s*\d+\s+for\s+the\s+"
                r"(conclusion|recommendation|answer|finding|result|verdict)", re.I),
     re.compile(r"\b(conclusion|recommendation|answer|verdict)\s+(?:is\s+)?(?:in|at)\s+the\s+"
@@ -226,8 +242,6 @@ def grade_opening(text):
     flags = []
     if any(p.search(body) for p in PREAMBLE_PAT):
         flags.append("preamble")
-    if any(p.search(body) for p in NARRATIVE_PAT):
-        flags.append("development-narrative")
     if any(p.search(whole) for p in DEFERRED_PAT):
         flags.append("deferred")
     cls = heading_class(first)
@@ -243,7 +257,7 @@ def grade_opening(text):
     # following the skill's own advice could carry two of the four failing shapes and exit 0.
     if "deferred" in flags:
         return "DEFERRED", flags, first, cls
-    if "preamble" in flags or "development-narrative" in flags:
+    if "preamble" in flags:
         return "PREAMBLE", flags, first, cls
     if cls == "":
         return "UNCLEAR", flags, first, cls
@@ -304,7 +318,11 @@ TABLE_SOURCE = [
 CONTRAST = re.compile(
     r"\b(but|however|despite|whereas|rather than|instead of|contradicts?|contradicting|"
     r"overrid\w+|not permitted|does not support|do not support|disagree\w*|in favour of|"
-    r"in favor of|supersed\w+|takes precedence|wins|against the)\b", re.I)
+    r"in favor of|supersed\w+|takes precedence)\b", re.I)
+# `wins` and `against the` were in that list and are deliberately not. "The datasheet part wins
+# on cost" is a sentence about a part, and "plotted the measured curve against the datasheet
+# curve; they agree" is a sentence about agreement. A contrast marker that fires on agreement is
+# not a contrast marker, and both put a false RESOLVED in the numerator.
 
 
 def tables(text):
@@ -380,10 +398,46 @@ def grade_tables(text):
         elif any(p.search(lead) for p in TABLE_SOURCE):
             v, d = "TABLE", "one source in the lead-in: %s" % lead.splitlines()[0][:60]
         else:
-            v, d = "NONE", "%d row(s), no source" % len(body)
+            n = sum(1 for r in body
+                    if any(rx.search(" ".join(r)) for rx in ALIAS_RE.values()))
+            v, d = "NONE", ("%d of %d row(s) name a source" % (n, len(body)) if n
+                            else "%d row(s), no source" % len(body))
         if worst is None or order[v] < order[worst]:
             worst, detail = v, d
     return worst, detail
+
+
+TABLE_ROW = re.compile(r"^\s{0,3}\|")
+
+
+def conflict_prose(text):
+    """The region's prose: fenced blocks dropped, table rows dropped, everything else kept.
+
+    TABLE ROWS ARE NOT A CONFLICT. A correctly sourced ledger names a different source on every
+    row — the shape #164 asks for — and reading it as prose reported the exemplar of the rule as
+    a silent conflict.
+
+    BUT A LINE IS ONLY A TABLE ROW IF IT STARTS WITH A PIPE. Dropping every line containing one
+    deleted `|Vgs| < 20 V`, `|Z|` and `|S21|`, which are ordinary in this corpus — and with them
+    whole conflicts, silently, into ONESIDED.
+
+    AND A FENCE IS TRACKED, because this is the third reader in the file and the other two track
+    it. A fenced sample mentioning two sources is sample text, not two claims.
+    """
+    out, fence = [], ""
+    for line in (text or "").splitlines():
+        f = FENCE.match(line)
+        if f:
+            run = f.group(1)
+            if not fence:
+                fence = run
+            elif run[0] == fence[0] and len(run) >= len(fence):
+                fence = ""
+            continue
+        if fence or TABLE_ROW.match(line):
+            continue
+        out.append(line)
+    return "\n".join(out)
 
 
 def grade_conflict(text):
@@ -433,7 +487,7 @@ def grade_conflict(text):
     # ledger names a different source on every row — that is the shape #164 asks for, and
     # scanning it as prose reported the exemplar of the rule as a silent conflict. A
     # disagreement is two claims about the same thing; two rows about different pins are not.
-    prose = "\n".join(ln for ln in (text or "").splitlines() if "|" not in ln)
+    prose = conflict_prose(text)
     present = [t for t in PROVENANCE if ALIAS_RE[t].search(prose)]
     if len(present) < 2:
         return "ONESIDED", present, ""
@@ -444,9 +498,12 @@ def grade_conflict(text):
     aside = [t for t in PROVENANCE if ALIAS_RE[t].search(before)]
     asserted = [t for t in PROVENANCE if ALIAS_RE[t].search(after)]
     if not asserted or not aside:
-        # The contrast does not sit between two sources — it is contrast about something else.
-        # Nothing to read a direction from, so no direction is claimed.
-        return "RESOLVED", present, ""
+        # The contrast does not sit between two sources — it is contrast about something else,
+        # so there is no direction to read. UNREADABLE, and scored in NEITHER column. Returning
+        # RESOLVED here put "no direction derivable" in the numerator, which is the inverse of
+        # how UNCLEAR, TABLE and BOLDONLY are handled everywhere else in this repo: the
+        # ambiguous middle is reported, never credited.
+        return "UNREADABLE", present, ""
     # PROVENANCE is ordered strongest first, so a lower index is a stronger source.
     won, lost = asserted[0], aside[0]
     if PROVENANCE.index(won) <= PROVENANCE.index(lost):
@@ -513,20 +570,44 @@ def grade_one(path):
     if toward:
         print("                 asserted over the rest: %s" % toward)
     print()
-    bad = []
+    # ONLY THE OPENING DECIDES THE EXIT CODE, and that is not timidity — it is the difference
+    # between the two instruments. The opening verdict is a property of a whole document: there
+    # is exactly one opening and it is either the finding or it is not. The table and conflict
+    # columns are region-scoped by construction — grade_conflict's own contract is "the case's
+    # chosen excerpt rather than a whole file", and grade_tables cannot tell a claim table from
+    # any other table.
+    #
+    # Run over whole files they are noise, measured: of the first 120 tracked .md files in this
+    # repository, 116 exited 1, and README.md, CLAUDE.md and the product definition were three
+    # of them. A pre-commit check that fails on almost every document is a check that gets
+    # turned off, and skills/engineering-report names this exact command as that check.
+    #
+    # So they are reported and they do not gate. FIX is a failure; LOOK is something to read.
+    bad, look = [], []
     if verdict in ("NARRATIVE", "DEFERRED", "PREAMBLE"):
         bad.append("the opening — skills/engineering-report, The opening")
     if tv == "NONE":
-        bad.append("a claim table with no source — skills/engineering-report, "
-                   "Where each claim came from")
+        look.append("a claim table with no source per row (%s). Region-scoped check run over a "
+                    "whole file — confirm it is a claim table before acting" % td)
     if cv == "SILENT":
-        bad.append("two sources disagreeing with nothing saying which won — same section")
+        look.append("two sources named with nothing saying they disagree (%s). Same caveat"
+                    % ", ".join(present))
+    # Read this before calling anything clean. WEAKWINS and UNCLEAR are not failures and do not
+    # move the exit code, but saying "clean" over either of them is how an author is told their
+    # document is fine on the exact question they should be looking at. The 2026-08-28 incident
+    # #164 was written about scores WEAKWINS: a weak source winning out loud has obeyed the
+    # rule, and is still the thing most worth a second pair of eyes.
+    if cv == "WEAKWINS":
+        look.append("a weaker source is asserted over a stronger one (%s over %s). Allowed — "
+                    "it is said out loud — but check the reason is good" % (toward, present[0]))
+    if verdict in ("UNCLEAR", "NOSECTION"):
+        look.append("the opening is not scorable: its first heading is in neither class")
     if bad:
         for b in bad:
-            print("  FIX  " + b)
-    elif verdict in ("UNCLEAR", "NOSECTION"):
-        print("  The opening is not scorable — read it yourself. Nothing else is flagged.")
-    else:
+            print("  FIX   " + b)
+    for x in look:
+        print("  LOOK  " + x)
+    if not bad and not look:
         print("  Clean on all three questions.")
     # The exit code is the verdict here, unlike the suite: one document has one answer, and a
     # caller checking a report before committing it wants that answer in $?.

@@ -89,6 +89,31 @@ Four defects in this issue's half, all in `tools/report-grade.py`, all fixed her
 tool: the skill pointed an author at a command that then said nothing about their tables. It now
 grades all three and exits 1 on any of them.
 
+## What pass 2 found — in pass 1's own fixes
+
+**Pass 1's fixes were unreviewed code, and two of them made the tool worse than it had been.**
+
+| | |
+| --- | --- |
+| **`--file` failed 116 of 120 markdown files** | Pass 1 widened it to grade tables and conflict over a whole file. Both are region-scoped by construction, and neither can tell a claim table from any other table. `README.md`, `CLAUDE.md` and the product definition all exited 1 — while `skills/engineering-report` named that exact command as its pre-commit check. **Only the opening gates now**; the other two print `LOOK` and exit 0 |
+| **The development-narrative patterns were blind where it mattered and wrong where they fired** | `opening()` collects prose only until the first `##`, so the first section's body — where *"We first tried a linear regulator, then found the switcher was needed"* actually lives — was never scanned. In the few lines it could see it failed ordinary prose: *"At first glance the two adapters are identical"*, *"It turns out the PSE budgets by declared class"*. **Removed.** The skill names four failing shapes; the tool checks three and now says so |
+| **`DEFERRED` fired on a cross-reference** | *"The findings in Section 3 are unchanged by this revision"* is a pointer to related work. `finding`, `findings`, `result` and `results` are out of that pattern; the four that name the answer itself remain |
+| **Six of nine fixes had no fixture** | Reverting each left the selftest green. That is how a fix that made things worse got through. Ten fixtures added — the reorder, the numeral lookahead, `Status`, the cross-reference, half-sourced tables, `extrapolated`, a pipe inside prose, a fenced sample, a sentence about agreement, and an unreadable direction |
+
+**The lesson is the one this arc keeps relearning.** A green gate constrains only what has a
+fixture behind it. `verify-all.sh` was clean and 45 selftests passed while `--file` was unusable
+on almost every document in the repository, because nothing tested `--file` against a real one.
+
+## What the fixes themselves needed
+
+**Commit attribution on the two pass-1 commits is wrong, and is recorded rather than rewritten.**
+`6193a3c` carries seven changes and its message describes four; `7583fb3` describes
+`grade_conflict`'s rewrite, `WEAKWINS`, the row exclusion and both matcher fixes, and touches no
+file under `tools/` at all. Every fix named in either message is genuinely in the tree — pass 3
+confirmed each one against current code — but the split between the two commits is not what the
+messages say. Rewriting pushed history to tidy it would cost more than it buys; the record says
+so instead.
+
 ## Hooks that fired
 
 `mode-guard` read `HANDOFF.md` before the commit and allowed it — the worktree's row says
@@ -101,7 +126,7 @@ output ends with *"A rate here is a property of the DOCUMENTS, not of a skill"* 
 settled that firing and adherence move independently, and a number that gets read as a skill
 score would undo that finding.
 
-**What it still cannot do.** There is no probe mode. `--probe` works on the other two scorers
-because a turn can be re-run against the installed plugin; a document cannot be re-written on
-demand. So this suite measures history and will keep measuring history until a report is written
+**What it still cannot do.** There is no probe mode. `tools/response-length.sh --probe` and
+`tools/skill-probe.sh` can re-run a turn against the installed plugin; a document cannot be
+re-written on demand. So this suite measures history and will keep measuring history until a report is written
 *with* the skill loaded and scored with `--file`. That is the soak, and it is the next report.

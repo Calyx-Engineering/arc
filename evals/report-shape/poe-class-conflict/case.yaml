@@ -1,8 +1,17 @@
 corpus: roadz-sound-system
 document: docs/report/issue-44-poe-pse-onboard/README.md
-lines: 237-262
+lines: 217-262
 why: >
-  The conflict exemplar. A measured class 4 signature contradicts the vendor's own label, model
+  The conflict exemplar. The region starts at section 5, not at section 6, and that is
+  deliberate: cut at the anomaly alone, the only `measured` token in it is the negated clause
+  "budgets power by declared class, not by measured draw", so the verdict rested on an
+  incidental word rather than on the measurement. Section 5 is where the measurement actually
+  is — "Classification measurement — results", taken on the bench — and a conflict case that
+  does not contain the measurement is not a conflict case.
+  THE VERDICT IS STILL THINNER THAN IT LOOKS, and it is worth saying so: `measured` appears on
+  both sides of the contrast split, so the direction survives the negated clause rather than
+  being decided by the measurement alone. The column is coarse by construction — that is why
+  only RESOLVED and SILENT are scored. A measured class 4 signature contradicts the vendor's own label, model
   suffix and silkscreen, all of which say 802.3af — and 802.3af does not permit class 4. The
   report resolves it in favour of the measurement and says so in the same sentence as the claim
   it is overriding: "all say 802.3af. But 802.3af defines classes 0-3 only."
