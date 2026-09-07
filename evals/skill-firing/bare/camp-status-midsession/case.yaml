@@ -1,0 +1,9 @@
+shape: bare
+expect:
+  - camp
+source:
+  session: be5aca1c
+  turn: 29
+  opening: false
+why: >
+  The same demand 28 turns later, after camp had not fired once. Bare works cold or warm.

@@ -1,0 +1,10 @@
+shape: wrapped
+expect:
+  - handoff
+  - camp
+source:
+  session: 9cefd799
+  turn: 1
+  opening: true
+why: >
+  Greets Camp by name, then subordinates the read to a goal for the day.

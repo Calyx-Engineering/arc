@@ -1,0 +1,11 @@
+shape: situation
+expect:
+  - none
+source:
+  session: 166e0c2c
+  turn: 1
+  opening: true
+why: >
+  Control. A bare repository question that matches no skill's trigger. Silence is the pass,
+  so this case fails if anything fires — a suite scored only on firing more is satisfied by
+  firing everything.

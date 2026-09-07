@@ -1,0 +1,9 @@
+shape: wrapped
+expect:
+  - autonomy-set
+source:
+  session: 3fab5afa
+  turn: 1
+  opening: true
+why: >
+  A wrapped name that fired. The trigger phrase autonomous mode is in the skill's own description.

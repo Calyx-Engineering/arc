@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links miner-scope skill-firing"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links miner-scope skill-firing skill-cases"
 
 RUN=0
 FAILED=0
@@ -76,6 +76,7 @@ fi
 run_gate "skill registry" bash tools/verify-skill-registry.sh
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
+run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -105,9 +106,13 @@ if [ "$LIST" = "1" ]; then
                               installed copy, which is only current after tools/plugin-reload.sh
     any skill                 no gate here invokes one. Every skill-carried rule is checked as
                               text, never as behaviour. tools/skill-firing.sh measures how often
-                              each skill fired in real sessions, which is history rather than a
+                              each skill fired in real sessions, and tools/skill-cases.sh scores
+                              evals/skill-firing per prompt — both are history rather than a
                               test; re-running a case against a changed skill needs
                               claude plugin eval, gated behind early access — #181
+    the eval cases themselves the gate above runs skill-cases.sh SELFTEST, on fixtures. Scoring
+                              the real cases needs the transcripts, which live on one machine —
+                              run bash tools/skill-cases.sh there
 CANNOT
   exit 0
 fi
