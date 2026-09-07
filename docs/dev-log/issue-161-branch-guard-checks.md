@@ -1,6 +1,6 @@
 # Issue #161 — branch-guard gets its other two checks
 
-**Issue:** [#161](https://github.com/Calyx-Engineering/arc/issues/161)  ·  **PR:** [#PR](https://github.com/Calyx-Engineering/arc/pull/PR)
+**Issue:** [#161](https://github.com/Calyx-Engineering/arc/issues/161)  ·  **PR:** [#221](https://github.com/Calyx-Engineering/arc/pull/221)
 
 ## Problem
 
