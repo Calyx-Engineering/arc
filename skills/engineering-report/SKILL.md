@@ -71,11 +71,22 @@ that are this skill's turn even when nothing is called a report:
 ### How it is scored
 
 [`tools/report-grade.sh`](../../tools/report-grade.sh) reads a report's opening — its first line
-through the end of its first `##` section — and returns `CONCLUSION`, `NARRATIVE`, `DEFERRED`
-or `PREAMBLE`. It is arithmetic, no model in the loop, and it grades **the document, not the
-session**: whether this skill fired while the report was written is a separate question with a
-separate instrument, which [#155](https://github.com/Calyx-Engineering/arc/issues/155) settled
-move independently. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+through the end of its first `##` section. It is arithmetic, no model in the loop, and it grades
+**the document, not the session**: whether this skill fired while the report was written is a
+separate question with a separate instrument, which
+[#155](https://github.com/Calyx-Engineering/arc/issues/155) settled move independently.
+
+| Verdict | |
+|---|---|
+| `CONCLUSION` | The pass |
+| `NARRATIVE` · `DEFERRED` · `PREAMBLE` | The fails. Every flag prints, so a document that hits three shapes shows all three |
+| `UNCLEAR` | The first heading is in neither class. **Not scored, and it exits 0** — read it yourself |
+| `NOSECTION` | No `##` heading. Not scored |
+
+`bash tools/report-grade.sh --file <path>` grades one document on all three of this skill's
+scored questions — the opening, provenance on every claim table, and whether a stated
+disagreement between sources resolves toward the stronger one — and exits 1 if any of them
+fails. Cases in [`evals/report-shape/`](../../evals/report-shape/).
 
 ---
 
@@ -122,6 +133,11 @@ The [confidence split](#4-confidence-split--mandatory) groups the report's claim
 **Verified / Measured / Not established**. Provenance is per row, and it survives being quoted
 out of the document. A report needs both: the split tells a reader how much of the whole is
 solid, the column tells them whether *this* number is.
+
+**The same rule applies outside a report.** A wiki fact, an arc-work ledger and a scratch
+measurement all carry their source —
+[record-route](../record-route/SKILL.md#every-record-carries-where-its-claims-came-from) holds
+that side.
 
 ### How it is scored
 
@@ -346,8 +362,9 @@ printed pack or a stitched PDF.
 - Confidence split present, with a populated *not established*
 - No actions, checklists or next steps anywhere in the report
 - No development narrative, no "previously we thought"
-- **The opening grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0.
-  A `NARRATIVE`, `DEFERRED` or `PREAMBLE` verdict names which of the four shapes it hit
+- **It grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0. The
+  opening, every claim table, and any stated disagreement between two sources, in one run. The
+  flags name which shape was hit; an `UNCLEAR` opening exits 0 and still needs your eyes
 - **Every claim table carries a source**, per row. Where two sources disagree, the document says
   which won — [Where each claim came from](#where-each-claim-came-from)
 - All internal links resolve

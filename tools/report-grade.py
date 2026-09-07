@@ -90,7 +90,7 @@ BOLD_LABEL = re.compile(r"^\s*\*{2}[^*]{1,40}:\*{2}")
 # the heading with any leading number, bullet or separator stripped.
 FINDINGS = ("finding", "findings", "conclusion", "conclusions", "recommendation",
             "recommendations", "answer", "answers", "result", "results", "verdict",
-            "summary", "decision", "decisions", "outcome", "state", "status")
+            "summary", "decision", "decisions", "outcome")
 BACKGROUND = ("question", "questions", "background", "context", "problem", "purpose",
               "introduction", "intro", "overview", "method", "methods", "methodology",
               "approach", "history", "scope", "investigation", "motivation", "premise")
@@ -107,6 +107,19 @@ PREAMBLE_PAT = [
                r"what follows|the purpose of)\b", re.I),
     re.compile(r"\bwhat\s+(this|the)\s+(document|report|note|page)\s+(is|does|covers|holds)\b",
                re.I),
+]
+
+# The fourth failing shape: the report telling the story of how it got there. It is listed in
+# skills/engineering-report beside the other three, and for a while nothing here looked for it —
+# the skill named four shapes and the tool could see three.
+NARRATIVE_PAT = [
+    re.compile(r"\bwe\s+(first|then|initially|originally|next|later)\s+"
+               r"(tried|found|thought|started|assumed|looked|went|built)\b", re.I),
+    re.compile(r"\b(we|i)\s+(first|initially|originally)\s+\w+", re.I),
+    re.compile(r"\b(at first|to begin with|our first attempt|the first attempt|"
+               r"it turns out|it turned out|as it turned out)\b", re.I),
+    re.compile(r"\bthis\s+(corrects|supersedes|replaces)\s+an\s+earlier\b", re.I),
+    re.compile(r"\b(previously|earlier)\s+we\s+(thought|said|believed|assumed)\b", re.I),
 ]
 
 # The conclusion, somewhere else. A pointer where the answer should be.
@@ -169,7 +182,12 @@ def opening(text):
 
 def heading_class(title):
     """"findings", "background" or "" — decided by the words the heading leads with."""
-    t = re.sub(r"^[\s#*_`]*[0-9IVXivx]+\s*[.)·—–:-]*\s*", "", (title or "")).strip()
+    # A separator has to follow the numeral. Without the lookahead the roman-numeral class
+    # matched the first letter of "Investigation", "Introduction", "Intro" and "Verdict" and
+    # stripped it, leaving "nvestigation" — so four words in the two lists below were dead as
+    # first words, including the one skills/engineering-report names in its failing shapes.
+    t = re.sub(r"^[\s#*_`]*(?:\d+|[IVXivx]+)(?=[\s.)·—–:-])\s*[.)·—–:-]*\s*", "",
+               (title or "")).strip()
     t = t.lower().replace("’", "'")
     words = re.findall(r"[a-z']+", t)
     if not words:
@@ -208,18 +226,27 @@ def grade_opening(text):
     flags = []
     if any(p.search(body) for p in PREAMBLE_PAT):
         flags.append("preamble")
+    if any(p.search(body) for p in NARRATIVE_PAT):
+        flags.append("development-narrative")
     if any(p.search(whole) for p in DEFERRED_PAT):
         flags.append("deferred")
     cls = heading_class(first)
     if cls == "background":
         flags.append("background-first")
         return "NARRATIVE", flags, first, cls
-    if cls == "":
-        return "UNCLEAR", flags, first, cls
+    # DEFERRED and PREAMBLE are read BEFORE the heading class is allowed to withhold a verdict.
+    # An unclassifiable heading means the scorer cannot say whether the first section is a
+    # findings section; it says nothing about a pointer on the status line or a sentence
+    # explaining what the document is, both of which are visible whatever the heading is called.
+    # Returning UNCLEAR first made both invisible on the shape skills/engineering-report
+    # explicitly blesses — "a first section named after its subject is fine" — so a document
+    # following the skill's own advice could carry two of the four failing shapes and exit 0.
     if "deferred" in flags:
         return "DEFERRED", flags, first, cls
-    if "preamble" in flags:
+    if "preamble" in flags or "development-narrative" in flags:
         return "PREAMBLE", flags, first, cls
+    if cls == "":
+        return "UNCLEAR", flags, first, cls
     return "CONCLUSION", flags, first, cls
 
 
@@ -246,7 +273,11 @@ ALIASES = {
     "schematic":    r"schematics?|netlist|the sheets?|board files?",
     "photograph":   r"photographs?|photos?|pictures?|an image of",
     "conversation": r"conversation|in chat|said in chat|verbally|a thread|the thread",
-    "inferred":     r"inferred|inference|assumed|assumption|extrapolat|estimated|implied|"
+    # `extrapolat\w*` and not `extrapolat`: the alternation is wrapped in \b(?:...)\b, so a
+    # branch ending mid-word can never match — "extrapolated" has no word boundary after
+    # "extrapolat". It was the headline word of `inferred`'s own definition in both skills, and
+    # the matcher could not see it.
+    "inferred":     r"inferred|inference|assumed|assumption|extrapolat\w*|estimated|implied|"
                     r"most likely|likely explanation|presumably|calculated from",
 }
 ALIAS_RE = {k: re.compile(r"\b(?:%s|%s)\b" % (k, v), re.I) for k, v in ALIASES.items()}
@@ -343,10 +374,9 @@ def grade_tables(text):
         if any(SOURCE_HEADER.match(c) for c in header):
             v = "ROWS"
             d = "column: %s" % next(c for c in header if SOURCE_HEADER.match(c))
-        elif body and sum(
-                1 for r in body
-                if any(rx.search(" ".join(r)) for rx in ALIAS_RE.values())) * 2 >= len(body):
-            v, d = "ROWS", "terms carried in the rows"
+        elif body and all(any(rx.search(" ".join(r)) for rx in ALIAS_RE.values())
+                          for r in body):
+            v, d = "ROWS", "terms carried in every row"
         elif any(p.search(lead) for p in TABLE_SOURCE):
             v, d = "TABLE", "one source in the lead-in: %s" % lead.splitlines()[0][:60]
         else:
@@ -356,48 +386,94 @@ def grade_tables(text):
     return worst, detail
 
 
-def grade_conflict(text, favours):
-    """(verdict, terms present, the source the section resolves toward).
+def grade_conflict(text):
+    """(verdict, terms present, the source the section asserts).
 
-    RESOLVED  two or more provenance strengths in play and the disagreement stated out loud.
-              The pass, and the strongest term present is what the section resolves toward.
+    RESOLVED  two or more provenance strengths in play, the disagreement stated out loud, and
+              the source asserted is at least as strong as the one set aside. The pass.
+    WEAKWINS  the same, but a WEAKER source is the one asserted. Reported, scored in neither
+              column: #164's rule is "not overridden without saying so explicitly", so a weak
+              source that wins out loud has obeyed the rule. It is still the thing a reader
+              most needs pointed at, and the scorer cannot judge whether the reason was good.
     SILENT    two or more in play and nothing says they disagree. The fail #164 names: a weak
               source standing beside a strong one with nothing recording which won.
     ONESIDED  fewer than two. Nothing to resolve, not scored.
-    MISMATCH  resolved, but toward a source the case did not expect. Reported, never scored —
-              it is either a mis-authored case or a real finding, and the scorer cannot tell.
+
+    THE DIRECTION IS DERIVED, NEVER ASSUMED. An earlier version returned the strongest term
+    present and printed it as "resolves in favour of" — which is not a reading of the document,
+    it is the vocabulary's own ordering restated. It graded this as a pass:
+
+        "The measured gain is 41.7x on the bench. However the estimated gain from the
+         instrument is 24.7x, and we are taking the estimate as correct."
+
+    That is the exact incident #164 was written about — an inference beating a verified bench
+    measurement — scored as resolving in favour of the measurement. The instrument must be able
+    to fail the thing it was built for.
+
+    HOW THE DIRECTION IS READ. The first contrast marker splits the region. Provenance named
+    before it is being SET ASIDE; provenance named after it is being ASSERTED. That is the shape
+    of the construction in English — "the label says X, BUT the measurement says Y" — and it
+    reads both real cases correctly: the PoE anomaly asserts `measured` over a vendor label, and
+    the probe above asserts `inferred` over `measured`.
+
+    ITS LIMITS, RECORDED, BECAUSE THEY DECIDE WHICH VERDICTS ARE SCORED. This column is coarse.
+    It detects two provenance strengths co-occurring in one region plus a stated disagreement;
+    it does not check that the two claims are about the same thing. So:
+
+      - A negated mention inside the asserted half ("budgets by declared class, not by measured
+        draw") still counts as a mention. The split reads the shape of the sentence, not its
+        meaning, and a section that inverts itself twice is read by its first turn only.
+      - A region that mentions two sources incidentally, with an ordinary "but" between them,
+        is reported as a conflict. That is why WEAKWINS is reported and never scored, and why
+        the region is the case's chosen excerpt rather than a whole file.
+
+    Only RESOLVED and SILENT are scored. The rest is pointed at, for a person to read.
     """
-    present = [t for t in PROVENANCE if ALIAS_RE[t].search(text or "")]
+    # TABLE ROWS ARE NOT A CONFLICT, AND STRIPPING THEM IS NOT OPTIONAL. A correctly sourced
+    # ledger names a different source on every row — that is the shape #164 asks for, and
+    # scanning it as prose reported the exemplar of the rule as a silent conflict. A
+    # disagreement is two claims about the same thing; two rows about different pins are not.
+    prose = "\n".join(ln for ln in (text or "").splitlines() if "|" not in ln)
+    present = [t for t in PROVENANCE if ALIAS_RE[t].search(prose)]
     if len(present) < 2:
         return "ONESIDED", present, ""
-    if not CONTRAST.search(text or ""):
+    m = CONTRAST.search(prose)
+    if not m:
         return "SILENT", present, ""
-    strongest = present[0]                       # PROVENANCE is ordered strongest first
-    if favours and strongest != favours:
-        return "MISMATCH", present, strongest
-    return "RESOLVED", present, strongest
+    before, after = prose[:m.start()], prose[m.end():]
+    aside = [t for t in PROVENANCE if ALIAS_RE[t].search(before)]
+    asserted = [t for t in PROVENANCE if ALIAS_RE[t].search(after)]
+    if not asserted or not aside:
+        # The contrast does not sit between two sources — it is contrast about something else.
+        # Nothing to read a direction from, so no direction is claimed.
+        return "RESOLVED", present, ""
+    # PROVENANCE is ordered strongest first, so a lower index is a stronger source.
+    won, lost = asserted[0], aside[0]
+    if PROVENANCE.index(won) <= PROVENANCE.index(lost):
+        return "RESOLVED", present, won
+    return "WEAKWINS", present, won
 
 
 def read_case(path):
-    """corpus, document, lines, conflict.favours. Purpose-built, not a YAML parser — the same
-    trade as tools/topic-numbering.py, and the format is fixed by evals/report-shape."""
+    """corpus, document, lines. Purpose-built, not a YAML parser — the same trade as
+    tools/topic-numbering.py, and the format is fixed by evals/report-shape.
+
+    A CASE DECLARES A DOCUMENT AND A REGION, AND NOTHING ELSE. There is deliberately no field
+    for an expected verdict, an expected direction, or which columns to score. An earlier
+    version took `conflict.favours` from the case and used it two ways — it gated whether the
+    conflict column was scored at all, and it decided whether a resolved conflict counted. Both
+    let the case author choose the result: omit the field, and a silent conflict is never
+    graded. That is the tick-without-evidence shape evals/README.md says this arc exists to fix,
+    and it was in the same commit that wrote the rule down."""
     out = {"corpus": "", "document": "", "lines": ""}
-    favours, section = "", None
     for raw in io.open(path, encoding="utf-8"):
         line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#"):
+        if not line.strip() or line.lstrip().startswith("#") or line[:1].isspace():
             continue
-        if not line[:1].isspace():
-            section = line.split(":", 1)[0].strip()
-            k, _, v = line.partition(":")
-            if k.strip() in out:
-                out[k.strip()] = v.strip()
-            continue
-        if section == "conflict":
-            m = re.match(r"favours:\s*(\S+)", line.strip())
-            if m:
-                favours = m.group(1)
-    return out["corpus"], out["document"], out["lines"], favours
+        k, _, v = line.partition(":")
+        if k.strip() in out:
+            out[k.strip()] = v.strip()
+    return out["corpus"], out["document"], out["lines"]
 
 
 def corpus_lines(root, corpus, document, rng):
@@ -415,25 +491,46 @@ def corpus_lines(root, corpus, document, rng):
 
 
 def grade_one(path):
-    """--file: grade a single document, so the rule the skill states can be run against the
-    report being written rather than only against the suite."""
+    """--file: grade a single document on ALL THREE questions, so the rules the skills state can
+    be run against the report being written rather than only against the suite.
+
+    It grades the whole file, not an excerpt, so the table and conflict checks read every table
+    and the whole text — an opening-only answer here was a check that pointed authors at a tool
+    which then said nothing about the two columns #164 added.
+    """
     text = io.open(path, encoding="utf-8", errors="replace").read()
     verdict, flags, first, cls = grade_opening(text)
+    tv, td = grade_tables(text)
+    cv, present, toward = grade_conflict(text)
     print("report-grade — %s" % path)
     print()
-    print("  %-10s %s" % (verdict, ("  flags: " + ", ".join(flags)) if flags else ""))
-    print("  first section: %s%s" % (
+    print("  opening        %-10s%s" % (verdict, ("  flags: " + ", ".join(flags)) if flags else ""))
+    print("                 first section: %s%s" % (
         (first or "(none)")[:70], ("  [%s]" % cls) if cls else "  [unclassified]"))
+    print("  table source   %-10s%s" % (tv, ("  " + td) if td else ""))
+    print("  conflict       %-10s%s" % (
+        cv, ("  in play: " + ", ".join(present)) if present else ""))
+    if toward:
+        print("                 asserted over the rest: %s" % toward)
     print()
-    if verdict == "CONCLUSION":
-        print("  The opening states the finding. skills/engineering-report, The opening.")
+    bad = []
+    if verdict in ("NARRATIVE", "DEFERRED", "PREAMBLE"):
+        bad.append("the opening — skills/engineering-report, The opening")
+    if tv == "NONE":
+        bad.append("a claim table with no source — skills/engineering-report, "
+                   "Where each claim came from")
+    if cv == "SILENT":
+        bad.append("two sources disagreeing with nothing saying which won — same section")
+    if bad:
+        for b in bad:
+            print("  FIX  " + b)
     elif verdict in ("UNCLEAR", "NOSECTION"):
-        print("  Not scored — read it yourself. skills/engineering-report, The opening.")
+        print("  The opening is not scorable — read it yourself. Nothing else is flagged.")
     else:
-        print("  Read skills/engineering-report, The opening. This is #159's defect.")
+        print("  Clean on all three questions.")
     # The exit code is the verdict here, unlike the suite: one document has one answer, and a
     # caller checking a report before committing it wants that answer in $?.
-    raise SystemExit(0 if verdict in ("CONCLUSION", "UNCLEAR", "NOSECTION") else 1)
+    raise SystemExit(1 if bad else 0)
 
 
 def main():
@@ -463,7 +560,7 @@ def main():
     for cp in cases:
         d = os.path.dirname(cp)
         name = os.path.relpath(d, evaldir).replace(os.sep, "/")
-        corpus, document, rng, favours = read_case(cp)
+        corpus, document, rng = read_case(cp)
         xp = os.path.join(d, "excerpt.md")
         if not os.path.isfile(xp):
             absent.append("%s  (no excerpt.md)" % name)
@@ -501,13 +598,14 @@ def main():
         tally["T:" + tv] = tally.get("T:" + tv, 0) + 1
         if tv != "NOTABLE":
             print("             table source: %-7s %s" % (tv, td))
-        if favours:
-            cv, present, toward = grade_conflict(text, favours)
-            tally["C:" + cv] = tally.get("C:" + cv, 0) + 1
-            print("             conflict:     %-7s in play: %s" % (cv, ", ".join(present)))
+        # Scored on every case, never gated on a field the case author supplies. Whether a
+        # region holds two sources in disagreement is a property of the region.
+        cv, present, toward = grade_conflict(text)
+        tally["C:" + cv] = tally.get("C:" + cv, 0) + 1
+        if cv != "ONESIDED":
+            print("             conflict:     %-8s in play: %s" % (cv, ", ".join(present)))
             if toward:
-                print("             resolves in favour of: %s  (case expects %s)"
-                      % (toward, favours))
+                print("             asserted over the rest: %s" % toward)
     print()
 
     good = tally.get("CONCLUSION", 0)
@@ -532,10 +630,9 @@ def main():
     print("  tables: sourced by row %d, unsourced %d, one source in the lead-in %d "
           "(not scored), no table %d" % (
               tgood, tbad, tally.get("T:TABLE", 0), tally.get("T:NOTABLE", 0)))
-    if cdenom or tally.get("C:ONESIDED", 0) or tally.get("C:MISMATCH", 0):
-        print("  conflicts: resolved out loud %d, silent %d, one source only %d "
-              "(not scored), resolved elsewhere %d (reported)" % (
-                  cgood, cbad, tally.get("C:ONESIDED", 0), tally.get("C:MISMATCH", 0)))
+    print("  conflicts: resolved out loud %d, silent %d, one source only %d (not scored), "
+          "weaker source asserted %d (reported)" % (
+              cgood, cbad, tally.get("C:ONESIDED", 0), tally.get("C:WEAKWINS", 0)))
     print()
     print("%-32s %s" % ("opens with the conclusion", "%d/%d  %.2f" % (good, denom, rate)))
     print("%-32s %s" % ("table rows carry a source", "%d/%d  %.2f" % (tgood, tdenom, trate)))

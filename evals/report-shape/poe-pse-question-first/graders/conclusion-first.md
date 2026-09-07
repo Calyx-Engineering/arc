@@ -26,16 +26,32 @@ Inside the opening, three parts are told apart:
 | Verdict | Condition |
 |---|---|
 | `CONCLUSION` | The first `##` section is a findings section, no framing preamble, no deferred conclusion. The only pass |
-| `NARRATIVE` | The first `##` section is background-class — *Question*, *Background*, *Context*, *Problem*, *Purpose*, *Method*, *Approach*, *History*, *Scope*. A fail |
+| `NARRATIVE` | The first `##` section is background-class. A fail |
 | `DEFERRED` | The opening points elsewhere for the conclusion — *"Conclusion in Section 9"*. A fail |
-| `PREAMBLE` | Prose in the opening explains what the document is. A fail |
+| `PREAMBLE` | Prose in the opening explains what the document is, **or** tells the story of how the answer was reached. A fail |
 | `UNCLEAR` | The first section's heading is in neither class. Not scored, and reported by name |
 | `NOSECTION` | No `##` heading in the region. Not scored |
+| `NOTOPENING` | The case's region does not start at line 1, so it is not an opening. Not scored |
+
+**The background class, in full:** *question, questions, background, context, problem, purpose,
+introduction, intro, overview, method, methods, methodology, approach, history, scope,
+investigation, motivation, premise.* The findings class: *finding, findings, conclusion,
+conclusions, recommendation, recommendations, answer, answers, result, results, verdict, summary,
+decision, decisions, outcome.* Only the heading's first three words are read — *"Summary of
+findings"* is a findings section and so is *"Findings — background to the sweep"*.
 
 **Every flag is printed; the verdict is the worst one.** `NARRATIVE` outranks `DEFERRED`
 outranks `PREAMBLE`. A document that opens on the wrong section has a bigger problem than one
 that opens with a spare sentence above the right section, and reporting only the worst would
 hide the other two.
+
+**`DEFERRED` and `PREAMBLE` are decided before `UNCLEAR` is allowed to withhold a verdict.** An
+unclassifiable heading means the grader cannot say whether the first section is a findings
+section. It says nothing about a pointer on the status line or a sentence explaining what the
+document is, both of which are visible whatever the heading is called. Returning `UNCLEAR` first
+made both invisible on the shape the skill explicitly blesses — *a first section named after its
+subject* — so a document following the skill's own advice could carry two failing shapes and
+still exit 0.
 
 **A framing preamble is a fail on its own.** [#159](https://github.com/Calyx-Engineering/arc/issues/159)
 requires it explicitly, and `light-dimming-findings-first` is the case that isolates it: a

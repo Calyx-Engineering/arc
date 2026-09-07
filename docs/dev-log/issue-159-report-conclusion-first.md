@@ -18,15 +18,15 @@ the remedy.
 
 | File | |
 | --- | --- |
-| `tools/report-grade.py`, `.sh` | Grades a report's **opening** — first line through the end of the first `##` section — as `CONCLUSION`, `NARRATIVE`, `DEFERRED`, `PREAMBLE`, or unscored. `--file` grades one document and exits on its verdict. 27 selftests |
-| `evals/report-shape/` | Three cases, each an excerpt copied verbatim from a real report in the ROADZ corpus, with the document and line range it came from |
+| `tools/report-grade.py`, `.sh` | Grades a report's **opening** — first line through the end of the first `##` section — as `CONCLUSION`, `NARRATIVE`, `DEFERRED`, `PREAMBLE`, or unscored. `--file` grades one document and exits on its verdict |
+| `evals/report-shape/` | Three cases, each an excerpt copied verbatim from a real report in the ROADZ corpus, with the document and line range it came from. #164 added three more to the same suite |
 | `evals/README.md` | A fourth suite, and why it is keyed by document rather than by session and turn |
 | `skills/engineering-report/SKILL.md` | A new **The opening — conclusion first** section; the `description:` trigger clause rebuilt against #155 §1; a *No framing preamble* row in *Point of view*; a grader line in *Before finishing* |
 | `tools/verify-all.sh` | The new selftest is a gate. 15 gates, all clean |
 
 ## The result
 
-```
+```text
 opens with the conclusion        1/3  0.33
 threshold                        0.67
 verdict                          FAIL
@@ -64,15 +64,30 @@ now measured.
 ## What testing the tests found
 
 **The fixture line ranges were wrong and the drift check caught it.** Nine fixtures declared
-`lines: 1-6` against files of seven to nine lines, so every clean run reported drift and exited
-1. The selftest asserted *"a clean run exits 0"* and went red — which is the drift check doing
-its job on its own fixtures before it ever saw a real document.
+`lines: 1-6` against files of seven to nine lines, so every clean run reported drift and left the
+scorer exiting 1. The selftest asserted *"a clean run exits 0"* and went red — the drift check
+doing its job on its own fixtures before it ever saw a real document.
 
 **Three checks exist because a strict version would be unusable.** A `**Scope:**` line is the
 status header §1 requires. A `> [!WARNING]` callout is a finding about how far results reach —
 the PoE report's damaged-DUT caveat is the reason the skill has a safety section at all. A first
 section named after its subject is not a background section. Each has a fixture, and the real
 `cellular-recommendation-first` case would fail without the first of them.
+
+## What pass 1 found
+
+Four defects in this issue's half, all in `tools/report-grade.py`, all fixed here.
+
+| | |
+| --- | --- |
+| **`UNCLEAR` short-circuited the fails** | The heading class was read before the deferred and preamble checks, so an unclassifiable first heading hid both. Take the skill's own advice — *"a first section named after its subject is fine"* — and a document with a pointer on its status line **and** a framing preamble scored `UNCLEAR` and exited 0. `DEFERRED` and `PREAMBLE` are now decided first: an unreadable heading says nothing about the two things that are visible whatever the heading is called |
+| **The roman-numeral strip ate a leading I, V or X** | `^[0-9IVXivx]+\s*[.)-]*` matched with no separator required, so *Investigation* became *nvestigation*. **Investigation, Introduction, Intro and Verdict were all unreachable** — and *Investigation* is named in the skill's own list of failing shapes. A lookahead now requires a separator after the numeral |
+| **A section headed `Status` scored `CONCLUSION`** | `status` and `state` were in the findings class. Removed |
+| **The skill named four failing shapes and the tool could see three** | Development narrative — *"we first tried X, then found Y"* — had no pattern anywhere. `NARRATIVE_PAT` adds it as a `development-narrative` flag at the `PREAMBLE` tier |
+
+**`--file` graded only the opening**, which mattered once #164 put two more columns on the same
+tool: the skill pointed an author at a command that then said nothing about their tables. It now
+grades all three and exits 1 on any of them.
 
 ## Hooks that fired
 

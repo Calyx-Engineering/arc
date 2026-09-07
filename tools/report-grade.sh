@@ -6,10 +6,14 @@
 #   tools/report-grade.sh              score every case from its stored excerpt
 #   tools/report-grade.sh --strict     also fail when a case's corpus is not on this machine
 #   tools/report-grade.sh selftest     fixtures only, no corpus needed
-#   tools/report-grade.sh --file F     grade one document. Exit 1 when its opening fails
+#   tools/report-grade.sh --file F     grade one document on all three questions. Exit 1 on a fail
 #
 #   --threshold N    the rate the suite must clear. Default 0.67
-#   --corpus DIR     where the source repositories live. Default $REPORT_CORPUS_DIR, else R:/work_lantern
+#   --corpus DIR     where the source repositories live. Default $REPORT_CORPUS_DIR, else
+#                    R:/work_lantern — a path that exists on ONE machine. Everywhere else every
+#                    case falls into CORPUS NOT CHECKED and scores from its excerpt unverified;
+#                    --strict turns that into a failure, and is the flag to use in any context
+#                    where the verbatim claim has to mean something.
 #
 # WHY THIS EXISTS. #159: reports, READMEs and one spec are written as an account of the
 # exploration rather than as the current state of knowledge — five post-install corrections,
@@ -60,7 +64,7 @@ while [ "$#" -gt 0 ]; do
     --corpus) CORPUS="${2:-}"; shift ;;
     --file) RG_FILE="${2:-}"; export RG_FILE; shift ;;
     --threshold) RG_THRESHOLD="${2:-0.67}"; export RG_THRESHOLD; shift ;;
-    -h|--help) sed -n "2,40p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,45p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -184,14 +188,12 @@ if [ "$SELFTEST" = "1" ]; then
   # present — which is #164's rule: a strong claim is not overridden by a weak one silently.
   printf 'The label says 802.3af. But the measured signature is class 4.\n\nMost likely explanation: one PD front end across the family.\n' \
     > "$E/conflictok/excerpt.md"; pad conflictok conflictok.md 39
-  printf 'conflict:\n  favours: measured\n' >> "$E/conflictok/case.yaml"
 
   mk conflictsilent conflictsilent.md 40-43
   # Both sources present, nothing saying they disagree. This is the defect: a demand list
   # carrying a photograph-sourced signal beside a schematic-sourced one, for weeks.
   printf 'The schematic allocates GP16 to CTRL.\n\nA photograph of the board shows three kill-path signals.\n' \
     > "$E/conflictsilent/excerpt.md"; pad conflictsilent conflictsilent.md 39
-  printf 'conflict:\n  favours: schematic\n' >> "$E/conflictsilent/case.yaml"
 
   mk conflictdead conflictdead.md 40-43
   # #164's second incident, on 2026-08-28: a bench measurement the user had verified was
@@ -199,25 +201,23 @@ if [ "$SELFTEST" = "1" ]; then
   # as signal. It happened in conversation and was never written into a document, so it is a
   # fixture here rather than a case — the shape that cost the most is the shape with no artifact
   # to score. SILENT, because nothing in it says the two disagree.
-  printf 'The bench measurement is 4.167 Vpp out for 100 mVpp in.
-
-The estimated gain from the scope reading is 24.7x.
-'     > "$E/conflictdead/excerpt.md"; pad conflictdead conflictdead.md 39
-  printf 'conflict:
-  favours: measured
-' >> "$E/conflictdead/case.yaml"
+  printf 'The bench measurement is 4.167 Vpp out for 100 mVpp in.\n\nThe estimated gain from the scope reading is 24.7x.\n' \
+    > "$E/conflictdead/excerpt.md"; pad conflictdead conflictdead.md 39
 
   mk conflictone conflictone.md 40-42
   printf 'The measured rise time is 336 us. But that is slower than needed.\n' \
     > "$E/conflictone/excerpt.md"; pad conflictone conflictone.md 39
-  printf 'conflict:\n  favours: measured\n' >> "$E/conflictone/case.yaml"
 
-  mk conflictmismatch conflictmismatch.md 40-43
-  # Resolved, but toward a stronger source than the case named. Either a mis-authored case or
-  # a real finding, and the scorer cannot tell which — so it reports and scores neither.
-  printf 'The label says 10 W. But the measured draw is 4 W.\n' \
-    > "$E/conflictmismatch/excerpt.md"; pad conflictmismatch conflictmismatch.md 39
-  printf 'conflict:\n  favours: vendor\n' >> "$E/conflictmismatch/case.yaml"
+  mk conflictweak conflictweak.md 40-42
+  # THE REGRESSION FIXTURE, and the reason the direction is derived rather than assumed. An
+  # earlier grade_conflict returned the strongest term PRESENT and printed it as "resolves in
+  # favour of" — the vocabulary's own ordering restated, not a reading of the document. It
+  # scored the line below as RESOLVED in favour of `measured`. That line IS the 2026-08-28
+  # incident #164 was written about, and the instrument built for it graded it a pass. The
+  # direction now comes from which side of the contrast each source sits on: WEAKWINS, and the
+  # source asserted is `inferred`.
+  printf 'The measured gain is 41.7x on the bench. However the estimated gain from the instrument is 24.7x, and we are taking the estimate as correct.\n' \
+    > "$E/conflictweak/excerpt.md"; pad conflictweak conflictweak.md 39
 
   out="$(score "$C" "$E" 2>&1)"; st=$?
   P=0; F=0
@@ -249,19 +249,21 @@ The estimated gain from the scope reading is 24.7x.
   t "a rate below the threshold is a FAIL verdict"        "^verdict +FAIL"
   t "the score is not what the exit code reports"         "Not the score"
   t "a provenance column scores ROWS"                     "table source: ROWS +column: Provenance"
-  t "sources carried in the rows also score ROWS"         "table source: ROWS +terms carried in the rows"
+  t "sources carried in the rows also score ROWS"         "table source: ROWS +terms carried in every row"
   t "one source in the lead-in is reported, not scored"   "table source: TABLE +one source in the lead-in: From the product label"
   t "a claim table with no source scores NONE"            "NOTOPENING +provnone"
   # If the fence leaked, provfenced would carry a NONE table and both counts below would move.
   t "a table inside a fence is not a claim table"         "NOTOPENING +provfenced +\(region 40-46"
   t "a conflict said out loud scores RESOLVED"            "conflict:     RESOLVED in play: measured, vendor, inferred"
-  t "the source a conflict resolves toward is named"      "resolves in favour of: measured  \(case expects measured\)"
-  t "a silent conflict is the fail #164 names"            "conflict:     SILENT  in play: schematic, photograph"
-  t "a measurement beaten by an inference, silently"      "conflict:     SILENT  in play: measured, inferred"
-  t "one source in play is nothing to resolve"            "conflict:     ONESIDED in play: measured"
-  t "resolving toward an unexpected source is reported"   "conflict:     MISMATCH in play: measured, vendor"
+  t "the source a conflict asserts is derived, not assumed" "asserted over the rest: measured"
+  t "a silent conflict is the fail #164 names"            "conflict:     SILENT   in play: schematic, photograph"
+  t "a measurement beaten by an inference, silently"      "conflict:     SILENT   in play: measured, inferred"
+  t "one source in play prints no conflict line"          "NOTOPENING +conflictone +\(region 40-42"
+  t "a weaker source asserted out loud is WEAKWINS"       "conflict:     WEAKWINS in play: measured, inferred"
+  t "the weaker source it asserts is named"                "asserted over the rest: inferred"
+  t "a sourced ledger is not read as a silent conflict"    "table source: ROWS +terms carried in every row"
   t "table verdicts are counted by kind"                  "tables: sourced by row 2, unsourced 2, one source in the lead-in 1 \(not scored\), no table 15"
-  t "conflict verdicts are counted by kind"               "conflicts: resolved out loud 1, silent 2, one source only 1 \(not scored\), resolved elsewhere 1 \(reported\)"
+  t "conflict verdicts are counted by kind"               "conflicts: resolved out loud 1, silent 2, one source only 16 \(not scored\), weaker source asserted 1 \(reported\)"
   t "the table column has its own rate"                   "table rows carry a source +2/4"
   t "the conflict column has its own rate"                "conflicts resolved out loud +1/3"
   t "a matching corpus is not reported as drift"          "report-grade — 20 case"
