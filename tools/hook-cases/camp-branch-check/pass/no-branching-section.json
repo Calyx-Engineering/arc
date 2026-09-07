@@ -1,0 +1,2 @@
+# a `CLAUDE.md` that declares no branching convention — nothing to check against
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/silent","tool_name":"Bash","tool_input":{"command":"git checkout -b fix-the-thing"}}

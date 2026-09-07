@@ -1,0 +1,2 @@
+# the section declares `release/2026-q4`, and `q` is a version tag, not a label a number can hide behind
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/labelled","tool_name":"Bash","tool_input":{"command":"git checkout -b feat/q4-sync-retry"}}

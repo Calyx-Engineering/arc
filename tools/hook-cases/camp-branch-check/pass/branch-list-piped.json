@@ -1,0 +1,2 @@
+# `git branch` piped into a reader creates nothing — the name slot holds an operator
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git branch | grep dogfood"}}

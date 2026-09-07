@@ -12,8 +12,8 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, pr-write, pr-merge
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-length (not an issue, or verify-tracker-body.sh is not beside the hook), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (no arc branch checked out)
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
 
@@ -29,6 +29,26 @@ INPUT="$(cat 2>/dev/null)"
 
 field() {
   printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# Fixture values, and never `field` for them, for two reasons. `field` splits on commas, so a
+# title or a body carrying one is truncated at it — and when its `sed` cannot parse a line it
+# prints that line unchanged, so a payload cut off mid-value hands back the key and its quotes
+# as if they were the value, which then lands verbatim in a finding. Yielding nothing is the
+# honest answer, and the one the malformed guard below can act on.
+#
+# Parameter expansion, no subprocess. There are six of these, and a `printf | sed` each would
+# cost two processes on every Bash tool call in the session — more than the two the whole hook
+# spent on fixtures before this work.
+fixture() {
+  local rest key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+  # No closing quote means the payload was cut off mid-value. Return nothing, never the rest.
+  case "$rest" in *'"'*) printf '%s' "${rest%%\"*}" ;; esac
+  return 0
 }
 
 # PostToolUse communicates by writing context back to the transcript, not by a decision.
@@ -47,8 +67,6 @@ case "$CMD" in
   *"gh issue create"*|*"gh issue edit"*|*"gh pr create"*|*"gh pr edit"*|*"gh pr merge"*) ;;
   *) exit 0 ;;
 esac
-
-command -v gh >/dev/null 2>&1 || exit 0
 
 CWD="$(field cwd)"
 [ -d "$CWD" ] || CWD="$PWD"
@@ -104,14 +122,57 @@ FINDINGS
   return 0
 }
 
+# Where the arc itself will merge. Not the GitHub default: `tools/arc-default-branch.sh`
+# points the default at the active arc for the arc's lifetime (m42), so mid-arc the default
+# is the arc branch and every rule that means "the trunk" resolves to the wrong thing — the
+# defect in #210. The flip records the trunk in the git dir before it moves anything; with
+# no record, a default that is not arc-shaped IS the trunk, and an arc-shaped one means the
+# flip is on, where `main` is the same answer `arc-default-branch.sh` itself defaults to.
+resolve_trunk() {
+  local gd
+  gd="$(git -C "$CWD" rev-parse --git-common-dir 2>/dev/null)"
+  case "$gd" in ''|/*|[A-Za-z]:*) ;; *) gd="$CWD/$gd" ;; esac
+  if [ -n "$gd" ] && [ -f "$gd/arc-default-branch-trunk" ]; then
+    head -1 "$gd/arc-default-branch-trunk" 2>/dev/null | tr -d ' \r'
+    return 0
+  fi
+  case "$1" in
+    arc/*) printf 'main' ;;
+    *)     printf '%s' "$1" ;;
+  esac
+}
+
 # A body supplied directly in the payload skips the tracker read. This is how the scanners
 # are exercised offline — a hook whose only test path needs the network is a hook nobody
 # runs the day it matters.
-FIXTURE_BODY="$(field arc_test_body)"
-# `field` splits on commas, and a title's commas are exactly what this check reads. Pull
-# the value out whole instead.
-FIXTURE_TITLE="$(printf '%s' "$INPUT" | sed -n 's/.*"arc_test_title" *: *"\([^"]*\)".*/\1/p')"
-if [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE" ]; then
+FIXTURE_BODY="$(fixture arc_test_body)"
+FIXTURE_TITLE="$(fixture arc_test_title)"
+
+# The PR checks read four values from `gh pr view` and one from `gh repo view`. A case
+# supplies them directly, so the base-branch rule — the one that fired on four correctly
+# based PRs in a single session, #183 — is exercisable with no network and no live PR.
+FIXTURE_PR_BASE="$(fixture arc_test_pr_base)"
+FIXTURE_DEFAULT="$(fixture arc_test_default)"
+FIXTURE_MILESTONE="$(fixture arc_test_milestone)"
+FIXTURE_LINKED="$(fixture arc_test_linked)"
+
+# A payload that names a fixture key and yields no value from any of them is truncated, not an
+# invocation. Stay silent: falling through would send a half-named PR to a live `gh` read.
+case "$INPUT" in
+  *'"arc_test_'*)
+    [ -n "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED" ] || exit 0
+    ;;
+esac
+
+# A fixture case answers every question `gh` would have answered, so it must not be skipped
+# for want of `gh` — that turns a case that should report into a silent pass.
+if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE" ]; then
+  command -v gh >/dev/null 2>&1 || exit 0
+fi
+
+# The issue scanners take the offline path only when no PR fixture is present. A PR case
+# carries a body too, and that body belongs to the PR checks further down.
+if [ -z "$FIXTURE_PR_BASE" ] && { [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE" ]; }; then
   [ -n "$FIXTURE_BODY" ] && scan_placeholders "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_BODY" ] && scan_dates "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue" "$FIXTURE_BODY"
@@ -138,14 +199,29 @@ case "$CMD" in
     ;;
 
   *"gh pr"*)
-    META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
-    [ -n "$META" ] || exit 0
+    if [ -n "$FIXTURE_PR_BASE" ]; then
+      BASE="$FIXTURE_PR_BASE"
+      BODY="$FIXTURE_BODY"
+      TITLE="$FIXTURE_TITLE"
+      DEFAULT="$FIXTURE_DEFAULT"
+      MILESTONE="${FIXTURE_MILESTONE:-set}"
+      LINKED="${FIXTURE_LINKED:-1}"
+    else
+      META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
+      [ -n "$META" ] || exit 0
 
-    BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","baseRefName.*//')"
-    BASE="$(printf '%s' "$META" | grep -oE '"baseRefName":"[^"]*"' | sed 's/.*:"//; s/"$//')"
-    DEFAULT="$(cd "$CWD" && gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)"
+      BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","baseRefName.*//')"
+      BASE="$(printf '%s' "$META" | grep -oE '"baseRefName":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+      DEFAULT="$(cd "$CWD" && gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)"
+      TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
 
-    TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+      MILESTONE=set
+      printf '%s' "$META" | grep -q '"milestone":null' && MILESTONE=null
+      LINKED=1
+      printf '%s' "$META" | grep -q '"closingIssuesReferences":\[\]' && LINKED=0
+    fi
+
+    TRUNK="$(resolve_trunk "$DEFAULT")"
 
     scan_placeholders "$BODY" "PR #$NUM"
     scan_dates "$BODY" "PR #$NUM"
@@ -153,17 +229,28 @@ case "$CMD" in
     # A PR with no milestone drops out of the milestone view, which is the only place a
     # human sees the arc as one unit. Settable and unrelated to the base-branch problem —
     # every PR in this repo's first two arcs simply never had one set.
-    printf '%s' "$META" | grep -q '"milestone":null'       && add "PR #$NUM has no milestone. It will not appear in the milestone view, which is where the arc reads as one unit."
+    [ "$MILESTONE" = null ] && add "PR #$NUM has no milestone. It will not appear in the milestone view, which is where the arc reads as one unit."
 
-    # An issue branch's PR belongs to its arc, not to the default branch. Targeting the
-    # default branch from inside an arc merges the issue ahead of the arc it belongs to,
-    # and the arc PR then has nothing left to carry.
+    # An issue branch's PR belongs to its arc. Targeting anything else — the trunk, a
+    # sibling issue branch — merges the issue ahead of the arc it belongs to, and the arc
+    # PR then has nothing left to carry.
+    #
+    # The comparison is against the arc branch the head branch's own name carries, never
+    # against the GitHub default. `tools/arc-default-branch.sh` points the default at the
+    # active arc for the arc's lifetime (m42), so a default-branch comparison resolves to
+    # the arc branch and asks a correctly based PR for the state it is already in. That is
+    # what fired on #178, #179, #180 and #182 in one session — #183.
     HEADBR="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
     case "$HEADBR" in
       arc/*-issue-*)
-        ARCBASE="$(printf '%s' "$HEADBR" | sed -n 's#^\(arc/[^-]*-[^-]*\)-issue-.*#\1#p')"
-        if [ -n "$DEFAULT" ] && [ "$BASE" = "$DEFAULT" ]; then
-          add "PR #$NUM targets \`$DEFAULT\` from an issue branch. It belongs to its arc — base it on \`${ARCBASE:-the arc branch}\` so the arc PR carries it."
+        # Strip from the `-issue-<number>` marker, not a fixed number of segments: an arc
+        # slug may carry any number of hyphens, and a derivation that returns nothing turns
+        # the check off silently.
+        ARCBASE="$(printf '%s' "$HEADBR" | sed 's#-issue-[0-9][0-9]*.*##')"
+        if [ -n "$ARCBASE" ] && [ -n "$BASE" ] && [ "$BASE" != "$ARCBASE" ]; then
+          WHAT="\`$BASE\`"
+          [ "$BASE" = "$TRUNK" ] && WHAT="trunk branch \`$BASE\`"
+          add "PR #$NUM targets $WHAT from an issue branch of \`$ARCBASE\`. It belongs to its arc — base it on \`$ARCBASE\` so the arc PR carries it."
         fi
         ;;
     esac
@@ -182,10 +269,11 @@ case "$CMD" in
 
     # Did the closing keyword bind? Empty is a defect on the default branch and expected
     # anywhere else — a check that cries wolf on every issue PR in an arc gets turned off.
+    # `DEFAULT`, not the arc branch, and deliberately: GitHub parses a closing keyword only
+    # on a PR targeting the repository default. While m42's flip is on that is the arc
+    # branch, and a keyword there does bind.
     WANTS_CLOSE=0
     printf '%s' "$BODY" | grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+' && WANTS_CLOSE=1
-    LINKED=0
-    printf '%s' "$META" | grep -q '"closingIssuesReferences":\[\]' || LINKED=1
 
     if [ "$WANTS_CLOSE" -eq 1 ] && [ "$LINKED" -eq 0 ]; then
       if [ -n "$DEFAULT" ] && [ "$BASE" = "$DEFAULT" ]; then
@@ -195,11 +283,15 @@ case "$CMD" in
       fi
     fi
 
-    # The arc PR is the one that actually closes things. An arc merging into the default
-    # branch with no closing keywords leaves every issue it consumed open.
-    if [ "$WANTS_CLOSE" -eq 0 ] && [ -n "$DEFAULT" ] && [ "$BASE" = "$DEFAULT" ]; then
+    # The arc PR is the one that actually closes things. An arc merging into the trunk with
+    # no closing keywords leaves every issue it consumed open.
+    #
+    # `TRUNK`, not `DEFAULT`. While the flip is on, a `DEFAULT` comparison gets both halves
+    # wrong: it misses the arc PR, which targets the trunk, and it fires on every issue PR
+    # merging into the arc — where closure correctly defers to the arc PR. #210.
+    if [ "$WANTS_CLOSE" -eq 0 ] && [ -n "$TRUNK" ] && [ "$BASE" = "$TRUNK" ]; then
       case "$CMD" in
-        *"gh pr merge"*) add "PR #$NUM merges to \`$DEFAULT\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
+        *"gh pr merge"*) add "PR #$NUM merges to trunk branch \`$TRUNK\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
       esac
     fi
     ;;
