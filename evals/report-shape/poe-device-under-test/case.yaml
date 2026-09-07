@@ -1,0 +1,12 @@
+corpus: roadz-sound-system
+document: docs/report/issue-44-poe-pse-onboard/README.md
+lines: 48-72
+why: >
+  A uniform-source table, and the reason the scorer has a third answer. Every row comes from the
+  product label, and the lead-in says so once — "From the product label" — rather than repeating
+  it ten times. That is table-level provenance: weaker than a column, and not the defect.
+  Scored as a pass it would license dropping the column; scored as a fail it would report a
+  correctly sourced table as unsourced. It is reported and counted in neither, on the same
+  reasoning as BOLDONLY in tools/topic-numbering.py.
+  The "30 W" subsection below it is the vendor/label/measurement disagreement stated in the open,
+  which is what the conflict case grades in poe-class-conflict.

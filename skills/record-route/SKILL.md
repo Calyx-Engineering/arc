@@ -1,6 +1,6 @@
 ---
 name: record-route
-description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Decides which file it belongs in across the K1–K4 ladder, requires a dev-log of every merged unit whether or not an issue exists, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
+description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Also fires when the question is where a claim came from: "where did that number come from", "is that measured or assumed", "did we verify that", "that was from a photo, not the schematic", "who said that". Decides which file it belongs in across the K1–K4 ladder, requires a dev-log of every merged unit whether or not an issue exists, requires every claim to carry its source strongest-first, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
 camp-reports: [record-routed, arc-log-updated, dev-log-written]
 checks: [tier, destination-exists, arc-log-status-current, dev-log-exists]
 skips:
@@ -69,6 +69,43 @@ in that one instead, and the `Spawned` rows link the two.
 **A no-issue PR's dev-log is written before the PR exists**, as its first commit: a PR needs a
 commit to exist, and the dev-log is what that commit is. It starts as a stub and is filled in
 before the PR is marked ready. `tools/new-direct-pr.sh` does this as one of its steps.
+
+---
+
+## Every record carries where its claims came from
+
+> **A number written down without its source is a number that outlives the reason to doubt it.**
+
+Routing decides which file. This decides what the row says once it gets there, and it applies at
+every tier — a wiki fact, an arc-work ledger, a scratch measurement, a report table.
+
+[#164](https://github.com/Calyx-Engineering/arc/issues/164): a demand list carried three
+kill-path signals read off **a photograph of a board the project does not hold**, treated as
+specified for weeks, because nothing recorded where they came from.
+
+| Provenance | Is | Strength |
+|---|---|---|
+| `measured` | A bench result | **Strongest** |
+| `datasheet` | The part's own document | |
+| `vendor` | A label, a listing, a product page | |
+| `schematic` | This board's own sheets | |
+| `photograph` | A picture of a circuit not in hand | Treat as a hypothesis |
+| `conversation` | Said, not written down | Not a decision until it is |
+| `inferred` | Extrapolated, assumed, calculated from something else | **Weakest** |
+
+**The order is the point.** Without it, *record the source* is a label with no consequence. A
+project may add a term it genuinely has — shipped firmware, a reviewed drawing, a merged report
+— but it places the new term **in the order**, or it has added a word and not a rule.
+
+| | |
+|---|---|
+| **A table row carries its source, on the row** | Not once in a lead-in above it. A row gets quoted somewhere else; the lead-in does not travel with it |
+| **A strong claim is not overridden by a weak one without saying so** | If an inference wins over a measurement, the record says so where the claim is, with why |
+| **Raised as an option is not decided** | `conversation` is the provenance for something said and not yet written. An option recorded as a requirement is the same defect wearing different clothes |
+
+**This is not the same as the confidence split.** That groups a whole report; this travels with
+one row. [engineering-report](../engineering-report/SKILL.md#where-each-claim-came-from) carries
+the report side and the grader that scores it.
 
 ---
 

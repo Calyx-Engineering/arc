@@ -1,0 +1,10 @@
+corpus: roadz-sound-system
+document: docs/arc-work/interface-pcba-rev-b/rp2040-pin-allocation.md
+lines: 51-74
+why: >
+  The provenance exemplar, and it is the user's own repair of the defect #164 names. Every row
+  of the ledger carries where its claim came from, in its own column, and the document says why
+  the column exists: three kill-path signals were carried on the demand list for weeks because
+  nothing recorded that they came from a photograph of a board the project does not hold.
+  It is the case that fixes what a pass looks like. Row-level provenance, in a column, on a
+  table of claims that get built on.
