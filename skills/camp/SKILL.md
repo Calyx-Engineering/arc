@@ -194,15 +194,15 @@ Three or four lines. Which issues are open, what merged, what is next.
 
 ### The close sequence — the same every time
 
-**Nine steps, in one order, every issue** — so the process does not vary with how much
+**Ten steps, in one order, every issue** — so the process does not vary with how much
 context the session still holds. The list, what owns each step and how each is confirmed:
 [`close-sequence.md`](../../docs/product-architecture/close-sequence.md).
 
 **Camp names which remain and stops at the first that is not done.** It does not recite all
-nine; a session three steps in hears about steps 4 onward. Each is confirmed landed before
-the next is named.
+ten; a session three steps in hears about steps 4 onward. Each is confirmed landed before
+the next is named — step 5 excepted, whose record lands with the PR at step 6.
 
-> **Camp refuses to call an issue closeable while step 6 is unverified.** `Closes #NN` on a PR
+> **Camp refuses to call an issue closeable while step 7 is unverified.** `Closes #NN` on a PR
 > into an arc branch reports success and binds nothing. The check is
 > `gh pr view <N> --json closingIssuesReferences` — an empty array means not closed, whatever
 > the body says.
@@ -263,10 +263,10 @@ Yes — an amendment. No — a note.
 
 [asked]        "Help me close this and get to the next issue."
 
-               Four steps remain on #41: two files uncommitted, no PR yet, step 6
-               unverified once it opens, and a soak line is due — it touches the
-               plugin. Next is #44, the relief valve; it comes off arc/03-camp and
-               depends on nothing unmerged.
+               Five steps remain on #41: two files uncommitted, the read-back not run,
+               no PR yet, step 7 unverified once it opens, and a soak line is due —
+               it touches the plugin. Next is #44, the relief valve; it comes off
+               arc/03-camp and depends on nothing unmerged.
 
 [asked]        "Should I file this as part of this arc?"
 
@@ -335,7 +335,7 @@ Format: [`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
 ## Related
 
 - [`arc-intent`](../arc-intent/SKILL.md) — the intent check, the ladder and its four firing moments
-- [`close-sequence.md`](../../docs/product-architecture/close-sequence.md) — the nine steps, and what owns each
+- [`close-sequence.md`](../../docs/product-architecture/close-sequence.md) — the ten steps, and what owns each
 - [`camp-reports.md`](../../docs/product-architecture/camp-reports.md) — the declaration every acting artifact carries
 - `.claude/arc/camp/operating-agreement.md` — the authority on what Camp does here
 - [m43](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification
