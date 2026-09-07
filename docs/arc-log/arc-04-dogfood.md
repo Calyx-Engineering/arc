@@ -174,26 +174,22 @@ Each workstream's 200-word boundary report lands here when it closes.
 
 ### Loop — boundary report, 2026-09-07 · closed
 
-**All four closed.** [#138](https://github.com/Calyx-Engineering/arc/issues/138) reduced the mode rule from five statements to one and inverted the verifier that had enforced the duplication; [#142](https://github.com/Calyx-Engineering/arc/issues/142) deleted the 13 shadowing skill copies; [#141](https://github.com/Calyx-Engineering/arc/issues/141) replaced the miner's prefix glob with an exact scope rule; [#149](https://github.com/Calyx-Engineering/arc/issues/149) measured skill firing from real transcripts after `plugin eval` turned out to be gated **and never to have been run**.
+**All four closed.** [#138](https://github.com/Calyx-Engineering/arc/issues/138) cut the mode rule from five statements to one and inverted the verifier that enforced the duplication. [#142](https://github.com/Calyx-Engineering/arc/issues/142) deleted 13 duplicate skills. [#141](https://github.com/Calyx-Engineering/arc/issues/141) gave the miner an exact scope rule. [#149](https://github.com/Calyx-Engineering/arc/issues/149) measured skill firing from transcripts, after `plugin eval` proved gated **and never to have been run**.
 
 | File | Why |
 |---|---|
-| `CLAUDE.md` | 231 → 141 lines. The mode stated once, and what the plugin owns removed |
-| `skills/work-watch` · `skills/autonomy-set` · `m40` | One authority for the rule; m40 §9 reversed with its original reasoning kept |
-| `tools/verify-autonomy.sh` | Six per-row checks → a census |
-| `tools/verify-skill-registry.sh` | **New.** The half of `sync-local-skills.sh` that outlived it |
-| `tools/miner-scope.sh` | **New.** IN / NEAR / SKIP, 9 selftest cases |
-| `tools/skill-firing.sh` · `.py` | **New.** Fires, sessions, at-opening per skill. 7 selftest cases |
-| `skill-firing-baseline.md` | **New.** 11 post-install sessions. The number Fire is scored against |
+| `CLAUDE.md` | 231 → 141 lines |
+| `work-watch` · `autonomy-set` · m40 | One authority for the rule |
+| `verify-autonomy.sh` | Per-row checks → a census |
+| `verify-skill-registry.sh` · `miner-scope.sh` · `skill-firing.sh` | New. 3, 9 and 7 cases |
+| `skill-firing-baseline.md` | New. What Fire is scored against |
 | `.claude/skills/` · two sync tools | Deleted |
 
-**Evidence.** `verify-all.sh`: **9 gates, all clean**, exit 0. **[PR #172](https://github.com/Calyx-Engineering/arc/pull/172) merged with no denial — the first merge here to run without an explicit per-merge request.** One observation; statement count is the leading explanation, not proof.
+**Evidence.** `verify-all.sh` — 10 gates, exit 0. Four PRs merged with no denial, the first here to run without a per-merge request. **Baseline:** `handoff` 0/11 at an opening, `work-watch` 1 fire in 11, `chat-response` 4/11. Every skill fired at least once, so the defect is frequency.
 
-**The baseline, and it is worse than the retrospective could show.** `handoff` fired at **no opening in 11 sessions**; `work-watch` **once in 11**, against a description saying *use continuously*; `chat-response` in 4 of 11 while governing every reply. **Every skill fired at least once — the defect is frequency, not discoverability.**
+**Not done.** `plugin eval` regression testing — [#181](https://github.com/Calyx-Engineering/arc/issues/181), out of the milestone, waiting on early-access enrolment. Nothing depends on it.
 
-**Not done: `plugin eval` regression testing.** Gated behind early-access enrolment, requested via `/feedback`. [#181](https://github.com/Calyx-Engineering/arc/issues/181), out of the milestone. Nothing else waits on it.
-
-**Spawned:** [#173](https://github.com/Calyx-Engineering/arc/issues/173) · [#174](https://github.com/Calyx-Engineering/arc/issues/174) · [#175](https://github.com/Calyx-Engineering/arc/issues/175) · [#177](https://github.com/Calyx-Engineering/arc/issues/177) · [#181](https://github.com/Calyx-Engineering/arc/issues/181) · [#183](https://github.com/Calyx-Engineering/arc/issues/183). The last is `tracker-verify` reporting a conforming PR base as wrong — four firings, four wrong, the same shape as [#162](https://github.com/Calyx-Engineering/arc/issues/162).
+**Six spawned.** [#183](https://github.com/Calyx-Engineering/arc/issues/183) matters: `tracker-verify` called a conforming PR base wrong, four times, four wrong.
 
 ```mermaid
 flowchart LR
