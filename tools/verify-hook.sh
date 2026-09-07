@@ -74,7 +74,7 @@ substitute() {
   sed -e "s#__FIXTURE_MAIN__#$(p main)#g" \
       -e "s#__FIXTURE_ARC__#$(p arc)#g" \
       -e "s#__FIXTURE_ISSUE__#$(p issue)#g" \
-      -e "s#__FIXTURE_NOREPO__#$(p norepo)#g"       -e "s#__FIXTURE_MANUAL__#$(p manual)#g"       -e "s#__FIXTURE_AUTONOMOUS__#$(p autonomous)#g"       -e "s#__FIXTURE_BADMODE__#$(p badmode)#g"
+      -e "s#__FIXTURE_NOREPO__#$(p norepo)#g"       -e "s#__FIXTURE_MANUAL__#$(p manual)#g"       -e "s#__FIXTURE_AUTONOMOUS__#$(p autonomous)#g"       -e "s#__FIXTURE_BADMODE__#$(p badmode)#g"      -e "s#__FIXTURE_PR__#$(p pr)#g"
 }
 
 # A case file's first line is a `# ` description; the rest is the JSON payload.
@@ -96,6 +96,8 @@ run_case() {
   #                 a message on stderr feeds context back; exit 0 is silence.
   if printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"'; then
     verdict=deny
+  elif printf '%s' "$out" | grep -q '"permissionDecisionReason" *: *"[^"]'; then
+    verdict=report
   elif [ "$rc" -eq 2 ]; then
     verdict=report
   elif [ "$rc" -ne 0 ]; then
