@@ -7,8 +7,11 @@
 # when the fix is one command.
 #
 # camp-reports: branch-create
-# checks: branch-name-convention, issue-or-pr-number-present, base-is-arc
-# skips: base-is-arc (branch was created without an explicit base)
+# checks: declared-convention-read, issue-or-pr-number-present
+# skips: base-is-arc (not built)
+#
+# A repo that declares no branching convention silences this hook entirely — there is no report
+# to carry a skip line, so that silence is not a `skips` entry.
 #
 # The three lines above are the `camp-reports:` declaration. They are why this hook is
 # visible when it fires — one declaration drives both the spoken report and the event-log
@@ -30,7 +33,7 @@ INPUT="$(cat 2>/dev/null)"
 
 # Read a top-level or nested field out of the hook payload without requiring jq.
 field() {
-  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
 }
 
 # Speak, without blocking. exit 2 surfaces stderr to the transcript.
@@ -41,7 +44,10 @@ report() {
 
 # ---- hook body ------------------------------------------------------------------
 
-CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/"$//')"
+# The command ends at its closing quote, not at the end of the line — a payload that carries
+# `"command":"…"}}` leaves the braces attached otherwise, and they end up inside the branch
+# name the report quotes back.
+CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/".*$//')"
 [ -n "$CMD" ] || exit 0
 
 # Only branch creation. `git checkout <existing>` and `git switch` without -c are moves,
@@ -63,38 +69,115 @@ NAME="$(printf '%s' "$CMD" \
   | awk '{print $NF}')"
 [ -n "$NAME" ] || exit 0
 
-# A flag rather than a name means the command was something this hook does not model.
+# The token is a shell word, not yet a ref: `git checkout -b 'fix-the-thing';` carries quotes
+# and a terminator that are no part of the name.
+NAME="$(printf '%s' "$NAME" | sed -e "s/^['\"]//" -e "s/['\"]$//" -e 's/[;&]*$//')"
+
+# A flag rather than a name means the command was something this hook does not model. So does
+# an operator: `git branch | grep foo` and `git branch > list.txt` create nothing, and a report
+# on a branch named `|` is the same false report this hook exists to stop making. Only the
+# shell's own metacharacters are rejected — git's legal ref names are wider than any pattern
+# worth writing here, and `_wip` is exactly the numberless branch that should be reported.
 case "$NAME" in -*) exit 0 ;; esac
+case "$NAME" in *['|&;()<>$`']*) exit 0 ;; esac
+[ -n "$NAME" ] || exit 0
 
 # The trunk branches are not work branches and are never created by this path in practice;
 # if one is, the session-start hook is the thing that speaks about it.
 case "$NAME" in main|master|develop) exit 0 ;; esac
 
-FINDINGS=""
-add() { FINDINGS="$FINDINGS
-  - $1"; }
+# ---- the repository's declared convention ---------------------------------------
+# Branch naming is per-repo. Arc names arcs `arc/<nn>-<slug>`; ROADZ names them after the
+# product component being revised. A hook that matches one repo's shape reports every branch
+# in the other as wrong — which is what this one did, five times out of five (#162).
+#
+# So the convention is read, not assumed. `CLAUDE.md`'s branching section is where a repo
+# declares it, and it is the file the session was already given. The nearest one up the tree
+# wins, so a subproject that declares its own is read instead of its parent's.
+#
+# The payload holds a JSON string, so a Windows cwd arrives as `R:\\arc-wt\\162`. Unescape it
+# and take the forward-slash form, or every session on Windows silently falls back to `$PWD`
+# and the walk-up above never runs where it was meant to.
+CWD="$(field cwd | sed -e 's/\\\\/\\/g' | tr '\\' '/')"
+{ [ -n "$CWD" ] && [ -d "$CWD" ]; } || CWD="$PWD"
 
-# Two work-branch forms, and the number names whichever identifier exists first — m46 §9.
-# A no-issue branch carries the PR number instead, and the `pr` label is what tells a reader
-# which counter the number came from. Issues and PRs share one, so an unlabelled number
-# points at whichever object happens to hold it.
-case "$NAME" in
-  arc/*-issue-*)
-    # An issue branch. The convention. Nothing to say.
-    ;;
-  arc/*-pr[0-9]*)
-    # A no-issue branch, named for the PR it will open. Also the convention.
-    ;;
-  arc/*)
-    add "\`$NAME\` is an arc branch, not a work branch. Work belongs on \`$NAME-issue-<N>-<slug>\`, or \`$NAME-pr<NN>-<slug>\` where there is no issue"
-    ;;
-  *)
-    add "\`$NAME\` matches neither \`arc/<nn>-<slug>-issue-<N>-<slug>\` nor \`arc/<nn>-<slug>-pr<NN>-<slug>\`, so nothing links it to an issue or a PR"
-    ;;
-esac
+CONVENTION=""
+dir="$(cd "$CWD" 2>/dev/null && pwd)"
+while [ -n "$dir" ]; do
+  if [ -f "$dir/CLAUDE.md" ]; then CONVENTION="$dir/CLAUDE.md"; break; fi
+  case "$dir" in */?*) dir="${dir%/*}" ;; *) dir="" ;; esac
+done
+[ -n "$CONVENTION" ] || exit 0
 
-[ -n "$FINDINGS" ] && report "**Camp here —** branch \`$NAME\` created.
-  Checked: name convention, issue or PR number present$FINDINGS
-  Declared but skipped: base-is-arc (no explicit base in the command)"
+# The section runs from the heading that names branching to the next heading of any kind. The
+# heading whose whole subject is branching is preferred, so a `## Branch protection` elsewhere
+# in the file cannot supply the forms; only if there is no such heading does any heading naming
+# a branch do. A repo that declares no convention gets silence: with nothing to check against,
+# anything this hook said would be its own opinion.
+section() {
+  awk -v pat="$1" '
+    $0 ~ /^#+ +/ && inb { exit }
+    $0 ~ pat { inb = 1; next }
+    inb { print }
+  ' "$CONVENTION" 2>/dev/null
+}
+SECTION="$(section '^#+ +[Bb]ranch(ing|es|[- ]naming)?([- ](strategy|conventions?|rules?|names?))?[[:space:]]*$')"
+[ -n "$SECTION" ] || SECTION="$(section '^#+ +.*[Bb]ranch')"
+[ -n "$SECTION" ] || exit 0
+
+# The declared forms are the backticked branch names in that section — `arc/03-camp-issue-78-work-nav`,
+# `<module>/rev-<X>-issue-<NN>-<slug>`. Only those carrying an identifier count: a form with a
+# number or a numeric placeholder in it is the repo saying which word labels the number.
+# A backticked token that is a link target or a filename is not a branch — `skills/issue-write`
+# and `tools/new-direct-pr.sh` both appear in Arc's branching section, and neither is a name
+# anyone creates a branch with.
+NAMED="$(printf '%s\n' "$SECTION" | grep -oE '`[^`]+`(\]\()?' \
+  | grep -v ']($' | tr -d '`' \
+  | grep -E '^[A-Za-z0-9_.<>-]+/[A-Za-z0-9_.<>-]+$' \
+  | grep -vE '\.[A-Za-z]{1,4}$')"
+
+# A declared form is one where the number is followed by the slug — `…-issue-78-work-nav`,
+# `…-pr115-transcript-staleness`, `feat/ticket-<NN>-<slug>`. That trailing separator is what
+# separates a labelled identifier from a version or a date: `release/2026-q4` ends at its
+# number, and reading `q` out of it as a label would let `feat/q4-anything` pass as numbered.
+# The label is two characters at least, for the same reason.
+FORMS="$(printf '%s\n' "$NAMED" | grep -E '[A-Za-z]{2,}[-_]?(<[Nn]+>|<number>|[0-9]+)[-_]')"
+
+# A name the section spells out in full is a branch the repo has already decided on — ROADZ's
+# `interface-pcba/rev_b` is its integration branch, declared two lines above the work-branch
+# form. It carries no issue number and is not supposed to: telling the repo to rename the
+# branch its own convention names is the failure this hook is being fixed for.
+if printf '%s\n' "$NAMED" | grep -qxF "$NAME"; then
+  exit 0
+fi
+
+# ---- does the name carry an identifier number? ----------------------------------
+# The check is the number, never the slug — m46 §9. `issue` and `pr` are the two labels Arc's
+# own mechanism defines and hold everywhere; the declared forms add whatever else this repo
+# labels its numbers with. A repo that declares only the issue form still gets `pr` from Arc,
+# which is why ROADZ's real `…-pr58-arc-setup` passes against a section that never mentions it.
+LABELS='issues?|pr'
+for k in $(printf '%s\n' "$FORMS" | grep -oE '[A-Za-z]{2,}[-_]?(<[Nn]+>|<number>|[0-9]+)[-_]' \
+             | sed -E 's/[-_]?(<[^>]*>|[0-9]+)[-_]$//' | tr '[:upper:]' '[:lower:]' | sort -u); do
+  case "|$LABELS|" in *"|$k|"*|*"|$k?|"*) ;; *) LABELS="$LABELS|$k" ;; esac
+done
+
+NUM="$(printf '%s' "$NAME" | tr '[:upper:]' '[:lower:]' \
+  | grep -oE "(^|[-/_])($LABELS)[-_]?[0-9]+" | head -1 | grep -oE '[0-9]+$')"
+if [ -n "$NUM" ] && [ "$NUM" -gt 0 ] 2>/dev/null; then
+  # It names an issue or a PR. Whatever else the name is, the tracker link exists.
+  exit 0
+fi
+
+# ---- nothing links it -----------------------------------------------------------
+# One finding, and it quotes the repo's own words rather than a shape compiled in here.
+FORM="$(printf '%s\n' "$FORMS" | head -1)"
+DECLARES=""
+[ -n "$FORM" ] && DECLARES=" This repo declares \`$FORM\` (\`CLAUDE.md\`, branching)."
+
+report "**Camp here —** branch \`$NAME\` created.
+  Checked: declared convention read, issue or PR number present
+  - \`$NAME\` carries no issue or PR number, so nothing links it to the tracker.$DECLARES Rename it now — once a PR is open the name is fixed
+  Declared but skipped: base-is-arc (not built)"
 
 exit 0

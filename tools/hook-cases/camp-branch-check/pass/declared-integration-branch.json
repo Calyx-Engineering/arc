@@ -1,0 +1,2 @@
+# ROADZ, real: the integration branch its convention names in full, which carries no number
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/roadz","tool_name":"Bash","tool_input":{"command":"git checkout -b interface-pcba/rev_b"}}

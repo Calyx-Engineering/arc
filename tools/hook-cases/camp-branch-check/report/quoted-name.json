@@ -1,0 +1,2 @@
+# the name arrives quoted and terminated — the quotes are no part of it, and it still has no number
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git checkout -b 'fix-the-thing';"}}

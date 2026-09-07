@@ -1,0 +1,2 @@
+# ROADZ, real: an issue branch on the pre-2026-08-24 underscore form its convention still allows
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/roadz","tool_name":"Bash","tool_input":{"command":"git checkout -b interface-pcba/rev_b-issue-1-dimmer-flasher"}}

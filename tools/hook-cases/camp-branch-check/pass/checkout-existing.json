@@ -1,2 +1,2 @@
 # moving to an existing branch is not creating one
-{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git checkout main"}}
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git checkout main"}}

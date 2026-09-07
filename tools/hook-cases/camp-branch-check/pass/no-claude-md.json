@@ -1,0 +1,2 @@
+# a repo with no CLAUDE.md anywhere up the tree — the convention cannot be read, so silence
+{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git checkout -b fix-the-thing"}}

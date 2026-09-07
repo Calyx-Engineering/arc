@@ -1,2 +1,2 @@
-# an issue branch matching the convention
-{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git checkout -b arc/03-camp-issue-43-hooks"}}
+# an issue branch matching this repo's declared convention
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git checkout -b arc/03-camp-issue-43-hooks"}}
