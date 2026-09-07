@@ -94,13 +94,15 @@ an unnumbered report reads as one block and gets skimmed.
 
 A diagram may follow and does not count against the 200.
 
-**Frame it, or nobody can tell where it starts and stops.** In the arc-log a report sits between
-a status table and the next workstream's block, and an unframed one reads as more of the page.
+**Number the heading and frame the block.** The arc-log numbers every heading, `## 6`, `### 6.1`;
+a report landing there as an unnumbered `###` breaks the document's own convention and cannot be
+cited. And a report sits between a status table and the next workstream's block, so without rules
+it reads as more of the page.
 
 ```markdown
 ---
 
-### <Workstream> — boundary report
+### <n> <Workstream> — boundary report
 
 **Workstream:** <name> · **Closed:** <date> · **<N> words**, diagram excluded
 
