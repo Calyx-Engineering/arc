@@ -1,6 +1,6 @@
 # Issue #155 — why a skill does not fire, and what would make it
 
-**Issue:** [#155](https://github.com/Calyx-Engineering/arc/issues/155)  ·  **PR:** [#201](https://github.com/Calyx-Engineering/arc/pull/201)
+**Issue:** [#155](https://github.com/Calyx-Engineering/arc/issues/155)  ·  **PR:** [#205](https://github.com/Calyx-Engineering/arc/pull/205)
 
 ## Problem
 
@@ -86,6 +86,14 @@ suite went red:
 **A fixture where the wrong answer scores the same as the right one asserts nothing.** Every
 exclusion now has a session built so that including it moves the skill out of the window, and the
 mutation run — delete a guard, expect red — is what proved it.
+
+## Hooks that fired
+
+| Hook | |
+| --- | --- |
+| `tracker-verify` on the issue write | *"the title names more than one deliverable."* Correct as a rule — the title does name two. Left as written; splitting an issue mid-run would orphan the branch |
+| `tracker-verify` on the PR | *"targets `arc/04-dogfood` from an issue branch. It belongs to its arc — base it on `arc/04-dogfood`."* The PR **is** based on `arc/04-dogfood`. This is [#183](https://github.com/Calyx-Engineering/arc/issues/183), reproduced |
+| `tracker-verify` on the PR | No milestone, and no `arc-04:` prefix. Both correct, both fixed |
 
 ## Retrospective
 
