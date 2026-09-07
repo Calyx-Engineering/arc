@@ -137,7 +137,11 @@ body_has_keyword() {
 repair_note() {
   local branch="$1" on_ref="$2"
   echo
-  if [ "$on_ref" = "unknown" ]; then
+  if [ -z "$branch" ]; then
+    echo "      No branch was named, so there is no ref to advise about. This issue is linked to"
+    echo "      nothing: no branch record and no closing PR. Cut the branch with"
+    echo "      \`createLinkedBranch\` and read this back before the PR exists."
+  elif [ "$on_ref" = "unknown" ]; then
     echo "      DO NOT delete this ref. Whether a PR heads it could not be read, and deleting the"
     echo "      head branch of an open PR closes that PR. Bind from the PR side instead: a"
     echo "      \`Closes #NN\` line on its own last line, then read this back again."
@@ -333,6 +337,7 @@ arc/x-issue-9-a" ""
   note_is "DO NOT delete this ref"    "delete the ref and re-run" "an open PR on the ref"      "arc/x-issue-9-a" "42"
   note_is "DO NOT delete this ref"    "delete the ref and re-run" "the ref read failed"        "arc/x-issue-9-a" "unknown"
   note_is "delete the ref and re-run" "DO NOT delete this ref"    "the ref is free"            "arc/x-issue-9-a" ""
+  note_is "No branch was named"       "delete the ref and re-run" "no branch was named at all" ""                ""
 
   # All four reference forms GitHub parses. Missing one of them turns a keyworded PR into the
   # `nokeyword` reading, which is the strongest claim this tool makes.
