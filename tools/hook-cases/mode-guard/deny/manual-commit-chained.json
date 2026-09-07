@@ -1,0 +1,2 @@
+# manual mode, a commit behind a cd and a comma — the truncation case
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"cd r:/arc && git add -A && git commit -m \"a, b, c\"","description":"Chained commit"}}

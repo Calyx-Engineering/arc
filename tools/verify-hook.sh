@@ -52,6 +52,21 @@ make_repo arc    arc/02-foundation
 make_repo issue  arc/02-foundation-issue-10-skeleton
 mkdir -p "$FIXTURES/norepo"
 
+# mode-guard reads HANDOFF.md's Execution mode row, so it needs repos that have one. The
+# branch is irrelevant to that hook; the file is the whole input. `norepo` covers absent.
+make_repo manual     main
+make_repo autonomous main
+make_repo badmode    main
+mode_file() { printf '## Execution mode
+
+| | |
+|---|---|
+| **Mode** | **%s** |
+' "$2" > "$FIXTURES/$1/HANDOFF.md"; }
+mode_file manual     Manual
+mode_file autonomous Autonomous
+mode_file badmode    Paused
+
 # Portable path form — a payload holds a JSON string, so backslashes would need escaping.
 p() { printf '%s' "$FIXTURES/$1" | tr '\\' '/'; }
 
@@ -59,7 +74,7 @@ substitute() {
   sed -e "s#__FIXTURE_MAIN__#$(p main)#g" \
       -e "s#__FIXTURE_ARC__#$(p arc)#g" \
       -e "s#__FIXTURE_ISSUE__#$(p issue)#g" \
-      -e "s#__FIXTURE_NOREPO__#$(p norepo)#g"
+      -e "s#__FIXTURE_NOREPO__#$(p norepo)#g"       -e "s#__FIXTURE_MANUAL__#$(p manual)#g"       -e "s#__FIXTURE_AUTONOMOUS__#$(p autonomous)#g"       -e "s#__FIXTURE_BADMODE__#$(p badmode)#g"
 }
 
 # A case file's first line is a `# ` description; the rest is the JSON payload.

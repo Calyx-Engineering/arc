@@ -15,7 +15,9 @@ mechanisms, the artifacts that carry them, and the state each is in.
 
 **Execution mode is manual** — files change; nothing is committed, pushed or merged unless
 asked. It changes only when `HANDOFF.md`'s *Execution mode* row says autonomous, and that row
-is read, never remembered (`skills/autonomy-set`).
+is read, never remembered — `hooks/mode-guard` reads it before every commit, push, PR and merge,
+and denies in manual. **You may set that row to manual and never to autonomous**
+(`skills/autonomy-set`).
 
 ## Working with David
 

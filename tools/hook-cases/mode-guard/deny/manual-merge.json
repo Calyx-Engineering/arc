@@ -1,0 +1,2 @@
+# manual mode, a merge — three of these landed unasked on 2026-09-07
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"gh pr merge 188 --merge --delete-branch","description":"Merge"}}

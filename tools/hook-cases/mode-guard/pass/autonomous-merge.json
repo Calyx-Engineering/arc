@@ -1,0 +1,2 @@
+# autonomous mode, a merge — the mode permits it
+{"tool_name":"Bash","cwd":"__FIXTURE_AUTONOMOUS__","tool_input":{"command":"gh pr merge 12 --merge","description":"Merge"}}

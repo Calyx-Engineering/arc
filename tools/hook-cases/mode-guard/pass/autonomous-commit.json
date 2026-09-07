@@ -1,0 +1,2 @@
+# autonomous mode, a commit — the mode permits it
+{"tool_name":"Bash","cwd":"__FIXTURE_AUTONOMOUS__","tool_input":{"command":"git commit -m \"work\"","description":"Commit"}}

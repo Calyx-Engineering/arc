@@ -149,6 +149,17 @@ because a document declared something and everyone downstream was expected to co
 
 ## 4 Entering and leaving
 
+**The switch is asymmetric.** Claude may set the mode to manual and may never set it to
+autonomous. Only the user raises it, by saying so; Claude writes the row on being told.
+Dropping to manual stays Claude's to do — at a named boundary, or when the self-test fails.
+
+**This cannot be enforced mechanically and is not pretended to be.** `hooks/mode-guard` sees a
+file change, not who asked for it, and gating writes to `HANDOFF.md` would block the rest of a
+file Claude legitimately maintains. What became mechanical is the other half: the mode is read
+at the moment of a commit rather than recalled, and manual denies.
+
+**The user never hand-edits `HANDOFF.md` to switch modes.** The switch is a sentence in chat.
+
 ### Entering — explicit, and never inferred
 
 | Counts as entering | Does not |
@@ -168,6 +179,9 @@ remembering is what this mechanism exists to replace.
 | **The named boundary** | Auto always runs *to* something — a wave, an issue count, an arc. Reaching it ends auto and hands back |
 | **An explicit return** | *"switch back to manual"*, *"stop"*, *"wait"* |
 | **A failed self-test** | §6. Ends auto and hands off — never *try harder* |
+
+**All three are Claude writing the row.** That direction needs no permission: dropping to manual
+removes authority rather than granting it, so there is nothing to guard.
 
 ### Suspension — inferred, per exchange
 

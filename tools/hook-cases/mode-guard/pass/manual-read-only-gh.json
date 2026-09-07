@@ -1,0 +1,2 @@
+# manual mode, reading a PR rather than merging it
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"gh pr view 12 --json state","description":"Read a PR"}}

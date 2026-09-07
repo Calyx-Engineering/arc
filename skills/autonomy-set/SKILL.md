@@ -47,6 +47,24 @@ the mode row has two values and not three.
 
 ---
 
+## The switch is asymmetric
+
+**You may set the mode to manual. You may never set it to autonomous.** Only the user raises it,
+by saying so — you write the row on being told, and never on your own reading of the situation.
+
+Dropping to manual is yours: at a named boundary, when the self-test fails, or when the user says
+stop. That direction removes authority rather than granting it, so there is nothing to guard.
+
+**The user does not hand-edit `HANDOFF.md`.** The switch is a sentence in chat; writing the row
+is your job.
+
+**`hooks/mode-guard` enforces the other half, not this one.** It reads the mode row before every
+commit, push, PR and merge, and denies in manual. It cannot tell whether the user asked for a
+mode change — it sees a file, not a conversation — so *only the user raises it* is a rule you
+keep, not a gate that catches you.
+
+---
+
 ## Entering — explicit, every time
 
 | Counts | Does not |
@@ -177,7 +195,7 @@ cause.** Check them in this order and name the one that applies.
 is in the refusal text and in `settings.json`, both available in the same turn.
 
 **Never edit `.claude/settings.json` to widen your own permissions.** An agent that can install
-its own switch has no switch.
+its own switch has no switch. The asymmetry above is the same reasoning applied to the mode row.
 
 ---
 

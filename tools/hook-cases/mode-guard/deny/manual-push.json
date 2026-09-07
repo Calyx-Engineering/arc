@@ -1,0 +1,2 @@
+# manual mode, a push
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"git push -u origin work","description":"Push"}}
