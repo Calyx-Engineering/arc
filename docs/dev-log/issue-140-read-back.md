@@ -1,6 +1,6 @@
 # Issue #140 — feat: read the work back against the issue before a PR
 
-**Issue:** [#140](https://github.com/Calyx-Engineering/arc/issues/140)  ·  **PR:** [#219](https://github.com/Calyx-Engineering/arc/pull/219)
+**Issue:** [#140](https://github.com/Calyx-Engineering/arc/issues/140)  ·  **PR:** [#222](https://github.com/Calyx-Engineering/arc/pull/222)
 
 ## Problem
 

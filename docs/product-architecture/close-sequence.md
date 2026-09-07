@@ -92,6 +92,9 @@ nothing else — no memory of the arguments, no attachment to the wording. Same 
 | **It costs** | Two dispatches whose context dies with them, against two whole-file readings carried in the session's own context for the rest of the unit. Delegating changes where the reading lands, never what is asked |
 | **It blocks** | Nothing. Findings are dispositioned in the PR body, like every other verifier here |
 
+**Acting on a finding dirties the tree again, and step 4 is re-established before step 6** —
+each round of dispositions is committed, and the gate re-run, so the PR opens on a clean tree.
+
 **The session disposes each finding in the PR body** — acted on, or declined with the reason. A
 pass that returned nothing is recorded as having returned nothing, because **silence in the body
 is indistinguishable from a step nobody ran.**
