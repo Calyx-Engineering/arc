@@ -61,9 +61,15 @@ BRANCH="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 # The segment, not the prefix. `arc/` is this repo's; another repo's operating agreement
 # names its own, and a work branch there must still be recognised. The `arc/*)` line below
 # is the half that still hardcodes it — #203.
+#
+# Both bare forms are listed because a repo with no prefix at all names the branch
+# `issue-42-slug`, which has nothing before the hyphen and misses `*-issue-*`. It would
+# fall through to the topic-branch case and still be allowed, so this is classification
+# rather than permission — but the fallback is what would have to stay permissive forever
+# for that to keep being true, and a guard should not depend on its own catch-all.
 case "$BRANCH" in
   main|master|develop)       KIND=trunk ;;
-  *-issue-[0-9]*|*-pr[0-9]*) exit 0 ;;   # a work branch — an issue branch or a direct PR
+  *-issue-[0-9]*|issue-[0-9]*|*-pr[0-9]*|pr[0-9]*) exit 0 ;;   # a work branch — an issue branch or a direct PR
   arc/*)                     KIND=arc ;;
   *)                         exit 0 ;;   # a topic branch — also fine
 esac
