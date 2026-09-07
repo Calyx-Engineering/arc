@@ -207,28 +207,8 @@ PY
 [ "$STATUS" = 1 ] && { show_status; exit 0; }
 [ "$REPORT" = 1 ] && { show_report; exit 0; }
 
-# --resume: a run that stopped — limit, crash, gave up — continues its own session.
-if [ -n "$RESUME" ]; then
-  dir="$RUNS/$RESUME"; wt="$WT_ROOT/$RESUME"
-  [ -f "$dir/issues" ] || die "no run $RESUME under $RUNS"
-  [ -d "$wt" ] || die "worktree $wt is gone — the session cannot continue; dispatch the issues afresh"
-  [ -f "$dir/pid" ] && alive "$(cat "$dir/pid")" && die "run $RESUME is still alive"
-  model_flag=""; [ -n "$MODEL" ] && model_flag="--model $MODEL"
-  echo "arc-loop: resuming run $RESUME — $(tr '\n' ' ' < "$dir/issues")"
-  mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json" 2>/dev/null || true
-  resume_run "$dir" "$wt" "$model_flag"
-  wait_run "$RESUME" "$dir" "$wt" "$model_flag" || exit 1
-  open=""
-  for n in $(cat "$dir/issues"); do
-    st="$(gh issue view "$n" -R "$REPO" --json state --jq .state 2>/dev/null || echo OPEN)"
-    [ "$st" = "OPEN" ] && open="$open #$n"
-  done
-  if [ -z "$open" ]; then git worktree remove --force "$wt" && echo "  every issue closed — removed $wt"
-  else echo "  still open:$open — worktree kept at $wt"; fi
-  exit 0
-fi
 
-[ -n "$PARENT" ] || die "usage: tools/arc-loop.sh <workstream-parent-issue> [--dry-run] [--max N] [--issues 183,210] | --status"
+[ -n "$PARENT" ] || [ -n "$RESUME" ] || die "usage: tools/arc-loop.sh <workstream-parent-issue> [--dry-run] [--max N] [--issues 183,210] | --status"
 [ -f "$INSTRUCTIONS" ] || die "missing $INSTRUCTIONS — run from the repository root"
 command -v gh >/dev/null || die "gh not found"
 [ "$DRY" = 1 ] || command -v powershell >/dev/null || die "powershell not found — detaching a run needs Start-Process"
@@ -243,6 +223,7 @@ esac
 # "arc/04" — the first line of every prompt, which is the title every session list shows.
 ARC="$(printf '%s' "$BASE" | sed -E 's#^(arc/[0-9]+).*#\1#')"
 
+if [ -z "$RESUME" ]; then
 # --- the parent must actually be a workstream -------------------------------
 labels=$(gh issue view "$PARENT" -R "$REPO" --json labels --jq '[.labels[].name]|join(",")') \
   || die "cannot read issue #$PARENT"
@@ -254,6 +235,7 @@ esac
 parent_title=$(gh issue view "$PARENT" -R "$REPO" --json title --jq .title)
 echo "arc-loop: #$PARENT $parent_title — runs nest under $BASE"
 [ "$DRY" = 1 ] && echo "arc-loop: dry run — nothing dispatched, no worktree, no mode row"
+fi
 
 # --- queue reads --------------------------------------------------------------
 open_children() {
@@ -478,6 +460,27 @@ EOF
   printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE" || { set_mode Manual; return 1; }
   set_mode Manual
 }
+
+# --resume: a run that stopped — limit, crash, gave up — continues its own session.
+if [ -n "$RESUME" ]; then
+  dir="$RUNS/$RESUME"; wt="$WT_ROOT/$RESUME"
+  [ -f "$dir/issues" ] || die "no run $RESUME under $RUNS"
+  [ -d "$wt" ] || die "worktree $wt is gone — the session cannot continue; dispatch the issues afresh"
+  [ -f "$dir/pid" ] && alive "$(cat "$dir/pid")" && die "run $RESUME is still alive"
+  model_flag=""; [ -n "$MODEL" ] && model_flag="--model $MODEL"
+  echo "arc-loop: resuming run $RESUME — $(tr '\n' ' ' < "$dir/issues")"
+  mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json" 2>/dev/null || true
+  resume_run "$dir" "$wt" "$model_flag"
+  wait_run "$RESUME" "$dir" "$wt" "$model_flag" || exit 1
+  open=""
+  for n in $(cat "$dir/issues"); do
+    st="$(gh issue view "$n" -R "$REPO" --json state --jq .state 2>/dev/null || echo OPEN)"
+    [ "$st" = "OPEN" ] && open="$open #$n"
+  done
+  if [ -z "$open" ]; then git worktree remove --force "$wt" && echo "  every issue closed — removed $wt"
+  else echo "  still open:$open — worktree kept at $wt"; fi
+  exit 0
+fi
 
 # --- a handed batch: one run, then stop ---------------------------------------------
 # The playlist decides what shares a run; this script does not. Every issue must be a child
