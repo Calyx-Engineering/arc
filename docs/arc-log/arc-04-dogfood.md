@@ -164,13 +164,39 @@ and acceptance criteria and carries no status — one fact, one place.
 
 Each workstream's 200-word boundary report lands here when it closes.
 
-| Workstream | Issues | Status |
-|---|---|---|
-| **Loop** | 3 | Not started. [#138](https://github.com/Calyx-Engineering/arc/issues/138) and [#141](https://github.com/Calyx-Engineering/arc/issues/141) filed, the eval suite not |
-| **Fire** | 12 | Not started. None filed |
-| **Handoff** | 6 | Not started. [#16](https://github.com/Calyx-Engineering/arc/issues/16) filed |
-| **Tracker** | 7 | Not started. All seven filed |
-| **Upkeep** | 5 | Not started. [#142](https://github.com/Calyx-Engineering/arc/issues/142), [#143](https://github.com/Calyx-Engineering/arc/issues/143), [#134](https://github.com/Calyx-Engineering/arc/issues/134) filed |
+| Workstream | Parent | Issues | Status |
+|---|---|---|---|
+| **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 4 | **3 of 4 closed.** [#149](https://github.com/Calyx-Engineering/arc/issues/149) blocked — report below |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 12 | Not started. **All blocked on [#149](https://github.com/Calyx-Engineering/arc/issues/149)** |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | Not started. **All blocked on [#149](https://github.com/Calyx-Engineering/arc/issues/149)** |
+| **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | Not started |
+| **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 7 | Not started |
+
+### Loop — boundary report, 2026-09-07
+
+**Three of four closed.** [#138](https://github.com/Calyx-Engineering/arc/issues/138) reduced the mode rule from five statements to one and inverted the verifier that had enforced the duplication; [#142](https://github.com/Calyx-Engineering/arc/issues/142) deleted the 13 shadowing skill copies; [#141](https://github.com/Calyx-Engineering/arc/issues/141) replaced the miner's prefix glob with an exact scope rule and a selftest.
+
+| File | Why |
+|---|---|
+| `CLAUDE.md` | 231 → 141 lines. The mode stated once, and what the plugin owns removed |
+| `skills/work-watch` · `skills/autonomy-set` · `m40` | One authority for the rule; m40 §9 reversed with its original reasoning kept |
+| `tools/verify-autonomy.sh` | Six per-row checks → a census |
+| `tools/verify-skill-registry.sh` | **New.** The half of `sync-local-skills.sh` that outlived it |
+| `tools/miner-scope.sh` | **New.** IN / NEAR / SKIP, 9 selftest cases |
+| `.claude/skills/` · two sync tools | Deleted |
+
+**Evidence.** `verify-all.sh`: **9 gates, all clean**, exit 0. **[PR #172](https://github.com/Calyx-Engineering/arc/pull/172) merged with no denial — the first merge here to run without an explicit per-merge request.** One observation; statement count is the leading explanation, not proof.
+
+**Not done: [#149](https://github.com/Calyx-Engineering/arc/issues/149), the eval suite.** `claude plugin eval` returns *`plugin eval` is currently in early access* on every invocation. It needs account enablement, which cannot be done from a session. **Fire's 12 and Handoff's 6 are all blocked on it** — 18 of the arc's issues, and the arc's critical path.
+
+```mermaid
+flowchart LR
+    A["#138 mode rule<br/>5 statements → 1"] --> M["merge runs<br/>unasked"]
+    B["#142 delete 13<br/>skill copies"] --> M
+    C["#141 miner scope<br/>IN / NEAR / SKIP"] --> D["a briefed run reads<br/>only what it was given"]
+    E["#149 eval suite"]:::blocked -.->|"early access"| F["Fire · 12<br/>Handoff · 6"]:::blocked
+    classDef blocked fill:#fff3cd,stroke:#e0a800
+```
 
 ### Closed before the workstreams existed
 
@@ -180,8 +206,9 @@ Each workstream's 200-word boundary report lands here when it closes.
 | [#17](https://github.com/Calyx-Engineering/arc/issues/17) transcript-miner, friction mode | [issue-17-transcript-miner](../dev-log/issue-17-transcript-miner.md) | **Merged** — [PR #139](https://github.com/Calyx-Engineering/arc/pull/139). Closed and linked by hand |
 | — the retrospective and the plan | [pr-133-dogfood-retrospective](../dev-log/pr-133-dogfood-retrospective.md) | **Open** — [PR #133](https://github.com/Calyx-Engineering/arc/pull/133), draft |
 
-**23 issues remain to be filed.** Filing happens after the planning session, not before — the
-session can still change what the workstreams are.
+**All 36 are filed**, plus five workstream parents and three held out of the milestone. The
+planning session collapsed to two subjects and both were settled in conversation — the merge
+route, and what a working handoff is.
 
 ## 7 Related analysis
 
