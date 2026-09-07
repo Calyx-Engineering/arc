@@ -79,6 +79,60 @@ move independently. Cases in [`evals/report-shape/`](../../evals/report-shape/).
 
 ---
 
+## Where each claim came from
+
+> **A claim's source travels with the claim, on the same row.** A source recorded once in a
+> lead-in, or not at all, is a source that stops travelling the first time the row is quoted
+> somewhere else.
+
+[#164](https://github.com/Calyx-Engineering/arc/issues/164). A demand list carried three
+kill-path signals read off **a photograph of a board the project does not hold**, treated as
+specified for weeks, because nothing on those rows said they were weaker than the rows beside
+them. Separately, a bench measurement the user had verified was discounted in favour of an
+inference from a dead instrument.
+
+### The vocabulary, strongest first
+
+| | Is | And |
+|---|---|---|
+| `measured` | A bench result | Name the rig and its limits |
+| `datasheet` | The part's own document | Cite the page |
+| `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
+| `schematic` | This board's own sheets | |
+| `photograph` | A picture of a circuit not in hand | **Treat as a hypothesis, never as a specification** |
+| `conversation` | Said, not written down | Not a decision until it is |
+| `inferred` | Extrapolated, assumed, calculated from something else | The weakest, and the easiest to mistake for a measurement |
+
+**The order is the point.** Without it, *record the source* is a label with no consequence. A
+project may add a term where it genuinely has one — a shipped firmware source, a reviewed
+drawing, a merged report — but it places the new term **in the order**, or it has added a word
+and not a rule.
+
+### The three rules
+
+| | |
+|---|---|
+| **Every claim table carries a `Provenance` column** | Or each row names its source inline. A table of numbers with no basis is a table a reader has to take on trust, and *the trust is what fails* |
+| **A strong claim is never overridden by a weak one silently** | If an inference wins over a measurement, the document says so, in the same sentence as the claim it is overriding, with why. The rule is not *cite the stronger source* — it is **say so when the weaker one wins** |
+| **A weak row is interrogated before anything is built on it** | `photograph`, `conversation` and `inferred` are hypotheses. They belong in *Not established* with what would settle them |
+
+### It is not the confidence split
+
+The [confidence split](#4-confidence-split--mandatory) groups the report's claims into
+**Verified / Measured / Not established**. Provenance is per row, and it survives being quoted
+out of the document. A report needs both: the split tells a reader how much of the whole is
+solid, the column tells them whether *this* number is.
+
+### How it is scored
+
+[`tools/report-grade.sh`](../../tools/report-grade.sh) returns `ROWS`, `NONE` or `TABLE` per
+claim table, and `RESOLVED` or `SILENT` where two sources disagree. It matches how provenance
+is actually written — *"from the product label"*, *"the scope reported"*, *"most likely
+explanation"* — not only the seven words, so a report is scored on the defect and not on
+adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+
+---
+
 ## Point of view
 
 | Rule | |
@@ -207,6 +261,9 @@ basis**, not an open question for someone else to dispose of.
 
 A report without the split looks more certain than it is.
 
+**The split is per report; the provenance column is per row.** They do different jobs and the
+column does not replace the split — see [Where each claim came from](#where-each-claim-came-from).
+
 ### 5. Sources
 
 Primary documents, datasheets, standards, part numbers, and links to the companion notes.
@@ -291,6 +348,8 @@ printed pack or a stitched PDF.
 - No development narrative, no "previously we thought"
 - **The opening grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0.
   A `NARRATIVE`, `DEFERRED` or `PREAMBLE` verdict names which of the four shapes it hit
+- **Every claim table carries a source**, per row. Where two sources disagree, the document says
+  which won — [Where each claim came from](#where-each-claim-came-from)
 - All internal links resolve
 - Filenames carry a class prefix and no numbers; README lists companions in reading order
 

@@ -8,13 +8,20 @@ its own scorer:
 | **`skill-firing/`** | Did the skill fire? — [#155](https://github.com/Calyx-Engineering/arc/issues/155) | `tools/skill-cases.sh`, `tools/skill-probe.sh` |
 | **`response-length/`** | Was the reply within the budget the user stated? — [#158](https://github.com/Calyx-Engineering/arc/issues/158) | `tools/response-length.sh` |
 | **`topic-numbering/`** | Could the user answer this multi-topic reply by number? — [#160](https://github.com/Calyx-Engineering/arc/issues/160) | `tools/topic-numbering.sh` |
-| **`report-shape/`** | Does the report open with the conclusion? — [#159](https://github.com/Calyx-Engineering/arc/issues/159) | `tools/report-grade.sh` |
+| **`report-shape/`** | Does the report open with the conclusion, and does every claim say where it came from? — [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#164](https://github.com/Calyx-Engineering/arc/issues/164) | `tools/report-grade.sh` |
 
 **The first three score a reply. The fourth scores a document.** A report is not a turn: it is a
 file, edited over days, and the turn it was written on says nothing about the shape it ended in.
 So `report-shape/` keys its cases by document and line range rather than by session and turn, and
 carries the excerpt it grades — which is why it is the only suite that still scores when its
 corpus is absent. Its corpus is a repository, not a transcript directory.
+
+**It is also the only suite scoring more than one question.** `report-shape/` has three columns —
+the opening, provenance on a claim table, and whether a disagreement between two sources is
+stated out loud — and **every column with anything in its denominator has to clear the
+threshold.** A suite that passed on the average of three questions would let a repaired opening
+report an unsourced table as progress. A case declares a document and a line range and never an
+outcome; the scorer re-derives every column it can answer.
 
 **Firing is not adherence.** #155 settled that a skill can fire and the rule still be broken,
 and that the rule can hold on a turn the skill never fired. The second and third suites exist

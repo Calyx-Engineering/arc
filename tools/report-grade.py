@@ -1,7 +1,14 @@
 # report-grade.py — the scoring half of tools/report-grade.sh. Not run directly.
 #
-# Answers one question per report: does it open with the conclusion, or with the story of how
-# the conclusion was reached?
+# Three questions about a report, all countable, all answered per case:
+#
+#   #159  Does it open with the conclusion, or with the story of how the conclusion was reached?
+#   #164  Does every claim table say where its rows came from?
+#   #164  When two sources disagree, does the document say which one won?
+#
+# Every column that has anything in its denominator has to clear the threshold. A suite that
+# passed on the average of three questions would let a repaired opening report an unsourced
+# table as progress, which is the two halves reporting each other's work as their own.
 #
 # THE DEFECT IT MEASURES. #159 — reports, READMEs and one spec written as an account of the
 # exploration rather than as the current state of knowledge. Five post-install corrections, the
@@ -45,6 +52,18 @@
 # background class could be a findings section named after its subject, or a background section
 # named the same way. Nothing structural separates them. Same reasoning as BOLDONLY in
 # tools/topic-numbering.py: crediting the ambiguous middle would score the defect as a pass.
+#
+# PROVENANCE IS STRENGTH-ORDERED, AND THE ORDER IS THE POINT. #164: measured > datasheet >
+# vendor > schematic > photograph > conversation > inferred. Without an order, "record the
+# source" is a label with no consequence — a demand list carried three kill-path signals read off
+# a photograph of a board the project does not hold, treated as specified for weeks, and nothing
+# in the document said the claim was weaker than the ones beside it.
+#
+# THE ALIASES ARE NOT DECORATION. A report written before the vocabulary existed still records
+# provenance, in its own words: "from the product label", "the scope reported", "most likely
+# explanation". An instrument matching only the seven vocabulary words would score every one of
+# those as unsourced, and the baseline would measure adoption of a word list rather than the
+# defect.
 #
 # THE EXCERPT IS THE CASE, AND THE CORPUS IS CHECKED AGAINST IT. Each case carries excerpt.md,
 # copied verbatim from a document in another repository, plus the line range it came from. The
@@ -204,18 +223,181 @@ def grade_opening(text):
     return "CONCLUSION", flags, first, cls
 
 
+# ---- provenance ---------------------------------------------------------------------------
+#
+# #164: a claim's source is not recorded, so a weak source silently overrides a strong one. A
+# demand list carried three kill-path signals read off a photograph of a board the project does
+# not hold, treated as specified for weeks. The vocabulary is strength-ordered, strongest first,
+# and the order is the whole point — without it "record the source" is a label with no
+# consequence.
+PROVENANCE = ("measured", "datasheet", "vendor", "schematic", "photograph", "conversation",
+              "inferred")
+
+# How each term appears in prose that is not using the vocabulary word. A report written before
+# the vocabulary existed still records provenance — "from the product label", "the scope
+# reported", "most likely explanation" — and an instrument that only matched the seven words
+# would score every one of those as unsourced.
+ALIASES = {
+    "measured":     r"measured|measurement|measures|bench|meter|scope (?:capture|read)|"
+                    r"on the bench|instrument read",
+    "datasheet":    r"datasheets?|data sheets?",
+    "vendor":       r"vendor|manufacturer|supplier|product label|the label|labell?ed|listing|"
+                    r"product page|silkscreen|marketing",
+    "schematic":    r"schematics?|netlist|the sheets?|board files?",
+    "photograph":   r"photographs?|photos?|pictures?|an image of",
+    "conversation": r"conversation|in chat|said in chat|verbally|a thread|the thread",
+    "inferred":     r"inferred|inference|assumed|assumption|extrapolat|estimated|implied|"
+                    r"most likely|likely explanation|presumably|calculated from",
+}
+ALIAS_RE = {k: re.compile(r"\b(?:%s|%s)\b" % (k, v), re.I) for k, v in ALIASES.items()}
+
+# A header cell that names where a row's claim came from.
+SOURCE_HEADER = re.compile(r"^\**\s*(source|sources|provenance|basis|evidence|origin|from|"
+                           r"per|reference|cited)\b", re.I)
+
+# A lead-in that gives one source for the whole table. Weaker than a column and not the defect —
+# see the TABLE verdict.
+TABLE_SOURCE = [
+    re.compile(r"^from the\b", re.I),
+    re.compile(r"\b(sourced|taken|read off|read from|quoted) from\b", re.I),
+    re.compile(r"\bmeasured (?:on|with|at|using)\b", re.I),
+    re.compile(r"^according to\b", re.I),
+    re.compile(r"\bper the (?:datasheet|schematic|label|standard|drawing)\b", re.I),
+    re.compile(r"\b(?:all|every) (?:row|value|figure|number)s? (?:comes?|come|are|is) from\b",
+               re.I),
+]
+
+# The override, said out loud. #164: a strong claim is not overridden by a weak one without
+# saying so explicitly — so what is countable is whether anything in the section SAYS the two
+# disagree.
+CONTRAST = re.compile(
+    r"\b(but|however|despite|whereas|rather than|instead of|contradicts?|contradicting|"
+    r"overrid\w+|not permitted|does not support|do not support|disagree\w*|in favour of|"
+    r"in favor of|supersed\w+|takes precedence|wins|against the)\b", re.I)
+
+
+def tables(text):
+    """[(lead-in text, header cells, body rows)] for each pipe table outside a fenced block.
+
+    The lead-in is the non-blank block immediately above the table. That is where a report puts
+    one source for the whole table, and it is the difference between the TABLE verdict and NONE.
+    """
+    out, fence = [], ""
+    lines = (text or "").splitlines()
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        f = FENCE.match(line)
+        if f:
+            run = f.group(1)
+            if not fence:
+                fence = run
+            elif run[0] == fence[0] and len(run) >= len(fence):
+                fence = ""
+            i += 1
+            continue
+        if fence or "|" not in line:
+            i += 1
+            continue
+        # A table is a header row, a delimiter row of dashes, then body rows.
+        if i + 1 >= len(lines) or not re.match(r"^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$", lines[i + 1]):
+            i += 1
+            continue
+        # The lead-in is the nearest non-blank block above the table. A blank line between the
+        # two is the normal shape — "From the product label:" then a blank then the table — so
+        # blanks are skipped before the block is collected, not treated as its end.
+        j = i - 1
+        while j >= 0 and not lines[j].strip():
+            j -= 1
+        lead = []
+        while j >= 0 and lines[j].strip() and "|" not in lines[j]:
+            lead.insert(0, lines[j].strip())
+            j -= 1
+        header = [c.strip() for c in line.strip().strip("|").split("|")]
+        body, k = [], i + 2
+        while k < len(lines) and "|" in lines[k] and lines[k].strip():
+            body.append([c.strip() for c in lines[k].strip().strip("|").split("|")])
+            k += 1
+        out.append(("\n".join(lead), header, body))
+        i = k
+    return out
+
+
+def grade_tables(text):
+    """(verdict, detail) — does every claim table say where its rows came from?
+
+    ROWS   a provenance column, or the terms carried in the rows themselves. The pass.
+    TABLE  one source stated once, in the lead-in, for a uniform-source table. NOT SCORED —
+           weaker than a column and not the defect #164 names. Scoring it as a pass would
+           license dropping the column; scoring it as a fail would report a correctly sourced
+           table as unsourced. Same reasoning as BOLDONLY in tools/topic-numbering.py.
+    NONE   nothing says where the numbers came from. The fail.
+    NOTABLE no table in the region. Not scored.
+    """
+    ts = tables(text)
+    if not ts:
+        return "NOTABLE", ""
+    worst, detail = None, ""
+    order = {"NONE": 0, "TABLE": 1, "ROWS": 2}
+    for lead, header, body in ts:
+        if any(SOURCE_HEADER.match(c) for c in header):
+            v = "ROWS"
+            d = "column: %s" % next(c for c in header if SOURCE_HEADER.match(c))
+        elif body and sum(
+                1 for r in body
+                if any(rx.search(" ".join(r)) for rx in ALIAS_RE.values())) * 2 >= len(body):
+            v, d = "ROWS", "terms carried in the rows"
+        elif any(p.search(lead) for p in TABLE_SOURCE):
+            v, d = "TABLE", "one source in the lead-in: %s" % lead.splitlines()[0][:60]
+        else:
+            v, d = "NONE", "%d row(s), no source" % len(body)
+        if worst is None or order[v] < order[worst]:
+            worst, detail = v, d
+    return worst, detail
+
+
+def grade_conflict(text, favours):
+    """(verdict, terms present, the source the section resolves toward).
+
+    RESOLVED  two or more provenance strengths in play and the disagreement stated out loud.
+              The pass, and the strongest term present is what the section resolves toward.
+    SILENT    two or more in play and nothing says they disagree. The fail #164 names: a weak
+              source standing beside a strong one with nothing recording which won.
+    ONESIDED  fewer than two. Nothing to resolve, not scored.
+    MISMATCH  resolved, but toward a source the case did not expect. Reported, never scored —
+              it is either a mis-authored case or a real finding, and the scorer cannot tell.
+    """
+    present = [t for t in PROVENANCE if ALIAS_RE[t].search(text or "")]
+    if len(present) < 2:
+        return "ONESIDED", present, ""
+    if not CONTRAST.search(text or ""):
+        return "SILENT", present, ""
+    strongest = present[0]                       # PROVENANCE is ordered strongest first
+    if favours and strongest != favours:
+        return "MISMATCH", present, strongest
+    return "RESOLVED", present, strongest
+
+
 def read_case(path):
-    """corpus, document, lines. Purpose-built, not a YAML parser — the same trade as
-    tools/topic-numbering.py, and the format is fixed by evals/report-shape."""
+    """corpus, document, lines, conflict.favours. Purpose-built, not a YAML parser — the same
+    trade as tools/topic-numbering.py, and the format is fixed by evals/report-shape."""
     out = {"corpus": "", "document": "", "lines": ""}
+    favours, section = "", None
     for raw in io.open(path, encoding="utf-8"):
         line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#") or line[:1].isspace():
+        if not line.strip() or line.lstrip().startswith("#"):
             continue
-        k, _, v = line.partition(":")
-        if k.strip() in out:
-            out[k.strip()] = v.strip()
-    return out["corpus"], out["document"], out["lines"]
+        if not line[:1].isspace():
+            section = line.split(":", 1)[0].strip()
+            k, _, v = line.partition(":")
+            if k.strip() in out:
+                out[k.strip()] = v.strip()
+            continue
+        if section == "conflict":
+            m = re.match(r"favours:\s*(\S+)", line.strip())
+            if m:
+                favours = m.group(1)
+    return out["corpus"], out["document"], out["lines"], favours
 
 
 def corpus_lines(root, corpus, document, rng):
@@ -281,7 +463,7 @@ def main():
     for cp in cases:
         d = os.path.dirname(cp)
         name = os.path.relpath(d, evaldir).replace(os.sep, "/")
-        corpus, document, rng = read_case(cp)
+        corpus, document, rng, favours = read_case(cp)
         xp = os.path.join(d, "excerpt.md")
         if not os.path.isfile(xp):
             absent.append("%s  (no excerpt.md)" % name)
@@ -305,11 +487,27 @@ def main():
         tally[verdict] = tally.get(verdict, 0) + 1
         if verdict == "NOTOPENING":
             print("  %-10s %s  (region %s does not start at line 1)" % (verdict, name, rng))
-            continue
-        note = ("  flags: " + ", ".join(flags)) if flags else ""
-        print("  %-10s %s%s" % (verdict, name, note))
-        print("             first section: %s%s" % (
-            (first or "(none)")[:70], ("  [%s]" % cls) if cls else "  [unclassified]"))
+        else:
+            note = ("  flags: " + ", ".join(flags)) if flags else ""
+            print("  %-10s %s%s" % (verdict, name, note))
+            print("             first section: %s%s" % (
+                (first or "(none)")[:70], ("  [%s]" % cls) if cls else "  [unclassified]"))
+
+        # Every case is scored for every check its excerpt can answer. A case declares a
+        # document and a region, never an expected outcome — the scorer re-derives all of it,
+        # for the reason evals/README.md gives: a recorded outcome that nothing re-checks is
+        # the tick-without-evidence failure this arc exists to fix.
+        tv, td = grade_tables(text)
+        tally["T:" + tv] = tally.get("T:" + tv, 0) + 1
+        if tv != "NOTABLE":
+            print("             table source: %-7s %s" % (tv, td))
+        if favours:
+            cv, present, toward = grade_conflict(text, favours)
+            tally["C:" + cv] = tally.get("C:" + cv, 0) + 1
+            print("             conflict:     %-7s in play: %s" % (cv, ", ".join(present)))
+            if toward:
+                print("             resolves in favour of: %s  (case expects %s)"
+                      % (toward, favours))
     print()
 
     good = tally.get("CONCLUSION", 0)
@@ -323,10 +521,33 @@ def main():
     print("  not scored %d (unclear heading %d, no section %d, not an opening %d)" % (
         unscored, tally.get("UNCLEAR", 0), tally.get("NOSECTION", 0),
         tally.get("NOTOPENING", 0)))
+    tgood = tally.get("T:ROWS", 0)
+    tbad = tally.get("T:NONE", 0)
+    tdenom = tgood + tbad
+    trate = (tgood / tdenom) if tdenom else 0.0
+    cgood = tally.get("C:RESOLVED", 0)
+    cbad = tally.get("C:SILENT", 0)
+    cdenom = cgood + cbad
+    crate = (cgood / cdenom) if cdenom else 0.0
+    print("  tables: sourced by row %d, unsourced %d, one source in the lead-in %d "
+          "(not scored), no table %d" % (
+              tgood, tbad, tally.get("T:TABLE", 0), tally.get("T:NOTABLE", 0)))
+    if cdenom or tally.get("C:ONESIDED", 0) or tally.get("C:MISMATCH", 0):
+        print("  conflicts: resolved out loud %d, silent %d, one source only %d "
+              "(not scored), resolved elsewhere %d (reported)" % (
+                  cgood, cbad, tally.get("C:ONESIDED", 0), tally.get("C:MISMATCH", 0)))
     print()
     print("%-32s %s" % ("opens with the conclusion", "%d/%d  %.2f" % (good, denom, rate)))
+    print("%-32s %s" % ("table rows carry a source", "%d/%d  %.2f" % (tgood, tdenom, trate)))
+    print("%-32s %s" % ("conflicts resolved out loud",
+                        "%d/%d  %.2f" % (cgood, cdenom, crate)))
     print("%-32s %.2f" % ("threshold", threshold))
-    print("%-32s %s" % ("verdict", "PASS" if denom and rate >= threshold else "FAIL"))
+    # Every column that has anything in its denominator has to clear the threshold. A suite
+    # that passed on the average of three questions would let a fixed opening hide an unsourced
+    # table, which is the two halves of this suite reporting each other's work as their own.
+    cols = [(denom, rate), (tdenom, trate), (cdenom, crate)]
+    ok = any(d for d, _ in cols) and all(r >= threshold for d, r in cols if d)
+    print("%-32s %s" % ("verdict", "PASS" if ok else "FAIL"))
     print()
     print("A rate here is a property of the DOCUMENTS, not of a skill. Whether")
     print("engineering-report fired while one was written is tools/skill-cases.sh's question —")

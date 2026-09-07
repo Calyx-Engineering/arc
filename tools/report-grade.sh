@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# report-grade.sh — score the eval cases in evals/report-shape: does a report open with the
-# conclusion, or with the story of how the conclusion was reached?
+# report-grade.sh — score the eval cases in evals/report-shape. Three questions about a report:
+# does it open with the conclusion (#159), does every claim table say where its rows came from
+# (#164), and when two sources disagree does the document say which one won (#164)?
 #
 #   tools/report-grade.sh              score every case from its stored excerpt
 #   tools/report-grade.sh --strict     also fail when a case's corpus is not on this machine
@@ -14,6 +15,11 @@
 # exploration rather than as the current state of knowledge — five post-install corrections,
 # cluster C3 of the 2026-09 retrospective. skills/engineering-report has said "Findings first"
 # since it was written and nothing has ever checked a document against it.
+#
+# #164 ADDED THE OTHER TWO. A claim's source is not recorded, so a weak source silently overrides
+# a strong one. Same instrument, same cases, two more columns — because both defects live in the
+# same artifact and a document that fixed one while breaking the other would otherwise look
+# repaired. Every column with a denominator has to clear the threshold.
 #
 # IT IS THE FIRST INSTRUMENT HERE THAT READS A DOCUMENT. skill-cases.sh, response-length.sh and
 # topic-numbering.sh all score a REPLY out of a transcript. A report is not a reply: it is a
@@ -80,6 +86,9 @@ if [ "$SELFTEST" = "1" ]; then
   }
   # sync <slug> <document-basename> — the corpus copy is the excerpt, so a clean run has no drift
   sync() { cp "$E/$1/excerpt.md" "$C/fixture/docs/$2"; }
+  # pad <slug> <document-basename> <n> — the same, for an excerpt cut from line n+1 onward
+  pad() { { printf 'filler
+%.0s' $(seq 1 "$3"); cat "$E/$1/excerpt.md"; } > "$C/fixture/docs/$2"; }
 
   mk good good.md 1-7
   printf '# A title\n\n**Status:** current\n\n## 1. Findings\n\nThe part is fast enough.\n' \
@@ -139,6 +148,77 @@ if [ "$SELFTEST" = "1" ]; then
   { printf 'filler
 %.0s' $(seq 1 39); cat "$E/midtable/excerpt.md"; } > "$C/fixture/docs/midtable.md"
 
+
+  # ---- #164: provenance on a table row, and a conflict resolved out loud ----------------
+  # All of these are non-openings, so the conclusion-first counts above do not move.
+
+  mk provcol provcol.md 40-44
+  printf '| GP | Provenance | Function |\n|---|---|---|\n| 13 | report PR #48 | PWM |\n| 16 | datasheet p8 | kill |\n' \
+    > "$E/provcol/excerpt.md"; pad provcol provcol.md 39
+
+  mk provrow provrow.md 40-44
+  # No column, but every row says where it came from. A ledger that names its sources inline
+  # is sourced; demanding the column shape would fail it for formatting.
+  printf '| Signal | Claim |\n|---|---|\n| nHARD_KILL | measured on the bench at 3.1 V |\n| WAKE_EN | from the datasheet, page 8 |\n' \
+    > "$E/provrow/excerpt.md"; pad provrow provrow.md 39
+
+  mk provlead provlead.md 40-45
+  # One source, stated once, for a uniform-source table. Weaker than a column and NOT the
+  # defect — scored as a pass it would license dropping the column, scored as a fail it would
+  # report a correctly sourced table as unsourced. Reported and counted in neither.
+  printf 'From the product label:\n\n| | |\n|---|---|\n| Model | PT-PGC-AF |\n| Input | 44-57 V DC |\n' \
+    > "$E/provlead/excerpt.md"; pad provlead provlead.md 39
+
+  mk provnone provnone.md 40-44
+  printf 'Consequences depend on the PSE:\n\n| PSE | Allocated |\n|---|---|\n| Type 1 | 12.95 W |\n' \
+    > "$E/provnone/excerpt.md"; pad provnone provnone.md 39
+
+  mk provfenced provfenced.md 40-46
+  # A table inside a fenced block is sample markup. Counting it would report a documentation
+  # example as an unsourced claim table.
+  printf 'Prose only.\n\n```\n| a | b |\n|---|---|\n| 1 | 2 |\n```\n' \
+    > "$E/provfenced/excerpt.md"; pad provfenced provfenced.md 39
+
+  mk conflictok conflictok.md 40-44
+  # Two strengths in play and the disagreement said out loud. RESOLVED, toward the strongest
+  # present — which is #164's rule: a strong claim is not overridden by a weak one silently.
+  printf 'The label says 802.3af. But the measured signature is class 4.\n\nMost likely explanation: one PD front end across the family.\n' \
+    > "$E/conflictok/excerpt.md"; pad conflictok conflictok.md 39
+  printf 'conflict:\n  favours: measured\n' >> "$E/conflictok/case.yaml"
+
+  mk conflictsilent conflictsilent.md 40-43
+  # Both sources present, nothing saying they disagree. This is the defect: a demand list
+  # carrying a photograph-sourced signal beside a schematic-sourced one, for weeks.
+  printf 'The schematic allocates GP16 to CTRL.\n\nA photograph of the board shows three kill-path signals.\n' \
+    > "$E/conflictsilent/excerpt.md"; pad conflictsilent conflictsilent.md 39
+  printf 'conflict:\n  favours: schematic\n' >> "$E/conflictsilent/case.yaml"
+
+  mk conflictdead conflictdead.md 40-43
+  # #164's second incident, on 2026-08-28: a bench measurement the user had verified was
+  # discounted in favour of an inference from an instrument that was reading a class-D carrier
+  # as signal. It happened in conversation and was never written into a document, so it is a
+  # fixture here rather than a case — the shape that cost the most is the shape with no artifact
+  # to score. SILENT, because nothing in it says the two disagree.
+  printf 'The bench measurement is 4.167 Vpp out for 100 mVpp in.
+
+The estimated gain from the scope reading is 24.7x.
+'     > "$E/conflictdead/excerpt.md"; pad conflictdead conflictdead.md 39
+  printf 'conflict:
+  favours: measured
+' >> "$E/conflictdead/case.yaml"
+
+  mk conflictone conflictone.md 40-42
+  printf 'The measured rise time is 336 us. But that is slower than needed.\n' \
+    > "$E/conflictone/excerpt.md"; pad conflictone conflictone.md 39
+  printf 'conflict:\n  favours: measured\n' >> "$E/conflictone/case.yaml"
+
+  mk conflictmismatch conflictmismatch.md 40-43
+  # Resolved, but toward a stronger source than the case named. Either a mis-authored case or
+  # a real finding, and the scorer cannot tell which — so it reports and scores neither.
+  printf 'The label says 10 W. But the measured draw is 4 W.\n' \
+    > "$E/conflictmismatch/excerpt.md"; pad conflictmismatch conflictmismatch.md 39
+  printf 'conflict:\n  favours: vendor\n' >> "$E/conflictmismatch/case.yaml"
+
   out="$(score "$C" "$E" 2>&1)"; st=$?
   P=0; F=0
   t() {
@@ -164,11 +244,27 @@ if [ "$SELFTEST" = "1" ]; then
   t "a heading inside a fence is not the first section"   "CONCLUSION +fenced$"
   t "fails are counted by kind"                           "narrative 1, deferred 1, preamble 1"
   t "a region that is not an opening is not scored"       "NOTOPENING +midtable +\(region 40-44 does not start at line 1\)"
-  t "unscored verdicts are counted apart, by kind"        "not scored 3 \(unclear heading 1, no section 1, not an opening 1\)"
+  t "unscored verdicts are counted apart, by kind"        "not scored 13 \(unclear heading 1, no section 1, not an opening 11\)"
   t "the rate counts every fail in the denominator"       "opens with the conclusion +4/7"
   t "a rate below the threshold is a FAIL verdict"        "^verdict +FAIL"
   t "the score is not what the exit code reports"         "Not the score"
-  t "a matching corpus is not reported as drift"          "report-grade — 10 case"
+  t "a provenance column scores ROWS"                     "table source: ROWS +column: Provenance"
+  t "sources carried in the rows also score ROWS"         "table source: ROWS +terms carried in the rows"
+  t "one source in the lead-in is reported, not scored"   "table source: TABLE +one source in the lead-in: From the product label"
+  t "a claim table with no source scores NONE"            "NOTOPENING +provnone"
+  # If the fence leaked, provfenced would carry a NONE table and both counts below would move.
+  t "a table inside a fence is not a claim table"         "NOTOPENING +provfenced +\(region 40-46"
+  t "a conflict said out loud scores RESOLVED"            "conflict:     RESOLVED in play: measured, vendor, inferred"
+  t "the source a conflict resolves toward is named"      "resolves in favour of: measured  \(case expects measured\)"
+  t "a silent conflict is the fail #164 names"            "conflict:     SILENT  in play: schematic, photograph"
+  t "a measurement beaten by an inference, silently"      "conflict:     SILENT  in play: measured, inferred"
+  t "one source in play is nothing to resolve"            "conflict:     ONESIDED in play: measured"
+  t "resolving toward an unexpected source is reported"   "conflict:     MISMATCH in play: measured, vendor"
+  t "table verdicts are counted by kind"                  "tables: sourced by row 2, unsourced 2, one source in the lead-in 1 \(not scored\), no table 15"
+  t "conflict verdicts are counted by kind"               "conflicts: resolved out loud 1, silent 2, one source only 1 \(not scored\), resolved elsewhere 1 \(reported\)"
+  t "the table column has its own rate"                   "table rows carry a source +2/4"
+  t "the conflict column has its own rate"                "conflicts resolved out loud +1/3"
+  t "a matching corpus is not reported as drift"          "report-grade — 20 case"
   if printf '%s' "$out" | grep -q "EXCERPT DRIFT"; then
     echo "  FAIL  a matching excerpt is not reported as drift"; F=$((F+1))
   else
@@ -219,19 +315,30 @@ if [ "$SELFTEST" = "1" ]; then
   mout="$(bash "$HERE/report-grade.sh" --file "$T/nosuchfile.md" 2>&1)"; mst=$?
   [ "$mst" = "2" ] && { echo "  PASS  --file on a missing file exits 2"; P=$((P+1)); }                    || { echo "  FAIL  --file on a missing file exits 2 (got $mst)"; F=$((F+1)); }
 
-  # A threshold the fixture clears must flip the verdict, or the verdict is not reading it.
-  tout="$(RG_CORPUS_DIR="$T/nowhere" RG_EVAL_DIR="$E" RG_THRESHOLD=0.5 python "$HERE/report-grade.py" 2>&1)"
+  # A threshold every column clears must flip the verdict, or the verdict is not reading them.
+  # 0.33 is the lowest of the three fixture rates — opening 4/7, tables 2/4, conflicts 1/3.
+  tout="$(RG_CORPUS_DIR="$T/nowhere" RG_EVAL_DIR="$E" RG_THRESHOLD=0.33 python "$HERE/report-grade.py" 2>&1)"
   if printf '%s' "$tout" | grep -qE "^verdict +PASS"; then
     echo "  PASS  the threshold is read, not hardcoded"; P=$((P+1))
   else
     echo "  FAIL  the threshold is read, not hardcoded"; F=$((F+1))
   fi
 
+  # One failing column fails the whole verdict. At 0.55 the opening column clears (4/7 = 0.57)
+  # and the table column does not (2/4 = 0.50). A suite that passed on the average of its three
+  # questions would let a repaired opening report an unsourced table as progress.
+  xout="$(RG_CORPUS_DIR="$T/nowhere" RG_EVAL_DIR="$E" RG_THRESHOLD=0.55 python "$HERE/report-grade.py" 2>&1)"
+  if printf '%s' "$xout" | grep -qE "^verdict +FAIL"; then
+    echo "  PASS  one column below the threshold fails the whole verdict"; P=$((P+1))
+  else
+    echo "  FAIL  one column below the threshold fails the whole verdict"; F=$((F+1))
+  fi
+
   # The line above sets the variable directly, which does not exercise this script's own flag
   # plumbing. --threshold has to reach the scorer or it is an option nothing tests.
   fout="$(RG_EVAL_DIR_OVERRIDE="$E" REPORT_CORPUS_DIR="$T/nowhere" \
-          bash "$HERE/report-grade.sh" --threshold 0.5 2>&1)"
-  if printf '%s' "$fout" | grep -qE "^threshold +0\.50" && printf '%s' "$fout" | grep -qE "^verdict +PASS"; then
+          bash "$HERE/report-grade.sh" --threshold 0.33 2>&1)"
+  if printf '%s' "$fout" | grep -qE "^threshold +0\.33" && printf '%s' "$fout" | grep -qE "^verdict +PASS"; then
     echo "  PASS  --threshold reaches the scorer"; P=$((P+1))
   else
     echo "  FAIL  --threshold reaches the scorer"; F=$((F+1))
