@@ -166,15 +166,15 @@ Each workstream's 200-word boundary report lands here when it closes.
 
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|
-| **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 4 | **3 of 4 closed.** [#149](https://github.com/Calyx-Engineering/arc/issues/149) blocked — report below |
-| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 12 | Not started. **All blocked on [#149](https://github.com/Calyx-Engineering/arc/issues/149)** |
-| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | Not started. **All blocked on [#149](https://github.com/Calyx-Engineering/arc/issues/149)** |
+| **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 4 | **Closed, 4 of 4.** Report below |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | Not started. **Unblocked** — the baseline exists |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | Not started. **Unblocked** |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | Not started |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 7 | Not started |
 
-### Loop — boundary report, 2026-09-07
+### Loop — boundary report, 2026-09-07 · closed
 
-**Three of four closed.** [#138](https://github.com/Calyx-Engineering/arc/issues/138) reduced the mode rule from five statements to one and inverted the verifier that had enforced the duplication; [#142](https://github.com/Calyx-Engineering/arc/issues/142) deleted the 13 shadowing skill copies; [#141](https://github.com/Calyx-Engineering/arc/issues/141) replaced the miner's prefix glob with an exact scope rule and a selftest.
+**All four closed.** [#138](https://github.com/Calyx-Engineering/arc/issues/138) reduced the mode rule from five statements to one and inverted the verifier that had enforced the duplication; [#142](https://github.com/Calyx-Engineering/arc/issues/142) deleted the 13 shadowing skill copies; [#141](https://github.com/Calyx-Engineering/arc/issues/141) replaced the miner's prefix glob with an exact scope rule; [#149](https://github.com/Calyx-Engineering/arc/issues/149) measured skill firing from real transcripts after `plugin eval` turned out to be gated **and never to have been run**.
 
 | File | Why |
 |---|---|
@@ -183,18 +183,25 @@ Each workstream's 200-word boundary report lands here when it closes.
 | `tools/verify-autonomy.sh` | Six per-row checks → a census |
 | `tools/verify-skill-registry.sh` | **New.** The half of `sync-local-skills.sh` that outlived it |
 | `tools/miner-scope.sh` | **New.** IN / NEAR / SKIP, 9 selftest cases |
+| `tools/skill-firing.sh` · `.py` | **New.** Fires, sessions, at-opening per skill. 7 selftest cases |
+| `skill-firing-baseline.md` | **New.** 11 post-install sessions. The number Fire is scored against |
 | `.claude/skills/` · two sync tools | Deleted |
 
 **Evidence.** `verify-all.sh`: **9 gates, all clean**, exit 0. **[PR #172](https://github.com/Calyx-Engineering/arc/pull/172) merged with no denial — the first merge here to run without an explicit per-merge request.** One observation; statement count is the leading explanation, not proof.
 
-**Not done: [#149](https://github.com/Calyx-Engineering/arc/issues/149), the eval suite.** `claude plugin eval` returns *`plugin eval` is currently in early access* on every invocation. It needs account enablement, which cannot be done from a session. **Fire's 12 and Handoff's 6 are all blocked on it** — 18 of the arc's issues, and the arc's critical path.
+**The baseline, and it is worse than the retrospective could show.** `handoff` fired at **no opening in 11 sessions**; `work-watch` **once in 11**, against a description saying *use continuously*; `chat-response` in 4 of 11 while governing every reply. **Every skill fired at least once — the defect is frequency, not discoverability.**
+
+**Not done: `plugin eval` regression testing.** Gated behind early-access enrolment, requested via `/feedback`. [#181](https://github.com/Calyx-Engineering/arc/issues/181), out of the milestone. Nothing else waits on it.
+
+**Spawned:** [#173](https://github.com/Calyx-Engineering/arc/issues/173) · [#174](https://github.com/Calyx-Engineering/arc/issues/174) · [#175](https://github.com/Calyx-Engineering/arc/issues/175) · [#177](https://github.com/Calyx-Engineering/arc/issues/177) · [#181](https://github.com/Calyx-Engineering/arc/issues/181) · [#183](https://github.com/Calyx-Engineering/arc/issues/183). The last is `tracker-verify` reporting a conforming PR base as wrong — four firings, four wrong, the same shape as [#162](https://github.com/Calyx-Engineering/arc/issues/162).
 
 ```mermaid
 flowchart LR
     A["#138 mode rule<br/>5 statements → 1"] --> M["merge runs<br/>unasked"]
     B["#142 delete 13<br/>skill copies"] --> M
     C["#141 miner scope<br/>IN / NEAR / SKIP"] --> D["a briefed run reads<br/>only what it was given"]
-    E["#149 eval suite"]:::blocked -.->|"early access"| F["Fire · 12<br/>Handoff · 6"]:::blocked
+    G["#149 skill-firing<br/>baseline from transcripts"] --> H["Fire · 13<br/>Handoff · 6"]
+    E["#181 plugin eval"]:::blocked -.->|"early access"| I["regression gate"]:::blocked
     classDef blocked fill:#fff3cd,stroke:#e0a800
 ```
 
