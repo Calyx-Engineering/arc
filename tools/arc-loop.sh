@@ -16,8 +16,14 @@
 #
 # Exercised 2026-09-06 against the real milestone: selection and skipping on all
 # five workstreams, and the three guards (no argument, an issue that is not a
-# workstream, an issue that does not exist). NOT yet exercised: a real dispatch
-# to `claude -p`, the report run at workstream completion, the all-blocked stop,
+# workstream, an issue that does not exist).
+#
+# 2026-09-07, first real dispatch: #155 under #145, --max 1. Selection, the mode row and
+# both its exit paths worked. The dispatch did not — no --permission-mode, so the run was
+# denied Write, Edit and every `bash tools/…`. It did the analysis and could save none of
+# it. Fixed here; the flag has not itself been exercised yet.
+#
+# NOT yet exercised: the report run at workstream completion, the all-blocked stop,
 # the same-issue-twice guard, and a run exiting non-zero.
 #
 # Reasoning: docs/arc-log/arc-04-dogfood.md §3.1
@@ -26,6 +32,14 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 REPO="Calyx-Engineering/arc"
 INSTRUCTIONS="docs/arc-work/04-dogfood/run-instructions.md"
+
+# TWO SWITCHES ARE BOTH CALLED "MODE", and setting only one is what broke the first real
+# dispatch. HANDOFF.md's Execution mode row governs commit, push, PR and merge, through
+# hooks/mode-guard — set_mode below writes it. Claude Code's --permission-mode governs
+# whether the run may call Write, Edit or Bash at all. A `claude -p` cannot prompt, so with
+# no flag every request is denied: the run for #155 was authorised to merge a PR it had no
+# permission to write, and produced an analysis it could not save.
+PERMISSION_MODE="${ARC_LOOP_PERMISSION_MODE:-auto}"
 DRY=0
 MAX=0
 PARENT="${1:-}"
@@ -109,10 +123,10 @@ run_issue() {
            echo "Sections 1 to 5 above are yours; section 6 is not. The issue is #$n."; echo;
            gh issue view "$n" -R "$REPO" --json title,body --jq '"## " + .title + "\n\n" + .body')
   if [ "$DRY" = 1 ]; then
-    echo "  would dispatch issue run for #$n ($(printf '%s' "$prompt" | wc -c) bytes)"
+    echo "  would dispatch issue run for #$n ($(printf '%s' "$prompt" | wc -c) bytes, --permission-mode $PERMISSION_MODE)"
     return 0
   fi
-  printf '%s' "$prompt" | claude -p
+  printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE"
 }
 
 run_report() {
@@ -129,10 +143,10 @@ $parent_title.
 EOF
   )
   if [ "$DRY" = 1 ]; then
-    echo "  would dispatch report run for #$PARENT"
+    echo "  would dispatch report run for #$PARENT (--permission-mode $PERMISSION_MODE)"
     return 0
   fi
-  printf '%s' "$prompt" | claude -p
+  printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE"
 }
 
 # --- the loop -------------------------------------------------------------------
