@@ -234,7 +234,7 @@ flowchart LR
 
 | # | Issue | Fix | Done when |
 |---|---|---|---|
-| Upkeep-1 | [#143](https://github.com/Calyx-Engineering/arc/issues/143) verify the mechanism table against its specs | `tools/verify-mechanisms.sh` | Fixture cases, in `verify-sync-parity.sh`'s shape |
+| Upkeep-1 | [#143](https://github.com/Calyx-Engineering/arc/issues/143) verify the mechanism table against its specs | `tools/verify-mechanisms.sh` | Fixture cases, in `verify-hook.sh`'s shape |
 | Upkeep-2 | [#142](https://github.com/Calyx-Engineering/arc/issues/142) delete the local skill copies | Unblocked — [#132](https://github.com/Calyx-Engineering/arc/issues/132) is closed | `verify-all.sh` still clean; the artifact-table gate survives |
 | Upkeep-3 | [#167](https://github.com/Calyx-Engineering/arc/issues/167) the arc-work path assumes a flat slug | A rule, not a per-repo guess | A module-shaped slug resolves |
 | Upkeep-4 | [#168](https://github.com/Calyx-Engineering/arc/issues/168) the dev-log template calls itself a decision log | Collides with `ddr/` | Wording checked |

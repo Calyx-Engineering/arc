@@ -69,10 +69,9 @@ Format: [`docs/product-architecture/camp-reports.md`](https://github.com/Calyx-E
 
 ## Where it lives
 
-`skills/` — the plugin ships it. `.claude/skills/` is repo-local and does not ship; it holds
-copies made by `tools/sync-local-skills.sh` until Arc's first release.
+`skills/` — the plugin ships it. **A copy must not live in `.claude/skills/`**: where Arc is
+installed, a copy loads alongside the plugin's and selection sees two identical candidates.
 
-**A new skill needs two things before its PR.** Run the sync, so the copy exists — the check
-derives what to compare from `skills/`, so a skill with no copy now fails rather than being
-skipped. And give it a row in the product definition's artifact table with its mechanism
-number; the same check reads it.
+**A new skill needs one thing before its PR:** a row in the product definition's artifact table,
+with a mechanism number. `tools/verify-skill-registry.sh` fails without it — a skill the
+definition does not name is one nothing traces to.

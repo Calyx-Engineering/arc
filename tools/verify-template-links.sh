@@ -15,8 +15,8 @@
 #                                       so re-basing produces a plausible path that is still dead
 #   the target is in the CONSUMING repo  →  relative, and it must resolve from the destination
 #
-# That distinction is why sync-local-skills.sh's re-basing is the wrong instrument here rather
-# than an unapplied one: it fixes depth, and depth is not what is wrong with fourteen of them.
+# That distinction is why re-basing is the wrong instrument here rather than an unapplied one:
+# it fixes depth, and depth is not what is wrong with fourteen of them.
 #
 # A TEMPLATE WITH NO MAP ROW FAILS. Same shape as verify-all.sh failing on a hook with no case
 # directory: a template nobody mapped is one nobody checks, and it looks like coverage.

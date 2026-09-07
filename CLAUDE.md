@@ -119,13 +119,6 @@ the machine. Committed is not the same as exercised.
 
 **Unsoaked** = a commit here with no soak line from any repo.
 
-## Local skill copies — ending
-
-**Arc is installed here** — `cache/calyx-engineering/arc/0.1.0`, 13 skills — and `.claude/skills/`
-holds 13 more. Every skill is in this repository's context twice.
-[#142](https://github.com/Calyx-Engineering/arc/issues/142) deletes the copies. Until it lands:
-edit `skills/`, never the copy, and re-sync with `tools/sync-local-skills.sh`.
-
 ## Safe hook editing
 
 A bad hook fires on every tool call in every repo and can break the session needed to fix it.
