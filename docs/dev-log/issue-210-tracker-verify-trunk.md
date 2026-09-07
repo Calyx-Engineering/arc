@@ -43,15 +43,36 @@ Both were written first and both failed against the tree before the change:
 |---|---|
 | `pass/pr-merge-into-flipped-default.json` | an issue PR merging into its arc, default flipped onto that arc — silent |
 | `report/pr-merge-arc-into-trunk-no-keyword.json` | the arc PR merging into the trunk, default still flipped — reports |
+| `report/pr-base-trunk-while-flipped.json` | a wrong base while the flip is on — the finding still names the trunk, which is not the default |
 
 The recorded-trunk path was checked separately: a throwaway repo with
 `trunk-was-master` in `.git/arc-default-branch-trunk` produces
 *"merges to trunk branch `trunk-was-master` with no closing keyword"*.
 
+## Two gaps this left, named rather than closed
+
+**The recorded-trunk branch of `resolve_trunk` has no case.** Every case runs against a fresh
+`git init` fixture with no `arc-default-branch-trunk` file, so all of them fall through to the
+heuristic. A fixture repo carrying the record would have to be built in `tools/verify-hook.sh`,
+and that file is hard-excluded from autonomous edits. The branch is covered by the manual check
+below and by nothing in the gate.
+
+**`arc-default-branch.sh` cannot write the record from a worktree.** `flip` does
+`printf '%s\n' "$TRUNK" > .git/arc-default-branch-trunk` — a literal relative `.git`, which in a
+linked worktree is a file, so the redirect fails. The script has `set -u` and no `set -e`, so it
+flips the default anyway and leaves no record; `restore`'s `rm -f .git/...` is a matching no-op.
+Nothing is broken today — `R:/arc/.git/arc-default-branch-trunk` holds `main`, written from the
+main worktree — and the hook's heuristic covers the missing record. Recorded in #210's `Spawned`
+table; out of scope for both issues in this batch.
+
 ## Evidence
 
-`bash tools/verify-hook.sh hooks/tracker-verify` — 33 passed, 0 failed, exit 0.
+`bash tools/verify-hook.sh hooks/tracker-verify` — 33 passed, 0 failed, exit 0 at this commit;
+37 after the review passes added four cases and rewrote the malformed PR-fixture one.
 `bash tools/verify-all.sh` — 13 gates, all clean, exit 0.
 
-**The issue's command needs its path.** `bash tools/verify-hook.sh tracker-verify` exits 2 with
-`usage:` — the script takes a path, not a hook name. `hooks/tracker-verify` is what was run.
+**The issue's third box is left unticked.** `bash tools/verify-hook.sh tracker-verify` exits 2
+with `usage:` — the script takes a path, not a hook name. The substance is done and the gate
+passes on `hooks/tracker-verify`, but ticking a box whose command errors would assert something
+the tree contradicts. The reason is recorded in the issue body; correcting the criterion is the
+user's call.

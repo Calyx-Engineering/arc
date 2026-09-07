@@ -12,8 +12,8 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, pr-write, pr-merge
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: milestone (not a PR), arc-prefix (base is not an arc branch), closing-keyword (payload carried the body), issue-title-length (not an issue, or verify-tracker-body.sh is not beside the hook), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (no arc branch checked out)
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
 
@@ -29,6 +29,26 @@ INPUT="$(cat 2>/dev/null)"
 
 field() {
   printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+# Fixture values, and never `field` for them, for two reasons. `field` splits on commas, so a
+# title or a body carrying one is truncated at it — and when its `sed` cannot parse a line it
+# prints that line unchanged, so a payload cut off mid-value hands back the key and its quotes
+# as if they were the value, which then lands verbatim in a finding. Yielding nothing is the
+# honest answer, and the one the malformed guard below can act on.
+#
+# Parameter expansion, no subprocess. There are six of these, and a `printf | sed` each would
+# cost two processes on every Bash tool call in the session — more than the two the whole hook
+# spent on fixtures before this work.
+fixture() {
+  local rest key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+  # No closing quote means the payload was cut off mid-value. Return nothing, never the rest.
+  case "$rest" in *'"'*) printf '%s' "${rest%%\"*}" ;; esac
+  return 0
 }
 
 # PostToolUse communicates by writing context back to the transcript, not by a decision.
@@ -125,18 +145,24 @@ resolve_trunk() {
 # A body supplied directly in the payload skips the tracker read. This is how the scanners
 # are exercised offline — a hook whose only test path needs the network is a hook nobody
 # runs the day it matters.
-FIXTURE_BODY="$(field arc_test_body)"
-# `field` splits on commas, and a title's commas are exactly what this check reads. Pull
-# the value out whole instead.
-FIXTURE_TITLE="$(printf '%s' "$INPUT" | sed -n 's/.*"arc_test_title" *: *"\([^"]*\)".*/\1/p')"
+FIXTURE_BODY="$(fixture arc_test_body)"
+FIXTURE_TITLE="$(fixture arc_test_title)"
 
 # The PR checks read four values from `gh pr view` and one from `gh repo view`. A case
 # supplies them directly, so the base-branch rule — the one that fired on four correctly
 # based PRs in a single session, #183 — is exercisable with no network and no live PR.
-FIXTURE_PR_BASE="$(field arc_test_pr_base)"
-FIXTURE_DEFAULT="$(field arc_test_default)"
-FIXTURE_MILESTONE="$(field arc_test_milestone)"
-FIXTURE_LINKED="$(field arc_test_linked)"
+FIXTURE_PR_BASE="$(fixture arc_test_pr_base)"
+FIXTURE_DEFAULT="$(fixture arc_test_default)"
+FIXTURE_MILESTONE="$(fixture arc_test_milestone)"
+FIXTURE_LINKED="$(fixture arc_test_linked)"
+
+# A payload that names a fixture key and yields no value from any of them is truncated, not an
+# invocation. Stay silent: falling through would send a half-named PR to a live `gh` read.
+case "$INPUT" in
+  *'"arc_test_'*)
+    [ -n "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED" ] || exit 0
+    ;;
+esac
 
 # A fixture case answers every question `gh` would have answered, so it must not be skipped
 # for want of `gh` — that turns a case that should report into a silent pass.
