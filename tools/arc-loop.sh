@@ -13,6 +13,7 @@
 #   tools/arc-loop.sh 145 --issues 183,210 --track S1.F1   …and the session is titled "arc/04 — S1.F1 · #183 #210"
 #   tools/arc-loop.sh --status               every run under .arc-work/runs/, live or finished
 #   tools/arc-loop.sh --report               the same as a markdown table with totals — for the arc-log
+#   tools/arc-loop.sh --resume 160           continue a stopped run's session in its kept worktree
 #
 # Scope of one invocation is ONE workstream. When its children are all closed
 # the script dispatches a report run and exits; the next workstream is a
@@ -74,10 +75,12 @@ ISSUES=""
 TRACK=""
 STATUS=0
 REPORT=0
+RESUME=""
 PARENT="${1:-}"
 shift || true
 [ "$PARENT" = "--status" ] && { STATUS=1; PARENT=""; }
 [ "$PARENT" = "--report" ] && { REPORT=1; PARENT=""; }
+[ "$PARENT" = "--resume" ] && { RESUME="${1:-}"; shift || true; PARENT=""; }
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY=1 ;;
@@ -87,6 +90,7 @@ while [ $# -gt 0 ]; do
     --track) shift; TRACK="${1:-}" ;;
     --status) STATUS=1 ;;
     --report) REPORT=1 ;;
+    --resume) shift; RESUME="${1:-}" ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
   shift
@@ -202,6 +206,27 @@ PY
 
 [ "$STATUS" = 1 ] && { show_status; exit 0; }
 [ "$REPORT" = 1 ] && { show_report; exit 0; }
+
+# --resume: a run that stopped — limit, crash, gave up — continues its own session.
+if [ -n "$RESUME" ]; then
+  dir="$RUNS/$RESUME"; wt="$WT_ROOT/$RESUME"
+  [ -f "$dir/issues" ] || die "no run $RESUME under $RUNS"
+  [ -d "$wt" ] || die "worktree $wt is gone — the session cannot continue; dispatch the issues afresh"
+  [ -f "$dir/pid" ] && alive "$(cat "$dir/pid")" && die "run $RESUME is still alive"
+  model_flag=""; [ -n "$MODEL" ] && model_flag="--model $MODEL"
+  echo "arc-loop: resuming run $RESUME — $(tr '\n' ' ' < "$dir/issues")"
+  mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json" 2>/dev/null || true
+  resume_run "$dir" "$wt" "$model_flag"
+  wait_run "$RESUME" "$dir" "$wt" "$model_flag" || exit 1
+  open=""
+  for n in $(cat "$dir/issues"); do
+    st="$(gh issue view "$n" -R "$REPO" --json state --jq .state 2>/dev/null || echo OPEN)"
+    [ "$st" = "OPEN" ] && open="$open #$n"
+  done
+  if [ -z "$open" ]; then git worktree remove --force "$wt" && echo "  every issue closed — removed $wt"
+  else echo "  still open:$open — worktree kept at $wt"; fi
+  exit 0
+fi
 
 [ -n "$PARENT" ] || die "usage: tools/arc-loop.sh <workstream-parent-issue> [--dry-run] [--max N] [--issues 183,210] | --status"
 [ -f "$INSTRUCTIONS" ] || die "missing $INSTRUCTIONS — run from the repository root"
@@ -324,6 +349,40 @@ sys.exit(0 if (err and pat.search(txt)) else 1)
 PY
 }
 
+# wait_run <id> <run-dir> <worktree> <model-flag> — block until the run exits; on a rate or
+# usage limit wait and resume the same session, up to MAX_RETRY times.
+wait_run() {
+  local id="$1" dir="$2" wt="$3" model_flag="$4" pid attempt=0
+  while :; do
+    pid="$(cat "$dir/pid")"
+    while [ ! -f "$dir/exit" ]; do
+      alive "$pid" || { echo "  run $id died without an exit code — see $dir/err.log" >&2; return 1; }
+      sleep 30
+    done
+    echo "  run $id exited $(cat "$dir/exit")"
+    summarise "$dir"
+    limit_hit "$dir" || return 0
+    if [ "$attempt" -ge "$MAX_RETRY" ]; then
+      echo "  rate limit again after $MAX_RETRY resumes — giving up; worktree kept" >&2
+      return 0
+    fi
+    attempt=$((attempt + 1))
+    echo "  rate limit — waiting ${RETRY_WAIT}s, then resuming the same session ($attempt/$MAX_RETRY)"
+    mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json"
+    sleep "$RETRY_WAIT"
+    resume_run "$dir" "$wt" "$model_flag"
+  done
+}
+
+# resume_run <run-dir> <worktree> <model-flag> — `claude -p --continue` in the worktree picks up
+# that run's own transcript, so it carries on rather than starting the issue over.
+resume_run() {
+  printf '%s\n' "You were interrupted by a rate limit. Continue the run from where it stopped." \
+    "Read the issue checklists on GitHub for the current state before acting; do not redo ticked boxes." \
+    > "$1/resume.md"
+  launch_run "$1" "$2" "$3" "$1/resume.md" "--continue"
+}
+
 # run_batch <issue> [issue...] — one worktree, one detached `claude -p`, blocks until it exits.
 # Returns the run's exit code. The worktree is removed only if every issue closed.
 run_batch() {
@@ -377,30 +436,8 @@ run_batch() {
   # Launch, wait, and on a rate limit wait again and resume. The resumed run is the SAME
   # session — `claude -p --continue` in the worktree picks up its own transcript — so it carries
   # on from where the limit stopped it rather than starting the issue over.
-  local attempt=0
   launch_run "$dir" "$wt" "$model_flag" "$dir/prompt.md" ""
-  while :; do
-    pid="$(cat "$dir/pid")"
-    while [ ! -f "$dir/exit" ]; do
-      alive "$pid" || { echo "  run $id died without an exit code — see $dir/err.log" >&2; return 1; }
-      sleep 30
-    done
-    echo "  run $id exited $(cat "$dir/exit")"
-    summarise "$dir"
-    limit_hit "$dir" || break
-    if [ "$attempt" -ge "$MAX_RETRY" ]; then
-      echo "  rate limit again after $MAX_RETRY resumes — giving up; worktree kept" >&2
-      break
-    fi
-    attempt=$((attempt + 1))
-    echo "  rate limit — waiting ${RETRY_WAIT}s, then resuming the same session ($attempt/$MAX_RETRY)"
-    mv -f "$dir/out.json" "$dir/out.$attempt.json"
-    sleep "$RETRY_WAIT"
-    printf '%s\n' "You were interrupted by a rate limit. Continue the run from where it stopped." \
-      "Read the issue checklists on GitHub for the current state before acting; do not redo ticked boxes." \
-      > "$dir/resume.md"
-    launch_run "$dir" "$wt" "$model_flag" "$dir/resume.md" "--continue"
-  done
+  wait_run "$id" "$dir" "$wt" "$model_flag" || return 1
 
   # Keep the worktree if anything is still open: the branch and its uncommitted state are the
   # evidence of where the run stopped.
