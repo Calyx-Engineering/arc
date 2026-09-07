@@ -151,18 +151,19 @@ else
   FAILED=$((FAILED + 1))
 fi
 
-# And prove it works, rather than only that the line exists.
-KS="$HOME/.claude/HOOKS_OFF"
-KS_PREEXISTING=0
-[ -f "$KS" ] && KS_PREEXISTING=1
-mkdir -p "$(dirname "$KS")" 2>/dev/null
-touch "$KS" 2>/dev/null
+# And prove it works, rather than only that the line exists. The switch the hook reads is
+# $HOME/.claude/HOOKS_OFF, so the test points HOME at a fixture directory holding one — for this
+# one invocation only. It used to touch the real file: with runs verifying in parallel worktrees,
+# one verifier's kill-switch test made every other verifier's deny cases pass as allow, and
+# silenced every real hook on the machine for that moment. Nothing global is written now.
+KS_HOME="$FIXTURES/ks-home"
+mkdir -p "$KS_HOME/.claude" && touch "$KS_HOME/.claude/HOOKS_OFF"
 SPEAKS_UP=deny
 [ -d "$CASES_DIR/report" ] && SPEAKS_UP=report
 if [ -d "$CASES_DIR/$SPEAKS_UP" ]; then
   for f in "$CASES_DIR/$SPEAKS_UP"/*.json; do
     [ -e "$f" ] || continue
-    out="$(tail -n +2 "$f" | substitute | bash "$HOOK" 2>&1)"
+    out="$(tail -n +2 "$f" | substitute | HOME="$KS_HOME" bash "$HOOK" 2>&1)"
     rc=$?
     if printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"' || [ "$rc" -eq 2 ]; then
       echo "  FAIL  kill switch did not suppress a $SPEAKS_UP case"
@@ -174,7 +175,6 @@ if [ -d "$CASES_DIR/$SPEAKS_UP" ]; then
     break
   done
 fi
-[ "$KS_PREEXISTING" -eq 0 ] && rm -f "$KS"
 
 # ---- declaration check ----------------------------------------------------------
 # Reports, never fails. A hook with no `camp-reports:` header still works — it is simply
