@@ -9,7 +9,13 @@ why a skill does not fire.
 | | |
 |---|---|
 | **Today** | `bash tools/skill-cases.sh` — scores every case against the transcript it was drawn from. Add `--strict` to fail when a case's transcript is not on this machine |
+| **To score a change** | `bash tools/skill-probe.sh` — re-runs each `prompt.md` against the **installed** plugin and records what fired. `--openings` restricts it to `source.opening: true`, `--runs N` repeats. Run `tools/plugin-reload.sh` first or it measures the version before your edit. **It bills per run**, which is why it is not in `tools/verify-all.sh` |
 | **When `plugin eval` opens** | `claude plugin eval --eval-dir evals` — re-runs each `prompt.md` against the live plugin |
+
+**`tools/skill-cases.sh` cannot see a description change.** It replays transcripts recorded
+before the edit, so the same rows come back before and after. That is what `tools/skill-probe.sh`
+is for, and the distinction matters: a trigger fix scored only by `skill-cases.sh` has no
+evidence behind it at all.
 
 **`claude plugin eval` is gated behind early access and cannot be run here.** `claude plugin eval
 init --bare` returns `` `plugin eval` is currently in early access `` — and **exits 0 while doing

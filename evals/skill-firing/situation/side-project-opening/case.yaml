@@ -1,0 +1,16 @@
+shape: situation
+expect:
+  - spec-interview
+source:
+  session: c4fe2b5c
+  turn: 1
+  opening: true
+why: >
+  An opening that asks for a specification without asking for one by name — the user says
+  "drop straight into spec writing/interview mode" and then spends four paragraphs on what
+  the tool should do. `chat-response` fired and `spec-interview` did not.
+
+  It has a second job in this suite. It is an opening where `handoff` and `camp` must stay
+  silent, so it is the control that catches a trigger clause widened until it matches
+  everything. `expect` holds one skill, but tools/skill-probe.sh prints every skill that
+  fired, so an over-firing regression shows up in this row.

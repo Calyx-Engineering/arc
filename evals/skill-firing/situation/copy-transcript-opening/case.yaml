@@ -1,0 +1,14 @@
+shape: situation
+expect:
+  - handoff
+source:
+  session: 1ee27858
+  turn: 1
+  opening: true
+why: >
+  The sixth opening in the corpus that is handoff's work, and the only one that never says
+  the word. Saving a transcript to the arc's transcript directory is the skill's own
+  "Saving the transcript" section — the path, the naming and the order against the handoff
+  write are all decisions it holds. The user names neither the skill nor the handoff, so
+  this is the situation shape at an opening: the case that says whether the trigger clause
+  reaches a request that describes the work instead of naming it.
