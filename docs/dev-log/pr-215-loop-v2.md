@@ -61,6 +61,24 @@ no dependency on the installed plugin. Nothing else running, so the measurement 
 sub-agent passes. `tools/arc-loop.sh 145 --issues 183,210`; compare its usage lines against the
 table above.
 
-Unexercised at the time of writing: `Start-Process` surviving the launching session actually
-closing; `--output-format json`'s usage block on this CLI version; `cleanup` against a worktree
-whose branch was merged remotely.
+**Result, same day.** Run 183 — #183 and #210, one worktree, `claude-opus-5`, two other runs
+alongside it for the last 35 minutes:
+
+| | Run 183 (two issues) | #158 alone, before |
+|---|---|---|
+| Turns | 90 | 351 over two runs |
+| Input tokens | 12.4M, 99% cache | 42M |
+| Output | 92K | 345K |
+| Wall | 76 min | 90 min |
+| Cost | $14.08 by the CLI's own count | — |
+| Outcome | PR #216 merged by the run, both issues closed, worktree removed by the loop | merged |
+
+Per issue, roughly a quarter of the tokens and 40% of the wall time — before any parallelism is
+counted. Not attributable to one change: the sub-agent passes, no dead first run, and a batch
+sharing one read of the hook all landed together.
+
+First launch died at turn 1: the `~/.local/bin` CLI was 2.1.241 and rejected the account's new
+default model. `--model claude-opus-5` was the fix and is also the baseline-matching choice.
+
+Still unexercised: a rate-limit resume; a run that leaves its issue open; the report run from
+this tree; `--track` on a session list.

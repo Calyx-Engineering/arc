@@ -119,6 +119,7 @@ alive() {  # alive <pid> — Windows first, POSIX fallback
 summarise() {  # summarise <run-dir>
   python - "$1" <<'PY'
 import json, sys, os
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # a run's last words are not cp1252
 d = sys.argv[1]
 out = os.path.join(d, "out.json")
 if not os.path.exists(out) or os.path.getsize(out) == 0:
