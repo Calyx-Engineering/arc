@@ -8,6 +8,7 @@ source:
 why: >
   The tightest budget in the corpus and the fastest loss. The user quotes the reply he refused
   to read, says "too many words", and asks for the problem in 20 words. He gets 16. The next
-  reply is 140 words and the one after that 194 — seven times the budget, two turns later.
+  reply is 85 words and the one after that 93 — and the worst in the case is 219, eleven
+  times the budget.
   It is also the recurrence the issue names: this session was the retrospective that recorded
   the defect, and the defect happened inside it.

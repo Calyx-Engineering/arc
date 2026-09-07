@@ -55,14 +55,14 @@ after that, not just the next one.**
 move the payload into a table, or say what can be asked for. Overrunning to be complete is
 the failure: the user asked for the reply to be short, not for the subject to be small.
 
-### What this is worth, measured
+### What the loss looks like, measured
 
 Two real conversations, scored by `tools/response-length.sh`:
 
 | Budget | Held for | Replies within it |
 | --- | --- | --- |
 | 60 words, *"you're getting very verbose again"* | 0 turns | 5 of 11 |
-| 20 words, *"i'm not going to read that"* | 1 turn | 1 of 10 — the next reply was 140 words, and one two turns later was 194 |
+| 20 words, *"i'm not going to read that"* | 1 turn | 1 of 10 — the next reply was 85 words, and the worst 219 |
 
 **Both budgets were met when they were set and lost immediately after.** Nothing in either
 conversation withdrew them.
