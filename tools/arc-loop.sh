@@ -23,6 +23,7 @@
 # Reasoning: docs/arc-log/arc-04-dogfood.md §3.1
 set -euo pipefail
 
+HERE="$(cd "$(dirname "$0")" && pwd)"
 REPO="Calyx-Engineering/arc"
 INSTRUCTIONS="docs/arc-work/04-dogfood/run-instructions.md"
 DRY=0
@@ -40,6 +41,15 @@ done
 
 die() { echo "arc-loop: $*" >&2; exit 1; }
 
+# The mode row is written HERE and nowhere else in the loop. A human ran this script, which is
+# the same explicitness as saying "switch to autonomous" in chat — so the script may raise it.
+# A run dispatched by it never may: m40 §4's asymmetry, and hooks/mode-guard enforces the half
+# that can be enforced. Restored to Manual when the boundary is reached.
+set_mode() {  # set_mode <Manual|Autonomous> [boundary]
+  [ -f HANDOFF.md ] || die "no HANDOFF.md — the mode lives in its Execution mode row"
+  python "$HERE/set-mode.py" "$1" "${2:-}" || die "could not set the execution mode to $1"
+}
+
 [ -n "$PARENT" ] || die "usage: tools/arc-loop.sh <workstream-parent-issue> [--dry-run] [--max N]"
 [ -f "$INSTRUCTIONS" ] || die "missing $INSTRUCTIONS — run from the repository root"
 command -v gh >/dev/null || die "gh not found"
@@ -54,7 +64,11 @@ esac
 
 parent_title=$(gh issue view "$PARENT" -R "$REPO" --json title --jq .title)
 echo "arc-loop: #$PARENT $parent_title"
-[ "$DRY" = 1 ] && echo "arc-loop: dry run — nothing will be dispatched"
+if [ "$DRY" = 1 ]; then
+  echo "arc-loop: dry run — nothing dispatched, and the execution mode is not touched"
+else
+  set_mode Autonomous "#$PARENT $parent_title"
+fi
 
 # --- queue reads --------------------------------------------------------------
 open_children() {
@@ -128,17 +142,23 @@ while :; do
   if ! issue=$(next_issue); then
     if [ -n "$(open_children)" ]; then
       echo "arc-loop: every remaining issue is blocked — stopping"
+      [ "$DRY" = 1 ] || set_mode Manual
       exit 1
     fi
     echo "arc-loop: workstream complete, dispatching report run"
     run_report
-    echo "arc-loop: done. The next workstream is a separate invocation."
+    # The named boundary is reached, so the grant is spent. The report run leaves the parent
+    # issue open — closing it is the user's, after they have read the report.
+    [ "$DRY" = 1 ] || set_mode Manual
+    echo "arc-loop: done. #$PARENT stays open until you close it."
+    echo "arc-loop: the next workstream is a separate invocation."
     exit 0
   fi
 
   # a run that does not close its issue would otherwise loop forever
   if [ "$issue" = "$last" ]; then
     echo "arc-loop: #$issue still open after its run — stopping rather than repeating" >&2
+    [ "$DRY" = 1 ] || set_mode Manual
     exit 1
   fi
 
@@ -146,12 +166,14 @@ while :; do
   echo "arc-loop: [$count] issue run for #$issue"
   if ! run_issue "$issue"; then
     echo "arc-loop: the run for #$issue exited non-zero — stopping" >&2
+    [ "$DRY" = 1 ] || set_mode Manual
     exit 1
   fi
   last="$issue"
 
   if [ "$MAX" != 0 ] && [ "$count" -ge "$MAX" ]; then
     echo "arc-loop: reached --max $MAX — stopping"
+    [ "$DRY" = 1 ] || set_mode Manual
     exit 0
   fi
 

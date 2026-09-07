@@ -95,7 +95,7 @@ it a review rather than an announcement.
 | 2 | **Read the workstream's record**, and only that: every child issue's body, every merged PR, every dev-log. **The issue bodies are the point** — a box left unticked, or ticked with no evidence, is what section 6.2's *Not done* is for. Do not read the issue plan, and do not open the code |
 | 3 | Write the report into the arc-log's status section, as `#### <n>.<m>.1` onward |
 | 4 | Post the same report as a comment on the **workstream parent issue** — that is where it gets read |
-| 5 | **Set `HANDOFF.md`'s Execution mode row to Manual.** The named boundary was reached, so the grant is spent. Dropping to manual is yours to do; raising it never is |
+| 5 | **Check `HANDOFF.md`'s Execution mode row says Manual.** The named boundary is reached, so the grant is spent. `tools/arc-loop.sh` sets it on every exit path — if you were dispatched by it, confirm rather than write. If you were not, set it yourself: dropping to manual is yours to do, raising it never is |
 | 6 | **Leave the parent issue open.** All children closed is mechanical completion, not review. Closing it removes the surface the report is read on and buries the report in a closed issue |
 | 7 | Stop. The next workstream is a separate invocation and a separate grant |
 

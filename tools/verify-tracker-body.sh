@@ -98,6 +98,14 @@ check_body() {
 title_findings() {
   local title="$1" body="${2:-}" name words commas type multi=0
 
+  # `arc:` and `workstream:` are containers, not units of work. Their children are the
+  # deliverables; the title names a boundary and holds an ordered list. Every check below
+  # asks "does merging this ship the thing the title names", and nothing merges a container
+  # — so the checks are category errors here, not lenient exceptions. #194.
+  case "$title" in
+    arc:*|workstream:*) return 0 ;;
+  esac
+
   # The type prefix and a trailing mechanism or issue tag are bookkeeping, not part of the
   # name, and a free-standing dash joins two halves of one name. Strip all three before
   # counting, or every title spends words on punctuation.
