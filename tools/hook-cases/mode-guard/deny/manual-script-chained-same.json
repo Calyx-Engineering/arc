@@ -1,0 +1,2 @@
+# manual mode, the same script previewed then run for real — the exemption is per invocation, not per script
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"bash tools/arc-loop.sh 145 --dry-run && bash tools/arc-loop.sh 145 --max 1","description":"Preview then dispatch"}}

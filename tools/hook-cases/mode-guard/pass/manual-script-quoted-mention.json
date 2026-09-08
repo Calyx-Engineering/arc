@@ -1,0 +1,2 @@
+# manual mode, an invocation quoted as a search pattern — a mention, not a command
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"grep -n \"bash tools/arc-loop.sh\" notes.md","description":"Find the mention"}}

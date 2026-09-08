@@ -10,8 +10,8 @@
 # and merge, so the mode is read rather than recalled. #189.
 #
 # camp-reports: mode-check
-# checks: gating-command, mode-row
-# skips: mode-row (the command is not one the mode governs)
+# checks: gating-command, gating-script, mode-row
+# skips: mode-row (the command is not one the mode governs), gating-script (the command names a gating command outright)
 #
 # DENY-BIASED ON PURPOSE. A false deny costs one message and names its own fix. A false
 # allow is the failure this exists to prevent. So the command match runs against the whole
@@ -48,7 +48,9 @@
 arc_log_event mode-check
 
 # ---- fail-open wrapper ----------------------------------------------------------
-set +e
+# Globbing off with it: the command is split into words below, and a `*.sh` in a payload
+# must stay the string it was rather than becoming whatever is in the hook's directory.
+set +e -f
 
 INPUT="$(cat 2>/dev/null)"
 [ -n "$INPUT" ] || exit 0
@@ -69,28 +71,193 @@ field() {
 
 # ---- hook body ------------------------------------------------------------------
 
-# 1. Is this a command the mode governs? Anything else is none of this hook's business.
-case "$INPUT" in
-  *"git commit"*|*"git push"*|*"gh pr create"*|*"gh pr merge"*|*"gh pr ready"*)
-    arc_log_pass gating-command=yes
-    ;;
-  *)
-    arc_log_pass gating-command=no
-    arc_log_skip mode-row "the command is not one the mode governs"
-    arc_log_outcome ok "not a command the mode governs"
-    exit 0
-    ;;
-esac
+# 1. Where the mode lives: the payload's cwd, else wherever this is running. Read on demand,
+# not up front — `field` is a five-process pipeline, and most Bash calls are none of this
+# hook's business. Paying that on every one of them is how a hook becomes one people turn off.
+CWD=""
+need_cwd() {
+  [ -n "$CWD" ] && return 0
+  CWD="$(field cwd)"
+  { [ -n "$CWD" ] && [ -d "$CWD" ]; } || CWD="$PWD"
+  return 0
+}
 
-# 2. Where the mode lives: the payload's cwd, else wherever this is running.
-CWD="$(field cwd)"
-{ [ -n "$CWD" ] && [ -d "$CWD" ]; } || CWD="$PWD"
+# 2. Is this a command the mode governs? Anything else is none of this hook's business.
+GATED=no
+case "$INPUT" in
+  *"git commit"*|*"git push"*|*"gh pr create"*|*"gh pr merge"*|*"gh pr ready"*) GATED=yes ;;
+esac
+arc_log_pass "gating-command=$GATED"
+
+# 2b. THE COMMAND STRING IS NOT THE WHOLE COMMAND. `tools/new-direct-pr.sh` branches, commits,
+# pushes and opens a PR; the payload that runs it holds none of those words, so in manual mode
+# the guard never fired. Found running PR #200 — #201. Where a command INVOKES a script, that
+# script's own declaration is read as well:
+#
+#   # mode-guard: writes-outward
+#   # mode-guard-read-only: --dry-run --status --report
+#
+# A SCRIPT DECLARES ITSELF, AND AN UNDECLARED ONE IS NOT GATED. Scanning a script's text for
+# `git commit` looks more thorough and is wrong: tools/verify-activation-log.sh carries that
+# string inside a test payload, so a content match would deny a read-only verifier. #201's
+# constraint is explicit — the guard must not block reads — so the guard asks the script
+# rather than guessing about it, and an unrecognised script fails open.
+#
+# THIS HALF READS THE COMMAND FIELD, NOT THE PAYLOAD, and that is the opposite of step 2 on
+# purpose. Step 2 scans everything because its only failure mode is an extra deny. This half
+# has two failure modes, and both were reached by scanning the payload: `git status` denied for
+# a description reading "see bash tools/arc-loop.sh for details", and a real dispatch allowed
+# because a `--dry-run` elsewhere in the payload looked like its own flag.
+#
+# A MENTION IS NOT AN INVOCATION, so the command is split at `&` `;` `|` `(` and a backtick and
+# each segment is read as a command: leading `VAR=x` assignments and wrapper words are stepped
+# over, then an interpreter and its flags, and only the token that lands in command position
+# counts. `cat tools/arc-loop.sh` and `grep -n "bash tools/arc-loop.sh" notes.md` never reach it.
+# The rest of the segment is that invocation's own arguments, so in
+# `bash tools/arc-loop.sh --dry-run && bash tools/arc-loop.sh 145 --max 1` the second half is
+# gated and the first is not.
+#
+# WHAT THIS CANNOT DO.
+#   · A new outward-writing script that omits the declaration is invisible here. Only the two
+#     #201 named carry one; tools/arc-default-branch.sh and tools/verify-tracker-body.sh also
+#     write outward under some subcommands and do not. There is no repo-wide sweep for them.
+#   · `cd tools && bash arc-loop.sh` is not caught: resolution is against the payload's cwd and
+#     this hook's own root, and neither sees a `cd` earlier in the same command.
+#   · A path held in a variable, or displaced by a flag's argument (`bash -o errexit tools/x.sh`),
+#     is not caught.
+#   · The command field is found by the first `"command"` in the payload, so a description
+#     carrying that quoted word ahead of the real field mis-parses. A false allow, and the only
+#     one in this half that is not closed.
+#   · The hook-root fallback resolves against Arc's own copy, so in a consumer repo a relative
+#     path that does not exist there can still gate if Arc ships a script of that name. A false
+#     deny, and it names the file it read.
+SCRIPT_GATED=""
+MG_ROOT=""
+if [ "$GATED" = no ]; then
+  # Cheap pre-filter, and it is what keeps the common path free. Everything below is parameter
+  # expansion and builtins until a script actually lands in command position.
+  case "$INPUT" in
+    *.sh*)
+      # The command field, unescaped. `field` truncates at the first comma, which is why it is
+      # not used here — a command is where the commas are.
+      CMD=""
+      case "$INPUT" in
+        *'"command"'*)
+          REST="${INPUT#*\"command\"}"
+          REST="${REST#*\"}"
+          while :; do
+            HEAD="${REST%%\"*}"
+            if [ "$HEAD" = "$REST" ]; then CMD="$CMD$HEAD"; break; fi
+            case "$HEAD" in
+              *\\) CMD="$CMD${HEAD%\\}\""; REST="${REST#*\"}" ;;
+              *)   CMD="$CMD$HEAD"; break ;;
+            esac
+          done
+          ;;
+      esac
+
+      # A payload carries a newline as the two characters \ and n, and a multi-line command is
+      # the ordinary shape of a Bash tool call. Leaving them encoded glued every line after the
+      # first onto its predecessor, so only line one was ever read as a command.
+      CMD="${CMD//\\n/$'\n'}"; CMD="${CMD//\\t/ }"; CMD="${CMD//\\r/ }"; CMD="${CMD//\\\\/\\}"
+
+      # One command per line, so each can be read from its own start.
+      SEGS="$CMD"
+      SEGS="${SEGS//&/$'\n'}"; SEGS="${SEGS//;/$'\n'}"; SEGS="${SEGS//|/$'\n'}"
+      SEGS="${SEGS//(/$'\n'}"; SEGS="${SEGS//)/$'\n'}"; SEGS="${SEGS//\`/$'\n'}"
+      SEGS="${SEGS//\{/$'\n'}"; SEGS="${SEGS//\}/$'\n'}"
+
+      while IFS= read -r SEG; do
+        [ -n "$SEG" ] || continue
+        set -- $SEG
+        # Leading environment assignments and wrappers are not the command.
+        while [ $# -gt 0 ]; do
+          case "$1" in
+            *=*|command|env|exec|nohup|time|sudo|builtin) shift ;;
+            *) break ;;
+          esac
+        done
+        [ $# -gt 0 ] || continue
+        # An interpreter and its flags are not the command either.
+        NOEXEC=no
+        case "$1" in
+          bash|sh|zsh|ksh|dash|source|.)
+            shift
+            # `bash -n script` parses and runs nothing. It is a read, and it is the form used
+            # to check this hook's own edits.
+            while [ $# -gt 0 ]; do
+              case "$1" in
+                --*)  shift ;;
+                -*n*) NOEXEC=yes; shift ;;
+                -*)   shift ;;
+                *)    break ;;
+              esac
+            done
+            ;;
+        esac
+        [ "$NOEXEC" = yes ] && continue
+        [ $# -gt 0 ] || continue
+
+        s="$1"; shift
+        s="${s#\"}"; s="${s%\"}"; s="${s#\'}"; s="${s%\'}"
+        case "$s" in *.sh) ;; *) continue ;; esac
+
+        need_cwd
+        [ -n "$MG_ROOT" ] || MG_ROOT="$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)"
+        SPATH=""
+        for cand in "$CWD/$s" "$MG_ROOT/$s" "$s"; do
+          [ -f "$cand" ] && { SPATH="$cand"; break; }
+        done
+        [ -n "$SPATH" ] || continue
+        grep -qE '^#[[:space:]]*mode-guard:[[:space:]]*writes-outward' "$SPATH" 2>/dev/null || continue
+
+        # A declared read-only flag is a way into the script that writes nothing outward. The
+        # script names them, so this hook keeps no per-script knowledge — and they are matched
+        # against THIS invocation's arguments, which is the rest of this segment and nothing else.
+        RO="$(sed -n 's/^#[[:space:]]*mode-guard-read-only:[[:space:]]*//p' "$SPATH" 2>/dev/null | head -n1)"
+        ARGS=""
+        for a in "$@"; do
+          case "$a" in \#*) break ;; esac
+          ARGS="$ARGS $a"
+        done
+        READONLY=no
+        for f in $RO; do
+          case "$ARGS " in *" $f "*) READONLY=yes ;; esac
+        done
+        [ "$READONLY" = yes ] && continue
+
+        GATED=yes
+        SCRIPT_GATED="$s"
+        break
+      done <<<"$SEGS"
+      ;;
+  esac
+fi
+
+if [ "$GATED" = yes ] && [ -z "$SCRIPT_GATED" ]; then
+  arc_log_skip gating-script "the command names a gating command outright"
+else
+  arc_log_pass "gating-script=${SCRIPT_GATED:-no}"
+fi
+
+if [ "$GATED" = no ]; then
+  arc_log_skip mode-row "the command is not one the mode governs"
+  arc_log_outcome ok "not a command the mode governs"
+  exit 0
+fi
+
+# A denial names what it denied. Reading `git commit` in the payload is self-evident; reading
+# it out of a script the payload only named is not.
+VIA=""
+[ -n "$SCRIPT_GATED" ] && VIA=" \`$SCRIPT_GATED\` declares \`mode-guard: writes-outward\` — it commits, pushes or opens a PR from inside, so running it is one of those actions."
+
+need_cwd
 HANDOFF="$CWD/HANDOFF.md"
 
 if [ ! -f "$HANDOFF" ]; then
   arc_log_fail mode-row=no-handoff
   arc_log_outcome denied "no HANDOFF.md, so the mode is unset — unset means manual"
-  deny "No HANDOFF.md, so the execution mode is unset — and unset means manual. Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add HANDOFF.md with a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** |, or ask the user to switch to autonomous and name the boundary."
+  deny "No HANDOFF.md, so the execution mode is unset — and unset means manual.${VIA} Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add HANDOFF.md with a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** |, or ask the user to switch to autonomous and name the boundary."
 fi
 
 # 3. The mode row is the first table row whose first cell names the mode.
@@ -99,7 +266,7 @@ ROW="$(grep -m1 -iE '^\|[^|]*\bmode\b[^|]*\|' "$HANDOFF" 2>/dev/null)"
 if [ -z "$ROW" ]; then
   arc_log_fail mode-row=absent
   arc_log_outcome denied "HANDOFF.md has no Execution mode row — unset means manual"
-  deny "HANDOFF.md has no Execution mode row, so the mode is unset — and unset means manual. Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** | under an Execution mode heading."
+  deny "HANDOFF.md has no Execution mode row, so the mode is unset — and unset means manual.${VIA} Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** | under an Execution mode heading."
 fi
 
 # The second cell, stripped of markdown emphasis and whitespace, lowercased.
@@ -114,14 +281,14 @@ case "$MODE" in
   manual)
     arc_log_fail mode-row=manual
     arc_log_outcome denied "the mode is manual — propose and wait"
-    deny "The execution mode is manual — HANDOFF.md says so, and this hook reads it rather than recalling it. In manual, nothing is committed, pushed, opened as a PR or merged unless the user asks. Propose the change and stop: say what you did, and let the diff be read. To proceed the user asks, or sets HANDOFF.md's Execution mode row to Autonomous and names the boundary it runs to."
+    deny "The execution mode is manual — HANDOFF.md says so, and this hook reads it rather than recalling it.${VIA} In manual, nothing is committed, pushed, opened as a PR or merged unless the user asks. Propose the change and stop: say what you did, and let the diff be read. To proceed the user asks, or sets HANDOFF.md's Execution mode row to Autonomous and names the boundary it runs to."
     ;;
   *)
     # A row exists and says something this hook does not model. Not a crash, and not
     # permission — an unreadable mode is the same as no mode.
     arc_log_fail mode-row=unreadable
     arc_log_outcome denied "the mode row says neither manual nor autonomous"
-    deny "HANDOFF.md's Execution mode row does not say manual or autonomous, so the mode is unreadable — and unreadable means manual. The row read: $ROW — set that cell to Manual or Autonomous."
+    deny "HANDOFF.md's Execution mode row does not say manual or autonomous, so the mode is unreadable — and unreadable means manual.${VIA} The row read: $ROW — set that cell to Manual or Autonomous."
     ;;
 esac
 

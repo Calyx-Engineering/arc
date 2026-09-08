@@ -1,0 +1,2 @@
+# manual mode, reading a gated script rather than running it — the guard must not block reads
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"cat tools/new-direct-pr.sh","description":"Read the script"}}

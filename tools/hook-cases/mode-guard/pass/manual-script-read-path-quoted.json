@@ -1,0 +1,2 @@
+# manual mode, a read whose path itself is quoted
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"git diff HEAD~1 -- \"tools/arc-loop.sh\"","description":"Diff the script"}}
