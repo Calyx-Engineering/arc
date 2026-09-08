@@ -45,7 +45,7 @@ if [ "${1:-}" = "selftest" ]; then
     local root="$WORK/$1" link="$2"
     mkdir -p "$root/templates/camp" "$root/docs/arc-log" "$root/docs/dev-log"
     local f
-    for f in arc-log handoff event-log SKILL; do printf '# fixture\n' > "$root/templates/$f.md"; done
+    for f in arc-log handoff event-log issue pr SKILL; do printf '# fixture\n' > "$root/templates/$f.md"; done
     for f in operating-agreement voice notes; do printf '# fixture\n' > "$root/templates/camp/$f.md"; done
     printf '# fixture dev-log\n\n- **Arc work:** [&lt;topic&gt;](%s)\n' "$link" > "$root/templates/dev-log.md"
     printf '%s' "$root"
@@ -123,6 +123,8 @@ templates/arc-log.md|docs/arc-log
 templates/dev-log.md|docs/dev-log
 templates/handoff.md|.
 templates/event-log.md|.claude/arc
+templates/issue.md|.
+templates/pr.md|.
 templates/SKILL.md|skills/SKILLNAME
 templates/camp/operating-agreement.md|.claude/arc/camp
 templates/camp/voice.md|.claude/arc/camp

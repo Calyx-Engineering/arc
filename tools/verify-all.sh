@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch verify-mechanisms verify-dev-log-name miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases"
 
 RUN=0
 FAILED=0
@@ -91,6 +91,7 @@ run_gate "close-sequence count" bash tools/verify-close-sequence.sh
 run_gate "handoff staleness checks" bash tools/verify-handoff-checks.sh
 run_gate "workspace guard" bash tools/verify-workspace-guard.sh
 run_gate "linked-branch cases" bash tools/verify-linked-branch.sh selftest
+run_gate "label cases" bash tools/verify-labels.sh selftest
 run_gate "mechanism table cases" bash tools/verify-mechanisms.sh selftest
 run_gate "mechanism table" bash tools/verify-mechanisms.sh
 run_gate "dev-log name cases" bash tools/verify-dev-log-name.sh selftest
@@ -144,6 +145,10 @@ if [ "$LIST" = "1" ]; then
     a real branch↔issue link  verify-linked-branch.sh selftest runs its decision on fixtures. The
                               live read needs GitHub and a real issue — run
                               bash tools/verify-linked-branch.sh <NN> <branch> after creating one
+    a label against its       verify-labels.sh selftest runs its decision on fixtures. The sweep
+    prefix, and the label set of real open issues, and the label set itself, both read GitHub —
+                              run bash tools/verify-labels.sh and
+                              bash tools/verify-labels.sh labels
 CANNOT
   exit 0
 fi
