@@ -1,6 +1,6 @@
 # Issue #10 — plugin skeleton, hook harness, and the branch guard
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#10](https://github.com/Calyx-Engineering/arc/issues/10)  ·  **PR:** [#20](https://github.com/Calyx-Engineering/arc/pull/20)
 

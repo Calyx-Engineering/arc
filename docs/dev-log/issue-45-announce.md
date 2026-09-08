@@ -1,6 +1,6 @@
 # Issue #45 — Announcing completed actions
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#45](https://github.com/Calyx-Engineering/arc/issues/45)  ·  **PR:** [#54](https://github.com/Calyx-Engineering/arc/pull/54)
 

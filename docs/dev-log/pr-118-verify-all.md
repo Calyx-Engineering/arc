@@ -1,6 +1,6 @@
 # PR #118 — one command runs every gate
 
-> Decision log, not a spec. No issue behind it — the runner is a prerequisite for
+> Dev-log, not a spec. No issue behind it — the runner is a prerequisite for
 > [#117](https://github.com/Calyx-Engineering/arc/issues/117) and smaller than an issue.
 
 **Issue:** none  ·  **PR:** [#118](https://github.com/Calyx-Engineering/arc/pull/118)

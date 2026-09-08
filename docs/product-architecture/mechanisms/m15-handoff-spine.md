@@ -83,7 +83,7 @@ what any session must read.
 | K1 | `docs/dev-log/issue-<N>-<slug>.md` | **Good.** Compact per-issue rationale |
 | K2 | *(none)* | **Gap** |
 
-**The dev-log is K1, not K2.** Its own template says: *"Decision log, not a spec …
+**The dev-log is K1, not K2.** Its own template says: *"Dev-log, not a spec …
 capture the why, not a blow-by-blow."* Sections are Problem · Decisions & trade-offs ·
 Rejected approaches · Retrospective.
 

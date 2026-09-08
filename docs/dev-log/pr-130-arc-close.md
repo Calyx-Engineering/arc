@@ -1,6 +1,6 @@
 # PR #130 — the arc close
 
-> Decision log, not a spec. **No issue behind it** — the close is §14's checklist, not a unit of
+> Dev-log, not a spec. **No issue behind it** — the close is §14's checklist, not a unit of
 > work someone scoped.
 
 **Issue:** none  ·  **PR:** [#130](https://github.com/Calyx-Engineering/arc/pull/130)

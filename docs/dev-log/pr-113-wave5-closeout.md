@@ -1,6 +1,6 @@
 # PR #113 — Wave 5 close-out, and the branch-naming record
 
-> Decision log, not a spec. Opened by `tools/new-direct-pr.sh` — **its first use in real
+> Dev-log, not a spec. Opened by `tools/new-direct-pr.sh` — **its first use in real
 > work**, which makes this PR its own soak.
 
 **Issue:** none  ·  **PR:** [#113](https://github.com/Calyx-Engineering/arc/pull/113)

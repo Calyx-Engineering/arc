@@ -1,6 +1,6 @@
 # Issue #206 — createLinkedBranch reports success but forms no link
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#206](https://github.com/Calyx-Engineering/arc/issues/206)  ·  **PR:** [#223](https://github.com/Calyx-Engineering/arc/pull/223) — written in after it opened. The first draft of this line predicted #220, which turned out to be another issue's merged PR
 

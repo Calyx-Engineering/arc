@@ -1,6 +1,6 @@
 # Issue #41 — Where the arc stands, and the close sequence
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#41](https://github.com/Calyx-Engineering/arc/issues/41)  ·  **Spec:** [m43 §3.2](../product-architecture/mechanisms/m43-camp-assistant.md)
 

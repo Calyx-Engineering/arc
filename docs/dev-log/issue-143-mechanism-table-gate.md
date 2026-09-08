@@ -1,6 +1,6 @@
 # Issue #143 — verify the mechanism table against its specs
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 > Keep it short — capture the *why*, not a blow-by-blow. Skip any section that doesn't apply.
 
 **Issue:** [#143](https://github.com/Calyx-Engineering/arc/issues/143)  ·  **PR:** &lt;link&gt;

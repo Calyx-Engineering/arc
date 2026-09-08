@@ -1,6 +1,6 @@
 # Issue #42 — The intent check, holding the arc's intent
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#42](https://github.com/Calyx-Engineering/arc/issues/42)  ·  **Spec:** [m43 §3.1](../product-architecture/mechanisms/m43-camp-assistant.md)
 

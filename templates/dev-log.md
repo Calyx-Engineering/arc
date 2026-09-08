@@ -1,6 +1,6 @@
 # Issue #&lt;N&gt; — &lt;title&gt;
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 > Keep it short — capture the *why*, not a blow-by-blow. Skip any section that doesn't apply.
 
 **Issue:** &lt;link&gt;  ·  **PR:** &lt;link&gt;

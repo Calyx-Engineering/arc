@@ -1,6 +1,6 @@
 # Issue #167 — the arc-work path assumes a flat slug
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 > Keep it short — capture the *why*, not a blow-by-blow. Skip any section that doesn't apply.
 
 **Issue:** [#167](https://github.com/Calyx-Engineering/arc/issues/167)  ·  **PR:** &lt;link&gt;

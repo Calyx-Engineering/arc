@@ -1,6 +1,6 @@
 # Issue #17 — extract user corrections from past transcripts into mechanism candidates
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#17](https://github.com/Calyx-Engineering/arc/issues/17)  ·  **PR:** [#139](https://github.com/Calyx-Engineering/arc/pull/139)
 

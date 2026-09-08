@@ -1,6 +1,6 @@
 # PR #108 — A no-issue branch carries its PR number
 
-> Decision log, not a spec. **A no-issue PR is a unit of work like any other**
+> Dev-log, not a spec. **A no-issue PR is a unit of work like any other**
 > ([m46 §6.1](../product-architecture/mechanisms/m46-work-navigation.md)), so it gets a
 > dev-log under the identifier it does have.
 

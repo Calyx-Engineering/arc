@@ -97,7 +97,7 @@ mkdir -p docs/dev-log
 cat > "$DEVLOG" <<STUB
 # PR #${N} — ${TITLE}
 
-> Decision log, not a spec. **Stub** — opened by \`tools/new-direct-pr.sh\` so the draft PR
+> Dev-log, not a spec. **Stub** — opened by \`tools/new-direct-pr.sh\` so the draft PR
 > could claim its number. Written properly as the work proceeds, before the PR is marked ready.
 
 **Issue:** none  ·  **PR:** [#${N}](https://github.com/Calyx-Engineering/arc/pull/${N})
