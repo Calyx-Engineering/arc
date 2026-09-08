@@ -1,0 +1,2 @@
+# a quoted --comment carrying an issue number and no argument of its own. Not a call gh accepts — it isolates the extractor, and it is the only shape that DECIDES: strip the comment and there is no number, so silence; read it and #224 reports, which is a missing link claimed about an issue nobody touched
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close --comment \"Closed by #224\""}}

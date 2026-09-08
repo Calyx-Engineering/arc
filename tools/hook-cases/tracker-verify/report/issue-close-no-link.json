@@ -1,0 +1,2 @@
+# an issue closed with nothing linked to it — no branch record and no closing PR, and a closed issue is past the point where the link can be made
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close 163"}}

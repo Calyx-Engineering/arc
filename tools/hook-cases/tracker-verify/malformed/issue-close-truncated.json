@@ -1,0 +1,2 @@
+# a close payload cut off mid-value — no fixture parses, so it must stay silent rather than send a half-read issue to a live `gh` call
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh issue close 163"},"arc_test_linked":"
