@@ -65,17 +65,22 @@ call, ~58% on top of the hook. It is read when a script path or a mode row actua
 
 ## Retrospective
 
-The fix is +84 net lines of hook and sixteen new cases; the review passes are what shaped it. Pass 1
+The fix is ~110 net non-comment lines of hook and twenty new cases; the four review passes are what shaped it. Pass 1
 found the read-only exemption matching the whole payload — a dispatch exempted by a sentence
 Claude wrote itself — and found quoted reads being denied. Pass 2, reviewing pass 1's fixes,
 found the same class again in a new shape: one script named twice, the first invocation's
 `--dry-run` exempting the second. Both times the root cause was the same, and the third attempt
 removed it rather than patching around it: read the command, split it into commands, and ask
-each one what it is.
+each one what it is. Pass 4, reading it as a reviewer, found the largest one: a payload carries
+a newline as `
+`, so every line after the first was glued onto its predecessor and never read
+as a command — most of the surface this issue set out to close, and invisible until someone
+asked what an ordinary Bash call actually looks like.
 
 **What a future reader needs:** the hook's own `WHAT THIS CANNOT DO` block is the honest list —
-`cd tools && bash arc-loop.sh`, a path in a variable, `bash -o errexit tools/x.sh`, and the
-hook-root fallback resolving against Arc's own copy in a consumer repo. None is closed here.
+`cd tools && bash arc-loop.sh`, a path in a variable, `bash -o errexit tools/x.sh`, a description
+carrying the quoted word `"command"` ahead of the real field, and the hook-root fallback resolving
+against Arc's own copy in a consumer repo. None is closed here.
 
 **Not covered by the cases:** the `$CWD` branch of path resolution. `tools/verify-hook.sh`
 builds fixtures holding only `.git` and `HANDOFF.md`, so every case resolves through the
