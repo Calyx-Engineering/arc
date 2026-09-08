@@ -284,11 +284,21 @@ EOF
   if [ -n "$retired" ]; then
     echo "  FAIL  retired by #84 and still on the tracker:$retired"
     echo
+    echo "        Deleting a label strips it from everything wearing it, and this check reads"
+    echo "        only the label list. CHECK FIRST — nothing wore any of the six when #84"
+    echo "        retired them, which was true then and is not a claim about now. Issues and"
+    echo "        PRs both, because a delete takes it off both:"
+    echo
+    echo "        for l in duplicate \"good first issue\" \"help wanted\" invalid question wontfix; do"
+    echo "          echo \"\$l: \$(gh issue list --state all --label \"\$l\" --limit 1 --json number --jq length) issue(s), \\"
+    echo "                   \$(gh pr list --state all --label \"\$l\" --limit 1 --json number --jq length) PR(s)\""
+    echo "        done"
+    echo
+    echo "        Then, if every count is 0:"
+    echo
     echo "        for l in duplicate \"good first issue\" \"help wanted\" invalid question wontfix; do"
     echo "          gh label delete \"\$l\" --yes"
     echo "        done"
-    echo
-    echo "        Nothing wears them — checked against every issue and PR, open and closed."
     bad=1
   fi
   if [ -n "$unknown" ]; then

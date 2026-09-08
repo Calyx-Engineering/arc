@@ -18,16 +18,21 @@ positional rule was the one furthest from the section list.
 |---|---|
 | **What this issue is really for** | Making the assembled shape copyable, so the positional rules cannot be the ones that get lost |
 | **North star** | A body is produced by copying a file, not by remembering four sections of a skill — and the fields that live on the issue rather than in it are named where the body is written |
-| **What makes it durable** | The gates already in the repository. `verify-template-links.sh` refuses a template with no destination row; `verify-tracker-body.sh body` refuses a shape it would report in a real body |
+| **What makes it durable** | `verify-template-links.sh` refuses a template with no destination row, and it runs inside `verify-all.sh`. `verify-tracker-body.sh body` was run on both templates by hand; nothing runs it on them automatically |
 | **Out of scope** | `.github/ISSUE_TEMPLATE`. That serves a human filing in the web UI; this serves an agent writing a body to a file |
 
 ## Decisions & trade-offs
 
-**Two files, not one.** `templates/issue.md` and `templates/pr.md`. A single file cannot hold
-both: the PR shape ends with `Closes #<NN>` on the last line and the issue shape does not, so
-one of the two would sit after the other's terminal section — the exact defect
-`verify-tracker-body.sh body` reports. Both files now pass that gate, which makes the templates
-subject to the same check as the bodies they produce.
+**Two files, not one.** `templates/issue.md` and `templates/pr.md`. A single file would put one
+shape's sections after the other's terminal `Related` heading, which is the defect
+`verify-tracker-body.sh body` reports. Split, each file passes it — `'## Related' … is the last
+section`, exit 0 on both.
+
+**That gate's other half is inert here, and the first draft of this dev-log claimed otherwise.**
+`KEYWORD_RE` needs `#[0-9]+`, and a template carries `Closes #<NN>`, so the keyword-placement
+check finds nothing to place and passes trivially. The two-file decision rests on the
+terminal-section check alone. Caught by review pass 1, which ran the gate rather than reading
+the claim.
 
 **`Closes` is named in the issue template and belongs to the PR.** The order table names it as
 *a PR's last line, never an issue's*, because the rule most often got confused was which unit

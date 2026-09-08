@@ -2,32 +2,30 @@
 
 > The shape of a PR body. It is
 > [`templates/issue.md`](https://github.com/Calyx-Engineering/arc/blob/main/templates/issue.md)'s
-> order with four differences, below. **What to write and what to cut is
+> order, differing where the table below says. **What to write and what to cut is
 > [`issue-write`](https://github.com/Calyx-Engineering/arc/blob/main/skills/issue-write/SKILL.md)'s.**
-> Delete this block and every `&lt;placeholder&gt;` before the write.
+> Delete this block and every `<placeholder>` before the write.
 
 ## Set at creation, not written into the body
 
 | | |
 |---|---|
-| **Milestone** | `gh pr create --milestone "<name>"`. A PR with no milestone drops out of the milestone view, which is where the arc reads as one unit |
-| **Base** | `--base arc/&lt;nn&gt;-&lt;slug&gt;`. The arc branch, not the default branch |
-| **Draft** | `--draft`, before the work. It is marked ready after the final review pass |
-| **Label** | None. The `arc-&lt;nn&gt;:` prefix in the title is what groups arc PRs |
+| **Milestone** | `gh pr create --milestone "<name>"` |
+| **Base** | `--base arc/<nn>-<slug>`, the arc branch |
+| **Draft** | `--draft`, before the work |
+| **Label** | None. The `arc-<nn>:` title prefix is what groups arc PRs |
 
 ## What differs from the issue
 
 | | |
 |---|---|
-| **No `Required` checklist** | The issue holds it. This body says what happened to it |
-| **One section the issue has none of** | The read-back's dispositions — every finding, acted on or declined with the reason. A pass that returned nothing is recorded as having returned nothing |
-| **`Closes #&lt;NN&gt;` is the last line** | On its own line, after the spawn rows. One keyword, one number, and prose around it changes nothing |
-| **Retitled as the unit grows** | An issue is sized at filing; a PR title describes a diff still being written |
+| **No `Required` checklist, no `Constraints`** | The issue holds both |
+| **Sections the issue has none of** | `What changed`, `Review passes`, `Evidence` |
+| **`Closes #<NN>` is the last line** | After the `Related` table |
 
 ---
 
-&lt;What this changes, in one or two sentences. The endpoint, not the starting point — a
-reviewer reads this before the diff.&gt;
+&lt;What this changes, in one or two sentences — the endpoint, not the starting point.&gt;
 
 ## What changed
 
@@ -35,8 +33,8 @@ reviewer reads this before the diff.&gt;
 
 ## Review passes
 
-&lt;Every finding the read-back returned, and what happened to it. **A pass that returned
-nothing says so** — silence here is indistinguishable from a pass nobody ran.&gt;
+&lt;Every finding the read-back returned, and what happened to it. A pass that returned nothing
+says so.&gt;
 
 | Pass | Found | Disposition |
 |---|---|---|
@@ -44,15 +42,13 @@ nothing says so** — silence here is indistinguishable from a pass nobody ran.&
 
 ## Evidence
 
-&lt;Gate output, with the exit code. A claim without one is not evidence.&gt;
-
 | | |
 |---|---|
 | `bash tools/verify-all.sh` | &lt;N gates, all clean — exit 0&gt; |
 
 ## Related
 
-&lt;Same table as the issue's, same four kinds. Delete the rows that do not apply.&gt;
+&lt;Same table as the issue's. Delete the rows that do not apply.&gt;
 
 | | Link | What it is |
 | :--- | :--- | :--- |
