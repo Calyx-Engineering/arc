@@ -1,0 +1,2 @@
+# an arc branch, a Bash call — indexed, and silent, because output here would approve the command
+{"session_id":"verify-si-arc","cwd":"__FIXTURE_ARC__","tool_name":"Bash","tool_input":{"command":"ls"}}

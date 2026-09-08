@@ -1,0 +1,2 @@
+# an issue branch, first edit — the entry is written and nothing is said
+{"session_id":"verify-si-issue","cwd":"__FIXTURE_ISSUE__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_ISSUE__/src/a.c"}}

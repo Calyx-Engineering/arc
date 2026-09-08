@@ -328,6 +328,13 @@ handoff the arc ever had straight into the record — the exact opposite of what
 Anchor the handoff entry at the root. A bare `HANDOFF.md` also matches `templates/handoff.md`,
 which is a shipped artifact and must be committed.
 
+**And `git add .claude/arc/sessions.md` the first time it appears.** `hooks/session-index` creates
+it untracked, and an untracked index is one `git commit -a` away from never existing: the mapping
+from a transcript directory to its branch and issue then dies with the worktree, which is the whole
+of [m32](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m32-session-preservation.md).
+It is the one file here that goes **into** the record rather than out of it — the two entries above
+are ignored, this one is tracked.
+
 **At arc close, delete it.** Anything in it worth keeping was already promoted to the
 arc-log or a dev-log. If deleting it feels lossy, something skipped a tier — find what and
 put it where it belongs.
