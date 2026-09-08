@@ -3,9 +3,15 @@
 **Run it:** `bash tools/verify-tracker-body.sh live-bind <merged-pr> <issue>`
 
 Not a text fixture and not run by `verify-all.sh`. The claim is about what GitHub does, so the
-only honest test writes to the API and reads it back. The runner restores the PR body it
-changed, and refuses rather than clobber — the PR must be merged, its base must be the
-repository's default branch, and its body must carry no closing keyword already.
+only honest test writes to the API and reads it back.
+
+| The runner | |
+|---|---|
+| **Refuses rather than clobber** | The PR must be merged, its base must be the repository's default branch, and its body must carry no closing keyword already |
+| **Checks every read that feeds a write** | An unchecked `gh pr view` that failed would hand the restore an empty file and destroy the body it is protecting — [#87](https://github.com/Calyx-Engineering/arc/issues/87)'s shape |
+| **Restores from a trap** | Armed before the write, so an interrupt between the write and the restore still puts the body back |
+| **Asserts the restore on the body**, not on the reference | A reference read that has not caught up would otherwise report a failed restore as a pass |
+| **Compares normalised text, not bytes** | GitHub normalises a body it is given — line endings, and trailing blank lines. Measured 2026-09-07 on PR #215: the restore landed, the keyword was gone, and `cmp` still failed |
 
 ## The claim
 
@@ -24,8 +30,13 @@ repository's default branch, and its body must carry no closing keyword already.
 |---|---|---|---|
 | 2026-09-07 | [#192](https://github.com/Calyx-Engineering/arc/pull/192) | #144 | Bound. The observation [#193](https://github.com/Calyx-Engineering/arc/issues/193) was filed from |
 | 2026-09-07 | [#215](https://github.com/Calyx-Engineering/arc/pull/215) | [#225](https://github.com/Calyx-Engineering/arc/issues/225) | Bound, on the second read. Issue stayed **open**. Body restored, reference cleared |
+| 2026-09-07 | [#215](https://github.com/Calyx-Engineering/arc/pull/215) | [#225](https://github.com/Calyx-Engineering/arc/issues/225) | The finished runner, end to end. Bound, restored, reference cleared. Two assertions failed correctly: #225 was already closed, and the byte-for-byte body comparison — since fixed to compare normalised text |
 
 **The second run is why two of the rows above exist.** The first read after the edit returned
 `[]` — a single read would have recorded the recovery as failed. And #225 stayed open, so the
 one-line framing *"the recovery is two commands"* is wrong: it is three, and the third is
 `gh issue close`.
+
+**The third run found the normalisation.** Running the finished check against PR #215 restored
+the body correctly — no keyword, nothing bound — and its own byte-for-byte assertion still
+reported a failure. GitHub does not store back exactly what it was handed.

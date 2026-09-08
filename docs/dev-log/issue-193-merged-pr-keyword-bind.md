@@ -71,12 +71,42 @@ the only honest test writes to the API and reads it back.
 `live-bind` uses #87's guarded form — `! cmp -s orig tmp && gh pr edit …`. The same batch fixed
 that trap; a new tool reintroducing it would be the batch arguing with itself.
 
+## What the review passes found in this work
+
+Pass 1 read the finished tree against the three issues and found that `live-bind` — the tool
+added to stop a silent tracker failure — carried three of its own:
+
+| | |
+|---|---|
+| **An unchecked read feeding a destructive write** | `gh pr view --json body > "$orig"` with its exit status discarded. A failed read leaves `$orig` empty, the keyword guard passes on an empty file, and the restore then writes that empty file over a real merged PR's body. #87's exact shape, in the batch that fixed #87 |
+| **A failed query reading as a pass** | The `userLinkedOnly` probe is the one assertion separating a keyword link from a hand-attached one, and a `gh` error returns the same empty string a clean result does |
+| **No trap between the write and the restore** | An interrupt in that window leaves a probe keyword on a merged PR. Both the case file and the skill promised it "restores what it changed" |
+
+Also: the restore was asserted by polling the *reference* until it went absent, which breaks out
+on the first read that has not caught up — the same one-read false negative this check exists to
+document, used as the check's own evidence.
+
+All four fixed. The restore now checks `gh pr edit`'s exit status, reads the body back, and
+asserts on that.
+
+### Running it then found a fourth thing, in GitHub rather than in the code
+
+The finished runner against PR #215 restored the body correctly — no keyword, nothing bound —
+and its byte-for-byte assertion still failed. **GitHub normalises a body it is handed**, line
+endings and trailing blank lines, so a restore written from an exact copy of what was read does
+not read back identical. The comparison now normalises both sides, and `live_norm` is where that
+lives.
+
+The happy path has been run once, against the live API. Its two failing assertions were correct:
+#225 was already closed, and the byte comparison was wrong — the check working, on a
+precondition and on itself.
+
+## Not done
+
+Nothing in `Required` was left open.
+
 ## Spawned
 
 | | Link | What it is |
 | :--- | :--- | :--- |
 | **Spawned** | [#225](https://github.com/Calyx-Engineering/arc/issues/225) | the probe issue, closed with the measurements as its record |
-
-## Not done
-
-Nothing in `Required` was left open.

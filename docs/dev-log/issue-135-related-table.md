@@ -69,12 +69,32 @@ driver, and neither substitutes for the other.
 each reached for during this work and are each a synonym for one of the four. One word per
 meaning, or the first column sorts nothing.
 
+## What the review passes found
+
+Pass 1 established that the first version of the check was **inert on every body the new skill
+produces.** It fired only on a `Spawned` heading, and the skill it enforces abolishes that
+heading in favour of rows inside `Related`. It printed `PASS  no Spawned heading` — a pass whose
+text was an assumption, not a reading.
+
+Two consequences, both fixed:
+
+| | |
+|---|---|
+| **`Related` is a terminal section too** | The rule is *the spawn edges are last*, and the check now reports a heading after either `Related` or `Spawned`. Two more fixtures — one fail, one pass |
+| **The title has to be the whole heading** | A substring match reported `### Spawned versus related` as the section and then flagged every heading after it. Anchored to the complete title, bold and backticks stripped. A third fixture covers it |
+
+A third defect was in the finding itself: `grep -inE` prepends grep's own index, which the
+`cut -d: -f1` then read as the file's line number. Every terminal heading resolved to line 1 or
+2. Caught by the fixtures failing, which is what they are for.
+
 ## Evidence
 
 `bash tools/verify-all.sh` — 19 gates, all clean. `tracker body rules` went from 19 cases to
-22 with the three new fixtures.
+25: three fixtures for the `Spawned` heading, and three more from the review above.
 
 ## Not done
 
-Nothing in `Required` was left open. The section-order reading above is the one judgement call
-in it.
+Every box in `Required` is ticked. One is ticked on a reading rather than on a literal match:
+*"`Spawned` is stated as the last section"* is satisfied by `Related` being last with the spawn
+rows in it, because the same issue abolishes the `Spawned` heading. That reasoning is above, and
+it is the box to look at if the intent was a literal heading.

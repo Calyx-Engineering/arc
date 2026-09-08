@@ -75,8 +75,6 @@ case and a section order, [#135](https://github.com/Calyx-Engineering/arc/issues
 
 ---
 
----
-
 ## Why it matters more for trackers than for files
 
 | | File edit | Tracker write |

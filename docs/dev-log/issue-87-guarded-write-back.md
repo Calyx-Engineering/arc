@@ -51,6 +51,18 @@ The `/tmp` line in the skill's table is written from this, not from memory.
 | **`cmp -s`, not a hash** | Present everywhere `gh` is, no second interpreter, and a no-op edit correctly skips the write |
 | **No new gate** | The requirement is the documented procedure. A hook cannot see a run's shell chaining, and `tools/verify-tracker-body.sh` reads bodies, not command sequences |
 
+## What the review passes found
+
+Pass 1 found the fix contradicted twice in its own file, by the other two issues in the batch:
+
+| | |
+|---|---|
+| **The #193 recovery snippet repeated the trap** | Its `gh pr view … > body.md` was unchained, so a failed read produced an empty file, an empty `body.before`, a difference the guard let through, and a PR body replaced by the keyword line alone. Two hundred lines below the section teaching the opposite. Now one `&&` chain with a `[ -s body.md ]` on it |
+| **`live-bind` did the same against a merged PR** | The tool #193 added. Recorded in that issue's dev-log |
+
+Neither was in a diff either author would have read as suspicious. Both were in the section the
+diff does not show, which is why pass 1 reads whole files.
+
 ## Not done
 
 Nothing in `Required` was left open.

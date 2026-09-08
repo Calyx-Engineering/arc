@@ -149,7 +149,7 @@ rewritten; *Editing an existing body* below governs the description.
 | | |
 |---|---|
 | **Retitle at the descent, not at review time** | The moment the scope changed is the moment it is cheapest to name, and the only moment you still remember what it was before |
-| **A tangent does not trigger it** | Something spotted and recorded in `Spawned`, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
+| **A tangent does not trigger it** | Something spotted and recorded as a `Spawned` row, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
 | **The same test applies** | The retitled PR still has to pass *A name, not a summary* above. A title that grew by accretion is the other failure |
 
 ### What a good issue contains
@@ -165,8 +165,9 @@ rewritten; *Editing an existing body* below governs the description.
 
 **Spawned work lives in `Related`'s rows, so the spawn edges are the last thing in the body.**
 Not "at the end" as a habit — last in a stated order, which is what makes a heading appearing
-after them a reportable defect rather than a matter of taste, and `tools/verify-tracker-body.sh body`
-reports it. *Related — one table, four kinds* below gives the table's shape.
+after them a reportable defect rather than a matter of taste. `tools/verify-tracker-body.sh body`
+reports a heading that follows the `Related` section — or a `Spawned` section, in a body written
+before this shape. *Related — one table, four kinds* below gives the table's shape.
 
 **A `scope:` issue carries one more thing: the question inventory.** Every subject the spec
 cannot be written without, as a checklist, checked off as each is settled.
@@ -321,11 +322,12 @@ merge. Measured on [#192](https://github.com/Calyx-Engineering/arc/pull/192) and
 [#215](https://github.com/Calyx-Engineering/arc/pull/215), 2026-09-07.
 
 ```sh
-gh pr view NN --json body --jq .body > body.md
-cp body.md body.before
-printf '\n\nCloses #MM\n' >> body.md
-
-! cmp -s body.before body.md && gh pr edit NN --body-file body.md
+gh pr view NN --json body --jq .body > body.md \
+  && [ -s body.md ] \
+  && cp body.md body.before \
+  && printf '\n\nCloses #MM\n' >> body.md \
+  && ! cmp -s body.before body.md \
+  && gh pr edit NN --body-file body.md
 
 gh pr view NN --json state,closingIssuesReferences        # read it back — then read it AGAIN
 gh issue close MM                                          # the link came back; the closure did not
@@ -389,7 +391,7 @@ turns one visible failure into two invisible ones.
 
 ### Scan what you wrote
 
-Three of the six evaluation cases are mechanically catchable. Before and after writing:
+Three of the seven evaluation cases are mechanically catchable. Before and after writing:
 
 | Pattern | |
 |---|---|
@@ -421,7 +423,7 @@ The judgement half — *does this match what we agreed* — is this skill's.
 
 ## Actions agreed in conversation
 
-Two of the six cases are not verification failures. **The write never started.** Something
+Two of the seven cases are not verification failures. **The write never started.** Something
 was agreed mid-conversation and had nowhere to go.
 
 > *"i asked you to update #12 with the new component selection. i checked and that didn't
@@ -644,9 +646,9 @@ endpoint, not the starting point.** Reviewers read it before the diff.
 Seven real cases with checkable outcomes, in
 [m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md). **Any change to
 this skill is tested against them.** Cases 1–2 are *never written*; cases 3–6 are *written
-wrong and reported right*; case 7 is *written right into the wrong section* — a `Spawned`
-section populated with things that were never work, which no read-back catches because the
-body matches the intent and the intent was wrong.
+wrong and reported right*; case 7 is *written right into the wrong place* — spawn rows
+populated with things that were never work, which no read-back catches because the body
+matches the intent and the intent was wrong.
 
 The base-branch case above is the eighth, and the first isolated by this repo's own work.
 
