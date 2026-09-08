@@ -63,7 +63,9 @@ the reference right there. That is the defect, not a milder form of it.
 
 **Deleting `.claude/commands/arc-next.md` the way #142 deleted the `.claude/skills/` copies.**
 Defensible, and larger than this issue: `verify-skill-registry.sh` states a repo-local command
-is allowed and worth seeing. Synced instead.
+is allowed and worth seeing. Synced instead. [#177](https://github.com/Calyx-Engineering/arc/issues/177)
+did it: the file is gone and that gate now fails on a shadowing command rather than reporting
+it. The two paragraphs above describe the tree as it was.
 
 **A gate that greps the whole file.** It passed for the wrong reason — the block could move
 below the write path and every probe would still match. The probes now run on a slice bounded

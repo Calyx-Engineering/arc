@@ -18,9 +18,11 @@
 # below the write path, and the rule is that the handoff is checked BEFORE it is acted on. So the
 # read-path range is located first and every probe runs inside it.
 #
-# BOTH COMMAND FILES. `.claude/commands/arc-next.md` shadows the plugin's copy and is the one that
-# fires in this repository — verify-skill-registry.sh reports the shadowing. Checking only the
-# plugin file passes while the copy that actually runs is stale.
+# BOTH COMMAND FILES, IF BOTH EXIST. A `.claude/commands/arc-next.md` copy would shadow the
+# plugin's and be the one that fires here, so checking only the plugin file would pass while
+# the copy that actually runs was stale. #177 deleted that copy and made
+# verify-skill-registry.sh fail on a shadowing command rather than report it, so the shadow
+# probes below are a guard against it coming back, not a check on a file that is there.
 #
 # WHAT IT CANNOT DO. It reads files for content. It does not invoke the skill, and no gate in this
 # repository does — see tools/verify-all.sh --list. A check named here is present, not proven to be
