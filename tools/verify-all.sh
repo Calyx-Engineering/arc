@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-linked-branch verify-mechanisms verify-dev-log-name miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases"
 
 RUN=0
 FAILED=0
@@ -82,6 +82,7 @@ run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "response length cases" bash tools/response-length.sh selftest
 run_gate "topic numbering cases" bash tools/topic-numbering.sh selftest
 run_gate "report shape cases" bash tools/report-grade.sh selftest
+run_gate "saturation cases" bash tools/saturation-cases.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -96,6 +97,7 @@ run_gate "handoff stamp cases" bash tools/verify-handoff-stamp.sh selftest
 run_gate "handoff stamp" bash tools/verify-handoff-stamp.sh
 run_gate "workspace guard" bash tools/verify-workspace-guard.sh
 run_gate "linked-branch cases" bash tools/verify-linked-branch.sh selftest
+run_gate "label cases" bash tools/verify-labels.sh selftest
 run_gate "mechanism table cases" bash tools/verify-mechanisms.sh selftest
 run_gate "mechanism table" bash tools/verify-mechanisms.sh
 run_gate "dev-log name cases" bash tools/verify-dev-log-name.sh selftest
@@ -131,20 +133,29 @@ if [ "$LIST" = "1" ]; then
                               test; re-running a case against a changed skill needs
                               claude plugin eval, gated behind early access — #181
     the eval cases themselves the gates above run the SELFTESTS of skill-cases.sh,
-                              response-length.sh, topic-numbering.sh and report-grade.sh, on
-                              fixtures. Scoring the real cases needs the corpus — the transcripts
-                              and, for report-grade.sh, the source repositories — which live on
+                              response-length.sh, topic-numbering.sh, report-grade.sh and
+                              saturation-cases.sh, on fixtures. Scoring the real cases needs the
+                              corpus — the transcripts, and for report-grade.sh the source
+                              repositories — which live on
                               one machine. Run bash tools/skill-cases.sh, bash
-                              tools/response-length.sh, bash tools/topic-numbering.sh and bash
-                              tools/report-grade.sh there. report-grade.sh alone still scores
-                              from its stored excerpts when the corpus is absent; it just cannot
-                              check them against their source
-    reply length, and topic   response-length.sh --probe and topic-numbering.sh --probe re-run a
-    numbering, against a      case's turns live and score the replies. Both bill per turn, so
-    changed skill             neither is a gate here
+                              tools/response-length.sh, bash tools/topic-numbering.sh, bash
+                              tools/saturation-cases.sh and bash tools/report-grade.sh there.
+                              report-grade.sh alone still scores from its stored excerpts when
+                              the corpus is absent; it just cannot check them against their
+                              source
+    three questions against   response-length.sh --probe, topic-numbering.sh --probe and
+    a CHANGED skill — reply   saturation-cases.sh --probe re-run a case's turns live and score
+    length, topic numbering,  the replies. All three bill per turn, and the saturation case is
+    and whether a session     52 turns long, so none of them is a gate here
+    notices its own
+    saturation
     a real branch↔issue link  verify-linked-branch.sh selftest runs its decision on fixtures. The
                               live read needs GitHub and a real issue — run
                               bash tools/verify-linked-branch.sh <NN> <branch> after creating one
+    a label against its       verify-labels.sh selftest runs its decision on fixtures. The sweep
+    prefix, and the label set of real open issues, and the label set itself, both read GitHub —
+                              run bash tools/verify-labels.sh and
+                              bash tools/verify-labels.sh labels
 CANNOT
   exit 0
 fi
