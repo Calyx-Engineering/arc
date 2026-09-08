@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch miner-scope skill-firing skill-cases response-length topic-numbering report-grade"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade"
 
 RUN=0
 FAILED=0
@@ -76,6 +76,7 @@ fi
 run_gate "skill registry" bash tools/verify-skill-registry.sh
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
+run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "response length cases" bash tools/response-length.sh selftest
 run_gate "topic numbering cases" bash tools/topic-numbering.sh selftest
