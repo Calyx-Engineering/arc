@@ -53,6 +53,12 @@ nothing.** That step has no gate, because prose truth is not mechanically checka
 is the only place it is recorded at all — and silence there is indistinguishable from a step
 nobody ran.
 
+**One thing in the body is gated, and it is not the prose.** An unticked box named here as not
+done, or as moved to the issue that owns it, is read back by `tools/verify-issue-boxes.sh` —
+which [`hooks/tracker-verify`](../../hooks/tracker-verify) runs on `gh pr ready`. The naming has
+to carry words of its own: a checklist pasted into a PR body states nothing, and the check says
+so.
+
 ---
 
 ## Titles

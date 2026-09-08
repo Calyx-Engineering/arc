@@ -1,0 +1,2 @@
+# a draft marked ready where the box read could not be made — exit 2 is not a finding, and reporting it as one would put a defect on the record nothing observed
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_boxes_rc":"2","arc_test_boxes_out":"issue #199 could not be read","tool_input":{"command":"gh pr ready 250"}}

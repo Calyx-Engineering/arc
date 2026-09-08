@@ -1,0 +1,2 @@
+# a ready payload cut off mid-value — no fixture parses, so nothing is safe to read and the hook must stay silent rather than send a half-named PR to a live gh read
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh pr ready 250"},"arc_test_boxes_rc":"1

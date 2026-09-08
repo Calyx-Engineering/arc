@@ -11,11 +11,11 @@
 # This reads back what landed and reports a mismatch. Judging "does this match what we
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
-# camp-reports: issue-write, issue-close, pr-write, pr-merge
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-boxes, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
-# Fires on `gh issue create|edit|close`, `gh pr create|edit`, and `gh pr merge`.
+# Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
@@ -77,6 +77,10 @@ fi
 # Only tracker writes. A read is not a write, and `gh pr view` is what this hook itself uses.
 case "$CMD" in
   *"gh pr merge"*)                        arc_log_event pr-merge ;;
+  # `gh pr ready` is the moment a draft stops being allowed to be incomplete, and the only
+  # moment the checklist question has a defined answer. At `gh pr create` a draft is expected
+  # to have open boxes, so asking there would fire on every correctly-opened PR.
+  *"gh pr ready"*)                        arc_log_event pr-ready ;;
   *"gh pr create"*|*"gh pr edit"*)        arc_log_event pr-write ;;
   *"gh issue close"*)                     arc_log_event issue-close ;;
   *"gh issue create"*|*"gh issue edit"*)  arc_log_event issue-write ;;
@@ -227,16 +231,23 @@ FIXTURE_DEFAULT="$(fixture arc_test_default)"
 FIXTURE_MILESTONE="$(fixture arc_test_milestone)"
 FIXTURE_LINKED="$(fixture arc_test_linked)"
 
+# The box check shells out to `tools/verify-issue-boxes.sh`, which reads the live issue and the
+# bodies of the PRs that close it. A case supplies that tool's exit code and its output
+# directly, so the hook's own handling of all three verdicts — clean, findings, unreadable — is
+# exercised with no network and no live PR. The tool's own decision is covered by its selftest.
+FIXTURE_BOXES_RC="$(fixture arc_test_boxes_rc)"
+FIXTURE_BOXES_OUT="$(fixture arc_test_boxes_out)"
+
 # A payload that names a fixture key and yields no value from any of them is truncated, not an
 # invocation. Stay silent: falling through would send a half-named PR to a live `gh` read.
 case "$INPUT" in
   *'"arc_test_'*)
-    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED" ]; then
+    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT" ]; then
       # Named, rather than left to the `not reached` default. This is the one condition the
       # declaration calls out for every check at once, and a reason on the record is what
       # separates "the payload was truncated" from "the hook simply did not get that far".
       for c in placeholder-scan date-sanity milestone arc-prefix closing-keyword \
-               arc-merge-keyword close-link issue-title-length issue-title-list \
+               arc-merge-keyword close-link issue-boxes issue-title-length issue-title-list \
                issue-title-clause issue-title-scope issue-scope-type pr-base; do
         arc_log_skip "$c" "the payload names a fixture key whose value could not be parsed"
       done
@@ -347,8 +358,95 @@ case "$CMD" in
   *"gh issue close"*) check_close ;;
 esac
 
-# A close is the whole command, unless it was chained to a write that has its own checks
-# below. Returning rather than exiting, and testing that here, is what keeps
+# ---- a draft being marked ready --------------------------------------------------
+# The issue body's `Required` boxes are the acceptance criteria, and nothing mechanical ever
+# read them. It failed in both directions: #17 shipped missing two of five requirements, and
+# #194 reached its PR with twelve unticked boxes that were all actually done. Both were caught
+# by hand.
+#
+# AT READY, NOT AT OPEN. A draft is allowed to be incomplete — that is what a draft is for, and
+# `run-instructions.md` §2 opens every PR as one so pass 4 can still take commits. `gh pr ready`
+# is the moment the answer stops being "not yet".
+#
+# The counting lives in `tools/verify-issue-boxes.sh`, not here, and is shelled out to for the
+# same reason the title rules are: the question is decidable from the tracker alone, so it has
+# to be answerable by hand as well — `bash tools/verify-issue-boxes.sh <NN>` — and two copies of
+# a rule is one copy that goes stale.
+#
+# THE PROSE HALF IS STILL #140'S. This says the record accounts for every box; whether the work
+# is right, and whether a stated reason is a real reason, is the read-back's judgement.
+check_pr_ready() {
+  local args num out rc runner tool
+
+  # The same extraction `check_close` uses, and for the same reasons: `##` for the longest
+  # match so a chained command lands on the real invocation, quoted spans stripped first so a
+  # number inside `--body "…"` cannot win, and the number looked for as an argument anywhere
+  # after the subcommand so the `-R owner/repo` and URL forms are not read as "no number".
+  args="${CMD##*gh pr ready}"
+  args="$(printf '%s' "$args" | sed -e 's/"[^"]*"//g' -e "s/'[^']*'//g")"
+  num="$(printf '%s' "$args" | tr '[:space:]' '\n' | grep -m1 -E '^#?[0-9]+[^0-9A-Za-z_-]*$' | grep -oE '[0-9]+' | head -1)"
+  [ -n "$num" ] || num="$(printf '%s' "$args" | grep -oE 'https://github\.com/[^/]+/[^/]+/pull/[0-9]+' | head -1 | grep -oE '[0-9]+$')"
+
+  if [ -n "$FIXTURE_BOXES_RC" ]; then
+    rc="$FIXTURE_BOXES_RC"
+    out="$FIXTURE_BOXES_OUT"
+  else
+    tool="$(dirname "$0")/../tools/verify-issue-boxes.sh"
+    # Absent, the check does not run. Fail open is the rule; a missing helper is not a reason
+    # to speak up about boxes nothing read.
+    if [ ! -f "$tool" ]; then
+      arc_log_skip issue-boxes "tools/verify-issue-boxes.sh is missing"
+      return 0
+    fi
+    if ! command -v gh >/dev/null 2>&1; then
+      arc_log_skip issue-boxes "gh is not on PATH"
+      return 0
+    fi
+
+    # `gh pr ready` with no argument means the current branch's PR, which is the ordinary form.
+    # Reading the number here rather than declining is what keeps the check from being silently
+    # off for the way it is actually invoked.
+    if [ -z "$num" ]; then
+      num="$(cd "$CWD" 2>/dev/null && gh pr view --json number -q .number 2>/dev/null)"
+    fi
+    if [ -z "$num" ]; then
+      arc_log_skip issue-boxes "the command names no PR and none could be read"
+      return 0
+    fi
+
+    # BOUNDED, for the reason `check_close` records: this is a synchronous PostToolUse hook and
+    # the tool makes two GraphQL round trips. GNU's `timeout`, proven by `--version` rather than
+    # by name — Windows' own `timeout.exe` rejects this syntax and exits 1, and 1 is the tool's
+    # "there are undispositioned boxes" verdict, so the hook would report a finding it never
+    # read. Absent, run unbounded rather than not at all.
+    runner=""
+    timeout --version 2>/dev/null | grep -qi coreutils && runner="timeout 30"
+
+    # `cd` outside the `&&`: chained, a failed `cd` returns 1, which is the tool's finding
+    # verdict — an unreadable directory would report boxes nothing ever counted.
+    out="$( (cd "$CWD" 2>/dev/null || exit 3; $runner bash "$tool" --pr "$num" 2>&1) )"
+    rc=$?
+  fi
+
+  case "$rc" in
+    0) arc_log_pass "issue-boxes=pr-${num:-?}" ;;
+    1) arc_log_fail "issue-boxes=pr-${num:-?}"
+       add "PR #${num:-?} is being marked ready with boxes the record does not account for:
+$(printf '%s' "$out" | sed 's/^/    /')" ;;
+    # Anything else is "the read could not be made", which is a different answer from "there
+    # are open boxes" and must not be reported as one. Exit 2 from the tool, 124 from
+    # `timeout`, 3 from an unreadable directory all land here.
+    *) arc_log_skip issue-boxes "the box read could not be made" ;;
+  esac
+  return 0
+}
+
+case "$CMD" in
+  *"gh pr ready"*) check_pr_ready ;;
+esac
+
+# A close, and a ready, are the whole command unless chained to a write that has its own
+# checks below. Returning rather than exiting, and testing that here, is what keeps
 # `gh pr merge 201 && gh issue close 163` reaching the PR checks it also deserves.
 case "$CMD" in
   *"gh issue create"*|*"gh issue edit"*|*"gh pr create"*|*"gh pr edit"*|*"gh pr merge"*) ;;
