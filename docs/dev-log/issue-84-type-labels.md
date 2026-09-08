@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#84](https://github.com/Calyx-Engineering/arc/issues/84)  ·  **PR:** [#237](https://github.com/Calyx-Engineering/arc/pull/237)
+**Issue:** [#84](https://github.com/Calyx-Engineering/arc/issues/84)  ·  **PR:** [#240](https://github.com/Calyx-Engineering/arc/pull/240)
 
 ## Problem
 
@@ -47,15 +47,11 @@ prose; what changed is that an unmapped prefix is now a reported finding, so the
 enforced rather than remembered. Nothing open carries `spec:`, so no retitling was needed.
 
 **The six stock labels are retired but still on the tracker.** `duplicate`, `good first issue`,
-`help wanted`, `invalid`, `question`, `wontfix` — nothing wears any of them, checked against
-every issue and PR, open and closed. **The delete was blocked by the permission classifier in
-this run**, so `verify-labels.sh labels` names them as retired and prints the command:
-
-```sh
-for l in duplicate "good first issue" "help wanted" invalid question wontfix; do
-  gh label delete "$l" --yes
-done
-```
+`help wanted`, `invalid`, `question`, `wontfix` — nothing wore any of them when this was
+checked, every issue and PR, open and closed. **The delete was blocked by the permission
+classifier in this run**, so `verify-labels.sh labels` names them as retired and prints the
+count-then-delete pair rather than the delete alone: a label delete strips it from everything
+wearing it, and the script reads only the label list.
 
 That gate is red until a human runs it. It is not in `verify-all.sh` — only the selftest is —
 so a standing finding does not turn the whole runner red.
