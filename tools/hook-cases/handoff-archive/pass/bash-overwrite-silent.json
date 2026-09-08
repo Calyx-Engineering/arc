@@ -1,0 +1,2 @@
+# a Bash call that could overwrite the handoff — copies it, and stays SILENT: speaking here would auto-approve the command
+{"session_id":"verify-archive-bash","cwd":"__FIXTURE_MANUAL__","tool_name":"Bash","tool_input":{"command":"cat > HANDOFF.md"}}

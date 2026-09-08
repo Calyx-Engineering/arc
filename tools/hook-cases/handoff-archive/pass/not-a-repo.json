@@ -1,0 +1,2 @@
+# not a git repo — no root to hang .arc-work off, and no git to say what is tracked
+{"session_id":"verify-archive-norepo","cwd":"__FIXTURE_NOREPO__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_NOREPO__/a.c"}}

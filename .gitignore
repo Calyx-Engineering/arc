@@ -24,3 +24,7 @@ __pycache__/
 /HANDOFF.md
 .arc-work/
 .timescope/
+
+# `.arc-work/archive/` above also covers the recovery copies `hooks/handoff-archive` takes
+# before a user-authored file is replaced — #152. Recovery, not record: it must stay ignored,
+# or the record grows a stale copy of every handoff the arc ever had.

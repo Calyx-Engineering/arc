@@ -114,6 +114,34 @@ guessing the arc's state is the failure the handoff exists to prevent.
 it does carry, and ask for the next step. A handoff missing its ordered actions is a finding
 worth naming, not a gap to fill by inference.
 
+### When you are about to do it a different way
+
+**The unit was accepted. How it was to be done was accepted with it.** This fires on a
+substitution — the same issue and the same branch, not new work — in either of its two forms:
+
+| The substitution | |
+|---|---|
+| **A different approach inside a row the handoff names** | The same ordered action, done another way |
+| **A different order across rows it names** | A sequence is itself a decision. Re-ordering accepted rows replaces the approach to all of them at once, and it is the form least likely to be noticed, because every row still gets done |
+
+Twice in the measured corpus a session did one without noticing — one of each form. One inverted
+the handoff's step order and supplied a reason it had derived itself. The other read *not built,
+only needed if the coupler floor lands above the audio band*, stated the correct rationale for
+the rig unprompted, and about twelve minutes after that read had promoted the method to the
+primary plan. Neither announced a substitution, because neither saw itself making one.
+
+| | |
+|---|---|
+| **Say it before the work, not in the report** | One line: what the handoff names, what you are about to do instead, and what makes you think so |
+| **Then read the fact the decision rests on** | For an approach, *What would have to change* in *Load-bearing decisions*. For an order, the reason the row gave for its position. **If that fact has not changed, the decision has not been superseded — it has been forgotten**, and the accepted one stands |
+| **A row that gave no reason for its position is a finding, not a licence** | It is the gap that produced the inversion in the corpus. Say the reason is missing and ask, rather than supplying one of your own — a re-derived reason reaches the opposite answer as easily as the same one |
+| **A condition attached to the alternative is a condition to test** | *Only needed if X* is not a licence to start with it. Check X, and say what you found |
+| **If the fact has changed, name which one, then proceed** | A substitution carrying its constraint is a decision. One without is a re-derivation |
+
+**Stating your reason is not the check.** One of the two openings above gave a correct,
+unprompted rationale for what it was building and built the wrong thing anyway. The check is
+against the recorded constraint, not against your own account of it.
+
 ---
 
 ## Writing
@@ -130,6 +158,15 @@ worth naming, not a gap to fill by inference.
 
 **Not continuously.** Per-turn churn is narration by another name.
 
+**Every one of those moments re-stamps the title.** `YYYY-MM-DD HH:MM` — the current date *and*
+time of day, on **every write**, not only when the file is created. A stale stamp is worse than
+a missing one: the read path's first staleness check reads exactly this line, so a handoff
+rewritten at 16:40 and still headed with the morning's time is trusted by precisely as much as
+it should not be. And **a date with no time cannot separate an hour-old handoff from a week-old
+one** — a cold start then treats both as current.
+
+The rule is mechanical: **if the body changed and the stamp did not, the stamp is wrong.**
+
 At a break the order is fixed: **save the transcript, write the handoff, say it was written,
 give the prompt for the next chat.** The transcript is saved first so the handoff can name
 it.
@@ -143,7 +180,7 @@ Every section below exists because something was missing at a real failed cold s
 | **Where we are** | Current issue, branch, worktree, what was just finished | Work landing on the wrong branch |
 | **Do these in order** | The numbered actions the next session executes, top to bottom | A session that knows the state and still asks what to do |
 | **The tree** | Issues and what spawned them, with status | A flat list losing the shape of hardware work |
-| **Load-bearing decisions** | What must not be re-litigated | A fresh session re-opening settled questions |
+| **Load-bearing decisions** | What must not be re-litigated, **and the fact that would have to change to re-open it** | A fresh session re-deriving a settled question and reaching the opposite answer |
 | **Open threads** | Agreed but unfiled follow-ups, and unresolved questions | *"i asked you to update #12 … that didn't happen"* |
 | **What was ruled out** | Causes checked and eliminated, with what eliminated them | The next session re-deriving what this one already disproved |
 | **Next action** | One line, concrete — the first row of *do these in order* | The "what now?" round trip |
@@ -164,6 +201,14 @@ what to do — the round trip the mechanism exists to remove.
 Order by dependency, not importance. **When a row must be done before another is even
 readable, say so in the row** — an approval that has already been given, a file that must be
 read first, a branch that does not exist yet.
+
+**And where the order is not a hard dependency, the row still says why it sits there.** This is
+the same rule as *Load-bearing decisions*' second column, applied to the sequence: an order is a
+decision, and a decision with no reason gets re-derived. The corpus has the case — a handoff
+correctly ordered a tool commit ahead of an issue, gave no reason, and the next session
+re-derived one from the dependency graph and inverted it. The fact that would have settled it
+was that the user was about to be physically at the bench, which is not in a dependency graph
+and was never written down. A soft reason is exactly the kind that looks omissible and is not.
 
 **Rows come off the top and the rest renumber.** The list is working state, not a plan: the
 next session rewrites it when it hands off.
@@ -240,7 +285,7 @@ so it goes in the prompt. Everything else has a home, and belongs there.
 
 | Not here | Where |
 |---|---|
-| Why a decision was made | The dev-log. The handoff says *what was decided*, not the reasoning |
+| The narrative of how a decision was reached | The dev-log. *"We tried X, then Y"* is disposable. **The constraint that forces the decision is not** — it stays here, in the second column of *Load-bearing decisions*. A decision whose reason lives only in the dev-log is one the next session re-derives, and re-derivation reaches the opposite answer as easily as the same one |
 | Measurements, analysis, rejected topologies | K2 — `scratch/` or `arc-work/` |
 | Anything true after this arc ends | The wiki. The handoff dies with the arc |
 | A narrative of the session | Nowhere. Nobody reads it |
@@ -264,8 +309,24 @@ committed record, not here.
 Committing it means the record contains a file that is stale the moment it is written, and
 a fresh session cannot tell which of two overlapping documents to trust.
 
-**Add `HANDOFF.md` to `.gitignore` when starting an arc in a new repo.** It is the one
-setup step this skill needs.
+**Which is also why overwriting it destroys something.** Gitignored means git cannot restore
+it, so a rewrite takes the state this session was *given* with it. `hooks/handoff-archive`
+copies it to `.arc-work/archive/<timestamp>/` at the session's **first tool call of any kind** —
+not when the handoff is written, because a session that crashes never reaches its own write, and
+not only on an edit, because `cat > HANDOFF.md`, `mv` and `rm` destroy it without going near
+`Edit` or `Write`.
+The same rule covers any file git cannot restore: tracked files need no copy, git is the copy.
+
+The store is gitignored too. It is **recovery, not record** — nothing reads it as history,
+nothing prunes it, and getting a file back is a plain `cp` from the timestamped directory.
+
+**Add `/HANDOFF.md` *and* `.arc-work/` to `.gitignore` when starting an arc in a new repo.**
+It is the one setup step this skill needs, and it is **two entries, not one**: `.arc-work/archive/`
+is where the copies above land, so a repo that ignores only the handoff commits a copy of every
+handoff the arc ever had straight into the record — the exact opposite of what the store is for.
+
+Anchor the handoff entry at the root. A bare `HANDOFF.md` also matches `templates/handoff.md`,
+which is a shipped artifact and must be committed.
 
 **At arc close, delete it.** Anything in it worth keeping was already promoted to the
 arc-log or a dev-log. If deleting it feels lossy, something skipped a tier — find what and

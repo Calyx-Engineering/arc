@@ -1,0 +1,2 @@
+# a Write aimed at the handoff itself — #152 literally; the copy is taken before it lands
+{"session_id":"verify-archive-overwrite","cwd":"__FIXTURE_AUTONOMOUS__","tool_name":"Write","tool_input":{"file_path":"__FIXTURE_AUTONOMOUS__/HANDOFF.md"}}
