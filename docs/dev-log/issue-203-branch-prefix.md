@@ -67,6 +67,6 @@ before this change**, which is what fail-open means here.
 reloading from one of them is not this unit's call. `.claude/arc/log.md` carries no
 `prefix=` entry, so the change is unsoaked in the record and soaks on the next work stretch.
 
-**Gates:** `bash tools/verify-all.sh` → exit 0, 38 gates clean, including the new
+**Gates:** `bash tools/verify-all.sh` → exit 0, 39 gates clean, including the new
 `branch prefix` gate at 17 cases. `bash tools/verify-hook.sh hooks/branch-guard` → 18 passed,
 0 failed.
