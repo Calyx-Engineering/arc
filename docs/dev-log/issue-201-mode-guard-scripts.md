@@ -72,10 +72,9 @@ found the same class again in a new shape: one script named twice, the first inv
 `--dry-run` exempting the second. Both times the root cause was the same, and the third attempt
 removed it rather than patching around it: read the command, split it into commands, and ask
 each one what it is. Pass 4, reading it as a reviewer, found the largest one: a payload carries
-a newline as `
-`, so every line after the first was glued onto its predecessor and never read
-as a command — most of the surface this issue set out to close, and invisible until someone
-asked what an ordinary Bash call actually looks like.
+a newline as the two characters `\` and `n`, so every line after the first was glued onto its
+predecessor and never read as a command — most of the surface this issue set out to close, and
+invisible until someone asked what an ordinary Bash call actually looks like.
 
 **What a future reader needs:** the hook's own `WHAT THIS CANNOT DO` block is the honest list —
 `cd tools && bash arc-loop.sh`, a path in a variable, `bash -o errexit tools/x.sh`, a description
