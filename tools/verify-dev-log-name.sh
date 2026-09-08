@@ -14,12 +14,21 @@
 # A RENAME NEEDS A GATE OR IT COMES BACK. The sweep is the easy half; the stub generator is why
 # it would not have stayed swept. This is the grep that keeps it.
 #
-# THREE FILES KEEP THE OLD NAME, EACH FOR A REASON. Named here rather than listed in a variable,
-# because a list is what lets a fourth exception in without anyone deciding:
+# TWO KINDS OF EXCEPTION, EACH NAMED WITH ITS REASON — never a list held in a variable, because
+# a list is what lets the next one in without anyone deciding.
+#
+# Whole areas that are not this repository's live vocabulary:
 #
 #   docs/product-architecture/archive/         a frozen record of what was true then
 #   docs/reference-timescope/                  another system's vocabulary, not ours
-#   docs/arc-work/04-dogfood/issue-plan.md     names the defect in order to describe it
+#
+# Documents whose SUBJECT is this rename, which cannot describe it without naming it:
+#
+#   docs/arc-work/04-dogfood/issue-plan.md     the plan entry that raised it
+#   docs/dev-log/issue-168-dev-log-name.md     the dev-log of the change that made it
+#
+# This script excludes itself too, which is mechanical rather than an exception: it has to hold
+# the wrong name in order to search for it.
 #
 # REPORTS, NEVER BLOCKS. Exit 1 names the file and line. Same precedent as every verifier here.
 
@@ -41,6 +50,7 @@ scan() {  # scan <root> — prints one "path:line:text" per offending occurrence
       | grep -v '^docs/product-architecture/archive/' \
       | grep -v '^docs/reference-timescope/' \
       | grep -v '^docs/arc-work/04-dogfood/issue-plan\.md:' \
+      | grep -v '^docs/dev-log/issue-168-dev-log-name\.md:' \
       | grep -v '^tools/verify-dev-log-name\.sh:'
   )
 }
@@ -152,6 +162,21 @@ if [ "${1:-}" = "selftest" ]; then
     > "$root/docs/arc-work/04-dogfood/issue-plan.md"
   out=$(run "$root"); status=$?
   case_is "the plan may name the defect it describes" 0 "no artifact calls the dev-log" "$status" "$out"
+
+  # 8b — and so may the dev-log of the change that made the rename. Found by review pass 4:
+  #      the gate failed on its own dev-log, which cannot describe the defect without naming it.
+  root=$(make_tree ownlog)
+  printf '# the dev-log template calls itself a decision log\n' \
+    > "$root/docs/dev-log/issue-168-dev-log-name.md"
+  out=$(run "$root"); status=$?
+  case_is "the rename's own dev-log may name it" 0 "no artifact calls the dev-log" "$status" "$out"
+
+  # 8c — but only THAT dev-log. Another dev-log using the old name is the ordinary defect, and
+  #      without this case the exception could widen to docs/dev-log/ and nobody would see it.
+  root=$(make_tree otherlog)
+  printf '# a decision log\n' > "$root/docs/dev-log/issue-99-other.md"
+  out=$(run "$root"); status=$?
+  case_is "another dev-log is not covered by that exception" 1 "docs/dev-log/issue-99-other.md" "$status" "$out"
 
   # 9 — the exception is the archive DIRECTORY, not any file called HANDOFF.md. A path-suffix
   #     match would let the live handoff drift.

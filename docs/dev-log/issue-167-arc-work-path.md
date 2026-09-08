@@ -3,7 +3,7 @@
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 > Keep it short — capture the *why*, not a blow-by-blow. Skip any section that doesn't apply.
 
-**Issue:** [#167](https://github.com/Calyx-Engineering/arc/issues/167)  ·  **PR:** &lt;link&gt;
+**Issue:** [#167](https://github.com/Calyx-Engineering/arc/issues/167)  ·  **PR:** [#236](https://github.com/Calyx-Engineering/arc/pull/236)
 
 ## Problem
 

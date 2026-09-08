@@ -3,7 +3,7 @@
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 > Keep it short — capture the *why*, not a blow-by-blow. Skip any section that doesn't apply.
 
-**Issue:** [#168](https://github.com/Calyx-Engineering/arc/issues/168)  ·  **PR:** &lt;link&gt;
+**Issue:** [#168](https://github.com/Calyx-Engineering/arc/issues/168)  ·  **PR:** [#236](https://github.com/Calyx-Engineering/arc/pull/236)
 
 ## Problem
 
@@ -28,7 +28,8 @@ document disagreed with itself about its own name, at the one place the name is 
 | **`Dev-log, not a spec`** | The contrast the sentence exists to draw is with a *spec*, and that half was never wrong. Only the self-name changes, so the three mechanism specs that quote the banner stay accurate quotes |
 | **A gate, not just a sweep** | `tools/new-direct-pr.sh:100` writes the banner into every stub it opens. The issue did not name it; the grep did. A rename with a generator still emitting the old name is a rename that lasts until the next direct PR — which is why *Required*'s second box is the load-bearing one |
 | **Case-insensitive** | "decision log" is as wrong as "Decision log". A check matching only the capitalised form would leave a rename half done and report clean |
-| **Three named exceptions, in the header, with reasons** | Not a variable holding a list. `verify-template-links.sh` set this precedent — "One named exception with a reason, never a list — a list is what made a new skill invisible to the parity check" |
+| **Named exceptions, in the header, with reasons** | Not a variable holding a list. `verify-template-links.sh` set this precedent — "One named exception with a reason, never a list — a list is what made a new skill invisible to the parity check". They fall into two kinds: whole areas that are not this repository's live vocabulary, and documents whose subject *is* this rename |
+| **This dev-log is one of the exceptions** | Found by review pass 4: the gate failed on the very file documenting the rename, which cannot describe the defect without naming it. Cases 8b and 8c cover it — and 8c pins that the exception is this one file, not `docs/dev-log/` |
 | **The exception is the archive *directory*** | Anchored at `docs/product-architecture/archive/`, not at a filename. A suffix match on `HANDOFF.md` would have exempted the live handoff at the repository root, and case 9 is that case |
 
 ## Rejected approaches
@@ -43,7 +44,7 @@ document disagreed with itself about its own name, at the one place the name is 
 
 | | |
 |---|---|
-| `bash tools/verify-dev-log-name.sh selftest` | 9 passed, 0 failed |
+| `bash tools/verify-dev-log-name.sh selftest` | 11 passed, 0 failed |
 | `bash tools/verify-dev-log-name.sh` | `PASS no artifact calls the dev-log a 'decision log'`, exit 0 |
 | `bash tools/verify-all.sh` | 26 gates, all clean, exit 0 |
 | **The Done-when, measured** | With the old banner restored in `templates/dev-log.md` alone: `26 gates, 1 failed — dev-log name`, exit **1**, naming `templates/dev-log.md:3`. Reverted after the measurement |
