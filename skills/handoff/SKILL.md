@@ -152,6 +152,15 @@ against the recorded constraint, not against your own account of it.
 
 **Not continuously.** Per-turn churn is narration by another name.
 
+**Every one of those moments re-stamps the title.** `YYYY-MM-DD HH:MM` — the current date *and*
+time of day, on **every write**, not only when the file is created. A stale stamp is worse than
+a missing one: the read path's first staleness check reads exactly this line, so a handoff
+rewritten at 16:40 and still headed with the morning's time is trusted by precisely as much as
+it should not be. And **a date with no time cannot separate an hour-old handoff from a week-old
+one** — a cold start then treats both as current.
+
+The rule is mechanical: **if the body changed and the stamp did not, the stamp is wrong.**
+
 At a break the order is fixed: **save the transcript, write the handoff, say it was written,
 give the prompt for the next chat.** The transcript is saved first so the handoff can name
 it.
