@@ -112,7 +112,7 @@ thing**. `issue-writing` already opens with exactly this warning —
 
 > *"Every mechanism here fails silently."*
 
-— and the skill still did not prevent these six cases.
+— and the skill still did not prevent any of these seven cases.
 
 ---
 

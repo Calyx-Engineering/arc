@@ -48,6 +48,7 @@ The `/tmp` line in the skill's table is written from this, not from memory.
 | | |
 |---|---|
 | **Both guards in the snippet, not one** | The issue permits either. `&&` alone misses an edit step that exits 0 having done nothing; `cmp` alone misses nothing but is easy to omit under time pressure. Shown together, the reader copies both |
+| **The read is guarded too** | Neither of the two named guards covers a failed *read*: the redirect truncates `body.md` before `gh` fails, `body.before` is an empty copy of it, the edit writes the new section into the empty file, and `cmp` sees a difference. `[ -s body.md ]`. Pass 2 found this in the canonical snippet after pass 1 had already fixed it in the #193 one — the same file teaching two standards for one operation |
 | **`cmp -s`, not a hash** | Present everywhere `gh` is, no second interpreter, and a no-op edit correctly skips the write |
 | **No new gate** | The requirement is the documented procedure. A hook cannot see a run's shell chaining, and `tools/verify-tracker-body.sh` reads bodies, not command sequences |
 
@@ -58,6 +59,7 @@ Pass 1 found the fix contradicted twice in its own file, by the other two issues
 | | |
 |---|---|
 | **The #193 recovery snippet repeated the trap** | Its `gh pr view … > body.md` was unchained, so a failed read produced an empty file, an empty `body.before`, a difference the guard let through, and a PR body replaced by the keyword line alone. Two hundred lines below the section teaching the opposite. Now one `&&` chain with a `[ -s body.md ]` on it |
+| **Then the canonical snippet turned out to have it too** | Pass 2's finding. Fixing the copy and leaving the original is worse than fixing neither, because the file then documents two standards and the weaker one is the normative example |
 | **`live-bind` did the same against a merged PR** | The tool #193 added. Recorded in that issue's dev-log |
 
 Neither was in a diff either author would have read as suspicious. Both were in the section the

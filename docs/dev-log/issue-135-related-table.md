@@ -83,9 +83,17 @@ Two consequences, both fixed:
 | **`Related` is a terminal section too** | The rule is *the spawn edges are last*, and the check now reports a heading after either `Related` or `Spawned`. Two more fixtures — one fail, one pass |
 | **The title has to be the whole heading** | A substring match reported `### Spawned versus related` as the section and then flagged every heading after it. Anchored to the complete title, bold and backticks stripped. A third fixture covers it |
 
-A third defect was in the finding itself: `grep -inE` prepends grep's own index, which the
-`cut -d: -f1` then read as the file's line number. Every terminal heading resolved to line 1 or
-2. Caught by the fixtures failing, which is what they are for.
+Pass 2 then reviewed those fixes and found two more, both in the fix rather than in the original:
+
+| | |
+|---|---|
+| **`head -n1` picked the wrong terminal section** | A body in the older two-section shape carries `Related` and then `Spawned`. It is the **last** of them that has to be last, and taking the first reported a correctly-formed legacy body as a defect — the very shape the widened check claims to support. `tail -n1`, plus a fixture |
+| **Anchoring the title made the match CR-sensitive** | The pre-fix regex had no `$`, so a trailing `` was harmless. A body read out of `gh pr view --json body` is CRLF — this file's own `live_norm` exists for that reason — so the documented flow would have fed the check input on which every terminal heading is invisible, and it would have printed a pass. `tr -d ''` |
+
+**A note on the commit message for `f0b6ce7`.** It claims a fix for a `grep -inE` whose index
+shadowed the file's line number. That bug was real but was introduced and removed inside the same
+editing session; it never reached a commit, so the message describes a fix to code no reviewer
+could find. The fixtures caught it, which is what they are for — but it was not a review finding.
 
 ## Evidence
 

@@ -476,8 +476,9 @@ panel → ✕.
 edit the file, write it back — and read it back again:
 
 ```sh
-gh issue view NN --json body --jq .body > body.md
-cp body.md body.before
+gh issue view NN --json body --jq .body > body.md \
+  && [ -s body.md ] \
+  && cp body.md body.before
 
 python edit.py body.md \
   && ! cmp -s body.before body.md \
@@ -486,11 +487,17 @@ python edit.py body.md \
 gh issue view NN --json body --jq .body | grep -n 'the thing you changed'
 ```
 
-**The three commands are independent, and that is the trap.** Run separately, a middle
-command that dies leaves the third running against the file the *first* one
-wrote — `gh` writes the **original** body back and reports success. **Guard the write-back:**
-chain it on the edit's exit status, or compare the file against a copy taken before the edit.
-Either one stops the bad write; the snippet above does both.
+**The commands are independent, and that is the trap.** Run separately, a middle command that
+dies leaves the last one running against the file an earlier one wrote — `gh` writes the
+**original** body back and reports success. **Guard the write-back:** chain it on the edit's
+exit status, or compare the file against a copy taken before the edit. The snippet above does
+both, because neither alone covers everything: `&&` misses an edit that exits 0 having changed
+nothing, and `cmp` misses nothing but is the one people drop.
+
+**Guard the read as well.** A failed `gh issue view` leaves an empty `body.md` — the redirect
+truncated it before the command failed — and an empty `body.before` beside it. The edit then
+writes the new section into an empty file, `cmp` sees a difference, and the write-back replaces
+the whole body with that section alone. `[ -s body.md ]` is what stops it.
 
 **The failure is the edit step failing, not only a path the next step cannot see.** A reader
 who wrote the file to a shared, visible path concludes the trap does not apply, and it still

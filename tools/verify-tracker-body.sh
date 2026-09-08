@@ -109,15 +109,22 @@ check_keyword_placement() {
 check_spawned_last() {
   local file="$1" headings terminal_no terminal_txt after
 
-  headings="$(awk '/^(```|~~~)/ { f = !f; next } f { next } /^#+[ 	]/ { print NR": "$0 }' "$file")"
+  # `tr -d ''` because the title match is anchored at `$`. A body read straight out of
+  # `gh pr view --json body` is CRLF — this file's own `live_norm` exists for that reason — and
+  # a carriage return before the anchor makes every terminal heading invisible.
+  headings="$(awk '/^(```|~~~)/ { f = !f; next } f { next } /^#+[ 	]/ { print NR": "$0 }' "$file" | tr -d '')"
 
   # `[ 	]` after the hashes here too — the awk pass accepts a tab and this must not disagree
   # with it, or a tab-indented heading is found by one and missed by the other.
-  local terminal_re='^[0-9]+:[ 	]*#+[ 	]+[*`]*(Spawned|Related)[*`]*[ 	]*$'
-  # No `-n` on the grep: the stream already carries the file's line number as field 1, and
-  # grep's own index would shadow it.
+  local terminal_re='^[0-9]+:[ 	]*#+[ 	]+[*`]*(Spawned|Related)[*`]*:?[ 	]*$'
+  # `tail -n1`, not `head`: a body in the older two-section shape carries `Related` and then
+  # `Spawned`, and it is the LAST of them that has to be last. Taking the first reports a
+  # correctly-formed legacy body as a defect.
+  #
+  # No `-n` on the grep either — the stream already carries the file's line number as field 1,
+  # and grep's own index would shadow it.
   terminal_no="$(printf '%s
-' "$headings" | grep -iE "$terminal_re" | head -n1 | cut -d: -f1)"
+' "$headings" | grep -iE "$terminal_re" | tail -n1 | cut -d: -f1)"
   if [ -z "$terminal_no" ]; then
     echo "PASS  no Spawned or Related section heading — nothing to place"
     return 0
@@ -337,6 +344,10 @@ live_restore() {
   return 0
 }
 
+# A bare `trap live_restore INT` restores and then CARRIES ON — the handler returns and the
+# poll keeps hitting the API after the user asked it to stop. The signal traps exit.
+live_interrupt() { live_restore; exit 130; }
+
 check_live_bind() {
   local pr="$1" issue="$2" rc=0
   command -v gh >/dev/null 2>&1 || { echo "gh not on PATH" >&2; exit 2; }
@@ -375,7 +386,8 @@ check_live_bind() {
 
   # Armed BEFORE the write, so an interrupt during it still restores.
   LIVE_PR="$pr"; LIVE_ORIG="$orig"; LIVE_TMP="$tmp"
-  trap live_restore EXIT INT TERM
+  trap live_restore EXIT
+  trap live_interrupt INT TERM
 
   # The guarded write-back the skill teaches: the edit must have changed the file, or `gh`
   # writes the original back and reports success. #87.
@@ -437,13 +449,15 @@ check_live_bind() {
   # lines — so a body written back from an exact copy of what was read does not read back
   # identical. Measured 2026-09-07 on PR #215: the restore landed, the keyword was gone, and a
   # `cmp` still failed. Comparing normalised text is the assertion that means what it says.
-  trap - EXIT INT TERM
   back="$(mktemp)"
   if ! gh pr edit "$pr" --body-file "$orig" >/dev/null; then
+    trap - EXIT INT TERM
     echo "FAIL  restoring PR $pr's body failed — it still carries the probe keyword. Original: $orig"
     rm -f "$tmp" "$back"
     return 1
   fi
+  # The restore landed. Only now is the trap redundant.
+  trap - EXIT INT TERM
   if ! gh pr view "$pr" --json body --jq .body > "$back" || [ ! -s "$back" ]; then
     echo "FAIL  could not read PR $pr's body back after restoring it. Original: $orig"
     rm -f "$tmp" "$back"
@@ -543,7 +557,8 @@ case "${1:-}" in
   title)    [ $# -ge 2 ] && [ $# -le 3 ] || usage; check_title "$2" "${3:-}" ;;
   # Raw findings, one per line, exit 0 always. `hooks/tracker-verify` reads this so the
   # rules have one home; a hook must never inherit a non-zero exit from a helper.
-  title-findings) [ $# -ge 2 ] && [ $# -le 3 ] || usage; title_findings "$2" "${3:-}" ;;  binding)  [ $# -eq 3 ] || usage; check_binding "$2" "$3" ;;
+  title-findings) [ $# -ge 2 ] && [ $# -le 3 ] || usage; title_findings "$2" "${3:-}" ;;
+  binding)  [ $# -eq 3 ] || usage; check_binding "$2" "$3" ;;
   live-bind) [ $# -eq 3 ] || usage; check_live_bind "$2" "$3" ;;
   selftest) selftest ;;
   *)        usage ;;
