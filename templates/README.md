@@ -16,6 +16,7 @@ shipped broken: every review read them here, where they were fine.
 | `dev-log.md` | `docs/dev-log/issue-<NN>-<slug>.md`, or `pr-<NN>-<slug>.md` |
 | `handoff.md` | `HANDOFF.md`, at the repo root |
 | `event-log.md` | `.claude/arc/log.md` |
+| `issue.md` · `pr.md` | a body file the agent writes, then `gh issue create --body-file` |
 | `SKILL.md` | `skills/<name>/SKILL.md` |
 | `camp/operating-agreement.md` · `camp/voice.md` · `camp/notes.md` | `.claude/arc/camp/` |
 

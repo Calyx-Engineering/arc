@@ -190,14 +190,14 @@ rewritten; *Editing an existing body* below governs the description.
 
 ### What a good issue contains
 
-**The section order is fixed**, and `Related` is the last section:
+**The shape is [`templates/issue.md`](../../templates/issue.md)** — four sections, in order,
+each with its purpose, and [`templates/pr.md`](../../templates/pr.md) for a PR. **Copy it; do
+not assemble one from memory.** The rules below are scattered across four sections of this
+skill by subject, and the positional one — where `Related` sits — is always the furthest from
+the list. Nine issues were written in one session with `Spawned` mid-body, appended to four
+times before anyone noticed.
 
-| | Section | Holds |
-|---|---|---|
-| 1 | Opening | The defect or the need, in one or two sentences |
-| 2 | **Required** | What must be true when this is done. Checklist if there are several |
-| 3 | Constraints | Numbers, parts, interfaces, standards — as a table |
-| 4 | **Related** | Every edge this issue has — **as a table**, spawn rows included. Last, always |
+**This skill is the judgement and the template is the shape.** Neither repeats the other.
 
 **Spawned work lives in `Related`'s rows, so the spawn edges are the last thing in the body.**
 Not "at the end" as a habit — last in a stated order, which is what makes a heading appearing
@@ -296,6 +296,9 @@ Closes #42
 
 Parsers do not understand prose. `Closes the block-diagram item of #26` creates **no link** —
 the Development sidebar stays empty and the issue looks orphaned.
+
+**Where that line sits in the body is [`templates/pr.md`](../../templates/pr.md)'s** — last
+line, after the spawn rows.
 
 When a PR closes exactly one issue, cite it in the title: `<type>: <name> (#42)`. When it
 closes several, omit the number from the title and list them in the body. The title number
@@ -414,6 +417,11 @@ edits, and the asymmetry is the whole finding:
 drops out of the milestone view, which is the only place a human sees the arc as one unit.
 This is unrelated to the base-branch problem and purely an omission — every PR in this
 repo's first two arcs was missing it.
+
+**The fields set at creation rather than written into the body — milestone, base, label — are
+listed at the top of [`templates/issue.md`](../../templates/issue.md) and
+[`templates/pr.md`](../../templates/pr.md).** Each is invisible once missed, which is why they
+are named where the body is assembled and not only here.
 
 After **every** create or edit:
 
@@ -561,6 +569,9 @@ body to a file rather than passing it inline.
 **A body has one `Related` section, it is a table, and it is the last thing in the body.**
 There is no separate `Spawned` heading. Spawned work is a row like every other edge, which is
 what keeps the spawn rows at the end, where the arc-log's tree reads them.
+
+**The table's shape and its position are [`templates/issue.md`](../../templates/issue.md)'s.**
+What follows is which row a given edge takes — the judgement the template does not carry.
 
 Three columns — the relationship, the link, and what it is. The first column's header is
 empty, because the words in that column *are* the header.
