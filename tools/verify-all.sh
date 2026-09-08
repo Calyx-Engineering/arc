@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch verify-mechanisms verify-dev-log-name miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade"
 
 RUN=0
 FAILED=0
@@ -94,6 +94,8 @@ run_gate "mechanism table cases" bash tools/verify-mechanisms.sh selftest
 run_gate "mechanism table" bash tools/verify-mechanisms.sh
 run_gate "dev-log name cases" bash tools/verify-dev-log-name.sh selftest
 run_gate "dev-log name" bash tools/verify-dev-log-name.sh
+run_gate "activation log cases" bash tools/verify-activation-log.sh selftest
+run_gate "activation log" bash tools/verify-activation-log.sh
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
