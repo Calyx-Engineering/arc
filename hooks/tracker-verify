@@ -11,11 +11,11 @@
 # This reads back what landed and reports a mismatch. Judging "does this match what we
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
-# camp-reports: issue-write, pr-write, pr-merge
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# camp-reports: issue-write, issue-close, pr-write, pr-merge
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
-# Fires on `gh issue create|edit`, `gh pr create|edit`, and `gh pr merge`.
+# Fires on `gh issue create|edit|close`, `gh pr create|edit`, and `gh pr merge`.
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
@@ -64,7 +64,7 @@ CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"com
 
 # Only tracker writes. A read is not a write, and `gh pr view` is what this hook itself uses.
 case "$CMD" in
-  *"gh issue create"*|*"gh issue edit"*|*"gh pr create"*|*"gh pr edit"*|*"gh pr merge"*) ;;
+  *"gh issue create"*|*"gh issue edit"*|*"gh issue close"*|*"gh pr create"*|*"gh pr edit"*|*"gh pr merge"*) ;;
   *) exit 0 ;;
 esac
 
@@ -161,6 +161,107 @@ FIXTURE_LINKED="$(fixture arc_test_linked)"
 case "$INPUT" in
   *'"arc_test_'*)
     [ -n "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED" ] || exit 0
+    ;;
+esac
+
+# ---- an issue closing -----------------------------------------------------------
+# Closing is the last moment anyone looks at an issue. Every other check here runs while it
+# is still open and cheap to fix; a close is where an issue that was never bound to a branch
+# or a PR leaves the record for good, and nothing fired there until #163.
+#
+# The question is `tools/verify-linked-branch.sh`'s one-argument form, exactly: is this issue
+# linked to ANYTHING — a branch record, or a PR that closes it. Shelling out rather than
+# asking GraphQL again here keeps one copy of a reading that took #155 and #206 to get right,
+# including which field holds the link once a PR has promoted it. Its own caveat — that the
+# one-argument form answers yes forever once a link has been promoted — is not a problem at a
+# close, where the question is whether the record shows anything at all.
+#
+# Before the `gh` guard below, so a fixture case decides offline. Runs first among the
+# scanners because a close carries no body: none of them have anything to read.
+check_close() {
+  local args num linked runner link_lib
+
+  # `##`, longest match, so a chain lands on the real invocation and not on an earlier
+  # mention of one — `git commit -m "ran gh issue close 42" && gh issue close 163` is 163.
+  args="${CMD##*gh issue close}"
+
+  # QUOTED SPANS GO FIRST, and this is the whole reason the extraction is not one grep. A
+  # `--comment` is where a stray issue number or URL realistically lives, and it is always
+  # quoted: `gh issue close --comment "Closed by #224" 163` must be 163, not 224, or the
+  # hook reports a missing link on an issue nobody touched — and reads it over the network
+  # to do so.
+  args="$(printf '%s' "$args" | sed -e 's/"[^"]*"//g' -e "s/'[^']*'//g")"
+
+  # `gh issue close` takes `{<number> | <url>}`, and `--repo` is an inherited flag that may
+  # sit before it — `gh issue close -R owner/repo 163` is ordinary. So the number is looked
+  # for as an argument ANYWHERE after the subcommand, never immediately after it: anchoring
+  # on `issue close +[0-9]` reads the `-R` and URL forms as "no number" and skips the check
+  # in silence, which is the shape this hook exists to catch.
+  #
+  # The bare token is tried before the URL. A URL is one whitespace token beginning with a
+  # letter, so it can never satisfy the token pattern — while a URL in a flag value that
+  # survived the quote strip would beat the real argument if the URL grep ran first.
+  #
+  # Trailing punctuation is allowed on the token because `CMD` above is cut out of the raw
+  # payload and keeps whatever followed it there — the last argument arrives as `163"}}`.
+  # Trailing `-` and word characters are NOT allowed, so a date or a branch name carrying
+  # digits is not mistaken for an issue number.
+  num="$(printf '%s' "$args" | tr '[:space:]' '\n' | grep -m1 -E '^#?[0-9]+[^0-9A-Za-z_-]*$' | grep -oE '[0-9]+' | head -1)"
+  [ -n "$num" ] || num="$(printf '%s' "$args" | grep -oE 'https://github\.com/[^/]+/[^/]+/issues/[0-9]+' | head -1 | grep -oE '[0-9]+$')"
+  [ -n "$num" ] || return 0
+
+  if [ -n "$FIXTURE_LINKED" ]; then
+    linked="$FIXTURE_LINKED"
+  else
+    link_lib="$(dirname "$0")/../tools/verify-linked-branch.sh"
+    # Absent, the check does not run. Fail open is the rule; a missing helper is not a
+    # reason to speak up about a link nothing read.
+    [ -f "$link_lib" ] || return 0
+    command -v gh >/dev/null 2>&1 || return 0
+
+    # BOUNDED, because this is the only check here that goes to the network from inside a
+    # synchronous PostToolUse hook — two GraphQL round trips, ~2s warm. `command -v gh`
+    # proves gh is present, not that it answers; a hung call would hang the session, which
+    # is the one failure a hook that fails open must not have. `timeout` exits 124, which
+    # falls to the same arm as any other unusable answer. Absent, run unbounded rather than
+    # not at all.
+    #
+    # GNU's `timeout`, proven, not any binary of that name. On Windows `command -v timeout`
+    # can resolve to Windows' own `timeout.exe`, which rejects this syntax and exits 1 —
+    # and 1 is the link tool's "no link" verdict, so the hook would report a missing link
+    # it never read. `--version` separates them without running a child or waiting.
+    runner=""
+    timeout --version 2>/dev/null | grep -qi coreutils && runner="timeout 20"
+
+    # `cd` outside the `&&`, deliberately: chained, a failed `cd` returns 1 and 1 is the
+    # tool's "no link" verdict, so an unreadable directory would report a missing link
+    # nothing ever looked for.
+    (cd "$CWD" 2>/dev/null || exit 3; $runner bash "$link_lib" "$num" >/dev/null 2>&1)
+    case $? in
+      0) linked=1 ;;
+      1) linked=0 ;;
+      # Exit 2 is "the read could not be made", which is a different answer from "no link"
+      # and must not be reported as one. That distinction is the whole point of that tool.
+      *) return 0 ;;
+    esac
+  fi
+
+  [ "$linked" = 0 ] && add "issue #$num was closed with nothing linked to it — no branch record, and no PR that closes it. The record now has no trace of what did the work. Re-open it, put a \`Closes #$num\` line on its own last line in the PR, and let the merge close it."
+  return 0
+}
+
+case "$CMD" in
+  *"gh issue close"*) check_close ;;
+esac
+
+# A close is the whole command, unless it was chained to a write that has its own checks
+# below. Returning rather than exiting, and testing that here, is what keeps
+# `gh pr merge 201 && gh issue close 163` reaching the PR checks it also deserves.
+case "$CMD" in
+  *"gh issue create"*|*"gh issue edit"*|*"gh pr create"*|*"gh pr edit"*|*"gh pr merge"*) ;;
+  *)
+    [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
+    exit 0
     ;;
 esac
 

@@ -1,0 +1,2 @@
+# an issue closed with its link intact — a closing PR heads it, so the record shows what did the work and this must be silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"1","tool_input":{"command":"gh issue close 163"}}

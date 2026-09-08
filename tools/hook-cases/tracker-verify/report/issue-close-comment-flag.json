@@ -1,0 +1,2 @@
+# a number inside a quoted --comment placed before the real argument, unlinked — the comment's number must not win, or the hook reports a missing link on an issue nobody touched
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close --comment \"Closed by #224\" 163"}}
