@@ -28,18 +28,28 @@ Diagnosis is the human's, in the retrospective interview. Your job is evidence.
 
 ### 1. Locate
 
-**Two sources. Read both.**
+**Read the index first, then the two transcript sources.**
 
 | Source | |
 |---|---|
-| **Curated saves** | A repository saves transcripts under a named folder — `R:rc-transcripts`, `R:\work_lantern\_transcripts`. Files are named `<date>-<arc>-<issue-or-pr>-<topic>.jsonl`, so the filename itself carries the branch and issue context the raw store lacks. **Read these first**, and use their names as the context locator for every quote drawn from them |
+| **The session index** | `.claude/arc/sessions.md` in each briefed repository, written by `hooks/session-index` (m32). **Not a transcript source — a map.** One row per working directory and branch, naming the transcript directory, the worktree, the branch, the issue, the arc, the date span, and whether the worktree still exists |
+| **Curated saves** | A repository saves transcripts under a named folder — `R:rc-transcripts`, `R:\work_lantern\_transcripts`. Files are named `<date>-<arc>-<issue-or-pr>-<topic>.jsonl`, so the filename itself carries the branch and issue context the raw store lacks. Use their names as the context locator for every quote drawn from them |
 | **The raw store** | `~/.claude/projects/<path-slug>/*.jsonl`, one directory per working directory. Everything not yet curated |
 
-**Prefer a session index over globbing, when one exists.** `hooks/session-index` (m32) is meant to
-record where each session's transcript went, with its branch and issue. It is not built — issue #16.
-Until it is, globbing plus curated filenames is the fallback, and every packet says which was used.
-A glob cannot see a deleted worktree's orphaned directory as anything but a path, so the fallback
-is weaker in exactly the case that matters.
+**Read the index before globbing, and use it as the locator.** A glob returns paths; the index
+returns paths *with the work attached*. A row marked `orphaned` is the case that matters most —
+the worktree is gone, so nothing else on disk can say which issue that directory held.
+
+| From the index | Do |
+|---|---|
+| A row whose transcript directory `tools/miner-scope.sh` reports `IN` | Read it, and locate its quotes by **issue and branch** as well as by file. `#16 · arc/04-dogfood-issue-16-session-index` places a reader; `R--arc-wt-16` does not |
+| A row marked `orphaned` | The same, and say so in the packet. Its worktree is gone, so nothing but this row can attribute it |
+| A row whose transcript directory is **not on disk** | Name it in *Not covered*. The index is committed and transcripts are not, so this is normally another machine's row — say that, rather than letting it read as an absence of friction |
+| A directory on disk with **no row** | Read it if `miner-scope.sh` says `IN`, and name it in *Not covered* as unindexed. Rows exist only for sessions run after the hook shipped; everything earlier is a bare path |
+
+**The index does not decide scope — `tools/miner-scope.sh` still does.** The index says what a
+directory *was*; the brief says which repositories may be read. A row is not permission, and a row
+for a repository nobody briefed is `NEAR` however well it is labelled.
 
 The repository names its own save location — `skills/handoff` requires a *transcripts* note.
 Read that note rather than assuming a path. Say which sources you used.
@@ -140,7 +150,7 @@ counts row.
 
 ```markdown
 ## Scope
-Sources · files · MB · user messages · after pass A · after pass B · clusters
+Sources · index rows resolved (or `index absent — globbed`) · files · MB · user messages · after pass A · after pass B · clusters
 
 ## Ranked
 
@@ -169,7 +179,8 @@ and the locator for that moment. Not a diagnosis — what was on screen.
 
 ## Not covered
 Every NEAR directory `tools/miner-scope.sh` reported, by name, and that it was not read.
-Then anything unreadable, unparsed, or out of scope.
+Then every index row whose directory is not on this machine, and every IN directory with no index
+row. Then anything unreadable, unparsed, or out of scope.
 ```
 
 **A NEAR directory is named whether or not you think it mattered.** A skipped directory named

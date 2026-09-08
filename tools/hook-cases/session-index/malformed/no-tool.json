@@ -1,0 +1,2 @@
+# a payload naming no tool — a half-written payload is silent rather than wrong
+{"session_id":"verify-si-notool","cwd":"__FIXTURE_ISSUE__","tool_input":{"file_path":"__FIXTURE_ISSUE__/src/a.c"}}
