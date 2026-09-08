@@ -16,9 +16,14 @@
 # ships the thing the issue asked for, the title asks whether merging ships the thing the
 # title names. Both are decidable from text alone, so both live here.
 #
-# THREE CHECKS, TWO MOMENTS. Placement and title are decidable from text alone and must be
+# FOUR CHECKS, TWO MOMENTS. Placement and title are decidable from text alone and must be
 # checked BEFORE the write — a PostToolUse hook is too late, the wrong body is already in
 # the tracker. Binding is only decidable after, from the API. Neither subsumes the other.
+#
+# `body` carries two rules, not one: where the closing keyword sits, and whether a `Spawned`
+# heading is the last section. Both are decidable from the file alone and both are the same
+# caller's question — "is this body safe to write" — so they share one subcommand and one exit
+# code. #135.
 #
 # `hooks/tracker-verify` shells out to `title-findings` rather than carrying its own copy of
 # these rules, so a threshold is tuned in one place. It runs this as a subprocess, never
@@ -46,10 +51,8 @@ USAGE
 # ---- check 1 — placement --------------------------------------------------------
 # A keyword-plus-number is allowed exactly once, on the last non-empty line. Anywhere else
 # it is either a second binding nobody intended or a mention inside prose that will bind.
-check_body() {
+check_keyword_placement() {
   local file="$1"
-  [ -f "$file" ] || { echo "no such file: $file" >&2; exit 2; }
-
   local last_line_no hits count
   # The last non-empty line — trailing blank lines are normal in a written body and must not
   # shift where the keyword is allowed to sit.
@@ -84,6 +87,52 @@ check_body() {
 
   echo "PASS  one closing keyword, on the last line"
   return 0
+}
+
+# ---- check 1b — Spawned is the last section -------------------------------------
+# `Spawned` holds the units of work this effort caused, and the arc-log's tree is built by
+# reading it. A heading after it means a later section was appended past the spawn rows,
+# which is where the next writer adds to the wrong one. #135.
+#
+# REPORTS THE MISPLACED HEADING, NEVER THE ROWS. Whether a row is a unit of work is the
+# author's judgement and is not decidable from text; where the section sits is.
+#
+# Headings inside a fenced block are not headings — a `# comment` in a shell snippet would
+# otherwise read as a section after `Spawned`. The fence state is tracked, so it does not.
+check_spawned_last() {
+  local file="$1" headings spawn_no after
+
+  headings="$(awk '/^(```|~~~)/ { f = !f; next } f { next } /^#+[ 	]/ { print NR": "$0 }' "$file")"
+
+  spawn_no="$(printf '%s
+' "$headings" | grep -iE '^[0-9]+: *#+ .*spawned' | head -n1 | cut -d: -f1)"
+  if [ -z "$spawn_no" ]; then
+    echo "PASS  no Spawned heading — the spawn rows are in Related, or there are none"
+    return 0
+  fi
+
+  after="$(printf '%s
+' "$headings" | awk -F: -v n="$spawn_no" '$1 + 0 > n + 0')"
+  if [ -n "$after" ]; then
+    echo "FAIL  a Spawned heading on line $spawn_no is followed by another heading"
+    printf '%s
+' "$after" | sed 's/^/        /'
+    echo "        Spawned is the last section. A heading after it puts later rows outside the spawn edges."
+    return 1
+  fi
+
+  echo "PASS  the Spawned heading on line $spawn_no is the last section"
+  return 0
+}
+
+# ---- body — both file-decidable rules, one exit code ----------------------------
+# Every rule runs; the caller wants every finding in one read, not the first one.
+check_body() {
+  local file="$1" rc=0
+  [ -f "$file" ] || { echo "no such file: $file" >&2; exit 2; }
+  check_keyword_placement "$file" || rc=1
+  check_spawned_last "$file" || rc=1
+  return "$rc"
 }
 
 # ---- check 2 — the title --------------------------------------------------------

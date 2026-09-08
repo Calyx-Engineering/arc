@@ -23,9 +23,9 @@ Two things follow:
 
 ---
 
-## The failure has two distinct shapes
+## The failure has three distinct shapes
 
-Six instances across four weeks split cleanly:
+Six instances across four weeks split cleanly into the first two; the third was isolated later:
 
 ### Shape A — the write never happened
 
@@ -54,6 +54,26 @@ human's assumption that a completed edit is complete.
 
 Note both 2026-08-11 cases are the *same session*, minutes apart: a partial update
 leaving placeholder values behind, twice.
+
+### Shape C — the write happened, into a section that does not admit it
+
+> *"you wandered again. in the \"spawned\" section of PR70 you're throwing down random
+> decisions or thoughts. thats not what the section is for..."* — ROADZ, 2026-08-14
+
+> *"why are you adding documents to the spawned section?"* — ROADZ
+
+Eight distinct corrections between 2026-08-14 and 2026-09-05. The body was written, the write
+landed, and the read-back confirmed it — because the read-back compares the body against
+*intent*, and the intent was wrong. Documents, discarded approaches and loose thoughts were
+filed as spawned work; issues that did belong were missed.
+
+**This shape is invisible to every check above.** A placeholder scan finds nothing, a date
+check finds nothing, and the link bound correctly. What is wrong is that content sits under a
+heading whose definition excludes it — and a definition given only as a positive test
+("something this effort caused") admits anything session-shaped. The fix is a stated negative
+case and a section order, [#135](https://github.com/Calyx-Engineering/arc/issues/135).
+
+---
 
 ---
 
@@ -111,9 +131,10 @@ be tested against these.
 | 4 | 2026-08-11 | Figure updated, stale `3.3uH` remained | Re-read after write; diff against intended change |
 | 5 | 2026-08-13 | Issue #38 carried a nonsensical date | Sanity-check dates against reality |
 | 6 | 2026-07-26 | Comment on #1 referenced the wrong commit | Verify referenced commit exists and is the right one |
+| 7 | 2026-08-14 | `Spawned` populated with documents, a discarded approach, and loose decisions | Reject what is not a unit of work; route each to where it belongs. `tools/verify-tracker-body.sh body` reports the section's placement, the author judges the rows |
 
 **Pattern in shapes:** cases 1–2 are *never written*; cases 3–6 are *written wrong and
-reported right*.
+reported right*; case 7 is *written right into the wrong section*, which no read-back catches.
 
 ---
 
