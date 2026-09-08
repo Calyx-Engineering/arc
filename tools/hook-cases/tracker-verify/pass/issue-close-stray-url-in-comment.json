@@ -1,0 +1,2 @@
+# the same shape with a URL rather than a number — a cited issue inside a quoted comment must not become the issue the hook reads. Reading it would report #99
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close --comment \"superseded by https://github.com/Calyx-Engineering/arc/issues/99\""}}

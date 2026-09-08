@@ -37,7 +37,7 @@ to go — what it prevents is filing silently while the arc's stated scope says 
 | **Cut every sentence explaining why a problem is a problem** | If the defect is stated, the reader supplies the why |
 | **Tables and checklists over prose** | Prose is the fallback, not the default |
 | **Draft, then delete** | Remove every line a competent engineer already knows. This usually halves it |
-| **Lists of related items are bullets** | Never comma-separated inline |
+| **Lists of related items are bullets** | Never comma-separated inline. The `Related` section is the exception — it is a table, below |
 | **No development narrative** | Not "we tried X then found Y". State Y |
 
 A body that survives this is usually a short paragraph plus one or two tables.
@@ -149,17 +149,25 @@ rewritten; *Editing an existing body* below governs the description.
 | | |
 |---|---|
 | **Retitle at the descent, not at review time** | The moment the scope changed is the moment it is cheapest to name, and the only moment you still remember what it was before |
-| **A tangent does not trigger it** | Something spotted and recorded in `Spawned`, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
+| **A tangent does not trigger it** | Something spotted and recorded as a `Spawned` row, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
 | **The same test applies** | The retitled PR still has to pass *A name, not a summary* above. A title that grew by accretion is the other failure |
 
 ### What a good issue contains
 
-| Section | Holds |
-|---|---|
-| Opening | The defect or the need, in one or two sentences |
-| **Required** | What must be true when this is done. Checklist if there are several |
-| Constraints | Numbers, parts, interfaces, standards — as a table |
-| Related | Bulleted issue links, each with a few words on the relationship |
+**The section order is fixed**, and `Related` is the last section:
+
+| | Section | Holds |
+|---|---|---|
+| 1 | Opening | The defect or the need, in one or two sentences |
+| 2 | **Required** | What must be true when this is done. Checklist if there are several |
+| 3 | Constraints | Numbers, parts, interfaces, standards — as a table |
+| 4 | **Related** | Every edge this issue has — **as a table**, spawn rows included. Last, always |
+
+**Spawned work lives in `Related`'s rows, so the spawn edges are the last thing in the body.**
+Not "at the end" as a habit — last in a stated order, which is what makes a heading appearing
+after them a reportable defect rather than a matter of taste. `tools/verify-tracker-body.sh body`
+reports a heading that follows the `Related` section — or a `Spawned` section, in a body written
+before this shape. *Related — one table, four kinds* below gives the table's shape.
 
 **A `scope:` issue carries one more thing: the question inventory.** Every subject the spec
 cannot be written without, as a checklist, checked off as each is settled.
@@ -300,8 +308,58 @@ Two consequences:
   consumed.** That is the one PR where an empty array is a real bug, and the only place the
   issues actually close.
 
-Re-saving the body forces a re-parse of a *stale* link. It cannot create a link the base
-branch forbids — do not read a failed re-save as a transient problem.
+**Re-saving the body forces a re-parse, and the parse is not tied to the merge.** It cannot
+create a link the base branch forbids — that much still holds, and a failed re-save on an
+unflipped base is not a transient problem. But on a base that *is* the default branch it works
+after the merge as well as before, which the next section is about. The earlier wording here
+implied the opposite.
+
+### A missed keyword is recoverable after the merge
+
+**A `Closes #NN` line added to an already-merged PR still binds** — provided the base was the
+repository's default branch. Re-saving the body re-parses it, and the parse is not tied to the
+merge. Measured on [#192](https://github.com/Calyx-Engineering/arc/pull/192) and again on
+[#215](https://github.com/Calyx-Engineering/arc/pull/215), 2026-09-07.
+
+```sh
+gh pr view NN --json body --jq .body > body.md \
+  && [ -s body.md ] \
+  && cp body.md body.before \
+  && printf '\n\nCloses #MM\n' >> body.md \
+  && ! cmp -s body.before body.md \
+  && gh pr edit NN --body-file body.md
+
+gh pr view NN --json state,closingIssuesReferences        # read it back — then read it AGAIN
+gh issue close MM                                          # the link came back; the closure did not
+```
+
+| | |
+|---|---|
+| **The read-back is not instant** | The read immediately after the edit returns an empty array; seconds later it returns the binding. **One read is a false negative** — poll before concluding the recovery failed |
+| **It links, it does not close** | The merge event that closes an issue has already fired. #225 stayed open with the reference bound. `gh issue close` is the third command, and the reason this is not the two-command fix it first looked like |
+| **It is a keyword link, not a hand-attached one** | `closingIssuesReferences(first:5,userLinkedOnly:true)` comes back empty, so nothing was clicked. The distinction matters because a hand-attached link cannot be removed through the API |
+| **Removing the keyword unbinds** | Symmetric, and the reason the check below can restore what it changed |
+
+**This is the repair, not the practice.** A missed keyword is still a defect — it is caught at
+PR open, by *Verify* above. What changed is that the documented remedy was hand-linking through
+the UI, which needs a human and cannot run unattended. This can.
+
+#### What is still not recoverable
+
+**A PR whose base was never the default branch.** The keyword cannot bind at all, so there is
+nothing for a re-save to re-parse — the base-branch rule above is not a timing problem and no
+edit gets around it. The fix is
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md), applied before
+the PR merges, and [#136](https://github.com/Calyx-Engineering/arc/issues/136) is where linking
+and closing without the flip is tracked. After the merge, on an unflipped base, the issue is
+closed by hand and the link is made by hand.
+
+**The claim is a test, not a memory.**
+[`tools/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tools/tracker-cases/binding/merged-pr-keyword-bind.md)
+carries it, and `tools/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
+live API and restores what it changed. `verify-all.sh` does not run it — it writes to the
+tracker — and `selftest` names it as not covered rather than passing over it.
+
 
 ---
 
@@ -333,7 +391,7 @@ turns one visible failure into two invisible ones.
 
 ### Scan what you wrote
 
-Three of the six evaluation cases are mechanically catchable. Before and after writing:
+Three of the seven evaluation cases are mechanically catchable. Before and after writing:
 
 | Pattern | |
 |---|---|
@@ -365,7 +423,7 @@ The judgement half — *does this match what we agreed* — is this skill's.
 
 ## Actions agreed in conversation
 
-Two of the six cases are not verification failures. **The write never started.** Something
+Two of the seven cases are not verification failures. **The write never started.** Something
 was agreed mid-conversation and had nowhere to go.
 
 > *"i asked you to update #12 with the new component selection. i checked and that didn't
@@ -418,13 +476,42 @@ panel → ✕.
 edit the file, write it back — and read it back again:
 
 ```sh
-gh issue view NN --json body --jq .body > body.md
-gh issue edit NN --body-file body.md
+gh issue view NN --json body --jq .body > body.md \
+  && [ -s body.md ] \
+  && cp body.md body.before \
+  && python edit.py body.md \
+  && ! cmp -s body.before body.md \
+  && gh issue edit NN --body-file body.md
+
 gh issue view NN --json body --jq .body | grep -n 'the thing you changed'
 ```
 
-**A redirect to a path a later step cannot see produces an unmodified body, and `gh`
-reports success.** Write the temp file somewhere the shell and any helper agree on.
+**The commands are independent, and that is the trap.** Run separately, a middle command that
+dies leaves the last one running against the file an earlier one wrote — `gh` writes the
+**original** body back and reports success. **Guard the write-back:** chain it on the edit's
+exit status, or compare the file against a copy taken before the edit. The snippet above does
+both, because neither alone covers everything: `&&` misses an edit that exits 0 having changed
+nothing, and `cmp` misses nothing but is the one people drop.
+
+**Guard the read as well, in the same chain.** A failed `gh issue view` leaves an empty
+`body.md` — the redirect truncated it before the command failed — and no `body.before` at
+all. `cmp` against a missing file exits **2**, so `! cmp` is *true* and the write-back runs
+anyway. `[ -s body.md ]` stops it, and it has to be **one chain**: split in two, the read's
+failure never reaches the write.
+
+**The failure is the edit step failing, not only a path the next step cannot see.** A reader
+who wrote the file to a shared, visible path concludes the trap does not apply, and it still
+does. 2026-08-20, three times in one session: twice the editing step raised `SyntaxError`
+before touching the file, once a redirect went somewhere the interpreter could not see. Every
+time `gh` printed the issue URL and every time the body was unchanged.
+
+| Why the edit step dies | |
+|---|---|
+| **A Windows path in a non-raw string literal** | The repeat offender. `"C:\Users\..."` and `"R:\arc-transcripts\"` — `\U` and `\a` are escapes and a trailing `\` eats the closing quote, so the interpreter fails at **parse** time, before any edit runs. Use a raw string, forward slashes, or keep the path out of the source |
+| **A path a later step cannot see** | Write the temp file somewhere the shell and any helper agree on. Git Bash's `/tmp` is not a Windows interpreter's `/tmp` |
+
+**The read-back stays mandatory regardless.** It is the detector, not the fix — it caught all
+three, and nothing else would have. The guard stops the bad write; the read-back proves it.
 
 ### Non-ASCII and the console
 
@@ -433,41 +520,110 @@ body to a file rather than passing it inline.
 
 ---
 
-## Spawned versus related
+## Related — one table, four kinds
 
-When work uncovers new work, classify it by **cause, not by subject**.
+**A body has one `Related` section, it is a table, and it is the last thing in the body.**
+There is no separate `Spawned` heading. Spawned work is a row like every other edge, which is
+what keeps the spawn rows at the end, where the arc-log's tree reads them.
+
+Three columns — the relationship, the link, and what it is. The first column's header is
+empty, because the words in that column *are* the header.
+
+```markdown
+| | Link | What it is |
+| :--- | :--- | :--- |
+| **Spawned by** | [#133](https://github.com/Calyx-Engineering/arc/pull/133) | the dogfood retrospective |
+| **Spawned** | [#196](https://github.com/Calyx-Engineering/arc/issues/196) | the issue template this work needed to exist |
+| Blocked by | [#136](https://github.com/Calyx-Engineering/arc/issues/136) | link and close without the default-branch flip |
+| Related | [#83](https://github.com/Calyx-Engineering/arc/issues/83) | the enforcement half — an issue filed with no parent |
+
+Blocked by #136
+```
+
+**The spawn edge is the first row.** The first question asked of an issue is where it came
+from, and a table is scanned down its first column.
+
+### Four kinds. There is no fifth
+
+| | Means |
+|---|---|
+| **Spawned by** | The parent — the effort that caused this issue to exist. First row |
+| **Spawned** | This effort caused that one to exist |
+| **Blocked by** | This cannot start until that one lands |
+| **Related** | It exists independently and touches the same area |
+
+**A fifth word is a synonym for one of these.** *Creates*, *Depends on* and *See also* were
+each reached for and are each wrong. One word per meaning, or the column sorts nothing.
+
+**The parent's rows use the same table.** The edge is written from both ends and both ends
+look identical, so neither side has a second shape to learn.
+
+### `Blocked by #NN` also goes in the body as a bare line
+
+Under the table, on its own line:
+
+```text
+Blocked by #136
+```
+
+**The driver greps for it.** `| Blocked by | [#136](…) |` splits the words from the number
+across two cells, so nothing matching `Blocked by #[0-9]+` finds it. The table is for the
+reader and the bare line is for the machine; dropping either loses one of them.
+
+### Spawned — the test is cause, not subject and not surprise
 
 | | Test |
 |---|---|
-| **Spawned** | This effort caused the issue to exist. It would not have been filed otherwise |
+| **Spawned** | This effort caused it to exist. It would not have been filed otherwise |
 | **Related** | It exists independently and touches the same area |
 
-The common error is filtering on topic — rejecting a spawned issue because its subject looks
-unrelated to the parent. A documentation cleanup discovered while editing a diagram is
-**spawned**: the parent effort is why it exists, regardless of what it is about.
+**A deliverable counts, not only a discovery.** Something the work needed to exist is spawned
+whether or not it was foreseen — [#196](https://github.com/Calyx-Engineering/arc/issues/196)
+was created by [#194](https://github.com/Calyx-Engineering/arc/issues/194) and belongs in
+#194's `Spawned` rows. *Unplanned* is not the test; *caused* is.
 
-Keep spawned work in a `Spawned` section at the end of the parent issue, and say plainly
-whether any of it blocks the parent. It is also the raw material for the arc-log's tree.
+The common error the other way is filtering on **topic** — rejecting a spawned issue because
+its subject looks unrelated to the parent. A documentation cleanup discovered while editing a
+diagram is spawned: the parent effort is why it exists, whatever it is about.
 
-**Spawned work is not always an issue.** A small fix taken branch-to-PR is spawned work too,
-and it belongs in the parent's `Spawned` section like any other row. Two things then carry the link:
+**Spawned work is not always an issue.** A small fix taken branch-to-PR is spawned work and
+gets a row like any other. Two things then carry the link:
 
 | | |
 |---|---|
-| **The parent's `Spawned` section** | Gets a row naming the PR, same as it would an issue |
+| **The parent's `Spawned` row** | Names the PR, exactly as it would an issue |
 | **The PR body** | Carries `Spawned by #NN` — the only place the relationship exists when there is no issue |
 
 Without both, a no-issue PR is invisible to the arc's tree: the tree is built from what
 records its own parent, and a PR nobody linked records nothing.
 
+### `Spawned` holds units of work. Nothing else
+
+**A unit of work is an issue, or a PR with no issue.** That is the whole admissible set, and
+it has to be stated as a negative — a cause test on its own admits anything session-shaped.
+
+| Not a unit of work | Where it belongs |
+|---|---|
+| **A discarded approach** | The dev-log, as a decision. Ruling something out is not filing work |
+| **An option raised in conversation** | Nowhere yet. Writing it down does not promote it to work |
+| **A document produced by the work** | Nowhere. It is an output of the unit, not a unit of its own |
+| **A known limitation of a tool** | The dev-log. It becomes a row only when someone files the issue to fix it |
+
+**Observed in ROADZ: eight corrections between 2026-08-14 and 2026-09-05.** Documents, a
+discarded approach the dev-log had already ruled out, and loose decisions were all added as
+spawned work — while issues that did belong were missed. It is case 7 of the evaluation set.
+
+**This does not weaken the rule below.** A row for real work that was decided against stays,
+marked. What is barred is a row that was never work.
+
 ### A row that was decided against stays, marked
 
 **Never delete a `Spawned` row.** When the work is abandoned — folded into something else,
-ruled out, or overtaken — mark it and leave it where it is.
+ruled out, or overtaken — mark it in the first column and leave it where it is.
 
-```text
-| **Abandoned** — folded into #78 | A dev-log for every merged unit |
-| **Abandoned** — the shared `temp/` branch, disproved by PR #111 | Retarget a PR's head |
+```markdown
+| **Spawned — abandoned**, folded into #78 | #94 | a dev-log for every merged unit |
+| **Spawned — abandoned**, disproved by PR #111 | #102 | the shared `temp/` branch, to retarget a PR's head |
 ```
 
 | | |
@@ -476,8 +632,8 @@ ruled out, or overtaken — mark it and leave it where it is.
 | **Say what happened to it**, not only that it stopped | *Abandoned* alone leaves the next reader to re-derive whether it was wrong, done elsewhere, or deferred — which is the work the row exists to save |
 | **A deleted row loses the spawn edge** | The tree is built from recorded relationships, so a removed row does not become an unspawned discovery. It becomes one nobody can see was ever considered |
 
-**A record of what was chosen against is worth more than a tidy table.** The `Spawned` section
-is a growing definition of what this work turned out to be, not a to-do list that gets cleared
+**A record of what was chosen against is worth more than a tidy table.** The spawn rows are a
+growing definition of what this work turned out to be, not a to-do list that gets cleared
 down — so length is evidence, and pruning it destroys the evidence.
 
 ---
@@ -494,12 +650,14 @@ endpoint, not the starting point.** Reviewers read it before the diff.
 
 ## The evaluation set
 
-Six real cases with checkable outcomes, in
+Seven real cases with checkable outcomes, in
 [m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md). **Any change to
 this skill is tested against them.** Cases 1–2 are *never written*; cases 3–6 are *written
-wrong and reported right*.
+wrong and reported right*; case 7 is *written right into the wrong place* — spawn rows
+populated with things that were never work, which no read-back catches because the body
+matches the intent and the intent was wrong.
 
-The base-branch case above is the seventh, and the first isolated by this repo's own work.
+The base-branch case above is the eighth, and the first isolated by this repo's own work.
 
 ---
 
