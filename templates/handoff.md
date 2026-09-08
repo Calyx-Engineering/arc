@@ -77,12 +77,21 @@ Issues and what spawned them. Classify by cause, not subject.
 
 ## Load-bearing decisions — do not re-litigate
 
-What was settled and must not be re-opened. **What** was decided, not why — the why is in
-the dev-log.
+What was settled, **and the fact that settles it**. A decision travelling alone gets re-derived
+by the next session out of circumstances that look different, and re-derivation reaches the
+opposite answer as easily as the same one.
 
-| | |
+**The second column is the test, not a note.** A load-bearing reason can be written as a fact
+that would have to change for the decision to change — *"the 3.3 V rail cannot source 500 mA"*.
+Narrative cannot: *"we tried X, then Y"* names no fact, so it is disposable and belongs in the
+dev-log. **A row with an empty second column is a decision that will be re-opened.**
+
+| Decision | What would have to change to re-open it |
 |---|---|
-| &lt;decision&gt; | &lt;the constraint it imposes&gt; |
+| &lt;decision&gt; | &lt;the measurement, approval or condition it rests on — the fact that would have to be different&gt; |
+
+Where a decision also leaves a live trap — a branch not to touch, a file not to rewrite — that
+half is *Do not*'s, below.
 
 ## Open threads
 

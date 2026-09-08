@@ -114,6 +114,28 @@ guessing the arc's state is the failure the handoff exists to prevent.
 it does carry, and ask for the next step. A handoff missing its ordered actions is a finding
 worth naming, not a gap to fill by inference.
 
+### When you are about to do it a different way
+
+**The unit was accepted. The approach inside it was accepted with it.** This fires when you are
+about to act on an approach the handoff does not name, inside a row it does name — same issue,
+same branch, same ordered action, done another way. Not new work. A substitution.
+
+Twice in the measured corpus a session made one without noticing. One inverted the handoff's
+step order and supplied a reason it had derived itself; another read the line *not built, only
+needed if the coupler floor lands above the audio band* and promoted that method to the primary
+plan four minutes later. Neither announced a substitution, because neither saw itself making one.
+
+| | |
+|---|---|
+| **Say it before the work, not in the report** | One line: what the handoff names, what you are about to do instead, and what makes you think so |
+| **Then read *What would have to change* for that decision** | That column names the fact the decision rests on. **If the fact has not changed, the approach has not been superseded — it has been forgotten**, and the accepted one stands |
+| **A condition attached to the alternative is a condition to test** | *Only needed if X* is not a licence to start with it. Check X, and say what you found |
+| **If the fact has changed, name which one, then proceed** | A substitution carrying its constraint is a decision. One without is a re-derivation |
+
+**Stating your reason is not the check.** One of the two openings above gave a correct,
+unprompted rationale for what it was building and built the wrong thing anyway. The check is
+against the recorded constraint, not against your own account of it.
+
 ---
 
 ## Writing
@@ -143,7 +165,7 @@ Every section below exists because something was missing at a real failed cold s
 | **Where we are** | Current issue, branch, worktree, what was just finished | Work landing on the wrong branch |
 | **Do these in order** | The numbered actions the next session executes, top to bottom | A session that knows the state and still asks what to do |
 | **The tree** | Issues and what spawned them, with status | A flat list losing the shape of hardware work |
-| **Load-bearing decisions** | What must not be re-litigated | A fresh session re-opening settled questions |
+| **Load-bearing decisions** | What must not be re-litigated, **and the fact that would have to change to re-open it** | A fresh session re-deriving a settled question and reaching the opposite answer |
 | **Open threads** | Agreed but unfiled follow-ups, and unresolved questions | *"i asked you to update #12 … that didn't happen"* |
 | **What was ruled out** | Causes checked and eliminated, with what eliminated them | The next session re-deriving what this one already disproved |
 | **Next action** | One line, concrete — the first row of *do these in order* | The "what now?" round trip |
@@ -240,7 +262,7 @@ so it goes in the prompt. Everything else has a home, and belongs there.
 
 | Not here | Where |
 |---|---|
-| Why a decision was made | The dev-log. The handoff says *what was decided*, not the reasoning |
+| The narrative of how a decision was reached | The dev-log. *"We tried X, then Y"* is disposable. **The constraint that forces the decision is not** — it stays here, in the second column of *Load-bearing decisions*. A decision whose reason lives only in the dev-log is one the next session re-derives, and re-derivation reaches the opposite answer as easily as the same one |
 | Measurements, analysis, rejected topologies | K2 — `scratch/` or `arc-work/` |
 | Anything true after this arc ends | The wiki. The handoff dies with the arc |
 | A narrative of the session | Nowhere. Nobody reads it |

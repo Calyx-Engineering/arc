@@ -26,7 +26,7 @@ what changed, or that nothing did.
 | **What this issue is really for** | Not a restatement of the title |
 | **North star** | What must be true when this merges. Tested against the issue's verbatim quote where it has one |
 | **What makes it durable** | What the fix has to survive |
-| **Out of scope** | What refinement must not grow this into |
+| **Out of scope** | What refinement must not grow this into, **and why each exclusion is out** — deferred to a named issue, blocked, cheaper later, or simply not this unit's job. An exclusion with no reason is re-litigated by the next session, which cannot see one and derives its own |
 
 Carried into the PR body verbatim, so the final review tests the diff against it.
 
