@@ -1,15 +1,15 @@
 ---
 name: work-watch
-description: Use continuously while work is in progress — one sweep that watches for seven things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, whether a settled decision has been written down before the next topic opens, whether Arc itself just cost the work something, and whether this session has degraded far enough that the work should hand off. Run it at natural pauses, not every turn.
-camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, decision-unwritten, friction-caught, saturation-flagged]
-checks: [commit-point, test-obligation, depth, edit-completeness, working-surface, friction, saturation]
+description: Use continuously while work is in progress — one sweep that watches for eight things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, whether a settled decision has been written down before the next topic opens, whether Arc itself just cost the work something, whether this session has degraded far enough that the work should hand off, and whether a failure is about to be blamed on the user's environment with nothing tested on your own side. Run it at natural pauses, not every turn.
+camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, decision-unwritten, friction-caught, saturation-flagged, blame-gated]
+checks: [commit-point, test-obligation, depth, edit-completeness, working-surface, friction, saturation, environment-blame]
 skips:
   - friction (the operating agreement has the friction log off)
 ---
 
 # Watching the work
 
-Seven checks watch work as it proceeds. **One sweep, not seven always-on checks
+Eight checks watch work as it proceeds. **One sweep, not eight always-on checks
 competing for the same attention.**
 
 | Watches for | Proposes | |
@@ -21,16 +21,17 @@ competing for the same attention.**
 | A decision is settled and the next topic is opening | Writing it down first | m13 · m15 |
 | Arc itself cost the work something | A line in the arc's friction log | m17 · [`record-route`](../record-route/SKILL.md) |
 | This session has degraded far enough that the work should move | A handoff now, while there is budget to write one | m15 · [`handoff`](../handoff/SKILL.md) |
+| A failure is about to be blamed on the user's environment | One tested alternative on your own side, first | m13 |
 
 > **Propose, never act.** Checks 1, 2, 3, 6 and 7 nudge; the human decides. This is the whole
 > posture, and violating it on the first — committing unasked — is the single most repeated
 > correction in the record.
 >
-> **Checks 4 and 5 are gates, not nudges.** They govern your own behaviour rather than
+> **Checks 4, 5 and 8 are gates, not nudges.** They govern your own behaviour rather than
 > proposing anything: check 4 runs before you claim an edit is done, check 5 before you open
-> the next topic. **Check 4 is the only one that blocks.** Check 5 nudges in one case — when
-> the working surface itself has stopped holding the state, which is not something writing
-> one more thing down repairs.
+> the next topic, check 8 before you name the user's setup as the cause of a failure.
+> **Checks 4 and 8 block.** Check 5 nudges in one case — when the working surface itself has
+> stopped holding the state, which is not something writing one more thing down repairs.
 
 ---
 
@@ -43,9 +44,9 @@ Over-firing recreates the annoyance in a new form. The first three checks share 
 threshold and it is judgment, not a count: *has anything actually changed since the last
 sweep?* If not, say nothing.
 
-**Checks 4 and 5 are exempt from the threshold.** Neither is triggered by a pause but by an
-act — you are about to report an edit complete, or about to open the next topic. They run
-every time, at that moment.
+**Checks 4, 5 and 8 are exempt from the threshold.** None is triggered by a pause but by an
+act — you are about to report an edit complete, to open the next topic, or to say the failure
+is on the user's side. They run every time, at that moment.
 
 **Check 7 answers to its own precondition**, as check 3 does. Nothing may have changed since
 the last sweep and the session can still have gone past the point where it should hand off —
@@ -459,6 +460,100 @@ exactly as it is for the commit in check 1.
 
 ---
 
+## 8. Is the failure actually on the user's side?
+
+> *"you keep assuming **I** did something wrong when you're just stopping at the first issue
+> and not trying to figure it out yourself. / this should have been done 4 hours ago if you
+> didn't stop every 2 seconds"*
+
+**A failure attributed to the user's environment requires one tested alternative first.**
+
+Anything outside your own command path is the user's environment: the bench, the wiring, the
+instrument, the network, the install, the credentials, a file they edited. Naming one as the
+cause ends your side of the investigation and starts theirs — they go downstairs, or reinstall,
+or re-run a measurement they already made. **That is the most expensive sentence available to
+you**, and in the record it was said before anything on the session's own side had been tried.
+
+### The gate
+
+| Step | |
+|---|---|
+| 1 | Notice you are about to name the user's setup as the cause. That noticing is the whole trigger |
+| 2 | Name **one** alternative on your own side for the **same** symptom — your command, your parameters, your assumption about how the instrument behaves |
+| 3 | **Run it.** Reasoning about it is not testing it |
+| 4 | Report what you ran and what it showed, and only then what is left for the user |
+
+**One tested alternative, not a differential.** The gate is bounded on purpose: a check that
+demanded every hypothesis be exhausted would never clear, and it would become its own version
+of the depth failure check 3 watches for.
+
+### A fix on your own side for a different symptom does not clear the gate
+
+This is the shape that actually occurred, and it reads as diligence:
+
+> **CH2 nothing, CH3 a signal** — *"Either the probes are on the other posts, or the pos/neg
+> assignment is backwards."*
+>
+> …and one bug of mine: `restore` runs in a `finally` that sits outside the `with scope:` block.
+> Fixing now.
+
+Two bugs of its own were found, fixed and reported in the same reply — **and neither was about
+the channel that read nothing.** The alternative has to be for the symptom you are attributing.
+An unrelated self-correction beside the blame makes the reply look tested when nothing was.
+
+### A stated measurement is data
+
+> *"the physical setup - i verified that a 100mV input generates a 4V output. if you're not
+> getting anything then its an error on your side."*
+
+When the user reports a measurement they made, it is evidence about the rig, not an opinion to
+be weighed against your own reading. It is CLAUDE.md's *he is right about his own domain* in
+its most literal form: your instrument returning nothing where he measured 4 V is a fact about
+**your command path**, and it narrows the search rather than widening it.
+
+### Repetition is the compound failure
+
+One wrong attribution is a bad guess. The cost in the record came from three replies in a row,
+each handing something back to the person at the bench:
+
+| Reply to | Handed over |
+|---|---|
+| turn 30 | *"Simplest is you hit Auto-Scale down there"* · *"The gain knob is still at minimum"* |
+| turn 31 | *"Two things left, both yours"* |
+| turn 32 | *"Two things for you at the bench"* |
+
+He rejected it on turn 33 — *"no ch1 is 10x! the setup is done!!!"* — and the session took it
+back: *"Understood — 10× stays, setup is done. Fixing this on my side instead."* **Then it
+handed the same thing over again on the very next reply**: *"the sequence still needs one bench
+action from you."*
+
+**The second attribution of the same failure to the same setup is the signal**, on the same
+logic as check 6's *a correction given twice*. The one that comes after the person has told you
+the setup is fine is not a signal any more — it is the state this check exists to prevent.
+
+### Both directions fail
+
+| | Cost |
+|---|---|
+| **Blames too early** | The user's time, at the bench, on a rig that was fine. Four hours in the recorded instance, and the trust that the next report is worth walking downstairs for |
+| **Never says it** | A genuinely disconnected probe gets debugged in software forever. The gate is one tested alternative, not a prohibition — once it is cleared, say the setup is at fault plainly |
+
+### It is a gate, and it blocks
+
+Like checks 4 and 5, this one governs your own behaviour rather than proposing something to the
+human — and like check 4, it blocks. **The alternative is tested before the attribution is made,
+or the attribution is not made.**
+
+**Scored by `evals/environment-blame/`** — `tools/environment-blame.sh`, which reads the session
+above: an instrument returning nothing, a bench the user had already described, the replies that
+named it as the cause, and the measurement he came back and stated. **Its window is the three
+replies before he rejected the attribution, and the first blame inside it decides** — a session
+that sent him downstairs on the first one sent him downstairs, whatever the next two said.
+Everything from turn 33 on is carried as evidence and not scored, because by then the judgement
+being measured would be his. On replay it reads `BLAMED`, which is what happened.
+
+---
+
 ## Before the PR — does the build match the spec's diagram?
 
 **A spec section that defines a feature opens with a diagram. That diagram is the compact
@@ -493,9 +588,10 @@ always-on checks would compete for the same attention and share the same over-fi
 they share one moment — the pause. **Checks 3 and 7 each carry a mechanical precondition on top
 of it**, because the thing they watch can become true while nothing about the work has changed.
 
-**Checks 4 and 5 are gates, not nudges.** They fire on an act — reporting an edit done,
-opening the next topic — and they govern your own behaviour rather than proposing anything.
-They sit here because the moment each matters is a moment this sweep is already watching.
+**Checks 4, 5 and 8 are gates, not nudges.** They fire on an act — reporting an edit done,
+opening the next topic, naming the user's setup as the cause — and they govern your own
+behaviour rather than proposing anything. They sit here because the moment each matters is a
+moment this sweep is already watching.
 
 **Check 6 is the only one with an off switch.** Every other check holds everywhere. This one is
 about Arc, and a repository consuming Arc has no reason to record its rough edges.
@@ -505,7 +601,8 @@ because its signals — turns spent, ground re-covered, the subject the load is 
 this sweep is already looking at; a separate watcher would be reading the same conversation
 twice to ask a seventh question.
 
-**Check 4 is here because it is the same sweep, not the same shape.** It fires on an act
-rather than a pause, and it gates your own report rather than proposing to the human. It sits
-with the others because the moment it matters — an edit just landed and is about to be called
-done — is a moment this sweep is already looking at.
+**Check 8 is check 4's question asked of a diagnosis rather than an edit.** Both are m13's
+shape — an assertion made without the read that would settle it — which is why neither is a new
+mechanism. Check 4 gates a claim about the tree; check 8 gates a claim about the cause, and the
+moment each matters — an edit about to be called done, a diagnosis about to send someone
+downstairs — is a moment this sweep is already looking at.

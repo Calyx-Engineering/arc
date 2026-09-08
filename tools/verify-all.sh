@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-issue-boxes verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases"
+KNOWN="verify-autonomy verify-skill-registry verify-issue-boxes verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame"
 
 RUN=0
 FAILED=0
@@ -83,6 +83,7 @@ run_gate "response length cases" bash tools/response-length.sh selftest
 run_gate "topic numbering cases" bash tools/topic-numbering.sh selftest
 run_gate "report shape cases" bash tools/report-grade.sh selftest
 run_gate "saturation cases" bash tools/saturation-cases.sh selftest
+run_gate "environment blame cases" bash tools/environment-blame.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -136,13 +137,14 @@ if [ "$LIST" = "1" ]; then
                               test; re-running a case against a changed skill needs
                               claude plugin eval, gated behind early access — #181
     the eval cases themselves the gates above run the SELFTESTS of skill-cases.sh,
-                              response-length.sh, topic-numbering.sh, report-grade.sh and
-                              saturation-cases.sh, on fixtures. Scoring the real cases needs the
-                              corpus — the transcripts, and for report-grade.sh the source
-                              repositories — which live on
+                              response-length.sh, topic-numbering.sh, report-grade.sh,
+                              saturation-cases.sh and environment-blame.sh, on fixtures. Scoring
+                              the real cases needs the corpus — the transcripts, and for
+                              report-grade.sh the source repositories — which live on
                               one machine. Run bash tools/skill-cases.sh, bash
                               tools/response-length.sh, bash tools/topic-numbering.sh, bash
-                              tools/saturation-cases.sh and bash tools/report-grade.sh there.
+                              tools/saturation-cases.sh, bash tools/environment-blame.sh and
+                              bash tools/report-grade.sh there.
                               report-grade.sh alone still scores from its stored excerpts when
                               the corpus is absent; it just cannot check them against their
                               source
@@ -152,6 +154,11 @@ if [ "$LIST" = "1" ]; then
     and whether a session     52 turns long, so none of them is a gate here
     notices its own
     saturation
+    check 8 against a         environment-blame.sh has no --probe at all, and that is the
+    CHANGED skill             condition, not an omission: it scores a session in front of an
+                              instrument that answers and returns nothing, and a replayed
+                              session has no instrument. Scoring a change to work-watch check 8
+                              needs a live session at a real bench — #246
     a real branch↔issue link  verify-linked-branch.sh selftest runs its decision on fixtures. The
                               live read needs GitHub and a real issue — run
                               bash tools/verify-linked-branch.sh <NN> <branch> after creating one
