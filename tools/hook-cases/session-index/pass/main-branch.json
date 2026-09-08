@@ -1,0 +1,2 @@
+# trunk — this hook classifies nothing, it records where the transcript went
+{"session_id":"verify-si-main","cwd":"__FIXTURE_MAIN__","tool_name":"Write","tool_input":{"file_path":"__FIXTURE_MAIN__/a.md"}}
