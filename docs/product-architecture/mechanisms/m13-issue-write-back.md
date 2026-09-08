@@ -106,6 +106,14 @@ fires is the moment an edit is about to be called done.
 check 5 is what makes it *current* — ticking a done item and reading it back, so the checklist
 still says where the work is. Both fire on an act rather than a pause.
 
+**Check 8 is the same shape asked of a diagnosis.** An assertion that a failure is caused by
+the user's bench, install or wiring is a claim nothing read back either — and it is more
+expensive than a stale table cell, because it sends a person to a rig that was working. The
+gate is one tested alternative on the session's own command path before the attribution is
+made. It carries this mechanism rather than adding one, on the same argument check 4 does:
+the failure is an assertion made without the read that would settle it.
+[#165](https://github.com/Calyx-Engineering/arc/issues/165)
+
 **Same failure class as §2.8** (tracker mechanics) and the dropped-staged-files case in
 [commit-rhythm](m14-commit-rhythm.md): mechanisms that **report success and do the wrong
 thing**. `issue-writing` already opens with exactly this warning —
@@ -201,3 +209,4 @@ gh pr view <N> --json closingIssuesReferences   # empty means it did not link
 - [commit-rhythm.md](m14-commit-rhythm.md) — dropped staged files, same silent-failure class
 - [handoff-spine.md](m15-handoff-spine.md) — proposed home for pending actions
 - ROADZ `.claude/skills/issue-writing/SKILL.md` — the skill under evaluation
+- [`work-watch`](../../../skills/work-watch/SKILL.md) checks 4, 5 and 8 — this mechanism in files, in the checklist, and in a diagnosis
