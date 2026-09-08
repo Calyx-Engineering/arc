@@ -203,6 +203,9 @@ fi
 #
 # The test is `commands/$c` existing, not the files matching. Two copies that have drifted
 # apart are worse than two that agree, not better.
+#
+# THE GLOB IS FLAT, where the skills one walks `*/`. A namespaced `.claude/commands/arc/next.md`
+# is invisible to it, and cannot shadow anything while `commands/` is flat. Revisit if it is not.
 cmddupes=""
 for f in .claude/commands/*.md; do
   [ -f "$f" ] || continue
