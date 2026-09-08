@@ -8,7 +8,7 @@
 #
 # camp-reports: branch-create
 # checks: declared-convention-read, issue-or-pr-number-present
-# skips: base-is-arc (not built)
+# skips: base-is-arc (not built), declared-convention-read (there is no branch name to check — the payload names no command, the command creates no branch, it lists, deletes or renames, no name could be read out of it, the argument is a flag or carries a shell operator, the name is trunk — or no CLAUDE.md up the tree declares a convention, or it declares no branching section), issue-or-pr-number-present (the same conditions)
 #
 # The three lines above are the `camp-reports:` declaration. They are why this hook is
 # visible when it fires — one declaration drives both the spoken report and the event-log
@@ -24,6 +24,23 @@
 # escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
 
+# ---- the activation log ---------------------------------------------------------
+# Sourced before anything can exit. This hook is silent on most commands it sees, so the
+# log is the only thing separating "read the command and had nothing to say" from "never
+# ran". m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event branch-create
+arc_log_skip base-is-arc "not built"
+
+# A path this hook takes before it has a branch name to check: both declared checks are
+# recorded as unrun, with the reason, and the hook leaves quietly.
+nothing_to_check() {
+  arc_log_skip declared-convention-read "$1"
+  arc_log_skip issue-or-pr-number-present "$1"
+  arc_log_outcome ok "$1"
+  exit 0
+}
+
 # ---- fail-open wrapper ----------------------------------------------------------
 # Never `set -e`. The branch already exists by the time this runs, so there is nothing to
 # deny — this hook reports. On anything unexpected, exit 0 and stay silent.
@@ -38,6 +55,7 @@ field() {
 
 # Speak, without blocking. exit 2 surfaces stderr to the transcript.
 report() {
+  arc_log_outcome_default failed "Camp reported on the new branch"
   printf '%s\n' "$1" >&2
   exit 2
 }
@@ -48,26 +66,27 @@ report() {
 # `"command":"…"}}` leaves the braces attached otherwise, and they end up inside the branch
 # name the report quotes back.
 CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/".*$//')"
-[ -n "$CMD" ] || exit 0
+[ -n "$CMD" ] || nothing_to_check "the payload names no command"
 
 # Only branch creation. `git checkout <existing>` and `git switch` without -c are moves,
 # not creations, and this hook has nothing to say about them.
 case "$CMD" in
   *"git checkout -b "*|*"git checkout -B "*|*"git switch -c "*|*"git switch -C "*|*"git branch "*) ;;
-  *) exit 0 ;;
+  *) nothing_to_check "the command creates no branch" ;;
 esac
 
 # The name is the argument after the creating flag. `git branch -d` and friends delete
 # rather than create, so they are excluded before the name is read.
 case "$CMD" in
-  *"git branch -d"*|*"git branch -D"*|*"git branch -m"*|*"git branch --list"*|*"git branch -a"*|*"git branch -r"*) exit 0 ;;
+  *"git branch -d"*|*"git branch -D"*|*"git branch -m"*|*"git branch --list"*|*"git branch -a"*|*"git branch -r"*)
+    nothing_to_check "the command lists, deletes or renames rather than creates" ;;
 esac
 
 NAME="$(printf '%s' "$CMD" \
   | grep -oE 'git (checkout|switch|branch) +(-[bBcC] +)?[^ ]+' \
   | head -1 \
   | awk '{print $NF}')"
-[ -n "$NAME" ] || exit 0
+[ -n "$NAME" ] || nothing_to_check "no branch name could be read out of the command"
 
 # The token is a shell word, not yet a ref: `git checkout -b 'fix-the-thing';` carries quotes
 # and a terminator that are no part of the name.
@@ -78,13 +97,14 @@ NAME="$(printf '%s' "$NAME" | sed -e "s/^['\"]//" -e "s/['\"]$//" -e 's/[;&]*$//
 # on a branch named `|` is the same false report this hook exists to stop making. Only the
 # shell's own metacharacters are rejected — git's legal ref names are wider than any pattern
 # worth writing here, and `_wip` is exactly the numberless branch that should be reported.
-case "$NAME" in -*) exit 0 ;; esac
-case "$NAME" in *['|&;()<>$`']*) exit 0 ;; esac
-[ -n "$NAME" ] || exit 0
+case "$NAME" in -*) nothing_to_check "the argument is a flag, not a name" ;; esac
+case "$NAME" in *['|&;()<>$`']*) nothing_to_check "the argument carries a shell operator, not a name" ;; esac
+[ -n "$NAME" ] || nothing_to_check "no branch name could be read out of the command"
+arc_log_event branch-create "branch=$NAME"
 
 # The trunk branches are not work branches and are never created by this path in practice;
 # if one is, the session-start hook is the thing that speaks about it.
-case "$NAME" in main|master|develop) exit 0 ;; esac
+case "$NAME" in main|master|develop) nothing_to_check "trunk — camp-session-start speaks about that" ;; esac
 
 # ---- the repository's declared convention ---------------------------------------
 # Branch naming is per-repo. Arc names arcs `arc/<nn>-<slug>`; ROADZ names them after the
@@ -107,7 +127,7 @@ while [ -n "$dir" ]; do
   if [ -f "$dir/CLAUDE.md" ]; then CONVENTION="$dir/CLAUDE.md"; break; fi
   case "$dir" in */?*) dir="${dir%/*}" ;; *) dir="" ;; esac
 done
-[ -n "$CONVENTION" ] || exit 0
+[ -n "$CONVENTION" ] || nothing_to_check "no CLAUDE.md up the tree, so no convention is declared"
 
 # The section runs from the heading that names branching to the next heading of any kind. The
 # heading whose whole subject is branching is preferred, so a `## Branch protection` elsewhere
@@ -123,7 +143,8 @@ section() {
 }
 SECTION="$(section '^#+ +[Bb]ranch(ing|es|[- ]naming)?([- ](strategy|conventions?|rules?|names?))?[[:space:]]*$')"
 [ -n "$SECTION" ] || SECTION="$(section '^#+ +.*[Bb]ranch')"
-[ -n "$SECTION" ] || exit 0
+[ -n "$SECTION" ] || nothing_to_check "CLAUDE.md declares no branching section"
+arc_log_pass declared-convention-read
 
 # The declared forms are the backticked branch names in that section — `arc/03-camp-issue-78-work-nav`,
 # `<module>/rev-<X>-issue-<NN>-<slug>`. Only those carrying an identifier count: a form with a
@@ -148,6 +169,8 @@ FORMS="$(printf '%s\n' "$NAMED" | grep -E '[A-Za-z]{2,}[-_]?(<[Nn]+>|<number>|[0
 # form. It carries no issue number and is not supposed to: telling the repo to rename the
 # branch its own convention names is the failure this hook is being fixed for.
 if printf '%s\n' "$NAMED" | grep -qxF "$NAME"; then
+  arc_log_pass issue-or-pr-number-present=declared-by-name
+  arc_log_outcome ok "the convention names this branch in full"
   exit 0
 fi
 
@@ -166,11 +189,16 @@ NUM="$(printf '%s' "$NAME" | tr '[:upper:]' '[:lower:]' \
   | grep -oE "(^|[-/_])($LABELS)[-_]?[0-9]+" | head -1 | grep -oE '[0-9]+$')"
 if [ -n "$NUM" ] && [ "$NUM" -gt 0 ] 2>/dev/null; then
   # It names an issue or a PR. Whatever else the name is, the tracker link exists.
+  arc_log_pass "issue-or-pr-number-present=$NUM"
+  arc_log_outcome ok "the name carries an identifier number"
   exit 0
 fi
 
 # ---- nothing links it -----------------------------------------------------------
 # One finding, and it quotes the repo's own words rather than a shape compiled in here.
+arc_log_fail issue-or-pr-number-present=absent
+arc_log_outcome failed "the branch name links to nothing in the tracker"
+
 FORM="$(printf '%s\n' "$FORMS" | head -1)"
 DECLARES=""
 [ -n "$FORM" ] && DECLARES=" This repo declares \`$FORM\` (\`CLAUDE.md\`, branching)."
