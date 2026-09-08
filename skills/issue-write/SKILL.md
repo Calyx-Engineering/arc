@@ -114,9 +114,45 @@ names* — a question a container cannot answer, because it never merges. Its ch
 mechanical completion; the boundary is a review, and closing removes the surface it happens on.
 
 **`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
-inherits a capability-sized title, which is the first failure above. **Not `spec:`**: one
-word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
-its keep stays open until a month of real use answers it.
+inherits a capability-sized title, which is the first failure above. **`spec:` is retired**:
+one word per meaning, or the type sorts nothing. `tools/verify-labels.sh` reports an unmapped
+prefix, so the retirement is enforced rather than remembered.
+
+### Labels — the prefix decides, and only the prefix
+
+**A label that disagrees with the prefix is worse than no label.** `label:bug` then returns
+work that is not a bug and hides work that is.
+
+| Prefix | Label |
+|---|---|
+| `fix:` | `bug` |
+| `feat:` | `enhancement` |
+| `docs:` | `documentation` |
+| `arc:` | `arc` |
+| `workstream:` | `workstream` |
+| `scope:` · `chore:` · `refactor:` · `test:` | **none** |
+
+**Licensing nothing is a decision, not an omission.** Nobody filters on a chore, so a label for
+one costs attention at every issue write and returns nothing anyone asked for. The test is
+whether a query would actually run.
+
+Three labels say what a title cannot, and ride alongside the type label:
+
+| | |
+|---|---|
+| `in-progress` | A run is working it now. The driver reads it |
+| `priority: high` | Blocks or degrades other work. High only — medium is the absence of a label, and nobody queries for the absence of urgency |
+| `issue-discipline` | The area. A second area label has to name a query that would run |
+
+**The arc is the milestone, never a label.** A label duplicating it is one more thing to set,
+one more thing to get wrong, and nothing the milestone view does not already show.
+
+```sh
+tools/verify-labels.sh             every open issue, prefix against label
+tools/verify-labels.sh labels      the label set itself
+```
+
+**The table above and the script's `MAP` are the same fact.** A new prefix needs both.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
