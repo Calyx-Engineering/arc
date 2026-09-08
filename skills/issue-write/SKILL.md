@@ -478,9 +478,8 @@ edit the file, write it back — and read it back again:
 ```sh
 gh issue view NN --json body --jq .body > body.md \
   && [ -s body.md ] \
-  && cp body.md body.before
-
-python edit.py body.md \
+  && cp body.md body.before \
+  && python edit.py body.md \
   && ! cmp -s body.before body.md \
   && gh issue edit NN --body-file body.md
 
@@ -494,10 +493,11 @@ exit status, or compare the file against a copy taken before the edit. The snipp
 both, because neither alone covers everything: `&&` misses an edit that exits 0 having changed
 nothing, and `cmp` misses nothing but is the one people drop.
 
-**Guard the read as well.** A failed `gh issue view` leaves an empty `body.md` — the redirect
-truncated it before the command failed — and an empty `body.before` beside it. The edit then
-writes the new section into an empty file, `cmp` sees a difference, and the write-back replaces
-the whole body with that section alone. `[ -s body.md ]` is what stops it.
+**Guard the read as well, in the same chain.** A failed `gh issue view` leaves an empty
+`body.md` — the redirect truncated it before the command failed — and no `body.before` at
+all. `cmp` against a missing file exits **2**, so `! cmp` is *true* and the write-back runs
+anyway. `[ -s body.md ]` stops it, and it has to be **one chain**: split in two, the read's
+failure never reaches the write.
 
 **The failure is the edit step failing, not only a path the next step cannot see.** A reader
 who wrote the file to a shared, visible path concludes the trap does not apply, and it still

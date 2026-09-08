@@ -88,7 +88,9 @@ Pass 2 then reviewed those fixes and found two more, both in the fix rather than
 | | |
 |---|---|
 | **`head -n1` picked the wrong terminal section** | A body in the older two-section shape carries `Related` and then `Spawned`. It is the **last** of them that has to be last, and taking the first reported a correctly-formed legacy body as a defect — the very shape the widened check claims to support. `tail -n1`, plus a fixture |
-| **Anchoring the title made the match CR-sensitive** | The pre-fix regex had no `$`, so a trailing `` was harmless. A body read out of `gh pr view --json body` is CRLF — this file's own `live_norm` exists for that reason — so the documented flow would have fed the check input on which every terminal heading is invisible, and it would have printed a pass. `tr -d ''` |
+| **Anchoring the title made the match CR-sensitive** | The pre-fix regex had no `$`, so a trailing `
+` was harmless. A body read out of `gh pr view --json body` is CRLF — this file's own `live_norm` exists for that reason — so the documented flow would have fed the check input on which every terminal heading is invisible, and it would have printed a pass. `tr -d '
+'` |
 
 **A note on the commit message for `f0b6ce7`.** It claims a fix for a `grep -inE` whose index
 shadowed the file's line number. That bug was real but was introduced and removed inside the same
@@ -98,7 +100,7 @@ could find. The fixtures caught it, which is what they are for — but it was no
 ## Evidence
 
 `bash tools/verify-all.sh` — 19 gates, all clean. `tracker body rules` went from 19 cases to
-25: three fixtures for the `Spawned` heading, and three more from the review above.
+26: three fixtures for the `Spawned` heading, and three more from the review passes.
 
 ## Not done
 

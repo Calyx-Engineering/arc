@@ -60,6 +60,8 @@ Pass 1 found the fix contradicted twice in its own file, by the other two issues
 |---|---|
 | **The #193 recovery snippet repeated the trap** | Its `gh pr view … > body.md` was unchained, so a failed read produced an empty file, an empty `body.before`, a difference the guard let through, and a PR body replaced by the keyword line alone. Two hundred lines below the section teaching the opposite. Now one `&&` chain with a `[ -s body.md ]` on it |
 | **Then the canonical snippet turned out to have it too** | Pass 2's finding. Fixing the copy and leaving the original is worse than fixing neither, because the file then documents two standards and the weaker one is the normative example |
+| **And the guarded snippet was still two chains** | Pass 3's finding, and the sharpest. `[ -s body.md ]` was in the first chain and the write-back in a second, so a failed read still reached `gh`: with `body.before` never created, `cmp -s` exits **2**, `! cmp` is true, and the write proceeds. One chain now |
+| **`references/github.md` carried both defects untouched** | The unguarded three-line recipe, and the path-visibility-only sentence the issue quotes as the wording that fails to cover the trap. Three commits fixed the SKILL and never opened the reference it links to |
 | **`live-bind` did the same against a merged PR** | The tool #193 added. Recorded in that issue's dev-log |
 
 Neither was in a diff either author would have read as suspicious. Both were in the section the

@@ -97,9 +97,28 @@ endings and trailing blank lines, so a restore written from an exact copy of wha
 not read back identical. The comparison now normalises both sides, and `live_norm` is where that
 lives.
 
-The happy path has been run once, against the live API. Its two failing assertions were correct:
-#225 was already closed, and the byte comparison was wrong — the check working, on a
-precondition and on itself.
+### Then pass 3 asked whether the case was a test or a memory
+
+It was still a memory. The runner existed and was sound, but the version carrying `live_norm`
+had never completed a run — the recorded one predated it and had ended with two failed
+assertions. An armed assertion that has never fired is a claim, not a test.
+
+Discharged: probe [#233](https://github.com/Calyx-Engineering/arc/issues/233) against merged
+PR [#200](https://github.com/Calyx-Engineering/arc/pull/200).
+
+```text
+$ bash tools/verify-tracker-body.sh live-bind 200 233
+PASS  a keyword added after the merge bound #233 on merged PR 200
+PASS  userLinkedOnly is [] — the link came from the keyword, not the UI
+PASS  issue #233 is still OPEN — the bind restores the link, never the closure
+PASS  PR 200's body reads back as it was, and the probe keyword is gone
+PASS  #233 unbound
+EXIT=0
+```
+
+PR #200 was restored — no keyword, nothing bound. The case file's fourth run row is that output,
+and its preconditions now say the target issue must be **open**, which the earlier run's
+arguments no longer satisfy.
 
 ## Not done
 
