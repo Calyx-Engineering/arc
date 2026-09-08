@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec.
 
-**Issue:** [#154](https://github.com/Calyx-Engineering/arc/issues/154)  ·  **PR:** [#238](https://github.com/Calyx-Engineering/arc/pull/238)
+**Issue:** [#154](https://github.com/Calyx-Engineering/arc/issues/154)  ·  **PR:** [#241](https://github.com/Calyx-Engineering/arc/pull/241)
 
 ## Problem
 
