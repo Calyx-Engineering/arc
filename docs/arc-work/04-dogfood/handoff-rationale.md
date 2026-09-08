@@ -27,12 +27,19 @@ failed — which is five openings, not three.
 | 1 | C2 | Nothing was carried. The writer's document went to a session scratchpad headed *"Not committed to ROADZ"*, and the reader found `=====HANDOFF=====` with nothing under it | **No** — a delivery failure. Nothing was stripped because nothing was written |
 | 2 | C1, C2 | The document was **wrong**, not thin. It asserted *"not cloned here"* and *"Fill in rows 2–4"* when the clone existed and all five rows were open | **No** — and the binding worked. The session repeated both claims faithfully 4.2 seconds after reading them. Stale content, not missing rationale |
 | 3 | C2 | *"Option 1 is the recommended fix: a 1:1 600 Ω line isolation transformer per channel"* — the choice asserted, with no *why Option 1* anywhere in the file | **Yes** |
-| 4 | C1, C2 | *"Once filed, steps 0a–0b … unlock the #40 work"* — the order given, the reason absent. The session re-derived a reason from the dependency graph and inverted the order | **Yes, and it is the predicted mechanism exactly.** The fact that would have settled it — the user was about to be physically at the bench — was never written down |
+| 4 | C1, C2 | *"Once filed, steps 0a–0b … unlock the #40 work"* — the order given, the reason absent. The session re-derived a reason from the dependency graph and inverted the order | **Yes — the predicted mechanism exactly, in a slot the hypothesis did not name.** Decision, no constraint, re-derived, opposite answer: that is the hypothesis step for step. What it got wrong is *where*. It points at *Load-bearing decisions*; this decision was an **order**, and lives in the ordered actions. The fact that would have settled it — the user was about to be physically at the bench — was never written down anywhere |
 | 7 | C1 | The bound was in the document *and* quoted back correctly, unprompted, at `00:59:38`. A DC-ramp capacitance rig was designed four minutes later for a setup that measures inductance | **No** — rationale present, stated, and still the wrong work |
 
 **Two confirm, three reject.** The three rejections are not near-misses; each fails for a cause
 in a different layer — the document was never delivered (1), the document was false (2), the
 document was read and correctly understood (7).
+
+**Confirming the mechanism is not the same as confirming where it lives, and opening 4 separates
+the two.** The hypothesis describes the failure exactly and then points at the wrong section: it
+says *a decision with none of its constraints*, and the decisions table is the obvious home, but
+opening 4's decision was a **sequence**. The constraint column engages nothing there. This is why
+the fix below is three mechanisms rather than one — the diagnosis was right and its implied
+remedy was incomplete.
 
 ## What that splits the fix into
 
@@ -77,9 +84,16 @@ is none, and there cannot be one from this corpus.
 
 **C1 and C2 cannot move.** They score what a session *did*, and all eight sessions are finished
 recordings of openings that read the old format. Re-reading them yields the baseline's numbers by
-construction; a changed format cannot reach backwards into a transcript. Re-running an opening
-against the changed artifacts needs a live model and is
-[#181](https://github.com/Calyx-Engineering/arc/issues/181), as the baseline already stated.
+construction; a changed format cannot reach backwards into a transcript. Re-running an opening against the changed artifacts needs a live model.
+
+**And no filed issue carries that work — including #181, which the baseline routes it to and this
+document repeated.** [#181](https://github.com/Calyx-Engineering/arc/issues/181) builds *an eval
+suite that gates skill firing*: a suite per shipping skill, `tool_used: Skill` graders, a
+threshold in `verify-all.sh`. It would supply the **capability** — `claude plugin eval` can re-run
+a case against a changed artifact, which is exactly what is missing — but none of its boxes
+re-scores a handoff opening, and it is itself blocked on an account entitlement rather than on an
+issue. The re-score is unrouted, and is recorded as a spawned finding rather than parked against
+an issue that does not hold it.
 
 So what follows is a **document-level counterfactual**, scored by reading the changed artifacts
 against each bad opening's missing fact. It is weaker than the baseline in two specific ways, and
@@ -104,7 +118,7 @@ are named above and neither is a rationale problem.
 ## What would actually move the score
 
 **A live re-run — #181.** Everything here is text about text. The gate
-(`tools/verify-handoff-rationale.sh`, 6 live probes, 9 fixture cases) proves the rules are
+(`tools/verify-handoff-rationale.sh`, 9 live probes, 12 fixture cases) proves the rules are
 present and that each probe can fail; it cannot prove a session follows them, and no gate in this
 repository can — `tools/verify-all.sh --list` says so for every skill.
 
