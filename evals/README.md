@@ -1,6 +1,6 @@
 # Eval cases
 
-Cases authored against real work. Five suites, each asking a different question, and each with
+Cases authored against real work. Six suites, each asking a different question, and each with
 its own scorer:
 
 | Suite | Question | Scored by |
@@ -10,8 +10,9 @@ its own scorer:
 | **`topic-numbering/`** | Could the user answer this multi-topic reply by number? — [#160](https://github.com/Calyx-Engineering/arc/issues/160) | `tools/topic-numbering.sh` |
 | **`report-shape/`** | Does the report open with the conclusion, and does every claim say where it came from? — [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#164](https://github.com/Calyx-Engineering/arc/issues/164) | `tools/report-grade.sh` |
 | **`saturation/`** | Did the session propose handing off before the user said the context was full? — [#154](https://github.com/Calyx-Engineering/arc/issues/154) | `tools/saturation-cases.sh` |
+| **`environment-blame/`** | Was one alternative tested on the session's own command path before the user's bench was named as the cause? — [#165](https://github.com/Calyx-Engineering/arc/issues/165) | `tools/environment-blame.sh` |
 
-**The first three score a reply. The fourth scores a document. The fifth scores a session.**
+**The first three score a reply. The fourth scores a document. The last two score a session.**
 `saturation/` asks which turn a proposal landed on, and the answer only exists across a whole
 conversation: the defect is that the session had not said anything yet, so there is no prompt to
 key a case to. It carries the user's turns in order, the turn he called the saturation on, and
@@ -39,20 +40,28 @@ outcome; the scorer re-derives every column it can answer.
 and that the rule can hold on a turn the skill never fired. The second and third suites exist
 because the first one cannot answer their question.
 
-**The last four need no model to grade them.** Word count, label presence, heading class and
+**The last five need no model to grade them.** Word count, label presence, heading class and
 which turn a keyword landed on are arithmetic, so none waits on
 [#181](https://github.com/Calyx-Engineering/arc/issues/181). Each carries a `selftest` on
 fixtures, and it is the selftest — not the real cases — that is wired into
 `tools/verify-all.sh`, because the corpus is on one machine.
 
-**`saturation/`'s arithmetic is the weakest of the four, and it says so.** Whether a reply
-proposed handing off is judgment, and the scorer answers it with a keyword scan; what keeps it
-honest is that a pass also requires the skill to have fired, and that the matching sentence is
-printed rather than summarised.
+**`saturation/` and `environment-blame/` carry the weakest arithmetic, and both say so.**
+Whether a reply proposed handing off, and whether it tested an alternative before naming the
+bench, are judgments answered here with keyword scans. Three things keep them honest: a pass
+also requires the skill to have fired, the matching sentences are printed rather than
+summarised, and `environment-blame/` resolves an unmatchable case to the failure rather than to
+the pass — a false `HELD` hides the defect the suite exists to find.
 
-Everything below is `skill-firing/`'s. `response-length/`, `topic-numbering/` and `saturation/`
-key their `turns/<n>.md` by source turn number; `report-shape/` keys its `excerpt.md` by document
-and line range. All four are documented in their scorers' headers.
+**`environment-blame/` is the only suite with no probe, and the reason is the condition.** Its
+case is hardware-in-the-loop: an instrument that answers and returns nothing while the user has
+stated a measurement. Replaying those turns puts the session in front of no instrument, so it
+never reaches the choice being scored. Replay is the whole measurement there, and it is a
+baseline; scoring a change to `work-watch` check 8 needs a live session at a real bench.
+
+Everything below is `skill-firing/`'s. `response-length/`, `topic-numbering/`, `saturation/` and
+`environment-blame/` key their `turns/<n>.md` by source turn number; `report-shape/` keys its
+`excerpt.md` by document and line range. All five are documented in their scorers' headers.
 
 ## Running them
 
@@ -61,6 +70,7 @@ and line range. All four are documented in their scorers' headers.
 | **Today** | `bash tools/skill-cases.sh` — scores every case against the transcript it was drawn from. Add `--strict` to fail when a case's transcript is not on this machine |
 | **Reports** | `bash tools/report-grade.sh` — scores every `report-shape/` case, and checks each excerpt against its source document when the corpus is present. `--file <path>` grades one document and exits on its verdict |
 | **Saturation** | `bash tools/saturation-cases.sh` — replays the case's session and reports which turn a handoff was proposed on, if any. `--probe` replays the turns live instead; it is 52 turns of billing, and it needs `tools/plugin-reload.sh` first, which rewrites the installed plugin every other session on the machine is using |
+| **Environment blame** | `bash tools/environment-blame.sh` — replays the case's session and reports the first turn that handed the failure to the bench, with the sentence that did it and whatever was tested first. No `--probe`; see above |
 | **To score a change** | `bash tools/skill-probe.sh` — re-runs each `prompt.md` against the **installed** plugin and records what fired. `--openings` restricts it to `source.opening: true`, `--runs N` repeats. Run `tools/plugin-reload.sh` first or it measures the version before your edit. **It bills per run**, which is why it is not in `tools/verify-all.sh` |
 | **When `plugin eval` opens** | `claude plugin eval --eval-dir evals` — re-runs each `prompt.md` against the live plugin |
 
