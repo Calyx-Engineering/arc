@@ -279,6 +279,7 @@ than duplicate its ordering — duplicated order drifts.
 - [`commands/arc-next.md`](../../../commands/arc-next.md) — the typed entry point. It holds no rule of its own; the skill carries the staleness checks that run before a handoff is acted on
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 — **the in-session case of this argument.** State outside the context does not degrade with context length; this mechanism applies that between sessions, that check applies it within one
+- [`work-watch`](../../../skills/work-watch/SKILL.md) check 7 — **what decides that a handoff is due.** This mechanism says what a handoff holds and how it is read; that check watches for the session having degraded far enough to need one, while there is still budget to write it well. [#154](https://github.com/Calyx-Engineering/arc/issues/154)
 - [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism
 - TimeScope `docs/arc-log/arc-local-first-storage.md` — the software precedent
 - ROADZ `CLAUDE.md` — arc-tracking GitHub mechanics

@@ -1,0 +1,32 @@
+callout_turn: 52
+fires_from: 40
+expect:
+  - work-watch
+source:
+  session: be5aca1c
+  first_turn: 1
+  last_turn: 52
+why: >
+  C11 in the dogfood retrospective — context saturation forcing an unplanned stop. The session
+  ran 52 human turns across two calendar days, and the user called the saturation himself on
+  turn 52: "This will be the last task in this thread (context is a bit full)". Nothing in the
+  session said it first, so the remaining budget went to writing a handoff instead of doing
+  work — which is C1's input, a handoff written under a shrinking budget.
+
+  The window between fires_from and callout_turn is what the case measures. Turn 40 is where
+  the bounded-session evidence puts the first nudge: a Stop hook in the reference corpus counts
+  turns as its proxy for context size and first speaks at 40, because the retro behind it
+  measured ~125-turn sessions pinned near 200K with average output collapsing from 2,045 to
+  290 tokens. Firing before turn 40 is the other failure — every long session gets nagged — so
+  it is scored as early, not as a pass.
+
+  What it does not carry: the variant #154's opening sentence names, where the saturating load
+  was building a skill rather than doing the engineering. This session's drift is engineering
+  into meta-work — the onboarding log, the retrospective, the friction log — which is the same
+  shape and not the same instance. Both of C11's quotes come from this one file, and the
+  "previous claude was overstuffed on context" one is about the session before it.
+
+  Replay is the baseline: it reads what happened, and nothing fired. Only --probe can see a
+  change to the skill, and it bills 52 turns to do it. A replayed turn is answered without the
+  original session's tool work, so the probe accumulates context more slowly than the session
+  did: it is a floor on the condition, not a reproduction of it.
