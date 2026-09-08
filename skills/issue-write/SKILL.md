@@ -419,12 +419,34 @@ edit the file, write it back — and read it back again:
 
 ```sh
 gh issue view NN --json body --jq .body > body.md
-gh issue edit NN --body-file body.md
+cp body.md body.before
+
+python edit.py body.md \
+  && ! cmp -s body.before body.md \
+  && gh issue edit NN --body-file body.md
+
 gh issue view NN --json body --jq .body | grep -n 'the thing you changed'
 ```
 
-**A redirect to a path a later step cannot see produces an unmodified body, and `gh`
-reports success.** Write the temp file somewhere the shell and any helper agree on.
+**The three commands are independent, and that is the trap.** Run separately, a middle
+command that dies leaves the third running against the file the *first* one
+wrote — `gh` writes the **original** body back and reports success. **Guard the write-back:**
+chain it on the edit's exit status, or compare the file against a copy taken before the edit.
+Either one stops the bad write; the snippet above does both.
+
+**The failure is the edit step failing, not only a path the next step cannot see.** A reader
+who wrote the file to a shared, visible path concludes the trap does not apply, and it still
+does. 2026-08-20, three times in one session: twice the editing step raised `SyntaxError`
+before touching the file, once a redirect went somewhere the interpreter could not see. Every
+time `gh` printed the issue URL and every time the body was unchanged.
+
+| Why the edit step dies | |
+|---|---|
+| **A Windows path in a non-raw string literal** | The repeat offender. `"C:\Users\..."` and `"R:\arc-transcripts\"` — `\U` and `\a` are escapes and a trailing `\` eats the closing quote, so the interpreter fails at **parse** time, before any edit runs. Use a raw string, forward slashes, or keep the path out of the source |
+| **A path a later step cannot see** | Write the temp file somewhere the shell and any helper agree on. Git Bash's `/tmp` is not a Windows interpreter's `/tmp` |
+
+**The read-back stays mandatory regardless.** It is the detector, not the fix — it caught all
+three, and nothing else would have. The guard stops the bad write; the read-back proves it.
 
 ### Non-ASCII and the console
 
