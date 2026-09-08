@@ -128,12 +128,24 @@ reads is in
 
 ### Spec completeness
 
-A spec that exists is not automatically finished. Each one states its own state at the top:
+A spec that exists is not automatically finished. Each one states its own state at the top, in
+a `**Status:**` line above its first `##` heading. **These five words are the whole vocabulary**
+— `tools/verify-mechanisms.sh` reports any other, so a sixth is a deliberate act rather than a
+drift.
 
-| | Means |
-|---|---|
-| `partial` | A spec exists with known holes. **The holes must be named** |
-| `specified` | Buildable without further decisions |
+| | Means | Compatible with |
+|---|---|---|
+| `undefined` | Deferred. There is nothing to build from yet | ⚪ |
+| `partial` | A spec exists with known holes. **The holes must be named** | ⚪ 🔵 |
+| `specified` | Buildable without further decisions | ⚪ 🔵 ✅ |
+| `built` | The spec describes what is in Arc now | 🔵 ✅ |
+| `definition` | A definition rather than a build target — `knowledge-tiers.md` | ⚪ 🔵 ✅ |
+
+**The two ladders are one check, not one scale.** A word describes how finished the *spec* is;
+the Status glyph describes how far the *mechanism* is into Arc. The right-hand column is the
+only relation between them, and it is the one `tools/verify-mechanisms.sh` enforces — a
+`partial` spec cannot sit behind ✅ Matured, because Matured means soaked and a spec with named
+holes has not been.
 
 **Why `partial` must name its holes.** Transcript mining has a validated friction filter
 and an undesigned knowledge filter. A single "spec written" marker made that row read as

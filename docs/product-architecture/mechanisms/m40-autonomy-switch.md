@@ -3,6 +3,10 @@
 > **The workflow matches how the work actually runs.** One switch, with state the user can
 > see — not an instruction the session has to remember.
 
+**Status:** built — `hooks/mode-guard` reads `HANDOFF.md`'s *Execution mode* row before every
+commit, push, PR and merge, `skills/autonomy-set` carries the three states, and
+`tools/verify-autonomy.sh` gates §9's single-statement rule.
+
 **Spawned from:** three to five attempts to declare auto mode in prose, none of which changed
 behaviour. `docs/arc-work/03-camp/friction-log.md` entries 1, 2 and 4 are the observations.
 
