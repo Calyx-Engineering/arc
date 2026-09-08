@@ -49,10 +49,16 @@ The numbered actions the next session executes top to bottom. **An action, not a
 concrete enough to start without asking. Ordered by dependency. Rows come off the top and
 the rest renumber.
 
-| # | | |
-|---|---|---|
-| 1 | **&lt;action&gt;** | &lt;issue, branch, and the one constraint that changes how it is done&gt; |
-| 2 | **&lt;action&gt;** | &lt;…&gt; |
+**The last column carries why the row sits where it does**, and not only when the order is a
+hard dependency. A soft reason — someone is about to be at the bench, an approval expires — is
+the kind that looks omissible and is exactly the kind that gets re-derived into the opposite
+order by the next session. Same rule as *Load-bearing decisions*' second column, applied to the
+sequence.
+
+| # | | | Why here |
+|---|---|---|---|
+| 1 | **&lt;action&gt;** | &lt;issue, branch, and the one constraint that changes how it is done&gt; | &lt;what puts it at this position — a dependency, or the soft reason&gt; |
+| 2 | **&lt;action&gt;** | &lt;…&gt; | &lt;…&gt; |
 
 ## Read these, in this order
 
@@ -77,12 +83,21 @@ Issues and what spawned them. Classify by cause, not subject.
 
 ## Load-bearing decisions — do not re-litigate
 
-What was settled and must not be re-opened. **What** was decided, not why — the why is in
-the dev-log.
+What was settled, **and the fact that settles it**. A decision travelling alone gets re-derived
+by the next session out of circumstances that look different, and re-derivation reaches the
+opposite answer as easily as the same one.
 
-| | |
+**The second column is the test, not a note.** A load-bearing reason can be written as a fact
+that would have to change for the decision to change — *"the 3.3 V rail cannot source 500 mA"*.
+Narrative cannot: *"we tried X, then Y"* names no fact, so it is disposable and belongs in the
+dev-log. **A row with an empty second column is a decision that will be re-opened.**
+
+| Decision | What would have to change to re-open it |
 |---|---|
-| &lt;decision&gt; | &lt;the constraint it imposes&gt; |
+| &lt;decision&gt; | &lt;the measurement, approval or condition it rests on — the fact that would have to be different&gt; |
+
+Where a decision also leaves a live trap — a branch not to touch, a file not to rewrite — that
+half is *Do not*'s, below.
 
 ## Open threads
 

@@ -1107,9 +1107,10 @@ the intent check.** It also puts the m42 warning in front of the user at the mom
 
 ## 12 What is not designed
 
-**The nudge's over-firing budget.** The event half and `work-watch`'s three proposing
-checks share one threshold, and nothing sets it. First use produces the number. Its fourth
-check — edit completeness — is exempt: it fires on an act, not a pause.
+**The nudge's over-firing budget.** The event half and `work-watch`'s proposing checks draw on
+one budget — how often Arc may speak before it becomes the annoyance — and nothing sets it.
+First use produces the number. Which checks those are, and which are exempt because they fire
+on an act rather than a pause, is [`work-watch`](../../../skills/work-watch/SKILL.md)'s to say.
 
 **The relief valve's real triggers.** The shipped signals are plausible guesses, not
 evidence. [#36](https://github.com/Calyx-Engineering/arc/issues/36) mines three repositories

@@ -1,0 +1,2 @@
+# a Bash call in a repo with no handoff — the snapshot has nothing to take
+{"session_id":"verify-archive-bash-quiet","cwd":"__FIXTURE_ISSUE__","tool_name":"Bash","tool_input":{"command":"ls -la"}}

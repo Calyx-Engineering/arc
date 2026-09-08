@@ -16,11 +16,16 @@ shipped broken: every review read them here, where they were fine.
 | `dev-log.md` | `docs/dev-log/issue-<NN>-<slug>.md`, or `pr-<NN>-<slug>.md` |
 | `handoff.md` | `HANDOFF.md`, at the repo root |
 | `event-log.md` | `.claude/arc/log.md` |
+| `issue.md` | a body file at the repo root, then `gh issue create --body-file` |
+| `pr.md` | a body file at the repo root, then `gh pr create --body-file` |
 | `SKILL.md` | `skills/<name>/SKILL.md` |
 | `camp/operating-agreement.md` · `camp/voice.md` · `camp/notes.md` | `.claude/arc/camp/` |
 
 **This table and the gate's `MAP` are the same fact.** A new template needs a row in both, and
 the gate fails on a template it has no row for rather than skipping it.
+
+**Only the `MAP` half is checked.** Nothing reads this table, so a template added to `MAP` and
+not to it goes unnoticed. Write both rows in the same commit.
 
 ---
 

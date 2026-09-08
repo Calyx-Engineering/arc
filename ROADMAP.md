@@ -39,7 +39,7 @@ record survive a cold start.
 | `hooks/tracker-verify` | m12 · m43 | Links fail silently; a PR to the wrong base splits a milestone | Build |
 | `hooks/camp-session-start` | m43 | A session's first edit with no arc, issue or branch | Build |
 | `hooks/camp-branch-check` | m43 | A branch named so nothing links it to an issue | Build |
-| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | Commit timing, test obligations, depth, edit completeness, the working surface, and friction with Arc itself — one sweep | Build |
+| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | Commit timing, test obligations, depth, edit completeness, the working surface, friction with Arc itself, and the session's own saturation — one sweep | Build |
 | `skills/relief-valve` | m41 | The depth check's mechanical precondition, run inside that sweep | Build |
 | `skills/camp` | m21 · m43 | Something to ask "where is this arc, what is next" | Build |
 | `skills/decompose` | m43 | A spec or idea into a proposed set of issues | Build |

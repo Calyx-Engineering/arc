@@ -1,15 +1,15 @@
 ---
 name: work-watch
-description: Use continuously while work is in progress — one sweep that watches for six things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, whether a settled decision has been written down before the next topic opens, and whether Arc itself just cost the work something. Run it at natural pauses, not every turn.
-camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, decision-unwritten, friction-caught]
-checks: [commit-point, test-obligation, depth, edit-completeness, working-surface, friction]
+description: Use continuously while work is in progress — one sweep that watches for seven things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, whether a settled decision has been written down before the next topic opens, whether Arc itself just cost the work something, and whether this session has degraded far enough that the work should hand off. Run it at natural pauses, not every turn.
+camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, decision-unwritten, friction-caught, saturation-flagged]
+checks: [commit-point, test-obligation, depth, edit-completeness, working-surface, friction, saturation]
 skips:
   - friction (the operating agreement has the friction log off)
 ---
 
 # Watching the work
 
-Six mechanisms watch work as it proceeds. **One sweep, not six always-on checks
+Seven checks watch work as it proceeds. **One sweep, not seven always-on checks
 competing for the same attention.**
 
 | Watches for | Proposes | |
@@ -20,8 +20,9 @@ competing for the same attention.**
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
 | A decision is settled and the next topic is opening | Writing it down first | m13 · m15 |
 | Arc itself cost the work something | A line in the arc's friction log | m17 · [`record-route`](../record-route/SKILL.md) |
+| This session has degraded far enough that the work should move | A handoff now, while there is budget to write one | m15 · [`handoff`](../handoff/SKILL.md) |
 
-> **Propose, never act.** Checks 1, 2, 3 and 6 nudge; the human decides. This is the whole
+> **Propose, never act.** Checks 1, 2, 3, 6 and 7 nudge; the human decides. This is the whole
 > posture, and violating it on the first — committing unasked — is the single most repeated
 > correction in the record.
 >
@@ -45,6 +46,10 @@ sweep?* If not, say nothing.
 **Checks 4 and 5 are exempt from the threshold.** Neither is triggered by a pause but by an
 act — you are about to report an edit complete, or about to open the next topic. They run
 every time, at that moment.
+
+**Check 7 answers to its own precondition**, as check 3 does. Nothing may have changed since
+the last sweep and the session can still have gone past the point where it should hand off —
+that is what makes it the check the sweep's own threshold would otherwise hide.
 
 ---
 
@@ -378,6 +383,82 @@ they are the one who felt it.
 
 ---
 
+## 7. Has this session degraded far enough to hand off?
+
+> *"This will be the last task in this thread (context is a bit full)"*
+>
+> *"also, previous claude was overstuffed on context."*
+
+**Both are the user, and that is the defect.** The session did not notice; he did. The second
+quote is about the session *before* the one it was said in — so the failure had already
+happened once, unnamed, by the time anyone named it. By the point it is named the remaining
+budget goes to writing the handoff, so the document the next session starts from is written by
+the session least able to write it.
+
+**This check is not context management.** Nothing here trims, summarises or economises. It
+asks one question — *is this still the session that should be doing this work* — and the
+proposal is always the same one: hand off now, while there is budget to hand off well.
+
+### The precondition is mechanical, the response is judged
+
+Same shape as check 3, and for the same reason: no single signal means *saturated*.
+
+| Signal | Threshold |
+|---|---|
+| Human turns in this session | 40, then every 30 |
+| A compaction has happened | any — the context already overflowed once |
+| The session has spanned a break — a night, a calendar day | any |
+| Re-anchoring costs a turn: something established here is being re-read or re-derived | 2nd time |
+| The load is no longer the work the session was opened to do — building the tool rather than using it | any |
+
+**Two of them fire it. A compaction fires it alone.**
+
+**Turn count is a proxy, and it is the only one available.** A session cannot read its own
+context size, and neither can a hook. The numbers are not invented: the reference corpus
+carries a Stop hook that counts turns for exactly this reason and first speaks at 40, then
+every 30, because the retro behind it measured ~125-turn, ~19-hour sessions pinned near 200K
+with average output collapsing from 2,045 tokens to 290 as the context filled. **Quality
+collapses before the context is full** — which is why the threshold sits well below it.
+
+**The fifth signal is not about length at all**, and it is the one the record points at: the
+arc-log names the saturating load as building a skill rather than doing the engineering. A
+session opened to do the engineering that is now building a skill has changed subject, and the
+load it accumulated getting there is not load the next stretch of work needs.
+
+**That signal is argued, not measured.** The eval case carries a session whose drift was
+engineering into meta-work, which is the same shape and not the same instance; no transcript
+of the skill-building variant has been isolated.
+
+### What it proposes
+
+> "We are forty turns in and the load has moved from the pinout to building the tool. Want me
+> to checkpoint to the dev-log and hand off, or push on?"
+
+**The handoff is written at the fire, not at the end.** That is the whole point — a handoff
+written on the last five percent of a context is the input to the next session's cold start,
+and [`handoff`](../handoff/SKILL.md) is what writes it.
+
+### Both directions fail
+
+| | Cost |
+|---|---|
+| **Never fires** | The user calls it. The handoff is then written under a shrinking budget, and the next session starts from it |
+| **Fires early, or every pause** | Every long session gets nagged, and a sweep that nags is a sweep that gets ignored — the same cost check 1 pays for defensive committing |
+
+### The user saying it first is evidence this check did not fire
+
+Same closing as check 3, and the same remedy: it is a retrospective finding, not something to
+argue about in the moment. Answer the user, write the handoff, and record the miss.
+
+### It proposes; it does not stop on its own
+
+**In autonomous mode it does not end a run mid-issue.** The issue is the unit — the proposal
+lands at the issue boundary, as a reason to hand off rather than take the next one. Whether
+work stops is the mode's call, not this check's ([`autonomy-set`](../autonomy-set/SKILL.md)),
+exactly as it is for the commit in check 1.
+
+---
+
 ## Before the PR — does the build match the spec's diagram?
 
 **A spec section that defines a feature opens with a diagram. That diagram is the compact
@@ -407,17 +488,22 @@ a feature nobody built — the most common shape this catches, and invisible in 
 
 ## Why one sweep
 
-**Checks 1 to 3 and 6 are the same shape:** notice something about the work in progress, and
-say so. Four separate always-on checks would compete for the same attention and share the same
-over-firing failure, so they share one threshold and one moment.
+**Checks 1 to 3, 6 and 7 are the same shape:** notice something, and say so. Five separate
+always-on checks would compete for the same attention and share the same over-firing failure, so
+they share one moment — the pause. **Checks 3 and 7 each carry a mechanical precondition on top
+of it**, because the thing they watch can become true while nothing about the work has changed.
 
 **Checks 4 and 5 are gates, not nudges.** They fire on an act — reporting an edit done,
 opening the next topic — and they govern your own behaviour rather than proposing anything.
 They sit here because the moment each matters is a moment this sweep is already watching.
 
-**Check 6 is the only one with an off switch.** The other five are about the work and hold
-everywhere. This one is about Arc, and a repository consuming Arc has no reason to record its
-rough edges.
+**Check 6 is the only one with an off switch.** Every other check holds everywhere. This one is
+about Arc, and a repository consuming Arc has no reason to record its rough edges.
+
+**Check 7 is the only one about the session rather than the work.** It sits in the sweep
+because its signals — turns spent, ground re-covered, the subject the load is on — are what
+this sweep is already looking at; a separate watcher would be reading the same conversation
+twice to ask a seventh question.
 
 **Check 4 is here because it is the same sweep, not the same shape.** It fires on an act
 rather than a pause, and it gates your own report rather than proposing to the human. It sits
