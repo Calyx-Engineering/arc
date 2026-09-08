@@ -1,6 +1,6 @@
 # Issue #151 — a north star is read at cold start and does not bind
 
-**Issue:** https://github.com/Calyx-Engineering/arc/issues/151  ·  **PR:** _filled in when the batch PR opens_
+**Issue:** [#151](https://github.com/Calyx-Engineering/arc/issues/151)  ·  **PR:** [#237](https://github.com/Calyx-Engineering/arc/pull/237)
 
 ## Problem
 

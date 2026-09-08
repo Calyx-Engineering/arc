@@ -1,6 +1,6 @@
 # Issue #152 — a file the user authored is overwritten with no copy kept
 
-**Issue:** https://github.com/Calyx-Engineering/arc/issues/152  ·  **PR:** _filled in when the batch PR opens_
+**Issue:** [#152](https://github.com/Calyx-Engineering/arc/issues/152)  ·  **PR:** [#237](https://github.com/Calyx-Engineering/arc/pull/237)
 
 ## Problem
 

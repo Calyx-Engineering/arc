@@ -1,6 +1,6 @@
 # Issue #153 — the handoff header carries no time of day
 
-**Issue:** https://github.com/Calyx-Engineering/arc/issues/153  ·  **PR:** _filled in when the batch PR opens_
+**Issue:** [#153](https://github.com/Calyx-Engineering/arc/issues/153)  ·  **PR:** [#237](https://github.com/Calyx-Engineering/arc/pull/237)
 
 ## Problem
 
