@@ -2,7 +2,7 @@
 
 > Decision log, not a spec.
 
-**Issue:** [#193](https://github.com/Calyx-Engineering/arc/issues/193)  ·  **PR:** written in when it opens  ·  **Batch:** #87 #135 #193, one PR
+**Issue:** [#193](https://github.com/Calyx-Engineering/arc/issues/193)  ·  **PR:** [#235](https://github.com/Calyx-Engineering/arc/pull/235)  ·  **Batch:** #87 #135 #193, one PR
 
 ## Problem
 

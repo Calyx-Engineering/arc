@@ -106,39 +106,38 @@ check_keyword_placement() {
 #
 # Headings inside a fenced block are not headings — a `# comment` in a shell snippet would
 # otherwise read as a section after the spawn rows. The fence state is tracked, so it does not.
+#
+# `[[:blank:]]`, never a literal tab: both patterns have to agree about what follows the
+# hashes, and an invisible character in one of them is how they stop agreeing.
 check_spawned_last() {
   local file="$1" headings terminal_no terminal_txt after
 
-  # `tr -d ''` because the title match is anchored at `$`. A body read straight out of
+  # `tr -d '\r'` because the title match below is anchored at `$`. A body read straight out of
   # `gh pr view --json body` is CRLF — this file's own `live_norm` exists for that reason — and
-  # a carriage return before the anchor makes every terminal heading invisible.
-  headings="$(awk '/^(```|~~~)/ { f = !f; next } f { next } /^#+[ 	]/ { print NR": "$0 }' "$file" | tr -d '')"
+  # a carriage return before the anchor makes every terminal heading invisible. Some awks strip
+  # it and some do not, so it is stripped here rather than assumed.
+  headings="$(awk '/^(```|~~~)/ { f = !f; next } f { next } /^#+[[:blank:]]/ { print NR": "$0 }' "$file" | tr -d '\r')"
 
-  # `[ 	]` after the hashes here too — the awk pass accepts a tab and this must not disagree
-  # with it, or a tab-indented heading is found by one and missed by the other.
-  local terminal_re='^[0-9]+:[ 	]*#+[ 	]+[*`]*(Spawned|Related)[*`]*:?[ 	]*$'
+  local terminal_re='^[0-9]+:[[:blank:]]*#+[[:blank:]]+[*`]*(Spawned|Related)[*`]*:?[[:blank:]]*$'
+
   # `tail -n1`, not `head`: a body in the older two-section shape carries `Related` and then
   # `Spawned`, and it is the LAST of them that has to be last. Taking the first reports a
   # correctly-formed legacy body as a defect.
   #
   # No `-n` on the grep either — the stream already carries the file's line number as field 1,
   # and grep's own index would shadow it.
-  terminal_no="$(printf '%s
-' "$headings" | grep -iE "$terminal_re" | tail -n1 | cut -d: -f1)"
+  terminal_no="$(printf '%s\n' "$headings" | grep -iE "$terminal_re" | tail -n1 | cut -d: -f1)"
   if [ -z "$terminal_no" ]; then
     echo "PASS  no Spawned or Related section heading — nothing to place"
     return 0
   fi
 
-  terminal_txt="$(printf '%s
-' "$headings" | awk -F': ' -v n="$terminal_no" '$1 + 0 == n + 0 { print $2 }')"
+  terminal_txt="$(printf '%s\n' "$headings" | awk -F': ' -v n="$terminal_no" '$1 + 0 == n + 0 { print $2 }')"
+  after="$(printf '%s\n' "$headings" | awk -F: -v n="$terminal_no" '$1 + 0 > n + 0')"
 
-  after="$(printf '%s
-' "$headings" | awk -F: -v n="$terminal_no" '$1 + 0 > n + 0')"
   if [ -n "$after" ]; then
     echo "FAIL  '$terminal_txt' on line $terminal_no is followed by another heading"
-    printf '%s
-' "$after" | sed 's/^/        /'
+    printf '%s\n' "$after" | sed 's/^/        /'
     echo "        The spawn edges are the last thing in the body. A heading after them puts later rows outside."
     return 1
   fi

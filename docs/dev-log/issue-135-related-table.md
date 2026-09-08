@@ -2,7 +2,7 @@
 
 > Decision log, not a spec.
 
-**Issue:** [#135](https://github.com/Calyx-Engineering/arc/issues/135)  ·  **PR:** written in when it opens  ·  **Batch:** #87 #135 #193, one PR
+**Issue:** [#135](https://github.com/Calyx-Engineering/arc/issues/135)  ·  **PR:** [#235](https://github.com/Calyx-Engineering/arc/pull/235)  ·  **Batch:** #87 #135 #193, one PR
 
 ## Problem
 
@@ -91,6 +91,17 @@ Pass 2 then reviewed those fixes and found two more, both in the fix rather than
 | **Anchoring the title made the match CR-sensitive** | The pre-fix regex had no `$`, so a trailing `
 ` was harmless. A body read out of `gh pr view --json body` is CRLF — this file's own `live_norm` exists for that reason — so the documented flow would have fed the check input on which every terminal heading is invisible, and it would have printed a pass. `tr -d '
 '` |
+
+Pass 4, reading the diff as a reviewer with no context, found that the `tr -d ''` added in
+pass 2 was **`tr -d ''` in the file** — a no-op. The escape had been eaten writing the edit, and
+the CRLF test passed anyway because MSYS `awk` strips carriage returns itself. A test that
+cannot fail is not a test, and the check would have been silently wrong on any platform whose
+awk keeps them.
+
+The same edit had left a literal tab inside two bracket expressions and literal newlines inside
+four `printf '%s
+'` calls. All functional, all invisible in review. The function is rewritten
+with `[[:blank:]]` and proper escapes, and the script now contains no control characters at all.
 
 **A note on the commit message for `f0b6ce7`.** It claims a fix for a `grep -inE` whose index
 shadowed the file's line number. That bug was real but was introduced and removed inside the same
