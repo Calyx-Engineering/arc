@@ -12,8 +12,8 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-boxes, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, a PR that closes an issue, or the body could not be read), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 
@@ -217,6 +217,88 @@ resolve_trunk() {
   esac
 }
 
+# ---- what the current work is called ---------------------------------------------
+# One reader for the head branch, used by both the spawn-parent check and the base check
+# below. Two ways to ask the same question in one file is the drift this hook's own comments
+# keep warning about.
+head_branch() {
+  if [ -n "$FIXTURE_BRANCH" ]; then printf '%s' "$FIXTURE_BRANCH"; return 0; fi
+  git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null
+  return 0
+}
+
+# m46 §9's two forms, and the number names whichever identifier existed first:
+#
+#   arc/<nn>-<slug>-issue-<NN>-<hint>    an issue exists — its number
+#   arc/<nn>-<slug>-pr<NN>-<hint>        no issue — the PR number is the only identifier
+#
+# Prints `issue <NN>` or `pr <NN>`, and nothing when the branch carries neither. The issue
+# form is tried first because m46 forbids `pr<NN>` on an issue-backed branch, so a name
+# carrying both markers is an issue branch whose hint happens to read like the other form.
+#
+# `-pr` must be followed by a DIGIT, so a hint like `-pr-write` is not a PR number. And the
+# strip is anchored on the marker rather than on a segment count: an arc slug may carry any
+# number of hyphens, and a derivation that returns nothing turns the check off in silence.
+branch_parent() {
+  local br="$1" n
+  n="$(printf '%s' "$br" | sed -n 's#.*-issue-\([0-9][0-9]*\).*#\1#p')"
+  if [ -n "$n" ]; then printf 'issue %s' "$n"; return 0; fi
+  n="$(printf '%s' "$br" | sed -n 's#.*-pr\([0-9][0-9]*\).*#\1#p')"
+  [ -n "$n" ] && printf 'pr %s' "$n"
+  return 0
+}
+
+# ---- a spawn edge that was never recorded ----------------------------------------
+# An issue filed while working on another issue leaves no record on its parent unless someone
+# remembers to write one. `skills/issue-write` says to and m46 §6 makes it the mechanism's
+# core, and on 2026-08-20 four issues — #78 #79 #80 #81 — were filed during #76's cold review
+# with none of them recorded, until the user noticed the section was empty. The session that
+# wrote the mechanism broke it.
+#
+# WHY THIS ONE IS A HOOK. A lost spawn edge cannot be reconstructed with confidence: recovery
+# means reading a transcript and inferring which issue caused which, and nothing then
+# distinguishes an edge that was recorded from one guessed at later. The arc tree is built out
+# of what records its own parent, so an unrecorded spawn is not a degraded record, it is an
+# absent one. A rule that must fire every time, whose failure is silent and unrecoverable, is
+# a hook's job.
+#
+# WHAT COUNTS AS RECORDED — the child's line, not the parent's row. m46 §6 records both
+# directions, and only one of them is answerable here:
+#
+#   the child's `Spawned by`   in the body the write just landed. Free — the body is already read
+#   the parent's `Spawned` row may name this child by description and NOT by number, because
+#                              m46 §6 says a row gets its number at spawn time. So a parent-side
+#                              read is false-negative by design, and it would cost a second
+#                              network call inside a synchronous PostToolUse hook to be wrong
+#
+# ANY `Spawned by` SATISFIES IT, not specifically the branch's number. Work is genuinely
+# spawned from something other than the branch's issue — a review of a third issue, a PR
+# somebody else opened — and demanding the branch's own number would report those as defects.
+# For an issue, the branch decides whether the question is worth asking; the body answers it.
+#
+# A NO-ISSUE PR IS ASKED UNCONDITIONALLY, and this is the one place the branch does not decide.
+# `tools/new-direct-pr.sh` names that branch `arc/<nn>-<slug>-pr<NN>-<hint>` after the PR ITSELF
+# — m46 §9, the number names whichever identifier exists first — so the branch names no parent
+# there by construction, and gating on it would turn the check off in exactly the case m46 §6
+# says the child's line is the only record of.
+#
+# The link forms are matched loosely for the same reason: `skills/issue-write` puts this in the
+# `Related` table as `| **Spawned by** | [#194](…) |`, m46 writes it as a bare `Spawned by #NN`
+# line, and both are the record.
+#
+#   $1  the body   $2  what to call it in a finding   $3  the log tag   $4  why it was asked
+check_spawn_parent() {
+  local body="$1" what="$2" tag="$3" because="$4"
+
+  if printf '%s' "$body" | grep -Eqi 'spawned by[^0-9]*(#|gh-|issues/|pull/)[0-9]+'; then
+    arc_log_pass "spawn-parent=$tag"
+    return 0
+  fi
+  arc_log_fail "spawn-parent=$tag"
+  add "$what records no parent. $because Add a \`Spawned by\` row to its \`Related\` table, or a \`Spawned by #NN\` line. A lost spawn edge cannot be recovered — a tree rebuilt from a transcript cannot tell an edge that was recorded from one guessed at later."
+  return 0
+}
+
 # A body supplied directly in the payload skips the tracker read. This is how the scanners
 # are exercised offline — a hook whose only test path needs the network is a hook nobody
 # runs the day it matters.
@@ -238,17 +320,23 @@ FIXTURE_LINKED="$(fixture arc_test_linked)"
 FIXTURE_BOXES_RC="$(fixture arc_test_boxes_rc)"
 FIXTURE_BOXES_OUT="$(fixture arc_test_boxes_out)"
 
+# The head branch, which the spawn-parent check reads for the current work's number. Supplied
+# directly because m46 §9 has TWO forms and `tools/verify-hook.sh` builds fixture repositories
+# for one of them — and that script is on CLAUDE.md's never-edited-autonomously list, so the
+# `pr<NN>` form is untestable through a fixture repository. A case names the branch instead.
+FIXTURE_BRANCH="$(fixture arc_test_branch)"
+
 # A payload that names a fixture key and yields no value from any of them is truncated, not an
 # invocation. Stay silent: falling through would send a half-named PR to a live `gh` read.
 case "$INPUT" in
   *'"arc_test_'*)
-    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT" ]; then
+    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT$FIXTURE_BRANCH" ]; then
       # Named, rather than left to the `not reached` default. This is the one condition the
       # declaration calls out for every check at once, and a reason on the record is what
       # separates "the payload was truncated" from "the hook simply did not get that far".
       for c in placeholder-scan date-sanity milestone arc-prefix closing-keyword \
-               arc-merge-keyword close-link issue-boxes issue-title-length issue-title-list \
-               issue-title-clause issue-title-scope issue-scope-type pr-base; do
+               arc-merge-keyword close-link issue-boxes spawn-parent issue-title-length \
+               issue-title-list issue-title-clause issue-title-scope issue-scope-type pr-base; do
         arc_log_skip "$c" "the payload names a fixture key whose value could not be parsed"
       done
       arc_log_outcome ok "a truncated fixture payload — nothing safe to read"
@@ -468,6 +556,17 @@ if [ -z "$FIXTURE_PR_BASE" ] && { [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE
   [ -n "$FIXTURE_BODY" ] && scan_placeholders "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_BODY" ] && scan_dates "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue" "$FIXTURE_BODY"
+  case "$CMD" in
+    *"gh issue create"*)
+      SPAWN_PARENT="$(branch_parent "$(head_branch)")"
+      if [ -z "$SPAWN_PARENT" ]; then
+        arc_log_skip spawn-parent "the branch names no issue or PR"
+      else
+        check_spawn_parent "$FIXTURE_BODY" "the new issue" "issue-new" \
+          "It was created while the branch named ${SPAWN_PARENT%% *} #${SPAWN_PARENT##* }, so something caused it to exist and nothing says what."
+      fi
+      ;;
+  esac
   [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
   exit 0
 fi
@@ -488,6 +587,21 @@ case "$CMD" in
 
     ITITLE="$(cd "$CWD" && gh issue view "$NUM" --json title -q .title 2>/dev/null)"
     [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM" "$BODY"
+
+    # A create, never an edit. An edit is not a spawn — the parent was recorded, or was not,
+    # when the issue was filed, and asking again on every subsequent edit would report the
+    # same finding indefinitely on an issue that legitimately has no parent.
+    case "$CMD" in
+      *"gh issue create"*)
+        SPAWN_PARENT="$(branch_parent "$(head_branch)")"
+        if [ -z "$SPAWN_PARENT" ]; then
+          arc_log_skip spawn-parent "the branch names no issue or PR"
+        else
+          check_spawn_parent "$BODY" "issue #$NUM" "issue-$NUM" \
+            "It was created while the branch named ${SPAWN_PARENT%% *} #${SPAWN_PARENT##* }, so something caused it to exist and nothing says what."
+        fi
+        ;;
+    esac
     ;;
 
   *"gh pr"*)
@@ -534,13 +648,19 @@ case "$CMD" in
     # active arc for the arc's lifetime (m42), so a default-branch comparison resolves to
     # the arc branch and asks a correctly based PR for the state it is already in. That is
     # what fired on #178, #179, #180 and #182 in one session — #183.
-    HEADBR="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+    HEADBR="$(head_branch)"
     case "$HEADBR" in
-      arc/*-issue-*) ;;
+      arc/*-issue-[0-9]*) ;;
       *) arc_log_skip pr-base "HEAD is not an arc issue branch" ;;
     esac
     case "$HEADBR" in
-      arc/*-issue-*)
+      arc/*-issue-[0-9]*)
+        # `-issue-` FOLLOWED BY A DIGIT, in the guard above and here. m46 §9's own example of
+        # the PR form is `arc/03-camp-pr75-no-issue-pr`, which contains the literal `-issue-`
+        # and is not an issue branch — the bare glob read it as one, the strip below then
+        # matched nothing, `ARCBASE` came back as the whole branch name, and a correctly based
+        # PR was reported as misbased. Found while building the spawn-parent check, #83.
+        #
         # Strip from the `-issue-<number>` marker, not a fixed number of segments: an arc
         # slug may carry any number of hyphens, and a derivation that returns nothing turns
         # the check off silently.
@@ -603,6 +723,25 @@ case "$CMD" in
         add "PR #$NUM: closure defers to the arc PR. A keyword cannot bind on a base of \`$BASE\` — say so in the PR rather than leaving it looking orphaned."
       fi
     fi
+
+    # ---- a no-issue PR's own parent ---------------------------------------------
+    # m46 §6: `Spawned by #NN` in the child is THE ONLY RECORD WHEN THE CHILD HAS NO ISSUE.
+    # A PR that closes an issue is that issue's work and the issue carries the edge; a PR
+    # with neither a keyword nor a link is a tracker object in its own right, and nothing
+    # else will ever say where it came from. m46 §4 row 3 — work is spawned from no-issue
+    # PRs too, which is how PR #75 came to spawn #76.
+    #
+    # A create, never an edit, for the reason the issue arm records.
+    case "$CMD" in
+      *"gh pr create"*)
+        if [ "$WANTS_CLOSE" -ne 0 ] || [ "$LINKED" -ne 0 ]; then
+          arc_log_skip spawn-parent "not a no-issue \`gh pr create\`"
+        else
+          check_spawn_parent "$BODY" "PR #$NUM" "pr-$NUM" \
+            "It closes no issue, so nothing else will ever say where it came from — m46 §6."
+        fi
+        ;;
+    esac
 
     # The arc PR is the one that actually closes things. An arc merging into the trunk with
     # no closing keywords leaves every issue it consumed open.

@@ -1,0 +1,2 @@
+# an issue created while the branch names a PR — m46 4 row 3, work is spawned from no-issue PRs too, and the pr<NN> form of m46 9 has to resolve to a parent like the issue form does
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_branch":"arc/03-camp-pr75-no-issue-pr","arc_test_body":"## Required\n\n- [ ] one thing\n\nNo parent recorded anywhere in this body.","tool_input":{"command":"gh issue create --title x --body-file body.md"}}
