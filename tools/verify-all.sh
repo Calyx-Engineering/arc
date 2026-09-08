@@ -128,20 +128,21 @@ if [ "$LIST" = "1" ]; then
                               claude plugin eval, gated behind early access — #181
     the eval cases themselves the gates above run the SELFTESTS of skill-cases.sh,
                               response-length.sh, topic-numbering.sh, report-grade.sh and
-                              saturation-cases.sh, on
-                              fixtures. Scoring the real cases needs the corpus — the transcripts
-                              and, for report-grade.sh, the source repositories — which live on
+                              saturation-cases.sh, on fixtures. Scoring the real cases needs the
+                              corpus — the transcripts, and for report-grade.sh the source
+                              repositories — which live on
                               one machine. Run bash tools/skill-cases.sh, bash
                               tools/response-length.sh, bash tools/topic-numbering.sh, bash
                               tools/saturation-cases.sh and bash tools/report-grade.sh there.
                               report-grade.sh alone still scores from its stored excerpts when
                               the corpus is absent; it just cannot check them against their
                               source
-    reply length, topic       response-length.sh --probe, topic-numbering.sh --probe and
-    numbering, and whether    saturation-cases.sh --probe re-run a case's turns live and score
-    a session notices its     the replies. All three bill per turn — the saturation case is 52
-    own saturation, against   turns long — so none of them is a gate here
-    a changed skill
+    three questions against   response-length.sh --probe, topic-numbering.sh --probe and
+    a CHANGED skill — reply   saturation-cases.sh --probe re-run a case's turns live and score
+    length, topic numbering,  the replies. All three bill per turn, and the saturation case is
+    and whether a session     52 turns long, so none of them is a gate here
+    notices its own
+    saturation
     a real branch↔issue link  verify-linked-branch.sh selftest runs its decision on fixtures. The
                               live read needs GitHub and a real issue — run
                               bash tools/verify-linked-branch.sh <NN> <branch> after creating one

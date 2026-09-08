@@ -275,10 +275,10 @@ timing. Not a separate always-on process — a check in the same sweep."*
 | Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default |
 | This session has degraded far enough that the work should move | A handoff, now, while there is budget to write one | m15 — the only one about the session rather than the work. Turn count, a compaction, and the load having drifted off the work the session was opened for |
 
-The first three **propose and never act**, and share one open question: how often they may
-fire before the nudging becomes the annoyance. **The seventh proposes too**, and carries the
-same question in its own terms — a session nagged about its length at every pause is the
-failure that makes the whole sweep ignorable.
+**Most of them propose and never act** — the skill's own list says which — and they share one
+open question: how often they may fire before the nudging becomes the annoyance. The saturation
+check carries that question in its own terms: a session nagged about its length at every pause
+is the failure that makes the whole sweep ignorable.
 
 **The fourth blocks instead of proposing.** Edit completeness gates the agent's own report
 that an edit is done — a `grep` for the replaced string, zero hits or it is not finished. It

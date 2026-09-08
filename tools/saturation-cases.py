@@ -298,6 +298,26 @@ def main():
             drift += 1
             continue
 
+        # THE VERBATIM CLAIM IS CHECKED IN BOTH MODES. Same rule as tools/skill-cases.py —
+        # "drawn from a session that happened" stops being true the moment a turn is tidied —
+        # and the probe is the mode that needs it most: that run REPLAYS the stored turns, so
+        # without this it is the one run that never compares them to the session they came from.
+        path = find_session(session)
+        source, seen = replay(path, first, last) if path else ({}, 0)
+        if path:
+            for n, body in sorted(stored.items()):
+                if n not in source:
+                    print("  %-34s PROMPT DRIFT — turn %d is not in the transcript (it has %d turns)"
+                          % (name, n, seen))
+                    drift += 1
+                    break
+                if body.strip() != (source[n]["prompt"] or "").strip():
+                    print("  %-34s PROMPT DRIFT — turn %d does not match the transcript" % (name, n))
+                    print("        stored:     %s" % " ".join(body.split())[:100])
+                    print("        transcript: %s" % " ".join((source[n]["prompt"] or "").split())[:100])
+                    drift += 1
+                    break
+
         if MODE == "probe":
             rows, seen = from_probe(blob, name)
             if not rows:
@@ -305,26 +325,11 @@ def main():
                 absent += 1
                 continue
         else:
-            path = find_session(session)
             if not path:
                 print("  %-34s transcript %s not on this machine — skipped" % (name, session))
                 absent += 1
                 continue
-            rows, seen = replay(path, first, last)
-            # The verbatim claim is checked, not trusted. Same rule as tools/skill-cases.py:
-            # "drawn from a session that happened" stops being true the moment a turn is tidied.
-            for n, body in sorted(stored.items()):
-                if n not in rows:
-                    print("  %-34s PROMPT DRIFT — turn %d is not in the transcript (it has %d turns)"
-                          % (name, n, seen))
-                    drift += 1
-                    break
-                if body.strip() != (rows[n]["prompt"] or "").strip():
-                    print("  %-34s PROMPT DRIFT — turn %d does not match the transcript" % (name, n))
-                    print("        stored:     %s" % " ".join(body.split())[:100])
-                    print("        transcript: %s" % " ".join((rows[n]["prompt"] or "").split())[:100])
-                    drift += 1
-                    break
+            rows = source
 
         v, turn, said, unloaded, cuts = verdict(rows, expect, fires_from, callout)
         tally[v] += 1

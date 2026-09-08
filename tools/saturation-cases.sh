@@ -5,6 +5,7 @@
 #   tools/saturation-cases.sh             score every case against the transcript it came from
 #   tools/saturation-cases.sh --strict    also fail when a case's transcript is not on this machine
 #   tools/saturation-cases.sh --probe     replay the case's turns live and score the replies. BILLED
+#   tools/saturation-cases.sh --case <s>  restrict --probe to one case directory
 #   tools/saturation-cases.sh selftest    fixtures only, no corpus needed
 #
 #   SAT_PROBE_OUT=path   keep the probe's raw replies instead of losing them with the temp dir
@@ -21,7 +22,7 @@
 # drift.
 #
 # THE PROBE IS NOT A GATE. It bills per turn and the case is 52 turns long, so tools/verify-all.sh
-# runs the selftest — fixtures, free, portable — exactly as it does for the other three suites.
+# runs the selftest — fixtures, free, portable — exactly as it does for every other eval suite.
 #
 # THE CORPUS IS LOCAL. Transcripts live under ~/.claude/projects on one machine, so a case whose
 # session is absent is reported and skipped rather than failed.
@@ -41,7 +42,7 @@ while [ "$#" -gt 0 ]; do
     --strict) STRICT=1 ;;
     --probe) PROBE=1 ;;
     --case) ONLY="${2:-}"; shift ;;
-    -h|--help) sed -n "2,27p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,28p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -212,6 +213,20 @@ if [ "$SELFTEST" = "1" ]; then
     echo "  FAIL  a cut inside the window is thin, never silent"
     printf '%s\n' "$tout" | sed 's/^/          /'; Fc=$((Fc+1))
   fi
+
+  # The probe REPLAYS the stored turns, so it is the run that most needs the verbatim claim
+  # checked — and the one that would never check it if drift were a replay-mode concern.
+  printf '{"held":{"6":{"text":"want me to checkpoint and hand off?","cut":"","fired":["work-watch"]}}}\n' > "$PJ"
+  printf 'turn 5 please, but tidied up\n' > "$T/one/held/turns/5.md"
+  gout="$(SAT_ROOT_DIR="$T/projects" SAT_EVAL_DIR="$T/one" SAT_STRICT=0 \
+          SAT_MODE=probe SAT_PROBE_JSON="$PJ" python "$HERE/saturation-cases.py" 2>&1)"; gst=$?
+  if printf '%s' "$gout" | grep -q "PROMPT DRIFT" && [ "$gst" != "0" ]; then
+    echo "  PASS  probe mode checks the turns against the transcript too"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  probe mode checks the turns against the transcript too (exit $gst)"
+    printf '%s\n' "$gout" | sed 's/^/          /'; Fc=$((Fc+1))
+  fi
+  printf 'turn 5 please\n' > "$T/one/held/turns/5.md"
 
   echo
   echo "$Pc passed, $Fc failed"

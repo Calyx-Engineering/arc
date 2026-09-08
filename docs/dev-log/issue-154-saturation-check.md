@@ -95,15 +95,21 @@ tools/saturation-cases.sh --probe`, after a reload, on a machine with nothing el
 | **The keyword scan was matching a filename** | Above. Seven turns reported as the model guessing were seven replies about `HANDOFF.md`. **The instrument's own first finding was about itself**, which is the argument for scoring the baseline before trusting a verdict |
 | **Two sentences this change had just contradicted** | *"The other six are about the work"* against *"check 7 is the only one about the session"*, and *"they share one threshold"* against *"check 7 answers to its own precondition"*. Both are check 4's failure inside check 4's own file — a mechanical count bump without re-reading the sentence |
 | **Coverage holes in the selftest** | Nothing asserted that a false positive is rejected, that `expect` rejects the wrong skill, or that a cut outside the window leaves the verdict alone. Three fixtures added; 16 assertions became 19 |
+
+| Pass 4 found | |
+|---|---|
+| **The probe never checked the turns it replays** | The drift check sat inside the replay branch, so the one run that would tick the unticked box — the billed one — was the one run that never confirmed `turns/<n>.md` still matches the session. It now runs in both modes whenever the transcript is present, with its own selftest case |
+| **A count the sweep had left behind** | `docs/product-architecture/README.md` said *"the first three propose and never act"* beside a seven-row table. It now names the skill's list as the authority instead of counting, and m43's over-firing sentence says budget rather than threshold |
+| **The dev-log pointed at a PR that did not exist** | `#238` was written before the PR was opened. It is `#241`, and the base branch had moved six commits under the branch — merged in, one conflict in `verify-all.sh`'s `KNOWN` list, both new gates kept |
 | **Box 2 had a tick with nothing behind it** | It claims behaviour, and the only measurement in the tree is the baseline. Unticked and named as not done |
 
 ## Evidence
 
 | | |
 |---|---|
-| `bash tools/saturation-cases.sh selftest` | 19 passed, 0 failed — held, late, early, silent, thin, a filename that is not a proposal, the wrong skill, the guessing line, drift, `--strict`, probe mode, cut turns inside and outside the window |
+| `bash tools/saturation-cases.sh selftest` | 20 passed, 0 failed — held, late, early, silent, thin, a filename that is not a proposal, the wrong skill, the guessing line, drift in both modes, `--strict`, probe mode, cut turns inside and outside the window |
 | `bash tools/saturation-cases.sh` | `1 of 1 case(s) scored: 0 held, 0 late, 0 early, 1 silent, 0 thin` — the baseline, and the defect |
-| `bash tools/verify-all.sh` | 27 gates, all clean, exit 0 |
+| `bash tools/verify-all.sh` | 28 gates, all clean, exit 0 — after merging `arc/04-dogfood`, which brought `verify-labels` |
 
 **One thing the gate does not do.** `verify-all.sh`'s anti-skip guard globs `tools/verify-*.sh`,
 so adding `saturation-cases` to its `KNOWN` list is inert — delete its `run_gate` line and nothing
