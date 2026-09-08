@@ -161,6 +161,18 @@ report() {
          "the markers are empty files, one per session, and they would enter the record"
   fi
 
+  # AND THE SCRATCH FILES GO THERE TOO, not beside the index. `.claude/arc/` is tracked, so a lock
+  # or a temporary file left there by a crashed session appears as untracked next to the record and
+  # rides into the first `git add .` someone runs. Asserted as text because the failure is a path
+  # in the source, and it regresses the moment someone writes the obvious `"$INDEX.lock"`.
+  if grep -qE '^(LOCK|TMP)="\$INDEX' "$hook"; then
+    fail "the lock and the temporary file live in the gitignored working directory" \
+         "one of them is derived from \$INDEX, which puts it in the tracked .claude/arc/" \
+         "a crashed session then leaves debris beside the record"
+  else
+    pass "the lock and the temporary file live in the gitignored working directory"
+  fi
+
   # The format has one definition, in the template, and the template is mapped. Same rule as every
   # other template here — a template with no MAP row is one nobody checks.
   if [ ! -f "$root/templates/session-index.md" ]; then
@@ -643,7 +655,7 @@ if [ "${1:-}" = "selftest" ]; then
   # They exist to catch the release being dropped from one branch, and the stale-lock path
   # blocking forever — the two ways this code has actually been wrong. The exclusion itself is
   # named in *what it cannot do* at the top of this file rather than claimed here.
-  if [ ! -d "$(index "$repo").lock" ]; then
+  if [ ! -d "$repo/.arc-work/session-index/sessions.lock" ]; then
     ok "no lock is left behind after a rewrite [cleanup contract, not exclusion]"
   else
     bad "no lock is left behind after a rewrite" \
@@ -655,7 +667,7 @@ if [ "${1:-}" = "selftest" ]; then
   # still writing, which is the race the lock was added for.
   repo=$(make_repo stale arc/04-dogfood-issue-58-stale)
   fire s21 "$repo" Bash "" >/dev/null
-  mkdir -p "$(index "$repo").lock"
+  mkdir -p "$repo/.arc-work/session-index/sessions.lock"
   git -C "$repo" checkout -q -B arc/04-dogfood-issue-59-stale2 2>/dev/null
   fire s22 "$repo" Bash "" >/dev/null
   if [ "$(rows "$repo" | wc -l | tr -d ' ')" = "2" ]; then
@@ -664,7 +676,7 @@ if [ "${1:-}" = "selftest" ]; then
     bad "a stale lock does not block the write" \
         "one crashed session would otherwise stop every later one from being indexed"
   fi
-  if [ -d "$(index "$repo").lock" ]; then
+  if [ -d "$repo/.arc-work/session-index/sessions.lock" ]; then
     ok "and a lock this session never acquired is left where it is, not deleted"
   else
     bad "and a lock this session never acquired is left where it is, not deleted" \

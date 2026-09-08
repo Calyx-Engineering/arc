@@ -1,6 +1,6 @@
 # Issue #16 — index transcript locations at worktree creation
 
-**Issue:** [#16](https://github.com/Calyx-Engineering/arc/issues/16)  ·  **PR:** [#245](https://github.com/Calyx-Engineering/arc/pull/245)
+**Issue:** [#16](https://github.com/Calyx-Engineering/arc/issues/16)  ·  **PR:** [#250](https://github.com/Calyx-Engineering/arc/pull/250)
 
 ## Problem
 
@@ -98,7 +98,7 @@ that would have disabled the mechanism silently.
 | **1** | The index is created *untracked* and nothing adds it, so requirement 3 was met in form only. The artifact table's `Needs` cell had been filled with a circular dependency. `[ -s "$TMP" ]` did not detect the truncation its own comment claimed to prevent. A header-stripped index stayed headerless |
 | **2** | **The row-count guard pass 1 added counted only the rows the rewrite touched**, while the count it compared against covered every row the file held. Any index carrying a row for another live worktree looked like a loss, the write was blocked, and — since the next session read the same unchanged file — the mechanism would have stopped permanently and said nothing. It survived a full green selftest because every fixture had one row. Also: the pre-scan read the same file the guard was protecting against, so an unreadable index defeated it; the header repair duplicated the title; `rmdir` ran whether or not the lock was owned |
 | **3** | Three assertions that would pass with the code they named deleted — the once-per-session case, the lock case, and the edit-matcher registration check. Two cells asserted for non-emptiness rather than value, one of them the worktree path the whole sweep keys on |
-| **4** | *(pass 4's findings are recorded in the PR)* |
+| **4** | The lock and the temporary file were named off `$INDEX`, which put both in `.claude/arc/` — a **tracked** directory. A crashed session would leave `sessions.md.lock` or `sessions.md.4711` sitting next to the record, where the first `git add .` sweeps them in. Both moved to the gitignored `.arc-work/session-index/`, with a gate assertion on the source, because the obvious spelling is the wrong one |
 
 **Pass 2's finding is the one worth carrying forward.** A guard added to prevent data loss became
 the thing that stopped the mechanism, and every existing test stayed green because they all

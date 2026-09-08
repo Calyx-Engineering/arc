@@ -304,7 +304,15 @@ fi
 INDEX_DIR="$ROOT/.claude/arc"
 INDEX="$INDEX_DIR/sessions.md"
 mkdir -p "$INDEX_DIR" 2>/dev/null || nothing_to_weigh "the index directory could not be created"
-TMP="$INDEX.$$"
+
+# THE SCRATCH FILES GO WHERE THE MARKERS GO, NOT BESIDE THE INDEX. `.claude/arc/` is a TRACKED
+# directory — it holds the event log, the camp documents and now the index — so a `sessions.md.lock`
+# or a `sessions.md.4711` left there by a crashed session shows up as untracked next to the record
+# and rides into the first `git add .` someone runs. `.arc-work/` is already gitignored for exactly
+# this, it is in the same repository so the `mv` below is still a rename rather than a copy, and
+# `$MARKER_DIR` is created here rather than at the end so both paths exist before they are used.
+mkdir -p "$MARKER_DIR" 2>/dev/null || nothing_to_weigh "the working directory could not be created"
+TMP="$MARKER_DIR/sessions.$$.tmp"
 
 # ---- one writer at a time ---------------------------------------------------------
 # Read, rewrite, move is not atomic, and two sessions sharing a repository ROOT — the main
@@ -326,7 +334,7 @@ TMP="$INDEX.$$"
 # race. Where `sleep` refuses a fractional argument — BusyBox, Solaris `/bin/sleep` — the loop
 # breaks on the first collision instead, so there is effectively no locking there at all. Both are
 # fail-open, which is the rule everywhere else here, and the second is named rather than implied.
-LOCK="$INDEX.lock"
+LOCK="$MARKER_DIR/sessions.lock"
 OWNED=0
 tries=0
 while [ "$tries" -lt 10 ]; do
@@ -514,8 +522,8 @@ fi
 [ "$OWNED" = "1" ] && rmdir "$LOCK" 2>/dev/null
 
 # Written whatever happened above. Retrying a failed rewrite on every tool call of the session
-# would turn one bad write into a tax on every call.
-mkdir -p "$MARKER_DIR" 2>/dev/null && : > "$MARKER" 2>/dev/null
+# would turn one bad write into a tax on every call. The directory was created above.
+: > "$MARKER" 2>/dev/null
 
 # Silent, on both matchers — see the header. Stdout here is parsed as a permission decision, and
 # an "allow" would approve the call rather than annotate it.
