@@ -74,6 +74,7 @@ fi
 
 # ---- the gates ---------------------------------------------------------------------
 run_gate "skill registry" bash tools/verify-skill-registry.sh
+run_gate "skill registry cases" bash tools/verify-skill-registry.sh selftest
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
