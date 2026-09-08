@@ -18,12 +18,17 @@
 # so the previous stamp and the current one both exist and can be compared. Case 7 below fires
 # the real hook, rewrites the handoff without moving the stamp, and asserts this gate catches it.
 #
-# WHY IT DOES NOT JUDGE THIS REPOSITORY'S OWN HANDOFF.md. A loop run's `HANDOFF.md` is written by
-# tools/arc-loop.sh to carry an execution mode and says of itself that it is not a session
-# handoff. Asserting a session handoff's title format against it would fail every loop run for a
-# file that is not the thing being checked. So the live probes check the artifacts that TEACH the
-# format — the template and the skill — and the rewrite property engages only where there is an
-# archived prior copy proving a rewrite actually happened.
+# WHAT IT DOES AND DOES NOT ASSERT ABOUT THIS REPOSITORY'S OWN HANDOFF.md. It never checks that
+# file's title FORMAT. A loop run's `HANDOFF.md` is written by tools/arc-loop.sh to carry an
+# execution mode and says of itself that it is not a session handoff; requiring a session
+# handoff's stamp of it would fail every loop run over a file that is not the thing being checked.
+# So the format probes read the artifacts that TEACH the format — the template and the skill.
+#
+# Probe 5 does read it, but only to compare it against an archived prior copy, and only where one
+# exists. Be precise about the consequence: if a handoff here carries a parseable stamp AND an
+# archive of it exists AND the body changed with the stamp standing still, probe 5 fails — which
+# is the defect, correctly reported, on whatever file it happens to be. Where either file has no
+# parseable stamp the probe reports SKIP with its reason. It does not silently pass.
 #
 # WHAT IT CANNOT DO. It reads files, and compares two files where both exist. It does not invoke
 # the skill; no gate here does — tools/verify-all.sh --list.

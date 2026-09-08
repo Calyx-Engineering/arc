@@ -32,6 +32,14 @@ it is about to be replaced, because nothing can know in advance which file that 
 session per file: the first copy holds what the *user* wrote, later ones would only hold this
 session's own edits.
 
+**Registered on the `Bash` matcher as well as on the edit tools.** `cat > HANDOFF.md`, `mv`,
+`sed -i` and `rm` destroy a file without ever reaching `Edit` or `Write`; on the edit matchers
+alone the hook missed every one of them, which would have left the central requirement true only
+for the tools that happen to be typed. Bash gets moment 1, the snapshot, and not moment 2 — a
+shell command is not parsed for the files it will overwrite, because those forms compose and a
+wrong guess copies the wrong thing while reporting success. Cost on every Bash call after the
+first in a session: one `git rev-parse --git-dir` and one file test, via an early fast path.
+
 **`.arc-work/archive/`, not inside `.git/`.** Under `.git/` would be more strongly excluded, but
 a recovery copy nobody can find is not a recovery copy. `.arc-work/` is already gitignored, so
 the requirement is met and the user can `cp` a file back by hand.
@@ -56,6 +64,12 @@ unrecoverable" exactly.
 
 ## Spawned
 
+- **Still uncovered, named rather than implied away** — a Bash command that overwrites an
+  *untracked file which is not the handoff*. The snapshot covers the handoff on any tool; the
+  per-file archive needs a named target, and shell redirection does not give one.
+- **Convention drift** — this hook carries an issue number where the others carry a mechanism id
+  (`branch-guard` → m10). It has no mechanism row and no artifact-table entry. `mode-guard` is in
+  the same position, so this is drift rather than a regression, and no gate enforces it.
 - **Proposal, not filed** — a `SessionStart` variant of this hook. It would also cover a session
   that reads, crashes and never edits. That session destroyed nothing, so the gap is harmless,
   but the stronger form belongs to the user: CLAUDE.md excludes `SessionStart` hooks from
@@ -63,9 +77,9 @@ unrecoverable" exactly.
 
 ## Retrospective
 
-Built: `hooks/handoff-archive` (PreToolUse on `Edit|Write|NotebookEdit`, registered in
-`hooks/hooks.json`), eight cases under `tools/hook-cases/handoff-archive/`, and
-`tools/verify-handoff-archive.sh` — 4 live probes and 13 fixture cases, wired into
+Built: `hooks/handoff-archive` (PreToolUse on `Edit|Write|NotebookEdit` **and on `Bash`**,
+registered in `hooks/hooks.json`), nine cases under `tools/hook-cases/handoff-archive/`, and
+`tools/verify-handoff-archive.sh` — 6 live probes and 15 fixture cases, wired into
 `verify-all.sh` as two gates.
 
 **What changed from the plan:** two hook-cases had to be withdrawn and rewritten as sequenced

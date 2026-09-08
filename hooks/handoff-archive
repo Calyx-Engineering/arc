@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# handoff-archive — PreToolUse hook (matcher: Edit|Write|NotebookEdit). Carries #152.
+# handoff-archive — PreToolUse hook (matchers: Edit|Write|NotebookEdit, and Bash). Carries #152.
 #
 # `HANDOFF.md` is gitignored, so rewriting it destroys the state the session was given and
 # leaves no copy anywhere. Same shape as replacing a diagram the user spent hours on instead
@@ -24,6 +24,18 @@
 #   2. ANY OTHER USER-AUTHORED FILE, AS IT IS ABOUT TO BE REPLACED — because nothing can
 #      know in advance which file that will be. Once per session per file: the first copy
 #      holds what the USER wrote, and later ones would only hold this session's own edits.
+#
+# WHY IT IS ALSO ON THE Bash MATCHER. `cat > HANDOFF.md`, `mv`, `sed -i` and `rm` destroy a file
+# without ever going through Edit or Write. Registered only on the edit tools, this hook would
+# have missed every one of them — the handoff would be gone and no copy taken. Bash therefore
+# gets moment 1, the snapshot, which is what makes the cold-start property true whatever tool the
+# session reaches for. It does NOT get moment 2: a shell command is not parsed for the files it
+# will overwrite, because those forms compose and a wrong guess copies the wrong thing while
+# reporting success. Still uncovered, and named rather than implied away: a Bash command that
+# overwrites an untracked file which is not the handoff.
+
+# WHAT IT COSTS ON EVERY Bash CALL. One `git rev-parse --git-dir` and one file test, after the
+# first call in a session — see the fast path below.
 #
 # THIS IS THE PreToolUse PROXY FOR A COLD START, NOT A SessionStart HOOK. The property #152
 # needs does hold — the handoff is copied before this session's first write of anything, so
@@ -79,6 +91,21 @@ SESSION="$(field session_id)"
 [ -n "$SESSION" ] || exit 0
 [ -n "$(field tool_name)" ] || exit 0
 
+# The tool this call is about to run, if it names a file. A Bash call names none — see the fast
+# path below.
+TARGET="$(unescape_path "$(field file_path)")"
+[ -n "$TARGET" ] || TARGET="$(unescape_path "$(field notebook_path)")"
+
+GITDIR="$(git -C "$CWD" rev-parse --git-dir 2>/dev/null)"
+[ -n "$GITDIR" ] || exit 0
+case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
+
+# THE FAST PATH, AND WHY IT IS FIRST. This hook is registered on the Bash matcher as well as on
+# Edit|Write|NotebookEdit, so it runs on every Bash call in the session. Once the snapshot has
+# been taken and there is no named file to consider, there is nothing left to do — and that is
+# every Bash call after the first. One `rev-parse` and one file test, then out.
+[ -z "$TARGET" ] && [ -e "$GITDIR/arc-archive-$SESSION-handoff" ] && exit 0
+
 ROOT="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
 # No repo means no root to hang `.arc-work/` off, and no git to say what is tracked.
 [ -n "$ROOT" ] || exit 0
@@ -88,9 +115,6 @@ ROOT="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
 # target below is reduced the same way so the two are comparable.
 ROOT="$(cd "$ROOT" 2>/dev/null && pwd)" || exit 0
 [ -n "$ROOT" ] || exit 0
-GITDIR="$(git -C "$CWD" rev-parse --git-dir 2>/dev/null)"
-[ -n "$GITDIR" ] || exit 0
-case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
 
 STAMP="$(date -u +%Y%m%d-%H%M%S 2>/dev/null)"
 [ -n "$STAMP" ] || STAMP=unstamped
@@ -139,9 +163,11 @@ if archive_file "$ROOT/HANDOFF.md" "HANDOFF.md" "handoff"; then
 fi
 
 # ---- 2 · and the file this call is about to replace, if git cannot restore it -----
-TARGET="$(unescape_path "$(field file_path)")"
-[ -n "$TARGET" ] || TARGET="$(unescape_path "$(field notebook_path)")"
-
+# Only for a call that NAMES a file. A Bash command is not parsed for the files it will
+# overwrite: `>`, `mv`, `sed -i`, `tee` and a here-doc are all overwrites, they compose, and a
+# wrong guess either copies nothing or copies the wrong thing while reporting success. So Bash
+# gets the snapshot above and nothing else, and what stays uncovered is named in the dev-log
+# rather than implied to be handled.
 if [ -n "$TARGET" ]; then
   case "$TARGET" in
     /*|?:*) ABS="$TARGET" ;;

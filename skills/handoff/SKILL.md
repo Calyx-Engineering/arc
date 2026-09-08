@@ -116,19 +116,25 @@ worth naming, not a gap to fill by inference.
 
 ### When you are about to do it a different way
 
-**The unit was accepted. The approach inside it was accepted with it.** This fires when you are
-about to act on an approach the handoff does not name, inside a row it does name — same issue,
-same branch, same ordered action, done another way. Not new work. A substitution.
+**The unit was accepted. How it was to be done was accepted with it.** This fires on a
+substitution — the same issue and the same branch, not new work — in either of its two forms:
 
-Twice in the measured corpus a session made one without noticing. One inverted the handoff's
-step order and supplied a reason it had derived itself; another read the line *not built, only
-needed if the coupler floor lands above the audio band* and promoted that method to the primary
-plan four minutes later. Neither announced a substitution, because neither saw itself making one.
+| The substitution | |
+|---|---|
+| **A different approach inside a row the handoff names** | The same ordered action, done another way |
+| **A different order across rows it names** | A sequence is itself a decision. Re-ordering accepted rows replaces the approach to all of them at once, and it is the form least likely to be noticed, because every row still gets done |
+
+Twice in the measured corpus a session did one without noticing — one of each form. One inverted
+the handoff's step order and supplied a reason it had derived itself. The other read *not built,
+only needed if the coupler floor lands above the audio band*, stated the correct rationale for
+the rig unprompted, and about twelve minutes after that read had promoted the method to the
+primary plan. Neither announced a substitution, because neither saw itself making one.
 
 | | |
 |---|---|
 | **Say it before the work, not in the report** | One line: what the handoff names, what you are about to do instead, and what makes you think so |
-| **Then read *What would have to change* for that decision** | That column names the fact the decision rests on. **If the fact has not changed, the approach has not been superseded — it has been forgotten**, and the accepted one stands |
+| **Then read the fact the decision rests on** | For an approach, *What would have to change* in *Load-bearing decisions*. For an order, the reason the row gave for its position. **If that fact has not changed, the decision has not been superseded — it has been forgotten**, and the accepted one stands |
+| **A row that gave no reason for its position is a finding, not a licence** | It is the gap that produced the inversion in the corpus. Say the reason is missing and ask, rather than supplying one of your own — a re-derived reason reaches the opposite answer as easily as the same one |
 | **A condition attached to the alternative is a condition to test** | *Only needed if X* is not a licence to start with it. Check X, and say what you found |
 | **If the fact has changed, name which one, then proceed** | A substitution carrying its constraint is a decision. One without is a re-derivation |
 
@@ -195,6 +201,14 @@ what to do — the round trip the mechanism exists to remove.
 Order by dependency, not importance. **When a row must be done before another is even
 readable, say so in the row** — an approval that has already been given, a file that must be
 read first, a branch that does not exist yet.
+
+**And where the order is not a hard dependency, the row still says why it sits there.** This is
+the same rule as *Load-bearing decisions*' second column, applied to the sequence: an order is a
+decision, and a decision with no reason gets re-derived. The corpus has the case — a handoff
+correctly ordered a tool commit ahead of an issue, gave no reason, and the next session
+re-derived one from the dependency graph and inverted it. The fact that would have settled it
+was that the user was about to be physically at the bench, which is not in a dependency graph
+and was never written down. A soft reason is exactly the kind that looks omissible and is not.
 
 **Rows come off the top and the rest renumber.** The list is working state, not a plan: the
 next session rewrites it when it hands off.
@@ -304,8 +318,13 @@ The same rule covers any file git cannot restore: tracked files need no copy, gi
 The store is gitignored too. It is **recovery, not record** — nothing reads it as history,
 nothing prunes it, and getting a file back is a plain `cp` from the timestamped directory.
 
-**Add `HANDOFF.md` to `.gitignore` when starting an arc in a new repo.** It is the one
-setup step this skill needs.
+**Add `/HANDOFF.md` *and* `.arc-work/` to `.gitignore` when starting an arc in a new repo.**
+It is the one setup step this skill needs, and it is **two entries, not one**: `.arc-work/archive/`
+is where the copies above land, so a repo that ignores only the handoff commits a copy of every
+handoff the arc ever had straight into the record — the exact opposite of what the store is for.
+
+Anchor the handoff entry at the root. A bare `HANDOFF.md` also matches `templates/handoff.md`,
+which is a shipped artifact and must be committed.
 
 **At arc close, delete it.** Anything in it worth keeping was already promoted to the
 arc-log or a dev-log. If deleting it feels lossy, something skipped a tier — find what and

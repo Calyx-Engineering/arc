@@ -23,7 +23,7 @@ failed — which is five openings, not three.
 | # | Failed | What the document did | Explained? |
 |---|---|---|---|
 | 1 | C2 | Nothing was carried. The writer's document went to a session scratchpad headed *"Not committed to ROADZ"*, and the reader found `=====HANDOFF=====` with nothing under it | **No** — a delivery failure. Nothing was stripped because nothing was written |
-| 2 | C1, C2 | The document was **wrong**, not thin. It asserted *"not cloned here"* and *"Fill in rows 2–4"* when the clone existed and all five rows were open | **No** — and the binding worked. The session repeated both claims faithfully within four seconds. Stale content, not missing rationale |
+| 2 | C1, C2 | The document was **wrong**, not thin. It asserted *"not cloned here"* and *"Fill in rows 2–4"* when the clone existed and all five rows were open | **No** — and the binding worked. The session repeated both claims faithfully 4.2 seconds after reading them. Stale content, not missing rationale |
 | 3 | C2 | *"Option 1 is the recommended fix: a 1:1 600 Ω line isolation transformer per channel"* — the choice asserted, with no *why Option 1* anywhere in the file | **Yes** |
 | 4 | C1, C2 | *"Once filed, steps 0a–0b … unlock the #40 work"* — the order given, the reason absent. The session re-derived a reason from the dependency graph and inverted the order | **Yes, and it is the predicted mechanism exactly.** The fact that would have settled it — the user was about to be physically at the bench — was never written down |
 | 7 | C1 | The bound was in the document *and* quoted back correctly, unprompted, at `00:59:38`. A DC-ramp capacitance rig was designed four minutes later for a setup that measures inductance | **No** — rationale present, stated, and still the wrong work |
@@ -36,7 +36,8 @@ document was read and correctly understood (7).
 
 | Opening | What engages it |
 |---|---|
-| 3, 4 | **The constraint column.** *Load-bearing decisions* now asks what would have to change to re-open the decision, and the template says a row with an empty second column is a decision that will be re-opened |
+| 3 | **The constraint column.** *Load-bearing decisions* now asks what would have to change to re-open the decision, and the template says a row with an empty second column is a decision that will be re-opened |
+| 4 | **The ordered-actions rule and the trigger — not the constraint column.** The missing fact was *why this order*, which belongs to a *Do these in order* row and not to the decisions table. `skills/handoff/SKILL.md` now requires a row to say why it sits where it does even when the order is not a hard dependency, and the trigger's second form fires on a re-ordering of accepted rows |
 | 7 | **The approach-replacement trigger**, and specifically its condition row. The handoff said the step method was *not built, only needed if the coupler floor lands above the audio band*; the session promoted it without testing that condition. The constraint column would have changed nothing here — the constraint was already there and already read |
 | 1, 2 | **Neither.** Outside what this issue can reach |
 
@@ -66,6 +67,12 @@ Exit 0, the same eight writer→reader pairs, the same ages — `bfd1177f`, `be5
 `6b72c941`, `9cefd799`, `c4fe2b5c`, `10774bf5`, `508d625d`. The corpus is stable, so a later
 comparison has something fixed to compare against.
 
+**The baseline set a bar this does not clear, and it should be quoted rather than skirted:**
+*"A fix moves a row or it did not work."* No row moves here. The same document names why in its
+next breath — re-running an opening against a changed format is #181 — but the two sentences sit
+apart, and reading only the first would leave you expecting a moved score from this issue. There
+is none, and there cannot be one from this corpus.
+
 **C1 and C2 cannot move.** They score what a session *did*, and all eight sessions are finished
 recordings of openings that read the old format. Re-reading them yields the baseline's numbers by
 construction; a changed format cannot reach backwards into a transcript. Re-running an opening
@@ -86,7 +93,7 @@ neither is repairable from this corpus:
 | 1 | — | **No.** No handoff existed |
 | 2 | — | **No.** The document's claims were false, and no slot makes a false claim true |
 | 3 | *Why* Option 1 — the constraint that rules out Options 2 and 3 | **Yes.** The decision cannot be written without a second column, and the column asks for the fact it rests on |
-| 4 | The user was about to be at the bench, so bench-blocking work goes first | **Yes.** This is a condition the second column is shaped to hold, and the trigger fires independently on the inversion itself |
+| 4 | The user was about to be at the bench, so bench-blocking work goes first | **Yes, by two mechanisms, and neither is the constraint column** — that column is in *Load-bearing decisions* and this fact belongs to an ordered-actions row. The row must now give the reason for its position even when the order is a soft one, and the trigger's second form fires on a re-ordering of accepted rows |
 | 7 | Nothing was missing | **Yes, by the other half.** The trigger's condition row sends the session back to *only needed if the coupler floor lands above the audio band* before it may start with the step method |
 
 **Three of five bad openings now have a mechanism that engages; two do not.** Both exceptions

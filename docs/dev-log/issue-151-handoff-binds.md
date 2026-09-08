@@ -45,6 +45,19 @@ to an alternative (*only needed if the coupler floor lands above the audio band*
 tests the condition rather than asking for an announcement, and the gate has a probe that fails a
 trigger which only announces.
 
+**The trigger has two forms, because the first draft only had one and it excluded the opening it
+claimed to cover.** As written it fired on *the same ordered action, done another way*. Opening 4
+was not that — it was a re-ordering of two different rows, so by its own scope sentence the
+trigger would not have fired on the case cited for it. Re-ordering accepted rows is replacing the
+approach to all of them at once, and it is the form least likely to be noticed because every row
+still gets done. Both forms are now named.
+
+**The reason for an order needed a home, and it was not the decisions table.** Opening 4's
+missing fact was *why this order*, which belongs to a *Do these in order* row — the constraint
+column is in *Load-bearing decisions* and would not have held it. The ordered-actions rule
+already required a row to name a hard dependency; it now also requires the reason for a soft
+position, which is the kind that looks omissible and is exactly what was missing.
+
 ## Rejected approaches
 
 **Adding a *What was ruled out* section to the template.** `skills/handoff/SKILL.md` lists it in

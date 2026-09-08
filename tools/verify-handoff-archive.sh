@@ -15,6 +15,13 @@
 # "the second edit does not retake the snapshot" cannot be expressed there — it needs a first
 # edit to have happened. The sequencing cases live here, where each is driven explicitly.
 #
+# AND ITS KILL-SWITCH CHECK IS VACUOUS FOR THIS HOOK, WHICH IS WHY CASE 10 EXISTS. `verify-hook.sh`
+# re-runs the first `report/` case with HOME pointed at a fixture holding HOOKS_OFF. That payload
+# carries the session id the earlier run already used, so this hook's once-per-session marker is
+# set and it is silent on the second run whether or not the kill switch works. Case 10 below uses
+# a fresh repository and a fresh session, and asserts the switch suppresses THE COPY rather than
+# the message — which is the half that matters for a hook whose job is a side effect.
+#
 # THE COLD-START CASE IS THE ONE THAT MATTERS. #152 asks for the copy at cold start rather than
 # at write time, because a session that crashes never reaches write time. Case 3 is that: the
 # session edits an unrelated file, never touches the handoff, and the handoff is already
@@ -68,6 +75,15 @@ report() {
       fail "the hook is registered on Edit|Write|NotebookEdit" \
            "registered, but not on the matcher that catches a file being replaced"
     fi
+    # Registered on Bash as well, or `cat > HANDOFF.md`, `mv` and `rm` destroy the file with no
+    # copy taken — the edit tools never see a redirect.
+    if [ "$(grep -c 'handoff-archive' "$json")" -ge 2 ]; then
+      pass "the hook is registered on the Bash matcher too"
+    else
+      fail "the hook is registered on the Bash matcher too" \
+           "registered only on the edit tools, a shell overwrite of the handoff takes no copy" \
+           "expected handoff-archive in both PreToolUse matcher blocks"
+    fi
   else
     fail "the hook is registered in hooks/hooks.json" \
          "an unregistered hook never fires, however well it is tested"
@@ -80,6 +96,26 @@ report() {
     fail "the archive location is gitignored" \
          "a recovery copy that enters the record is the record growing a stale file — #152" \
          "git check-ignore said .arc-work/archive/... is not ignored"
+  fi
+
+  # ...and a CONSUMING repository is told to ignore it too. The probe above only speaks for this
+  # repository. The skill's setup step said "add HANDOFF.md to .gitignore", one entry, written
+  # before this store existed — so every other repo would have committed the recovery copies and
+  # the requirement would have been true here and false everywhere it ships.
+  local skill="$root/skills/handoff/SKILL.md"
+  if [ ! -f "$skill" ]; then
+    fail "the skill's setup step exists" "no skills/handoff/SKILL.md"
+  elif grep -qF '.arc-work/' "$skill" && grep -n 'gitignore' "$skill" >/dev/null 2>&1; then
+    if grep -A4 -iE '^\*\*Add .*gitignore' "$skill" | grep -qF '.arc-work/'; then
+      pass "a new repo is told to ignore the archive as well as the handoff"
+    else
+      fail "a new repo is told to ignore the archive as well as the handoff" \
+           "the setup step names only the handoff, so a consuming repo commits every copy" \
+           "expected .arc-work/ within the 'Add ... to .gitignore' setup step"
+    fi
+  else
+    fail "a new repo is told to ignore the archive as well as the handoff" \
+         "the skill never names .arc-work/"
   fi
 
   echo
@@ -240,6 +276,32 @@ Load-bearing: the 3.3 V rail cannot source 500 mA.'
   else
     bad "HOOKS_OFF suppresses the copy, not just the message" \
         "the kill switch has to reach the side effect, or it is not a kill switch"
+  fi
+
+  # ---- 10b · a Bash call takes the snapshot too -------------------------------------------
+  # `cat > HANDOFF.md`, `mv`, `sed -i` and `rm` never reach Edit or Write. Registered only on the
+  # edit tools, the hook missed every one of them: the handoff would be gone and no copy taken.
+  repo=$(make_repo bashpath "$ORIG")
+  printf '{"session_id":"sb1","cwd":"%s","tool_name":"Bash","tool_input":{"command":"cat > HANDOFF.md"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "HANDOFF.md" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "$ORIG" ]; then
+    ok "a Bash call takes the snapshot before a shell overwrite"
+  else
+    bad "a Bash call takes the snapshot before a shell overwrite" \
+        "the edit-tool matchers alone never see a redirect, an mv or an rm"
+  fi
+
+  # ---- 10c · and the second Bash call of that session is the fast path ---------------------
+  # The hook runs on every Bash call, so the common case has to be cheap and silent.
+  out=$(printf '{"session_id":"sb1","cwd":"%s","tool_name":"Bash","tool_input":{"command":"ls"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" 2>&1); rc=$?
+  n=$(archived_copies "$repo" "HANDOFF.md" | wc -l | tr -d ' ')
+  if [ "$rc" = "0" ] && [ -z "$out" ] && [ "$n" = "1" ]; then
+    ok "a later Bash call in the same session is silent and takes nothing"
+  else
+    bad "a later Bash call in the same session is silent and takes nothing" \
+        "exit $rc, $n copies, output: $out"
   fi
 
   # ---- 11 · no repository, and malformed input — silent, and no crash --------------------
