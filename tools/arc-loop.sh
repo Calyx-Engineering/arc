@@ -14,6 +14,7 @@
 #   tools/arc-loop.sh --status               every run under .arc-work/runs/, live or finished
 #   tools/arc-loop.sh --report               the same as a markdown table with totals — for the arc-log
 #   tools/arc-loop.sh --resume 160           continue a stopped run's session in its kept worktree
+#   ARC_LOOP_RESUME_NOTE="PR #247 conflicts with the base — merge it, re-gate, mark ready" tools/arc-loop.sh --resume 201
 #
 # Scope of one invocation is ONE workstream. When its children are all closed
 # the script dispatches a report run and exits; the next workstream is a
@@ -70,6 +71,9 @@ MODEL="${ARC_LOOP_MODEL:-}"
 # twelve waits of ten minutes gave up twenty minutes short of one on 2026-09-08 — three runs
 # stopped with their worktrees kept. Thirty-six waits is six hours.
 RETRY_WAIT="${ARC_LOOP_RETRY_WAIT:-600}"
+# An extra line for the resume prompt — what the orchestrator saw that the run did not, e.g.
+# "PR #247 is CONFLICTING against arc/04-dogfood: merge the base, re-run the gates, mark ready."
+RESUME_NOTE="${ARC_LOOP_RESUME_NOTE:-}"
 MAX_RETRY="${ARC_LOOP_MAX_RETRY:-36}"
 DRY=0
 MAX=0
@@ -364,6 +368,7 @@ resume_run() {
   printf '%s\n' "Your session ended before the run finished — a limit, or a turn that ended while waiting on background work. Continue the run from where it stopped." \
     "Read the issue checklists on GitHub and git status for the current state before acting; do not redo ticked boxes." \
     "Run sub-agents in the foreground: a claude -p session ends when you end your turn, and a background task's notification never arrives." \
+    ${RESUME_NOTE:+"$RESUME_NOTE"} \
     > "$1/resume.md"
   launch_run "$1" "$2" "$3" "$1/resume.md" "--continue"
 }
