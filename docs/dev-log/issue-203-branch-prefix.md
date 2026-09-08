@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#203](https://github.com/Calyx-Engineering/arc/issues/203)  ·  **PR:** [#245](https://github.com/Calyx-Engineering/arc/pull/245)
+**Issue:** [#203](https://github.com/Calyx-Engineering/arc/issues/203)  ·  **PR:** [#249](https://github.com/Calyx-Engineering/arc/pull/249)
 
 ## Problem
 
@@ -25,7 +25,7 @@ guard at all, silently.
 
 | | |
 |---|---|
-| **The clause is a value line, not a checkbox** | Section 3 is checkbox lists, but a prefix is not a choice among options. `**Branch prefix:** \`arc/\``, matching the `**Repository:**` line the file already opens with |
+| **The clause is a value line, not a checkbox** | Section 3 is checkbox lists, but a prefix is not a choice among options. A bolded label and a code span — the value here is `arc/` — matching the **Repository:** line the file already opens with |
 | **The read is bounded at the repository root** | `git rev-parse --show-toplevel`, then one `[ -f ]`. `camp-branch-check` walks up the tree for `CLAUDE.md`; here that walk could reach a `.claude/` outside the repository, and a per-repository setting read from outside the repository is worse than not reading it |
 | **Every form a user types is read** | Indented, bulleted, checkboxed, colon outside the bold, and with or without the code span. The section's own instruction is *"check one per setting"*, so a checkbox is what a reader reaches for — and a form that silently reverts to `arc/` is the misclassification this issue is about, arriving by a different door |
 | **The value must end in its separator** | `arc/`, `rev-`. This is the agreement's own wording, and it is what tells a prefix from a word: `none`, `unset` and `TBD` are how a repository says it has none, and reading one literally would classify nothing as coordination and switch the guard off across the whole repository |
