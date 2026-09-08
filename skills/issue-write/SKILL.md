@@ -2,13 +2,14 @@
 name: issue-write
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [arc-intent, title-size, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
+checks: [arc-intent, title-size, base-branch, milestone, label, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
   - arc-intent (the current arc has no arc-log)
   - read-back-dispositions (the write is an issue, not a PR)
   - title-size (editing a body, not a title)
+  - label (the prefix licenses none — `scope:`, `chore:`, `refactor:`, `test:`)
 ---
 
 # Writing issues and pull requests
@@ -104,6 +105,7 @@ it is too long. `fix: a spawned issue records no parent` passes both.
 |---|---|
 | `scope:` | The output is a decision or a decomposition — the specification, not the thing it specifies |
 | `feat:` · `fix:` · `docs:` · `chore:` | New construction · repair · documentation · housekeeping |
+| `refactor:` · `test:` | Restructuring with no behaviour change · a gap in what is verified |
 | `arc:` · `workstream:` | **Containers, not work.** They hold an ordered list of children and a boundary; nothing merges them. `arc: 04 dogfood — …`, `workstream: Fire — …` |
 
 **A container's title is exempt from the checks below**, and `verify-tracker-body.sh title`
@@ -114,9 +116,45 @@ names* — a question a container cannot answer, because it never merges. Its ch
 mechanical completion; the boundary is a review, and closing removes the surface it happens on.
 
 **`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
-inherits a capability-sized title, which is the first failure above. **Not `spec:`**: one
-word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
-its keep stays open until a month of real use answers it.
+inherits a capability-sized title, which is the first failure above. **`spec:` is retired**:
+one word per meaning, or the type sorts nothing. `tools/verify-labels.sh` reports an unmapped
+prefix, so the retirement is enforced rather than remembered.
+
+### Labels — the prefix decides, and only the prefix
+
+**A label that disagrees with the prefix is worse than no label.** `label:bug` then returns
+work that is not a bug and hides work that is.
+
+| Prefix | Label |
+|---|---|
+| `fix:` | `bug` |
+| `feat:` | `enhancement` |
+| `docs:` | `documentation` |
+| `arc:` | `arc` |
+| `workstream:` | `workstream` |
+| `scope:` · `chore:` · `refactor:` · `test:` | **none** |
+
+**Licensing nothing is a decision, not an omission.** Nobody filters on a chore, so a label for
+one costs attention at every issue write and returns nothing anyone asked for. The test is
+whether a query would actually run.
+
+Three labels say what a title cannot, and ride alongside the type label:
+
+| | |
+|---|---|
+| `in-progress` | A run is working it now. The driver reads it |
+| `priority: high` | Blocks or degrades other work. High only — medium is the absence of a label, and nobody queries for the absence of urgency |
+| `issue-discipline` | The area. A second area label has to name a query that would run |
+
+**The arc is the milestone, never a label.** A label duplicating it is one more thing to set,
+one more thing to get wrong, and nothing the milestone view does not already show.
+
+```sh
+tools/verify-labels.sh             every open issue, prefix against label
+tools/verify-labels.sh labels      the label set itself
+```
+
+**The table above and the script's `MAP` are the same fact.** A new prefix needs both.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
@@ -154,18 +192,17 @@ rewritten; *Editing an existing body* below governs the description.
 
 ### What a good issue contains
 
-**The section order is fixed**, and `Related` is the last section:
+**The shape is [`templates/issue.md`](../../templates/issue.md)** — four sections, in order,
+each with its purpose, and [`templates/pr.md`](../../templates/pr.md) for a PR. **Copy it; do
+not assemble one from memory.** The rules here are grouped by subject, so the positional one —
+where `Related` sits — is the furthest from the section list.
 
-| | Section | Holds |
-|---|---|---|
-| 1 | Opening | The defect or the need, in one or two sentences |
-| 2 | **Required** | What must be true when this is done. Checklist if there are several |
-| 3 | Constraints | Numbers, parts, interfaces, standards — as a table |
-| 4 | **Related** | Every edge this issue has — **as a table**, spawn rows included. Last, always |
+**This skill is the judgement and the template is the shape.** Neither repeats the other.
 
-**Spawned work lives in `Related`'s rows, so the spawn edges are the last thing in the body.**
-Not "at the end" as a habit — last in a stated order, which is what makes a heading appearing
-after them a reportable defect rather than a matter of taste. `tools/verify-tracker-body.sh body`
+**Spawned work lives in `Related`'s rows, and `Related` is the body's last section — so the
+spawn edges are in the last section, at the top of its table.** Not "at the end" as a habit —
+last in a stated order, which is what makes a heading appearing after that section a reportable
+defect rather than a matter of taste. `tools/verify-tracker-body.sh body`
 reports a heading that follows the `Related` section — or a `Spawned` section, in a body written
 before this shape. *Related — one table, four kinds* below gives the table's shape.
 
@@ -260,6 +297,9 @@ Closes #42
 
 Parsers do not understand prose. `Closes the block-diagram item of #26` creates **no link** —
 the Development sidebar stays empty and the issue looks orphaned.
+
+**Where that line sits in the body is [`templates/pr.md`](../../templates/pr.md)'s** — last
+line, after the spawn rows.
 
 When a PR closes exactly one issue, cite it in the title: `<type>: <name> (#42)`. When it
 closes several, omit the number from the title and list them in the body. The title number
@@ -378,6 +418,11 @@ edits, and the asymmetry is the whole finding:
 drops out of the milestone view, which is the only place a human sees the arc as one unit.
 This is unrelated to the base-branch problem and purely an omission — every PR in this
 repo's first two arcs was missing it.
+
+**The fields set at creation rather than written into the body — milestone, base, label — are
+listed at the top of [`templates/issue.md`](../../templates/issue.md) and
+[`templates/pr.md`](../../templates/pr.md).** Each is invisible once missed, which is why they
+are named where the body is assembled and not only here.
 
 After **every** create or edit:
 
@@ -524,24 +569,14 @@ body to a file rather than passing it inline.
 
 **A body has one `Related` section, it is a table, and it is the last thing in the body.**
 There is no separate `Spawned` heading. Spawned work is a row like every other edge, which is
-what keeps the spawn rows at the end, where the arc-log's tree reads them.
+what keeps the spawn edges inside the last section, where the arc-log's tree reads them. **The
+section is last; the spawn rows are first within it.**
 
-Three columns — the relationship, the link, and what it is. The first column's header is
-empty, because the words in that column *are* the header.
+**The table's shape and its position are [`templates/issue.md`](../../templates/issue.md)'s.**
+What follows is which row a given edge takes — the judgement the template does not carry.
 
-```markdown
-| | Link | What it is |
-| :--- | :--- | :--- |
-| **Spawned by** | [#133](https://github.com/Calyx-Engineering/arc/pull/133) | the dogfood retrospective |
-| **Spawned** | [#196](https://github.com/Calyx-Engineering/arc/issues/196) | the issue template this work needed to exist |
-| Blocked by | [#136](https://github.com/Calyx-Engineering/arc/issues/136) | link and close without the default-branch flip |
-| Related | [#83](https://github.com/Calyx-Engineering/arc/issues/83) | the enforcement half — an issue filed with no parent |
-
-Blocked by #136
-```
-
-**The spawn edge is the first row.** The first question asked of an issue is where it came
-from, and a table is scanned down its first column.
+**Why the spawn edge is the table's first row:** the first question asked of an issue is where
+it came from, and a table is scanned down its first column.
 
 ### Four kinds. There is no fifth
 
