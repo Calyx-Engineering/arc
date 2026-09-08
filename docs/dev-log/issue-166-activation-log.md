@@ -40,8 +40,8 @@ caught before "every hook" quietly became false.
 | A `printf >> log` at each `exit` | Thirty-odd sites, and the next exit anyone adds is unlogged. It is also five copies of the format |
 | Editing `hooks/TEMPLATE` | On the never-edited-autonomously list. It comes as `docs/arc-work/proposed-template-activation-log.md`, the same shape as the standing `proposed-verify-hook-declaration-check.md` |
 | Adding the assertion to `tools/verify-hook.sh` | Same list. And splitting keeps each script answering one question |
-| A `log/` subdirectory of new cases per hook | `verify-hook.sh` iterates `pass deny report malformed` and would ignore it, so a separate runner was needed either way — and the existing 106 cases already exercise every path worth asserting on |
-| Running all four assertions on all 106 cases | Four process spawns per case is ~7 minutes on Windows. `one entry`, the shape and the stdout check run per case; fails-open and the kill switch are library properties and run once per kind |
+| A `log/` subdirectory of new cases per hook | `verify-hook.sh` iterates `pass deny report malformed` and would ignore it, so a separate runner was needed either way — and the existing 115 cases already exercise every path worth asserting on |
+| Running all four assertions on all 115 cases | Four process spawns per case is ~7 minutes on Windows. `one entry`, the shape and the stdout check run per case; fails-open and the kill switch are library properties and run once per kind |
 | Comparing stdout against the same run with logging disabled | It catches an asymmetry, not noise: a hook that echoes its entry unconditionally passes that comparison. The gate greps stdout for entry text directly instead |
 | Marking `tracker-verify`'s title checks as a group | Four false records to avoid one prose match |
 
@@ -97,8 +97,8 @@ The same pass measured the first version at **+1.4s per Bash tool call** — abo
 process spawns per firing, from `printf | tr | sed` in a command substitution per field and a
 five-process pipeline to read the declaration. m44 lists *cheap to append* as a requirement, and
 `hooks/tracker-verify:48-50` had already rejected exactly this shape for exactly this reason.
-The write path is now parameter expansion and builtins throughout: **+66ms per Bash call**,
-measured the same way.
+The write path is now parameter expansion and builtins throughout: **+91ms per Bash call**
+across the four hooks on that matcher, measured the same way.
 
 Volume is the finding that survives. m44 named it undesigned and deferred it *"until real volume
 exists"*. Four of the six hooks are on the Bash matcher, so a session appends four entries per
