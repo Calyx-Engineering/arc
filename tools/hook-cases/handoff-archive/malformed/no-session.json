@@ -1,0 +1,2 @@
+# no session id — nothing to key the once-per-session marker to
+{"cwd":"__FIXTURE_MANUAL__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_MANUAL__/a.c"}}

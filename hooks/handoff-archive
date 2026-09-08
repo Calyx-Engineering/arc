@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+# handoff-archive — PreToolUse hook (matcher: Edit|Write|NotebookEdit). Carries #152.
+#
+# `HANDOFF.md` is gitignored, so rewriting it destroys the state the session was given and
+# leaves no copy anywhere. Same shape as replacing a diagram the user spent hours on instead
+# of archiving it. This hook takes the copy first.
+#
+# camp-reports: handoff-archived
+# checks: handoff-snapshot, user-authored-file-archived
+# skips: none
+#
+# WHAT GETS ARCHIVED: whatever git cannot restore. A tracked file needs no copy — git IS the
+# copy, and archiving it would be duplicating the thing that already works. An untracked or
+# ignored file has nothing behind it, so overwriting it is destruction. That rule is what
+# generalises "the handoff" to #152's "any user-authored file" without needing a list.
+#
+# TWO MOMENTS, AND THEY ARE NOT THE SAME CHECK:
+#
+#   1. THE HANDOFF, AT THE SESSION'S FIRST EDIT — of any file, not of the handoff. #152's
+#      point is that a session which crashes never reaches write time, so a copy taken when
+#      the handoff is rewritten is a copy taken too late. The snapshot is keyed to the
+#      session id, so it happens once, before this session has written anything at all.
+#
+#   2. ANY OTHER USER-AUTHORED FILE, AS IT IS ABOUT TO BE REPLACED — because nothing can
+#      know in advance which file that will be. Once per session per file: the first copy
+#      holds what the USER wrote, and later ones would only hold this session's own edits.
+#
+# THIS IS THE PreToolUse PROXY FOR A COLD START, NOT A SessionStart HOOK. The property #152
+# needs does hold — the handoff is copied before this session's first write of anything, so
+# no rewrite of it can outrun the copy. A true SessionStart hook would also cover a session
+# that reads, crashes, and never edits; that session destroyed nothing, so the gap is
+# harmless. CLAUDE.md bars a SessionStart hook from being written autonomously, so the
+# stronger form is a proposal, not this file.
+#
+# RECOVERY, NOT RECORD. The destination is `.arc-work/archive/`, which `.gitignore` already
+# excludes — #152 requires the copy location be gitignored too. It is under the repo root
+# rather than inside `.git/` so the user can find it; a recovery copy nobody can locate is
+# not one. Nothing prunes it, and nothing should read it as history.
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. Ahead of every
+# other line, so a misbehaving copy can be silenced without editing JSON.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Never `set -e`. This hook never denies at all — it copies and reports. On anything
+# unexpected, exit 0 and allow: losing the archive is bad, blocking every edit is worse.
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+
+field() {
+  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+}
+
+json_string() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
+}
+
+report() {
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":$(json_string "$1")}}"
+  exit 0
+}
+
+# A JSON string carries Windows separators escaped. Undo that, then work in forward slashes
+# throughout — git reports its own paths that way on every platform.
+unescape_path() {
+  printf '%s' "$1" | sed -e 's|\\\\|/|g' -e 's|\\|/|g'
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+CWD="$(unescape_path "$(field cwd)")"
+[ -d "$CWD" ] || CWD="$PWD"
+
+# A truncated payload can still yield a readable `cwd`. Requiring the session id and the tool
+# name as well means a half-written payload is silent rather than acting on a guess.
+SESSION="$(field session_id)"
+[ -n "$SESSION" ] || exit 0
+[ -n "$(field tool_name)" ] || exit 0
+
+ROOT="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
+# No repo means no root to hang `.arc-work/` off, and no git to say what is tracked.
+[ -n "$ROOT" ] || exit 0
+# Canonicalised through the shell, because git reports a path in its own form: under Git for
+# Windows `/tmp/x` comes back as `C:/Users/.../Temp/x`. Comparing the two forms as strings makes
+# every path look outside the repository, and the per-file archive silently never fires. The
+# target below is reduced the same way so the two are comparable.
+ROOT="$(cd "$ROOT" 2>/dev/null && pwd)" || exit 0
+[ -n "$ROOT" ] || exit 0
+GITDIR="$(git -C "$CWD" rev-parse --git-dir 2>/dev/null)"
+[ -n "$GITDIR" ] || exit 0
+case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
+
+STAMP="$(date -u +%Y%m%d-%H%M%S 2>/dev/null)"
+[ -n "$STAMP" ] || STAMP=unstamped
+ARCHIVE="$ROOT/.arc-work/archive"
+
+ARCHIVED=""
+
+# archive_file <absolute-path> <relative-path> <marker-key>
+#
+# Copies once per session per file. Returns 0 only when a copy was actually made, so the
+# report names what happened rather than what was attempted.
+archive_file() {
+  local abs="$1" rel="$2" key="$3" marker dest size
+
+  [ -f "$abs" ] || return 1
+
+  # Never archive the archive. Without this, a session editing a recovered copy would fold
+  # the store into itself on every edit.
+  case "$rel" in .arc-work/archive/*) return 1 ;; esac
+
+  # Tracked means git can restore it, so a copy here is duplication rather than recovery.
+  git -C "$ROOT" ls-files --error-unmatch -- "$rel" >/dev/null 2>&1 && return 1
+
+  marker="$GITDIR/arc-archive-$SESSION-$key"
+  [ -e "$marker" ] && return 1
+
+  # A cap, so a stray large untracked file cannot make every session pay a big copy. The
+  # marker is written either way: skipped once is skipped for the session.
+  size="$(wc -c < "$abs" 2>/dev/null)"
+  : > "$marker" 2>/dev/null
+  case "$size" in ''|*[!0-9]*) return 1 ;; esac
+  [ "$size" -gt 5242880 ] && return 1
+
+  dest="$ARCHIVE/$STAMP/$rel"
+  mkdir -p "$(dirname "$dest")" 2>/dev/null || return 1
+  cp -p "$abs" "$dest" 2>/dev/null || return 1
+  return 0
+}
+
+# ---- 1 · the handoff, at this session's first edit of anything -------------------
+# Deliberately not conditional on what is being edited. That is the whole difference between
+# this and a copy taken at write time.
+if archive_file "$ROOT/HANDOFF.md" "HANDOFF.md" "handoff"; then
+  ARCHIVED="$ARCHIVED
+  - \`HANDOFF.md\` → \`.arc-work/archive/$STAMP/HANDOFF.md\` — taken before this session's first write, not before the handoff's"
+fi
+
+# ---- 2 · and the file this call is about to replace, if git cannot restore it -----
+TARGET="$(unescape_path "$(field file_path)")"
+[ -n "$TARGET" ] || TARGET="$(unescape_path "$(field notebook_path)")"
+
+if [ -n "$TARGET" ]; then
+  case "$TARGET" in
+    /*|?:*) ABS="$TARGET" ;;
+    *)      ABS="$CWD/$TARGET" ;;
+  esac
+  # Same reduction as ROOT above. The directory has to exist for `cd` to resolve it, which is
+  # true whenever there is an existing file to archive — a brand-new file needs no copy.
+  ABSDIR="$(cd "$(dirname "$ABS")" 2>/dev/null && pwd)"
+  [ -n "$ABSDIR" ] && ABS="$ABSDIR/$(basename "$ABS")"
+  REL="${ABS#"$ROOT"/}"
+  # Outside the repo root, or a path that did not reduce — nothing sensible to file it under.
+  if [ "$REL" != "$ABS" ] && [ "$REL" != "HANDOFF.md" ]; then
+    if archive_file "$ABS" "$REL" "$(printf '%s' "$REL" | cksum | cut -d' ' -f1)"; then
+      ARCHIVED="$ARCHIVED
+  - \`$REL\` → \`.arc-work/archive/$STAMP/$REL\` — untracked, so git could not have restored it"
+    fi
+  fi
+fi
+
+[ -n "$ARCHIVED" ] && report "**Camp here —** archived before overwriting.
+  Checked: handoff snapshot, user-authored file archived$ARCHIVED
+  Recovery only, gitignored, never pruned. Copy it back by hand if you need it."
+
+exit 0

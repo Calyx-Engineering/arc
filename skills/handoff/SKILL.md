@@ -286,6 +286,15 @@ committed record, not here.
 Committing it means the record contains a file that is stale the moment it is written, and
 a fresh session cannot tell which of two overlapping documents to trust.
 
+**Which is also why overwriting it destroys something.** Gitignored means git cannot restore
+it, so a rewrite takes the state this session was *given* with it. `hooks/handoff-archive`
+copies it to `.arc-work/archive/<timestamp>/` at the session's **first edit of anything** —
+not when the handoff is written, because a session that crashes never reaches its own write.
+The same rule covers any file git cannot restore: tracked files need no copy, git is the copy.
+
+The store is gitignored too. It is **recovery, not record** — nothing reads it as history,
+nothing prunes it, and getting a file back is a plain `cp` from the timestamped directory.
+
 **Add `HANDOFF.md` to `.gitignore` when starting an arc in a new repo.** It is the one
 setup step this skill needs.
 
