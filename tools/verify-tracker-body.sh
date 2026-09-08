@@ -5,6 +5,7 @@
 #   tools/verify-tracker-body.sh title <title> [path-to-body.md]
 #   tools/verify-tracker-body.sh title-findings <title> [path-to-body.md]   # raw, for hooks
 #   tools/verify-tracker-body.sh binding <pr-number> <intent>     # intent: closes | refs
+#   tools/verify-tracker-body.sh live-bind <merged-pr> <issue>    # live, mutates and restores
 #   tools/verify-tracker-body.sh selftest
 #
 # GitHub's parser matches a closing keyword and an issue number and ignores everything
@@ -43,6 +44,7 @@ usage:
   verify-tracker-body.sh title <title> [path-to-body.md]
   verify-tracker-body.sh title-findings <title> [path-to-body.md]
   verify-tracker-body.sh binding <pr-number> <closes|refs>
+  verify-tracker-body.sh live-bind <merged-pr-number> <issue-number>
   verify-tracker-body.sh selftest
 USAGE
   exit 2
@@ -271,6 +273,104 @@ check_binding() {
   return 0
 }
 
+# ---- check 4 — the merged-PR bind, live -----------------------------------------
+# `tools/tracker-cases/binding/merged-pr-keyword-bind.md` is this check's case. It cannot be a
+# text fixture: the claim is about what GitHub does, so the only honest test writes to the API
+# and reads it back. #193.
+#
+# WHAT IT ASSERTS. A `Closes #NN` line appended to an ALREADY-MERGED PR binds, provided the
+# base was the repository's default branch. Removing it again unbinds. It does NOT close the
+# issue — the merge event that would have closed it has already fired.
+#
+# THE READ-BACK IS NOT INSTANT. Measured 2026-09-07 on PR #215: the read immediately after the
+# edit returned an empty array and the read seconds later returned the binding. A single read
+# is a false negative, which is #155's failure with an exit code on it. Hence the poll.
+#
+# IT RESTORES WHAT IT CHANGED, and it refuses rather than clobber: the PR must be merged, its
+# base must be the default branch, and its body must carry no closing keyword already.
+#
+# NOT IN verify-all.sh. It needs the network and it writes to the tracker. Run it deliberately.
+check_live_bind() {
+  local pr="$1" issue="$2" rc=0
+  command -v gh >/dev/null 2>&1 || { echo "gh not on PATH" >&2; exit 2; }
+
+  local state base default orig tmp bound i
+  state="$(gh pr view "$pr" --json state --jq .state 2>/dev/null)"     || { echo "cannot read PR $pr" >&2; exit 2; }
+  base="$(gh pr view "$pr" --json baseRefName --jq .baseRefName)"
+  default="$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)"
+
+  [ "$state" = "MERGED" ] || { echo "refusing: PR $pr is $state, the case needs a merged one" >&2; exit 2; }
+  [ "$base" = "$default" ]     || { echo "refusing: PR $pr's base '$base' is not the default branch '$default'" >&2; exit 2; }
+
+  orig="$(mktemp)"; tmp="$(mktemp)"
+  gh pr view "$pr" --json body --jq .body > "$orig"
+  if grep -qEi "$KEYWORD_RE" "$orig"; then
+    rm -f "$orig" "$tmp"
+    echo "refusing: PR $pr already carries a closing keyword — restoring it is not this check's risk to take" >&2
+    exit 2
+  fi
+
+  cp "$orig" "$tmp"
+  printf '
+
+Closes #%s
+' "$issue" >> "$tmp"
+
+  # The guarded write-back the skill teaches: the edit must have changed the file, or `gh`
+  # writes the original back and reports success. #87.
+  if ! { ! cmp -s "$orig" "$tmp" && gh pr edit "$pr" --body-file "$tmp" >/dev/null; }; then
+    rm -f "$orig" "$tmp"
+    echo "could not write the keyword to PR $pr" >&2
+    exit 2
+  fi
+
+  # Poll, do not read once. See the note above.
+  bound=""
+  for i in 1 2 3 4 5 6 7 8 9 10; do
+    bound="$(gh pr view "$pr" --json closingIssuesReferences       --jq '[.closingIssuesReferences[].number] | join(",")')"
+    case ",$bound," in *",$issue,"*) break ;; esac
+    sleep 3
+  done
+
+  case ",$bound," in
+    *",$issue,"*) echo "PASS  a keyword added after the merge bound #$issue on merged PR $pr" ;;
+    *) echo "FAIL  keyword added to merged PR $pr, nothing bound after 30s (got [$bound])"; rc=1 ;;
+  esac
+
+  # A hand-attached link would populate the same field. This is what proves it was the keyword.
+  local hand
+  hand="$(gh api graphql -f query="{repository(owner:\"$(gh repo view --json owner --jq .owner.login)\",name:\"$(gh repo view --json name --jq .name)\"){pullRequest(number:$pr){closingIssuesReferences(first:10,userLinkedOnly:true){nodes{number}}}}}"     --jq '[.data.repository.pullRequest.closingIssuesReferences.nodes[].number] | join(",")' 2>/dev/null)"
+  case ",$hand," in
+    *",$issue,"*) echo "FAIL  #$issue is hand-attached, so this proves nothing about the keyword"; rc=1 ;;
+    *) echo "PASS  userLinkedOnly is [$hand] — the link came from the keyword, not the UI" ;;
+  esac
+
+  # The link forms; the close does not. The merge event that closes an issue has already fired.
+  local istate
+  istate="$(gh issue view "$issue" --json state --jq .state)"
+  if [ "$istate" = "OPEN" ]; then
+    echo "PASS  issue #$issue is still OPEN — the bind restores the link, never the closure"
+  else
+    echo "FAIL  issue #$issue is $istate; the recorded behaviour is that it stays open"
+    rc=1
+  fi
+
+  # Restore, and prove the restore landed.
+  gh pr edit "$pr" --body-file "$orig" >/dev/null
+  bound="x"
+  for i in 1 2 3 4 5 6 7 8 9 10; do
+    bound="$(gh pr view "$pr" --json closingIssuesReferences       --jq '[.closingIssuesReferences[].number] | join(",")')"
+    case ",$bound," in *",$issue,"*) sleep 3 ;; *) break ;; esac
+  done
+  case ",$bound," in
+    *",$issue,"*) echo "FAIL  PR $pr restored but #$issue is still bound — check it by hand"; rc=1 ;;
+    *) echo "PASS  PR $pr body restored, #$issue unbound" ;;
+  esac
+
+  rm -f "$orig" "$tmp"
+  return "$rc"
+}
+
 # ---- selftest -------------------------------------------------------------------
 # Fixtures live beside the hook cases, same pass/fail shape.
 #
@@ -324,6 +424,13 @@ selftest() {
 
   echo
   echo "$passed passed, $failed failed"
+
+  # Say what this run did NOT cover. The binding cases are claims about GitHub's behaviour, so
+  # the only honest test writes to the API — a silent omission here would read as coverage.
+  local live
+  live="$(find "$base/binding" -name '*.md' 2>/dev/null | grep -c . || true)"
+  [ "${live:-0}" -gt 0 ]     && echo "$live live case not run — it writes to the tracker: verify-tracker-body.sh live-bind <merged-pr> <issue>"
+
   [ "$failed" -eq 0 ] || return 1
 }
 
@@ -333,6 +440,7 @@ case "${1:-}" in
   # Raw findings, one per line, exit 0 always. `hooks/tracker-verify` reads this so the
   # rules have one home; a hook must never inherit a non-zero exit from a helper.
   title-findings) [ $# -ge 2 ] && [ $# -le 3 ] || usage; title_findings "$2" "${3:-}" ;;  binding)  [ $# -eq 3 ] || usage; check_binding "$2" "$3" ;;
+  live-bind) [ $# -eq 3 ] || usage; check_live_bind "$2" "$3" ;;
   selftest) selftest ;;
   *)        usage ;;
 esac

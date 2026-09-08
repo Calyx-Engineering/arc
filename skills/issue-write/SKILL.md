@@ -307,8 +307,57 @@ Two consequences:
   consumed.** That is the one PR where an empty array is a real bug, and the only place the
   issues actually close.
 
-Re-saving the body forces a re-parse of a *stale* link. It cannot create a link the base
-branch forbids — do not read a failed re-save as a transient problem.
+**Re-saving the body forces a re-parse, and the parse is not tied to the merge.** It cannot
+create a link the base branch forbids — that much still holds, and a failed re-save on an
+unflipped base is not a transient problem. But on a base that *is* the default branch it works
+after the merge as well as before, which the next section is about. The earlier wording here
+implied the opposite.
+
+### A missed keyword is recoverable after the merge
+
+**A `Closes #NN` line added to an already-merged PR still binds** — provided the base was the
+repository's default branch. Re-saving the body re-parses it, and the parse is not tied to the
+merge. Measured on [#192](https://github.com/Calyx-Engineering/arc/pull/192) and again on
+[#215](https://github.com/Calyx-Engineering/arc/pull/215), 2026-09-07.
+
+```sh
+gh pr view NN --json body --jq .body > body.md
+cp body.md body.before
+printf '\n\nCloses #MM\n' >> body.md
+
+! cmp -s body.before body.md && gh pr edit NN --body-file body.md
+
+gh pr view NN --json state,closingIssuesReferences        # read it back — then read it AGAIN
+gh issue close MM                                          # the link came back; the closure did not
+```
+
+| | |
+|---|---|
+| **The read-back is not instant** | The read immediately after the edit returns an empty array; seconds later it returns the binding. **One read is a false negative** — poll before concluding the recovery failed |
+| **It links, it does not close** | The merge event that closes an issue has already fired. #225 stayed open with the reference bound. `gh issue close` is the third command, and the reason this is not the two-command fix it first looked like |
+| **It is a keyword link, not a hand-attached one** | `closingIssuesReferences(first:5,userLinkedOnly:true)` comes back empty, so nothing was clicked. The distinction matters because a hand-attached link cannot be removed through the API |
+| **Removing the keyword unbinds** | Symmetric, and the reason the check below can restore what it changed |
+
+**This is the repair, not the practice.** A missed keyword is still a defect — it is caught at
+PR open, by *Verify* above. What changed is that the documented remedy was hand-linking through
+the UI, which needs a human and cannot run unattended. This can.
+
+#### What is still not recoverable
+
+**A PR whose base was never the default branch.** The keyword cannot bind at all, so there is
+nothing for a re-save to re-parse — the base-branch rule above is not a timing problem and no
+edit gets around it. The fix is
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md), applied before
+the PR merges, and [#136](https://github.com/Calyx-Engineering/arc/issues/136) is where linking
+and closing without the flip is tracked. After the merge, on an unflipped base, the issue is
+closed by hand and the link is made by hand.
+
+**The claim is a test, not a memory.**
+[`tools/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tools/tracker-cases/binding/merged-pr-keyword-bind.md)
+carries it, and `tools/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
+live API and restores what it changed. `verify-all.sh` does not run it — it writes to the
+tracker — and `selftest` names it as not covered rather than passing over it.
+
 
 ---
 
