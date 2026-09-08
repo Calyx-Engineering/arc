@@ -64,7 +64,10 @@ Report, in one short block:
 | Blocked | Any issue whose `Blocked by #NN` is still open — the set should not have been reached, so say so |
 | The mode | That each run gets an Autonomous row in **its own worktree's** `HANDOFF.md`, written by `arc-loop.sh`; this tree's row is not touched |
 
-**Then stop and wait for a yes.** This is the last point before unattended work begins.
+**Then stop and wait for a yes.** This is the last point before unattended work begins. **The
+yes runs to the next workstream boundary**, not to the end of the set: when a set closes and no
+workstream has closed with it, launch the next set without asking. A set that closes a
+workstream stops here — its report run is the review the user reads before the next yes.
 
 ## 4 Run it
 
@@ -96,7 +99,9 @@ autonomous is the failure `hooks/mode-guard` and [m40](../docs/product-architect
 boundary report is — the arc-log and the workstream parent — and that **the parent issue is still
 open**, closing it being the user's call after reading.
 
-**When the set closes**, name the next set and stop. Each set is its own yes.
+**When the set closes** and no workstream closed with it, launch the next set — the yes
+covers it. When a workstream closed, name the next set and stop: the boundary report is the
+review, and the next yes comes after it is read.
 
 **Never close the workstream parent.** All children closed is mechanical completion; the boundary
 is a review.

@@ -66,9 +66,11 @@ INSTRUCTIONS="docs/arc-work/04-dogfood/run-instructions.md"
 PERMISSION_MODE="${ARC_LOOP_PERMISSION_MODE:-auto}"
 MODEL="${ARC_LOOP_MODEL:-}"
 # A run that ends on a rate or usage limit is resumed, not restarted: wait, then
-# `claude -p --continue` in its worktree. Twelve waits of ten minutes covers a reset window.
+# `claude -p --continue` in its worktree. A session limit resets on a five-hour window, and
+# twelve waits of ten minutes gave up twenty minutes short of one on 2026-09-08 — three runs
+# stopped with their worktrees kept. Thirty-six waits is six hours.
 RETRY_WAIT="${ARC_LOOP_RETRY_WAIT:-600}"
-MAX_RETRY="${ARC_LOOP_MAX_RETRY:-12}"
+MAX_RETRY="${ARC_LOOP_MAX_RETRY:-36}"
 DRY=0
 MAX=0
 ISSUES=""
@@ -359,8 +361,9 @@ wait_run() {
 # resume_run <run-dir> <worktree> <model-flag> — `claude -p --continue` in the worktree picks up
 # that run's own transcript, so it carries on rather than starting the issue over.
 resume_run() {
-  printf '%s\n' "You were interrupted by a rate limit. Continue the run from where it stopped." \
-    "Read the issue checklists on GitHub for the current state before acting; do not redo ticked boxes." \
+  printf '%s\n' "Your session ended before the run finished — a limit, or a turn that ended while waiting on background work. Continue the run from where it stopped." \
+    "Read the issue checklists on GitHub and git status for the current state before acting; do not redo ticked boxes." \
+    "Run sub-agents in the foreground: a claude -p session ends when you end your turn, and a background task's notification never arrives." \
     > "$1/resume.md"
   launch_run "$1" "$2" "$3" "$1/resume.md" "--continue"
 }
