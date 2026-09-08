@@ -113,7 +113,7 @@ moves next; this column only reports.
 | m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | ⚪ |
 | m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../skills/plugin-retrospective/SKILL.md) | 🔵 |
 | m39 | Mechanism numbering | 📐 | **A new mechanism gets a number that is actually free.** *The number space spans all three plugins; a registry issues the next one and records the claim* | — | ⚪ |
-| m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | ⚪ |
+| m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | 🔵 |
 
 Numbering is inherited from the retrospective's product plan and kept stable so existing
 specs and evidence still resolve. That plan ran to 37 across all three plugins, so new
