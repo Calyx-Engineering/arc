@@ -78,7 +78,7 @@ comparison has something fixed to compare against.
 
 **The baseline set a bar this does not clear, and it should be quoted rather than skirted:**
 *"A fix moves a row or it did not work."* No row moves here. The same document names why in its
-next breath — re-running an opening against a changed format is #181 — but the two sentences sit
+next breath — re-running an opening against a changed format needs a live model — but the two sentences sit
 apart, and reading only the first would leave you expecting a moved score from this issue. There
 is none, and there cannot be one from this corpus.
 
@@ -117,7 +117,7 @@ are named above and neither is a rationale problem.
 
 ## What would actually move the score
 
-**A live re-run — #181.** Everything here is text about text. The gate
+**A live re-run, which no filed issue carries.** Everything here is text about text. The gate
 (`tools/verify-handoff-rationale.sh`, 9 live probes, 12 fixture cases) proves the rules are
 present and that each probe can fail; it cannot prove a session follows them, and no gate in this
 repository can — `tools/verify-all.sh --list` says so for every skill.

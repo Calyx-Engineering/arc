@@ -16,7 +16,7 @@
 #
 # TWO MOMENTS, AND THEY ARE NOT THE SAME CHECK:
 #
-#   1. THE HANDOFF, AT THE SESSION'S FIRST EDIT — of any file, not of the handoff. #152's
+#   1. THE HANDOFF, AT THE SESSION'S FIRST TOOL CALL — of any kind, not the handoff's own. #152's
 #      point is that a session which crashes never reaches write time, so a copy taken when
 #      the handoff is rewritten is a copy taken too late. The snapshot is keyed to the
 #      session id, so it happens once, before this session has written anything at all.
@@ -36,12 +36,25 @@
 #
 # AND IT IS SILENT ON Bash — see `report()`. Speaking there would auto-approve the command.
 #
-# WHAT IT COSTS ON EVERY Bash CALL AFTER THE FIRST, stated honestly because the first draft of
-# this comment understated it: reading stdin, three `field` calls (`cwd`, `session_id`,
-# `tool_name` — each a short pipeline in a subshell), one `git rev-parse --git-dir`, and one file
-# test. Tens of processes, not "one file test". That is the floor for a hook on this matcher, and
-# it is paid on every Bash call in every repository the plugin is installed into. `field` is not
-# `jq` precisely so the floor stays a few small processes rather than a dependency.
+# WHAT IT COSTS ON EVERY Bash CALL AFTER THE FIRST. Measured on this machine, 20 iterations,
+# marker warm — which is the common case:
+#
+#   bash -c 'exit 0'        27 ms   the floor
+#   hooks/mode-guard        65 ms   the other PreToolUse Bash hook
+#   hooks/handoff-archive  147 ms
+#
+# Two earlier drafts of this comment were wrong about it. The first said "one file test"; the
+# second, corrected to "tens of processes", then claimed that was "the floor for a hook on this
+# matcher" — which the file next to it refutes, since mode-guard bails on a `case` before doing
+# any of this. Review pass 4 measured it at 309 ms and called the claim out.
+#
+# The parse is now bash builtins rather than three `grep`/`sed` pipelines, which is what took it
+# from 309 to 147. What remains is stdin, one `git rev-parse --git-dir` for the marker path, and
+# one file test. Getting below that means not calling git, which means keying the marker
+# somewhere other than the repository — a design change, not a tuning one.
+#
+# 147 ms on every Bash call in every repository the plugin is installed into is a real tax, and
+# whether the Bash matcher is worth it is a judgement recorded on #152 rather than settled here.
 #
 # THIS IS THE PreToolUse PROXY FOR A COLD START, NOT A SessionStart HOOK. The property #152
 # needs does hold — the handoff is copied before this session's first write of anything, so
@@ -54,6 +67,13 @@
 # excludes — #152 requires the copy location be gitignored too. It is under the repo root
 # rather than inside `.git/` so the user can find it; a recovery copy nobody can locate is
 # not one. Nothing prunes it, and nothing should read it as history.
+#
+# IT ALSO LEAVES MARKERS IN `.git/`, and they are not pruned either. One per session for the
+# handoff, plus one per file archived: `$GITDIR/arc-archive-<session>-<key>`. They are empty,
+# they are what makes "once per session" true across separate hook invocations, and `.git/` is
+# never committed — but a long-lived clone accumulates one per session forever. The same is true
+# of `camp-session-start`'s marker, so this is the house pattern rather than a new one; it is
+# named here because review pass 4 found it undocumented.
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. Ahead of every
@@ -67,8 +87,29 @@ set +e
 
 INPUT="$(cat 2>/dev/null)"
 
-field() {
-  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+# Parsed with bash's own parameter expansion — NO subprocess at all.
+#
+# This hook runs on every Bash call in every repository the plugin is installed into, so the
+# parse is the hot path. The previous form cost two processes per field (`grep` then `sed`, over
+# a `tr` of the whole payload) and measured ~51 ms per field on Windows, three times over,
+# before the hook had decided whether it had anything to do at all.
+#
+# Matching on the QUOTED key also fixes a bug rather than only being faster. The old `grep` was
+# unanchored over the whole payload, and a Bash payload carries the command text — so
+# `grep -n file_path hooks/handoff-archive`, run as a command, matched inside the command string
+# and returned the command as a path.
+#
+# It is a naive reader, as the `sed` it replaces was: it finds `"<key>"`, expects a string value,
+# and stops at the next quote. A value containing an escaped quote would truncate. Tool payload
+# paths and ids do not, and the alternative is a `jq` dependency for a hook on this matcher.
+field() {  # field <key> — prints the string value of "<key>", or nothing
+  local rest="${INPUT#*\"$1\"}"
+  [ "$rest" = "$INPUT" ] && return 1          # key absent
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) ;; *) return 1 ;; esac  # not a string value
+  rest="${rest#\"}"
+  printf '%s' "${rest%%\"*}"
 }
 
 json_string() {
@@ -90,8 +131,20 @@ report() {
 
 # A JSON string carries Windows separators escaped. Undo that, then work in forward slashes
 # throughout — git reports its own paths that way on every platform.
+# Guarded so a path with no backslash — every POSIX one, and so the whole fast path there —
+# costs nothing. The substitution itself is left exactly as it was: an attempt to make it a bash
+# builtin changed behaviour in a way this environment cannot check, so it was reverted rather
+# than shipped on reasoning.
+#
+# NOTHING HERE COVERS THE BACKSLASH BRANCH. Every fixture path comes from `mktemp` and every
+# path git reports on this machine uses forward slashes, so the selftests exercise only the
+# `*)` arm above. That is a real gap, recorded on #152 rather than papered over: the branch that
+# matters on Windows is the one no case runs.
 unescape_path() {
-  printf '%s' "$1" | sed -e 's|\\\\|/|g' -e 's|\\|/|g'
+  case "$1" in
+    *\\*) printf '%s' "$1" | sed -e 's|\\\\|/|g' -e 's|\\|/|g' ;;
+    *)    printf '%s' "$1" ;;
+  esac
 }
 
 # ---- hook body ------------------------------------------------------------------

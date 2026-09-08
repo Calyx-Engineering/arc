@@ -30,9 +30,9 @@ the body changed and the stamp did not, the stamp is wrong* can be applied witho
 it is the same predicate the gate implements.
 
 **The check is possible only because #152 landed first.** Comparing "the stamp before" with "the
-stamp now" needs the before, and `hooks/handoff-archive` is what leaves it on disk. Case 7 fires
-the real hook, rewrites the handoff without moving the stamp, and asserts the gate catches it —
-which is #153's *done when*, executed rather than asserted. The dependency is deliberate and
+stamp now" needs the before, and `hooks/handoff-archive` is what leaves it on disk. The case named *"a real rewrite with an unmoved
+stamp is caught end to end"* fires the real hook, rewrites the handoff without moving the stamp,
+and asserts the gate catches it — which is #153's *done when*, executed rather than asserted. The dependency is deliberate and
 recorded here because it is not obvious from either issue alone.
 
 **An identical file is not a rewrite.** Without that branch the gate would demand a new stamp for
@@ -49,7 +49,7 @@ between the two deserves its own decision rather than being taken as a side effe
 ## Retrospective
 
 Built: the re-stamp rule in `skills/handoff/SKILL.md`'s write path, and
-`tools/verify-handoff-stamp.sh` — 4 live probes, 13 fixture cases, wired into `verify-all.sh` as
+`tools/verify-handoff-stamp.sh` — 5 live probes, 13 fixture cases, wired into `verify-all.sh` as
 two gates. The live rewrite probe reports `SKIP` with its reason where no archived prior handoff
 exists, rather than passing silently.
 

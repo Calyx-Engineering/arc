@@ -26,7 +26,7 @@ has nothing behind it, so overwriting it is destruction. `git ls-files --error-u
 whole test.
 
 **Two moments, because they are two different questions.** The handoff is snapshotted at the
-session's first edit *of anything*, keyed to the session id — that is #152's *cold start, not
+session's first tool call *of any kind*, keyed to the session id — that is #152's *cold start, not
 write time*, and a session that crashes has already been covered. Every other file is archived as
 it is about to be replaced, because nothing can know in advance which file that will be. Once per
 session per file: the first copy holds what the *user* wrote, later ones would only hold this
