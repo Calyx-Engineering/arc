@@ -29,6 +29,91 @@
 
 set -u
 
+SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+
+# ---- the self-test -------------------------------------------------------------------------
+# Fixture trees under mktemp, never this repository's own. It runs the real script through
+# TEMPLATE_ROOT, which already existed for exactly this. The arc-work derivation (#167) is what
+# needs cases: the live tree resolves, so a live run alone cannot show the check can fail.
+if [ "${1:-}" = "selftest" ]; then
+  passed=0; failed=0
+  WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
+
+  # Every template MAP names must exist, or the script reports a mapped template missing from
+  # disk — so a fixture is the whole set, with only dev-log.md carrying the link under test.
+  make_tree() {  # make_tree <name> <the arc-work link to put in dev-log.md>
+    local root="$WORK/$1" link="$2"
+    mkdir -p "$root/templates/camp" "$root/docs/arc-log" "$root/docs/dev-log"
+    local f
+    for f in arc-log handoff event-log SKILL; do printf '# fixture\n' > "$root/templates/$f.md"; done
+    for f in operating-agreement voice notes; do printf '# fixture\n' > "$root/templates/camp/$f.md"; done
+    printf '# fixture dev-log\n\n- **Arc work:** [&lt;topic&gt;](%s)\n' "$link" > "$root/templates/dev-log.md"
+    printf '%s' "$root"
+  }
+
+  case_is() {
+    local name="$1" want_status="$2" want_text="$3" got_status="$4" got="$5"
+    if [ "$got_status" = "$want_status" ] && [[ "$got" == *"$want_text"* ]]; then
+      echo "  PASS  $name"; passed=$((passed + 1))
+    else
+      echo "  FAIL  $name"
+      echo "        wanted exit $want_status containing: $want_text"
+      echo "        got exit $got_status:"
+      printf '%s\n' "$got" | sed 's/^/        | /'
+      failed=$((failed + 1))
+    fi
+  }
+
+  run() { TEMPLATE_ROOT="$1" bash "$SELF" 2>&1; }
+
+  echo "verify-template-links selftest — fixture trees, never the live tree"
+  echo
+
+  # 1 — the derived path resolves: the arc-work root is where the `../` lands, and it holds a
+  #     real arc slug for <arc-slug> to name.
+  root=$(make_tree resolves '../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md')
+  mkdir -p "$root/docs/arc-work/04-dogfood"
+  out=$(run "$root"); status=$?
+  case_is "a derived arc-work path that resolves passes" 0 "0 failed" "$status" "$out"
+
+  # 2 — #167's case. The `../` count assumes the template lands one level under docs/; two
+  #     levels up lands outside it entirely, and nothing reported that before.
+  root=$(make_tree wrongdepth '../../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md')
+  mkdir -p "$root/docs/arc-work/04-dogfood"
+  out=$(run "$root"); status=$?
+  case_is "an arc-work path at the wrong depth fails" 1 "the arc-work root does not resolve from here" "$status" "$out"
+
+  # 3 — no arc-work root at all.
+  root=$(make_tree noroot '../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md')
+  out=$(run "$root"); status=$?
+  case_is "a missing arc-work root fails" 1 "the arc-work root does not resolve from here" "$status" "$out"
+
+  # 4 — the root resolves but holds no slug, so <arc-slug> can name nothing. Without this the
+  #     check would pass on an empty directory and prove only that `..` was counted right.
+  root=$(make_tree noslug '../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md')
+  mkdir -p "$root/docs/arc-work"
+  out=$(run "$root"); status=$?
+  case_is "an arc-work root with no arc slug fails" 1 "holds no arc slug" "$status" "$out"
+
+  # 5 — a NESTED arc slug. This is the shape #167 names: the path is derived from the tree
+  #     rather than assumed to be one flat segment, so a slug that is itself nested resolves.
+  root=$(make_tree nested '../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md')
+  mkdir -p "$root/docs/arc-work/04-dogfood/s3-upkeep"
+  out=$(run "$root"); status=$?
+  case_is "a nested arc slug resolves" 0 "0 failed" "$status" "$out"
+
+  # 6 — a placeholder link that is not an arc-work path is still skipped. The derivation is
+  #     scoped, and this case says so rather than leaving it to be inferred.
+  root=$(make_tree otherplaceholder '../scratch/issue-&lt;N&gt;/&lt;topic&gt;.md')
+  out=$(run "$root"); status=$?
+  case_is "a non-arc-work placeholder is not derived" 0 "0 failed" "$status" "$out"
+
+  echo
+  echo "$passed passed, $failed failed"
+  [ "$failed" = "0" ] || exit 1
+  exit 0
+fi
+
 cd "${TEMPLATE_ROOT:-$(dirname "$0")/..}" || exit 1
 
 # template  →  the directory it is copied INTO, relative to the consuming repo root.
@@ -88,7 +173,43 @@ printf '%s\n' "$MAP" | while IFS='|' read -r tpl dest; do
   for t in $links; do
     case "$t" in
       http://*|https://*|mailto:*|\#*) continue ;;
-      *'<'*|*'&lt;'*) continue ;;     # a placeholder path inside the template's own example
+    esac
+    case "$t" in
+      *'<'*|*'&lt;'*)
+        # A PLACEHOLDER PATH IS DERIVED, NOT SKIPPED — #167. `../arc-work/<arc-slug>/<topic>.md`
+        # was skipped whole by this rule, so nothing checked that the fixed half of it lands
+        # anywhere: the `../` assumed the template lands exactly one level under docs/, and a
+        # template that moved, or an arc-work root that did not, would report nothing at all.
+        #
+        # Only the arc-work path is derived here, and that is a scope statement rather than a
+        # special case: the placeholder is expanded against the arc slugs THIS repository has,
+        # and arc-work is the one K2 directory it actually populates. `../scratch/` and
+        # `../report/` carry the same shape with no instances to expand against, so there is
+        # nothing to derive them from — see this issue's Spawned note.
+        case "$t" in
+          *arc-work/*) ;;
+          *) continue ;;
+        esac
+        # the fixed half of the path: everything up to and including the arc-work segment
+        aw="${t%%arc-work/*}arc-work"
+        case "$dest" in
+          */SKILLNAME) awres="$(dirname "$dest")/x/$aw" ;;
+          *) awres="$dest/$aw" ;;
+        esac
+        awres="$(printf '%s' "$awres" | awk -F/ '{n=0; for(i=1;i<=NF;i++){ if($i==""||$i==".") continue; if($i==".."){ if(n>0) n--; else out[++n]=".."; } else out[++n]=$i } s=""; for(i=1;i<=n;i++) s=s (i>1?"/":"") out[i]; print s}')"
+        if [ ! -d "$awres" ]; then
+          bad="$bad
+        $t
+          the arc-work root does not resolve from here: $awres"
+        elif [ -z "$(find "$awres" -mindepth 1 -maxdepth 1 -type d -print -quit 2>/dev/null)" ]; then
+          # The placeholder names an arc slug. With no slug under the root there is nothing it
+          # could name, so the derived path cannot resolve for any value of it.
+          bad="$bad
+        $t
+          $awres holds no arc slug, so <arc-slug> names nothing"
+        fi
+        continue
+        ;;
     esac
     path="${t%%#*}"
     [ -n "$path" ] || continue

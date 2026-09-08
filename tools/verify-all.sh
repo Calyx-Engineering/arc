@@ -85,6 +85,7 @@ run_gate "report shape cases" bash tools/report-grade.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
+run_gate "template link cases" bash tools/verify-template-links.sh selftest
 run_gate "close-sequence count" bash tools/verify-close-sequence.sh
 run_gate "handoff staleness checks" bash tools/verify-handoff-checks.sh
 run_gate "workspace guard" bash tools/verify-workspace-guard.sh
