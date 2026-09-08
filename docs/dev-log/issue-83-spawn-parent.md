@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec.
 
-**Issue:** [#83](https://github.com/Calyx-Engineering/arc/issues/83)  ·  **PR:** written in once it opens
+**Issue:** [#83](https://github.com/Calyx-Engineering/arc/issues/83)  ·  **PR:** [#251](https://github.com/Calyx-Engineering/arc/pull/251)
 
 ## Problem
 
