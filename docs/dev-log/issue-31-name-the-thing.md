@@ -1,6 +1,6 @@
 # Issue #31 — Saying what a thing is when naming it
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#31](https://github.com/Calyx-Engineering/arc/issues/31)  ·  **PR:** _pending_
 

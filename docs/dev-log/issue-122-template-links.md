@@ -1,6 +1,6 @@
 # Issue #122 — template links break where the template lands
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#122](https://github.com/Calyx-Engineering/arc/issues/122)  ·  **PR:** —
 

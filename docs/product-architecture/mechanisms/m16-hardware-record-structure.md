@@ -315,7 +315,7 @@ attention of every future reader; an unnecessary analysis file costs disk.
 ### The two compact files stay compact
 
 **Nothing about the dev-log changes** except one line: its retrospective gains a link
-into the analyses. Its template rule — *"Decision log, not a spec … capture the why, not
+into the analyses. Its template rule — *"Dev-log, not a spec … capture the why, not
 a blow-by-blow"* — is what makes it reviewable and must not be relaxed.
 
 ```markdown

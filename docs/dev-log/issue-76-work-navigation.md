@@ -1,6 +1,6 @@
 # Issue #76 — How discovered work is recorded, navigated, and merged
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#76](https://github.com/Calyx-Engineering/arc/issues/76)  ·  **Spec:** [m46](../product-architecture/mechanisms/m46-work-navigation.md)
 

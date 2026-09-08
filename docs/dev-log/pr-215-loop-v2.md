@@ -1,6 +1,6 @@
 # PR #215 — arc-loop dispatches batched, detached runs into worktrees
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** none  ·  **PR:** [#215](https://github.com/Calyx-Engineering/arc/pull/215)
 

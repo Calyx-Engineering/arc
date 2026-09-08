@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-workspace-guard verify-linked-branch verify-mechanisms verify-dev-log-name miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade"
 
 RUN=0
 FAILED=0
@@ -85,10 +85,15 @@ run_gate "report shape cases" bash tools/report-grade.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
+run_gate "template link cases" bash tools/verify-template-links.sh selftest
 run_gate "close-sequence count" bash tools/verify-close-sequence.sh
 run_gate "handoff staleness checks" bash tools/verify-handoff-checks.sh
 run_gate "workspace guard" bash tools/verify-workspace-guard.sh
 run_gate "linked-branch cases" bash tools/verify-linked-branch.sh selftest
+run_gate "mechanism table cases" bash tools/verify-mechanisms.sh selftest
+run_gate "mechanism table" bash tools/verify-mechanisms.sh
+run_gate "dev-log name cases" bash tools/verify-dev-log-name.sh selftest
+run_gate "dev-log name" bash tools/verify-dev-log-name.sh
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.

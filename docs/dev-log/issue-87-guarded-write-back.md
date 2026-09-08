@@ -1,6 +1,6 @@
 # Issue #87 — a failed edit writes the original body back
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#87](https://github.com/Calyx-Engineering/arc/issues/87)  ·  **PR:** [#235](https://github.com/Calyx-Engineering/arc/pull/235)  ·  **Batch:** #87 #135 #193, one PR
 

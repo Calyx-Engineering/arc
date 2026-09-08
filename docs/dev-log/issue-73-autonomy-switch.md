@@ -1,6 +1,6 @@
 # Issue #73 — the autonomy switch
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#73](https://github.com/Calyx-Engineering/arc/issues/73)  ·  **PR:** —
 

@@ -18,7 +18,7 @@ tier a session reads every time it starts.
 | `docs/arc-log/arc-<slug>.md` | One arc | Why the arc exists, target architecture, load-bearing decisions, build order, a live status table |
 | `docs/dev-log/issue-<N>-<slug>.md`, or `pr-<NN>-<slug>.md` | **One merged unit** — an issue, or a PR that never had one ([m46 §6.1](m46-work-navigation.md#61-merged-work-always-has-a-dev-log)) | Problem · Decisions and trade-offs · Rejected approaches · Retrospective |
 
-**Both are deliberately short.** The dev-log template says it outright: *"Decision log, not
+**Both are deliberately short.** The dev-log template says it outright: *"Dev-log, not
 a spec. Keep it short — capture the why, not a blow-by-blow."* That constraint is what makes
 them readable every session, and it is what K2 exists to protect — working detail goes
 there, not here.

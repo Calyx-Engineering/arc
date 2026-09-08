@@ -1,6 +1,6 @@
 # Issue #132 — local edits never reach the installed plugin
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#132](https://github.com/Calyx-Engineering/arc/issues/132)  ·  **PR:** [#137](https://github.com/Calyx-Engineering/arc/pull/137)
 

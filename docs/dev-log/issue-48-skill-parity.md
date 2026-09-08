@@ -1,6 +1,6 @@
 # Issue #48 — verify every shipping skill matches its local copy before release
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#68](https://github.com/Calyx-Engineering/arc/issues/68)  ·  **PR:** [#114](https://github.com/Calyx-Engineering/arc/pull/114)
 
