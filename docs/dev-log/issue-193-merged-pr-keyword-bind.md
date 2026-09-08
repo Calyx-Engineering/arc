@@ -1,6 +1,6 @@
 # Issue #193 — a merged PR still binds a closing keyword added afterwards
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#193](https://github.com/Calyx-Engineering/arc/issues/193)  ·  **PR:** [#235](https://github.com/Calyx-Engineering/arc/pull/235)  ·  **Batch:** #87 #135 #193, one PR
 
