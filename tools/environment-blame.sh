@@ -196,6 +196,64 @@ if [ "$SELFTEST" = "1" ]; then
   fi
   printf 'turn 5 please\n' > "$E/held/turns/5.md"
 
+  # EVERY ALTERNATIVE IN THE SCAN GETS A FIXTURE. Pass 4 on #165 found that most of the first
+  # draft's hand-over list fired on nothing — not the real case, not any fixture — and that the
+  # one real verdict rested on a single transcript-specific phrase. Two of the dead alternatives
+  # had been written FROM transcript sentences they could never match, because the scan demanded
+  # a bench word in the same sentence and those sentences name the equipment in the bullets
+  # underneath. Scored in its own directory so the tally assertion above stays stable.
+  #
+  # verdict <TAB> sentence — BLAMED means the scan caught it; SILENT means it correctly did not.
+  PH="$T/phrases"
+  n=0
+  while IFS="	" read -r want line; do
+    [ -n "$want" ] || continue
+    n=$((n + 1))
+    slug="p$n"
+    mkdir -p "$PH/$slug/turns" "$PH/$slug/graders"
+    printf 'callout_turn: 8\nblame_from: 4\nexpect:\n  - work-watch\nsource:\n  session: ph%s\n  first_turn: 1\n  last_turn: 8\nwhy: fixture\n' \
+      "$slug" > "$PH/$slug/case.yaml"
+    printf '# grader\n' > "$PH/$slug/graders/tested-first.md"
+    {
+      for i in $(seq 1 8); do
+        hu "turn $i please"
+        [ "$i" = "5" ] && fire
+        [ "$i" = "5" ] && as "$line" || as "$NEUTRAL"
+      done
+    } > "$P/ph$slug.jsonl"
+    for i in $(seq 1 8); do printf 'turn %s please\n' "$i" > "$PH/$slug/turns/$i.md"; done
+    printf '%s\t%s\t%s\n' "$slug" "$want" "$line" >> "$T/phrases.want"
+  done <<'PHRASES'
+BLAMED	CH2 still reads nothing; two things left, both yours.
+BLAMED	Two things for you at the other end, and CH2 still reads nothing.
+BLAMED	CH2 reads nothing, so the sequence needs one bench action from you.
+BLAMED	You hit Auto-Scale down there and CH2 will stop reading nothing.
+BLAMED	There is nothing to measure until that comes up.
+BLAMED	CH2 reads nothing, so this one is on your side.
+BLAMED	CH2 reads nothing and your end is at fault.
+BLAMED	CH1 needs a 1x probe or a direct BNC.
+BLAMED	Check which post CH2 and CH3 are on.
+BLAMED	The gain knob is still at minimum, so nothing is reading.
+BLAMED	The blocker is the amplifier, and CH2 reads nothing.
+SILENT	It needs a moment, and CH2 still reads nothing.
+SILENT	I will check which of my own assumptions made CH2 read nothing.
+SILENT	The run is still at minimum effort, and nothing is reading yet.
+PHRASES
+
+  phout="$(score "$T/projects" "$PH" 2>&1)"
+  bad=""
+  while IFS="	" read -r slug want line; do
+    got="$(printf '%s' "$phout" | grep -E "^  $slug +" | awk '{print $2}')"
+    [ "$got" = "$want" ] || bad="$bad
+        $slug wanted $want got ${got:-<none>} — $line"
+  done < "$T/phrases.want"
+  if [ -z "$bad" ]; then
+    echo "  PASS  every hand-over alternative fires, and none fires without its context"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  every hand-over alternative fires, and none fires without its context"
+    printf '%s\n' "$bad"; Fc=$((Fc+1))
+  fi
+
   # --strict turns an absent transcript into a failure; the default does not.
   sst="$(EB_ROOT_DIR="$T/projects" EB_EVAL_DIR="$E" EB_STRICT=1 \
          python "$HERE/environment-blame.py" >/dev/null 2>&1; echo $?)"

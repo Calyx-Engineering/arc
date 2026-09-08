@@ -113,12 +113,27 @@ recorded defect had never happened. #246 is where a passing measurement can come
 | **A count bumped past its referent** | `docs/product-architecture/README.md` said *"eight separate sweeps competing"*. Five is right — only the five nudging checks have that shape; the three gates fire on an act |
 | **`ROADMAP.md`'s repair narrowed the check** | *"the user's bench"* where the skill and the definition both say environment: the wiring, the network, the install, a file they edited |
 
+| Pass 3 found | |
+|---|---|
+| **All three boxes have evidence, and the *Done when* does not** | The audit confirmed each box against the tree — the section, the frontmatter declarations, the case, the drift check, the gate. It also confirmed no stale *seven* survives anywhere: every remaining hit is `/arc-next`'s handoff staleness checks or a historical dev-log |
+| **This file undercounted the gate it was warning about** | It said the anti-skip guard leaves *"the other five eval scorers"* uncovered. It is eight `KNOWN` entries. Corrected in Evidence below — a note about a coverage hole that gets the hole's size wrong is the shape it is warning about |
+| **The predicted PR number resolved to someone else's PR** | This file and the arc-log both cited #247, which is open and unrelated. Fixed to #248 in its own commit once the PR existed. m46 §9.1's window, and it did not close cleanly |
+| **`playlist.md`'s F8 row says this suite has a probe** | True when the arc was planned, false now. A planning artifact and outside this unit — flagged in the PR body rather than edited |
+
+| Pass 4 found | |
+|---|---|
+| **The scan's coverage claim did not survive being checked** | Most of the hand-over list fired on **nothing** — not the scored window, not any fixture — and the one real verdict rested on a single transcript-specific phrase, `is still at minimum`. Delete that alternative and the suite reported `SILENT` on the session it was written from |
+| **Two alternatives were written from sentences they could never match** | *"Two things left, both yours:"* and *"Simplest is you hit Auto-Scale down there"* are the bluntest attributions in the session and **neither names a piece of equipment** — the equipment is in the bullets underneath. The scan demanded a bench word in the same sentence, so the alternatives added for those two sentences were dead on arrival. The scan now has two kinds of hand-over: one that needs a `PLACE` token beside it, and one that says it on its own. The real case's first blame is now turn 30's Auto-Scale sentence, which is the earlier and blunter one |
+| **Every alternative now has a fixture** | Fourteen more, scored in their own directory so the main tally stays stable: eleven that must be caught and three near-misses that must not be — *"It needs a moment"*, *"I will check which of my own assumptions"*, *"still at minimum effort"* |
+| **The skill said the suite scores three replies** | It scores a window of three and the **first blame inside it decides** — `verdict()` returns on it. The grader had this right and the skill contradicted it |
+| **The PR body's own account was wrong twice** | *"the case stopped one turn short"* — it stopped two turns short of the stated measurement and gained six. And *"passes 1–3 found eleven defects"* while this section had no pass 3 in it, which is the tick-without-evidence shape applied to a review pass |
+
 ## Evidence
 
 | | |
 |---|---|
-| `bash tools/environment-blame.sh selftest` | 24 passed, 0 failed — held, held-from-an-earlier-turn, blamed, a different-symptom fix, no symptom token, unfired, the wrong skill, silent, a blame before the window, a blame on the callout turn, a reply naming its own fault, the possessive determiner, drift, `--strict` |
-| `bash tools/environment-blame.sh` | `1 of 1 case(s) scored: 0 held, 0 unfired, 1 blamed, 0 silent` — the baseline, and the defect |
+| `bash tools/environment-blame.sh selftest` | 25 passed, 0 failed — held, held-from-an-earlier-turn, blamed, a different-symptom fix, no symptom token, unfired, the wrong skill, silent, a blame before the window, a blame on the callout turn, a reply naming its own fault, the possessive determiner, drift, `--strict`, and every hand-over alternative against fourteen phrases |
+| `bash tools/environment-blame.sh` | `1 of 1 case(s) scored: 0 held, 0 unfired, 1 blamed, 0 silent` — the baseline, and the defect. **Only on the machine holding the corpus**; elsewhere it prints `transcript 9cefd799 not on this machine — skipped` and exits 0, which is why the selftest is the part wired into the gate |
 | `bash tools/verify-all.sh` | 38 gates, all clean, exit 0 |
 
 **The scan's first finding was about itself.** Before the `OWNS_IT` veto and the *"yours"* /

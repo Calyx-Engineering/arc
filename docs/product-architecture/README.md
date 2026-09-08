@@ -259,9 +259,9 @@ mechanisms fire together:
 
 ### `skills/work-watch` — the design-time evaluator
 
-Eight checks watch work as it proceeds. Splitting them into eight always-on
-checks means five separate sweeps competing for the same attention — the five that
-notice and say so; the three gates fire on an act, not a pause — and
+Eight checks watch work as it proceeds. Five of them notice something and say so; the other
+three are gates that fire on an act rather than a pause. **Splitting the five into
+always-on checks means five separate sweeps competing for the same attention** — and
 [test-obligation-capture](mechanisms/m23-test-obligation-capture.md) rejects the split
 outright: *"one of the things the design-time evaluator watches for, alongside commit
 timing. Not a separate always-on process — a check in the same sweep."*

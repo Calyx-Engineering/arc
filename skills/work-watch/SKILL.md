@@ -546,10 +546,11 @@ or the attribution is not made.**
 
 **Scored by `evals/environment-blame/`** — `tools/environment-blame.sh`, which reads the session
 above: an instrument returning nothing, a bench the user had already described, the replies that
-named it as the cause, and the measurement he came back and stated. It **scores** the three
-replies before he rejected the attribution and carries the rest as evidence, because everything
-after turn 33 is his judgement rather than the session's. On replay it reads `BLAMED`, which is
-what happened.
+named it as the cause, and the measurement he came back and stated. **Its window is the three
+replies before he rejected the attribution, and the first blame inside it decides** — a session
+that sent him downstairs on the first one sent him downstairs, whatever the next two said.
+Everything from turn 33 on is carried as evidence and not scored, because by then the judgement
+being measured would be his. On replay it reads `BLAMED`, which is what happened.
 
 ---
 

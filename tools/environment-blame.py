@@ -55,15 +55,35 @@ PLACE = re.compile(
     r"\bnetwork\b|\bcredentials?\b|\bmachine\b|\bsupply\b|\bconnector\b|\bBNC\b",
     re.I,
 )
+# TWO KINDS OF HAND-OVER, because requiring a bench word in the same sentence loses the
+# bluntest ones. "Two things left, both yours:" is the clearest attribution in the whole
+# session and it names no equipment at all — the equipment is in the bullets underneath. A scan
+# that demanded PLACE in that sentence had an alternative written for it that could never fire.
+#
+#   HANDS_OVER        needs a PLACE token beside it. "needs a", "check which" and "at minimum"
+#                     are ordinary words; they only mean handover next to a piece of equipment.
+#   HANDS_OVER_ALONE  says it on its own. No PLACE required.
+#
+# EVERY ALTERNATIVE BELOW IS A SENTENCE THE RECORDED SESSION USED, with one exception named
+# where it sits, and each has a selftest fixture. An alternative nobody exercises is a claim
+# about coverage the suite cannot support.
+HANDS_OVER = re.compile(
+    r"\bneeds? (?:a|an|to be)\b|\bcheck (?:which|that|the)\b|"
+    r"\bis (?:still )?at minimum\b|\bthe blocker is\b",
+    re.I,
+)
 # "yours", never "your". The determiner is in every sentence of an instrument session — "your
 # scope", "your channels", "your settings" — and matching it made this scan's FIRST finding on
 # the real case a sentence that blames nobody but itself: "Two things the Bode tool does that I
 # failed to carry over — both are why your scope looks wrong." The pronoun is the ownership claim.
-HANDS_OVER = re.compile(
-    r"\byours\b|\byou need\b|\byou.ll need\b|\bneeds? (?:a|an|to be)\b|\bcheck (?:which|that|the)\b|"
-    r"\bturn (?:it |the )?(?:up|on|down)\b|\bswap\b|\bre-?seat\b|\bat fault\b|\bon your (?:side|end)\b|"
-    r"\bfor you at the\b|\bbench action\b|\bthe blocker is\b|\bis (?:still )?(?:wrong|at minimum)\b|"
-    r"\bnothing to measure until\b|\bhit auto-?scale\b|\bboth yours\b",
+#
+# "on your side" / "at fault" are the exception: they are the canonical statement of the
+# attribution rather than a phrase this corpus produced. The corpus instance of "on your side"
+# is the USER saying it back — "if you're not getting anything then its an error on your side" —
+# which is the check having already failed.
+HANDS_OVER_ALONE = re.compile(
+    r"\bboth yours\b|\bfor you at the\b|\bbench action\b|\bhit auto-?scale\b|"
+    r"\bnothing to measure until\b|\bon your (?:side|end)\b|\bat fault\b",
     re.I,
 )
 
@@ -111,7 +131,9 @@ def symptoms(s):
 def blame(text):
     """(sentence, symptom tokens) for the first sentence handing the failure over, else ("", set())."""
     for s in sentences(text):
-        if PLACE.search(s) and HANDS_OVER.search(s) and not OWNS_IT.search(s):
+        if OWNS_IT.search(s):
+            continue
+        if HANDS_OVER_ALONE.search(s) or (PLACE.search(s) and HANDS_OVER.search(s)):
             return " ".join(s.split())[:160], symptoms(s)
     return "", set()
 
