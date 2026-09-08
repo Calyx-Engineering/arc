@@ -9,7 +9,7 @@
 # behaviour half — HANDOFF.md's Execution mode row is read before every commit, push, PR
 # and merge, so the mode is read rather than recalled. #189.
 #
-# camp-reports: PreToolUse
+# camp-reports: mode-check
 # checks: gating-command, mode-row
 # skips: mode-row (the command is not one the mode governs)
 #
@@ -41,6 +41,12 @@
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
 
+# ---- the activation log ---------------------------------------------------------
+# Sourced here, before anything can exit, so an entry is written whichever way this hook
+# leaves — including the `[ -n "$INPUT" ] || exit 0` a few lines down. m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event mode-check
+
 # ---- fail-open wrapper ----------------------------------------------------------
 set +e
 
@@ -52,6 +58,7 @@ json_string() {
 }
 
 deny() {
+  arc_log_outcome_default denied "the hook denied the call"
   printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$(json_string "$1")}}"
   exit 0
 }
@@ -64,8 +71,15 @@ field() {
 
 # 1. Is this a command the mode governs? Anything else is none of this hook's business.
 case "$INPUT" in
-  *"git commit"*|*"git push"*|*"gh pr create"*|*"gh pr merge"*|*"gh pr ready"*) ;;
-  *) exit 0 ;;
+  *"git commit"*|*"git push"*|*"gh pr create"*|*"gh pr merge"*|*"gh pr ready"*)
+    arc_log_pass gating-command=yes
+    ;;
+  *)
+    arc_log_pass gating-command=no
+    arc_log_skip mode-row "the command is not one the mode governs"
+    arc_log_outcome ok "not a command the mode governs"
+    exit 0
+    ;;
 esac
 
 # 2. Where the mode lives: the payload's cwd, else wherever this is running.
@@ -74,6 +88,8 @@ CWD="$(field cwd)"
 HANDOFF="$CWD/HANDOFF.md"
 
 if [ ! -f "$HANDOFF" ]; then
+  arc_log_fail mode-row=no-handoff
+  arc_log_outcome denied "no HANDOFF.md, so the mode is unset — unset means manual"
   deny "No HANDOFF.md, so the execution mode is unset — and unset means manual. Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add HANDOFF.md with a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** |, or ask the user to switch to autonomous and name the boundary."
 fi
 
@@ -81,6 +97,8 @@ fi
 ROW="$(grep -m1 -iE '^\|[^|]*\bmode\b[^|]*\|' "$HANDOFF" 2>/dev/null)"
 
 if [ -z "$ROW" ]; then
+  arc_log_fail mode-row=absent
+  arc_log_outcome denied "HANDOFF.md has no Execution mode row — unset means manual"
   deny "HANDOFF.md has no Execution mode row, so the mode is unset — and unset means manual. Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** | under an Execution mode heading."
 fi
 
@@ -89,14 +107,20 @@ MODE="$(printf '%s' "$ROW" | awk -F'|' '{print $3}' | tr -d '*` ' | tr '[:upper:
 
 case "$MODE" in
   autonomous)
+    arc_log_pass mode-row=autonomous
+    arc_log_outcome ok "autonomous — the command is allowed"
     exit 0
     ;;
   manual)
+    arc_log_fail mode-row=manual
+    arc_log_outcome denied "the mode is manual — propose and wait"
     deny "The execution mode is manual — HANDOFF.md says so, and this hook reads it rather than recalling it. In manual, nothing is committed, pushed, opened as a PR or merged unless the user asks. Propose the change and stop: say what you did, and let the diff be read. To proceed the user asks, or sets HANDOFF.md's Execution mode row to Autonomous and names the boundary it runs to."
     ;;
   *)
     # A row exists and says something this hook does not model. Not a crash, and not
     # permission — an unreadable mode is the same as no mode.
+    arc_log_fail mode-row=unreadable
+    arc_log_outcome denied "the mode row says neither manual nor autonomous"
     deny "HANDOFF.md's Execution mode row does not say manual or autonomous, so the mode is unreadable — and unreadable means manual. The row read: $ROW — set that cell to Manual or Autonomous."
     ;;
 esac
