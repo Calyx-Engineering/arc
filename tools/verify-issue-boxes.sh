@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # verify-issue-boxes.sh — is every `Required` box dispositioned before the PR is ready?
 #
-#   tools/verify-issue-boxes.sh <issue-number>     the issue's boxes, against its closing PRs
-#   tools/verify-issue-boxes.sh --pr <pr-number>   every issue that PR closes
+#   tools/verify-issue-boxes.sh <issue-number>     the issue's boxes, against its PRs' bodies
+#   tools/verify-issue-boxes.sh --pr <pr-number>   every issue that PR is answerable for
 #   tools/verify-issue-boxes.sh selftest
 #
 # WHY. #140 put a read-back before the PR and ruled a script out — "prose correctness is not
@@ -22,11 +22,16 @@
 # WHAT COUNTS AS RESOLVED
 #
 #   ticked                  `- [x]`
-#   named, with a reason    the box's opening words appear in a closing PR's body, on an entry
-#                           that also carries at least three words the box itself does not.
-#                           `— moved to #250` and `not done: the API has no such field` both
-#                           pass; the box pasted back verbatim does not, because a checklist
-#                           copied into a PR body states nothing
+#   named, with a reason    THE BOX'S FIRST EIGHT WORDS, quoted in a PR body on an entry that
+#                           also carries at least three words the box itself does not. So:
+#
+#                             - Selftest cases for every shape — moved to #250
+#
+#                           `Box 4: not done` does NOT satisfy it, and nor does the box pasted
+#                           back verbatim: a checklist copied into a PR body states nothing.
+#                           Quoting the box is what makes the disposition matchable to it, and
+#                           the failure message and skills/issue-write both say so, because a
+#                           rule an author cannot read is a rule that reports honest work
 #
 # The moved-box case falls out of the same rule rather than needing one of its own: #140 allows
 # moving a box this unit cannot meet, and a row naming where it went is a row with words of its
@@ -51,10 +56,13 @@
 # — with no network and no live issue. The precedent is `hooks/tracker-verify`'s `arc_test_*`
 # keys: a verifier whose only path needs GitHub is a verifier nobody runs the day it matters.
 #
-#   issue-<N>.md      the issue body. ABSENT MEANS THE ISSUE DOES NOT EXIST
-#   issue-<N>.prs     numbers of the PRs that close it, one per line. Absent means none
-#   pr-<N>.md         the PR body. ABSENT MEANS THE PR DOES NOT EXIST
-#   pr-<N>.issues     numbers of the issues it closes, one per line. Absent means none
+#   issue-<N>.md         the issue body. ABSENT MEANS THE ISSUE DOES NOT EXIST
+#   issue-<N>.prs        PRs GitHub already binds to it, one number per line. Absent means none
+#   issue-<N>.crossrefs  PRs that only mention it — candidates, admitted by the same test the
+#                        live path applies. This is where the arc case lives
+#   pr-<N>.md            the PR body. ABSENT MEANS THE PR DOES NOT EXIST
+#   pr-<N>.branch        its head branch name
+#   pr-<N>.issues        issues GitHub already binds it to, one per line. Absent means none
 
 set -u
 
@@ -94,25 +102,72 @@ key_of() {
     | sed -E 's/ +$//'
 }
 
-# One unticked box per line, its continuation lines folded in. A `- [x]` closes the box before
-# it and contributes nothing; so does a blank line or a new list item.
-unticked() {
-  awk '
-    function flush() { if (cur != "") { print cur; cur = "" } }
-    {
-      line = $0
-      if (line ~ /^[ \t]*[-*+] \[ \]/) {
-        flush(); sub(/^[ \t]*[-*+] \[ \][ \t]*/, "", line); cur = line; next
-      }
-      if (line ~ /^[ \t]*[-*+] \[[xX]\]/) { flush(); next }
-      if (cur != "") {
-        if (line ~ /^[ \t]+[^ \t]/ && line !~ /^[ \t]*[-*+] / && line !~ /^[ \t]*[0-9]+\. /) {
-          sub(/^[ \t]+/, " ", line); cur = cur line; next
-        }
-        flush()
-      }
+# ONE SCANNER FOR BOTH COUNTS, so the total and the open list can never disagree about what a
+# box is. `mode=open` prints one unticked box per line with its continuation lines folded in;
+# `mode=total` prints how many checkboxes of either state there are. A `- [x]` closes the box
+# before it and contributes nothing; so does a blank line or a new list item.
+#
+# FENCED BLOCKS ARE NOT CHECKLISTS. An issue that shows a checklist — a body template, an
+# example of the shape this tool accepts, a quoted `Required` section from somewhere else — is
+# not an issue that HAS one. Counting those reports a finding for a box that does not exist and
+# cannot be ticked, and a check that fires on a correctly dispositioned PR is one somebody turns
+# off. (Inline code spans need no rule: `- [ ]` inside backticks on one line is not at the start
+# of that line, so it was never a box. #199's own first requirement is written that way.)
+#
+# AN UNBALANCED FENCE TURNS THE RULE OFF, and this is the important half. A single toggle on
+# either marker made an unclosed ``` — or a ~~~ line inside a backtick block — swallow every box
+# after it, and the run then printed `0 boxes, all ticked`. That is a UNIVERSAL SILENT PASS, and
+# the first draft of this repair shipped it while fixing the over-count. So the markers are
+# matched to each other, and the whole body is read twice: if a fence is still open at the end,
+# the body's fencing cannot be trusted and every box is counted. Over-reporting is a finding a
+# human can dismiss in a second; under-reporting is the silence this check exists to end.
+box_scan() {
+  awk -v mode="$1" '
+    function marker_of(l) {
+      if (l ~ /^[ \t]*```/) return "```"
+      if (l ~ /^[ \t]*~~~/) return "~~~"
+      return ""
     }
-    END { flush() }
+    function flush() { if (cur != "") { if (mode == "open") print cur; cur = "" } }
+    { line[NR] = $0 }
+    END {
+      # Pass A — are the fences balanced? A closing marker must match the one that opened.
+      open_marker = ""
+      for (i = 1; i <= NR; i++) {
+        fm = marker_of(line[i])
+        if (fm == "")                      continue
+        if (open_marker == "")             { open_marker = fm; continue }
+        if (fm == open_marker)             open_marker = ""
+      }
+      honour = (open_marker == "")
+
+      # Pass B — the scan.
+      open_marker = ""
+      for (i = 1; i <= NR; i++) {
+        l = line[i]
+        fm = marker_of(l)
+        if (honour && fm != "") {
+          if (open_marker == "")      { flush(); open_marker = fm; continue }
+          if (fm == open_marker)      { open_marker = ""; continue }
+          continue
+        }
+        if (honour && open_marker != "") continue
+
+        if (l ~ /^[ \t]*[-*+] \[[ xX]\]/) total++
+        if (l ~ /^[ \t]*[-*+] \[ \]/) {
+          flush(); sub(/^[ \t]*[-*+] \[ \][ \t]*/, "", l); cur = l; continue
+        }
+        if (l ~ /^[ \t]*[-*+] \[[xX]\]/) { flush(); continue }
+        if (cur != "") {
+          if (l ~ /^[ \t]+[^ \t]/ && l !~ /^[ \t]*[-*+] / && l !~ /^[ \t]*[0-9]+\. /) {
+            sub(/^[ \t]+/, " ", l); cur = cur l; continue
+          }
+          flush()
+        }
+      }
+      flush()
+      if (mode == "total") print total + 0
+    }
   '
 }
 
@@ -188,6 +243,63 @@ gh_or_die() {
   printf '%s' "$out"
 }
 
+# Bodies travel base64-encoded so one PR stays on one line whatever the body contains. A DECODE
+# THAT FAILS MUST NOT LOOK LIKE AN EMPTY BODY: `base64` absent from PATH, a BSD build wanting
+# `-D`, a truncated payload — each would otherwise leave an empty file, and an empty issue body
+# reads as `0 boxes, all ticked`, which is a universally clean pass. That is the same confusion
+# the exit-code rule above exists to prevent, one layer down.
+b64_to_file() {
+  local b64="$1" dest="$2" what="$3"
+  if ! printf '%s' "$b64" | base64 -d > "$dest" 2>/dev/null; then
+    echo "the $what could not be decoded — cannot tell whether the boxes were dispositioned" >&2
+    exit 2
+  fi
+  return 0
+}
+
+# GitHub parses FOUR closing-reference forms, and recognising only `#NN` misses three of them.
+# The vocabulary matches tools/verify-linked-branch.sh and tools/verify-tracker-body.sh
+# deliberately: one list, tuned in one place.
+#
+#   Closes #206 · Closes GH-206 · Closes owner/repo#206 · Closes https://…/issues/206
+KEYWORDS='(close[sd]?|fix(e[sd])?|resolve[sd]?)'
+
+body_closes_issue() {
+  local issue="$1" body="$2"
+  printf '%s\n' "$body" | grep -Eqi \
+    "${KEYWORDS}[[:space:]]+[^[:space:]]*(#|gh-|issues/)${issue}([^0-9]|$)"
+}
+
+# Every issue number a body closes, one per line.
+body_closes_which() {
+  printf '%s\n' "$1" | grep -Eoi "${KEYWORDS}[[:space:]]+[^[:space:]]*(#|gh-|issues/)[0-9]+" \
+    | grep -oE '[0-9]+$'
+}
+
+# THE HEAD BRANCH IS A CLAIM ABOUT WHICH ISSUE THIS IS, and inside an arc it is often the only
+# one the tracker can be asked for. m46 §9: `arc/<nn>-<slug>-issue-<NN>-<hint>`.
+branch_issue() {
+  printf '%s' "$1" | sed -n 's#.*-issue-\([0-9][0-9]*\)\(-.*\)\?$#\1#p'
+}
+
+# ---- why the resolution is not just `closingIssuesReferences` --------------------
+# AN ARC ISSUE PR CLOSES NOTHING, AS FAR AS GitHub IS CONCERNED. A closing keyword is parsed
+# only on a PR targeting the repository default, and every issue PR in an arc targets the arc
+# branch — `hooks/tracker-verify` says so in as many words when it fires: "closure defers to the
+# arc PR. A keyword cannot bind on a base of `<arc branch>`". Measured in this repository and
+# recorded in docs/arc-work/02-foundation/closing-keywords-and-base-branch.md: PR #7 on `main`
+# linked five issues, PR #20 on `arc/02-foundation` linked none, same session and same keyword.
+#
+# So a resolution that trusts that field alone answers "this PR closes no issue" for exactly the
+# PRs this check exists for — #17 and #194 were both arc issue PRs — and exits 0 having counted
+# nothing. Two more sources close the gap, and both are claims the author made on purpose:
+#
+#   the body's own closing keyword   `Closes #NN`, which every arc PR is required to carry
+#   the head branch's `-issue-<NN>`  which `createLinkedBranch` put there
+#
+# Neither is a guess. A PR that says `Closes #199` is answerable for #199's checklist whether or
+# not GitHub was willing to bind the keyword on that base.
+
 NWO=""
 resolve_repo() {
   [ -n "$NWO" ] && return 0
@@ -199,7 +311,7 @@ resolve_repo() {
 
 # Fills TMP with `body` and `prs`, and one `pr-<n>.body` per closing PR.
 load_issue() {
-  local n="$1" fx="${ARC_BOXES_FIXTURES:-}" raw owner repo num b64 pr line
+  local n="$1" fx="${ARC_BOXES_FIXTURES:-}" raw owner repo num ref b64 kind pr line
   if [ -n "$fx" ]; then
     if [ ! -f "$fx/issue-$n.md" ]; then
       echo "issue #$n could not be read — it does not exist, or the read failed" >&2
@@ -207,24 +319,38 @@ load_issue() {
     fi
     cp "$fx/issue-$n.md" "$TMP/body"
     : > "$TMP/prs"
+    # `.prs` are the PRs GitHub already binds; `.crossrefs` are the ones that only mention it,
+    # which is where the arc case lives. Candidates run the same acceptance test as live.
     [ -f "$fx/issue-$n.prs" ] && grep -E '^[0-9]+$' "$fx/issue-$n.prs" > "$TMP/prs"
     while IFS= read -r pr; do
       [ -n "$pr" ] || continue
       if [ -f "$fx/pr-$pr.md" ]; then cp "$fx/pr-$pr.md" "$TMP/pr-$pr.body"; else : > "$TMP/pr-$pr.body"; fi
     done < "$TMP/prs"
+    if [ -f "$fx/issue-$n.crossrefs" ]; then
+      while IFS= read -r pr; do
+        case "$pr" in ''|*[!0-9]*) continue ;; esac
+        grep -qxF "$pr" "$TMP/prs" && continue
+        ref=""
+        [ -f "$fx/pr-$pr.branch" ] && ref="$(head -n1 "$fx/pr-$pr.branch")"
+        accept_candidate "$n" "$pr" "$ref" "$(cat "$fx/pr-$pr.md" 2>/dev/null)" || continue
+        printf '%s\n' "$pr" >> "$TMP/prs"
+        if [ -f "$fx/pr-$pr.md" ]; then cp "$fx/pr-$pr.md" "$TMP/pr-$pr.body"; else : > "$TMP/pr-$pr.body"; fi
+      done < "$fx/issue-$n.crossrefs"
+    fi
     return 0
   fi
 
   resolve_repo
   owner="${NWO%%/*}"; repo="${NWO##*/}"
 
-  # One round trip for the body and every closing PR's body. Bodies come back base64-encoded so
-  # that one PR stays on one line whatever the body contains — the same shape
-  # tools/verify-linked-branch.sh uses, for the same reason.
+  # One round trip for the body and every PR that could answer for this checklist. The timeline's
+  # cross-references are what reach an arc issue PR at all — see the note above
+  # `body_closes_issue`. They are CANDIDATES: anything may cross-reference an issue, so each is
+  # admitted only on its own claim, below.
   raw="$(gh_or_die "issue #$n" \
-    -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){issue(number:$n){body closedByPullRequestsReferences(first:50,includeClosedPrs:true){nodes{number body}}}}}' \
+    -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){issue(number:$n){body closedByPullRequestsReferences(first:50,includeClosedPrs:true){nodes{number headRefName body}} timelineItems(first:100,itemTypes:[CROSS_REFERENCED_EVENT]){nodes{... on CrossReferencedEvent{source{... on PullRequest{number headRefName body}}}}}}}}' \
     -F o="$owner" -F r="$repo" -F n="$n" \
-    --jq 'if .data.repository.issue == null then "MISSING" else (["BODY \(.data.repository.issue.body // "" | @base64)"] + [.data.repository.issue.closedByPullRequestsReferences.nodes[]? | "\(.number) \(.body // "" | @base64)"] | join("\n")) end')" || exit $?
+    --jq 'if .data.repository.issue == null then "MISSING" else (["BODY \(.data.repository.issue.body // "" | @base64)"] + [.data.repository.issue.closedByPullRequestsReferences.nodes[]? | "PR \(.number) bound \(.headRefName // "-") \(.body // "" | @base64)"] + [.data.repository.issue.timelineItems.nodes[]? | select(.source != null and (.source.number != null)) | "PR \(.source.number) candidate \(.source.headRefName // "-") \(.source.body // "" | @base64)"] | join("\n")) end')" || exit $?
 
   if [ "$raw" = "MISSING" ] || [ -z "$raw" ]; then
     echo "issue #$n could not be read — it does not exist, or the read failed" >&2
@@ -234,12 +360,24 @@ load_issue() {
   : > "$TMP/prs"
   while IFS= read -r line; do
     case "$line" in
-      "BODY "*) printf '%s' "${line#BODY }" | base64 -d > "$TMP/body" 2>/dev/null ;;
-      "") ;;
-      *)
-        num="${line%% *}"; b64="${line#* }"
+      "BODY "*) b64_to_file "${line#BODY }" "$TMP/body" "body of issue #$n" ;;
+      "PR "*)
+        line="${line#PR }"
+        num="${line%% *}"; line="${line#* }"
+        kind="${line%% *}"; line="${line#* }"
+        ref="${line%% *}"; b64="${line#* }"
+        grep -qxF "$num" "$TMP/prs" 2>/dev/null && continue
+        [ "$ref" = "-" ] && ref=""
+        if [ "$kind" = candidate ]; then
+          # DECODED THROUGH THE SAME GUARD as the two writes below. A bare decode here would
+          # hand `accept_candidate` an empty body on a `base64` that is absent or BSD-flavoured,
+          # the candidate would be rejected in silence, and an issue whose only answering PR is
+          # an unbound arc PR would exit 1 — a finding — where it owes exit 2.
+          b64_to_file "$b64" "$TMP/candidate" "body of PR #$num"
+          accept_candidate "$n" "$num" "$ref" "$(cat "$TMP/candidate")" || continue
+        fi
         printf '%s\n' "$num" >> "$TMP/prs"
-        printf '%s' "$b64" | base64 -d > "$TMP/pr-$num.body" 2>/dev/null
+        b64_to_file "$b64" "$TMP/pr-$num.body" "body of PR #$num"
         ;;
     esac
   done <<RAW
@@ -249,29 +387,74 @@ RAW
   return 0
 }
 
-# The issues a PR closes, one per line on stdout. EMPTY IS A LEGITIMATE ANSWER — a no-issue PR
-# is ordinary work (m46 §4) and has no checklist to disposition.
+# Does this PR claim to answer for that issue's checklist? TWO claims the author made on purpose,
+# and no inference beyond them. The third source — `closedByPullRequestsReferences` — needs no
+# test: it is what produced the bound list in the first place.
+#
+# The branch test is the weaker of the two and stays for the `git checkout -b` case. A branch
+# made through `createLinkedBranch` does not need it: m12 measured that opening a PR on a linked
+# branch PROMOTES the record into that PR's closing reference, so such a PR arrives already
+# bound, whatever its body says.
+accept_candidate() {
+  local issue="$1" pr="$2" ref="$3" body="$4"
+  body_closes_issue "$issue" "$body" && return 0
+  [ -n "$ref" ] && [ "$(branch_issue "$ref")" = "$issue" ] && return 0
+  return 1
+}
+
+# The issues a PR is answerable for, one per line on stdout. EMPTY IS A LEGITIMATE ANSWER — a
+# no-issue PR is ordinary work (m46 §4) and has no checklist to disposition.
+#
+# Three sources, unioned, for the reason recorded above `body_closes_issue`: inside an arc,
+# `closingIssuesReferences` is empty on a correctly written PR.
 pr_issues() {
-  local n="$1" fx="${ARC_BOXES_FIXTURES:-}" owner repo out
+  local n="$1" fx="${ARC_BOXES_FIXTURES:-}" owner repo out body ref bound i
   if [ -n "$fx" ]; then
     if [ ! -f "$fx/pr-$n.md" ]; then
       echo "PR #$n could not be read — it does not exist, or the read failed" >&2
       exit 2
     fi
-    [ -f "$fx/pr-$n.issues" ] && grep -E '^[0-9]+$' "$fx/pr-$n.issues"
-    return 0
+    body="$(cat "$fx/pr-$n.md" 2>/dev/null)"
+    ref=""; [ -f "$fx/pr-$n.branch" ] && ref="$(head -n1 "$fx/pr-$n.branch")"
+    bound=""; [ -f "$fx/pr-$n.issues" ] && bound="$(grep -E '^[0-9]+$' "$fx/pr-$n.issues")"
+  else
+    resolve_repo
+    owner="${NWO%%/*}"; repo="${NWO##*/}"
+    out="$(gh_or_die "PR #$n" \
+      -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){number headRefName body closingIssuesReferences(first:50){nodes{number}}}}}' \
+      -F o="$owner" -F r="$repo" -F n="$n" \
+      --jq 'if .data.repository.pullRequest == null then "MISSING" else (["REF \(.data.repository.pullRequest.headRefName // "-")", "BODY \(.data.repository.pullRequest.body // "" | @base64)"] + [.data.repository.pullRequest.closingIssuesReferences.nodes[]? | "NUM \(.number)"] | join("\n")) end')" || exit $?
+    if [ "$out" = "MISSING" ]; then
+      echo "PR #$n could not be read — it does not exist, or the read failed" >&2
+      exit 2
+    fi
+    ref=""; body=""; bound=""
+    while IFS= read -r i; do
+      case "$i" in
+        "REF "*)  ref="${i#REF }"; [ "$ref" = "-" ] && ref="" ;;
+        # NO TEMP FILE HERE. `run_pr` calls this before it has a `TMP`, so a `$TMP/prbody` write
+        # resolved to `/prbody` — failing outright on a POSIX box and littering the msys root on
+        # Windows. This is the hook's ONLY path, and no fixture case could reach it, so all 24
+        # selftest cases passed over it. The decode keeps its guard: this loop is not a subshell,
+        # so `exit 2` leaves the function, and every caller uses `|| exit $?`.
+        "BODY "*)
+          if ! body="$(printf '%s' "${i#BODY }" | base64 -d 2>/dev/null)"; then
+            echo "the body of PR #$n could not be decoded — cannot tell whether the boxes were dispositioned" >&2
+            exit 2
+          fi
+          ;;
+        "NUM "*)  bound="$bound${bound:+
+}${i#NUM }" ;;
+      esac
+    done <<OUT
+$out
+OUT
   fi
-  resolve_repo
-  owner="${NWO%%/*}"; repo="${NWO##*/}"
-  out="$(gh_or_die "PR #$n" \
-    -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){number closingIssuesReferences(first:50){nodes{number}}}}}' \
-    -F o="$owner" -F r="$repo" -F n="$n" \
-    --jq 'if .data.repository.pullRequest == null then "MISSING" else ([.data.repository.pullRequest.closingIssuesReferences.nodes[]?.number] | map(tostring) | join("\n")) end')" || exit $?
-  if [ "$out" = "MISSING" ]; then
-    echo "PR #$n could not be read — it does not exist, or the read failed" >&2
-    exit 2
-  fi
-  printf '%s\n' "$out" | grep -E '^[0-9]+$'
+
+  { printf '%s\n' "$bound"
+    body_closes_which "$body"
+    [ -n "$ref" ] && branch_issue "$ref"
+  } | grep -E '^[0-9]+$' | sort -un
   return 0
 }
 
@@ -281,7 +464,11 @@ check_issue() {
   local n="$1"
   local total=0 open=0 accounted=0 findings="" box box_norm verdict where pr prs
 
-  total="$(grep -cE '^[ \t]*[-*+] \[[ xX]\]' "$TMP/body" 2>/dev/null)"
+  # `box_scan`, never a `grep -c`. GNU ERE reads `\` literally inside a bracket expression, so
+  # `[ \t]*` matches space, backslash and the letter `t` and NOT a tab — a tab-indented box was
+  # counted by the scanner and missed by the grep, and the report then carried `1 of 0 boxes`.
+  # One scanner cannot disagree with itself.
+  total="$(box_scan total < "$TMP/body")"
   prs="$(tr '\n' ' ' < "$TMP/prs" 2>/dev/null | sed -E 's/ +$//')"
 
   while IFS= read -r box; do
@@ -304,7 +491,7 @@ check_issue() {
         - unticked, and no closing PR names it: \"$box\"" ;;
     esac
   done <<BOXES
-$(unticked < "$TMP/body")
+$(box_scan open < "$TMP/body")
 BOXES
 
   if [ -z "$findings" ]; then
@@ -318,10 +505,18 @@ BOXES
 
   echo "FAIL  #$n — $open of $total boxes unticked, $((open - accounted)) of them undispositioned:$findings"
   echo
-  echo "      Tick it, or name it in the PR body with what happened — not done and why, or"
-  echo "      moved to the issue that owns it. Partial completion stays approvable; silence"
-  echo "      about it does not."
-  [ -n "$prs" ] || echo "      No PR closes #$n yet. This answers at PR-ready time, not at PR-open."
+  echo "      Tick it, or write a line in the PR body that QUOTES THE BOX'S FIRST $KEY_WORDS WORDS,"
+  echo "      unbroken and in order, and then says what happened — not done and why, or moved to"
+  echo "      the issue that owns it:"
+  echo
+  echo "        - <the box's first $KEY_WORDS words, copied> — moved to #250"
+  echo
+  echo "      The quote is what ties the disposition to the box; a reason with no quote reads as"
+  echo "      prose about something else. The part after it must carry at least $REASON_WORDS words the box"
+  echo "      does not, so the box pasted back unchanged is not a disposition. Partial completion"
+  echo "      stays approvable; silence about it does not."
+  [ -n "$prs" ] || echo "      Nothing answers for #$n yet — no PR closes it, names it in a closing keyword, or"
+  [ -n "$prs" ] || echo "      heads a branch named for it. This answers at PR-ready time, not at PR-open."
   return 1
 }
 
@@ -500,6 +695,124 @@ BODY
 Prose only. No checklist in this issue.
 BODY
   case_is 0 "0 boxes, all ticked" "no boxes at all" 910
+
+  # ---- the arc case: a PR that closes it, that GitHub does not bind -----------------------
+  # A closing keyword is parsed only on a PR targeting the repository default, so every issue PR
+  # inside an arc has an EMPTY closingIssuesReferences and appears on the issue only as a
+  # cross-reference. Measured in this repository: PR #7 on `main` linked five issues, PR #20 on
+  # `arc/02-foundation` linked none, same session and same keyword. A resolution that trusted
+  # that field answered "closes no issue" for #17 and #194, which are the two failures this
+  # whole check exists for.
+  cat > "$FX/issue-912.md" <<'BODY'
+- [ ] Selftest cases for every shape the check can meet
+BODY
+  printf '809\n' > "$FX/issue-912.crossrefs"
+  cat > "$FX/pr-809.md" <<'BODY'
+- Selftest cases for every shape the check can meet — not done, deferred to #904
+
+Closes #912
+BODY
+  case_is 0 "named in a closing PR with a reason" "an arc PR, bound only by its keyword" 912
+
+  # The same shape with the keyword written as a URL. GitHub parses four reference forms and
+  # recognising one of them classifies the other three as "closes no issue".
+  cat > "$FX/issue-913.md" <<'BODY'
+- [ ] Selftest cases for every shape the check can meet
+BODY
+  printf '810\n' > "$FX/issue-913.crossrefs"
+  cat > "$FX/pr-810.md" <<'BODY'
+- Selftest cases for every shape the check can meet — not done, deferred to #904
+
+Resolves https://github.com/Calyx-Engineering/arc/issues/913
+BODY
+  case_is 0 "named in a closing PR with a reason" "an arc PR bound by a URL keyword" 913
+
+  # Bound by the head branch alone — what `createLinkedBranch` put there, and the only claim
+  # left on a PR whose body was written before the keyword rule.
+  cat > "$FX/issue-914.md" <<'BODY'
+- [ ] Selftest cases for every shape the check can meet
+BODY
+  printf '811\n' > "$FX/issue-914.crossrefs"
+  printf 'arc/04-dogfood-issue-914-boxes\n' > "$FX/pr-811.branch"
+  cat > "$FX/pr-811.md" <<'BODY'
+- Selftest cases for every shape the check can meet — not done, deferred to #904
+BODY
+  case_is 0 "named in a closing PR with a reason" "an arc PR bound by its head branch" 914
+
+  # A CROSS-REFERENCE IS NOT A CLAIM. Any PR may mention an issue; one that neither closes it
+  # nor heads a branch named for it is not answerable for its checklist, and admitting it would
+  # let an unrelated PR's prose resolve boxes by accident.
+  cat > "$FX/issue-915.md" <<'BODY'
+- [ ] Selftest cases for every shape the check can meet
+BODY
+  printf '812\n' > "$FX/issue-915.crossrefs"
+  printf 'arc/04-dogfood-issue-77-other\n' > "$FX/pr-812.branch"
+  cat > "$FX/pr-812.md" <<'BODY'
+Follows on from #915, but does not close it.
+
+- Selftest cases for every shape the check can meet — not done, deferred to #904
+BODY
+  case_is 1 "unticked, and no closing PR names it" "a bare cross-reference does not count" 915
+
+  # ---- a `- [ ]` inside a fenced block is not a checklist item ------------------------------
+  # An issue that shows a checklist is not an issue that has one. Counting the example reports a
+  # finding for a box that does not exist and cannot be ticked.
+  cat > "$FX/issue-916.md" <<'BODY'
+## Required
+
+- [x] The script reports every remaining box
+
+A body may show the shape it accepts:
+
+```markdown
+- [ ] this is an example, not a requirement
+```
+BODY
+  case_is 0 "1 boxes, all ticked" "a fenced example box is not a box" 916
+
+  # ---- an unbalanced fence must not silence the checklist -------------------------------------
+  # THE FIRST DRAFT OF THE FENCE RULE SHIPPED A UNIVERSAL SILENT PASS. A single toggle on either
+  # marker meant an unclosed ``` swallowed every box after it and the run printed `0 boxes, all
+  # ticked`. Over-reporting is a finding a human dismisses in a second; this was the other
+  # direction, and it is the one this whole check exists to end.
+  printf 'Body\n\n```sh\ngh pr ready\n\n## Required\n\n- [ ] a real requirement\n- [ ] another one\n' > "$FX/issue-919.md"
+  case_is 1 "2 of 2 boxes unticked" "an unclosed fence counts everything" 919
+
+  # A `~~~` inside a backtick block used to flip the state off, so the real closing fence flipped
+  # it back on and hid the rest of the body. Markers are matched to each other now.
+  printf '```\n~~~\n```\n- [ ] a real requirement\n' > "$FX/issue-920.md"
+  case_is 1 "1 of 1 boxes unticked" "a mismatched marker does not close a fence" 920
+
+  # And the balanced tilde form still works, or the repair would have bought silence back by
+  # honouring only one marker.
+  cat > "$FX/issue-921.md" <<'BODY'
+- [x] The script reports every remaining box
+
+~~~markdown
+- [ ] this is an example, not a requirement
+~~~
+BODY
+  case_is 0 "1 boxes, all ticked" "a balanced tilde fence is honoured" 921
+
+  # ---- the total and the open list cannot disagree -------------------------------------------
+  # A tab-indented box. The count used to come from a `grep -E '[ \t]'`, where GNU ERE reads the
+  # backslash literally inside a bracket expression — so the scanner saw the box and the count
+  # did not, and the report said `1 of 0 boxes unticked`.
+  printf '## Required\n\n\t- [ ] a tab-indented box\n' > "$FX/issue-917.md"
+  case_is 1 "1 of 1 boxes unticked" "a tab-indented box counts once" 917
+
+  # ---- a PR whose issues come only from its own keyword -------------------------------------
+  # The hook's path inside an arc: `gh pr ready` on a PR GitHub binds to nothing.
+  cat > "$FX/pr-813.md" <<'BODY'
+Adds the checker.
+
+Closes #918
+BODY
+  cat > "$FX/issue-918.md" <<'BODY'
+- [ ] Selftest cases for every shape the check can meet
+BODY
+  printf '813\n' > "$FX/issue-918.crossrefs"
+  case_is 1 "unticked, and no closing PR names it" "--pr resolves through its own keyword" --pr 813
 
   # ---- an issue that does not exist ----------------------------------------------------
   # EXIT 2, NEVER 1. A read that could not be made is not a finding, and reporting it as one

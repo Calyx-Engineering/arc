@@ -13,7 +13,7 @@
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
 # checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, a PR that closes an issue, or the body could not be read), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 
@@ -22,7 +22,7 @@
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
 
 # ---- the activation log ---------------------------------------------------------
-# Sourced before anything can exit. This hook has fourteen exit paths and thirteen declared
+# Sourced before anything can exit. This hook has fourteen exit paths and fifteen declared
 # checks, most of which do not run on any one invocation — so a declared check the run never
 # marked is written to the entry's `skipped:` line as `not reached`, rather than being
 # absent from the record. m44.
