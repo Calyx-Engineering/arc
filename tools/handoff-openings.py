@@ -72,6 +72,28 @@ def is_human_prompt(o):
     return (o.get("origin") or {}).get("kind") == "human"
 
 
+def is_dispatched_prompt(o):
+    """A prompt the loop dispatched: the same envelope as a typed one, without a human origin.
+
+    Needed only to answer *did anything drive this session before the human did*. A run the
+    driver opened and a human later joined is not a cold start — its opening was a brief, not a
+    handoff — and counting only human prompts cannot tell the two apart.
+    """
+    if o.get("type") != "user" or o.get("isMeta"):
+        return False
+    c = (o.get("message") or {}).get("content")
+    if isinstance(c, list):
+        if any(isinstance(x, dict) and x.get("type") == "tool_result" for x in c):
+            return False
+        joined = "".join(x.get("text", "") for x in c if isinstance(x, dict) and x.get("type") == "text")
+        if joined.startswith("[Request interrupted"):
+            return False
+    kind = (o.get("origin") or {}).get("kind")
+    if kind == "human" or kind == "task-notification":
+        return False
+    return o.get("promptSource") == "sdk"
+
+
 def repo_of(d):
     """The repository a transcript directory belongs to.
 
@@ -117,6 +139,7 @@ for d in dirs:
                     writes.append((o.get("timestamp", ""), repo, sid, p, f))
 
         prompts = [o for o in parsed if is_human_prompt(o)]
+        dispatched = [o for o in parsed if is_dispatched_prompt(o)]
         sessions.append(
             {
                 "sid": sid,
@@ -126,6 +149,7 @@ for d in dirs:
                 "start": min(stamps),
                 "end": max(stamps),
                 "prompts": prompts,
+                "dispatched": dispatched,
             }
         )
 
@@ -138,8 +162,15 @@ def is_cold_start(s):
     Two prompts rather than one is what separates a session that picked something up from a
     one-shot errand — in the real store, `/plugin install` (no prompt at all) and "please copy
     this transcript" (exactly one). Both are post-install sessions and neither is a cold start.
+
+    And the human has to have opened it. A loop run that a human joined later has two human
+    prompts too, and its opening was the driver's brief — so any dispatched prompt before the
+    first typed one disqualifies the session.
     """
     if len(s["prompts"]) < 2:
+        return False
+    first_human = s["prompts"][0].get("timestamp", "")
+    if any(o.get("timestamp", "") < first_human for o in s["dispatched"]):
         return False
     if since and s["start"] < since:
         return False

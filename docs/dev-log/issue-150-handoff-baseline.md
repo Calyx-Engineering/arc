@@ -43,6 +43,7 @@ Scoring it means re-running the openings against a live model, which is
 | **A cold start is defined by the session, not by the opening's wording** | Starts in the window, opens with a human at the keyboard, at least two human prompt turns. Filtering on *asked for a handoff read* gives 6, not 8, and drops two real cold starts that opened on new work |
 | **Two human prompt turns, not one** | Set from what the excluded sessions *are* — one ran `/plugin install`, one asked for a transcript to be copied — not from the count it yields. The count agreeing with #150's 8 is a weak check, since this threshold is the knob that produces it |
 | **A loop-dispatched run is not a cold start** | Its prompt carries `promptSource: "sdk"` with no human origin. The driver handed it an issue, not a handoff. This is the one rule where `handoff-openings.py` deliberately differs from `skill-firing.py`, which counts a dispatched prompt as a turn |
+| **The human has to have opened it** | A dispatched run a human later joined has two human prompts too, so the count alone admits it. Any dispatched prompt before the first typed one disqualifies the session. Found at PR time: the tool's header claimed this and the code did not do it |
 | **A session that started before `--since` is out even if it ran past it** | It began its cold start against a pre-install handoff. `skill-firing.py` keeps such a session; here it would be measuring the wrong document |
 | **Pairing is per repository, not per directory** | A worktree gets its own transcript directory and writes the same repository's handoff. Pairing per directory loses the writer across that boundary |
 | **`--until` closes the corpus** | So a later run compares like with like. Without it, a human cold start after the boundary would change the denominator silently |
@@ -75,14 +76,16 @@ silently.
 ## Evidence
 
 ```
-bash tools/handoff-openings.sh selftest        32 passed, 0 failed
+bash tools/handoff-openings.sh selftest        33 passed, 0 failed
 bash tools/verify-all.sh                       20 gates, all clean   (exit 0)
 ```
 
-**The selftest was mutation-tested.** Eight rules were deleted one at a time from
+**The selftest was mutation-tested.** Nine rules were deleted one at a time from
 `handoff-openings.py` — `repo_of`'s `.lower()`, the handoff basename match, the `--since` and
-`--until` filters, the `tool_result`, `isMeta` and interrupt guards, and the two-prompt threshold.
-All eight turned the selftest red. The first version of it caught none of the last six.
+`--until` filters, the `tool_result`, `isMeta` and interrupt guards, the two-prompt threshold,
+and the rule that a human must have opened the session. All nine turned the selftest red. **The
+first version of the selftest caught none of the last seven**, which is why the mutation run
+exists at all — 15 green assertions were guarding four rules.
 
 ## What this does not do
 

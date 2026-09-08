@@ -159,6 +159,9 @@ if [ "$SELFTEST" = "1" ]; then
   { u 2026-08-27T12:00 "please copy this transcript"; } > "$P/r--fixture/skip-cpy.jsonl"
   # skip-loop is a loop-dispatched run. Four prompts, none human. Not a cold start.
   { disp 2026-08-28T10:00; disp 2026-08-28T10:01; disp 2026-08-28T10:02; disp 2026-08-28T10:03; } > "$P/r--fixture/skip-loo.jsonl"
+  # skip-join is the harder one: a dispatched run that a human joined. It has two human prompts,
+  # so the count alone admits it — but the driver opened it, and its opening was a brief.
+  { disp 2026-08-28T11:00; disp 2026-08-28T11:01; u 2026-08-28T11:30 "actually, read handoff"; u 2026-08-28T11:40; } > "$P/r--fixture/skip-joi.jsonl"
   # One human prompt plus two of the envelope under test, each carrying a human origin. A cold
   # start iff that envelope is miscounted as a prompt — one session per rejected shape, so a
   # deleted guard names itself.
@@ -242,6 +245,7 @@ if [ "$SELFTEST" = "1" ]; then
   nt "the install session's slash echo is not a prompt turn" "^[0-9]+ +[-0-9: ]+skip-ins"
   nt "a single-human-prompt session is not a cold start"     "^[0-9]+ +[-0-9: ]+skip-cpy"
   nt "a loop-dispatched run is not a cold start"             "^[0-9]+ +[-0-9: ]+skip-loo"
+  nt "a dispatched run a human joined is not a cold start"   "^[0-9]+ +[-0-9: ]+skip-joi"
   t  "a worktree's cold start is in the corpus"              "^3 +2026-08-30 10:00 +read-03 .*yes"
   t  "the writer is the last handoff write before the read"  "^1 +read-01 +wrote-01 +2026-08-23 18:00"
   t  "the pre-window write is still the handoff that was read" "^1 +read-01 +wrote-01 .*40\.0h"
