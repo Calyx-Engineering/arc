@@ -80,6 +80,8 @@ measured only as a baseline: replay says the source session was `SILENT`, on all
 
 **It is the run that should be made before this soaks anywhere.** `bash
 tools/saturation-cases.sh --probe`, after a reload, on a machine with nothing else running.
+That run is [#243](https://github.com/Calyx-Engineering/arc/issues/243), so the unticked box has
+somewhere to be resolved rather than being closed with the PR.
 
 ## What the review passes changed
 
@@ -115,3 +117,8 @@ tools/saturation-cases.sh --probe`, after a reload, on a machine with nothing el
 so adding `saturation-cases` to its `KNOWN` list is inert — delete its `run_gate` line and nothing
 fails. That is true of the other four eval scorers too and is not this change's to fix; it is
 recorded here so the next reader does not assume the guard covers them.
+
+## Spawned
+
+- **Issues:** [#243](https://github.com/Calyx-Engineering/arc/issues/243) — run the saturation
+  probe against the installed plugin, and resolve #154's second box by what it shows
