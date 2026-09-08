@@ -7,7 +7,7 @@
 #
 # camp-reports: handoff-archived
 # checks: handoff-snapshot, user-authored-file-archived
-# skips: none
+# skips: handoff-snapshot (the payload names no session or no tool, there is no repository, or the root could not be read), user-authored-file-archived (the call names no file — every Bash call, by design — the path lands outside the repository, it is the handoff itself, or the snapshot was already taken this session)
 #
 # WHAT GETS ARCHIVED: whatever git cannot restore. A tracked file needs no copy — git IS the
 # copy, and archiving it would be duplicating the thing that already works. An untracked or
@@ -80,6 +80,22 @@
 # other line, so a misbehaving copy can be silenced without editing JSON.
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
 
+# ---- the activation log ---------------------------------------------------------
+# Sourced before anything can exit. This hook is SILENT on Bash by design — see `report()` —
+# so on the matcher it runs most often it produces no visible trace at all, and the log is
+# the only thing that says it ran. m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event handoff-archived
+
+# A path taken before there is anything to weigh: both declared checks recorded as unrun,
+# with the reason, and the hook leaves quietly.
+nothing_to_weigh() {
+  arc_log_skip handoff-snapshot "$1"
+  arc_log_skip user-authored-file-archived "$1"
+  arc_log_outcome ok "$1"
+  exit 0
+}
+
 # ---- fail-open wrapper ----------------------------------------------------------
 # Never `set -e`. This hook never denies at all — it copies and reports. On anything
 # unexpected, exit 0 and allow: losing the archive is bad, blocking every edit is worse.
@@ -124,6 +140,7 @@ json_string() {
 # So Bash gets the copy and no output at all — exit 0 with an empty stdout leaves the permission
 # system exactly as it found it. Visibility is worth less than the prompt it would have skipped.
 report() {
+  arc_log_outcome_default repaired "took a copy before the overwrite"
   [ "$TOOL" = "Bash" ] && exit 0
   printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":$(json_string "$1")}}"
   exit 0
@@ -155,9 +172,10 @@ CWD="$(unescape_path "$(field cwd)")"
 # A truncated payload can still yield a readable `cwd`. Requiring the session id and the tool
 # name as well means a half-written payload is silent rather than acting on a guess.
 SESSION="$(field session_id)"
-[ -n "$SESSION" ] || exit 0
+[ -n "$SESSION" ] || nothing_to_weigh "the payload names no session"
 TOOL="$(field tool_name)"
-[ -n "$TOOL" ] || exit 0
+[ -n "$TOOL" ] || nothing_to_weigh "the payload names no tool"
+arc_log_event handoff-archived "tool=$TOOL"
 
 # The file this call is about to replace, where the call names one.
 #
@@ -173,7 +191,7 @@ if [ "$TOOL" != "Bash" ]; then
 fi
 
 GITDIR="$(git -C "$CWD" rev-parse --git-dir 2>/dev/null)"
-[ -n "$GITDIR" ] || exit 0
+[ -n "$GITDIR" ] || nothing_to_weigh "not a git repository"
 case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
 
 # THE FAST PATH. Registered on the Bash matcher, this hook runs on every Bash call in the session.
@@ -185,17 +203,22 @@ case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
 # existed only in a repository that HAD an untracked handoff. Every repo without one — which is
 # every non-Arc repo the plugin is installed into — fell through the whole body on every Bash
 # call, which is the opposite of what this path is for.
-[ -z "$TARGET" ] && [ -e "$GITDIR/arc-archive-$SESSION-handoff" ] && exit 0
+if [ -z "$TARGET" ] && [ -e "$GITDIR/arc-archive-$SESSION-handoff" ]; then
+  arc_log_skip handoff-snapshot "already taken this session"
+  arc_log_skip user-authored-file-archived "the call names no file"
+  arc_log_outcome ok "the snapshot was already taken this session"
+  exit 0
+fi
 
 ROOT="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
 # No repo means no root to hang `.arc-work/` off, and no git to say what is tracked.
-[ -n "$ROOT" ] || exit 0
+[ -n "$ROOT" ] || nothing_to_weigh "the repository root could not be read"
 # Canonicalised through the shell, because git reports a path in its own form: under Git for
 # Windows `/tmp/x` comes back as `C:/Users/.../Temp/x`. Comparing the two forms as strings makes
 # every path look outside the repository, and the per-file archive silently never fires. The
 # target below is reduced the same way so the two are comparable.
-ROOT="$(cd "$ROOT" 2>/dev/null && pwd)" || exit 0
-[ -n "$ROOT" ] || exit 0
+ROOT="$(cd "$ROOT" 2>/dev/null && pwd)" || nothing_to_weigh "the repository root could not be resolved"
+[ -n "$ROOT" ] || nothing_to_weigh "the repository root could not be resolved"
 
 STAMP="$(date -u +%Y%m%d-%H%M%S 2>/dev/null)"
 [ -n "$STAMP" ] || STAMP=unstamped
@@ -238,7 +261,10 @@ archive_file() {
 # ---- 1 · the handoff, at this session's first call of any kind -------------------
 # Deliberately not conditional on what is being edited. That is the whole difference between
 # this and a copy taken at write time.
+# A copy taken and nothing to copy are both the check having RUN — an archive is not a
+# finding. The value says which, so the two are still distinguishable in the log.
 if archive_file "$ROOT/HANDOFF.md" "HANDOFF.md" "handoff"; then
+  arc_log_pass handoff-snapshot=archived
   ARCHIVED="$ARCHIVED
   - \`HANDOFF.md\` → \`.arc-work/archive/$STAMP/HANDOFF.md\` — taken before this session's first write, not before the handoff's"
 fi
@@ -246,6 +272,7 @@ fi
 # The snapshot has now been CONSIDERED, whatever the answer was — no handoff, a tracked one, one
 # too large, or one that was copied. The marker records that, so the fast path above is reached
 # in a repository with no handoff at all and not only in one that had something to copy.
+[ -n "$ARCHIVED" ] || arc_log_pass handoff-snapshot=nothing-to-copy
 : > "$GITDIR/arc-archive-$SESSION-handoff" 2>/dev/null
 
 # ---- 2 · and the file this call is about to replace, if git cannot restore it -----
@@ -254,6 +281,9 @@ fi
 # wrong guess either copies nothing or copies the wrong thing while reporting success. So Bash
 # gets the snapshot above and nothing else, and what stays uncovered is named in the dev-log
 # rather than implied to be handled.
+if [ -z "$TARGET" ]; then
+  arc_log_skip user-authored-file-archived "the call names no file"
+fi
 if [ -n "$TARGET" ]; then
   case "$TARGET" in
     /*|?:*) ABS="$TARGET" ;;
@@ -265,13 +295,25 @@ if [ -n "$TARGET" ]; then
   [ -n "$ABSDIR" ] && ABS="$ABSDIR/$(basename "$ABS")"
   REL="${ABS#"$ROOT"/}"
   # Outside the repo root, or a path that did not reduce — nothing sensible to file it under.
-  if [ "$REL" != "$ABS" ] && [ "$REL" != "HANDOFF.md" ]; then
+  if [ "$REL" = "$ABS" ]; then
+    arc_log_skip user-authored-file-archived "the path lands outside the repository"
+  elif [ "$REL" = "HANDOFF.md" ]; then
+    arc_log_skip user-authored-file-archived "the file is the handoff, covered by the snapshot"
+  else
     if archive_file "$ABS" "$REL" "$(printf '%s' "$REL" | cksum | cut -d' ' -f1)"; then
+      arc_log_pass "user-authored-file-archived=$REL"
       ARCHIVED="$ARCHIVED
   - \`$REL\` → \`.arc-work/archive/$STAMP/$REL\` — untracked, so git could not have restored it"
+    else
+      arc_log_pass user-authored-file-archived=nothing-to-copy
     fi
   fi
 fi
+
+# `repaired`, not `ok`: a copy taken is neither a clean pass nor a finding — it is the hook
+# having changed something to prevent a loss, which is what that word is in the set for.
+[ -n "$ARCHIVED" ] && arc_log_outcome repaired "took a copy before the overwrite"
+[ -n "$ARCHIVED" ] || arc_log_outcome ok "nothing needed a copy"
 
 [ -n "$ARCHIVED" ] && report "**Camp here —** archived before overwriting.
   Checked: handoff snapshot, user-authored file archived$ARCHIVED

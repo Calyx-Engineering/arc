@@ -102,14 +102,28 @@ printf 'not a directory\n' > "$FIXTURES/blocked"
 UNWRITABLE="$FIXTURES/blocked/log.md"
 
 # Every assertion below runs the same payload more than once, so anything a hook leaves in
-# the fixtures has to go between runs — `camp-session-start` writes a once-per-session
-# marker into the repo's .git, and `branch-guard` a base-freshness stamp. A second run that
-# finds one takes a different path from the first, which reads as an inconsistency the hook
-# does not have.
+# the fixtures has to go between runs. Three hooks leave something: `camp-session-start` a
+# once-per-session marker, `branch-guard` a base-freshness stamp, `handoff-archive` a marker
+# per session and per file archived. A second run that finds one takes a different path from
+# the first, which reads as an inconsistency the hook does not have — `handoff-archive`
+# reported on the first run and was silent on the second, and the difference was read as the
+# log having changed the verdict.
 reset_state() {
   rm -f "$FIXTURES"/*/.git/arc-camp-session-* 2>/dev/null
+  rm -f "$FIXTURES"/*/.git/arc-archive-* 2>/dev/null
   rm -rf "$FIXTURES"/*/.git/arc-branch-guard 2>/dev/null
+  rm -rf "$FIXTURES"/*/.arc-work 2>/dev/null
   return 0
+}
+
+# The two runs of a case are a second or so apart, and a hook may legitimately put the clock
+# in its own output — `handoff-archive` names the archive directory, which is stamped to the
+# second. Comparing those raw reads a real difference as an inconsistency, so both sides are
+# reduced first. Only a timestamp is normalised; everything else still has to match exactly.
+undate() {
+  printf '%s' "$1" | sed -E \
+    -e 's/20[0-9]{6}-[0-9]{6}/<stamp>/g' \
+    -e 's/20[0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?Z?/<ts>/g'
 }
 
 ok()  { printf '  PASS  %s\n' "$1"; PASSED=$((PASSED + 1)); }
@@ -271,7 +285,7 @@ check_hook() {
       reset_state
       out_other="$(printf '%s' "$payload" | ARC_EVENT_LOG="$UNWRITABLE" bash "$hook" 2>/dev/null)"
       rc_other=$?
-      if [ "$out_logged" = "$out_other" ] && [ "$rc_logged" = "$rc_other" ]; then
+      if [ "$(undate "$out_logged")" = "$(undate "$out_other")" ] && [ "$rc_logged" = "$rc_other" ]; then
         ok "$kind  fails open           $desc"
       else
         bad "$kind  an unwritable log changed the verdict   $desc" \
