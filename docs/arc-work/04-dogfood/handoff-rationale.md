@@ -8,8 +8,10 @@ the whole story: two openings failed for reasons no amount of carried rationale 
 failed with its rationale present, correct and volunteered.
 
 **So carrying the constraint is necessary and not sufficient**, which is why #151 asks for a
-trigger as a separate requirement. The two halves of the fix cover different openings, and
-neither covers all of them.
+trigger as a separate requirement. The fix ended up as **three** mechanisms, not two — the
+constraint column, the reason an ordered-actions row gives for its position, and the trigger —
+because opening 4's missing fact turned out to live in the ordered actions rather than in the
+decisions table. Each covers different openings and none covers all of them.
 
 The corpus and the criteria are [the baseline](handoff-baseline.md)'s. *Bad* means bad by
 [#150](https://github.com/Calyx-Engineering/arc/issues/150)'s definition — either criterion

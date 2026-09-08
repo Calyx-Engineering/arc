@@ -49,10 +49,16 @@ The numbered actions the next session executes top to bottom. **An action, not a
 concrete enough to start without asking. Ordered by dependency. Rows come off the top and
 the rest renumber.
 
-| # | | |
-|---|---|---|
-| 1 | **&lt;action&gt;** | &lt;issue, branch, and the one constraint that changes how it is done&gt; |
-| 2 | **&lt;action&gt;** | &lt;…&gt; |
+**The last column carries why the row sits where it does**, and not only when the order is a
+hard dependency. A soft reason — someone is about to be at the bench, an approval expires — is
+the kind that looks omissible and is exactly the kind that gets re-derived into the opposite
+order by the next session. Same rule as *Load-bearing decisions*' second column, applied to the
+sequence.
+
+| # | | | Why here |
+|---|---|---|---|
+| 1 | **&lt;action&gt;** | &lt;issue, branch, and the one constraint that changes how it is done&gt; | &lt;what puts it at this position — a dependency, or the soft reason&gt; |
+| 2 | **&lt;action&gt;** | &lt;…&gt; | &lt;…&gt; |
 
 ## Read these, in this order
 

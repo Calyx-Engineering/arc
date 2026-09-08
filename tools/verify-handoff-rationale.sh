@@ -158,6 +158,49 @@ report() {
     fi
   fi
 
+  # ---- 5b · the trigger's second form — a re-ordering ---------------------------------------
+  # The first draft fired only on "the same ordered action, done another way", which excluded
+  # baseline opening 4 — a re-ordering of two different rows — the very opening it was cited for.
+  # A trigger that cannot fire on its own evidence is worse than none, so the form is checked.
+  if [ -n "$trig_line" ]; then
+    if printf '%s\n' "$trig_slice" | grep -qiF 'a different order across'; then
+      pass "the trigger fires on a re-ordering, not only on a substituted approach"
+    else
+      fail "the trigger fires on a re-ordering, not only on a substituted approach" \
+           "opening 4 re-ordered accepted rows; a trigger scoped to one row never sees it" \
+           "looked for: a different order across"
+    fi
+  fi
+
+  # ---- 5c · and an order carries the reason for its position, in both artifacts -------------
+  # This is where opening 4's missing fact actually lives — an ordered-actions row, not the
+  # decisions table. Checked in the skill AND the template, because the constraint column was
+  # fixed in both and a rule with no slot to write it in is a rule nobody can follow.
+  if grep -qiF 'where the order is not a hard dependency' "$skill"; then
+    pass "the skill requires the reason for a soft ordering"
+  else
+    fail "the skill requires the reason for a soft ordering" \
+         "an order is a decision; with no reason it is re-derived — baseline opening 4" \
+         "looked for: where the order is not a hard dependency"
+  fi
+
+  local oa_start oa_end oa_slice
+  oa_start=$(grep -n '^## Do these in order' "$handoff" | head -n1 | cut -d: -f1)
+  if [ -n "$oa_start" ]; then
+    oa_end=$(awk -v s="$oa_start" 'NR>s && /^## /{print NR; exit}' "$handoff")
+    [ -n "$oa_end" ] || oa_end=$(wc -l < "$handoff")
+    oa_slice=$(sed -n "${oa_start},${oa_end}p" "$handoff")
+    if printf '%s\n' "$oa_slice" | grep -qiF 'Why here'; then
+      pass "the template gives the ordering reason a column to go in"
+    else
+      fail "the template gives the ordering reason a column to go in" \
+           "the skill asks for a fact the template has nowhere to hold" \
+           "looked for a 'Why here' column in ## Do these in order"
+    fi
+  else
+    fail "the template has a Do these in order section" "the section is gone"
+  fi
+
   # ---- 6 · out of scope carries its reason --------------------------------------------------
   local oos
   oos=$(grep -n '\*\*Out of scope\*\*' "$devlog" | head -n1 | cut -d: -f1)
@@ -188,6 +231,12 @@ if [ "${1:-}" = "selftest" ]; then
     cat > "$1/templates/handoff.md" <<'TPL'
 # Handoff
 
+## Do these in order
+
+| # | | | Why here |
+|---|---|---|---|
+| 1 | <action> | <constraint> | <what puts it at this position> |
+
 ## Load-bearing decisions — do not re-litigate
 
 | Decision | What would have to change to re-open it |
@@ -208,7 +257,12 @@ Execute the rows.
 
 ### When you are about to do it a different way
 
+A different approach inside a named row, or a different order across named rows.
 Check it against What would have to change.
+
+### The ordered actions
+
+Where the order is not a hard dependency, the row still says why it sits there.
 
 ## Writing
 
@@ -252,7 +306,7 @@ SKL
 
   # 1 — the fixed form passes. Every later case is this tree with one thing broken.
   root=$(make_tree clean); out=$(run "$root"); status=$?
-  case_is "the fixed form passes" 0 "6 passed, 0 failed" "$status" "$out"
+  case_is "the fixed form passes" 0 "9 passed, 0 failed" "$status" "$out"
 
   # 2 — the decisions table holding only the decision. The state #151 was filed against.
   root=$(make_tree nocolumn)
@@ -390,6 +444,89 @@ Say so before starting.
 SKL
   out=$(run "$root"); status=$?
   case_is "a trigger that only announces fails" 1 "back to the constraint" "$status" "$out"
+
+  # 7b — the trigger scoped to one row only. This is exactly what the first draft shipped, and it
+  #      excluded baseline opening 4 — a re-ordering — which is the opening it was cited for.
+  root=$(make_tree triggeronerow)
+  cat > "$root/skills/handoff/SKILL.md" <<'SKL'
+# The handoff
+
+### Then execute
+
+Execute the rows.
+
+### When you are about to do it a different way
+
+The same ordered action, done another way.
+Check it against What would have to change.
+
+### The ordered actions
+
+Where the order is not a hard dependency, the row still says why it sits there.
+
+## Writing
+
+### What does NOT go in it
+
+| Not here | Where |
+|---|---|
+| The narrative of how a decision was reached | The dev-log |
+
+## Template
+SKL
+  out=$(run "$root"); status=$?
+  case_is "a trigger that cannot fire on a re-ordering fails" 1 "fires on a re-ordering" "$status" "$out"
+
+  # 7c — the soft-ordering rule missing from the skill. Opening 4's fact lives in an ordered
+  #      actions row, not the decisions table, so the constraint column alone does not cover it.
+  root=$(make_tree nosoftorder)
+  cat > "$root/skills/handoff/SKILL.md" <<'SKL'
+# The handoff
+
+### Then execute
+
+Execute the rows.
+
+### When you are about to do it a different way
+
+A different approach inside a named row, or a different order across named rows.
+Check it against What would have to change.
+
+## Writing
+
+### What does NOT go in it
+
+| Not here | Where |
+|---|---|
+| The narrative of how a decision was reached | The dev-log |
+
+## Template
+SKL
+  out=$(run "$root"); status=$?
+  case_is "a skill with no soft-ordering rule fails" 1 "reason for a soft ordering" "$status" "$out"
+
+  # 7d — the rule present in the skill with nowhere in the template to write it. A rule asking for
+  #      a fact the artifact cannot hold is the asymmetry the constraint column was fixed to avoid.
+  root=$(make_tree noorderslot)
+  cat > "$root/templates/handoff.md" <<'TPL'
+# Handoff
+
+## Do these in order
+
+| # | | |
+|---|---|---|
+| 1 | <action> | <constraint> |
+
+## Load-bearing decisions — do not re-litigate
+
+| Decision | What would have to change to re-open it |
+|---|---|
+| <decision> | <the fact that forces it> |
+
+## Open threads
+TPL
+  out=$(run "$root"); status=$?
+  case_is "a template with no column for the ordering reason fails" 1 "a column to go in" "$status" "$out"
 
   # 8 — out of scope with no reason.
   root=$(make_tree noreason)

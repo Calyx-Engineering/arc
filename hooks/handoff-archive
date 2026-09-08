@@ -33,9 +33,15 @@
 # will overwrite, because those forms compose and a wrong guess copies the wrong thing while
 # reporting success. Still uncovered, and named rather than implied away: a Bash command that
 # overwrites an untracked file which is not the handoff.
-
-# WHAT IT COSTS ON EVERY Bash CALL. One `git rev-parse --git-dir` and one file test, after the
-# first call in a session — see the fast path below.
+#
+# AND IT IS SILENT ON Bash — see `report()`. Speaking there would auto-approve the command.
+#
+# WHAT IT COSTS ON EVERY Bash CALL AFTER THE FIRST, stated honestly because the first draft of
+# this comment understated it: reading stdin, three `field` calls (`cwd`, `session_id`,
+# `tool_name` — each a short pipeline in a subshell), one `git rev-parse --git-dir`, and one file
+# test. Tens of processes, not "one file test". That is the floor for a hook on this matcher, and
+# it is paid on every Bash call in every repository the plugin is installed into. `field` is not
+# `jq` precisely so the floor stays a few small processes rather than a dependency.
 #
 # THIS IS THE PreToolUse PROXY FOR A COLD START, NOT A SessionStart HOOK. The property #152
 # needs does hold — the handoff is copied before this session's first write of anything, so
@@ -69,7 +75,15 @@ json_string() {
   printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
 }
 
+# AND WHY IT IS SILENT ON Bash. `permissionDecision: "allow"` does not merely annotate the call —
+# it APPROVES it, skipping the permission prompt. That is a defensible trade on the edit tools,
+# where the decision is about a file this hook has just copied, and it is the shape the other
+# hooks here use. It is not defensible on Bash: the first Bash call of a session would be
+# auto-approved as a side effect of taking a handoff snapshot, and that call can be anything.
+# So Bash gets the copy and no output at all — exit 0 with an empty stdout leaves the permission
+# system exactly as it found it. Visibility is worth less than the prompt it would have skipped.
 report() {
+  [ "$TOOL" = "Bash" ] && exit 0
   printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":$(json_string "$1")}}"
   exit 0
 }
@@ -89,21 +103,35 @@ CWD="$(unescape_path "$(field cwd)")"
 # name as well means a half-written payload is silent rather than acting on a guess.
 SESSION="$(field session_id)"
 [ -n "$SESSION" ] || exit 0
-[ -n "$(field tool_name)" ] || exit 0
+TOOL="$(field tool_name)"
+[ -n "$TOOL" ] || exit 0
 
-# The tool this call is about to run, if it names a file. A Bash call names none — see the fast
-# path below.
-TARGET="$(unescape_path "$(field file_path)")"
-[ -n "$TARGET" ] || TARGET="$(unescape_path "$(field notebook_path)")"
+# The file this call is about to replace, where the call names one.
+#
+# NOT READ FOR A Bash CALL, and that is a correctness fix rather than an optimisation. `field` is
+# an unanchored grep over the whole payload, and a Bash payload carries the command text — so
+# `grep -n file_path hooks/handoff-archive`, run as a command, made `field file_path` match inside
+# the command string and return it as a path. Harmless in outcome, since no such file exists, but
+# it defeated the fast path below and ran moment 2 on nonsense. Bash never names a target here.
+TARGET=""
+if [ "$TOOL" != "Bash" ]; then
+  TARGET="$(unescape_path "$(field file_path)")"
+  [ -n "$TARGET" ] || TARGET="$(unescape_path "$(field notebook_path)")"
+fi
 
 GITDIR="$(git -C "$CWD" rev-parse --git-dir 2>/dev/null)"
 [ -n "$GITDIR" ] || exit 0
 case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
 
-# THE FAST PATH, AND WHY IT IS FIRST. This hook is registered on the Bash matcher as well as on
-# Edit|Write|NotebookEdit, so it runs on every Bash call in the session. Once the snapshot has
-# been taken and there is no named file to consider, there is nothing left to do — and that is
-# every Bash call after the first. One `rev-parse` and one file test, then out.
+# THE FAST PATH. Registered on the Bash matcher, this hook runs on every Bash call in the session.
+# Once the snapshot has been CONSIDERED and there is no named file to weigh, there is nothing left
+# to do.
+#
+# The marker it reads is written whether or not a copy was taken — see moment 1 below. An earlier
+# version wrote it only inside `archive_file`, after that function's own early returns, so it
+# existed only in a repository that HAD an untracked handoff. Every repo without one — which is
+# every non-Arc repo the plugin is installed into — fell through the whole body on every Bash
+# call, which is the opposite of what this path is for.
 [ -z "$TARGET" ] && [ -e "$GITDIR/arc-archive-$SESSION-handoff" ] && exit 0
 
 ROOT="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
@@ -154,13 +182,18 @@ archive_file() {
   return 0
 }
 
-# ---- 1 · the handoff, at this session's first edit of anything -------------------
+# ---- 1 · the handoff, at this session's first call of any kind -------------------
 # Deliberately not conditional on what is being edited. That is the whole difference between
 # this and a copy taken at write time.
 if archive_file "$ROOT/HANDOFF.md" "HANDOFF.md" "handoff"; then
   ARCHIVED="$ARCHIVED
   - \`HANDOFF.md\` → \`.arc-work/archive/$STAMP/HANDOFF.md\` — taken before this session's first write, not before the handoff's"
 fi
+
+# The snapshot has now been CONSIDERED, whatever the answer was — no handoff, a tracked one, one
+# too large, or one that was copied. The marker records that, so the fast path above is reached
+# in a repository with no handoff at all and not only in one that had something to copy.
+: > "$GITDIR/arc-archive-$SESSION-handoff" 2>/dev/null
 
 # ---- 2 · and the file this call is about to replace, if git cannot restore it -----
 # Only for a call that NAMES a file. A Bash command is not parsed for the files it will

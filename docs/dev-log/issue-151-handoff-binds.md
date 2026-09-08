@@ -81,10 +81,11 @@ doing — see *Out of scope*.
 
 ## Retrospective
 
-Built: the constraint column in `templates/handoff.md`, the routing-row correction and the
-approach-replacement trigger in `skills/handoff/SKILL.md`, the reason requirement in
-`templates/dev-log.md`, and `tools/verify-handoff-rationale.sh` — 6 live probes, 9 fixture cases,
-wired into `verify-all.sh` as two gates.
+Built: the constraint column in `templates/handoff.md`; the routing-row correction, the
+approach-replacement trigger and the soft-ordering rule in `skills/handoff/SKILL.md`; the
+*Why here* column in the handoff template's ordered actions; the reason requirement in
+`templates/dev-log.md`; and `tools/verify-handoff-rationale.sh` — 9 live probes, 12 fixture
+cases, wired into `verify-all.sh` as two gates.
 
 **What changed from the plan: the hypothesis did not survive intact.** It was filed as the
 explanation and holds for two of five bad openings. Three fail in other layers — no document,

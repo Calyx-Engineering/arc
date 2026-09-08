@@ -37,8 +37,12 @@ session's own edits.
 alone the hook missed every one of them, which would have left the central requirement true only
 for the tools that happen to be typed. Bash gets moment 1, the snapshot, and not moment 2 — a
 shell command is not parsed for the files it will overwrite, because those forms compose and a
-wrong guess copies the wrong thing while reporting success. Cost on every Bash call after the
-first in a session: one `git rev-parse --git-dir` and one file test, via an early fast path.
+wrong guess copies the wrong thing while reporting success. It is also **silent** on Bash: `permissionDecision: "allow"` approves a call rather than
+annotating it, so speaking there would auto-approve the session's first shell command as a side
+effect of taking a snapshot — and that command can be anything. The copy still happens; the
+message does not. Cost on every Bash call after the first in a session: reading stdin, three
+`field` calls, one `git rev-parse --git-dir` and one file test — tens of small processes, which
+is the floor for a hook on this matcher.
 
 **`.arc-work/archive/`, not inside `.git/`.** Under `.git/` would be more strongly excluded, but
 a recovery copy nobody can find is not a recovery copy. `.arc-work/` is already gitignored, so
@@ -79,7 +83,7 @@ unrecoverable" exactly.
 
 Built: `hooks/handoff-archive` (PreToolUse on `Edit|Write|NotebookEdit` **and on `Bash`**,
 registered in `hooks/hooks.json`), nine cases under `tools/hook-cases/handoff-archive/`, and
-`tools/verify-handoff-archive.sh` — 6 live probes and 15 fixture cases, wired into
+`tools/verify-handoff-archive.sh` — 6 live probes and 16 fixture cases, wired into
 `verify-all.sh` as two gates.
 
 **What changed from the plan:** two hook-cases had to be withdrawn and rewritten as sequenced
@@ -89,6 +93,15 @@ Under Git for Windows the shell's `/tmp/x` comes back from `git rev-parse --show
 the per-file archive silently never fired. The handoff snapshot kept working throughout, because
 it builds its path from the root rather than reducing one against it — so a verdict-only gate
 would have shown nothing wrong. Both paths are now canonicalised through the same `cd && pwd`.
+
+**Three defects came out of registering on Bash, and all three were found by review rather than
+by a gate.** The hook auto-approved the first shell command of every session, because the report
+shape it inherited from the edit tools grants permission rather than annotating. The fast path
+could not fire in the common case, because its marker was written inside `archive_file` past that
+function's own early returns — so it existed only where there had been an untracked handoff, and
+every repo without one ran the full body on every Bash call. And `field` is an unanchored grep
+over the payload, which now carries the command text, so a command mentioning `file_path`
+returned itself as a target. The first is the one that mattered.
 
 **What a future reader needs to know:** the gate runs the hook as a program. It does not prove a
 live session invokes it — no gate here does, `verify-all.sh --list` says so — and registration in

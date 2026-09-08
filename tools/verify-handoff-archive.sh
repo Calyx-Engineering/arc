@@ -77,12 +77,22 @@ report() {
     fi
     # Registered on Bash as well, or `cat > HANDOFF.md`, `mv` and `rm` destroy the file with no
     # copy taken — the edit tools never see a redirect.
-    if [ "$(grep -c 'handoff-archive' "$json")" -ge 2 ]; then
+    #
+    # Scoped to the Bash block, not counted across the file. Counting occurrences passes when the
+    # hook is listed twice inside the edit-tools block, which is not registration on Bash at all —
+    # the assertion has to look where it claims to look.
+    # PostToolUse has a "Bash" matcher of its own, so the file is cut at PostToolUse first — a
+    # greedy match reads the wrong block and reports the opposite of the truth. Then each matcher
+    # block is a record, and the Bash one must carry this hook.
+    local preblock
+    preblock="$(tr -d ' \n\t' < "$json" | sed 's/"PostToolUse".*//')"
+    if printf '%s' "$preblock" \
+         | awk 'BEGIN{RS="\"matcher\":\""} /^Bash"/ && /handoff-archive/{f=1} END{exit !f}'; then
       pass "the hook is registered on the Bash matcher too"
     else
       fail "the hook is registered on the Bash matcher too" \
            "registered only on the edit tools, a shell overwrite of the handoff takes no copy" \
-           "expected handoff-archive in both PreToolUse matcher blocks"
+           "handoff-archive does not appear between \"matcher\":\"Bash\" and the next matcher"
     fi
   else
     fail "the hook is registered in hooks/hooks.json" \
@@ -292,16 +302,30 @@ Load-bearing: the 3.3 V rail cannot source 500 mA.'
         "the edit-tool matchers alone never see a redirect, an mv or an rm"
   fi
 
-  # ---- 10c · and the second Bash call of that session is the fast path ---------------------
-  # The hook runs on every Bash call, so the common case has to be cheap and silent.
-  out=$(printf '{"session_id":"sb1","cwd":"%s","tool_name":"Bash","tool_input":{"command":"ls"}}' \
-    "$repo" | HOME="$RUN_HOME" bash "$HOOK" 2>&1); rc=$?
-  n=$(archived_copies "$repo" "HANDOFF.md" | wc -l | tr -d ' ')
-  if [ "$rc" = "0" ] && [ -z "$out" ] && [ "$n" = "1" ]; then
-    ok "a later Bash call in the same session is silent and takes nothing"
+  # ---- 10c · a Bash call is SILENT even when it archives ----------------------------------
+  # `permissionDecision: "allow"` approves the call rather than annotating it. On the edit tools
+  # that is the house shape; on Bash it would auto-approve the session's first shell command as a
+  # side effect of taking a snapshot, and that command can be anything.
+  out=$(fire sb2 "$(make_repo bashquiet "$ORIG")" Bash ""); rc=$?
+  if [ "$rc" = "0" ] && [ -z "$out" ]; then
+    ok "a Bash call says nothing — speaking there would auto-approve the command"
   else
-    bad "a later Bash call in the same session is silent and takes nothing" \
-        "exit $rc, $n copies, output: $out"
+    bad "a Bash call says nothing — speaking there would auto-approve the command" \
+        "exit $rc, output: $out"
+  fi
+
+  # ---- 10d · the fast-path marker is written even with no handoff to copy -----------------
+  # The marker used to be written only inside archive_file, past its own early returns, so it
+  # existed only where there HAD been an untracked handoff. Every repo without one — every
+  # non-Arc repo the plugin is installed into — then ran the whole body on every Bash call.
+  # Asserted on the marker itself: exit code and silence are identical on both paths.
+  repo=$(make_repo nohandoff_fast)
+  fire sb3 "$repo" Bash "" >/dev/null
+  if [ -e "$repo/.git/arc-archive-sb3-handoff" ]; then
+    ok "the fast-path marker is written in a repo with no handoff at all"
+  else
+    bad "the fast-path marker is written in a repo with no handoff at all" \
+        "without it the fast path never fires where there is nothing to copy — the common case"
   fi
 
   # ---- 11 · no repository, and malformed input — silent, and no crash --------------------

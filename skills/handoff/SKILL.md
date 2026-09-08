@@ -311,8 +311,10 @@ a fresh session cannot tell which of two overlapping documents to trust.
 
 **Which is also why overwriting it destroys something.** Gitignored means git cannot restore
 it, so a rewrite takes the state this session was *given* with it. `hooks/handoff-archive`
-copies it to `.arc-work/archive/<timestamp>/` at the session's **first edit of anything** —
-not when the handoff is written, because a session that crashes never reaches its own write.
+copies it to `.arc-work/archive/<timestamp>/` at the session's **first tool call of any kind** —
+not when the handoff is written, because a session that crashes never reaches its own write, and
+not only on an edit, because `cat > HANDOFF.md`, `mv` and `rm` destroy it without going near
+`Edit` or `Write`.
 The same rule covers any file git cannot restore: tracked files need no copy, git is the copy.
 
 The store is gitignored too. It is **recovery, not record** — nothing reads it as history,
