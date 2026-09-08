@@ -1,0 +1,2 @@
+# a draft marked ready whose issue has every box dispositioned — the checker exits 0, so this must be silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_boxes_rc":"0","arc_test_boxes_out":"PASS  #199 — 7 boxes, all ticked","tool_input":{"command":"gh pr ready 250"}}

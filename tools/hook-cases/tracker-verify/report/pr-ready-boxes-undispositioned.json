@@ -1,0 +1,2 @@
+# a draft marked ready with an unticked box no PR body names — #17 shipped missing two of five requirements this way
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_boxes_rc":"1","arc_test_boxes_out":"FAIL  #199 — 2 of 7 boxes unticked, 2 of them undispositioned","tool_input":{"command":"gh pr ready 250"}}

@@ -204,7 +204,7 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
-| `hooks/tracker-verify` | hook | m12 · m43 | Automatic, on issue create, PR open, PR merge | `skills/issue-write` for repair |
+| `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tools/verify-issue-boxes.sh` · `tools/verify-linked-branch.sh` · `tools/verify-tracker-body.sh` |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
 | `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry · `skills/handoff` to write the handoff the saturation check proposes |
