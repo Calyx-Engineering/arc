@@ -1,6 +1,6 @@
 # PR #245 — arc-loop resumes across a reset; arc-run runs to a workstream boundary
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** none  ·  **PR:** [#245](https://github.com/Calyx-Engineering/arc/pull/245)
 
