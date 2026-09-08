@@ -194,10 +194,8 @@ rewritten; *Editing an existing body* below governs the description.
 
 **The shape is [`templates/issue.md`](../../templates/issue.md)** — four sections, in order,
 each with its purpose, and [`templates/pr.md`](../../templates/pr.md) for a PR. **Copy it; do
-not assemble one from memory.** The rules below are scattered across four sections of this
-skill by subject, and the positional one — where `Related` sits — is always the furthest from
-the list. Nine issues were written in one session with `Spawned` mid-body, appended to four
-times before anyone noticed.
+not assemble one from memory.** The rules here are grouped by subject, so the positional one —
+where `Related` sits — is the furthest from the section list.
 
 **This skill is the judgement and the template is the shape.** Neither repeats the other.
 
