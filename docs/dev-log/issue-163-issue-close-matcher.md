@@ -1,6 +1,6 @@
 # Issue #163 — fire when an issue closes
 
-**Issue:** [#163](https://github.com/Calyx-Engineering/arc/issues/163)  ·  **PR:** pending
+**Issue:** [#163](https://github.com/Calyx-Engineering/arc/issues/163)  ·  **PR:** [#232](https://github.com/Calyx-Engineering/arc/pull/232)
 
 ## Problem
 

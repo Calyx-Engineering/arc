@@ -179,7 +179,7 @@ esac
 # Before the `gh` guard below, so a fixture case decides offline. Runs first among the
 # scanners because a close carries no body: none of them have anything to read.
 check_close() {
-  local args num linked runner
+  local args num linked runner link_lib
 
   # `##`, longest match, so a chain lands on the real invocation and not on an earlier
   # mention of one — `git commit -m "ran gh issue close 42" && gh issue close 163` is 163.
@@ -213,10 +213,10 @@ check_close() {
   if [ -n "$FIXTURE_LINKED" ]; then
     linked="$FIXTURE_LINKED"
   else
-    LINK_LIB="$(dirname "$0")/../tools/verify-linked-branch.sh"
+    link_lib="$(dirname "$0")/../tools/verify-linked-branch.sh"
     # Absent, the check does not run. Fail open is the rule; a missing helper is not a
     # reason to speak up about a link nothing read.
-    [ -f "$LINK_LIB" ] || return 0
+    [ -f "$link_lib" ] || return 0
     command -v gh >/dev/null 2>&1 || return 0
 
     # BOUNDED, because this is the only check here that goes to the network from inside a
@@ -236,7 +236,7 @@ check_close() {
     # `cd` outside the `&&`, deliberately: chained, a failed `cd` returns 1 and 1 is the
     # tool's "no link" verdict, so an unreadable directory would report a missing link
     # nothing ever looked for.
-    (cd "$CWD" 2>/dev/null || exit 3; $runner bash "$LINK_LIB" "$num" >/dev/null 2>&1)
+    (cd "$CWD" 2>/dev/null || exit 3; $runner bash "$link_lib" "$num" >/dev/null 2>&1)
     case $? in
       0) linked=1 ;;
       1) linked=0 ;;
