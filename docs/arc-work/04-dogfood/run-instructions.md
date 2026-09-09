@@ -92,7 +92,29 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. What this arc pins down:
 |---|---|
 | **Done** | Every box in `Required` resolved — ticked with evidence, or named as not done with the reason. Pass 4 done, PR marked ready, and merged if the mode allows it. **Then `gh issue edit <NN> --remove-label in-progress`** |
 | **Blocked** | The issue cannot be done as written. **Say why and stop.** Do not redesign the issue, and do not do an adjacent issue instead. **Remove the label here too** — a run that stops still stops, and a label left behind says work is underway when nothing is |
-| **Scope grew** | Record it in the issue's `Spawned` table and finish what you were given. A discovery is not permission to widen the unit |
+| **Scope grew** | **A finding goes in the dev-log** — a wrong premise, a defect spotted in passing, an approach ruled out. **A filed issue goes in a `Related` row**, and only a filed issue does. Then finish what you were given: a discovery is not permission to widen the unit |
+
+**An issue body has no `Spawned` heading, and one row shape is the only shape.** `Spawned` is a
+row in the issue's `Related` table — three columns, the kind, the link, one clause — and
+`Related` is the body's last section. Add the row to **the issue that caused the work**, which is
+usually yours.
+
+```markdown
+| | Link | What it is |
+| :--- | :--- | :--- |
+| **Spawned** | [#NN](https://github.com/Calyx-Engineering/arc/issues/NN) | <one clause> |
+```
+
+**The edge is written from both ends.** The new issue's own body carries the same table with a
+`Spawned by` row naming yours. An issue filed without one cannot be reconstructed later, so
+`hooks/tracker-verify` reports a `gh issue create` whose body has none — whenever the branch you
+are on names an issue or a PR, which on a `arc/04-dogfood-issue-<NN>-<hint>` branch is always.
+
+**A finding is not a unit of work, so it has no row.** Only an issue you actually filed, or a PR
+opened with no issue behind it, is a unit — [`skills/issue-write`](../../../skills/issue-write/SKILL.md),
+*`Spawned` holds units of work. Nothing else*. Everything else this run learned goes in the
+dev-log it writes at §2 step 7. `hooks/tracker-verify` reports a `Spawned` heading on
+`gh issue create` and `gh issue edit`.
 
 ## 6 A report run — the workstream boundary
 
