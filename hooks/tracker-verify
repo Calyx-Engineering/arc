@@ -55,11 +55,10 @@ printf -v _ARC_CR  '\r'
 # `json_string` below reads the `command` and the `cwd` the same way, for the same reason, and
 # `field` is gone: it was the last comma-split read in the file. #230.
 #
-# THE TWO READERS ARE NOT THE SAME, DELIBERATELY. `json_string` resolves `\"` `\` `
-` `	`
-# ``; this one resolves nothing and stops at the first `"`, escaped or not. A fixture value is
-# a CASE payload, and `scan_spawned_heading` depends on the literal `
-` surviving — see the
+# THE TWO READERS ARE NOT THE SAME, DELIBERATELY. `json_string` resolves the escapes `\"`, `\\`,
+# `\n`, `\t` and `\r`; this one resolves nothing and stops at the first `"`, escaped or not. A
+# fixture value is a CASE payload, and `scan_spawned_heading` depends on the two-character `\n`
+# surviving — see the
 # comment there. Teaching this one to resolve escapes would rewrite a live body's `	` and move
 # a fence marker, which is a change to what the scanners see rather than to how they are fed.
 #
