@@ -190,7 +190,7 @@ Each workstream's 200-word boundary report lands here when it closes.
 |---|---|---|---|
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
 | **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | **In progress.** [#163](https://github.com/Calyx-Engineering/arc/issues/163) closed; [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the activation log, every hook leaving a record — is in [#244](https://github.com/Calyx-Engineering/arc/pull/244); [#165](https://github.com/Calyx-Engineering/arc/issues/165) — `work-watch` check 8, one tested alternative before a failure is blamed on the user's environment — is in [#248](https://github.com/Calyx-Engineering/arc/pull/248); [#272](https://github.com/Calyx-Engineering/arc/issues/272) — `branch-guard` denying a write to a path in no repository, because the path-is-source check ran before the worktree check could exempt it — is in [#296](https://github.com/Calyx-Engineering/arc/pull/296). Spawned [#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239), [#246](https://github.com/Calyx-Engineering/arc/issues/246) and [#294](https://github.com/Calyx-Engineering/arc/issues/294) |
-| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 10 | **10 of 10 closed**, the last two with this PR. Report in [§6.4](#64-handoff--boundary-report). The parent stays open until the user closes it. **The tracker now lists 10 children.** [#252](https://github.com/Calyx-Engineering/arc/issues/252) and [#253](https://github.com/Calyx-Engineering/arc/issues/253) were attached after the report and are closed; [#267](https://github.com/Calyx-Engineering/arc/issues/267) and [#268](https://github.com/Calyx-Engineering/arc/issues/268) — both from [#208](https://github.com/Calyx-Engineering/arc/issues/208)'s findings — are the two open. The report describes the original six. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 10 | **10 of 10 closed.** Reports in [§6.4](#64-handoff--boundary-report) — the original six — and [§6.5](#65-handoff-reopened--boundary-report) — [#252](https://github.com/Calyx-Engineering/arc/issues/252), [#253](https://github.com/Calyx-Engineering/arc/issues/253), [#267](https://github.com/Calyx-Engineering/arc/issues/267) and [#268](https://github.com/Calyx-Engineering/arc/issues/268), attached after the first report. The parent stays open until the user closes it. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | **In progress.** [#199](https://github.com/Calyx-Engineering/arc/issues/199) — `tests/verify-issue-boxes.sh`, the box count `hooks/tracker-verify` runs on `gh pr ready` — and [#83](https://github.com/Calyx-Engineering/arc/issues/83) — the same hook reporting a tracker object that records no parent — are built. [#136](https://github.com/Calyx-Engineering/arc/issues/136) — linking and closing without the default-branch flip, m12 §5 rewritten as the choice between it and m42, plus `merge-close` and `tools/arc-link-sweep.sh` — is in [#290](https://github.com/Calyx-Engineering/arc/pull/290), which spawned [#286](https://github.com/Calyx-Engineering/arc/issues/286) and [#287](https://github.com/Calyx-Engineering/arc/issues/287). [#140](https://github.com/Calyx-Engineering/arc/issues/140)'s *not a gate script* constraint is narrowed to the prose half. [#271](https://github.com/Calyx-Engineering/arc/issues/271) — Fire's nine bodies reshaped to the three-column `Related` table, with twenty-nine finding rows moved to their dev-logs — is in [#302](https://github.com/Calyx-Engineering/arc/pull/302). [#274](https://github.com/Calyx-Engineering/arc/issues/274) — the GitHub issue type as the field that says **who** does the work, gating all four of `arc-loop.sh`'s issue-dispatch paths and reported by `tests/verify-labels.sh` — is in [#306](https://github.com/Calyx-Engineering/arc/pull/306), and is this workstream's last open child |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
 
@@ -422,6 +422,73 @@ flowchart LR
 ```
 
 *End of Handoff's boundary report.*
+
+---
+
+### 6.5 Handoff, reopened — boundary report
+
+**Workstream:** Handoff, second closing · **Closed:** 2026-09-09 · **198 words**, diagram excluded
+
+Four children attached after §6.4: [#252](https://github.com/Calyx-Engineering/arc/issues/252), [#253](https://github.com/Calyx-Engineering/arc/issues/253), [#267](https://github.com/Calyx-Engineering/arc/issues/267), [#268](https://github.com/Calyx-Engineering/arc/issues/268).
+
+#### 6.5.1 Delivered
+
+1. Firing re-probed after [#208](https://github.com/Calyx-Engineering/arc/issues/208): 24/24, was 22/24; checks travel
+2. Live cold start: C1 pass, C2 pass; *Done when* met
+3. All fourteen checks declare a path; gate gains selftest
+4. Eighth staleness check: the mode row against the arc-log
+
+#### 6.5.2 Spawned
+
+| | | Routed |
+|---|---|---|
+| [#308](https://github.com/Calyx-Engineering/arc/issues/308) | `tracker-verify` ran its own comment as code | Fire — closed, duplicate of [#305](https://github.com/Calyx-Engineering/arc/issues/305) |
+
+#### 6.5.3 Unexpected
+
+- `skill-probe.py` stopped at the announce turn; [#157](https://github.com/Calyx-Engineering/arc/issues/157)'s rate is a floor
+- Two boxes named absent instruments: no skill text in transcripts, no skill rows in `log.md`
+- Two plugins served `handoff`; the qualified name told them apart
+- Live handoff stamped 14:40, mtime 20:37; `find -newer` trips on the writer's own transcript
+
+#### 6.5.4 Unplanned but needed
+
+| | |
+|---|---|
+| `skill-probe.py` stop condition | Fire scored as miss |
+| `tools/probe-handoff-checks.sh` | Box 3 undecidable from transcripts |
+| `verify-handoff-checks.sh` selftest | Denial runs were prose |
+
+#### 6.5.5 Evidence
+
+| | |
+|---|---|
+| `verify-all.sh` | 49 → 58 gates, exit 0 every merge; 58 here, exit 0 |
+| Firing | `handoff` 24/24 · `camp` 12/12 |
+| Live opening | C1 pass · C2 pass, against 5/8 · 4/8. n = 1 |
+| `verify-handoff-checks.sh` | 8/0; selftest 9/0 |
+
+#### 6.5.6 Not done
+
+- [#253](https://github.com/Calyx-Engineering/arc/issues/253) box 4 answered from the transcript, not `log.md`
+- [#157](https://github.com/Calyx-Engineering/arc/issues/157) not re-measured with the fixed instrument
+- [#154](https://github.com/Calyx-Engineering/arc/issues/154) box 2 still unticked; [#243](https://github.com/Calyx-Engineering/arc/issues/243) open, not a sub-issue
+- Stamp and `-newer` findings unfiled
+- `spec-interview` 0/3 on the side-project control
+
+#### 6.5.7 What it changed
+
+```mermaid
+flowchart LR
+    A["#157 firing 22/24"] --> B["#252 re-probe 24/24<br/>instrument fixed"]
+    C["#150 baseline<br/>5/8 · 4/8"] --> D["#253 live opening<br/>C1 pass · C2 pass"]
+    E["#208 seven checks,<br/>path declared"] --> F["#267 all fourteen<br/>declare a path"]
+    F --> G["#268 eighth check:<br/>mode row vs arc-log"]
+    H["#243 saturation probe"]:::blocked
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
+```
+
+*End of Handoff's second boundary report.*
 
 ---
 
