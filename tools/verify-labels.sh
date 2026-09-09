@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# verify-labels.sh — a label agrees with the title prefix, or it is not there.
+# verify-labels.sh — a label agrees with the title prefix, or it is not there; and an issue
+# says who does the work, or it is a finding.
 #
 #   tools/verify-labels.sh                 sweep this repository's open issues
 #   tools/verify-labels.sh labels          the label set itself, against the sanctioned one
@@ -25,6 +26,13 @@
 # `test:` carry no label because no query would use one — the test in #84 is whether a query
 # would actually run, not whether a category exists. Licensing nothing is checked as strictly
 # as licensing something: an issue titled `chore:` wearing `enhancement` fails.
+#
+# AND THE TYPE, WHICH IS A DIFFERENT FACT. A GitHub issue type is not a label and it is not
+# judged against the prefix: the prefix says what kind of work it is, the type says WHO does it.
+# `Agent` is the loop's — `tools/arc-loop.sh` dispatches nothing else — and any other type is a
+# human's. An open issue carrying none answers neither question, so the sweep reports it. Only
+# presence is judged: which type a human's issue takes is a human's call, and a check that
+# ranked the org's types would go stale the day one is added. #274.
 #
 # REPORTS, NEVER BLOCKS, AND NEVER WRITES. Same precedent as every other verifier here. Exit 1
 # marks a finding for a human to read; nothing denies a tool call and nothing edits the tracker.
@@ -164,6 +172,21 @@ EOF
   return 0
 }
 
+# ---- the type ---------------------------------------------------------------------
+# Pure, like `classify`, and separate from it. The type answers "who does this" and the prefix
+# answers "what kind of work is it"; folding the two into one function would make an issue with
+# a right label and no type report a label finding, which is the wrong sentence.
+#
+#   $1  the issue type name, empty when the issue carries none
+classify_type() {
+  if [ -z "${1:-}" ]; then
+    echo "FAIL  no issue type — nothing says whether this is the loop's work or a human's"
+    return 1
+  fi
+  echo "PASS  type \`$1\`"
+  return 0
+}
+
 # ---- live ------------------------------------------------------------------------
 # EVERY READ THAT DECIDES A VERDICT IS CHECKED. An empty answer from a failed read is
 # indistinguishable from a repository with no open issues, and reporting "all clean" for a read
@@ -184,32 +207,43 @@ gh_read() {
 # `36<tab><tab>feat: …` and `read num labels title` puts the TITLE into `labels` and leaves the
 # title empty. Every unlabelled issue then reported "no type prefix" against an empty string,
 # which is the exact class of false finding this file exists to remove. Found by running the
-# sweep, not by reading it.
+# sweep, not by reading it. The type made a THIRD empty-able field of the row, so the separator
+# matters more now rather than less.
 US="$(printf '\037')"
 
-# Reads rows on stdin, one issue per line: <number><US><labels><US><title>. Separated from the
-# `gh` read so the selftest can feed it fixture rows — the parse is where the defect was, and a
-# selftest that only exercised `classify` passed while the sweep was wrong.
+# Reads rows on stdin, one issue per line: <number><US><labels><US><type><US><title>. Separated
+# from the `gh` read so the selftest can feed it fixture rows — the parse is where the defect
+# was, and a selftest that only exercised `classify` passed while the sweep was wrong.
+#
+# BOTH VERDICTS ARE REPORTED, never only the first. An issue can carry a contradicting label AND
+# no type, and a sweep that stopped at the first finding would hide the second until the first
+# was fixed — one run per defect instead of one run for all of them.
 sweep_stream() {
-  local passed=0 failed=0 num labels title out status
-  while IFS="$US" read -r num labels title; do
+  local passed=0 failed=0 num labels itype title out findings
+  while IFS="$US" read -r num labels itype title; do
     [ -n "${num:-}" ] || continue
-    out="$(classify "${title:-}" "${labels:-}")"; status=$?
-    if [ "$status" = "0" ]; then
+
+    findings=""
+    out="$(classify "${title:-}" "${labels:-}")" || findings="$findings
+${out#FAIL  }"
+    out="$(classify_type "${itype:-}")" || findings="$findings
+${out#FAIL  }"
+
+    if [ -z "$findings" ]; then
       passed=$((passed + 1))
-    else
-      failed=$((failed + 1))
-      echo "  #$num  ${out#FAIL  }"
-      echo "        ${title:-(no title)}"
+      continue
     fi
+    failed=$((failed + 1))
+    printf '%s\n' "$findings" | sed "/^\$/d; s/^/  #$num  /"
+    echo "        ${title:-(no title)}"
   done
 
   echo
   if [ "$failed" = "0" ]; then
-    echo "$passed open issues, all agree with their prefix"
+    echo "$passed open issues, all agree with their prefix and carry a type"
     return 0
   fi
-  echo "$((passed + failed)) open issues, $failed disagree with their prefix"
+  echo "$((passed + failed)) open issues, $failed with findings"
   return 1
 }
 
@@ -218,10 +252,10 @@ sweep() {
   local rows
 
   rows="$(gh_read "open issues" gh issue list --state open --limit 500 \
-    --json number,title,labels \
-    --jq '.[] | "\(.number)\u001f\(.labels | map(.name) | join(","))\u001f\(.title)"')" || exit $?
+    --json number,title,labels,issueType \
+    --jq '.[] | "\(.number)\u001f\(.labels | map(.name) | join(","))\u001f\(.issueType.name // "")\u001f\(.title)"')" || exit $?
 
-  echo "verify-labels — open issues, prefix against type label"
+  echo "verify-labels — open issues: the prefix against its type label, and the issue type"
   echo
 
   sweep_stream <<EOF
@@ -380,12 +414,47 @@ selftest() {
   # Order in the label list must not decide the verdict.
   case_is 0 "agree"       "type label last"             "fix: a thing is wrong"       "issue-discipline,bug"
 
+  # ---- the issue type -----------------------------------------------------------
+  # Presence, and only presence. Which type a human's issue takes is a human's call, so the
+  # cases assert that every named type passes and that the empty string is the one finding.
+  type_is() {
+    local want="$1" want_text="$2" name="$3" itype="$4"
+    run=$((run + 1))
+    local out status
+    out="$(classify_type "$itype")"; status=$?
+    if [ "$status" != "$want" ]; then
+      bad "$name — wanted exit $want, got $status: $out"; return
+    fi
+    if ! printf '%s' "$out" | grep -qF -- "$want_text"; then
+      bad "$name — exit $status is right but the message never says \"$want_text\": $out"; return
+    fi
+    ok "$name — $out"
+  }
+
+  type_is 1 "no issue type" "no type at all"   ""
+  type_is 0 "type \`Agent\`"   "Agent is the loop's" "Agent"
+
+  # A HUMAN'S TYPE IS NOT A FINDING. The rule is who, not which — `Task`, `Bug` and `Feature`
+  # all say "a human's" and none of them is more right than another. A check that preferred one
+  # would be inventing a rule the org's type set does not carry.
+  type_is 0 "type \`Task\`"    "Task passes"      "Task"
+  type_is 0 "type \`Bug\`"     "Bug passes"       "Bug"
+  type_is 0 "type \`Feature\`" "Feature passes"   "Feature"
+
+  # An unrecognised name passes too: the org adds types without this file being edited, and a
+  # sanctioned-set check here would report every new one as a defect on the day it is created.
+  type_is 0 "type \`Epic\`"    "a type this file has never heard of" "Epic"
+
   # ---- the parse, which is where the defect actually was ------------------------
   # `classify` was right and the sweep was wrong: rows arrived tab-separated, bash collapsed
   # the empty label field, and every UNLABELLED issue reported "no type prefix" against an
   # empty title. Twenty false findings in one run. A selftest that stopped at `classify`
   # passed the whole time, so the parse gets its own cases.
-  row() { printf '%s%s%s%s%s\n' "$1" "$US" "$2" "$US" "$3"; }
+  #
+  # THE TYPE ADDED A SECOND EMPTY-ABLE FIELD between two populated ones, which is the same
+  # shape as the original defect. `row` takes it in tracker order — number, labels, type,
+  # title — so a fixture reads like the `gh` row it stands for.
+  row() { printf '%s%s%s%s%s%s%s\n' "$1" "$US" "$2" "$US" "$3" "$US" "$4"; }
 
   stream_is() {
     local want="$1" want_text="$2" name="$3" rows="$4"
@@ -401,26 +470,51 @@ selftest() {
     ok "$name"
   }
 
-  stream_is 0 "1 open issues, all agree" "a labelled row parses" \
-    "$(row 42 "bug" "fix: a thing is wrong")"
+  stream_is 0 "1 open issues, all agree" "a labelled, typed row parses" \
+    "$(row 42 "bug" "Agent" "fix: a thing is wrong")"
 
-  # THE CASE THAT WAS THE BUG. An empty middle field must stay empty and the title must stay
-  # in the third position.
+  # THE CASE THAT WAS THE BUG. An empty labels field must stay empty and the title must stay
+  # in the last position.
   stream_is 1 "missing — \`fix:\` licenses \`bug\`" "an unlabelled row keeps its title" \
-    "$(row 42 "" "fix: a thing is wrong")"
+    "$(row 42 "" "Agent" "fix: a thing is wrong")"
 
   # The reported title is the issue's, not an empty string — the tell that the fields shifted.
   stream_is 1 "fix: a thing is wrong" "the failing row names its title" \
-    "$(row 42 "" "fix: a thing is wrong")"
+    "$(row 42 "" "Agent" "fix: a thing is wrong")"
+
+  # THE SAME SHAPE, ONE FIELD ALONG. An empty TYPE between a populated labels field and a
+  # populated title is where a collapsing separator would put the title into the type.
+  stream_is 1 "no issue type" "an untyped row is reported" \
+    "$(row 42 "bug" "" "fix: a thing is wrong")"
+
+  stream_is 1 "fix: a thing is wrong" "the untyped row keeps its title" \
+    "$(row 42 "bug" "" "fix: a thing is wrong")"
+
+  # Both fields empty at once — the label finding and the type finding are separate sentences
+  # about one issue, and reporting only the first is how the second waits a whole run.
+  stream_is 1 "missing — \`fix:\` licenses \`bug\`" "untyped and unlabelled — the label half" \
+    "$(row 42 "" "" "fix: a thing is wrong")"
+
+  stream_is 1 "no issue type" "untyped and unlabelled — the type half" \
+    "$(row 42 "" "" "fix: a thing is wrong")"
+
+  # …and it counts as ONE issue with findings, not two.
+  stream_is 1 "1 open issues, 1 with findings" "two findings, one issue" \
+    "$(row 42 "" "" "fix: a thing is wrong")"
+
+  # A human's type is as good as the loop's here: `chore:` licenses no label, `Task` says a
+  # human does it, and nothing about that row is a finding.
+  stream_is 0 "all agree" "a human's row passes" \
+    "$(row 42 "" "Task" "chore: tidy the tree")"
 
   # A title containing the separator's near-neighbours must not split. A tab inside a title is
   # unlikely; a comma and a colon are not.
   stream_is 0 "all agree" "commas and colons in a title" \
-    "$(row 42 "bug" "fix: a thing, and another thing: really")"
+    "$(row 42 "bug" "Agent" "fix: a thing, and another thing: really")"
 
-  stream_is 1 "2 open issues, 1 disagree" "several rows, one bad" \
-    "$(row 42 "bug" "fix: right")
-$(row 43 "" "feat: wrong")"
+  stream_is 1 "2 open issues, 1 with findings" "several rows, one bad" \
+    "$(row 42 "bug" "Agent" "fix: right")
+$(row 43 "" "Agent" "feat: wrong")"
 
   echo
   if [ "$failed" = "0" ]; then

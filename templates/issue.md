@@ -7,12 +7,13 @@
 
 ## Set at creation, not written into the body
 
-Three fields are set at creation, not written into the text. Each is invisible once missed.
+Four fields are set at creation, not written into the text. Each is invisible once missed.
 
 | | |
 |---|---|
 | **Milestone** | `gh issue create --milestone "<name>"` |
 | **Label** | The title prefix decides it — the mapping is [`issue-write`](https://github.com/Calyx-Engineering/arc/blob/main/skills/issue-write/SKILL.md)'s *Labels* section, and `tools/verify-labels.sh` enforces it |
+| **Type** | Who does the work. `gh issue create --type Agent` for the loop's; any other type is a human's — [`issue-write`](https://github.com/Calyx-Engineering/arc/blob/main/skills/issue-write/SKILL.md)'s *The issue type says who does the work* section, and `tools/verify-labels.sh` reports one with none |
 | **Base** | An issue has none. A PR's base is the arc branch — [`templates/pr.md`](https://github.com/Calyx-Engineering/arc/blob/main/templates/pr.md) |
 
 ## The order

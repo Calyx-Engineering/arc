@@ -196,9 +196,10 @@ if [ "$LIST" = "1" ]; then
     a real branch↔issue link  verify-linked-branch.sh selftest runs its decision on fixtures. The
                               live read needs GitHub and a real issue — run
                               bash tools/verify-linked-branch.sh <NN> <branch> after creating one
-    a label against its       verify-labels.sh selftest runs its decision on fixtures. The sweep
-    prefix, and the label set of real open issues, and the label set itself, both read GitHub —
-                              run bash tools/verify-labels.sh and
+    a label against its       verify-labels.sh selftest runs both decisions on fixtures. The
+    prefix, the issue type,   sweep of real open issues — prefix against label, and whether the
+    and the label set         issue carries a type at all — and the label set itself both read
+                              GitHub. Run bash tools/verify-labels.sh and
                               bash tools/verify-labels.sh labels
     two dispatchers against   arc-claim.sh selftest drives take, release, refresh and the race
     the real tracker          through a fixture backend, and one case drives the live path

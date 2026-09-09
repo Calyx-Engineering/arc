@@ -76,13 +76,13 @@ exist, so order is native and no label, project board or queue file is needed.
 | | |
 |---|---|
 | **Finding the parents** | `gh issue list --label workstream --milestone <name>` |
-| **Next issue** | First open sub-issue of the current workstream's parent |
+| **Next issue** | First open **`Agent`-typed** sub-issue of the current workstream's parent. The GitHub issue type says who does the work — `Agent` is the loop's, any other type is a human's, and all four dispatch paths refuse anything else. [#274](https://github.com/Calyx-Engineering/arc/issues/274) |
 | **Order** | The sub-issue list order — `reprioritizeSubIssue` sets it |
 | **Blocked** | An issue whose `Blocked by #NN` issues are still open is skipped, not started |
-| **Workstream done** | No open children left. The driver dispatches a report run, then stops |
+| **Workstream done** | No open children left, **of any type**. A workstream still holding a human's issue is not finished, and the driver says so rather than dispatching the report run |
 | **Where the report lands** | A comment on the parent, and [§6](#6-status) |
 | **Scope of one invocation** | **One workstream.** `tools/arc-loop.sh <parent-issue>` runs its children, dispatches the report run, exits. The next workstream is a second invocation, after the user has read the report — the stop is mechanical, not remembered |
-| **The driver holds no state** | Position is *which sub-issues are still open*, which lives in GitHub. Kill it mid-workstream and restarting resumes at the first open child with nothing lost |
+| **The driver holds no state** | Position is *which sub-issues are still open*, which lives in GitHub. Kill it mid-workstream and restarting resumes at the first open `Agent`-typed child with nothing lost |
 | **Two drivers cannot take one issue** | The open list is a queue, not an interlock — two dispatchers read it and both picked [#158](https://github.com/Calyx-Engineering/arc/issues/158). An issue is **claimed** before any work starts, by a comment carrying an owner token and a TTL; selection subtracts the claimed set, the holder heartbeats while its run is alive, and every exit path releases. A killed dispatcher's claim expires on its own, so a restart still resumes — `--resume` at once, a plain restart within one TTL. `tools/arc-claim.sh`, [#214](https://github.com/Calyx-Engineering/arc/issues/214) |
 
 **Labels were rejected** — five arc-scoped labels pollute a space the user reads, for something that
