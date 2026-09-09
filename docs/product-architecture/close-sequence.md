@@ -9,9 +9,11 @@ session still holds. A session that is nearly full closes an issue the same way 
 does.
 
 **Camp performs none of these.** It names which remain, in order, and confirms each landed
-before naming the next — **step 5 excepted**, whose record is written into the PR at step 6 and
-so is confirmed one step late. **Every step is owned** — by an artifact, by the person the mode
-says, or, for step 5, by a read-only sub-agent, because that one is judgement.
+before naming the next — **steps 1 and 5 excepted**, both of which are confirmed late because
+both land their record in the PR at step 6. Step 5's findings are dispositioned there, and a
+step 1 box resolved as *not done* rather than ticked is resolved *in the PR body*, so nothing
+can check it until that body exists. **Every step is owned** — by an artifact, by the person the
+mode says, or, for step 5, by a read-only sub-agent, because that one is judgement.
 
 ---
 
@@ -19,7 +21,7 @@ says, or, for step 5, by a read-only sub-agent, because that one is judgement.
 
 | # | Step | Owned by | Confirmed by |
 |---|---|---|---|
-| 1 | **Every checklist item resolved** — ticked with evidence, named as not done with the reason, or moved to the issue that owns it | Camp names what is unresolved | The issue body |
+| 1 | **Every checklist item resolved** — ticked with evidence, named as not done with the reason, or moved to the issue that owns it | Camp names what is unresolved | The issue body, and `tools/verify-issue-boxes.sh <NN>` once step 6's PR exists. **A disposition is not a resolution until the PR body carries it**, so the exit code only settles here after the PR opens — and [`hooks/tracker-verify`](../../hooks/tracker-verify) asks again when the draft is marked ready, between steps 6 and 9 |
 | 2 | The `dev-log` written for this **unit** — `issue-<NN>-` or `pr-<NN>-`, whichever identifier it carries | [`skills/record-route`](../../skills/record-route/SKILL.md) | The file exists |
 | 3 | The `arc-log` status row updated | [`skills/record-route`](../../skills/record-route/SKILL.md) | The row says what merged |
 | 4 | Changes committed — nothing uncommitted in the tree | [`skills/work-watch`](../../skills/work-watch/SKILL.md) | `git status --short` is empty |
@@ -50,6 +52,14 @@ an API read. This one is confirmed by reading, because what it checks is whether
 true, and prose is not executable. Seventy-eight offline checks passed on the change that
 shipped a README whose Requirements, Results, Troubleshooting and *What it does* sections each
 named something that change had removed. All four were in sections the diff did not touch.
+
+**Step 1 is not part of that, and [#140](https://github.com/Calyx-Engineering/arc/issues/140)'s
+constraint originally read as if it were.** Whether every `- [ ]` in the issue body is still
+unticked is a `gh` query and a count — `tools/verify-issue-boxes.sh`. Whether a tick has
+evidence behind it is this step. The mechanical half was silent for want of the distinction,
+in both directions: [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing
+two of five requirements, and [#194](https://github.com/Calyx-Engineering/arc/issues/194)
+reached its PR with twelve unticked boxes that were all actually done.
 
 **The issue is the specification.** Each changed file is evaluated against the issue body, never
 against the diff and never against what the session meant to write. A diff shows what moved; the

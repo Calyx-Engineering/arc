@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes"
 
 RUN=0
 FAILED=0
@@ -96,9 +96,12 @@ run_gate "handoff archive cases" bash tools/verify-handoff-archive.sh selftest
 run_gate "handoff archive" bash tools/verify-handoff-archive.sh
 run_gate "handoff stamp cases" bash tools/verify-handoff-stamp.sh selftest
 run_gate "handoff stamp" bash tools/verify-handoff-stamp.sh
+run_gate "session index cases" bash tools/verify-session-index.sh selftest
+run_gate "session index" bash tools/verify-session-index.sh
 run_gate "workspace guard" bash tools/verify-workspace-guard.sh
 run_gate "branch prefix" bash tools/verify-branch-prefix.sh
 run_gate "linked-branch cases" bash tools/verify-linked-branch.sh selftest
+run_gate "issue box cases" bash tools/verify-issue-boxes.sh selftest
 run_gate "label cases" bash tools/verify-labels.sh selftest
 run_gate "mechanism table cases" bash tools/verify-mechanisms.sh selftest
 run_gate "mechanism table" bash tools/verify-mechanisms.sh
@@ -166,6 +169,10 @@ if [ "$LIST" = "1" ]; then
     prefix, and the label set of real open issues, and the label set itself, both read GitHub —
                               run bash tools/verify-labels.sh and
                               bash tools/verify-labels.sh labels
+    a real issue's boxes      verify-issue-boxes.sh selftest runs the whole script against a
+    against its PR body       fixture backend. The live read needs GitHub, a real issue and the
+                              PR that closes it — run bash tools/verify-issue-boxes.sh <NN> at
+                              PR-ready time, which is also where hooks/tracker-verify calls it
 CANNOT
   exit 0
 fi

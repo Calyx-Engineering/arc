@@ -1,0 +1,2 @@
+# an issue created on a branch carrying no number — nothing names the current work, so there is no parent to record and the check must stay silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] one thing\n\nNo parent recorded anywhere in this body.","tool_input":{"command":"gh issue create --title x --body-file body.md"}}

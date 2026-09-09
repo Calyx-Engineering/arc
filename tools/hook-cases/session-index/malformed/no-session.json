@@ -1,0 +1,2 @@
+# a payload naming no session — the once-per-session key is missing, so nothing is written
+{"cwd":"__FIXTURE_ISSUE__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_ISSUE__/src/a.c"}}
