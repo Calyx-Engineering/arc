@@ -25,7 +25,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks verify-log-rotation"
 
 RUN=0
 FAILED=0
@@ -87,9 +87,9 @@ run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 # text out. It replaces the billed half through PROBE_PY.
 #
 # Their names ARE in KNOWN, alongside the dozen others there that the guard cannot check. It
-# globs `tests/verify-*.sh` and never asks after a file named anything else, so those entries
-# are for the reader, not for the guard. The gap is real and it is the guard's: a selftest whose
-# file is not named `verify-*` can only be noticed by reading this file.
+# globs `tests/verify-*.sh` and `tools/verify-*.sh` and never asks after a file named anything
+# else, so those entries are for the reader, not for the guard. The gap is real and it is the
+# guard's: a selftest whose file is not named `verify-*` can only be noticed by reading this file.
 run_gate "skill probe cases" python tools/skill-probe.py selftest
 run_gate "skill probe loop cases" bash tools/skill-probe.sh selftest
 run_gate "probe handoff check cases" bash tools/probe-handoff-checks.sh selftest
@@ -126,8 +126,12 @@ run_gate "mechanism table cases" bash tests/verify-mechanisms.sh selftest
 run_gate "mechanism table" bash tests/verify-mechanisms.sh
 run_gate "dev-log name cases" bash tests/verify-dev-log-name.sh selftest
 run_gate "dev-log name" bash tests/verify-dev-log-name.sh
+run_gate "hook source cases" bash tests/verify-hook-source.sh selftest
+run_gate "hook source" bash tests/verify-hook-source.sh
 run_gate "activation log cases" bash tests/verify-activation-log.sh selftest
 run_gate "activation log" bash tests/verify-activation-log.sh
+run_gate "log rotation cases" bash tests/verify-log-rotation.sh selftest
+run_gate "log rotation" bash tests/verify-log-rotation.sh
 run_gate "set-mode cases" bash tests/verify-set-mode.sh selftest
 run_gate "report budget cases" bash tests/verify-report-budget.sh selftest
 run_gate "report budget" bash tests/verify-report-budget.sh

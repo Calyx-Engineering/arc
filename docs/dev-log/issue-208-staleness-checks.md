@@ -71,13 +71,6 @@ it. The two paragraphs above describe the tree as it was.
 below the write path and every probe would still match. The probes now run on a slice bounded
 by the read-path headings, and a separate assertion pins the heading order.
 
-## Spawned
-
-- **Issues:** none filed. Four findings routed in the issue's `Spawned` table — the command's
-  missing fallback (#157), the six un-annotated `checks:` names, `autonomy-set`'s re-read rule
-  resting on no mechanical check (m40), and the Done-when being proven as location rather than
-  behaviour (#181).
-
 ## Retrospective
 
 Built as scoped, and the review passes roughly doubled the file count: four required boxes,
@@ -90,3 +83,16 @@ stale by one assertion.
 repository invokes a skill, and both `tests/verify-all.sh --list` and the new script's own
 header say so. Its three deny cases were run against fixtures under `HANDOFFCHK_ROOT`: block
 drifted below the write path, shadow copy left stale, one check row deleted — exit 1 each.
+
+## Findings
+
+Moved verbatim from #208's body under [#271](https://github.com/Calyx-Engineering/arc/issues/271).
+None was filed as an issue. Two came out of the review passes; the other two are consequences
+of this issue's own decisions, named where they were made.
+
+| Finding | Where it routes |
+|---|---|
+| **The command now has no fallback.** Stripped to a delegation, a `/arc-next` that fires without loading the skill yields nothing; before, it at least carried the read order and the checks. The issue records that this happens — `e349dc03`, the command fired and never invoked the skill | #157, which owns the trigger. This issue's constraint excludes trigger work |
+| **`skills/handoff`'s six pre-existing `checks:` are not path-annotated.** The seven added here declare the write path as a skip; `ordered-actions-present`, `open-threads-carried` and `stale-rows-removed` declare nothing, so a `handoff-read` report claims it checked them. Deciding which of the six are path-specific is a design call about the declaration, not a content move | Needs an issue. `skills/handoff` frontmatter |
+| **`skills/autonomy-set`'s re-read rule is covered by no staleness check.** None of the seven compares the handoff's *Execution mode* row against the arc-log, so *"re-read it before a commit, before a push"* rests on nothing mechanical. Pre-existing; this issue made it visible by scoping the checks to the read path | Needs an issue. m40 |
+| **The Done-when is proven as location, not behaviour.** The gate asserts the checks are in the read path; no gate in this repository invokes a skill — `tests/verify-all.sh --list` says so, and the new gate says it in its own header | #181, `claude plugin eval` |

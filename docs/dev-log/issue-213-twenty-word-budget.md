@@ -150,3 +150,18 @@ issue's would have been too. Added before the first billed run here.
 
 Every number in this document was re-derived from the retained JSON rather than copied from a
 terminal.
+
+## Findings
+
+Moved verbatim from #213's body under [#271](https://github.com/Calyx-Engineering/arc/issues/271).
+None was filed as an issue. A row saying *needs an issue* is a routing decision, not an action
+left undone by this run.
+
+| Finding | Where it routes |
+|---|---|
+| **The grader was deleting the evidence.** `tools/response-length.py` dropped any reply under a flat 15-word floor as `THIN`, in neither column — three quarters of a 20-word budget, and below the 13 words this issue's own rule tells the model to aim at. The instrument was discarding the turns that obeyed the rule it was grading: the existence-proof run scored 7/8 instead of 10/11. Floor is now `min(RL_THIN_FLOOR, budget // 2)`, printed per case, with two selftest cases. Every number in this issue is at the corrected floor | Fixed in this PR. It moved the candidate arm 0.38 → 0.45 and every figure #158 published was taken under the flat floor |
+| **The premise both `skills/chat-response` and [#158](https://github.com/Calyx-Engineering/arc/issues/158)'s dev-log carried was wrong.** Both described the 20-word failure as replies clustering *just over* the ceiling. Measured across the turns after the budget is set, the median is **55 words** before the change and **30** after — two to three times over, not one word over. Only 3 of 29 breaches landed in the 21–25 band. A fix aimed at trimming two words would have been aimed at a failure that is not happening | The false line is **removed** from `skills/chat-response`, not merely argued against, and the measured figures replace it. #158's dev-log still carries it |
+| **Firing separates the runs, which contradicts [#158](https://github.com/Calyx-Engineering/arc/issues/158)'s conclusion at this ceiling.** Every run where `chat-response` fired scored 0.30–0.91; every run where it did not scored 0.09–0.20, with no overlap. #158 found the effect came entirely from the `description:` — true for 60 words, not for 20. n=4 either side | Needs an issue. It is the surface question the third box answers |
+| **The budget breaks on the same turn in all six 20-word runs** — held on the turn it was stated, gone on the next, with and without the rule. Whatever holds a budget on the turn it is set is not what carries it forward | Recorded in the dev-log. Not filed |
+| **A rate limit destroyed two billed probe runs**, both returning all 11 turns `CUT`, one at `$0.000`. The scorer refused them rather than reading truncation as a held budget — #158's `CUT` rule working — but there is no retry and no warning that a run is worthless until it is scored | Needs an issue. `tools/response-length.sh` |
+| **`tools/response-length.sh` had no way to keep a billed run's replies.** Ported `RL_PROBE_OUT` from `tools/topic-numbering.sh`, where it had already paid for itself once. #158's runs were unrecoverable for want of it | Done in this PR |
