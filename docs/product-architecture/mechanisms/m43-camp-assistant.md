@@ -808,7 +808,7 @@ recorded rather than re-explained each session.
 |---|---|
 | **Register and verbosity** | Colleague · terse · character, and how loud |
 | **What Camp does unasked** | The triggers for the nudge and the report |
-| **Work size and shape** | Issue granularity, *and* the form work takes — checklist versus prose, table versus paragraph |
+| **Work size and shape** | Issue granularity, *and* the form work takes — checklist versus prose, table versus paragraph. The branch prefix sits here too: it is the shape a branch name takes, and `hooks/branch-guard` reads it |
 | **Response shape** | Where long is wanted, where short |
 | **Standing corrections** | Things not to repeat — see below |
 

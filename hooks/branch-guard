@@ -6,10 +6,11 @@
 # same class of mistake recurred eight-plus times. CLAUDE.md said "check the branch first"
 # and it was skipped, because advice with no trigger is not a mechanism.
 #
-# Coordination branches are `main`, `develop`, and any arc branch (`arc/<slug>`). An arc
-# branch is where issue branches merge to; source work belongs on the issue branch nested
-# under it. Docs and agent-facing files stay writable everywhere, because maintaining the
-# record IS the coordination work those branches exist for.
+# Coordination branches are `main`, `develop`, and any branch under the prefix the operating
+# agreement declares — `arc/` in this repository, and `arc/` anywhere the agreement is silent.
+# A coordination branch is where issue branches merge to; source work belongs on the issue
+# branch nested under it. Docs and agent-facing files stay writable everywhere, because
+# maintaining the record IS the coordination work those branches exist for.
 #
 # Three checks, m10's three. Branch kind is the one that maps to the session-costing 08-03
 # failure; worktree identity catches an edit made in a window opened for something else, and
@@ -66,6 +67,42 @@ if [ -z "$BRANCH" ]; then
   exit 0
 fi
 
+# ---- the coordination prefix ----------------------------------------------------
+# Which prefix marks a coordination branch is a per-repository decision, so the operating
+# agreement states it as a setting and this hook reads it. `arc/` is Arc's own; a hardware
+# repository's is `rev/`, and a hook that compiles one in classifies every branch in the
+# other wrongly — #203.
+#
+# Fail open, and in one direction only. An absent agreement, an absent clause, or a value
+# that is not a plain prefix all fall back to `arc/` — the shipped default, and what this
+# hook used before it read anything.
+#
+# EMPTY IS THE DANGEROUS VALUE, not a glob. The pattern below is `"$PREFIX"*`, and a quoted
+# expansion in a `case` pattern is matched literally — a clause reading `*` matches only a
+# branch actually named `*…`. An empty one does not: `""*` matches every branch in the
+# repository, classifies all of it as coordination, and denies every source edit in it.
+# What holds that off is that an empty value never reaches the assignment at all —
+# `printf '%s' ""` emits no line, so the test below has nothing to match and fails.
+PREFIX=arc/
+TOP="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
+AGREEMENT="$TOP/.claude/arc/camp/operating-agreement.md"
+if [ -n "$TOP" ] && [ -f "$AGREEMENT" ]; then
+  # The clause is a line the user edits, so the forms a user writes are all read: indented,
+  # bulleted, or checkboxed — section 3 of the agreement says "check one per setting", and a
+  # checkbox is what the clause's neighbours look like. The value is the first token after
+  # the label, with backticks treated as whitespace, so a clause typed without the code span
+  # still reads: falling back to `arc/` because the backticks were missing would be the
+  # silent misclassification #203 is about.
+  LINE="$(grep -m1 -E '^[[:space:]]*([-*][[:space:]]*(\[[ xX]\][[:space:]]*)?)?\*\*Branch prefix' \
+    "$AGREEMENT" 2>/dev/null)"
+  DECLARED="$(printf '%s' "$LINE" | sed -e 's/.*[Bb]ranch prefix[*:]*//' -e 's/`/ /g' | awk '{print $1}')"
+  # It must end in its separator. That is what the agreement's own clause asks for, and it
+  # is what tells a prefix from a word: `none`, `unset` and `TBD` are how a repository says
+  # it has no prefix, and taking one of those literally would classify nothing as
+  # coordination and silently switch the guard off across the whole repository.
+  if printf '%s' "$DECLARED" | grep -qE '^[A-Za-z0-9_./-]+[/_-]$'; then PREFIX="$DECLARED"; fi
+fi
+
 # Work branches nest under an arc by name, not by ref — git refs cannot nest under an
 # existing branch — so `arc/02-foundation-issue-10-skeleton` is a *work* branch and
 # `arc/02-foundation` is not. A numbered `-issue-` or `-pr-` segment is what tells them
@@ -73,9 +110,8 @@ fi
 # create: a direct PR's branch is `arc/04-dogfood-pr200-slug`, which carried no `-issue-`
 # and so was read as coordination-only. It denied the fix to itself.
 #
-# The segment, not the prefix. `arc/` is this repo's; another repo's operating agreement
-# names its own, and a work branch there must still be recognised. The `arc/*)` line below
-# is the half that still hardcodes it — #203.
+# The segment, not the prefix. Which prefix marks a coordination branch is read above rather
+# than compiled in, so a work branch under another repository's prefix is recognised here too.
 #
 # Both bare forms are listed because a repo with no prefix at all names the branch
 # `issue-42-slug`, which has nothing before the hyphen and misses `*-issue-*`. It would
@@ -85,10 +121,10 @@ fi
 case "$BRANCH" in
   main|master|develop)       KIND=trunk ;;
   *-issue-[0-9]*|issue-[0-9]*|*-pr[0-9]*|pr[0-9]*) KIND=work ;;   # an issue branch or a direct PR
-  arc/*)                     KIND=arc ;;
+  "$PREFIX"*)                KIND=coord ;;
   *)                         KIND=topic ;;
 esac
-arc_log_event edit-checked "branch=$BRANCH"
+arc_log_event edit-checked "branch=$BRANCH prefix=$PREFIX"
 arc_log_pass "branch-kind=$KIND"
 
 FILE="$(field file_path)"
@@ -108,7 +144,7 @@ lower() { printf '%s' "$1" | tr 'A-Z' 'a-z'; }
 # ---- check 1: branch kind -------------------------------------------------------
 # Writable on a coordination branch: the record, the process, and the plugin's own
 # agent-facing surface. This is what those branches exist to maintain.
-if [ "$KIND" = trunk ] || [ "$KIND" = arc ]; then
+if [ "$KIND" = trunk ] || [ "$KIND" = coord ]; then
   case "$NORM" in
     */docs/*|docs/*) arc_log_pass path-is-source=no ;;
     */.claude/*|.claude/*) arc_log_pass path-is-source=no ;;
@@ -118,8 +154,8 @@ if [ "$KIND" = trunk ] || [ "$KIND" = arc ]; then
     *)
       arc_log_fail path-is-source=yes
       # Everything else on a coordination branch is source work.
-      if [ "$KIND" = arc ]; then
-        deny "Source edit blocked: you are on \`$BRANCH\`, an arc branch. Arc branches are coordination only — issue branches nest under them and merge back in. Create \`$BRANCH-issue-<N>-<slug>\` and edit there. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here — maintaining the record is what this branch is for.)"
+      if [ "$KIND" = coord ]; then
+        deny "Source edit blocked: you are on \`$BRANCH\`, a coordination branch — \`$PREFIX\` marks one here (the operating agreement's branch prefix). Issue branches nest under it and merge back in, and that is where source work goes. Create \`$BRANCH-issue-<N>-<slug>\` and edit there. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here — maintaining the record is what this branch is for.)"
       else
         deny "Source edit blocked: you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here.)"
       fi

@@ -120,6 +120,20 @@ each has a fixed template that prescribes its structure.
 **Prose last is a valid answer.** So is prose first. The order is a preference, not a ladder
 of quality.
 
+### Branch prefix — what marks a coordination branch · [`branch-guard`](https://github.com/Calyx-Engineering/arc/blob/main/hooks/branch-guard)
+
+**Branch prefix:** `arc/`
+
+**One value, not a choice.** Coordination branches begin with it; work branches nest under
+them by name. **End it with its separator** — `arc/` and `rev-` are both prefixes; a value
+that does not end in one is read as a word rather than a setting.
+
+**Unset means `arc/`**, and so does an unreadable value — `none` and `unset` among them.
+
+**Work branches under the prefix carry `-issue-<N>-` or `-pr<N>-`.** That segment is what
+marks one. A branch under the prefix without it is classified as coordination, and source
+edits on it are denied.
+
 ### Branch naming
 
 - [x] **One per issue, named for the issue number** — `arc/03-camp-issue-45-announce`

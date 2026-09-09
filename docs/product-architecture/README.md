@@ -203,7 +203,7 @@ function list, then read its Needs column to find what else must exist before it
 | Artifact | Form | Carries | Invoked by | Needs |
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
-| `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
+| `hooks/branch-guard` | hook | m10 | Automatic, before any edit | `.claude/arc/camp/operating-agreement.md`'s *branch prefix* clause |
 | `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tools/verify-issue-boxes.sh` · `tools/verify-linked-branch.sh` · `tools/verify-tracker-body.sh` |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
