@@ -67,7 +67,7 @@ The two boxes this leaves open are named on the issue with this reason rather th
 | `bash tests/verify-all.sh --list` | 58 gates, no unknown-verifier finding. The gate NAMES diff identically against `origin/arc/04-dogfood:tools/verify-all.sh` — same 51 static gates, same 7 hooks |
 | `bash tests/verify-all.sh`, first sweep | 57 gates then, 2 failed — both diagnosed above, both fixed |
 | `bash tools/probe-handoff-checks.sh selftest` | 16 cases, 16 passed, 0 failed, after the sibling-path fix |
-| `bash tests/verify-all.sh`, final sweep | recorded when it completes |
+| `bash tests/verify-all.sh`, final sweep | **58 gates, all clean, exit 0**, on a clean tree with nothing else running |
 | Citation sweep | a repository-wide grep for the old `verify-` path returns only `tools/verify-hook.sh`, the two `tools/verify-*.sh` glob lines the disk guard needs, and the five never-lived-in-`tests/` citations named under *Decisions* |
 | Orphan-citation sweep | every `tests/verify-*.sh` string cited anywhere resolves to a file that exists — 24 names, 24 files |
 
