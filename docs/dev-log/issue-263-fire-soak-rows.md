@@ -6,7 +6,7 @@
 
 ## What a Fire merge is, and how the set was fixed
 
-Fourteen merges closed Fire's seventeen closed sub-issues. The set was read from the tracker,
+Fifteen merges closed Fire's eighteen closed sub-issues. The set was read from the tracker,
 not from the issue plan or the boundary report: for each sub-issue, the `ClosedEvent`'s `closer`
 and its `mergeCommit`.
 
@@ -19,14 +19,22 @@ and its `mergeCommit`.
 | 216 | #183 · #210 | 248 | #165 |
 | 217 | #162 | 291 | #265 |
 | 218 | #160 · #213 | 220 | #208 |
+| 295 | #264 | | |
 
 **Three already had rows** — #156, #165 and #166, the last with two. Each states its own status in
-its own words, so none is a neighbour's row reused and none was rewritten. **Eleven rows were
+its own words, so none is a neighbour's row reused and none was rewritten. **Twelve rows were
 added**, one per remaining merge.
 
 [#265](https://github.com/Calyx-Engineering/arc/issues/265) merged on 2026-09-09, after Fire's
 boundary report closed. It is a Fire sub-issue and a Fire merge, so it gets a row; leaving it out
 would have left a merge with none, which is what the issue's second box forbids.
+
+**A fifteenth merge landed mid-run.** [#264](https://github.com/Calyx-Engineering/arc/issues/264)
+closed at `2026-09-09T09:59Z`, between the tracker read that fixed the set and this branch's merge
+of the base. It gets a row too, and the row says what is true of it: PR #295 merged five files and
+none of them runs — a dev-log correction, a new dev-log and a proposal — so there is nothing to
+exercise. `tools/verify-hook.sh` was not changed. The set was re-read rather than assumed, which is
+the only reason it was caught.
 
 ## The check
 
