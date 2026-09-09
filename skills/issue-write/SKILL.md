@@ -434,10 +434,24 @@ edits, and the asymmetry is the whole finding:
 | Visibility | The diff is in front of the user | Lives on a website nobody re-opens |
 | Detection | Immediate | Only when someone happens to look |
 
-**Set the milestone at creation.** `gh pr create --milestone "<name>"`. A PR without one
-drops out of the milestone view, which is the only place a human sees the arc as one unit.
-This is unrelated to the base-branch problem and purely an omission — every PR in this
-repo's first two arcs was missing it.
+**A milestone item is one unit of work, so a PR that closes an issue takes no milestone.**
+The issue is the unit and already carries it; giving the PR one counts the same work twice and
+ticks twice when it lands. A direct PR has no issue behind it, so it is the unit — set its
+milestone at creation, `gh pr create --milestone "<name>"`, or it drops out of the milestone
+view, which is the only place a human sees the arc as one unit.
+
+| PR | Milestone |
+|---|---|
+| Carries a closing keyword | None |
+| No closing keyword — a direct PR | Required |
+
+**The keyword decides it, not whether the link bound.** On a base other than the default
+nothing binds and closure defers to the arc PR — but the issue exists and carries the
+milestone either way.
+
+**Side effect worth having: a PR in the milestone is, by definition, a direct PR.** The view
+had no other way to tell the two apart. `hooks/tracker-verify`'s `milestone` check reports
+both directions. #204.
 
 **The fields set at creation rather than written into the body — milestone, base, label — are
 listed at the top of [`templates/issue.md`](../../templates/issue.md) and

@@ -13,7 +13,7 @@
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
 # checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 
@@ -610,19 +610,56 @@ case "$CMD" in
       BODY="$FIXTURE_BODY"
       TITLE="$FIXTURE_TITLE"
       DEFAULT="$FIXTURE_DEFAULT"
+      # `arc_test_milestone` keeps its sentinel contract — the literal `null` means none —
+      # and the answer is derived from it, never read off the name. See the live arm.
       MILESTONE="${FIXTURE_MILESTONE:-set}"
+      HAS_MILESTONE=1
+      [ "$MILESTONE" = null ] && HAS_MILESTONE=0
       LINKED="${FIXTURE_LINKED:-1}"
     else
       META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
       [ -n "$META" ] || exit 0
 
-      BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","baseRefName.*//')"
+      # `closingIssuesReferences`, not `baseRefName`. `gh` returns the fields SORTED, so
+      # `baseRefName` precedes `body` and that terminator never matched — the extracted body
+      # ran to the end of the payload, carrying the milestone's description and the PR's own
+      # title with it. The milestone check below greps this for a closing keyword, so a PR
+      # whose title happened to read `… fixes #12` was classified as closing an issue.
+      BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","closingIssuesReferences".*//')"
       BASE="$(printf '%s' "$META" | grep -oE '"baseRefName":"[^"]*"' | sed 's/.*:"//; s/"$//')"
       DEFAULT="$(cd "$CWD" && gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)"
-      TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+      # `tail -n1`, and the whole check depends on it. `gh` returns the fields sorted, so a
+      # closing issue's title and the milestone's title both appear BEFORE the PR's own, and
+      # an untailed match yields all three on separate lines. `grep -q` then matches the arc
+      # prefix on any of them, so a PR missing its prefix passed whenever a neighbour had one.
+      TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | tail -n1 | sed 's/.*:"//; s/"$//')"
 
-      MILESTONE=set
-      printf '%s' "$META" | grep -q '"milestone":null' && MILESTONE=null
+      # THE ANSWER AND THE NAME ARE TWO VARIABLES. The finding names the milestone the PR
+      # carries, so a sentinel would print where a human expects `Dogfood` — but `null` and
+      # `set` are both legal milestone titles, so one string cannot hold both without a
+      # milestone called `null` reading as no milestone at all.
+      #
+      # THREE STATES, NOT TWO. A `META` carrying neither shape means the field could not be
+      # read, and neither default is safe: absent-means-set invents a milestone on a closing
+      # PR, absent-means-none demands one on a direct PR. It skips instead.
+      #
+      # ISOLATE THE OBJECT FIRST, AND ONLY WHEN IT IS THERE. `gh` sorts the fields, so the
+      # milestone sits between `closingIssuesReferences` and the PR's own `title`. A `sed`
+      # whose address is absent does not fail — it passes the payload straight through, and
+      # the next `grep` hands back a neighbour's title as the milestone's name.
+      MILESTONE=""
+      case "$META" in
+        *'"milestone":null'*) HAS_MILESTONE=0 ;;
+        *'"milestone":{'*)
+          HAS_MILESTONE=1
+          MILESTONE="$(printf '%s' "$META"             | sed 's/.*"milestone":{//; s/}.*//' | grep -oE '"title":"[^"]*"'             | sed 's/.*:"//; s/"$//')"
+          # A milestone whose name will not parse is still a milestone. A title carrying an
+          # escaped quote truncates rather than falling back — the verdict is unaffected,
+          # only the name printed.
+          [ -n "$MILESTONE" ] || MILESTONE="(name unreadable)"
+          ;;
+        *) HAS_MILESTONE=unknown ;;
+      esac
       LINKED=1
       printf '%s' "$META" | grep -q '"closingIssuesReferences":\[\]' && LINKED=0
     fi
@@ -632,12 +669,39 @@ case "$CMD" in
     scan_placeholders "$BODY" "PR #$NUM"
     scan_dates "$BODY" "PR #$NUM"
 
-    # A PR with no milestone drops out of the milestone view, which is the only place a
-    # human sees the arc as one unit. Settable and unrelated to the base-branch problem —
-    # every PR in this repo's first two arcs simply never had one set.
-    [ "$MILESTONE" = null ] && arc_log_fail milestone=none
-    [ "$MILESTONE" = null ] || arc_log_pass "milestone=$MILESTONE"
-    [ "$MILESTONE" = null ] && add "PR #$NUM has no milestone. It will not appear in the milestone view, which is where the arc reads as one unit."
+    # A milestone item is ONE UNIT OF WORK, and a PR that closes an issue is not one — the
+    # issue is, and it already carries the milestone. Giving the PR one too counts the same
+    # work twice and ticks twice when it lands: ten of Dogfood's seventeen PRs did exactly
+    # that, inflating percent complete against a denominator that was itself inflated. A
+    # direct PR has no issue behind it, so it IS the unit and needs the milestone to appear
+    # in the view where the arc reads as one unit. #204.
+    #
+    # Side effect worth having: a PR in the milestone is then, by definition, a direct PR.
+    #
+    # THE KEYWORD, NOT `closingIssuesReferences`. On a base other than the default nothing
+    # binds and closure defers to the arc PR — but the issue exists and carries the milestone
+    # either way, so the PR must not. Reading the link would give every issue PR in an arc a
+    # milestone back.
+    WANTS_CLOSE=0
+    printf '%s' "$BODY" | grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+' && WANTS_CLOSE=1
+
+    # String comparisons throughout — `HAS_MILESTONE` carries `unknown`, and `-eq` on it is
+    # an error rather than a false.
+    if [ "$HAS_MILESTONE" = unknown ]; then
+      arc_log_skip milestone "the milestone field could not be read"
+    elif [ "$WANTS_CLOSE" -eq 1 ]; then
+      if [ "$HAS_MILESTONE" = 0 ]; then
+        arc_log_pass milestone=none
+      else
+        arc_log_fail "milestone=$MILESTONE"
+        add "PR #$NUM closes an issue and carries milestone \`$MILESTONE\`. The issue is the unit of work and already carries it — remove the milestone from the PR, or the same work counts twice."
+      fi
+    elif [ "$HAS_MILESTONE" = 0 ]; then
+      arc_log_fail milestone=none
+      add "PR #$NUM closes no issue, so it is the unit of work and needs a milestone. Without one it drops out of the milestone view, which is where the arc reads as one unit."
+    else
+      arc_log_pass "milestone=$MILESTONE"
+    fi
 
     # An issue branch's PR belongs to its arc. Targeting anything else — the trunk, a
     # sibling issue branch — merges the issue ahead of the arc it belongs to, and the arc
@@ -705,9 +769,7 @@ case "$CMD" in
     # `DEFAULT`, not the arc branch, and deliberately: GitHub parses a closing keyword only
     # on a PR targeting the repository default. While m42's flip is on that is the arc
     # branch, and a keyword there does bind.
-    WANTS_CLOSE=0
-    printf '%s' "$BODY" | grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+' && WANTS_CLOSE=1
-
+    # `WANTS_CLOSE` is set by the milestone check above, which needs the same answer.
     if [ "$WANTS_CLOSE" -eq 1 ] && [ "$LINKED" -eq 1 ]; then
       arc_log_pass closing-keyword=bound
     elif [ "$WANTS_CLOSE" -eq 0 ]; then

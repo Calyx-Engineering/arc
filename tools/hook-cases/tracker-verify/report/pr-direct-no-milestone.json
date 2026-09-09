@@ -1,0 +1,2 @@
+# a direct PR with no milestone — it closes no issue, so it is the unit of work and must appear in the milestone view
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"main","arc_test_milestone":"null","arc_test_linked":"0","arc_test_title":"arc-02: fix: the thing","arc_test_body":"A direct PR. No issue behind it.\n","tool_input":{"command":"gh pr edit 200 --body-file body.md"}}

@@ -10,7 +10,7 @@
 
 | | |
 |---|---|
-| **Milestone** | `gh pr create --milestone "<name>"` |
+| **Milestone** | Only on a direct PR: `gh pr create --milestone "<name>"`. A PR closing an issue takes none — the issue is the unit of work |
 | **Base** | `--base arc/<nn>-<slug>`, the arc branch |
 | **Draft** | `--draft`, before the work |
 | **Label** | None. The `arc-<nn>:` title prefix is what groups arc PRs |
