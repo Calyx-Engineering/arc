@@ -5,7 +5,7 @@
 
 **Status:** built — `hooks/mode-guard` reads `HANDOFF.md`'s *Execution mode* row before every
 commit, push, PR and merge, `skills/autonomy-set` carries the three states, and
-`tools/verify-autonomy.sh` gates §9's single-statement rule.
+`tests/verify-autonomy.sh` gates §9's single-statement rule.
 
 **Spawned from:** three to five attempts to declare auto mode in prose, none of which changed
 behaviour. `docs/arc-work/03-camp/friction-log.md` entries 1, 2 and 4 are the observations.
@@ -338,7 +338,7 @@ everything else to the skill.
 | **Everything else points** | `work-watch` says whether you commit is the mode's call, not its own |
 | **The state carrier is not a restatement** | `templates/handoff.md` defines what *suspended* means. That is the semantics of the state, not a standing prohibition |
 
-`tools/verify-autonomy.sh` enforces it as a census: the prohibition appears only in
+`tests/verify-autonomy.sh` enforces it as a census: the prohibition appears only in
 `autonomy-set`, and `CLAUDE.md` states the mode exactly once with its override. **Scope is what
 a session loads every turn** — `CLAUDE.md`, skills, templates, hooks, agents, commands. `docs/`
 is opened deliberately rather than loaded, so m14 §3 and `close-sequence.md` steps 9 and 10 keep
@@ -358,7 +358,7 @@ the older shape.
 | *"switch to autonomous"* enters auto; *"switch back to manual"* leaves it | §4, and [`skills/autonomy-set`](../../../skills/autonomy-set/SKILL.md) |
 | It **returns to manual on its own when conversation starts** | §4's suspension, on signals that need no setting |
 
-**What can be tested mechanically, and what cannot.** `tools/verify-autonomy.sh` tests the half
+**What can be tested mechanically, and what cannot.** `tests/verify-autonomy.sh` tests the half
 that is decidable from text — that the prohibition is stated only by `autonomy-set`, that
 `CLAUDE.md` states the mode once with its override, and that the mode vocabulary has not
 drifted. Behaviour is a separate instrument: Arc is now installed in this repository and

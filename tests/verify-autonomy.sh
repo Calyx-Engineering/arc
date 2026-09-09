@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify-autonomy.sh — the mode rule is stated once, and everything else points at it.
 #
-#   tools/verify-autonomy.sh
+#   tests/verify-autonomy.sh
 #
 # WHY THIS EXISTS. Auto mode was declared in prose five times and never ran once. m40 read that
 # as a read-frequency problem and put the permission beside every prohibition — four copies of

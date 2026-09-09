@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # verify-report-budget.sh — a workstream boundary report fits its 200-word budget.
 #
-#   tools/verify-report-budget.sh            check every boundary report in docs/arc-log/
-#   tools/verify-report-budget.sh selftest   run the fixture cases
-#   tools/verify-report-budget.sh --root D   check another tree
-#   tools/verify-report-budget.sh --count F  print each report's count in one file
+#   tests/verify-report-budget.sh            check every boundary report in docs/arc-log/
+#   tests/verify-report-budget.sh selftest   run the fixture cases
+#   tests/verify-report-budget.sh --root D   check another tree
+#   tests/verify-report-budget.sh --count F  print each report's count in one file
 #
 # WHY. The budget is stated in three documents — docs/arc-work/04-dogfood/run-instructions.md
 # §6.2, the arc-log's execution section, and execution-process.md — and nothing read any of them.

@@ -78,9 +78,9 @@ set -u
 # someone adds it here with a reason, which is the direction that fails safe.
 #
 # tools/ IS NOT INERT, and #211's "Survived" column reads as though it were. That column named
-# one file, `tools/verify-all.sh`, which nothing loads — but three of its siblings are executed
-# by a live hook: hooks/tracker-verify resolves ../tools/verify-tracker-body.sh,
-# ../tools/verify-linked-branch.sh and ../tools/verify-issue-boxes.sh against the plugin root,
+# one file, `tests/verify-all.sh`, which nothing loads — but three of its siblings are executed
+# by a live hook: hooks/tracker-verify resolves ../tests/verify-tracker-body.sh,
+# ../tests/verify-linked-branch.sh and ../tests/verify-issue-boxes.sh against the plugin root,
 # which is the cache. An uncommitted verifier is copied there and then run on every issue write.
 # reference/ is not inert either: skills/record-route and skills/engineering-report both link
 # ../../reference/knowledge-tiers.md, so an edit there changes what two installed skills teach.
@@ -168,7 +168,7 @@ dirty_component_paths() {
 #
 # 3 AND 4 ARE DIFFERENT ANSWERS. "This plugin ships no working tree" and "I could not find out"
 # lead to opposite actions, and collapsing them is how a guard turns into a reassuring message
-# in front of an unchecked reload. Same distinction tools/verify-linked-branch.sh draws.
+# in front of an unchecked reload. Same distinction tests/verify-linked-branch.sh draws.
 #
 # ARC_KNOWN_MARKETPLACES overrides the file, so the cases below can drive all three answers.
 marketplace_source_dir() {
@@ -330,7 +330,7 @@ fixture_repo() {
   local d="$1"
   mkdir -p "$d/.claude-plugin" "$d/agents" "$d/commands" "$d/hooks" "$d/reference" \
            "$d/skills/camp" "$d/skills/chat-response" "$d/templates" \
-           "$d/docs" "$d/evals" "$d/tools"
+           "$d/docs" "$d/evals" "$d/tools" "$d/tests"
   echo '{"name":"f","version":"0.0.1"}' > "$d/.claude-plugin/plugin.json"
   echo a > "$d/agents/a.md"
   echo c > "$d/commands/c.md"
@@ -344,8 +344,8 @@ fixture_repo() {
   echo t > "$d/templates/t.md"
   echo d > "$d/docs/d.md"
   echo e > "$d/evals/e.md"
-  echo v > "$d/tools/verify-all.sh"
-  echo v > "$d/tools/verify-tracker-body.sh"
+  echo v > "$d/tests/verify-all.sh"
+  echo v > "$d/tests/verify-tracker-body.sh"
   echo r > "$d/README.md"
   echo r > "$d/ROADMAP.md"
   echo c > "$d/CLAUDE.md"
@@ -403,9 +403,9 @@ selftest() {
 
   # tools/ is loaded: hooks/tracker-verify executes three of its scripts from the plugin root.
   # #211's "Survived" column named one inert file there and this is the correction.
-  R="$WORK/u1b"; fixture_repo "$R"; echo x >> "$R/tools/verify-tracker-body.sh"
+  R="$WORK/u1b"; fixture_repo "$R"; echo x >> "$R/tests/verify-tracker-body.sh"
   check "an edited tool is named — hooks run them from the cache" \
-        " M${TAB}tools/verify-tracker-body.sh" "$(dirty_component_paths "$R")"
+        " M${TAB}tests/verify-tracker-body.sh" "$(dirty_component_paths "$R")"
 
   R="$WORK/u1c"; fixture_repo "$R"; echo x >> "$R/reference/knowledge-tiers.md"
   check "an edited reference is named — skills link into it" \

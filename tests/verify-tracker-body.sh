@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # verify-tracker-body.sh — catch a tracker write that promises the wrong thing.
 #
-#   tools/verify-tracker-body.sh body <path-to-body.md>
-#   tools/verify-tracker-body.sh title <title> [path-to-body.md]
-#   tools/verify-tracker-body.sh title-findings <title> [path-to-body.md]   # raw, for hooks
-#   tools/verify-tracker-body.sh binding <pr-number> <intent>     # intent: closes | refs
-#   tools/verify-tracker-body.sh live-bind <merged-pr> <issue>    # live, mutates and restores
-#   tools/verify-tracker-body.sh selftest
+#   tests/verify-tracker-body.sh body <path-to-body.md>
+#   tests/verify-tracker-body.sh title <title> [path-to-body.md]
+#   tests/verify-tracker-body.sh title-findings <title> [path-to-body.md]   # raw, for hooks
+#   tests/verify-tracker-body.sh binding <pr-number> <intent>     # intent: closes | refs
+#   tests/verify-tracker-body.sh live-bind <merged-pr> <issue>    # live, mutates and restores
+#   tests/verify-tracker-body.sh selftest
 #
 # GitHub's parser matches a closing keyword and an issue number and ignores everything
 # around it, including the word "not". So a heading that says a PR does *not* close an issue
@@ -293,7 +293,7 @@ check_binding() {
 }
 
 # ---- check 4 — the merged-PR bind, live -----------------------------------------
-# `tools/tracker-cases/binding/merged-pr-keyword-bind.md` is this check's case. It cannot be a
+# `tests/tracker-cases/binding/merged-pr-keyword-bind.md` is this check's case. It cannot be a
 # text fixture: the claim is about what GitHub does, so the only honest test writes to the API
 # and reads it back. #193.
 #

@@ -118,7 +118,7 @@ only the branch checkout.
 | | |
 |---|---|
 | Reverted | `skills/chat-response/SKILL.md` — inside a plugin component directory |
-| Survived | `tools/verify-all.sh`, and untracked files under `evals/` and `tools/` |
+| Survived | `tests/verify-all.sh`, and untracked files under `evals/` and `tools/` |
 
 The `calyx-engineering` marketplace is registered as `{"source": "directory", "path": "R:\arc"}`
 with `installLocation: R:\arc`, so uninstall/install operates on the repository itself.

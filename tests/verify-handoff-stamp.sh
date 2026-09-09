@@ -2,8 +2,8 @@
 # verify-handoff-stamp.sh — the handoff header carries a date AND a time, re-stamped on every
 # write.
 #
-#   tools/verify-handoff-stamp.sh            check this repository
-#   tools/verify-handoff-stamp.sh selftest   run the fixture cases
+#   tests/verify-handoff-stamp.sh            check this repository
+#   tests/verify-handoff-stamp.sh selftest   run the fixture cases
 #
 # WHY. #153: the header carried a date and no time, so a cold start could not tell an hour-old
 # handoff from a week-old one and treated both as current. Half of it was already true — the
@@ -31,7 +31,7 @@
 # parseable stamp the probe reports SKIP with its reason. It does not silently pass.
 #
 # WHAT IT CANNOT DO. It reads files, and compares two files where both exist. It does not invoke
-# the skill; no gate here does — tools/verify-all.sh --list.
+# the skill; no gate here does — tests/verify-all.sh --list.
 #
 # REPORTS, NEVER BLOCKS beyond its exit code.
 

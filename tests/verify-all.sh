@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 # verify-all.sh — run every gate this repo has, and report one exit code.
 #
-#   tools/verify-all.sh            every gate
-#   tools/verify-all.sh --list     what it would run, and what it cannot
+#   tests/verify-all.sh            every gate
+#   tests/verify-all.sh --list     what it would run, and what it cannot
 #
 # WHY. The repo had four verifiers and nothing that ran them. "The gates are clean" in a PR
 # body was a claim a reviewer took on trust, and the close sequence asked for it without
 # giving anyone a command. This is that command.
 #
 # A NEW VERIFIER CANNOT BE SILENTLY SKIPPED. The invocations below are a table, because the
-# scripts take different arguments — but the table is checked against `tools/verify-*.sh` on
-# disk, and an unknown one fails the run. That is #68's lesson: a hardcoded list makes a new
-# thing invisible, and the check whose job is catching a gap reports success instead.
+# scripts take different arguments — but the table is checked against `tests/verify-*.sh` and
+# `tools/verify-*.sh` on disk, and an unknown one fails the run. That is #68's lesson: a
+# hardcoded list makes a new thing invisible, and the check whose job is catching a gap
+# reports success instead.
 #
 # REPORTS, NEVER BLOCKS. Same precedent as every verifier it calls. Exit 1 marks findings for
 # a human to read; nothing here denies a tool call or gates a merge on its own.
@@ -56,7 +57,7 @@ echo
 # ---- the table is checked against disk before anything runs ------------------------
 # A verifier nobody wired in is worse than one that fails: it looks like coverage.
 unknown=""
-for f in tools/verify-*.sh; do
+for f in tests/verify-*.sh tools/verify-*.sh; do
   [ -f "$f" ] || continue
   n="$(basename "$f" .sh)"
   [ "$n" = "verify-all" ] && continue
@@ -73,9 +74,9 @@ if [ -n "$unknown" ]; then
 fi
 
 # ---- the gates ---------------------------------------------------------------------
-run_gate "case reader cases" bash tools/verify-case-reader.sh selftest
-run_gate "skill registry" bash tools/verify-skill-registry.sh
-run_gate "skill registry cases" bash tools/verify-skill-registry.sh selftest
+run_gate "case reader cases" bash tests/verify-case-reader.sh selftest
+run_gate "skill registry" bash tests/verify-skill-registry.sh
+run_gate "skill registry cases" bash tests/verify-skill-registry.sh selftest
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 # The three selftests around the probe. None invokes `claude`, so none bills — what is excluded
@@ -86,7 +87,7 @@ run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 # text out. It replaces the billed half through PROBE_PY.
 #
 # Their names ARE in KNOWN, alongside the dozen others there that the guard cannot check. It
-# globs `tools/verify-*.sh` and never asks after a file named anything else, so those entries
+# globs `tests/verify-*.sh` and never asks after a file named anything else, so those entries
 # are for the reader, not for the guard. The gap is real and it is the guard's: a selftest whose
 # file is not named `verify-*` can only be noticed by reading this file.
 run_gate "skill probe cases" python tools/skill-probe.py selftest
@@ -102,34 +103,34 @@ run_gate "environment blame cases" bash tools/environment-blame.sh selftest
 run_gate "issue claim cases" bash tools/arc-claim.sh selftest
 run_gate "plugin reload cases" bash tools/plugin-reload.sh selftest
 run_gate "link sweep cases" bash tools/arc-link-sweep.sh selftest
-run_gate "autonomy switch" bash tools/verify-autonomy.sh
-run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
-run_gate "template links" bash tools/verify-template-links.sh
-run_gate "template link cases" bash tools/verify-template-links.sh selftest
-run_gate "close-sequence count" bash tools/verify-close-sequence.sh
-run_gate "handoff staleness checks" bash tools/verify-handoff-checks.sh
-run_gate "handoff rationale cases" bash tools/verify-handoff-rationale.sh selftest
-run_gate "handoff rationale" bash tools/verify-handoff-rationale.sh
-run_gate "handoff archive cases" bash tools/verify-handoff-archive.sh selftest
-run_gate "handoff archive" bash tools/verify-handoff-archive.sh
-run_gate "handoff stamp cases" bash tools/verify-handoff-stamp.sh selftest
-run_gate "handoff stamp" bash tools/verify-handoff-stamp.sh
-run_gate "session index cases" bash tools/verify-session-index.sh selftest
-run_gate "session index" bash tools/verify-session-index.sh
-run_gate "workspace guard" bash tools/verify-workspace-guard.sh
-run_gate "branch prefix" bash tools/verify-branch-prefix.sh
-run_gate "linked-branch cases" bash tools/verify-linked-branch.sh selftest
-run_gate "issue box cases" bash tools/verify-issue-boxes.sh selftest
-run_gate "label cases" bash tools/verify-labels.sh selftest
-run_gate "mechanism table cases" bash tools/verify-mechanisms.sh selftest
-run_gate "mechanism table" bash tools/verify-mechanisms.sh
-run_gate "dev-log name cases" bash tools/verify-dev-log-name.sh selftest
-run_gate "dev-log name" bash tools/verify-dev-log-name.sh
-run_gate "activation log cases" bash tools/verify-activation-log.sh selftest
-run_gate "activation log" bash tools/verify-activation-log.sh
-run_gate "set-mode cases" bash tools/verify-set-mode.sh selftest
-run_gate "report budget cases" bash tools/verify-report-budget.sh selftest
-run_gate "report budget" bash tools/verify-report-budget.sh
+run_gate "autonomy switch" bash tests/verify-autonomy.sh
+run_gate "tracker body rules" bash tests/verify-tracker-body.sh selftest
+run_gate "template links" bash tests/verify-template-links.sh
+run_gate "template link cases" bash tests/verify-template-links.sh selftest
+run_gate "close-sequence count" bash tests/verify-close-sequence.sh
+run_gate "handoff staleness checks" bash tests/verify-handoff-checks.sh
+run_gate "handoff rationale cases" bash tests/verify-handoff-rationale.sh selftest
+run_gate "handoff rationale" bash tests/verify-handoff-rationale.sh
+run_gate "handoff archive cases" bash tests/verify-handoff-archive.sh selftest
+run_gate "handoff archive" bash tests/verify-handoff-archive.sh
+run_gate "handoff stamp cases" bash tests/verify-handoff-stamp.sh selftest
+run_gate "handoff stamp" bash tests/verify-handoff-stamp.sh
+run_gate "session index cases" bash tests/verify-session-index.sh selftest
+run_gate "session index" bash tests/verify-session-index.sh
+run_gate "workspace guard" bash tests/verify-workspace-guard.sh
+run_gate "branch prefix" bash tests/verify-branch-prefix.sh
+run_gate "linked-branch cases" bash tests/verify-linked-branch.sh selftest
+run_gate "issue box cases" bash tests/verify-issue-boxes.sh selftest
+run_gate "label cases" bash tests/verify-labels.sh selftest
+run_gate "mechanism table cases" bash tests/verify-mechanisms.sh selftest
+run_gate "mechanism table" bash tests/verify-mechanisms.sh
+run_gate "dev-log name cases" bash tests/verify-dev-log-name.sh selftest
+run_gate "dev-log name" bash tests/verify-dev-log-name.sh
+run_gate "activation log cases" bash tests/verify-activation-log.sh selftest
+run_gate "activation log" bash tests/verify-activation-log.sh
+run_gate "set-mode cases" bash tests/verify-set-mode.sh selftest
+run_gate "report budget cases" bash tests/verify-report-budget.sh selftest
+run_gate "report budget" bash tests/verify-report-budget.sh
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
@@ -195,11 +196,11 @@ if [ "$LIST" = "1" ]; then
                               needs a live session at a real bench — #246
     a real branch↔issue link  verify-linked-branch.sh selftest runs its decision on fixtures. The
                               live read needs GitHub and a real issue — run
-                              bash tools/verify-linked-branch.sh <NN> <branch> after creating one
+                              bash tests/verify-linked-branch.sh <NN> <branch> after creating one
     a label against its       verify-labels.sh selftest runs its decision on fixtures. The sweep
     prefix, and the label set of real open issues, and the label set itself, both read GitHub —
-                              run bash tools/verify-labels.sh and
-                              bash tools/verify-labels.sh labels
+                              run bash tests/verify-labels.sh and
+                              bash tests/verify-labels.sh labels
     two dispatchers against   arc-claim.sh selftest drives take, release, refresh and the race
     the real tracker          through a fixture backend, and one case drives the live path
                               behind a stubbed gh. A real one needs two loops, a live
@@ -211,7 +212,7 @@ if [ "$LIST" = "1" ]; then
                               cases. --dry-run reaches selection and stops before the claim
     a real issue's boxes      verify-issue-boxes.sh selftest runs the whole script against a
     against its PR body       fixture backend. The live read needs GitHub, a real issue and the
-                              PR that closes it — run bash tools/verify-issue-boxes.sh <NN> at
+                              PR that closes it — run bash tests/verify-issue-boxes.sh <NN> at
                               PR-ready time, which is also where hooks/tracker-verify calls it
     an arc's issues against   arc-link-sweep.sh selftest runs its decision on fixtures. The sweep
     both link fields          itself searches GitHub and paginates — run

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # verify-case-reader.sh — run the shared case-reader cases.
 #
-#   tools/verify-case-reader.sh            the cases
-#   tools/verify-case-reader.sh selftest   the same cases — this script has no separate fixtures
+#   tests/verify-case-reader.sh            the cases
+#   tests/verify-case-reader.sh selftest   the same cases — this script has no separate fixtures
 #
 # WHY A WRAPPER AT ALL. The cases live in `tools/case_reader.py selftest`, beside the code they
-# cover. This file exists so the gate is a `tools/verify-*.sh` like every other one: verify-all.sh
+# cover. This file exists so the gate is a `tests/verify-*.sh` like every other one: verify-all.sh
 # checks its invocation table against that glob and fails on a verifier it does not know, and a
 # gate invoked as `python tools/x.py` sits outside that check. Same shape as verify-set-mode.sh.
 #
@@ -31,5 +31,5 @@ case "${1:-}" in
   *) echo "unknown argument: $1" >&2; exit 2 ;;
 esac
 
-python "$HERE/case_reader.py" selftest
+python "$HERE/../tools/case_reader.py" selftest
 exit $?

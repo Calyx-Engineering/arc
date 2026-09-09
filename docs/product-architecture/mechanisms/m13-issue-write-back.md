@@ -137,7 +137,7 @@ be tested against these.
 | 4 | 2026-08-11 | Figure updated, stale `3.3uH` remained | Re-read after write; diff against intended change |
 | 5 | 2026-08-13 | Issue #38 carried a nonsensical date | Sanity-check dates against reality |
 | 6 | 2026-07-26 | Comment on #1 referenced the wrong commit | Verify referenced commit exists and is the right one |
-| 7 | 2026-08-14 | `Spawned` populated with documents, a discarded approach, and loose decisions | Reject what is not a unit of work; route each to where it belongs. `tools/verify-tracker-body.sh body` reports the section's placement, the author judges the rows |
+| 7 | 2026-08-14 | `Spawned` populated with documents, a discarded approach, and loose decisions | Reject what is not a unit of work; route each to where it belongs. `tests/verify-tracker-body.sh body` reports the section's placement, the author judges the rows |
 
 **Pattern in shapes:** cases 1–2 are *never written*; cases 3–6 are *written wrong and
 reported right*; case 7 is *written right into the wrong section*, which no read-back catches.

@@ -20,8 +20,8 @@ the end — while practice had moved to one `Related` table with the kind in the
 | | |
 |---|---|
 | **`skills/issue-write`** | *Spawned versus related* replaced by *Related — one table, four kinds*. One section, one table, four kinds, the negative case stated, the keep-marked rule carried over onto the table shape |
-| **`tools/verify-tracker-body.sh`** | `body` gains a second rule: a `Spawned` heading followed by any other heading is reported |
-| **`tools/tracker-cases/body/`** | Three fixtures — one fail, two pass |
+| **`tests/verify-tracker-body.sh`** | `body` gains a second rule: a `Spawned` heading followed by any other heading is reported |
+| **`tests/tracker-cases/body/`** | Three fixtures — one fail, two pass |
 | **m13** | Shape C and evaluation case 7 — the write landed, into a section that does not admit it |
 
 ## Decisions
@@ -110,7 +110,7 @@ could find. The fixtures caught it, which is what they are for — but it was no
 
 ## Evidence
 
-`bash tools/verify-all.sh` — 19 gates, all clean. `tracker body rules` went from 19 cases to
+`bash tests/verify-all.sh` — 19 gates, all clean. `tracker body rules` went from 19 cases to
 26: three fixtures for the `Spawned` heading, and three more from the review passes.
 
 ## Not done

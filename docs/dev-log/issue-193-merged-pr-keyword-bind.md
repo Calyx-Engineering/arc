@@ -48,15 +48,15 @@ Both went into the skill and the case file. Neither was in the issue.
 | | |
 |---|---|
 | **`skills/issue-write`** | The re-saving sentence corrected in place, saying what still holds and what it implied wrongly. New section *A missed keyword is recoverable after the merge* — the condition, the four measured properties, the steps with the poll and `gh issue close`, and what is not recoverable |
-| **`tools/tracker-cases/binding/merged-pr-keyword-bind.md`** | The case, with both runs recorded |
-| **`tools/verify-tracker-body.sh live-bind`** | The case as an executable test |
+| **`tests/tracker-cases/binding/merged-pr-keyword-bind.md`** | The case, with both runs recorded |
+| **`tests/verify-tracker-body.sh live-bind`** | The case as an executable test |
 
 ## Decisions
 
 ### The case had to be executable, and could not be a text fixture
 
 *"So the claim is a test rather than a memory."* Every existing case under
-`tools/tracker-cases/` is a file the checker reads. This claim is about what GitHub does, so
+`tests/tracker-cases/` is a file the checker reads. This claim is about what GitHub does, so
 the only honest test writes to the API and reads it back.
 
 | | |
@@ -107,7 +107,7 @@ Discharged: probe [#233](https://github.com/Calyx-Engineering/arc/issues/233) ag
 PR [#200](https://github.com/Calyx-Engineering/arc/pull/200).
 
 ```text
-$ bash tools/verify-tracker-body.sh live-bind 200 233
+$ bash tests/verify-tracker-body.sh live-bind 200 233
 PASS  a keyword added after the merge bound #233 on merged PR 200
 PASS  userLinkedOnly is [] — the link came from the keyword, not the UI
 PASS  issue #233 is still OPEN — the bind restores the link, never the closure

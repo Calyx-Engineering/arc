@@ -34,7 +34,7 @@ flowchart TB
     REV --> BLOCK{{"<b>Any blocking finding?</b>"}}
     BLOCK ==>|yes| FIX["<b>Fix it, in its own PR</b><br/><i>the release waits.<br/>Non-blocking findings do not<br/>hold the release</i>"]
     FIX --> REV
-    BLOCK ==>|no| GATES["<b>Every gate clean</b><br/><code>bash tools/verify-all.sh</code>"]
+    BLOCK ==>|no| GATES["<b>Every gate clean</b><br/><code>bash tests/verify-all.sh</code>"]
     GATES --> VER{{"<b>Decide the version</b><br/>§3"}}
     VER --> BUMP["<b>Bump both manifests</b><br/><code>plugin.json</code> version<br/><code>marketplace.json</code> plugin version<br/><i>they must agree</i>"]
     BUMP --> DEF{{"<b>Is the default branch<br/>the release branch?</b><br/><i>m42's flip</i>"}}

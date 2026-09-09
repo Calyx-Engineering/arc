@@ -100,7 +100,7 @@ auto clause in the same row — not a cross-reference to m40.
 **Why not a single cross-reference.** A rule that says *"see m40"* is read once; the rule beside
 it is read every turn. The asymmetry in how often the two are read is the mechanism that has
 defeated every previous attempt, and duplicating one clause four times is the cost of fixing it.
-`tools/verify-autonomy.sh` is what keeps the four copies honest.
+`tests/verify-autonomy.sh` is what keeps the four copies honest.
 
 ### What the switch cannot do, stated in the spec
 
@@ -117,14 +117,14 @@ are both a wrong diagnosis reached from a single session's denials.
 | 3 | The four artifacts gain their auto clause, in the same row as the rule |
 | 4 | `close-sequence` steps 8 and 9 become mode-dependent |
 | 5 | `templates/handoff.md` gains the suspended state and the rule for inferring it |
-| 6 | `tools/verify-autonomy.sh` — fails when an artifact states a prohibition with no auto clause, when the registry or ROADMAP still call m40 unspecified, or when the mode vocabulary drifts |
+| 6 | `tests/verify-autonomy.sh` — fails when an artifact states a prohibition with no auto clause, when the registry or ROADMAP still call m40 unspecified, or when the mode vocabulary drifts |
 | 7 | Registry row, ROADMAP row, arc-log §9 and §10, and the sync |
 
 ## Decisions & trade-offs
 
 | | |
 |---|---|
-| **The permission is duplicated into four artifacts** | A knowing exception to *one fact, one place*. A cross-reference is read once and the rule beside it is read whenever the rule is — and that asymmetry is the entire bug. `tools/verify-autonomy.sh` is what makes duplication acceptable rather than reckless: it fails when an artifact states one of these prohibitions with no auto arm in the **same row** |
+| **The permission is duplicated into four artifacts** | A knowing exception to *one fact, one place*. A cross-reference is read once and the rule beside it is read whenever the rule is — and that asymmetry is the entire bug. `tests/verify-autonomy.sh` is what makes duplication acceptable rather than reckless: it fails when an artifact states one of these prohibitions with no auto arm in the **same row** |
 | **Three states** | Two cannot express a conversation. A wave that cancels on the first clarifying question is not runnable; an agent that executes through a question is not talking to anyone. Suspension is what the user described in criterion 3, and it is also what the session that filed this issue did correctly with no artifact telling it to |
 | **Matching is per-row, not per-file** | The check greps the line, not the document. A clause a paragraph away is a cross-reference wearing the costume of one, and would pass a file-level check while failing in the way that matters |
 | **The mode lives in the handoff, not a new file** | The row already exists and already says *"never infer it"*. A second store is two files holding one fact, which is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s condition created on purpose |

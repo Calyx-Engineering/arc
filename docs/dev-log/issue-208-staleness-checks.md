@@ -87,6 +87,6 @@ wrong reason, and the shadow copy; pass 3 found m40 half-swept and box 1's evide
 stale by one assertion.
 
 **What a future reader needs.** The gate proves *location*, not behaviour — no gate in this
-repository invokes a skill, and both `tools/verify-all.sh --list` and the new script's own
+repository invokes a skill, and both `tests/verify-all.sh --list` and the new script's own
 header say so. Its three deny cases were run against fixtures under `HANDOFFCHK_ROOT`: block
 drifted below the write path, shadow copy left stale, one check row deleted — exit 1 each.

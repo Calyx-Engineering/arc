@@ -68,7 +68,7 @@ drives the live path instead, behind a stubbed `gh`.
 | A claim left by a killed run | An expired claim locks nothing, the expiry boundary is exclusive, an unrefreshed claim stops being live after its TTL, and the next reader reaps it |
 | A claim released on every exit path | The tool half, executed: `release` removes ours and **only** ours with a second dispatcher's claim standing beside it, leaves an ordinary comment alone, and is not an error twice over. The caller half, as source text: **fifteen** checks on `arc-loop.sh` — the three traps, `release_claims`, the per-issue release when a run ends, `take_claim` in `run_batch` and `reclaim_claim` in `--resume`, that `reclaim_claim` has **exactly one** caller, and that `run_batch`'s worktree and liveness guards precede its first claim |
 
-Structural checks follow `tools/verify-linked-branch.sh`'s precedent: the guarantee is one line of
+Structural checks follow `tests/verify-linked-branch.sh`'s precedent: the guarantee is one line of
 shell, it cannot be exercised without dispatching a real run, and the first draft of this
 integration released on the happy path only.
 
@@ -148,5 +148,5 @@ not exercised by the run it dispatched — this one. `--dry-run` reaches `read_c
 outside the structural checks. It soaks on the next `tools/arc-loop.sh` invocation from the main
 tree.
 
-**Gates:** `bash tools/verify-all.sh` → exit 0, 47 gates clean, including the new **issue claim
+**Gates:** `bash tests/verify-all.sh` → exit 0, 47 gates clean, including the new **issue claim
 cases** gate at 56. `bash tools/arc-claim.sh selftest` → 56 passed, 0 failed.

@@ -12,13 +12,13 @@ Three fields are set at creation, not written into the text. Each is invisible o
 | | |
 |---|---|
 | **Milestone** | `gh issue create --milestone "<name>"` |
-| **Label** | The title prefix decides it — the mapping is [`issue-write`](https://github.com/Calyx-Engineering/arc/blob/main/skills/issue-write/SKILL.md)'s *Labels* section, and `tools/verify-labels.sh` enforces it |
+| **Label** | The title prefix decides it — the mapping is [`issue-write`](https://github.com/Calyx-Engineering/arc/blob/main/skills/issue-write/SKILL.md)'s *Labels* section, and `tests/verify-labels.sh` enforces it |
 | **Base** | An issue has none. A PR's base is the arc branch — [`templates/pr.md`](https://github.com/Calyx-Engineering/arc/blob/main/templates/pr.md) |
 
 ## The order
 
 **Four sections, and the order is the rule.** `Related` is last; a heading after it is a
-reportable defect — `tools/verify-tracker-body.sh body <file>`.
+reportable defect — `tests/verify-tracker-body.sh body <file>`.
 
 | | Section | Holds |
 |---|---|---|

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # verify-mechanisms.sh — check the product definition's mechanism table against the specs.
 #
-#   tools/verify-mechanisms.sh            check this repository
-#   tools/verify-mechanisms.sh selftest   run the fixture cases
+#   tests/verify-mechanisms.sh            check this repository
+#   tests/verify-mechanisms.sh selftest   run the fixture cases
 #
 # WHY. The mechanism table in docs/product-architecture/README.md and the specs in
 # docs/product-architecture/mechanisms/ are kept in agreement by hand. Nothing read them
@@ -323,7 +323,7 @@ report() {
 }
 
 # ---- the self-test --------------------------------------------------------------------------
-# Fixture trees, never this repository's own — the shape tools/verify-sync-parity.sh used
+# Fixture trees, never this repository's own — the shape tests/verify-sync-parity.sh used
 # before #142 removed it, recovered from git and fitted to the `selftest` subcommand the
 # surviving verifiers use. Every case builds a complete miniature product definition under
 # mktemp and runs the real check against it, so a failed run leaves no residue and a case
@@ -645,8 +645,8 @@ case "${1:-}" in
   *)
     cat >&2 <<'USAGE'
 usage:
-  tools/verify-mechanisms.sh            check this repository
-  tools/verify-mechanisms.sh selftest   run the fixture cases
+  tests/verify-mechanisms.sh            check this repository
+  tests/verify-mechanisms.sh selftest   run the fixture cases
 USAGE
     exit 2
     ;;

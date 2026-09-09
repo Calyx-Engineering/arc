@@ -68,12 +68,12 @@
 #   1  someone else holds it — a verdict, not a failure
 #   2  the read or write could not be made, or the arguments were wrong. NEVER 1: "another
 #      dispatcher holds this" and "I could not tell" are different answers. Same distinction
-#      tools/verify-linked-branch.sh draws, for the same reason
+#      tests/verify-linked-branch.sh draws, for the same reason
 #
 # THE FIXTURE BACKEND. `ARC_CLAIM_FIXTURES=<dir>` swaps every `gh` call for files of the same
 # shape — and the files are WRITTEN as well as read, so the selftest drives take, refresh,
 # release and the race end to end with no network and no issue. `ARC_CLAIM_NOW` fixes the clock
-# so expiry is a case rather than a wait. The precedent is tools/verify-issue-boxes.sh.
+# so expiry is a case rather than a wait. The precedent is tests/verify-issue-boxes.sh.
 #
 #   comments-<N>.tsv   one comment per line: <id><TAB><base64 body>
 #   nextid             the id the next posted comment gets; monotonic, as GitHub's are
@@ -346,7 +346,7 @@ cmd_take() {  # cmd_take <issue>
   settle "$SETTLE"
 
   # THE READ-BACK IS THE INTERLOCK. The post's own return value says what we asked for, not what
-  # the issue now holds — the same lesson tools/verify-linked-branch.sh is built on.
+  # the issue now holds — the same lesson tests/verify-linked-branch.sh is built on.
   claims="$(claims_on "$issue")" || exit 2
   n="$(now)"
   out="$(verdict "$n" "$self" "$claims")"; status=$?
@@ -690,7 +690,7 @@ selftest() {
 
   # ---- CASE — RELEASED ON EVERY EXIT PATH, the caller half ----------------------
   # The tool cannot release a claim the caller never drops. This is a structural check on
-  # tools/arc-loop.sh, in the same spirit as tools/verify-linked-branch.sh's source_has: the
+  # tools/arc-loop.sh, in the same spirit as tests/verify-linked-branch.sh's source_has: the
   # guarantee is one line of shell, it cannot be exercised without dispatching a real run, and
   # the first draft of that integration released on the happy path only.
   loop_has() {  # loop_has <want-count> <regex> <name>

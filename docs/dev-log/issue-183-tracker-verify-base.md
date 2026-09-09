@@ -126,7 +126,7 @@ edits, so this is recorded rather than fixed. #210's `Spawned` table carries it.
 
 `bash tools/verify-hook.sh hooks/tracker-verify` — 31 passed, 0 failed, exit 0 **at this
 commit**. #210 and the review passes add six more; the count on the merged branch is 37.
-`bash tools/verify-all.sh` — 13 gates, all clean, exit 0.
+`bash tests/verify-all.sh` — 13 gates, all clean, exit 0.
 
 The new pass cases were checked for vacuity rather than assumed: swapping one case's base to
 `arc/09-other` and changing nothing else produces the base finding, and adding

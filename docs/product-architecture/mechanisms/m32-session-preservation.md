@@ -169,7 +169,7 @@ index makes transcripts findable; it does not make them durable.**
 
 | Part | |
 |---|---|
-| §1 Index, do not copy | **Built.** `hooks/session-index` writes `.claude/arc/sessions.md`, one row per working directory and branch, with the seven fields above. Format: [templates/session-index.md](../../../templates/session-index.md). Gate: `tools/verify-session-index.sh` |
+| §1 Index, do not copy | **Built.** `hooks/session-index` writes `.claude/arc/sessions.md`, one row per working directory and branch, with the seven fields above. Format: [templates/session-index.md](../../../templates/session-index.md). Gate: `tests/verify-session-index.sh` |
 | §2 Capture at creation | **Built.** The row is written at the first tool call of the first session in a directory; a later firing from elsewhere flips its status to `orphaned`. Nothing is written at deletion |
 | §3 Distil before deletion | **Not built**, and not this mechanism's. Knowledge mining is m19's trigger over m30's pipeline |
 | §4 Retention | **Not addressed, and cannot be.** The index makes transcripts findable; nothing here makes them durable |
@@ -182,7 +182,7 @@ none of which this can recover the branch and issue for by itself.
 **And two limits the shipped shape carries.** A row is written into the working tree it describes,
 so it survives only if that branch merges — an abandoned worktree takes its own row with it. And
 the file is created untracked: `skills/handoff`'s setup step tells a new repository to `git add` it,
-and `tools/verify-session-index.sh` fails when it exists unstaged, because "committed to the repo"
+and `tests/verify-session-index.sh` fails when it exists unstaged, because "committed to the repo"
 is requirement 3 and an untracked file meets none of it.
 
 ## Open questions

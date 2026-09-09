@@ -111,6 +111,6 @@ copy, which reported *"PR #257 has no milestone. It will not appear in the miles
 old rule, on the PR that removes it. The stale-installed-copy row in the arc-log's §10 stops
 being a prediction here: the hook that denies this PR's correct state is the one this PR fixes.
 
-**Gates:** `bash tools/verify-all.sh` → exit 0, 43 gates clean.
+**Gates:** `bash tests/verify-all.sh` → exit 0, 43 gates clean.
 `bash tools/verify-hook.sh hooks/tracker-verify` → exit 0, 64 passed, 0 failed.
-`bash tools/verify-activation-log.sh hooks/tracker-verify` → exit 0, 204 passed, 0 failed.
+`bash tests/verify-activation-log.sh hooks/tracker-verify` → exit 0, 204 passed, 0 failed.

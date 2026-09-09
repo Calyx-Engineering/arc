@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # verify-handoff-archive.sh — a handoff rewrite leaves the prior version on disk.
 #
-#   tools/verify-handoff-archive.sh            check this repository
-#   tools/verify-handoff-archive.sh selftest   run the fixture cases
+#   tests/verify-handoff-archive.sh            check this repository
+#   tests/verify-handoff-archive.sh selftest   run the fixture cases
 #
 # WHY THIS EXISTS AND verify-hook.sh DOES NOT COVER IT. #152's "done when" is a claim about
 # the filesystem: after a rewrite, the prior version is still there. verify-hook.sh scores a
@@ -28,7 +28,7 @@
 # archived. A copy taken when the handoff is written would fail that case.
 #
 # WHAT IT CANNOT DO. It runs the hook as a program against fixture repositories. It does not
-# prove the hook is invoked by a live session — no gate here does, tools/verify-all.sh --list
+# prove the hook is invoked by a live session — no gate here does, tests/verify-all.sh --list
 # says so. Registration in hooks/hooks.json is checked as text, which is presence and not
 # firing.
 #

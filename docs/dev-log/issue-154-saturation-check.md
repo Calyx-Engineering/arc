@@ -111,9 +111,9 @@ somewhere to be resolved rather than being closed with the PR.
 |---|---|
 | `bash tools/saturation-cases.sh selftest` | 20 passed, 0 failed — held, late, early, silent, thin, a filename that is not a proposal, the wrong skill, the guessing line, drift in both modes, `--strict`, probe mode, cut turns inside and outside the window |
 | `bash tools/saturation-cases.sh` | `1 of 1 case(s) scored: 0 held, 0 late, 0 early, 1 silent, 0 thin` — the baseline, and the defect |
-| `bash tools/verify-all.sh` | 28 gates, all clean, exit 0 — after merging `arc/04-dogfood`, which brought `verify-labels` |
+| `bash tests/verify-all.sh` | 28 gates, all clean, exit 0 — after merging `arc/04-dogfood`, which brought `verify-labels` |
 
-**One thing the gate does not do.** `verify-all.sh`'s anti-skip guard globs `tools/verify-*.sh`,
+**One thing the gate does not do.** `verify-all.sh`'s anti-skip guard globs `tests/verify-*.sh`,
 so adding `saturation-cases` to its `KNOWN` list is inert — delete its `run_gate` line and nothing
 fails. That is true of the other four eval scorers too and is not this change's to fix; it is
 recorded here so the next reader does not assume the guard covers them.

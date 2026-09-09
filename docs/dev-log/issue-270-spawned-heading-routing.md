@@ -28,19 +28,19 @@ second box asks for the hook.
 | **What this issue is really for** | The instruction a run reads and the check that fires on what it writes have to agree. One sentence in `run-instructions.md` disagreed with the skill, and the tracker recorded nine bodies in a shape this repo does not have |
 | **North star** | A run told to record something routes a finding to the dev-log and a filed issue to a `Related` row, is shown one row shape, and gets a finding from `tracker-verify` if it writes a `Spawned` heading anyway |
 | **What makes it durable** | The check is mechanical and fires on the write. A prose rule that nine runs walked past is not evidence that the tenth will not |
-| **Out of scope** | **The nine existing bodies are not rewritten** — that is a tracker edit across nine issues in another workstream's children, and this unit is the instruction and the guard. **`tools/verify-tracker-body.sh body` does not learn the rule** — three of its pass cases carry a `Spawned` heading deliberately, because `check_spawned_last` exists to place a *legacy* section correctly, and teaching `body` to reject the shape would flip all three. **§6's boundary report keeps its `Spawned` section** — that is a report's own heading, not an issue body |
+| **Out of scope** | **The nine existing bodies are not rewritten** — that is a tracker edit across nine issues in another workstream's children, and this unit is the instruction and the guard. **`tests/verify-tracker-body.sh body` does not learn the rule** — three of its pass cases carry a `Spawned` heading deliberately, because `check_spawned_last` exists to place a *legacy* section correctly, and teaching `body` to reject the shape would flip all three. **§6's boundary report keeps its `Spawned` section** — that is a report's own heading, not an issue body |
 
 ## Decisions & trade-offs
 
-**The check lives in the hook, not in `tools/verify-tracker-body.sh`.** The precedent runs the
+**The check lives in the hook, not in `tests/verify-tracker-body.sh`.** The precedent runs the
 other way — the title rules are shelled out to that script so one copy of a threshold exists —
 so this needed a reason. It is that `check_body`'s existing `check_spawned_last` *tolerates* a
 `Spawned` section by design, and its cases prove it:
 
 ```
-tools/tracker-cases/body/pass/legacy-two-sections.md:8:## Spawned
-tools/tracker-cases/body/pass/spawned-heading-last.md:9:## Spawned
-tools/tracker-cases/body/pass/spawned-word-inside-a-fence.md:3:## Spawned
+tests/tracker-cases/body/pass/legacy-two-sections.md:8:## Spawned
+tests/tracker-cases/body/pass/spawned-heading-last.md:9:## Spawned
+tests/tracker-cases/body/pass/spawned-word-inside-a-fence.md:3:## Spawned
 ```
 
 Adding the rule to `check_body` flips three passing cases to failing. The two questions are
@@ -77,7 +77,7 @@ literal `\n` inside a fence, and rewriting that would move the fence markers.
 ### The gate
 
 ```
-bash tools/verify-all.sh                        → exit 0, 47 gates, all clean
+bash tests/verify-all.sh                        → exit 0, 47 gates, all clean
 bash tools/verify-hook.sh hooks/tracker-verify  → exit 0, 70 passed, 0 failed
 ```
 
@@ -118,7 +118,7 @@ Pass 1 found eight things and four of them changed the tree.
 
 | | |
 |---|---|
-| **The pattern is anchored at `$` and nothing stripped the CR** | A live body out of `gh issue view --json body` is CRLF, and a carriage return before the anchor makes every heading invisible. `tr -d '\r'` now runs before the awk — what `tools/verify-tracker-body.sh`'s placement check already did, for the reason it already states. **The failure is not reproducible on this machine**: Git Bash's gawk strips the CR itself, so the length of a CRLF line reads there the same as an LF one. The guard is asserted from the sibling check's stated reason and from the anchor, not from a local failure — and no case can cover it, because a JSON fixture body cannot hold a raw CR |
+| **The pattern is anchored at `$` and nothing stripped the CR** | A live body out of `gh issue view --json body` is CRLF, and a carriage return before the anchor makes every heading invisible. `tr -d '\r'` now runs before the awk — what `tests/verify-tracker-body.sh`'s placement check already did, for the reason it already states. **The failure is not reproducible on this machine**: Git Bash's gawk strips the CR itself, so the length of a CRLF line reads there the same as an LF one. The guard is asserted from the sibling check's stated reason and from the anchor, not from a local failure — and no case can cover it, because a JSON fixture body cannot hold a raw CR |
 | **Case-sensitive where the check it claimed parity with is not** | `## SPAWNED` passed. Now matched with `tolower($0) ~ /…/`, so the two tools cannot disagree about whether a legacy body has a section |
 | **Nothing pinned the issue-only gating** | The scan is deliberately gated to issue writes on both paths — an inner `case` on the fixture path, the outer `*"gh issue"*` arm on the live one — and every case still passed with that gating removed. `pass/pr-edit-spawned-heading.json` is the case that fails if it is hoisted out. **It pins the fixture path only.** The live gate needs a live `gh issue view`, so no fixture can reach it |
 | **Two cross-references were loose** | §5 said findings go where "§2 step 7 already sends it". Step 7 does write the dev-log — it reads *"Dev-log, commit, open the PR as a draft"* — so the old sentence was vague rather than false; it now says "the dev-log it writes at §2 step 7". The second was the real one: §5 told a run to add a `Spawned` row without mentioning that `tracker-verify` also reports a `gh issue create` whose body carries no `Spawned by`, a finding on the very write §5 had just asked for. That is this issue's own north star one level down |

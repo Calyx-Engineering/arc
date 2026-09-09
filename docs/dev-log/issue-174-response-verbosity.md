@@ -57,7 +57,7 @@ a preference with no home and no boundary.
 |---|---|
 | `bash tools/response-length.sh selftest` | 48 passed, 0 failed — 23 of them new: the agreement read, an edited number, `Other: <n> words`, the uncapped level, the shipped `normal` level, a blank clause, two boxes checked, a repository with no clause, and four fixture pairing cases |
 | `bash tools/response-length.sh` | The new case scores `1/3 0.33` at 40 words: `replies/2.md` is 149 words of correct answer and 3.7× the budget the agreement set |
-| `bash tools/verify-all.sh` | See the PR body |
+| `bash tests/verify-all.sh` | See the PR body |
 
 ## Retrospective
 

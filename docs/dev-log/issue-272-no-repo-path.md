@@ -32,8 +32,8 @@ Two skip reasons were wrong and are corrected. `worktree-identity` logged *"the 
 | | |
 |---|---|
 | `tools/verify-hook.sh hooks/branch-guard` | 19 passed, 0 failed, exit 0 |
-| `tools/verify-activation-log.sh hooks/branch-guard` | 69 passed, 0 failed, exit 0 |
-| `tools/verify-all.sh` | see the PR body |
+| `tests/verify-activation-log.sh hooks/branch-guard` | 69 passed, 0 failed, exit 0 |
+| `tests/verify-all.sh` | see the PR body |
 
 `tools/hook-cases/branch-guard/pass/coord-branch-outside-any-repository.json` is a real regression test, not a case that already passed: against `git show origin/arc/04-dogfood:hooks/branch-guard` it reads **18 passed, 1 failed**. It is the only case in the directory that flips.
 

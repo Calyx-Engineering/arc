@@ -4,7 +4,7 @@ Each file here is **copied somewhere else before anyone reads it.** That makes a
 only artifact whose links must be correct somewhere it is not, and it is why eighteen of them
 shipped broken: every review read them here, where they were fine.
 
-`tools/verify-template-links.sh` is the gate. It runs inside `tools/verify-all.sh`.
+`tests/verify-template-links.sh` is the gate. It runs inside `tests/verify-all.sh`.
 
 ---
 
@@ -58,6 +58,6 @@ examples**: both land under `docs/`, and everything they point at is the consumi
 
 ## Related
 
-- [`tools/verify-template-links.sh`](../tools/verify-template-links.sh) — the gate, and the destination map
+- [`tests/verify-template-links.sh`](../tests/verify-template-links.sh) — the gate, and the destination map
 - [`docs/release/pre-release-review.md`](../docs/release/pre-release-review.md) — pass 2, which is where this was found
 - [m43](../docs/product-architecture/mechanisms/m43-camp-assistant.md) — `camp/`'s three documents and why a user reads them

@@ -42,7 +42,7 @@
 # suite runs on any machine. When the corpus IS present the excerpt is compared against those
 # lines and a mismatch fails the run, which is the same verbatim claim topic-numbering.sh makes
 # about turns/<n>.md, checked the same way. Only the selftest is fully portable, which is why it
-# is the part wired into tools/verify-all.sh.
+# is the part wired into tests/verify-all.sh.
 #
 # A LOW RATE IS A MEASUREMENT. The suite is drawn from documents that were written before any of
 # this existed, so a baseline that fails is the baseline. Raising the threshold until it passes,

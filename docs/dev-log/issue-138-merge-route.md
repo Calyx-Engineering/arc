@@ -29,7 +29,7 @@ ROADZ was fixed on install day, [`44dbb06`](https://github.com/Lantern-Systems/r
 
 **This reverses [m40](../product-architecture/mechanisms/m40-autonomy-switch.md)'s central decision.** m40 chose to duplicate deliberately — *"the rule appears beside every prohibition it overrides"* — on the reasoning that a cross-reference is read once and an adjacent clause every time. Sound in isolation. But five prohibitions each carrying an override is still five prohibitions, and the base instruction permits an outward-facing action only when it is *durably authorized*.
 
-`tools/verify-autonomy.sh` enforces the duplication: it fails an artifact that omits the override. It has to fail one that states the prohibition at all.
+`tests/verify-autonomy.sh` enforces the duplication: it fails an artifact that omits the override. It has to fail one that states the prohibition at all.
 
 ### Two of five artifacts ship
 
@@ -51,7 +51,7 @@ ROADZ was fixed on install day, [`44dbb06`](https://github.com/Lantern-Systems/r
 | `skills/work-watch` | The `Never commit unasked` row deleted. A pointer under the mechanical-rules table says whether you commit is the mode's call |
 | `skills/autonomy-set` | *The rule appears beside every prohibition* replaced by *This skill is the only place the rule is stated*. New: on a denial, name which of the three gates stopped it |
 | `docs/…/m40-autonomy-switch.md` | §9 reversed, original reasoning kept in full. §10's "nothing runs a skill" corrected — Arc is installed here |
-| `tools/verify-autonomy.sh` | Six per-row checks replaced by a census. Both failure modes tested |
+| `tests/verify-autonomy.sh` | Six per-row checks replaced by a census. Both failure modes tested |
 
 `templates/handoff.md` was left alone — it defines what *suspended* means, which is the state's semantics rather than a standing prohibition.
 

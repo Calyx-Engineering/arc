@@ -130,7 +130,7 @@ reads is in
 
 A spec that exists is not automatically finished. Each one states its own state at the top, in
 a `**Status:**` line above its first `##` heading. **These five words are the whole vocabulary**
-— `tools/verify-mechanisms.sh` reports any other, so a sixth is a deliberate act rather than a
+— `tests/verify-mechanisms.sh` reports any other, so a sixth is a deliberate act rather than a
 drift.
 
 | | Means | Compatible with |
@@ -143,7 +143,7 @@ drift.
 
 **The two ladders are one check, not one scale.** A word describes how finished the *spec* is;
 the Status glyph describes how far the *mechanism* is into Arc. The right-hand column is the
-only relation between them, and it is the one `tools/verify-mechanisms.sh` enforces — a
+only relation between them, and it is the one `tests/verify-mechanisms.sh` enforces — a
 `partial` spec cannot sit behind ✅ Matured, because Matured means soaked and a spec with named
 holes has not been.
 
@@ -204,7 +204,7 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | `.claude/arc/camp/operating-agreement.md`'s *branch prefix* clause |
-| `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tools/verify-issue-boxes.sh` · `tools/verify-linked-branch.sh` · `tools/verify-tracker-body.sh` |
+| `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tests/verify-issue-boxes.sh` · `tests/verify-linked-branch.sh` · `tests/verify-tracker-body.sh` |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
 | `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry · `skills/handoff` to write the handoff the saturation check proposes |

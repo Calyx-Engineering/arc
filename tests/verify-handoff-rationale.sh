@@ -2,8 +2,8 @@
 # verify-handoff-rationale.sh — the handoff carries the constraint behind a decision, not only
 # the decision.
 #
-#   tools/verify-handoff-rationale.sh            check this repository
-#   tools/verify-handoff-rationale.sh selftest   run the fixture cases
+#   tests/verify-handoff-rationale.sh            check this repository
+#   tests/verify-handoff-rationale.sh selftest   run the fixture cases
 #
 # WHY THIS EXISTS. #151: a populated, correct, freshly-read handoff does not bind. The session
 # reports status correctly and then does the wrong work. The baseline
@@ -24,7 +24,7 @@
 # probes below look for that form, not for the word "why".
 #
 # WHAT IT CANNOT DO. It reads files for content. It does not invoke the skill, and no gate in
-# this repository does — tools/verify-all.sh --list. A rule found here is present, not proven to
+# this repository does — tests/verify-all.sh --list. A rule found here is present, not proven to
 # be followed. Whether the change moved the score is
 # docs/arc-work/04-dogfood/handoff-rationale.md, and re-running an opening against the changed
 # format needs #181.

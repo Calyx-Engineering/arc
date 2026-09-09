@@ -89,12 +89,12 @@ scores are what they were before this issue and this issue did not set out to mo
 
 | Gate | Result |
 |---|---|
-| `bash tools/verify-case-reader.sh` | 28 passed, 0 failed, exit 0 |
-| `bash tools/verify-all.sh` | 48 gates, all clean, exit 0 |
+| `bash tests/verify-case-reader.sh` | 28 passed, 0 failed, exit 0 |
+| `bash tests/verify-all.sh` | 48 gates, all clean, exit 0 |
 
-`tools/verify-case-reader.sh` is a thin wrapper over `python tools/case_reader.py selftest`, the
+`tests/verify-case-reader.sh` is a thin wrapper over `python tools/case_reader.py selftest`, the
 shape `verify-set-mode.sh` already uses: `verify-all.sh` checks its invocation table against
-`tools/verify-*.sh` on disk and fails on a verifier it does not know, so a gate invoked as
+`tests/verify-*.sh` on disk and fails on a verifier it does not know, so a gate invoked as
 `python tools/x.py` would sit outside that check. It is wired into `KNOWN` and given an
 invocation in the same commit.
 

@@ -32,7 +32,7 @@ The base comes from the branch name: `arc/04-dogfood-issue-161-slug` was cut fro
 
 `tools/verify-hook.sh` is hard-excluded from autonomous edits ([m10 §5](../product-architecture/mechanisms/m10-branch-guard.md)) — it validates hook changes, so a run making one does not change it. Its fixtures are three throwaway repos substituted into payloads by placeholder, and neither new check is expressible that way: the worktree check needs a *linked worktree*, the freshness check needs a base that has moved.
 
-`tools/verify-workspace-guard.sh` carries those fixtures instead. It is registered in `verify-all.sh`, whose `KNOWN` cross-check would fail the run if it were not. The payload-expressible half — an edit in the session's own tree, one in a different repository, one outside any repository, a work branch with no base ref — stayed in `tools/hook-cases/branch-guard/`.
+`tests/verify-workspace-guard.sh` carries those fixtures instead. It is registered in `verify-all.sh`, whose `KNOWN` cross-check would fail the run if it were not. The payload-expressible half — an edit in the session's own tree, one in a different repository, one outside any repository, a work branch with no base ref — stayed in `tools/hook-cases/branch-guard/`.
 
 **Worth knowing:** `verify-hook.sh hooks/branch-guard` alone stays green if checks 2 and 3 are deleted. Its cases prove they do not misfire, not that they fire. The deny coverage is `verify-workspace-guard.sh`'s, and `verify-all.sh` runs both.
 
@@ -46,8 +46,8 @@ Pass 2 caught the documentation half: m10 still said two checks were undesigned 
 
 ```text
 bash tools/verify-hook.sh hooks/branch-guard   →  18 passed, 0 failed   (exit 0)
-bash tools/verify-workspace-guard.sh           →  10 passed, 0 failed   (exit 0)
-bash tools/verify-all.sh                       →  15 gates, all clean   (exit 0)
+bash tests/verify-workspace-guard.sh           →  10 passed, 0 failed   (exit 0)
+bash tests/verify-all.sh                       →  15 gates, all clean   (exit 0)
 ```
 
 Baseline before the change: 14 gates, all clean; `branch-guard` 13 passed.

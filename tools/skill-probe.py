@@ -1,5 +1,5 @@
 # skill-probe.py — the running half of tools/skill-probe.sh. Not run directly, except for
-# `selftest` below, which tools/verify-all.sh runs.
+# `selftest` below, which tests/verify-all.sh runs.
 #
 # Re-runs a case's prompt.md against the plugin AS IT IS ON DISK NOW and records which skills
 # fired. tools/skill-cases.py scores frozen transcripts and therefore cannot see a description

@@ -211,7 +211,7 @@ all.
 | `templates/handoff.md` | Carries the *state* and defines what suspended means. That is the semantics of the state, not a rule |
 | The repository's `CLAUDE.md` | One sentence: the mode, its override, and a pointer here |
 
-`tools/verify-autonomy.sh` enforces it as a census — the prohibition appears only in this file,
+`tests/verify-autonomy.sh` enforces it as a census — the prohibition appears only in this file,
 and `CLAUDE.md` states the mode exactly once with its override.
 
 **This reverses a deliberate decision.** Until 2026-09-06 the permission was duplicated beside

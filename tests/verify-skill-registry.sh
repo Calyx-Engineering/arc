@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify-skill-registry.sh — every shipping artifact is reachable from the product definition.
 #
-#   tools/verify-skill-registry.sh
+#   tests/verify-skill-registry.sh
 #
 # WHY THIS EXISTS. This is the half of tools/sync-local-skills.sh that outlived it. That script
 # kept .claude/skills/ in step with skills/, and did one other job on the side: fail when a

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # verify-set-mode.sh — run the set-mode cases.
 #
-#   tools/verify-set-mode.sh            the cases
-#   tools/verify-set-mode.sh selftest   the same cases — this script has no separate fixtures
+#   tests/verify-set-mode.sh            the cases
+#   tests/verify-set-mode.sh selftest   the same cases — this script has no separate fixtures
 #
 # WHY A WRAPPER AT ALL. The cases live in `tools/set-mode.py selftest`, where #198 asked for
 # them: they drive the real script in throwaway directories and one of them fires
-# `hooks/mode-guard` against what it wrote. This file exists so the gate is a `tools/verify-*.sh`
+# `hooks/mode-guard` against what it wrote. This file exists so the gate is a `tests/verify-*.sh`
 # like every other one — verify-all.sh checks its invocation table against that glob and fails on
 # a verifier it does not know, and a gate invoked as `python tools/x.py` sits outside that check.
 # Same shape as report-grade.sh, environment-blame.sh and the other python-backed gates.
@@ -33,5 +33,5 @@ case "${1:-}" in
   *) echo "unknown argument: $1" >&2; exit 2 ;;
 esac
 
-python "$HERE/set-mode.py" selftest
+python "$HERE/../tools/set-mode.py" selftest
 exit $?

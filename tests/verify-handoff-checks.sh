@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify-handoff-checks.sh — the staleness checks are reachable from the skill, not only the command.
 #
-#   tools/verify-handoff-checks.sh
+#   tests/verify-handoff-checks.sh
 #
 # WHY THIS EXISTS. m15 has two entry points into the same mechanism. `/arc-next` is a typed
 # shortcut; `skills/handoff` is what fires when a session says "read the handoff" in any of the
@@ -25,7 +25,7 @@
 # probes below are a guard against it coming back, not a check on a file that is there.
 #
 # WHAT IT CANNOT DO. It reads files for content. It does not invoke the skill, and no gate in this
-# repository does — see tools/verify-all.sh --list. A check named here is present, not proven to be
+# repository does — see tests/verify-all.sh --list. A check named here is present, not proven to be
 # performed.
 #
 # REPORTS, NEVER BLOCKS beyond its exit code. Same precedent as the other verifiers.

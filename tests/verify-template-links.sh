@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify-template-links.sh — every template link resolves from where the template LANDS.
 #
-#   tools/verify-template-links.sh
+#   tests/verify-template-links.sh
 #
 # WHY THIS EXISTS. A template is the only artifact whose links must be correct somewhere it is
 # not. `templates/camp/operating-agreement.md` is copied to `.claude/arc/camp/`, so a link that

@@ -4,7 +4,7 @@
 #   tools/arc-link-sweep.sh <milestone-title>   every issue in that milestone
 #   tools/arc-link-sweep.sh selftest            the decision, on fixtures
 #
-# WHY A SWEEP AND NOT A PER-BRANCH CHECK. `tools/verify-linked-branch.sh <NN> <branch>` asks
+# WHY A SWEEP AND NOT A PER-BRANCH CHECK. `tests/verify-linked-branch.sh <NN> <branch>` asks
 # about one branch at one moment, and m12 §4 names the decisive moment as branch creation —
 # before the PR exists. A run that skipped that moment leaves nothing behind that says so, and
 # the drift accumulates across days. This is the checkpoint read that catches it, and the only
@@ -101,7 +101,7 @@ repair_note() {
     OPEN|open)
       echo "        Open: delete the ref if no PR heads it and re-run \`createLinkedBranch\`, or"
       echo "        open the PR with a \`Closes #NN\` line on its own last line, then read it back"
-      echo "        with \`tools/verify-linked-branch.sh <NN> <branch>\`."
+      echo "        with \`tests/verify-linked-branch.sh <NN> <branch>\`."
       ;;
     *)
       echo "        Closed: the merge event has already fired, so nothing binds now. Attach the"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # verify-session-index.sh — a session's transcript stays findable after its worktree is gone.
 #
-#   tools/verify-session-index.sh            check this repository
-#   tools/verify-session-index.sh selftest   run the fixture cases
+#   tests/verify-session-index.sh            check this repository
+#   tests/verify-session-index.sh selftest   run the fixture cases
 #
 # WHY THIS EXISTS AND verify-hook.sh DOES NOT COVER IT. Same shape as verify-handoff-archive.sh:
 # #16's "done when" is a claim about a file on disk, and `verify-hook.sh` scores a hook's VERDICT —
@@ -23,7 +23,7 @@
 # the transcript directory is what proves this machine ran that session.
 #
 # WHAT IT CANNOT DO. It runs the hook as a program against fixtures. It does not prove the hook is
-# invoked by a live session — no gate here does, and tools/verify-all.sh --list says so.
+# invoked by a live session — no gate here does, and tests/verify-all.sh --list says so.
 # Registration in hooks/hooks.json is checked as text, which is presence and not firing. It also
 # cannot check the slug derivation against Claude Code itself: case 2 asserts the rule measured off
 # the real store on 2026-09-08 (R:/arc-wt/16 is stored as R--arc-wt-16), which is evidence rather
@@ -180,7 +180,7 @@ report() {
          "the format would then be inferred from whatever the hook last wrote"
   else
     pass "templates/session-index.md exists"
-    if grep -q 'session-index' "$root/tools/verify-template-links.sh" 2>/dev/null; then
+    if grep -q 'session-index' "$root/tests/verify-template-links.sh" 2>/dev/null; then
       pass "the template has a MAP row in verify-template-links.sh"
     else
       fail "the template has a MAP row in verify-template-links.sh" \

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # verify-linked-branch.sh — read the branch↔issue link back after creating it.
 #
-#   tools/verify-linked-branch.sh <issue-number> <branch-name>
-#   tools/verify-linked-branch.sh <issue-number>            # is this issue linked to anything?
-#   tools/verify-linked-branch.sh selftest
+#   tests/verify-linked-branch.sh <issue-number> <branch-name>
+#   tests/verify-linked-branch.sh <issue-number>            # is this issue linked to anything?
+#   tests/verify-linked-branch.sh selftest
 #
 # WHY. `createLinkedBranch` returns a `linkedBranch` node on success, and a run that reads that
 # return value as evidence has verified nothing — the mutation reports what it was asked to do,
@@ -52,9 +52,9 @@ set -u
 usage() {
   cat >&2 <<'USAGE'
 usage:
-  tools/verify-linked-branch.sh <issue-number> <branch-name>
-  tools/verify-linked-branch.sh <issue-number>
-  tools/verify-linked-branch.sh selftest
+  tests/verify-linked-branch.sh <issue-number> <branch-name>
+  tests/verify-linked-branch.sh <issue-number>
+  tests/verify-linked-branch.sh selftest
 USAGE
 }
 
@@ -114,7 +114,7 @@ classify() {
 #   Closes owner/repo#206
 #   Closes https://github.com/owner/repo/issues/206
 #
-# The keyword vocabulary matches `tools/verify-tracker-body.sh`, deliberately: one list, tuned in
+# The keyword vocabulary matches `tests/verify-tracker-body.sh`, deliberately: one list, tuned in
 # one place.
 #
 #   $1  issue number   $2  body text

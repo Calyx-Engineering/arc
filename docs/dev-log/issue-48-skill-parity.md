@@ -92,7 +92,7 @@ nothing has to be kept in step by hand.
 | **Adding the two missing names to `SKILLS`** | What [#48](https://github.com/Calyx-Engineering/arc/issues/48) item 4 literally asks. It closes today's gap and re-opens on the next skill — which is how this one opened |
 | **An `EXCEPT` list for skills not worth copying locally** | The old comment's stance — "not every shipped skill, only the ones that shape how work is done here". A second hardcoded list, one line below the one being deleted |
 | **Testing by mutating the real trees** | How the four cases were first run by hand. Fine interactively, wrong committed: an interrupted run leaves `skills/ghost/` behind in the tree the check is meant to police |
-| **Adding `tools/verify-sync-parity.sh` to the registry's artifact table** | No `tools/` script is in it — not `verify-hook.sh`, not `verify-tracker-body.sh`. Adding one alone would be the inconsistency, and the table having no home for `tools/` is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s to resolve. Named, not swept, per arc-log §6.1.3 |
+| **Adding `tests/verify-sync-parity.sh` to the registry's artifact table** | No `tools/` script is in it — not `verify-hook.sh`, not `verify-tracker-body.sh`. Adding one alone would be the inconsistency, and the table having no home for `tools/` is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s to resolve. Named, not swept, per arc-log §6.1.3 |
 
 ## Retrospective
 
@@ -111,5 +111,5 @@ a third the issue does not mention at all.
 different mechanisms produced it here, and the arc-log's wave 5 review records the same shape
 twice more — a rule contradicted by its own example, a structural check passing on a wrong
 artifact. The fix each time is a test that fails when the check is removed, which is what
-`tools/verify-sync-parity.sh` is for: nine cases, and four deliberate mutations of the script
+`tests/verify-sync-parity.sh` is for: nine cases, and four deliberate mutations of the script
 each failing exactly the case meant to catch them.

@@ -89,7 +89,7 @@ wire.
 
 | | |
 | --- | --- |
-| `bash tools/verify-all.sh` | **exit 0** — 12 gates, all clean, before and after |
+| `bash tests/verify-all.sh` | **exit 0** — 12 gates, all clean, before and after |
 | `claude plugin validate .` | **exit 0** |
 | `bash tools/skill-cases.sh` | **exit 0** — no prompt drift, so both cases are verbatim. bare 3/3 · situation 2/3 · wrapped 2/7, unchanged, as expected of a transcript scorer |
 | Frontmatter | Parses as YAML, 827 characters, three U+2014 em dashes, no cp1252 bytes, no `": "` that would break the plain scalar |

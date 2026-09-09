@@ -75,7 +75,7 @@ learned the hard way, on 2026-09-07:
 The report is seven `####` sections: delivered, spawned with routing, **unexpected**, unplanned
 but needed, evidence, not done, and the diagram. **The prose of the first six is what the 200
 covers** — the diagram is optional and outside it, and so are the headings and the frame lines.
-**The count is `tools/verify-report-budget.sh`'s, which `verify-all.sh` runs, and that script's
+**The count is `tests/verify-report-budget.sh`'s, which `verify-all.sh` runs, and that script's
 header is where the rule is exact** — the budget was written in three documents, this one
 included, and read by none.
 

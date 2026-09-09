@@ -106,7 +106,7 @@ dev-logs re-read, or `git merge-base` run.
 **One three-line paragraph after `*End of Fire's boundary report.*`.** §6.3.6 reads *Everything
 merged unsoaked*; §10 now says otherwise for every Fire merge, and a reader landing on §6.3.6 had
 nothing pointing forward. The frozen report is untouched — the note sits after its `*End of …*`
-line, which is where `tools/verify-report-budget.sh` stops counting, and Fire still measures 186
+line, which is where `tests/verify-report-budget.sh` stops counting, and Fire still measures 186
 words against a budget of 200.
 
 ## Findings about Arc, filed nowhere
@@ -123,8 +123,8 @@ Recorded here rather than as `Spawned` rows, per [#270](https://github.com/Calyx
 
 | | |
 |---|---|
-| `bash tools/verify-all.sh` | **52 gates, all clean, exit 0** |
-| `bash tools/verify-report-budget.sh` | 4 passed, 0 failed — Fire 186 words, budget 200 |
+| `bash tests/verify-all.sh` | **52 gates, all clean, exit 0** |
+| `bash tests/verify-report-budget.sh` | 4 passed, 0 failed — Fire 186 words, budget 200 |
 | The issue's own check | Fourteen merges, fourteen rows, exit 0. Red before the rows, green after |
 | Table shape | Every §10 row one line, three columns, four pipes |
 

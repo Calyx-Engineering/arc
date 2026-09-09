@@ -126,6 +126,6 @@ until real volume exists.
 - [m30](m30-transcript-mining.md) — what was said, beside this record of what ran
 - [m17](m17-k1-upkeep.md) — the `arc-log`, which records decisions rather than events
 - [`hooks/lib/activation-log`](../../../hooks/lib/activation-log) — the library every hook sources to write one
-- [`tools/verify-activation-log.sh`](../../../tools/verify-activation-log.sh) — the gate that asserts one entry per firing, on every path
+- [`tests/verify-activation-log.sh`](../../../tests/verify-activation-log.sh) — the gate that asserts one entry per firing, on every path
 - [#37](https://github.com/Calyx-Engineering/arc/issues/37) — the issue that built the format and the file
 - [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the issue that gave it producers

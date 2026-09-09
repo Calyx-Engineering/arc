@@ -118,9 +118,9 @@ are named above and neither is a rationale problem.
 ## What would actually move the score
 
 **A live re-run, which no filed issue carries.** Everything here is text about text. The gate
-(`tools/verify-handoff-rationale.sh`, 9 live probes, 12 fixture cases) proves the rules are
+(`tests/verify-handoff-rationale.sh`, 9 live probes, 12 fixture cases) proves the rules are
 present and that each probe can fail; it cannot prove a session follows them, and no gate in this
-repository can — `tools/verify-all.sh --list` says so for every skill.
+repository can — `tests/verify-all.sh --list` says so for every skill.
 
 **The next real cold start is the first honest datum.** It reads the changed format with no
 knowledge of this document, which is the separation the counterfactual above lacks.

@@ -49,7 +49,7 @@ between the two deserves its own decision rather than being taken as a side effe
 ## Retrospective
 
 Built: the re-stamp rule in `skills/handoff/SKILL.md`'s write path, and
-`tools/verify-handoff-stamp.sh` — 5 live probes, 13 fixture cases, wired into `verify-all.sh` as
+`tests/verify-handoff-stamp.sh` — 5 live probes, 13 fixture cases, wired into `verify-all.sh` as
 two gates. The live rewrite probe reports `SKIP` with its reason where no archived prior handoff
 exists, rather than passing silently.
 

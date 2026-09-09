@@ -86,14 +86,14 @@ permissions problem — came back as an empty result and read as clean. (Not a h
 draft of this paragraph and of the script's comment both asserted otherwise, on no test.) Both now return their own code, both route through one
 `cannot_check()` so the messages cannot drift apart, and each has a case. **"This ships no local
 tree" and "I could not find out" are opposite answers**, and collapsing them is exactly how a
-guard becomes a reassuring message. Same distinction `tools/verify-linked-branch.sh` draws
+guard becomes a reassuring message. Same distinction `tests/verify-linked-branch.sh` draws
 between exit 1 and exit 2.
 
 **An exclusion list, not an inclusion list — and the first draft got this wrong.** The draft
 listed the six obvious component directories and justified leaving `tools/` out with the issue's
 own *Survived* column. Review pass 1 disproved it: `hooks/tracker-verify` resolves
-`../tools/verify-tracker-body.sh`, `../tools/verify-linked-branch.sh` and
-`../tools/verify-issue-boxes.sh` against the plugin root, which is the cache — so an uncommitted
+`../tests/verify-tracker-body.sh`, `../tests/verify-linked-branch.sh` and
+`../tests/verify-issue-boxes.sh` against the plugin root, which is the cache — so an uncommitted
 verifier is copied there and then executed by a live hook on every issue write. `reference/` was
 missing too: `skills/record-route` and `skills/engineering-report` both link
 `../../reference/knowledge-tiers.md`. The issue's column named one inert file, `verify-all.sh`,
@@ -121,7 +121,7 @@ rejected-approach row two paragraphs down. An exclusion list fails safe on cover
 | Refuse on any dirty file at all | `docs/` and `evals/` churn constantly and reach nothing at runtime. Refusing on them makes the guard the thing people work around |
 | List ignored files too, with `--ignored` | It would name every `__pycache__` on every run. The trade is stated where it is made: an ignored file inside `skills/` is shipped without being named, so "the installed plugin equals a commit" holds with that one exception |
 | Check `$PWD` | Silently correct only when the reload is run from the marketplace's own directory |
-| A new `tools/verify-plugin-reload.sh` | The decision and its cases belong in the file they are about. Same shape as `tools/arc-claim.sh selftest` |
+| A new `tests/verify-plugin-reload.sh` | The decision and its cases belong in the file they are about. Same shape as `tools/arc-claim.sh selftest` |
 
 ## Findings
 
@@ -157,4 +157,4 @@ function that checks the value is non-empty, is a directory, and matches the pat
 asked for. **The lesson generalises past this file: an EXIT trap and a `local` are in different
 scopes, and on Windows the obvious short names are already environment variables.**
 
-`bash tools/verify-all.sh` exits 0 at 48 gates, the new one among them.
+`bash tests/verify-all.sh` exits 0 at 48 gates, the new one among them.

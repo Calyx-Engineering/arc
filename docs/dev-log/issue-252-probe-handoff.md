@@ -123,7 +123,7 @@ and the next run's need not be.
 
 ## Decisions & trade-offs
 
-**The content check is `tools/verify-handoff-checks.sh`'s, not a second copy of the seven
+**The content check is `tests/verify-handoff-checks.sh`'s, not a second copy of the seven
 literals.** One list, tuned in one place — #208's own argument against keeping the checks in two
 artifacts, applied to the tool that checks them.
 
@@ -134,10 +134,10 @@ anyone can re-run.
 
 **Exit 2 is kept distinct from exit 1** in the new tool. *The checks are missing* and *I could not
 tell which file was read* are different answers, and only one is a defect. Same precedent as
-`tools/verify-linked-branch.sh`.
+`tests/verify-linked-branch.sh`.
 
-**Both new selftests are registered in `tools/verify-all.sh`.** Its unregistered-verifier guard
-scans `tools/verify-*.sh` only, so a tool named `probe-handoff-checks.sh` slips past it by
+**Both new selftests are registered in `tests/verify-all.sh`.** Its unregistered-verifier guard
+scans `tests/verify-*.sh` only, so a tool named `probe-handoff-checks.sh` slips past it by
 filename. Cited as evidence and never run again is how a gate becomes decoration; neither invokes
 `claude`, so neither bills. What stays out of `verify-all.sh` is the live probe, not the logic
 that reads its output.
@@ -167,7 +167,7 @@ installed file and this branch's file are the same bytes, which is checked direc
 | `bash tools/probe-handoff-checks.sh <dir>` | 27 dumps, 27 resolved, all seven checks present, exit 0 |
 | `bash tools/probe-handoff-checks.sh selftest` | 16 cases, 16 passed, exit 0 — including the deny case, a fixture skill with one check cut out, which reports CHECKS MISSING and exit 1 |
 | `python tools/skill-probe.py selftest` | 13 cases, 13 passed, exit 0 |
-| `bash tools/verify-all.sh` | 49 gates, all clean, exit 0 |
+| `bash tests/verify-all.sh` | 49 gates, all clean, exit 0 |
 
 The single equivalent of the nine per-case invocations is
 `PROBE_TRANSCRIPT_DIR=<dir> bash tools/skill-probe.sh --openings --expect handoff --runs 3`. It was

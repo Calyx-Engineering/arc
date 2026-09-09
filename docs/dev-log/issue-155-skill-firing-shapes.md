@@ -21,7 +21,7 @@ That was the question worth answering.
 | `evals/README.md` | The case format, and why the prompts are not invented |
 | `tools/skill-cases.sh`, `.py` | Scores each case against the turn it came from: did the expected skill fire **before the next prompt turn**. Checks every prompt still matches its source. 11 selftests |
 | `tools/skill-firing.py`, `.sh` | `is_prompt_turn()` replaces `is_user_turn()`. Selftest rebuilt: 12 cases, one session per rule |
-| `tools/verify-all.sh` | The new selftest is a gate. 12 gates, all clean |
+| `tests/verify-all.sh` | The new selftest is a gate. 12 gates, all clean |
 | `docs/arc-work/04-dogfood/skill-firing-decision.md` | The four rules, the per-shape baseline, the one-cause answer |
 | `docs/arc-work/04-dogfood/skill-firing-baseline.md` | Corrected in place, with the defect stated and the numbers re-measured |
 

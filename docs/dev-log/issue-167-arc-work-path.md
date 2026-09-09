@@ -8,7 +8,7 @@
 ## Problem
 
 `templates/dev-log.md` and `templates/arc-log.md` both carry
-`../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md`. `tools/verify-template-links.sh` skipped any link
+`../arc-work/&lt;arc-slug&gt;/&lt;topic&gt;.md`. `tests/verify-template-links.sh` skipped any link
 holding a placeholder — one line, `*'<'*|*'&lt;'*) continue` — so the `../` count was never
 checked against where the template actually lands. Every other template link in the repository
 was resolved; these were not, and a wrong one would have reported nothing.
@@ -42,9 +42,9 @@ was resolved; these were not, and a wrong one would have reported nothing.
 
 | | |
 |---|---|
-| `bash tools/verify-template-links.sh selftest` | 6 passed, 0 failed |
-| `bash tools/verify-template-links.sh` | exit 0 against the live tree |
-| `bash tools/verify-all.sh` | 24 gates, all clean, exit 0 |
+| `bash tests/verify-template-links.sh selftest` | 6 passed, 0 failed |
+| `bash tests/verify-template-links.sh` | exit 0 against the live tree |
+| `bash tests/verify-all.sh` | 24 gates, all clean, exit 0 |
 | **The Done-when, measured** | With `templates/dev-log.md` pointing at `../../arc-work/…`: `24 gates, 1 failed — template links`, exit **1**. Reverted after the measurement, `git diff` clean |
 
 The live tree passing is not evidence the check can fail, which is the whole reason the selftest

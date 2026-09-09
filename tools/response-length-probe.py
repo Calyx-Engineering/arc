@@ -22,7 +22,7 @@
 # their own column rather than counting them as a pass.
 #
 # IT COSTS MONEY, and the cost grows per turn as the conversation does. RL_PROBE_BUDGET caps
-# each turn. This is why --probe is not in tools/verify-all.sh.
+# each turn. This is why --probe is not in tests/verify-all.sh.
 import io
 import json
 import os
