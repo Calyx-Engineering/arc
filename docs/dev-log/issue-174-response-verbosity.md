@@ -87,3 +87,19 @@ scorer.
 **Seven, not nine.** The first ceiling was the 90th percentile of *every checkbox in the issue
 body*; the clause governs the `Required` section, whose 90th percentile is 7. The number was
 wrong because the measurement measured something adjacent to what the clause said.
+
+**Pass 4 found three numbers about checklist length in one section.** The `Issue granularity`
+checkboxes were left as written — *"a fourteen-point checklist is two or more issues"*, and
+*"twenty to forty checklist items"* on the alternative — six lines above the new
+`Checklist ceiling: 7`. Adding a value clause beside an option that already states its own
+number leaves a reader with two answers and a user who edits the ceiling with three. The
+checkboxes now carry the direction only, which is the split section 4's *Chat length* had
+already been given in this same PR and section 3 had not.
+
+**It also found the PR title missing its type.** `arc-04: the operating agreement tunes…`
+against every other PR in the arc's `arc-04: <type>: <summary> (#NN)`. That is the pass-4 class
+exactly: nothing about it is visible until the unit is a PR, and the branch, the commits and the
+issue all read correctly.
+
+**And m43 §5.1.2 still described section 4 as *"where long is wanted, where short"*** — true
+before this PR moved length into section 1, and left describing the file as it used to be.
