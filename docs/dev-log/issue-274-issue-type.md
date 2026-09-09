@@ -1,6 +1,6 @@
 # Issue #274 — the issue type says who does the work
 
-**Issue:** [#274](https://github.com/Calyx-Engineering/arc/issues/274)  ·  **PR:** [#303](https://github.com/Calyx-Engineering/arc/pull/303)
+**Issue:** [#274](https://github.com/Calyx-Engineering/arc/issues/274)  ·  **PR:** [#306](https://github.com/Calyx-Engineering/arc/pull/306)
 
 ## Problem
 
