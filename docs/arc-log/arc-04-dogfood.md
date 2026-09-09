@@ -106,7 +106,10 @@ unproven.
 
 **200 words maximum**, written into [§6](#6-status) under that workstream's own number. Durable
 there in a way a PR comment is not, and posted on the workstream parent issue, which is where it
-is read.
+is read. **`bash tools/verify-report-budget.sh` counts it, and `verify-all.sh` runs that** — the
+budget was stated in three documents, this one, `run-instructions.md` §6.2 and
+`execution-process.md`, and read by none of them, which is how Loop's first report reached
+302 words ([#185](https://github.com/Calyx-Engineering/arc/issues/185)).
 
 **The boundary is a handover.** The mode drops to manual, the parent issue stays open until the
 user closes it, and the next workstream is a separate grant. Sections, shapes and the ordered
