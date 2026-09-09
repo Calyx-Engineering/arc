@@ -137,7 +137,7 @@ difference between the changed skill and the unchanged one either way.
 |---|---|
 | **n = 3 per side** | Enough to see that the case passes and that the control passes too. Not enough to rank two descriptions — the same limit #158 recorded, and the same reason: a rate over three turns swings hard |
 | **The case is one case, three turns** | The suite is not a suite yet. A second case (`045b77e5` t26–t28, 0/4, 0/5, 0/6 at baseline) exists in the corpus and was left unbuilt to keep this unit one issue wide |
-| **A cold probe cannot reproduce a long-context decay** | Recorded in the issue's `Spawned`. The defect lives at turn 130; nothing here replays 130 turns |
+| **A cold probe cannot reproduce a long-context decay** | Recorded in *Findings* below. The defect lives at turn 130; nothing here replays 130 turns |
 | **The probe is billed** | ~$1.00–1.40 per run for this case. Twelve runs including the six withdrawn ones, roughly $14. This is why `--probe` is not in `verify-all.sh`, and why `TN_PROBE_OUT` now exists — the first six runs' replies were not kept and could not be re-scored after the instrument was fixed |
 | **The corpus is local** | Transcripts live under `~/.claude/projects` on one machine. Only the selftest is portable, which is the part wired into the gate |
 
@@ -155,7 +155,7 @@ from a byte-compared backup. No main-tree write, and the before/after runs diffe
 one file.
 
 **Every `--probe` number produced from a worktree in this arc was taken under this
-constraint.** Filed in the issue's `Spawned` as needing its own issue.
+constraint.** Recorded in *Findings* below as needing its own issue.
 
 ## `tools/verify-hook.sh` left the global hook kill switch on
 
@@ -182,4 +182,16 @@ Cleared by hand; `verify-all.sh` returned to 14 gates clean, exit 0, and a clean
 does not leak the file.
 
 **Not fixed here.** `CLAUDE.md` lists the verify script among the things never edited
-autonomously. Filed in the issue's `Spawned`.
+autonomously. Recorded in *Findings* below.
+
+## Findings
+
+Moved verbatim from #160's body under [#271](https://github.com/Calyx-Engineering/arc/issues/271).
+One character corrected: the body reads ``R:^Grc`` where it means ``R:\arc``, a backslash mangled
+when the row was written. Everything else is byte-identical.
+
+| Finding | Where it routes |
+|---|---|
+| **A probe cannot see a worktree's edit.** The `calyx-engineering` marketplace is a `directory` source at `R:\arc` — the main tree — so `tools/plugin-reload.sh` run from a worktree installs the main tree's content, not the branch under test. Measuring this change needed the candidate `SKILL.md` staged into `~/.claude/plugins/cache/calyx-engineering/arc/0.1.0/` by hand and restored after. Every `--probe` result in this arc so far was taken from a worktree | Needs an issue — same surface as [#211](https://github.com/Calyx-Engineering/arc/issues/211) |
+| **`tools/verify-hook.sh` can leave the global hook kill switch ON.** It creates `~/.claude/HOOKS_OFF` to prove the switch works, and removes it only when the file was absent at start: `[ "$KS_PREEXISTING" -eq 0 ] && rm -f "$KS"`. Two overlapping runs — three worktrees share one `$HOME` — leave it on disk permanently, and **every hook in every repo and session is then inert, silently**. Found because `mode-guard` and `tracker-verify` went from 14/14 and 22/22 to failing every deny case. Cleared by hand; a clean sequential run does not leak it. **Not fixed here** — `CLAUDE.md` forbids editing the verify script autonomously | Needs an issue. High blast radius, no detection |
+| **A cold 3-turn probe cannot reproduce a long-context decay.** The recorded defect is at turn 130 of a 391-turn session. Replayed cold the control scores **7/7 · 1.00** — the same as the change — so the case has no headroom and cannot rank two descriptions | A limit on `--probe`, recorded in the dev-log. Not filed |
