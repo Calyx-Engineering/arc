@@ -55,10 +55,21 @@ try:
 except Exception:
     pass
 
-BRIEF_PATH = sys.argv[1]
-OUT_PATH = sys.argv[2]
+# `selftest` takes no paths, and reading argv[2] before checking for it made the selftest
+# crash on an IndexError rather than run. A missing argument on the live path is still an
+# error, and says which one.
+SELFTEST = len(sys.argv) > 1 and sys.argv[1] == "selftest"
+if not SELFTEST and len(sys.argv) < 3:
+    raise SystemExit("usage: report-shape-probe.py <brief.md> <out.md> | selftest")
+BRIEF_PATH = "" if SELFTEST else sys.argv[1]
+OUT_PATH = "" if SELFTEST else sys.argv[2]
 
-BUDGET = os.environ.get("RSP_BUDGET", "0.60")
+# MEASURED, NOT GUESSED. 0.60 was borrowed from tools/response-length-probe.py and is a
+# PER-TURN budget there. Here one run is a whole session that loads a 400-line skill and
+# writes a page of markdown, and 0.60 killed the first two attempts of #260's before side
+# with `error_max_budget_usd` — two billed runs that measured nothing. A budget set below
+# what the work costs does not save money; it spends it on cut sessions.
+BUDGET = os.environ.get("RSP_BUDGET", "3.00")
 TIMEOUT = int(os.environ.get("RSP_TIMEOUT", "600"))
 TURNCAP = int(os.environ.get("RSP_TURN_CAP", "12"))
 BACKOFF = int(os.environ.get("RSP_BACKOFF", "60"))
@@ -143,6 +154,26 @@ def unusable(out):
     return ""
 
 
+def keep(cut, wrote, out_path):
+    """(where the report is copied, what `file` reports) — the run's report, filed.
+
+    A CUT RUN'S REPORT IS KEPT ASIDE, NOT UNDER THE SIDE'S NAME. Measured on #260's before
+    side: `error_max_budget_usd` arrived AFTER the session had written a complete report, so the
+    file existed and the run was still not a measurement. Nothing here can tell a finished
+    document from one the budget stopped mid-sentence, and grading it is the guess this
+    instrument must not make.
+
+    Left under the side's name it did worse than not being graded: the loop's overwrite guard
+    saw a report for `--label before` and refused the re-run, so a cut side could not be
+    measured again without deleting files by hand. `.cut` keeps it readable and out of the way.
+    """
+    if not wrote:
+        return "", ""
+    if cut:
+        return out_path + ".cut", ""
+    return out_path, out_path
+
+
 def with_retry(attempt, backoff, sleep=time.sleep, say=None):
     """One attempt; if it measured nothing, say so, wait the stated back-off, try once more.
 
@@ -220,13 +251,74 @@ def attempt():
     # whatever the verdict. #158's and #160's billed runs could not be re-scored when their
     # numbers had to be revisited, because the raw output died with the temp directory.
     src = os.path.join(cwd, REPORT_NAME)
-    out["file"] = ""
-    if os.path.isfile(src):
-        os.makedirs(os.path.dirname(os.path.abspath(OUT_PATH)) or ".", exist_ok=True)
-        shutil.copyfile(src, OUT_PATH)
-        out["file"] = OUT_PATH
+    dest, out["file"] = keep(out["cut"], os.path.isfile(src), OUT_PATH)
+    if dest:
+        os.makedirs(os.path.dirname(os.path.abspath(dest)) or ".", exist_ok=True)
+        shutil.copyfile(src, dest)
     shutil.rmtree(cwd, ignore_errors=True)
     return out
 
+
+def selftest():
+    """The parts that do not bill: which runs are measurements, and where a report is filed.
+
+    Everything else here needs a billed session and is not covered — tools/report-shape-probe.sh
+    selftest covers the loop that reads this file's JSON. Both run in tests/verify-all.sh.
+    """
+    n = [0, 0]
+
+    def check(name, got, want):
+        n[0] += 1
+        if got == want:
+            print("  ok    %s" % name)
+        else:
+            n[1] += 1
+            print("  FAIL  %s" % name)
+            print("        got %r, want %r" % (got, want))
+
+    print("report-shape-probe.py selftest — which runs are measurements, and where a report goes")
+    print()
+    good = {"cut": "", "turns": 3, "file": "/o/r.md"}
+    check("a run that answered and wrote a report is a measurement", unusable(good), "")
+    check("a cut run is not, and says which cut",
+          unusable(dict(good, cut="error_max_budget_usd")), "error_max_budget_usd")
+    check("a session with no assistant turn is not",
+          unusable(dict(good, turns=0)), "no assistant turns")
+    # The shape unique to this instrument. A session that answered in prose and never called
+    # Write produced no document: there is nothing to grade, and grading nothing lands in every
+    # column as a fail.
+    check("a run that wrote no report is not",
+          unusable(dict(good, file="")), "the session wrote no report.md")
+    # `cut` is read BEFORE the missing file, so a budget-killed run is reported as the budget
+    # and not as a session that declined to write. The operator raises the budget; they do not
+    # go looking for a skill that did not fire.
+    check("a cut run reports the cut, not the missing file",
+          unusable(dict(good, cut="timeout", file="")), "timeout")
+
+    check("a measured run's report is kept under the side's name",
+          keep("", True, "/o/before-run1.md"), ("/o/before-run1.md", "/o/before-run1.md"))
+    check("a cut run's report is kept aside and reported as no file",
+          keep("error_max_budget_usd", True, "/o/before-run1.md"), ("/o/before-run1.md.cut", ""))
+    check("a run that wrote nothing files nothing",
+          keep("", False, "/o/before-run1.md"), ("", ""))
+
+    # The back-off is asserted without waiting for it, and without opening a session.
+    waited, said = [], []
+    tries = [dict(good, cut="error_during_execution"), dict(good)]
+    out = with_retry(lambda: dict(tries.pop(0)), 60, sleep=waited.append, say=said.append)
+    check("a cut run is retried once and the retry is what is reported",
+          (out["unusable"], out["retried"], waited), ("", "error_during_execution", [60]))
+    tries = [dict(good, cut="a"), dict(good, cut="b")]
+    out = with_retry(lambda: dict(tries.pop(0)), 60, sleep=waited.append, say=said.append)
+    check("a second failure is reported, never retried again",
+          (out["unusable"], out["retried"], len(waited)), ("b", "a", 2))
+
+    print()
+    print("%d cases, %d passed, %d failed" % (n[0], n[0] - n[1], n[1]))
+    return 1 if n[1] else 0
+
+
+if SELFTEST:
+    raise SystemExit(selftest())
 
 print(json.dumps(with_retry(attempt, BACKOFF)))

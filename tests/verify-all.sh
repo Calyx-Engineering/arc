@@ -93,12 +93,19 @@ run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 run_gate "skill probe cases" python tools/skill-probe.py selftest
 run_gate "skill probe loop cases" bash tools/skill-probe.sh selftest
 run_gate "probe handoff check cases" bash tools/probe-handoff-checks.sh selftest
-# report-shape-probe.sh's loop, on canned reports through RSP_PY, so it bills nothing. It is
-# the only gate here that runs ANOTHER gate's scorer live: the canned reports are graded by
-# tools/report-grade.sh as it is on disk, which is what notices if the verdict strings the
-# probe classifies ever drift from the ones the grader prints. Its billed half — a session
-# that writes a report — is excluded, like every other probe's.
-run_gate "report shape probe cases" bash tools/report-shape-probe.sh selftest
+# The two selftests around the report-shape probe, neither of which invokes `claude`. The
+# first is the runner's own non-billing half: which runs are measurements, and where a report
+# is filed. #260 found the second question the hard way — a budget-killed session had already
+# written a complete report, the file was kept under the side's name, and the loop's overwrite
+# guard then refused to re-measure the side.
+#
+# The second is the loop, on canned reports through RSP_PY. It is the only gate here that runs
+# ANOTHER gate's scorer live: the canned reports are graded by tools/report-grade.sh as it is
+# on disk, which is what notices if the verdict strings the probe classifies ever drift from
+# the ones the grader prints. The billed half — a session that writes a report — is excluded,
+# like every other probe's.
+run_gate "report shape probe cases" python tools/report-shape-probe.py selftest
+run_gate "report shape probe loop cases" bash tools/report-shape-probe.sh selftest
 run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "response length cases" bash tools/response-length.sh selftest
