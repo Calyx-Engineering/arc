@@ -41,6 +41,12 @@
 #              one commit per issue. Batching is by shared file, never by count.
 #   RESUMED    A run that ends on a rate or usage limit is not lost: the loop waits, then
 #              `claude -p --continue` in the same worktree carries the same session on.
+#   CLAIMED    Selection is not an interlock on its own. Two dispatchers read the same open list
+#              on 2026-09-07 and both took #158. Before any work starts, `tools/arc-claim.sh`
+#              claims the issue with a comment carrying an owner token and a TTL; selection
+#              subtracts the claimed set, the wait loop heartbeats the claim, and every exit path
+#              — including a kill — releases it. A dispatcher that dies leaks nothing past one
+#              TTL. #214.
 #
 # THE MODE ROW lives in the worktree. hooks/mode-guard reads HANDOFF.md from the payload's cwd,
 # and HANDOFF.md is gitignored, so a fresh worktree has none and every commit is denied. The
@@ -116,6 +122,139 @@ ROOT="$(git rev-parse --show-toplevel)"
 # Same path form as $ROOT (R:/arc on Windows), so worktree paths read the same everywhere.
 WT_ROOT="$(dirname "$ROOT")/arc-wt"
 RUNS="$ROOT/.arc-work/runs"
+CLAIM="$HERE/arc-claim.sh"
+
+# --- claims: which issues this dispatcher holds --------------------------------
+# THE OPEN LIST IS NOT AN INTERLOCK. Two dispatchers reading it pick the same issue, which is
+# what happened to #158 — one built and measured while the other committed that tree, opened the
+# PR and merged it. So an issue is CLAIMED before any work starts, and the claim lives on the
+# issue in GitHub rather than in this script, for the same reason the position does: kill the
+# loop and restart, and the claim is still there. tools/arc-claim.sh holds the mechanism. #214.
+#
+# CLAIMS is "<issue>:<token>" per held claim. The token names this dispatcher process — two
+# dispatchers run as the same GitHub user, so the account cannot be the identity.
+CLAIMS=""
+CLAIMED_SET=""
+CLAIM_DIR=""
+
+# ONE OWNER FOR THE WHOLE DISPATCHER, minted here rather than per `arc-claim.sh` invocation:
+# every issue this loop holds then carries the same name, and the pid in the claim comment is
+# this script's rather than that of a helper process which exited seconds later.
+# THE `||` GOES INSIDE THE SUBSHELL, not after the assignment. Under `set -euo pipefail` a
+# missing `hostname` makes the pipeline exit 127 and the script dies at this line — before the
+# fallback on the next one can run, and before `--status` and `--report`, which need no owner
+# at all, reach their early exit.
+LOOP_HOST="$( (hostname 2>/dev/null || echo unknown) | tr -cd 'A-Za-z0-9.-' )"
+[ -n "$LOOP_HOST" ] || LOOP_HOST="unknown"
+LOOP_RAND="$( (od -An -N4 -tx1 /dev/urandom 2>/dev/null || echo "$RANDOM$RANDOM") | tr -cd 'a-f0-9' )"
+[ -n "$LOOP_RAND" ] || LOOP_RAND="$$"
+LOOP_OWNER="$LOOP_HOST/$$/${LOOP_RAND:0:8}"
+
+claim_token() {  # claim_token <issue>
+  local e
+  for e in $CLAIMS; do
+    case "$e" in "$1:"*) printf '%s' "${e#*:}"; return 0 ;; esac
+  done
+  return 1
+}
+
+# take_claim <issue> — 0 if it is ours, 1 if another dispatcher holds it, 2 if that could not be
+# read. THE THREE ARE DISTINCT ALL THE WAY UP: arc-claim.sh separates "held" from "I could not
+# tell" precisely so a caller can, and collapsing them here would dispatch on a rate limit.
+#
+# The token is recorded beside the run so that reclaim_claim below can find it. That file is
+# identity, not queue position — losing it costs one TTL, never correctness.
+take_claim() {  # take_claim <issue>
+  local tok rc=0
+  tok="$(ARC_CLAIM_OWNER="$LOOP_OWNER" bash "$CLAIM" take "$1")" || rc=$?
+  [ "$rc" = 0 ] || return "$rc"
+  CLAIMS="$CLAIMS $1:$tok"
+  [ -n "$CLAIM_DIR" ] && { mkdir -p "$CLAIM_DIR"; printf '%s\n' "$tok" > "$CLAIM_DIR/claim-$1"; }
+  return 0
+}
+
+# reclaim_claim <issue> — take it, but first try to pick up the token a KILLED dispatcher left.
+# #214 requires that killing the loop and restarting resumes correctly; a fresh process mints a
+# fresh token, so without this a restarted loop reads its own claim as somebody else's for a
+# full TTL.
+#
+# ONLY `--resume` MAY CALL THIS, AND ONLY AFTER ITS LIVENESS GUARD. The token in the file is a
+# bearer credential: `arc-claim.sh refresh` matches on the string, so anything that reads the
+# file can refresh — and `$RUNS` is shared by every dispatcher started from this checkout. What
+# makes it safe is the caller, which has already established that the run recorded in this
+# directory is DEAD. `run_batch` deliberately does not call it: it refuses outright when the
+# worktree or a live run is already there, so a dispatcher racing into another's run directory
+# never reaches a claim at all.
+#
+# A refresh that could not be READ is not a refusal. Exit 2 means the tracker could not be
+# reached; deleting the token file on that would destroy the one artifact the next restart
+# needs, at the moment it is most likely to be needed.
+reclaim_claim() {  # reclaim_claim <issue>
+  local tok rc=0
+  if [ -n "$CLAIM_DIR" ] && [ -f "$CLAIM_DIR/claim-$1" ]; then
+    tok="$(cat "$CLAIM_DIR/claim-$1")"
+    if [ -n "$tok" ]; then
+      bash "$CLAIM" refresh "$1" "$tok" >/dev/null 2>&1 || rc=$?
+      case "$rc" in
+        0) CLAIMS="$CLAIMS $1:$tok"
+           echo "  #$1 — reclaimed the claim a killed dispatcher left" >&2
+           return 0 ;;
+        2) return 2 ;;
+        *) rm -f "$CLAIM_DIR/claim-$1" ;;
+      esac
+    else
+      rm -f "$CLAIM_DIR/claim-$1"
+    fi
+  fi
+  take_claim "$1"
+}
+
+release_claim() {  # release_claim <issue>
+  local tok rest e
+  tok="$(claim_token "$1")" || return 0
+  bash "$CLAIM" release "$1" "$tok" || true
+  [ -n "$CLAIM_DIR" ] && rm -f "$CLAIM_DIR/claim-$1"
+  rest=""
+  for e in $CLAIMS; do
+    case "$e" in "$1:"*) ;; *) rest="$rest $e" ;; esac
+  done
+  CLAIMS="$rest"
+  return 0
+}
+
+# RELEASED ON EVERY EXIT PATH. run_batch drops its own claims when its run ends, so the next
+# issue is dispatched with nothing stale held; this trap is the other paths — a `die` anywhere,
+# a Ctrl-C, a kill, and the plain exits. Without it a killed loop leaves the issue locked until
+# the TTL runs out, which is the failure a lock without an expiry has and this one must not.
+# It never fails the script it is unwinding: a claim that cannot be deleted expires on its own.
+release_claims() {
+  local e
+  for e in $CLAIMS; do
+    bash "$CLAIM" release "${e%%:*}" "${e#*:}" || true
+    [ -n "$CLAIM_DIR" ] && rm -f "$CLAIM_DIR/claim-${e%%:*}"
+  done
+  CLAIMS=""
+  return 0
+}
+# EACH SIGNAL TRAP EXITS. A handler that returns hands control back to the line after the one
+# that was interrupted, so `trap release_claims INT` would have turned Ctrl-C into "drop the
+# claim on the issue whose run is still executing, then carry on and dispatch the next one" —
+# strictly worse than the no-trap behaviour it replaced. 130 and 143 are the shell's own codes
+# for the two signals. The EXIT trap then fires as well and finds nothing left to do.
+trap release_claims EXIT
+trap 'release_claims; exit 130' INT
+trap 'release_claims; exit 143' TERM
+
+# read_claimed — the set selection subtracts, refreshed once per pass rather than once per
+# candidate. IT FAILS CLOSED. An unreadable claim list is indistinguishable from an empty one,
+# and treating "I could not tell" as "nobody holds it" is the whole defect this guards against.
+read_claimed() {
+  local raw
+  raw="$(bash "$CLAIM" claimed "$PARENT")"     || die "cannot read which issues other dispatchers hold — refusing to select blind"
+  CLAIMED_SET=" $(printf '%s
+' "$raw" | awk 'NF{print $1}' | tr '
+' ' ') "
+}
 
 # The mode row is written by this script and never by a run. A human ran it, which is the same
 # explicitness as saying "switch to autonomous" in chat — so the script may raise it. A run
@@ -270,9 +409,14 @@ blocked() {
   return 1
 }
 
+# CLAIMED_SET is read by the caller, not here: this runs inside a command substitution, so a
+# `die` in it would kill only the subshell and read as "nothing eligible".
 next_issue() {
   local n b
   for n in $(open_children); do
+    case "$CLAIMED_SET" in
+      *" $n "*) echo "  #$n claimed by another dispatcher" >&2; continue ;;
+    esac
     if b=$(blocked "$n"); then
       echo "  #$n blocked by #$b" >&2
     else
@@ -347,13 +491,65 @@ PY
 
 # wait_run <id> <run-dir> <worktree> <model-flag> — block until the run exits; on a rate or
 # usage limit wait and resume the same session, up to MAX_RETRY times.
+# THE HEARTBEAT. A claim's TTL is how long after this dispatcher dies before the issue is free,
+# not how long a run may take — so while the run is alive the expiry is pushed out.
+#
+# A REFUSED REFRESH IS REPORTED. arc-claim.sh returns 1 to say "the claim you think you hold is
+# gone" — reaped, or deleted by hand. Swallowing that leaves the dispatcher believing it holds an
+# issue another one is free to take, which is the whole failure being fixed here.
+heartbeat() {  # heartbeat <run-dir>
+  local n tok rc
+  for n in $(cat "$1/issues" 2>/dev/null); do
+    tok="$(claim_token "$n")" || continue
+    rc=0; bash "$CLAIM" refresh "$n" "$tok" || rc=$?
+    # The two are not the same warning. 1 is "the claim you think you hold is gone"; 2 is "the
+    # tracker could not be reached", which the next beat retries in five minutes.
+    case "$rc" in
+      0) ;;
+      2) echo "  the claim on #$n could not be read this beat — retrying next beat" >&2 ;;
+      *) echo "  WARNING: the claim on #$n is gone — another dispatcher may take it" >&2 ;;
+    esac
+  done
+  return 0
+}
+
+# sleep_heartbeat <seconds> <run-dir> — a long wait, sliced so the claim never goes unrefreshed
+# for longer than one slice. The rate-limit wait defaults to 600s against a 1800s TTL, but
+# ARC_LOOP_RETRY_WAIT is a knob and nothing couples the two; slicing removes the coupling.
+#
+# A NON-INTEGER WAIT IS SLEPT WHOLE, NOT SKIPPED. `sleep` takes `10m`; `[ 10m -gt 0 ]` is an
+# error, and a `while` whose condition errors runs no body at all — so slicing a value like that
+# would turn the rate-limit wait into no wait, and fire MAX_RETRY resumes straight back into the
+# limit that caused them.
+sleep_heartbeat() {
+  local left="$1" dir="$2" slice
+  case "$left" in
+    ''|*[!0-9]*)
+      echo "  ARC_LOOP_RETRY_WAIT=$left is not a whole number of seconds — sleeping it unsliced," \
+           "so the claim is not refreshed during the wait" >&2
+      sleep "$left"
+      heartbeat "$dir"
+      return 0 ;;
+  esac
+  while [ "$left" -gt 0 ]; do
+    slice=300; [ "$left" -lt 300 ] && slice="$left"
+    sleep "$slice"
+    left=$((left - slice))
+    heartbeat "$dir"
+  done
+  return 0
+}
+
 wait_run() {
-  local id="$1" dir="$2" wt="$3" model_flag="$4" pid attempt=0
+  local id="$1" dir="$2" wt="$3" model_flag="$4" pid attempt=0 ticks=0
   while :; do
     pid="$(cat "$dir/pid")"
     while [ ! -f "$dir/exit" ]; do
       alive "$pid" || { echo "  run $id died without an exit code — see $dir/err.log" >&2; return 1; }
       sleep 30
+      # Every tenth poll: five minutes against a TTL measured in tens of them.
+      ticks=$((ticks + 1))
+      [ "$((ticks % 10))" = 0 ] && heartbeat "$dir"
     done
     echo "  run $id exited $(cat "$dir/exit")"
     summarise "$dir"
@@ -365,7 +561,7 @@ wait_run() {
     attempt=$((attempt + 1))
     echo "  rate limit — waiting ${RETRY_WAIT}s, then resuming the same session ($attempt/$MAX_RETRY)"
     mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json"
-    sleep "$RETRY_WAIT"
+    sleep_heartbeat "$RETRY_WAIT" "$dir"
     resume_run "$dir" "$wt" "$model_flag"
   done
 }
@@ -391,8 +587,32 @@ run_batch() {
     echo "  would dispatch issue run for $(printf '#%s ' "$@")into $wt (--permission-mode $PERMISSION_MODE${MODEL:+ --model $MODEL})"
     return 0
   fi
+  # CLAIMED BEFORE ANY WORK — after the two guards above, and before everything else. Two
+  # dispatchers validating the same issue is the state that produced #158; the claim is what
+  # makes the second one stop. Return 3 rather than 1 — losing a race is not a failed run, and
+  # the caller picks something else. A read that could not be made is neither: it stops the
+  # dispatcher rather than guessing.
+  # THESE TWO GUARDS COME FIRST, ahead of the claim. They are what says this run directory is
+  # nobody else's, and a claim taken before them is a claim taken inside another dispatcher's
+  # workspace — then released by the `die` on the next line.
   [ -d "$wt" ] && die "worktree $wt already exists — remove it first: git worktree remove --force $wt"
   [ -f "$dir/pid" ] && alive "$(cat "$dir/pid")" && die "run $id is still alive (pid $(cat "$dir/pid"))"
+
+  CLAIM_DIR="$dir"
+  local crc
+  for n in "$@"; do
+    crc=0; take_claim "$n" || crc=$?
+    if [ "$crc" = 2 ]; then
+      release_claims
+      die "could not read whether #$n is claimed — refusing to dispatch blind"
+    fi
+    if [ "$crc" != 0 ]; then
+      echo "  #$n is claimed by another dispatcher — nothing dispatched" >&2
+      release_claims
+      return 3
+    fi
+  done
+
   for n in "$@"; do
     st="$(gh issue view "$n" -R "$REPO" --json state --jq .state)" || die "cannot read issue #$n"
     [ "$st" = "OPEN" ] || die "#$n is $st"
@@ -435,21 +655,35 @@ run_batch() {
   # session — `claude -p --continue` in the worktree picks up its own transcript — so it carries
   # on from where the limit stopped it rather than starting the issue over.
   launch_run "$dir" "$wt" "$model_flag" "$dir/prompt.md" ""
-  wait_run "$id" "$dir" "$wt" "$model_flag" || return 1
+  local rc=0
+  wait_run "$id" "$dir" "$wt" "$model_flag" || rc=1
 
   # Keep the worktree if anything is still open: the branch and its uncommitted state are the
   # evidence of where the run stopped.
+  #
+  # AND KEEP IT IF `wait_run` ITSELF FAILED. It returns non-zero when the run died without
+  # leaving an exit code, which is precisely when its tree is the only evidence there is. This
+  # was unreachable while the function read `wait_run … || return 1`, and became reachable when
+  # the claim release moved to the end of it. #214's pass 4.
   local open=""
   for n in "$@"; do
     st="$(gh issue view "$n" -R "$REPO" --json state --jq .state 2>/dev/null || echo OPEN)"
     [ "$st" = "OPEN" ] && open="$open #$n"
   done
-  if [ -z "$open" ]; then
+  if [ "$rc" != 0 ]; then
+    echo "  the run left no exit code — worktree kept at $wt"
+  elif [ -z "$open" ]; then
     git worktree remove --force "$wt" && echo "  every issue closed — removed $wt"
   else
     echo "  still open:$open — worktree kept at $wt"
   fi
-  [ "$(cat "$dir/exit")" = 0 ]
+  if [ "$rc" = 0 ] && [ "$(cat "$dir/exit")" != 0 ]; then rc=1; fi
+
+  # RELEASED HERE, not left to the trap: the loop dispatches the next issue before this shell
+  # exits, and a claim outliving its run says work is underway when none is. The trap is for the
+  # paths that never reach this line.
+  for n in "$@"; do release_claim "$n"; done
+  return "$rc"
 }
 
 run_report() {
@@ -492,6 +726,17 @@ if [ -n "$RESUME" ]; then
   [ -d "$wt" ] || die "worktree $wt is gone — the session cannot continue; dispatch the issues afresh"
   [ -f "$dir/pid" ] && alive "$(cat "$dir/pid")" && die "run $RESUME is still alive"
   model_flag=""; [ -n "$MODEL" ] && model_flag="--model $MODEL"
+  # A resume is a dispatch: it claims what it is about to work on, or stops. Without this the
+  # one path that skips selection is the one path with no interlock. CLAIM_DIR first, so a run
+  # whose dispatcher was killed reclaims its own token instead of colliding with itself.
+  # `reclaim_claim`, not `take_claim`: the guard three lines above has established that this
+  # run's process is dead, which is the only condition under which picking up its token is safe.
+  CLAIM_DIR="$dir"
+  for n in $(cat "$dir/issues"); do
+    crc=0; reclaim_claim "$n" || crc=$?
+    [ "$crc" = 2 ] && die "could not read whether #$n is claimed — refusing to resume blind"
+    [ "$crc" = 0 ] || die "#$n is claimed by another dispatcher — not resuming run $RESUME"
+  done
   echo "arc-loop: resuming run $RESUME — $(tr '\n' ' ' < "$dir/issues")"
   mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json" 2>/dev/null || true
   resume_run "$dir" "$wt" "$model_flag"
@@ -503,6 +748,7 @@ if [ -n "$RESUME" ]; then
   done
   if [ -z "$open" ]; then git worktree remove --force "$wt" && echo "  every issue closed — removed $wt"
   else echo "  still open:$open — worktree kept at $wt"; fi
+  release_claims
   exit 0
 fi
 
@@ -515,8 +761,11 @@ if [ -n "$ISSUES" ]; then
     case "$children" in *" $n "*) ;; *) die "#$n is not an open child of #$PARENT" ;; esac
   done
   echo "arc-loop: batch run for $(printf '#%s ' $ISSUES)"
+  rc=0
   # shellcheck disable=SC2086
-  run_batch $ISSUES || { echo "arc-loop: the batch run exited non-zero" >&2; exit 1; }
+  run_batch $ISSUES || rc=$?
+  [ "$rc" = 3 ] && die "the batch is claimed by another dispatcher — nothing dispatched"
+  [ "$rc" = 0 ] || { echo "arc-loop: the batch run exited non-zero" >&2; exit 1; }
   echo "arc-loop: batch done. Selection, --max and the report run are the plain invocation's."
   exit 0
 fi
@@ -524,10 +773,19 @@ fi
 # --- the loop -------------------------------------------------------------------
 count=0
 last=""
+# A lost race costs a pass, and a pass is several `gh` calls. Bounded so a dispatcher that keeps
+# losing stops rather than spinning on the API.
+lost=0
 while :; do
+  read_claimed
   if ! issue=$(next_issue); then
     if [ -n "$(open_children)" ]; then
-      echo "arc-loop: every remaining issue is blocked — stopping"
+      if [ -n "$(printf '%s' "$CLAIMED_SET" | tr -d ' ')" ]; then
+        echo "arc-loop: every remaining issue is blocked or claimed by another dispatcher —" \
+             "claimed:$CLAIMED_SET— stopping"
+      else
+        echo "arc-loop: every remaining issue is blocked — stopping"
+      fi
       exit 1
     fi
     echo "arc-loop: workstream complete, dispatching report run"
@@ -547,7 +805,20 @@ while :; do
 
   count=$((count + 1))
   echo "arc-loop: [$count] issue run for #$issue"
-  if ! run_batch "$issue"; then
+  rc=0
+  run_batch "$issue" || rc=$?
+  # A lost race is not a failed run. The claimed set is re-read at the top of the next pass, so
+  # this issue is skipped there and something else is picked; `count` is put back because
+  # nothing was dispatched.
+  if [ "$rc" = 3 ]; then
+    count=$((count - 1))
+    lost=$((lost + 1))
+    [ "$lost" -ge 5 ] && die "lost the race for an issue five times — another dispatcher is taking this workstream; stopping"
+    sleep 5
+    continue
+  fi
+  lost=0
+  if [ "$rc" != 0 ]; then
     echo "arc-loop: the run for #$issue exited non-zero — stopping" >&2
     exit 1
   fi
