@@ -1,2 +1,2 @@
 # a closing keyword that bound to nothing, on a base that cannot bind one — say so rather than leave the issue looking orphaned
-{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"main","arc_test_linked":"0","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closes #10\n","tool_input":{"command":"gh pr edit 200 --body-file body.md"}}
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"main","arc_test_milestone":"null","arc_test_linked":"0","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closes #10\n","tool_input":{"command":"gh pr edit 200 --body-file body.md"}}
