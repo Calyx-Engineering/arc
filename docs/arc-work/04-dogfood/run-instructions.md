@@ -146,12 +146,12 @@ as a picture of what was not done.
 
 **The budget is checked — `bash tools/verify-report-budget.sh`, and `verify-all.sh` runs it.**
 Loop's first report was 302 words and the user caught it, because the budget was stated in three
-documents — this one, the arc-log and `execution-process.md` — and read by nothing. What counts as a word is in that script's header and is worth
-knowing before writing: section 7 and every fenced block, the section headings, the
-`**Workstream:**` line and the `*End of ...*` line are all outside the count, as are table pipes,
-delimiter rows, list markers and the URL half of a link. It reports and never truncates, and it
-does not check a report's self-declared count — that number is a hand count, and only the one the
-script prints binds.
+documents — this one, the arc-log and `execution-process.md` — and read by nothing. What counts
+as a word is in that script's header and is worth knowing before writing: section 7 and every
+fenced block, the section headings, the `**Workstream:**` line and the `*End of ...*` line are all
+outside the count, as are table pipes, delimiter rows, list markers and the URL half of a link.
+It reports and never truncates, and it does not check a report's self-declared count — that number
+is a hand count, and only the one the script prints binds.
 
 **Number the heading and frame the block.** The arc-log numbers every heading, `## 6`, `### 6.1`;
 a report landing there as an unnumbered `###` breaks the document's own convention and cannot be

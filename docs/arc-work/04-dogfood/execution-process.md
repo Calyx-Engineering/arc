@@ -73,10 +73,11 @@ learned the hard way, on 2026-09-07:
 | **Leave the parent open** | All children closed is mechanical completion. Closing it removes the surface the report is reviewed on |
 
 The report is seven `####` sections: delivered, spawned with routing, **unexpected**, unplanned
-but needed, evidence, not done, and the diagram. **Six of them inside 200 words** — the diagram
-does not count, and is optional. **The 200 is counted by `tools/verify-report-budget.sh`, which
-`verify-all.sh` runs** — the budget was written in three documents, this one included, and read
-by none.
+but needed, evidence, not done, and the diagram. **The prose of the first six is what the 200
+covers** — the diagram is optional and outside it, and so are the headings and the frame lines.
+**The count is `tools/verify-report-budget.sh`'s, which `verify-all.sh` runs, and that script's
+header is where the rule is exact** — the budget was written in three documents, this one
+included, and read by none.
 
 ## 6 What this replaced
 

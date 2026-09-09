@@ -6,10 +6,12 @@
 #   tools/verify-report-budget.sh --root D   check another tree
 #   tools/verify-report-budget.sh --count F  print each report's count in one file
 #
-# WHY. The budget is stated twice — docs/arc-work/04-dogfood/run-instructions.md §6.2 and the
-# arc-log's own execution section — and nothing read either. Loop's first boundary report was 302
-# words against 200, and the user caught it. #185. That is the arc's own subject in miniature: a
-# rule written down in two places, loaded, and not fired.
+# WHY. The budget is stated in three documents — docs/arc-work/04-dogfood/run-instructions.md
+# §6.2, the arc-log's execution section, and execution-process.md — and nothing read any of them.
+# A fourth statement sits in the plan, which is the human's forest view and not an execution
+# input. Loop's first boundary report was 302 words against 200, and the user caught it. #185.
+# That is the arc's own subject in miniature: a rule written down three times, loaded, and not
+# fired.
 #
 # WHAT IT COUNTS, so the number is reproducible. Between a `### <n> <Workstream> — boundary
 # report` heading and its `*End of ... boundary report.*` line, a word is a whitespace-separated
