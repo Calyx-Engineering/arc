@@ -35,6 +35,17 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **F6 handoff** | [#208](https://github.com/Calyx-Engineering/arc/issues/208) | `skills/handoff`, `commands/arc-next.md` | — | **S2** |
 | **F7 activation log** | [#166](https://github.com/Calyx-Engineering/arc/issues/166) | **every hook** | — | **S4**, the only hook track in its set. Blocked by #163; touches what F1 F2 F4 touch |
 | **F8 work-watch** | [#165](https://github.com/Calyx-Engineering/arc/issues/165) | `skills/work-watch` | probe | **S5**. Blocked by [#154](https://github.com/Calyx-Engineering/arc/issues/154), Handoff's H3, which runs in S4 |
+| **F9 tracker-verify extraction** | [#230](https://github.com/Calyx-Engineering/arc/issues/230) [#231](https://github.com/Calyx-Engineering/arc/issues/231) | `hooks/tracker-verify`, its cases | — | **S7**. Spawned by F1's run, attached to Fire 2026-09-08 |
+| **F10 activation log volume** | [#238](https://github.com/Calyx-Engineering/arc/issues/238) [#239](https://github.com/Calyx-Engineering/arc/issues/239) [#273](https://github.com/Calyx-Engineering/arc/issues/273) | `hooks/lib`, every hook's log write | — | **S9**, the set's only hook track. #273 (the tracked log dirties every tree) is the same file. Never beside another hook track: it touches every hook's log write |
+| **F11 case reader** | [#265](https://github.com/Calyx-Engineering/arc/issues/265) | `tools/report-grade.py`, `topic-numbering.py`, `response-length.py`, `skill-cases.py` | — | **S7**. Before every grader track below — they import what it builds |
+| **F16 probe runner** | [#269](https://github.com/Calyx-Engineering/arc/issues/269) | `tools/skill-probe.py` | — | **S8**. Before the probe tracks in S10–S12 |
+| **F17 soak lines** | [#263](https://github.com/Calyx-Engineering/arc/issues/263) | arc-log §10 | — | **S8**. Docs only |
+| **F18 verify-hook exit** | [#264](https://github.com/Calyx-Engineering/arc/issues/264) | a proposal under `docs/arc-work/` — `verify-hook.sh` is never edited by a run | — | **S8** |
+| **F19 branch-guard outside a repo** | [#272](https://github.com/Calyx-Engineering/arc/issues/272) | `hooks/branch-guard`, its cases | — | **S8**. A different hook file from F9; neither touches `verify-all.sh` |
+| **F12 topic case** | [#259](https://github.com/Calyx-Engineering/arc/issues/259) | `evals/topic-numbering`, `tools/topic-numbering.py` | — | **S10**. After F11 |
+| **F13 report shape** | [#260](https://github.com/Calyx-Engineering/arc/issues/260) | `skills/engineering-report` | probe | **S10** — probe slot |
+| **F14 provenance** | [#266](https://github.com/Calyx-Engineering/arc/issues/266) then [#261](https://github.com/Calyx-Engineering/arc/issues/261) | `skills/record-route`, `evals/`provenance | #261 probe | **S10** for the scope, **S12** for #261 — the set's probe slot |
+| **F15 twenty words** | [#262](https://github.com/Calyx-Engineering/arc/issues/262) | `skills/chat-response`, `evals/response-length` | probe | **S11** — probe slot. After U8 (#174) has merged, same file |
 
 **Why not the brief's #162+#183+#210:** #162 is a different hook in a different file. #163 edits `tracker-verify` too and was unscoped when the brief was written.
 
@@ -47,6 +58,7 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **H3 saturation check** | [#154](https://github.com/Calyx-Engineering/arc/issues/154) | `skills/work-watch` | probe | Nothing. Unblocks Fire's F8 — same file, same check count; F8 runs in the set after |
 | **H4 session index** | [#16](https://github.com/Calyx-Engineering/arc/issues/16) | new `hooks/session-index`, `hooks.json`, `agents/transcript-miner` | — | Fire's F7 (#166 instruments every hook) |
 | **H5 handoff, live** | [#252](https://github.com/Calyx-Engineering/arc/issues/252) [#253](https://github.com/Calyx-Engineering/arc/issues/253) | probe run on the eight openings; a scored live cold start on a real `HANDOFF.md` | probe | H2, F6. Filed after Handoff's boundary report: *no score moved, nothing soaked live* |
+| **H6 checks and the mode row** | [#267](https://github.com/Calyx-Engineering/arc/issues/267) [#268](https://github.com/Calyx-Engineering/arc/issues/268) | `skills/handoff` | — | H5 — an edit to the skill during H5's measurement corrupts it. **S9** |
 
 ### 3.3 Tracker — [#147](https://github.com/Calyx-Engineering/arc/issues/147)
 
@@ -57,6 +69,9 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **T3 issue-write rules** | [#87](https://github.com/Calyx-Engineering/arc/issues/87) [#135](https://github.com/Calyx-Engineering/arc/issues/135) [#193](https://github.com/Calyx-Engineering/arc/issues/193) | `skills/issue-write`, `verify-tracker-body.sh`, `tools/tracker-cases/` | probe (#135's m13 case) | Nothing |
 | **T4 issue shape** | [#84](https://github.com/Calyx-Engineering/arc/issues/84) [#85](https://github.com/Calyx-Engineering/arc/issues/85) | `skills/issue-write`, new `templates/issue.md`, GitHub labels | — | T3 (same skill) |
 | **T5 manual linking** | [#136](https://github.com/Calyx-Engineering/arc/issues/136) | `m12`, `skills/issue-write`, `hooks/tracker-verify` | — | T2, T4. **Low priority — the issue says it may leave the arc** |
+| **T6 findings to the dev-log** | [#270](https://github.com/Calyx-Engineering/arc/issues/270) | `run-instructions.md`, `hooks/tracker-verify` | — | Nothing. **S7** — every later run follows the rule it sets. F9 edits the same hook, so F9 waits for S8 |
+| **T7 Fire's bodies reshaped** | [#271](https://github.com/Calyx-Engineering/arc/issues/271) | nine issue bodies, nine dev-logs | — | T6. **S9** |
+| **T8 the issue type** | [#274](https://github.com/Calyx-Engineering/arc/issues/274) | `skills/issue-write`, `tools/arc-loop.sh`, `tools/verify-labels.sh` | — | U11 (#214, `arc-loop.sh`). **S9** |
 
 ### 3.4 Upkeep — [#148](https://github.com/Calyx-Engineering/arc/issues/148)
 
@@ -75,6 +90,24 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **U11 one run per issue** | [#214](https://github.com/Calyx-Engineering/arc/issues/214) | `tools/arc-loop.sh` — refuse an `in-progress` issue | — | Nothing |
 | **U9 move to `tests/`** | [#190](https://github.com/Calyx-Engineering/arc/issues/190) | every verifier, every case directory, every citation | — | **Everything. Alone. Last.** `verify-hook.sh`'s move is a proposal to David |
 
+### 3.5 Skills — [#90](https://github.com/Calyx-Engineering/arc/issues/90)
+
+Added 2026-09-08 at the user's direction. Every skill reviewed with Anthropic's skill-writing tooling, and for each the question whether a hook, script or template does part of its job more cheaply. **Runs alone, after every other workstream has reported** — it touches every skill, and it should read Fire's graders as they end up.
+
+| Track | Issues | Edits | Probe | After |
+|---|---|---|---|---|
+| **K1 the method** | [#275](https://github.com/Calyx-Engineering/arc/issues/275) | a scope document | — | Nothing. **S13**, alone — everything below is blocked by it |
+| **K2 length gate** | [#276](https://github.com/Calyx-Engineering/arc/issues/276) | new `tools/verify-skill-length.sh`, `verify-all.sh` | — | Nothing. **S13** |
+| **K3 issue-write** | [#277](https://github.com/Calyx-Engineering/arc/issues/277) | `skills/issue-write`, `hooks/tracker-verify` | — | K1. **S14** |
+| **K4 work-watch** | [#278](https://github.com/Calyx-Engineering/arc/issues/278) | `skills/work-watch`, `skills/relief-valve` | — | K1. **S14** |
+| **K5 the writing skills** | [#279](https://github.com/Calyx-Engineering/arc/issues/279) | `skills/chat-response`, `engineering-report`, `record-route` | probe | K1. **S14** — probe slot, Fire's graders before and after |
+| **K6 the spine** | [#280](https://github.com/Calyx-Engineering/arc/issues/280) | `skills/handoff`, `camp`, `autonomy-set`, `arc-intent` | — | K1. **S15** |
+| **K7 the rest** | [#281](https://github.com/Calyx-Engineering/arc/issues/281) | `skills/spec-interview`, `decompose`, `plugin-retrospective` | — | K1. **S15** |
+| **K8 the rule's home** | [#282](https://github.com/Calyx-Engineering/arc/issues/282) | `CLAUDE.md`, the product definition | — | K1. **S15** |
+| **K9 the menu** | [#283](https://github.com/Calyx-Engineering/arc/issues/283) | `README.md`, every `SKILL.md` frontmatter, `verify-skill-registry.sh` | — | K3–K7 — the README describes the skills as they end up, not as they start. **S15**, last |
+
+**The queue grows.** A review that finds a hook should exist files it under #90; the orchestrator adds a track.
+
 ## 4 The sets — whole arc, in order
 
 Workstreams are **not** the parallel unit; the track is. Each set mixes workstreams where the files allow. Five tracks, at most one probe.
@@ -87,21 +120,30 @@ Workstreams are **not** the parallel unit; the track is. Each set mixes workstre
 | **S4** | F7 (the only hook track) · H2 · H3 · T4 | Fire · Handoff · Tracker | H3 |
 | **S5** | F8 · T2 · H4 · U5 · U6 | Fire · Tracker · Handoff · Upkeep | F8 |
 | **S6** | U7 · U3 · U8 · U11 | Upkeep | U8 |
-| **S7** | H5 · U10 · T5 · human (#134 #175 #202) | Handoff · Upkeep · Tracker | H5 |
-| **S8** | U9 alone | Upkeep | — |
+| **S7** | H5 · U10 · T5 · T6 · F11 · human (#134 #175 #202) | Handoff · Upkeep · Tracker · Fire | H5 |
+| **S8** | F9 · F16 · F17 · F18 · F19 | Fire | — |
+| **S9** | U9 · F10 · H6 · T7 · T8 | Upkeep · Fire · Handoff · Tracker | — |
+| **S10** | F12 · F13 · F14 (#266) | Fire | F13 |
+| **S11** | F15 | Fire | F15 |
+| **S12** | F14 (#261) | Fire | F14 |
+| **S13** | K1 · K2 | Skills | — |
+| **S14** | K3 · K4 · K5 | Skills | K5 |
+| **S15** | K6 · K7 · K8 · K9 | Skills | — |
 
 ```mermaid
 flowchart LR
-  S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8
+  S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8 --> S9 --> S10 --> S11 --> S12 --> S13 --> S14 --> S15
   S5 -.-> RF["Fire report"]
-  S7 -.-> RH["Handoff report"]
-  S7 -.-> RT["Tracker report"]
-  S8 -.-> RU["Upkeep report"]
+  S12 -.-> RF
+  S9 -.-> RH["Handoff report"]
+  S9 -.-> RT["Tracker report"]
+  S9 -.-> RU["Upkeep report"]
+  S15 -.-> RK["Skills report"]
 ```
 
-A workstream's report run fires when its last child closes — Fire after S5, Handoff and Tracker after S7, Upkeep after S8. The boundary is a review, not a scheduling unit.
+A workstream's report run fires when its last child closes — Fire after S5 and again after S12 (fifteen issues reopened it 2026-09-08), Handoff, Tracker and Upkeep after S9, Skills after S15. The boundary is a review, not a scheduling unit.
 
-**Eight sets at ~45 min if the sub-agent passes hold: a working day of wall time, against thirty-plus serial runs.**
+**Fifteen sets at ~45 min if the sub-agent passes hold: a working day of wall time, against thirty-plus serial runs.**
 
 ## 5 The orchestrator's loop
 

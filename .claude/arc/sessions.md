@@ -8,4 +8,5 @@
 
 | Transcript | Worktree | Branch | Issue | Arc | Dates | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `R--arc-wt-16` | `R:/arc-wt/16` | `arc/04-dogfood-issue-16-session-index` | #16 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | live |
+| `R--arc-wt-16` | `R:/arc-wt/16` | `arc/04-dogfood-issue-16-session-index` | #16 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | orphaned |
+| `r--arc` | `r:/arc` | `arc/04-dogfood-issue-145-fire-review` | #145 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | live |

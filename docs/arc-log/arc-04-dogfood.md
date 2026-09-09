@@ -136,6 +136,10 @@ sequence are in
 | **Rationale is not narrative** | Leading hypothesis for why a correct handoff produces the opposite conclusion: *"we tried X then Y"* is cut as development narrative and the constraint that produced the decision goes with it. In hardware the constraint is what makes the next decision correct. Unproven — Handoff-1 tests it |
 | **The manual process the handoff replaced worked** | A cold start that began by reading the previous session's transcript produced good results, and inspired the handoff. The document is a distillation of that transcript — **distillation is where the rationale is lost**, which is the same finding as the row above, arrived at from the other direction |
 | **No standing merge grant has ever existed here** | Since Arc was installed, no merge has run without an explicit per-merge request. [#138](https://github.com/Calyx-Engineering/arc/issues/138) is building a route, not recovering a lost one |
+| **The skill length limit is Anthropic's 500 lines, not 180** | The user's call 2026-09-08: *stick to anthropic official guidance and modify our own practices.* [#90](https://github.com/Calyx-Engineering/arc/issues/90) carried 180; retired. What would have to change: Anthropic's published guidance |
+| **The issue type says who does the work; the prefix says what** | GitHub issue types are single-valued, so **Agent** cannot coexist with Bug. Agent-typed issues are the loop's; any other type is a human's. Kind stays in the prefix and its label. Decided 2026-09-08; [#274](https://github.com/Calyx-Engineering/arc/issues/274) builds it. What would have to change: labels proving a better human-readable split, or types becoming multi-valued |
+| **The boundary review is where a workstream's spawned work gets routed** | Fire's review 2026-09-08 turned one 200-word report into 24 issues: four spawns never attached, eleven *needs an issue* rows never filed, §6.3.6 items nobody owned, and a new workstream. A report that lists *Not done* without a route for each item is incomplete — every item is an issue, done, or marked *cannot*, with the reason. What would have to change: a run that routes its own spawns and files its own findings, which is what [#270](https://github.com/Calyx-Engineering/arc/issues/270) builds |
+| **The user reviews every boundary report before the next workstream's report runs** | The review is the mechanism that caught the above. It is not optional and not the orchestrator's |
 | **Issue writing is in scope** | The user's call: *"good issue writing and naming has become a critical core to the development workflow."* Six issues carry it |
 
 ### 4.1 Judgement calls made unattended — 2026-09-07, workstream #145
@@ -185,10 +189,11 @@ Each workstream's 200-word boundary report lands here when it closes.
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
-| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | **In progress.** [#163](https://github.com/Calyx-Engineering/arc/issues/163) closed; [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the activation log, every hook leaving a record — is in [#244](https://github.com/Calyx-Engineering/arc/pull/244); [#165](https://github.com/Calyx-Engineering/arc/issues/165) — `work-watch` check 8, one tested alternative before a failure is blamed on the user's environment — is in [#248](https://github.com/Calyx-Engineering/arc/pull/248). Spawned [#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239) and [#246](https://github.com/Calyx-Engineering/arc/issues/246) |
-| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | **6 of 6 closed.** Report in [§6.4](#64-handoff--boundary-report). The parent stays open until the user closes it. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
-| **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | **In progress.** [#199](https://github.com/Calyx-Engineering/arc/issues/199) — `tools/verify-issue-boxes.sh`, the box count `hooks/tracker-verify` runs on `gh pr ready` — and [#83](https://github.com/Calyx-Engineering/arc/issues/83) — the same hook reporting a tracker object that records no parent — are built. [#140](https://github.com/Calyx-Engineering/arc/issues/140)'s *not a gate script* constraint is narrowed to the prose half |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 31 | **16 closed, 15 open.** Report in [§6.3](#63-fire--boundary-report) covers the first sixteen. **Reopened 2026-09-08** by the user's review of that report: four spawns never attached ([#230](https://github.com/Calyx-Engineering/arc/issues/230) [#231](https://github.com/Calyx-Engineering/arc/issues/231) [#238](https://github.com/Calyx-Engineering/arc/issues/238) [#239](https://github.com/Calyx-Engineering/arc/issues/239)) and eleven filed from §6.3.6 and the children's unfiled findings ([#259](https://github.com/Calyx-Engineering/arc/issues/259)–[#266](https://github.com/Calyx-Engineering/arc/issues/266), [#269](https://github.com/Calyx-Engineering/arc/issues/269), [#272](https://github.com/Calyx-Engineering/arc/issues/272), [#273](https://github.com/Calyx-Engineering/arc/issues/273)). Playlist F9–F19. The parent stays open until the user closes it |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 10 | **6 closed, 4 open.** Report in [§6.4](#64-handoff--boundary-report). Reopened by [#252](https://github.com/Calyx-Engineering/arc/issues/252) [#253](https://github.com/Calyx-Engineering/arc/issues/253) (H5) and [#267](https://github.com/Calyx-Engineering/arc/issues/267) [#268](https://github.com/Calyx-Engineering/arc/issues/268) (H6). [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
+| **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 10 | **In progress.** [#199](https://github.com/Calyx-Engineering/arc/issues/199) and [#83](https://github.com/Calyx-Engineering/arc/issues/83) built; [#140](https://github.com/Calyx-Engineering/arc/issues/140)'s constraint narrowed to the prose half. Added 2026-09-08: [#270](https://github.com/Calyx-Engineering/arc/issues/270) findings to the dev-log, [#271](https://github.com/Calyx-Engineering/arc/issues/271) Fire's bodies reshaped, [#274](https://github.com/Calyx-Engineering/arc/issues/274) the issue type says who does the work |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — is in [#249](https://github.com/Calyx-Engineering/arc/pull/249) |
+| **Skills** | [#90](https://github.com/Calyx-Engineering/arc/issues/90) | 9 | **Not started.** Added 2026-09-08 at the user's direction, last in the order — every skill reviewed with Anthropic's skill-writing tooling, and for each whether a hook, script or template does the job more cheaply. Playlist §3.5, S13–S15 |
 
 ### 6.1 The retrospective and the plan
 
@@ -279,6 +284,8 @@ flowchart LR
 
 **Workstream:** Fire · **Closed:** 2026-09-08 · **200 words**, diagram excluded
 
+**Why it exists:** the rules were already written and were not being read. 21 of 47 post-install corrections were a rule that existed in a skill or hook and did not fire. Fire's job was to make firing measurable, then make it happen — an eval per shipping skill, a case directory per hook.
+
 #### 6.3.1 Delivered
 
 1. Openings load `handoff` and `camp`: 0/12 to 0.83
@@ -292,7 +299,7 @@ flowchart LR
 | | | Routed |
 |---|---|---|
 | [#208](https://github.com/Calyx-Engineering/arc/issues/208) · [#210](https://github.com/Calyx-Engineering/arc/issues/210) · [#213](https://github.com/Calyx-Engineering/arc/issues/213) | Closed | Fire |
-| [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) | Hook extraction; log volume, rotation | Fire — open, **not sub-issues** |
+| [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) | Hook extraction; log volume, rotation | Fire — open; attached as sub-issues 2026-09-08, tracks F9 (S7) and F10 (S8) |
 | [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#246](https://github.com/Calyx-Engineering/arc/issues/246) | Reload reverts edits; check 8 live | Dogfood — open |
 | Unfiled | Eleven *needs an issue* findings | Nowhere |
 
@@ -326,7 +333,7 @@ flowchart LR
 - Boxes unticked: [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#210](https://github.com/Calyx-Engineering/arc/issues/210), [#166](https://github.com/Calyx-Engineering/arc/issues/166)
 - [#160](https://github.com/Calyx-Engineering/arc/issues/160)'s case cannot discriminate
 - Everything merged unsoaked
-- `TEMPLATE`, `verify-hook.sh` edits proposed only
+- `TEMPLATE` edit proposed only — **applied 2026-09-08** on the user's approval. `verify-hook.sh`'s declaration check was already in the file since 2026-08-19; the proposal was moot
 
 #### 6.3.7 What it changed
 
