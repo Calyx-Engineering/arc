@@ -1,6 +1,6 @@
 # Issue #271 — Fire's nine bodies reshaped to the `Related` table
 
-**Issue:** [#271](https://github.com/Calyx-Engineering/arc/issues/271)  ·  **PR:** <pr>
+**Issue:** [#271](https://github.com/Calyx-Engineering/arc/issues/271)  ·  **PR:** [#302](https://github.com/Calyx-Engineering/arc/pull/302)
 
 ## Problem
 
@@ -65,7 +65,7 @@ dropped. The driver greps for that line; the table cell does not match it.
 | `tools/verify-tracker-body.sh body` | All nine reshaped bodies exit 0 — `Related` is the last section in each |
 | `tools/verify-tracker-body.sh selftest` | 26 passed, 0 failed, exit 0 |
 | `bash tools/verify-all.sh` | **42 gates PASS, 0 FAIL — the run did not reach its exit line.** Five worktree runs share this machine and the runner stalled inside a hook gate; killed rather than left holding `$HOME/.claude/HOOKS_OFF`, which was confirmed absent afterwards. Not a green claim |
-| Gates not reached | `verify-hook`, `activation log`, `set-mode cases`, `report budget`. This change touches nine markdown dev-logs and no hook, tool or skill, so none of the four reads a file it altered |
+| Gates not reached | Eleven, `verify-hook` among them — 42 run plus 11 unreached is the 53 `verify-all.sh --list` names. Ten read nothing this diff touches. **`activation log` does** — `tools/verify-activation-log.sh` reads `.claude/arc/log.md`, which the second commit grows by 4050 lines |
 | Read-back of all nine live bodies | Identical to what was written, re-confirmed against the tracker after the last write. `Spawned` headings 0/9, three-column delimiter present 9/9, first row `**Spawned by**` 9/9, last section `Related` 9/9 |
 | Finding-row counts, source against dev-log | 4·4·3·5·4·3·6 — twenty-nine, no difference |
 
@@ -107,7 +107,7 @@ whose source is the tracker**, and it has to say which side it could not see.
 |---|---|
 | **#165's `Spawned` row was not in the tracker** | The write had been refused by the rate limit and the run had recorded it as fixed. Pass 3 read the live body and found the row absent. Landed afterwards through the REST endpoint and read back individually |
 | **`gh issue view` is rate-limited where `gh api` is not** | Pass 3 found the REST path answering while every GraphQL call failed. That is what unblocked the #165 write |
-| **The corpus count was invented** | *29 with `## Spawned`, 10 with `## Findings`* matched no measurement. Measured: 28 and 10 here, 30 and 2 at `HEAD` |
+| **The corpus count was invented** | *29 with `## Spawned`, 10 with `## Findings`* matched no measurement. Measured: 28 and 10 on this branch, 30 and 2 on `arc/04-dogfood` |
 | **Two counting claims disagreed with each other** | Whether eight or nine bodies carried the section, and whether all of them held a table |
 
 **Box 3 is the one pass 3 was right to press on.** The nine bodies were written in a loop and
@@ -124,17 +124,22 @@ failed write was not shipped as done.**
 | **#269's body now carries a false claim.** It says *"#213 has no `Spawned by` row"*; #213 gained one here | Same issue. The claim was true when written |
 | **#166's spawn edge is one-directional.** [#238](https://github.com/Calyx-Engineering/arc/issues/238) and [#239](https://github.com/Calyx-Engineering/arc/issues/239) still carry the two-column table and no `Spawned by` row | Needs an issue. Outside the nine |
 | **The `Routed` column was lost from #166's two rows.** Both said *"This arc — Fire"*; a three-column table has no cell for it. Recoverable from each issue's own milestone and parent | Recorded. Not a defect in the shape |
-| **`## Findings` is a heading no artifact defines.** `templates/dev-log.md` defines `## Spawned`; `skills/record-route` says a created thing goes in *the dev-log's Spawned section*. The corpus is now split — of 102 dev-logs, 28 carry `## Spawned` and 10 carry `## Findings`, against 30 and 2 at `HEAD`. #270 routed findings to the dev-log without saying which section receives them | Needs an issue. It is #270's other half |
+| **`## Findings` is a heading no artifact defines.** `templates/dev-log.md` defines `## Spawned`; `skills/record-route` says a created thing goes in *the dev-log's Spawned section*. The corpus is now split — of 102 dev-logs, 28 carry `## Spawned` and 10 carry `## Findings` on this branch, against 30 and 2 on `arc/04-dogfood`. #270 routed findings to the dev-log without saying which section receives them | Needs an issue. It is #270's other half |
 | **#213's moved row disagrees with its own dev-log.** The row says fired runs scored 0.30–0.91 and non-fired 0.09–0.20; the tables in the same file say 0.36–0.91 and 0.09–0.27. Verbatim from the body, so the disagreement was already there — the move put both numbers in one file, where it is visible | Recorded. Not corrected: unlike the path, neither figure is decidably the typo |
 | **A secondary GitHub rate limit is not the documented one.** `gh issue edit` returned *"API rate limit already exceeded"* while `gh api rate_limit` reported 5000 remaining on both core and graphql. Five worktrees share one token; the limit that bites is invisible to the endpoint that reports limits | Needs an issue. Every run in this arc writes to the tracker |
 
 ## Retrospective
 
 The mechanical half — strip a heading, rewrite a table — was done in one pass and read back
-clean. Everything worth recording came from **pass 1**, and all of it was the same class of
+clean. Everything worth recording came from the review passes, and most of it was one class of
 defect: a *reference* left pointing at something the move deleted. Three dev-logs cited a table
-that no longer existed, one issue body said *see Spawned*, one dev-log ended up holding the same
+that no longer existed, #164's own body said *see Spawned*, one dev-log ended up holding the same
 findings twice, and an issue outside the nine now makes a claim that this change falsified.
+
+**The passes did not find the same thing twice.** Pass 1 found the dangling references, pass 2
+found what pass 1's own fixes broke, and pass 3 found the one that would have shipped: a
+`Spawned` row recorded as fixed while the write behind it had been refused. Three questions, three
+different answers.
 
 **Moving a section is not finished when the section has moved.** What makes it a defect rather
 than untidiness is that each of those pointers reads as a live cross-reference — a reader follows
