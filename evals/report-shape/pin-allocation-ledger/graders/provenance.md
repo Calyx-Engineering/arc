@@ -14,16 +14,60 @@ beside them.
 | | Is | And |
 |---|---|---|
 | `measured` | A bench result | The rig and its limits belong with it |
+| `instrument` | A number an instrument displayed | **Not a measurement.** Nothing says it was measuring what the claim names |
+| `schematic` | This board's own sheets | |
 | `datasheet` | The part's own document | Cite the page |
 | `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
-| `schematic` | This board's own sheets | |
+| `firmware` | Shipped source | What the code *does*, not what the hardware requires |
+| `drawing` | A reviewed diagram | As strong as the review behind it |
+| `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
+| `thread` | An issue thread | A decision was reached; no artifact records it yet |
 | `photograph` | A picture of a circuit not in hand | **Treat as a hypothesis** |
 | `conversation` | Said, not written | Not a decision until it is |
 | `inferred` | Extrapolated, assumed, calculated from something else | The weakest, and the easiest to mistake for a measurement |
 
 **The order is the point.** Without it, "record the source" is a label with no consequence.
 
-**The grader matches aliases, not only these seven words.** A report written before the
+**Twelve, not seven, and the extra five are why this case is the exemplar.**
+[#266](https://github.com/Calyx-Engineering/arc/issues/266) reconciled the vocabulary #164
+specified with the one this very document had been carrying — `firmware`, `drawing`, `report`
+and `thread` are adopted from it, `photo` maps to `photograph`, and `schematic` rises above
+`datasheet` and `vendor` both — a claim about *this board* is settled by this board's own
+sheets, and it is the only term that moves. Every one of the adopted four appears in the ledger
+below.
+
+**`instrument` is the new term, and it is the one the seven could not express.** `measured`
+covered a bench result and a number an instrument displayed with equal weight. On 2026-08-28 a
+scope reported 2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading cannot separate a
+tone from a tone plus a 433 kHz class-D carrier — and an estimate from that reading was taken
+over a bench measurement the user had verified. Under one word for both, that region held ONE
+source and graded `ONESIDED`: unscored, and invisible. `pr-68-gain-sweep-tool.md` is the only
+place it is written down, and it could not become a case here for exactly that reason. It is the
+`instrumentreading` fixture in the selftest.
+
+**All four adopted terms are ordinary English before they are labels.** An amplifier is
+*drawing power*; every document this instrument reads is a *report*; a screw has a *thread*; a
+duty cycle is *fixed in firmware*. Matched bare they would put a second source in play wherever
+the word falls — and because the conflict column counts co-occurrence, a false match does not
+mis-label a row, it manufactures a conflict and lands `RESOLVED` in the numerator.
+
+**`drawing`, `report` and `thread` are matched only followed by what they cite.** `firmware`
+cannot take that shape — the ledger writes it bare in its column — and it cannot take a
+cell-shaped one either, because the row scan searches the cells joined by spaces, with the pipes
+already gone. It is guarded by what makes the false shape false instead: *"fixed in firmware"*
+and *"disable CLKOUT in firmware"* are statements about behaviour, and a Provenance cell never
+reads *"in firmware"*.
+
+The same reasoning took `the scope`, `the meter` and `the instrument` out of `instrument`:
+*"the scope of this document"* is not an oscilloscope, *"300 meters of cable"* is not a
+multimeter, and *"an instrument matching only the vocabulary"* is this file talking about
+itself. An instrument is reached through what it did — read, reported, captured, showed.
+
+**Each guard has a fixture that goes red without it**, which four of them did not until review
+pass 2 checked: `drawingpower`, `reportprose`, `scopeprose`, `threadpitch`, `firmwareinprose`,
+`instrumentnoun`, `metresprose`.
+
+**The grader matches aliases, not only these twelve words.** A report written before the
 vocabulary existed still records provenance in its own words — *"from the product label"*,
 *"the scope reported"*, *"most likely explanation"*. An instrument matching only the vocabulary
 would score every one of those as unsourced, and the baseline would measure adoption of a word
@@ -79,7 +123,10 @@ this as a pass, in favour of `measured`:
 > 24.7x, and we are taking the estimate as correct.
 
 That is the 2026-08-28 incident #164 was written about. **An instrument has to be able to fail
-the thing it was built for.** It now scores `WEAKWINS`, asserting `inferred`.
+the thing it was built for.** It now scores `WEAKWINS`, asserting `instrument` — #266 split
+that term out of `measured`, and what beat the bench here was a number the instrument
+displayed. Naming `inferred` alone, as this read before #266, hid the instrument behind the
+estimate drawn from it.
 
 **`WEAKWINS` is reported, not failed.** #164's rule is *not overridden without saying so
 explicitly*, so a weak source that wins out loud has obeyed the rule. Whether the reason was good
