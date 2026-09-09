@@ -60008,7 +60008,7 @@
   outcome: ok — already checked this session
   skipped: arc-active (no arc registry exists yet) · branch-is-work (already checked this session) · issue-in-branch-name (already checked this session)
 2026-09-09T14:44Z  handoff-archive  handoff-archived  tool=Edit
-  checked: handoff-snapshot=nothing-to-copy · user-authored-file-archived=tests/verify-log-rotation.sh — all ok
+  checked: handoff-snapshot=nothing-to-copy · user-authored-file-archived=tools/verify-log-rotation.sh — all ok
   outcome: repaired — took a copy before the overwrite
 2026-09-09T14:44Z  branch-guard  edit-checked  branch=arc/04-dogfood-issue-238-log-volume prefix=arc/
   checked: branch-kind=work · worktree-identity=own · base-freshness=current — all ok

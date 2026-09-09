@@ -708,7 +708,7 @@ The user identified it: *"you dont get it when i ask you because then i'm explic
 |---|---|
 | **Six places outside `work-watch` assert its check count** | Moved four → five → six in one day. Swept clean both times, and never de-duplicated |
 | **Issues are not re-read against the tree before being picked up** | Four of five needed their scope re-derived at pass 2. The loop's pass 2 catches it, at the cost of a plan written and then rewritten |
-| **Almost nothing here has run** | `hooks/hooks.json` resolves `${CLAUDE_PLUGIN_ROOT}`, so no hook fires and no skill is invoked. **`tools/` is the exception** — `new-direct-pr.sh`, `verify-hook.sh`, `verify-tracker-body.sh` and `sync-local-skills.sh` all run here for real, which is why the only genuinely soaked change in this arc is a script |
+| **Almost nothing here has run** | `hooks/hooks.json` resolves `${CLAUDE_PLUGIN_ROOT}`, so no hook fires and no skill is invoked. **the scripts are the exception** — `new-direct-pr.sh`, `verify-hook.sh`, `verify-tracker-body.sh` and `sync-local-skills.sh` all run here for real, which is why the only genuinely soaked change in this arc is a script |
 
 ## 13 Soak
 
