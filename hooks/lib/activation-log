@@ -204,8 +204,9 @@ _arc_log_write() {
   #                        (same)` under `outcome: ok — already indexed this session`
   #
   # Measured over the log rotated out at arc 03's close, docs/arc-log/events/arc-03-camp:
-  # 14,734 entries and 4.43 MB, of which 11,156 were of this kind and their skipped lines were
-  # 2.26 MB — 50% of the file, restating what the two lines above it already said. #238.
+  # 14,734 entries in 4,643,015 bytes, of which 11,156 were of this kind and the skipped lines
+  # of the 11,105 cleanly-written ones were 2,342,122 bytes — 50% of the file, restating what
+  # the two lines above them already said. #238.
   #
   # THE ENTRY IS NEVER OMITTED, and sampling was rejected for the same reason: one firing is
   # one entry on every path, or `tools/verify-activation-log.sh` has nothing it can assert and

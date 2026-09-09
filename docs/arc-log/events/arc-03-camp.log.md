@@ -8,11 +8,16 @@
 
 **Arc:** `arc/03-camp` · **Rotated:** 2026-08-19 · **Closed:** 2026-09-09 · **Previous:** none — this is the first
 
-> **Rotated late — [#239](https://github.com/Calyx-Engineering/arc/issues/239).** Nothing
-> performed rotation when arc 04 opened, so entries from 2026-09-08 onward were appended here
-> while `arc/04-dogfood` was the live arc. They are left where they are: the log is append-only,
-> and moving an entry out of it is an edit. `tools/verify-log-rotation.sh` is what makes the
-> next omission visible.
+> **Rotated late, and almost none of this is arc 03 — [#239](https://github.com/Calyx-Engineering/arc/issues/239).**
+> Nothing performed rotation when arc 04 opened, so `arc/04-dogfood` wrote here for its whole
+> length. Of 14,734 entries, **3 are dated 2026-08-19** — `issue-write` examples from when the
+> format was built — **1,193 are 2026-09-08 and 13,538 are 2026-09-09**, all of them arc 04's.
+> The file keeps arc 03's name because that is the header it carried; its contents are arc 04's.
+> The entries are left where they are: the log is append-only, and moving one out of it is an
+> edit. `tools/verify-log-rotation.sh` is what makes the next omission visible.
+>
+> It is also **one worktree's copy**. The live log is per-worktree, so four sibling trees held
+> their own; this is 238's.
 
 ---
 

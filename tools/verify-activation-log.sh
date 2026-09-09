@@ -20,8 +20,8 @@
 #   compact       a firing that reached no declared check and reports nothing carries no
 #                 `skipped:` line at all — neither the declaration copied back nor the skip
 #                 reasons, which on such a firing restate the `outcome:` line. 50% of arc
-#                 03's 4.43 MB log — #238. The entry is still asserted, one per firing on
-#                 every path; only its length changed
+#                 03's 4,643,015-byte log — #238. The entry is still asserted, one per
+#                 firing on every path; only its length changed
 #   invisible     no entry text reaches stdout. A PreToolUse hook's stdout is parsed as a
 #                 permission decision, so an entry echoed there is a broken hook however
 #                 good the log looks

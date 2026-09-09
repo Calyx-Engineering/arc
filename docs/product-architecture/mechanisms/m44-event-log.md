@@ -66,6 +66,13 @@ here: an arc's events are recoverable only from the moment they are rotated. The
 a tracked file rewritten by machine on every tool call — makes every human diff unreadable,
 which loses the review the tracking was for.
 
+**The live log is per-worktree, and untracking it makes that visible rather than causing it.**
+The path resolves under `$CLAUDE_PROJECT_DIR`, so five worktrees keep five logs. While the file
+was tracked they were merged by whoever committed next; nothing merges them now, and **the
+archive a rotation produces is one worktree's slice rather than the arc's whole record.**
+Measured across the five trees live at arc 03's rotation: 58,210 · 58,466 · 60,014 · 62,089 ·
+58,481 lines, one of them holding 250 lines the archived copy does not.
+
 ---
 
 ## Consumers
@@ -116,11 +123,14 @@ working one.
 **The rate is kept and the entry is what got smaller.** Five hook registrations sit on the
 `Bash` matcher — `mode-guard`, `handoff-archive` and `session-index` before the call,
 `tracker-verify` and `camp-branch-check` after — so an ordinary Bash tool call appends five
-entries. The log rotated out at arc 03's close measured **14,734 entries and 4.43 MB**, and
+entries. The log rotated out at arc 03's close holds **14,734 entries in 4,643,015 bytes**, and
 **11,156 of them (75%)** recorded a hook that returned before any declared check ran. Every
 number in this section is measured against that file,
 [`docs/arc-log/events/arc-03-camp.log.md`](../../arc-log/events/arc-03-camp.log.md), as
-committed.
+committed. **The counting rule, because two passes of this got different answers:** an entry
+runs from its timestamp line to the next one, and the stripped population is those with exactly
+one `checked:` line reading `— none reached` and exactly one `outcome:` line starting `ok` — so
+the 96 torn and 50 merged entries below are excluded rather than guessed at.
 
 | Considered | |
 |---|---|
@@ -129,14 +139,14 @@ committed.
 | **Accept the rate, shrink the entry** | **Chosen.** Every firing still writes exactly one entry |
 
 **An entry where no declared check ran, and which reports nothing, carries no `skipped:`
-line** — the whole line, not only the part of it the artifact did not write. **2.26 MB of
-4.43 MB, 50% of the file.** What that line held on such an entry is two things, and neither
-is evidence about the firing:
+line** — the whole line, not only the part of it the artifact did not write. **2,342,122 bytes
+of 4,643,015 — 50% of the file**, over the 11,105 entries that meet the rule above. What that line held on such an entry is two things, and
+neither is evidence about the firing:
 
 | | |
 |---|---|
-| **The unreached list** | The artifact's own `checks:` declaration copied back, every name marked `not reached` — seventeen names for `tracker-verify`, 1.21 MB of that one log |
-| **Explicit skip reasons** | `arc_log_skip` calls made on the way out, which on a firing that reached nothing say what the `outcome:` line says: `skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)` under `outcome: ok — already indexed this session`. 1.05 MB |
+| **The unreached list** | The artifact's own `checks:` declaration copied back, every name marked `not reached`. **1,213,851 bytes.** `tracker-verify` declares seventeen checks today and its lines in that log carry thirteen to fifteen — the declaration grew while the log was being written |
+| **Explicit skip reasons** | `arc_log_skip` calls made on the way out, which on a firing that reached nothing say what the `outcome:` line says: `skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)` under `outcome: ok — already indexed this session`. **1,004,622 bytes** |
 
 **The narrowness is the design, and it is a guard rather than a measurement.** A `denied`,
 `failed` or `repaired` entry keeps its `skipped:` line whatever else is true. No entry in that
@@ -158,6 +168,11 @@ both are required for a retrospective to say anything useful.
 ---
 
 ## What is not designed
+
+**Aggregation across worktrees.** The live log is per-worktree and rotation archives one of
+them. Whether the others are merged at the boundary, kept as separate files, or accepted as
+lost, is undecided. Untracking did not create the divergence — it removed the accident that
+was masking it.
 
 **Retention after an arc closes.** Per-arc rotation is settled — the log moves to
 `docs/arc-log/events/` beside that arc's arc-log. How long it is kept there, and whether it
