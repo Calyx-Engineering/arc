@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#204](https://github.com/Calyx-Engineering/arc/issues/204)  ·  **PR:** [#255](https://github.com/Calyx-Engineering/arc/pull/255)
+**Issue:** [#204](https://github.com/Calyx-Engineering/arc/issues/204)  ·  **PR:** [#257](https://github.com/Calyx-Engineering/arc/pull/257)
 
 ## Problem
 
@@ -99,6 +99,11 @@ true when it was filed. Nothing in the sequence re-reads a premise, and a run th
 asserted here is the harness plus five live probes of the extraction against PRs #245 and #249.
 **The next work stretch in this repo is its first exercise**, and the thing to read is whether
 `.claude/arc/log.md` carries `milestone=Dogfood` — a name — rather than `milestone=set`.
+
+**And it was measured, not predicted.** `gh pr create` on this unit's own PR fired the installed
+copy, which reported *"PR #257 has no milestone. It will not appear in the milestone view"* — the
+old rule, on the PR that removes it. The stale-installed-copy row in the arc-log's §10 stops
+being a prediction here: the hook that denies this PR's correct state is the one this PR fixes.
 
 **Gates:** `bash tools/verify-all.sh` → exit 0, 43 gates clean.
 `bash tools/verify-hook.sh hooks/tracker-verify` → exit 0, 63 passed, 0 failed.
