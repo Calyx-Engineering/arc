@@ -615,6 +615,9 @@ case "$CMD" in
       MILESTONE="${FIXTURE_MILESTONE:-set}"
       HAS_MILESTONE=1
       [ "$MILESTONE" = null ] && HAS_MILESTONE=0
+      # A second sentinel, and the only way a case can reach the live arm's third state —
+      # a `META` carrying neither `"milestone":null` nor `"milestone":{`.
+      [ "$MILESTONE" = unreadable ] && HAS_MILESTONE=unknown
       LINKED="${FIXTURE_LINKED:-1}"
     else
       META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
@@ -652,7 +655,7 @@ case "$CMD" in
         *'"milestone":null'*) HAS_MILESTONE=0 ;;
         *'"milestone":{'*)
           HAS_MILESTONE=1
-          MILESTONE="$(printf '%s' "$META"             | sed 's/.*"milestone":{//; s/}.*//' | grep -oE '"title":"[^"]*"'             | sed 's/.*:"//; s/"$//')"
+          MILESTONE="$(printf '%s' "$META" | sed 's/.*"milestone":{//; s/}.*//' | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
           # A milestone whose name will not parse is still a milestone. A title carrying an
           # escaped quote truncates rather than falling back — the verdict is unaffected,
           # only the name printed.
@@ -671,8 +674,8 @@ case "$CMD" in
 
     # A milestone item is ONE UNIT OF WORK, and a PR that closes an issue is not one — the
     # issue is, and it already carries the milestone. Giving the PR one too counts the same
-    # work twice and ticks twice when it lands: ten of Dogfood's seventeen PRs did exactly
-    # that, inflating percent complete against a denominator that was itself inflated. A
+    # work twice and ticks twice when it lands: 35 of Dogfood's 45 PRs did exactly that,
+    # inflating percent complete against a denominator that was itself inflated. A
     # direct PR has no issue behind it, so it IS the unit and needs the milestone to appear
     # in the view where the arc reads as one unit. #204.
     #

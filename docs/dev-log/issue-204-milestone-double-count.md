@@ -66,6 +66,12 @@ Fixed to `","closingIssuesReferences"`, verified against PR #245 live.
 **Pass 3** confirmed all five boxes against the tree and the live tracker, and caught the stale
 number in box 3 — see below.
 
+**Pass 4** found the line continuations in the milestone extraction had been flattened to one
+run-on line, the check's own comment still repeating the issue's disproved *"ten of seventeen"*,
+and the third state — *could not be read* — reachable by no case at all. `arc_test_milestone`
+gained a second sentinel, `unreadable`, and a fifth case: a direct PR whose milestone field
+cannot be read skips rather than being told to set one.
+
 ## The strip
 
 The issue said ten issue-closing PRs in a 73-item milestone. By the time the work ran it was
@@ -106,5 +112,5 @@ old rule, on the PR that removes it. The stale-installed-copy row in the arc-log
 being a prediction here: the hook that denies this PR's correct state is the one this PR fixes.
 
 **Gates:** `bash tools/verify-all.sh` → exit 0, 43 gates clean.
-`bash tools/verify-hook.sh hooks/tracker-verify` → exit 0, 63 passed, 0 failed.
-`bash tools/verify-activation-log.sh hooks/tracker-verify` → exit 0, 201 passed, 0 failed.
+`bash tools/verify-hook.sh hooks/tracker-verify` → exit 0, 64 passed, 0 failed.
+`bash tools/verify-activation-log.sh hooks/tracker-verify` → exit 0, 204 passed, 0 failed.
