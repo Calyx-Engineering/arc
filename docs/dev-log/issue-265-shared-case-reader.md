@@ -110,3 +110,16 @@ invocation in the same commit.
 The issue enumerates four graders and its checklist says four; converting these is work nobody
 scoped. Both are filed as [#285](https://github.com/Calyx-Engineering/arc/issues/285), carried as
 #265's `Spawned` row. The second was found by pass 1, after #285 was filed for the first.
+
+## A finding about Arc, not about this change
+
+**`hooks/tracker-verify` and `templates/pr.md` disagree about the milestone on an issue PR.** The
+hook reported PR #291 as having none; the template says a PR closing an issue takes none, because
+the issue is the unit of work — which is [#204](https://github.com/Calyx-Engineering/arc/issues/204)'s
+finding, shipped by PR [#257](https://github.com/Calyx-Engineering/arc/pull/257), itself milestone-less.
+The template was followed and the milestone left unset. Merged arc-04 PRs are split roughly evenly
+between the two, so the hook is reporting against a rule the repository changed under it.
+
+No issue filed: which of the two is wrong is a decision, not a defect with an obvious fix, and
+[#270](https://github.com/Calyx-Engineering/arc/issues/270) has just moved this class of record
+into the dev-log rather than a `Spawned` row.

@@ -5,8 +5,9 @@
 # IN RESPONSE TO THAT TURN — between it and the next prompt turn, not somewhere later.
 import json, io, os, glob, sys
 
-# The case scan and the fence rule, shared with the other three graders — #265. `tools/` is
-# sys.path[0] because skill-cases.sh runs this file by path.
+# The case scan, shared with the other three graders — #265. This file grades prompts and skill
+# firings, not documents, so it takes the scan and not `Fence`. `tools/` is sys.path[0] because
+# skill-cases.sh runs this file by path.
 import case_reader
 
 # The corpus carries em dashes and the user's own punctuation, and a Windows console defaults to
