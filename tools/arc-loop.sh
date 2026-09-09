@@ -24,6 +24,19 @@
 # starting it in manual mode is one of those actions taken at one remove — #201. The three
 # read-only switches report on runs and dispatch nothing, so they are exempt.
 #
+# THE QUEUE IS THE AGENT-TYPED CHILDREN, not every child. An issue holds one GitHub issue type
+# and it says who does the work: `Agent` is this loop's, any other type — or none — is a human's.
+# All four paths that dispatch an ISSUE refuse anything else — selection, a hand-written
+# `--issues` batch, `--resume`, and the automatic resume after a rate limit — so an issue that
+# needs a human at a bench, or a judgement call, cannot be handed to an unattended session by
+# being filed under the wrong parent, and retyping one off `Agent` takes it back mid-run.
+#
+# THE REPORT RUN IS THE EXEMPTION, and it is not an omission. It carries no issue — it reads a
+# closed workstream's record and writes a report — and it is reachable only when EVERY child is
+# closed, so there is no issue for a type to speak for. That is also why completeness counts
+# every open child and not only the Agent-typed ones: a workstream still holding a human's
+# issue is not finished, and must not reach it. #274.
+#
 # Scope of one invocation is ONE workstream. When its children are all closed
 # the script dispatches a report run and exits; the next workstream is a
 # second invocation, after a human has read that report.
@@ -391,11 +404,41 @@ echo "arc-loop: #$PARENT $parent_title — runs nest under $BASE"
 fi
 
 # --- queue reads --------------------------------------------------------------
-open_children() {
+# `<number>|<issue type>` for every OPEN child, one per line. The type is empty when the issue
+# carries none.
+#
+# THE TYPE SAYS WHO DOES THE WORK. `Agent` is this loop's; any other type — or none — is a
+# human's, and this script dispatches an unattended `claude -p` at it if nobody stops it. #274.
+#
+# ONE READ, TWO QUESTIONS, AND THE ROWS STAY WHOLE. *Is anything left* and *is anything
+# dispatchable* have different answers, and the report run is dispatched on the first coming
+# back empty — so a read that dropped a human's issues here would announce a workstream
+# finished while they were still open. Callers filter; this does not.
+#
+# ITS EXIT STATUS IS THE CALLER'S TO CHECK. `$(…)` carries it, `[ -n "$(…)" ]` throws it away,
+# and an empty answer from a failed `gh` is indistinguishable from a workstream with nothing
+# left in it.
+open_child_rows() {
   gh api graphql -f query="{repository(owner:\"${REPO%%/*}\",name:\"${REPO##*/}\"){
-    issue(number:$PARENT){subIssues(first:50){nodes{number state}}}}}" \
-    --jq '.data.repository.issue.subIssues.nodes[] | select(.state=="OPEN") | .number'
+    issue(number:$PARENT){subIssues(first:50){nodes{number state issueType{name}}}}}}" \
+    --jq '.data.repository.issue.subIssues.nodes[] | select(.state=="OPEN")
+          | "\(.number)|\(.issueType.name // "")"'
 }
+
+# The filter, written once. Reads rows on stdin, prints the numbers of the Agent-typed ones —
+# selection, the batch check and the terminal message all need it and two of them already hold
+# the rows in a variable. Three copies of one awk expression is three edit sites the day the
+# type is renamed.
+agent_of_rows() { awk -F'|' '$2 == "Agent" { print $1 }'; }
+
+# The dispatchable half — what selection is allowed to pick from.
+agent_children() { open_child_rows | agent_of_rows; }
+
+# One issue's own type — `Agent`, another name, or empty when it carries none. Used where the
+# parent's child list is not the right question: a resume takes no workstream, and an issue can
+# be retyped after it was dispatched. Non-zero when the read failed, which each caller answers
+# for itself.
+issue_type_of() { gh issue view "$1" -R "$REPO" --json issueType --jq '.issueType.name // ""'; }
 
 # an issue is eligible when every "Blocked by #NN" line names a closed issue
 blocked() {
@@ -411,9 +454,15 @@ blocked() {
 
 # CLAIMED_SET is read by the caller, not here: this runs inside a command substitution, so a
 # `die` in it would kill only the subshell and read as "nothing eligible".
+#
+# WHICH IS WHY A FAILED READ RETURNS 2 AND NOT 1. `1` means *nothing eligible*, and the caller
+# answers that by naming a reason — blocked, claimed, or a human's. A `gh` failure that came
+# back as `1` would pick one of those three and say it with confidence about a queue nobody
+# read. `$( )` carries the status, so the caller can tell the two apart.
 next_issue() {
-  local n b
-  for n in $(open_children); do
+  local n b rows
+  rows="$(open_child_rows)" || return 2
+  for n in $(printf '%s\n' "$rows" | agent_of_rows); do
     case "$CLAIMED_SET" in
       *" $n "*) echo "  #$n claimed by another dispatcher" >&2; continue ;;
     esac
@@ -541,7 +590,7 @@ sleep_heartbeat() {
 }
 
 wait_run() {
-  local id="$1" dir="$2" wt="$3" model_flag="$4" pid attempt=0 ticks=0
+  local id="$1" dir="$2" wt="$3" model_flag="$4" pid attempt=0 ticks=0 n itype
   while :; do
     pid="$(cat "$dir/pid")"
     while [ ! -f "$dir/exit" ]; do
@@ -562,6 +611,28 @@ wait_run() {
     echo "  rate limit — waiting ${RETRY_WAIT}s, then resuming the same session ($attempt/$MAX_RETRY)"
     mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json"
     sleep_heartbeat "$RETRY_WAIT" "$dir"
+    # THE TYPE IS RE-READ BEFORE EACH AUTOMATIC RESUME. Retyping an issue off `Agent` is how a
+    # human takes work back from the loop mid-run, and a ten-minute rate-limit wait is exactly
+    # when they get the chance — so a resume that never re-reads makes that takeback silently
+    # ineffective for up to `MAX_RETRY` × `RETRY_WAIT`. #274.
+    #
+    # FAIL OPEN, unlike `--resume`. Starting blind and continuing a session already in flight
+    # are different acts: one `gh` failure is not a reason to abandon work in progress, and the
+    # dispatch that started this run was gated.
+    if [ -f "$dir/issues" ]; then
+      for n in $(cat "$dir/issues"); do
+        itype="$(issue_type_of "$n")" || continue
+        [ "$itype" = "Agent" ] && continue
+        if [ -n "$itype" ]; then
+          echo "  #$n is typed \`$itype\`, not \`Agent\` — taken back by a human mid-run;" \
+               "not resuming. Worktree kept at $wt" >&2
+        else
+          echo "  #$n now carries no issue type — nothing says whose work it is;" \
+               "not resuming. Worktree kept at $wt" >&2
+        fi
+        return 0
+      done
+    fi
     resume_run "$dir" "$wt" "$model_flag"
   done
 }
@@ -737,6 +808,21 @@ if [ -n "$RESUME" ]; then
     [ "$crc" = 2 ] && die "could not read whether #$n is claimed — refusing to resume blind"
     [ "$crc" = 0 ] || die "#$n is claimed by another dispatcher — not resuming run $RESUME"
   done
+  # A RESUME IS A DISPATCH, SO THE TYPE GATE APPLIES HERE TOO. It is the path that skips
+  # selection, so nothing else will stop it — and every run directory created before #274 was
+  # dispatched with no type check at all. Read the issue's OWN type rather than the parent's
+  # child list: `--resume` takes no workstream, and retyping an issue to `Task` is how a human
+  # takes work back off the loop mid-run. That has to stop the resume, not just the next pick.
+  for n in $(cat "$dir/issues"); do
+    itype="$(issue_type_of "$n")" || die "cannot read #$n's issue type — refusing to resume blind"
+    if [ "$itype" != "Agent" ]; then
+      # Two sentences, because a human reads this at the moment they deliberately retyped an
+      # issue to take it back — and "retyped" and "never typed" are different things to have done.
+      [ -n "$itype" ] \
+        && die "#$n is typed \`$itype\`, not \`Agent\` — a resume is a dispatch, and this is a human's work now" \
+        || die "#$n carries no issue type — a resume is a dispatch, and nothing says whose work it is"
+    fi
+  done
   echo "arc-loop: resuming run $RESUME — $(tr '\n' ' ' < "$dir/issues")"
   mv -f "$dir/out.json" "$dir/out.$(date +%H%M%S).json" 2>/dev/null || true
   resume_run "$dir" "$wt" "$model_flag"
@@ -755,10 +841,29 @@ fi
 # --- a handed batch: one run, then stop ---------------------------------------------
 # The playlist decides what shares a run; this script does not. Every issue must be a child
 # of the workstream, so a batch cannot smuggle work in from outside the queue.
+#
+# AND EVERY ISSUE MUST BE AGENT-TYPED. A hand-written batch is the one path that names issue
+# numbers directly, so it is the one path where selection cannot protect a human's issue. Three
+# refusals, not two: not a child of this workstream, a human's type, and no type at all are
+# answered differently — the last is a defect in the issue rather than a decision about it.
 if [ -n "$ISSUES" ]; then
-  children=" $(open_children | tr '\n' ' ') "
+  # CHECKED, because an empty answer from a failed read is indistinguishable from a workstream
+  # with no open children — and here it would refuse every issue in the batch as "not a child",
+  # sending the reader to look at the tracker instead of at the network.
+  child_rows="$(open_child_rows)" || die "cannot read #$PARENT's children — refusing to dispatch blind"
+  children=" $(printf '%s\n' "$child_rows" | cut -d'|' -f1 | tr '\n' ' ') "
+  agents=" $(printf '%s\n' "$child_rows" | agent_of_rows | tr '\n' ' ') "
   for n in $ISSUES; do
     case "$children" in *" $n "*) ;; *) die "#$n is not an open child of #$PARENT" ;; esac
+    case "$agents" in
+      *" $n "*) ;;
+      *)
+        itype="$(printf '%s\n' "$child_rows" | awk -F'|' -v n="$n" '$1 == n { print $2; exit }')"
+        [ -n "$itype" ] \
+          && die "#$n is typed \`$itype\` — the type says a human does it, not the loop" \
+          || die "#$n carries no issue type — nothing says whose work it is, and the loop does not guess"
+        ;;
+    esac
   done
   echo "arc-loop: batch run for $(printf '#%s ' $ISSUES)"
   rc=0
@@ -778,13 +883,29 @@ last=""
 lost=0
 while :; do
   read_claimed
-  if ! issue=$(next_issue); then
-    if [ -n "$(open_children)" ]; then
-      if [ -n "$(printf '%s' "$CLAIMED_SET" | tr -d ' ')" ]; then
-        echo "arc-loop: every remaining issue is blocked or claimed by another dispatcher —" \
-             "claimed:$CLAIMED_SET— stopping"
+  pick=0; issue="$(next_issue)" || pick=$?
+  if [ "$pick" != 0 ]; then
+    # 2 IS A FAILED READ, NOT AN EMPTY QUEUE. Every message below names a reason, and naming one
+    # off a read that never happened is worse than stopping.
+    [ "$pick" = 2 ] && die "cannot read #$PARENT's children — refusing to choose blind"
+    # THE SECOND READ'S STATUS IS CHECKED TOO. "Nothing is left" and "I could not tell" are
+    # different answers, and this branch acts on the first by dispatching the report run — so a
+    # `gh` failure here announces a workstream finished that is not.
+    remaining="$(open_child_rows)" \
+      || die "cannot read #$PARENT's children — refusing to say whether the workstream is finished"
+    if [ -n "$remaining" ]; then
+      # WHY IT STOPPED IS THREE DIFFERENT ANSWERS, and only one of them is a defect. Blocked
+      # waits on another issue; claimed waits on another dispatcher; a human's issue waits on a
+      # human and no dispatcher will ever pick it up. Reporting all three as "blocked" sends the
+      # reader looking for a dependency that does not exist.
+      if [ -z "$(printf '%s\n' "$remaining" | agent_of_rows)" ]; then
+        echo "arc-loop: every remaining issue in #$PARENT is a human's — none is Agent-typed." \
+             "The workstream is not finished and this loop cannot finish it — stopping"
+      elif [ -n "$(printf '%s' "$CLAIMED_SET" | tr -d ' ')" ]; then
+        echo "arc-loop: every remaining Agent-typed issue is blocked or claimed by another" \
+             "dispatcher — claimed:$CLAIMED_SET— stopping"
       else
-        echo "arc-loop: every remaining issue is blocked — stopping"
+        echo "arc-loop: every remaining Agent-typed issue is blocked — stopping"
       fi
       exit 1
     fi
