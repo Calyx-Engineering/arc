@@ -14,7 +14,7 @@
 |---|---|
 | Two issues edit one file | Same track, or different sets. Never two tracks in one set |
 | `Blocked by #NN` | A later set than the blocker's |
-| **The installed plugin is one machine-wide cache** — `plugin-reload.sh` then `skill-probe.sh` / `response-length.sh --probe` | At most **one probe track per set**. Two runs reloading the cache measure each other's edits |
+| **The installed plugin is one machine-wide cache** — `plugin-reload.sh` then `skill-probe.sh` / `response-length.sh --probe` | At most **one probe track per set**. Two runs reloading the cache measure each other's edits. Since #211 the reload also refuses on a dirty tree, naming what it would install — commit first, or `--force` |
 | [#190](https://github.com/Calyx-Engineering/arc/issues/190) moves every verifier and case directory into `tests/` | Runs alone, last, nothing else in flight — its own constraint |
 | One merge target, `arc/04-dogfood` | Orchestrator merges, one PR at a time, each rebased on the arc tip first |
 | **Cap: 5 tracks per set** | Wall time is the constraint the user named. The ceiling is the usage window, not the graph — a limit-hit run is resumed by `arc-loop.sh`, not lost |
