@@ -4,7 +4,11 @@ description: Use when the user asks for the handoff to be read or written, in an
 camp-reports: [handoff-written, handoff-read, transcript-saved]
 checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open]
 skips:
-  - graduated-to-record (nothing in the handoff outlives the arc)
+  - handoff-exists (the write path — the handoff is being written, and its absence is what the write fixes)
+  - transcript-saved (the read path — no handoff is being written, and the save is the write's first step)
+  - open-threads-carried (the read path — no handoff is being written)
+  - graduated-to-record (the read path — no handoff is being written; and on a write, when nothing in the handoff outlives the arc)
+  - stale-rows-removed (the read path — no handoff is being written)
   - handoff-age (the write path — no handoff is being acted on)
   - transcripts-newer (the write path — no handoff is being acted on)
   - branch-matches (the write path — no handoff is being acted on)
@@ -371,3 +375,18 @@ these in order* fails in exactly the way those sections exist to prevent.
 document that says when the state it describes was true, and the next session reads it to
 decide whether to trust the rest. A date alone cannot distinguish a handoff written an hour
 ago from one written before a full day's work in another window.
+
+---
+
+## Which path each check runs on
+
+**Two paths, one `checks:` declaration.** A check that runs on only one of them has to say
+which, or both reports are wrong at once — a `handoff-read` claiming the transcript was saved,
+and a `handoff-written` claiming the tree was checked against the handoff. So every name in
+`checks:` does one of two things and never both: it carries a `skips:` entry whose condition
+**opens** with *the read path* or *the write path* — the one it does not run on — or it is named
+on the both-path line below.
+
+**Both-path checks:** `ordered-actions-present` — the ordered actions are read before they are
+executed and required when the handoff is written, so it skips on neither. The set is the names
+on that line.

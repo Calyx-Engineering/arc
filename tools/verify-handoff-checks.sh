@@ -2,6 +2,7 @@
 # verify-handoff-checks.sh — the staleness checks are reachable from the skill, not only the command.
 #
 #   tools/verify-handoff-checks.sh
+#   tools/verify-handoff-checks.sh selftest
 #
 # WHY THIS EXISTS. m15 has two entry points into the same mechanism. `/arc-next` is a typed
 # shortcut; `skills/handoff` is what fires when a session says "read the handoff" in any of the
@@ -32,6 +33,10 @@
 
 set -u
 
+# Captured before the cd: the selftest re-invokes this script with HANDOFFCHK_ROOT pointing at a
+# fixture tree, and after the cd a relative $0 no longer resolves.
+SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+
 cd "${HANDOFFCHK_ROOT:-$(dirname "$0")/..}" || exit 1
 
 SKILL=skills/handoff/SKILL.md
@@ -42,6 +47,52 @@ PASSED=0
 FAILED=0
 pass() { echo "  PASS  $1"; PASSED=$((PASSED + 1)); }
 fail() { echo "  FAIL  $1"; shift; for l in "$@"; do echo "        $l"; done; FAILED=$((FAILED + 1)); }
+
+# ---- selftest ---------------------------------------------------------------------------------
+# Fixture skills with a known defect each, to prove the frontmatter block can fail. A gate nobody
+# can make fail is a gate nobody should read a pass from — and the five denial runs this unit's
+# record cites were ad-hoc until they were written down here.
+#
+# EACH FIXTURE IS THE REAL SKILL WITH ONE LINE CHANGED, and the mutations are ASCII-only: the
+# entries they replace carry an em dash, and matching one through sed on Windows is a portability
+# problem this does not need to have.
+selftest() {
+  T="$(mktemp -d)"
+  trap 'rm -rf "$T"' EXIT
+  ROOT="$T/root"
+  mkdir -p "$ROOT/skills/handoff" "$ROOT/commands"
+  cp "$CMD" "$ROOT/commands/arc-next.md"
+
+  case_is() {  # <expected-exit> <label> <filter…>
+    local want="$1" label="$2"; shift 2
+    "$@" < "$SKILL" > "$ROOT/skills/handoff/SKILL.md"
+    HANDOFFCHK_ROOT="$ROOT" bash "$SELF" >/dev/null 2>&1
+    local got=$?
+    if [ "$got" = "$want" ]; then
+      pass "selftest — $label exits $got"
+    else
+      fail "selftest — $label exits $got, expected $want"
+    fi
+  }
+
+  case_is 0 "the skill as it stands" cat
+  case_is 1 "a check with no skips: entry"          grep -v '^  - stale-rows-removed ('
+  case_is 1 "a condition naming no path"            sed 's/^  - stale-rows-removed (.*/  - stale-rows-removed (only when rows were consumed)/'
+  case_is 1 "a path phrase appended to a condition" sed 's/^  - stale-rows-removed (.*/  - stale-rows-removed (only when rows were consumed on the read path)/'
+  case_is 1 "a skip for a check not declared"       sed 's/^checks: \[handoff-exists, /checks: [handoff-present, /'
+  case_is 1 "a name both skipped and both-path"     sed 's/^  - handoff-exists (/  - ordered-actions-present (/'
+  case_is 1 "the both-path line deleted"            grep -v 'Both-path checks:'
+}
+
+if [ "${1:-}" = "selftest" ]; then
+  echo "verify-handoff-checks selftest — the frontmatter block can fail"
+  echo
+  selftest
+  echo
+  echo "$PASSED passed, $FAILED failed"
+  [ "$FAILED" = "0" ] || exit 1
+  exit 0
+fi
 
 echo "verify-handoff-checks — the staleness checks live in the skill"
 echo
@@ -164,6 +215,108 @@ else
   fail "every command file delegates to the handoff skill" \
        "a shortcut that names no skill is a shortcut to nothing" \
        "names no skill:$nodelegate"
+fi
+
+# ---- every declared check names the path it runs on ------------------------------------------
+# camp-reports.md makes `skips` the only way a declared-but-unrun check stays visible. This skill
+# has two paths, so a check that runs on one of them and is declared bare makes both reports
+# wrong at once — a `handoff-read` listing checks only a write performs, and a `handoff-written`
+# listing the staleness checks. #267.
+#
+# A PATH IS ASSERTED, NOT THE PRESENCE OF AN ENTRY, AND THE CONDITION HAS TO OPEN WITH IT.
+# `skips` conditions are ordinarily content conditions — camp-reports.md's own example is
+# `placeholder-scan (only when a body was edited)` — and one of those satisfies "has an entry"
+# while saying nothing about which path ran. Matching the words anywhere in the condition is the
+# same hole one step further in: `(only when a body was edited on the read path)` would pass. So
+# the condition must BEGIN `the read path` or `the write path`, which is the form every entry in
+# the skill uses and the form its own section states.
+#
+# THE FRONTMATTER IS PARSED, NOT GREPPED, and the both-path line is read from the section that
+# declares it. A name present somewhere in the file proves nothing about the declaration; an
+# empty parse would pass vacuously; and an example of the format written higher up would
+# otherwise become the declaration.
+fm() { sed -n '2,/^---$/p' "$SKILL"; }
+
+# Charset-filtered on the way in. A name is a hyphenated word, and anything else reaching a
+# `case` pattern below would glob rather than compare.
+declared="$(fm | sed -n 's/^checks: *\[\(.*\)\] *$/\1/p' | tr ',' '\n' | tr -d ' ' \
+            | grep -E '^[a-z][a-z0-9-]*$')"
+
+# Only the items under `skips:`. A key added after it would otherwise feed its own list items in
+# as check names, and they would read as orphans.
+skipentries="$(fm | awk '/^skips:/{f=1;next} f && /^[A-Za-z][A-Za-z0-9_-]*:/{f=0} f' \
+               | grep -E '^[[:space:]]*-[[:space:]]')"
+
+# One line, deliberately: the set is whatever is backticked on the `**Both-path checks:**` line,
+# which is what the skill's own section says. Reading the paragraph instead would take every
+# backticked word in it as a check name. A name that wraps to the next line reads as bare, which
+# fails — safely, and with a message that blames the skill rather than this parser.
+bothline="$(grep -n '^## Which path each check runs on$' "$SKILL" | head -n1 | cut -d: -f1)"
+both=""
+[ -n "$bothline" ] && both="$(sed -n "${bothline},\$p" "$SKILL" \
+    | grep -m1 -- '\*\*Both-path checks:\*\*' | grep -o '`[a-z0-9-]\{1,\}`' | tr -d '`')"
+
+skipped=""
+nopath=""
+while IFS= read -r entry; do
+  [ -n "$entry" ] || continue
+  nm="$(printf '%s' "$entry" | sed -n 's/^[[:space:]]*-[[:space:]]\{1,\}\([a-z][a-z0-9-]*\).*/\1/p')"
+  [ -n "$nm" ] || continue
+  skipped="$skipped $nm"
+  cond="${entry#*(}"
+  case "$cond" in
+    "the read path"*|"the write path"*) ;;
+    *) nopath="$nopath $nm" ;;
+  esac
+done <<ENTRIES
+$skipentries
+ENTRIES
+
+ndeclared="$(printf '%s' "$declared" | grep -c '[a-z]')"
+if [ "$ndeclared" -lt 1 ]; then
+  fail "the skill's checks: declaration parses" \
+       "read no names — a declaration this gate cannot read is one it cannot check" \
+       "checks: is one bracketed line, and this is what is there:" \
+       "$(grep -m1 '^checks:' "$SKILL" | head -c 120)"
+else
+  pass "the skill's checks: declaration parses — $ndeclared checks"
+
+  haystack=" $(printf '%s ' $skipped)$(printf '%s ' $both)"
+  bare=""
+  for c in $declared; do
+    case "$haystack" in *" $c "*) ;; *) bare="$bare $c" ;; esac
+  done
+
+  if [ -z "$bare" ] && [ -z "$nopath" ]; then
+    pass "every declared check names the path it runs on"
+  else
+    fail "every declared check names the path it runs on" \
+         "a check whose path is undeclared reports as having run on both, and it ran on one" \
+         "no skips: entry and not declared both-path:${bare:- none}" \
+         "a skips: condition not opening \"the read path\" or \"the write path\":${nopath:- none}"
+  fi
+
+  # And the reverse. A skips entry for a check the skill no longer declares is a report line for
+  # a check that does not exist; a name declared both-path AND skipped is the declaration
+  # contradicting itself, which no report can resolve.
+  orphan=""
+  contra=""
+  hay2=" $(printf '%s ' $declared)"
+  for s in $skipped $both; do
+    case "$hay2" in *" $s "*) ;; *) orphan="$orphan $s" ;; esac
+  done
+  for b in $both; do
+    case " $(printf '%s ' $skipped)" in *" $b "*) contra="$contra $b" ;; esac
+  done
+  if [ -z "$orphan" ] && [ -z "$contra" ]; then
+    pass "the declaration does not disagree with itself"
+  else
+    fail "the declaration does not disagree with itself" \
+         "a skip for a check that is not declared reports nothing that ran, and a name that is" \
+         "both skipped and both-path is a state no report can render" \
+         "skipped or both-path, but not in checks::${orphan:- none}" \
+         "declared both-path and skipped:${contra:- none}"
+  fi
 fi
 
 echo
