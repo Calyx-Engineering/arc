@@ -1,0 +1,2 @@
+# manual mode, two reads on two lines — every line is read as a command, and neither is one
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"sed -n \"1,50p\" tools/arc-loop.sh\ncat tools/new-direct-pr.sh","description":"Read both"}}

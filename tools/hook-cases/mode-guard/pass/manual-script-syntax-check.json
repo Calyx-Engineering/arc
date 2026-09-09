@@ -1,0 +1,2 @@
+# manual mode, bash -n on a gated script — it parses and runs nothing
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"bash -n tools/arc-loop.sh","description":"Syntax check"}}

@@ -1,0 +1,2 @@
+# manual mode, a harmless command whose description names a gated script — the description is not the command
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"git status --short","description":"see bash tools/arc-loop.sh for details"}}

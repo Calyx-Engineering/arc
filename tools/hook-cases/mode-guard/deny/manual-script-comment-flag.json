@@ -1,0 +1,2 @@
+# manual mode, a read-only flag inside a trailing shell comment — a comment is not an argument
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"bash tools/arc-loop.sh 145 --max 1 # not a --dry-run","description":"Dispatch"}}

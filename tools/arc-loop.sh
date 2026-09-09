@@ -15,6 +15,14 @@
 #   tools/arc-loop.sh --report               the same as a markdown table with totals — for the arc-log
 #   tools/arc-loop.sh --resume 160           continue a stopped run's session in its kept worktree
 #
+# mode-guard: writes-outward
+# mode-guard-read-only: --dry-run --status --report
+#
+# The declaration above is read by hooks/mode-guard. This script raises the execution mode in
+# each worktree it creates and dispatches runs that commit, push, open PRs and merge them, so
+# starting it in manual mode is one of those actions taken at one remove — #201. The three
+# read-only switches report on runs and dispatch nothing, so they are exempt.
+#
 # Scope of one invocation is ONE workstream. When its children are all closed
 # the script dispatches a report run and exits; the next workstream is a
 # second invocation, after a human has read that report.
