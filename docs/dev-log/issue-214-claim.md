@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#214](https://github.com/Calyx-Engineering/arc/issues/214)  ·  **PR:** [#252](https://github.com/Calyx-Engineering/arc/pull/252)
+**Issue:** [#214](https://github.com/Calyx-Engineering/arc/issues/214)  ·  **PR:** [#284](https://github.com/Calyx-Engineering/arc/pull/284)
 
 ## Problem
 
@@ -136,7 +136,7 @@ in silence — the same class pass 2 had just fixed in `sleep_heartbeat`, one kn
 
 | | |
 |---|---|
-| `take` then `claimed 148` | `214 DAVID-HOME-PC/49250/2ab5db7d` |
+| `take` then `claimed 148` | `214 <host>/49250/2ab5db7d` — the issue and its holder |
 | A second dispatcher | `#214 held by … — comment 5594028858`, exit 1, **no comment posted** |
 | `release` | `#214 free`, comment count 0 — the issue left as it was found |
 | Selection skips a claimed issue | `#134` claimed, then `arc-loop.sh 148 --dry-run` → `#134 claimed by another dispatcher` / `[1] issue run for #198` |

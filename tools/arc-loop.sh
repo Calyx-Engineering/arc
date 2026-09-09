@@ -587,10 +587,11 @@ run_batch() {
     echo "  would dispatch issue run for $(printf '#%s ' "$@")into $wt (--permission-mode $PERMISSION_MODE${MODEL:+ --model $MODEL})"
     return 0
   fi
-  # CLAIMED BEFORE ANY WORK, INCLUDING THE CHECKS BELOW. Two dispatchers validating the same
-  # issue is the state that produced #158; the claim is what makes the second one stop. Return 3
-  # rather than 1 — losing a race is not a failed run, and the caller picks something else. A
-  # read that could not be made is neither: it stops the dispatcher rather than guessing.
+  # CLAIMED BEFORE ANY WORK — after the two guards above, and before everything else. Two
+  # dispatchers validating the same issue is the state that produced #158; the claim is what
+  # makes the second one stop. Return 3 rather than 1 — losing a race is not a failed run, and
+  # the caller picks something else. A read that could not be made is neither: it stops the
+  # dispatcher rather than guessing.
   # THESE TWO GUARDS COME FIRST, ahead of the claim. They are what says this run directory is
   # nobody else's, and a claim taken before them is a claim taken inside another dispatcher's
   # workspace — then released by the `die` on the next line.
@@ -659,12 +660,19 @@ run_batch() {
 
   # Keep the worktree if anything is still open: the branch and its uncommitted state are the
   # evidence of where the run stopped.
+  #
+  # AND KEEP IT IF `wait_run` ITSELF FAILED. It returns non-zero when the run died without
+  # leaving an exit code, which is precisely when its tree is the only evidence there is. This
+  # was unreachable while the function read `wait_run … || return 1`, and became reachable when
+  # the claim release moved to the end of it. #214's pass 4.
   local open=""
   for n in "$@"; do
     st="$(gh issue view "$n" -R "$REPO" --json state --jq .state 2>/dev/null || echo OPEN)"
     [ "$st" = "OPEN" ] && open="$open #$n"
   done
-  if [ -z "$open" ]; then
+  if [ "$rc" != 0 ]; then
+    echo "  the run left no exit code — worktree kept at $wt"
+  elif [ -z "$open" ]; then
     git worktree remove --force "$wt" && echo "  every issue closed — removed $wt"
   else
     echo "  still open:$open — worktree kept at $wt"
