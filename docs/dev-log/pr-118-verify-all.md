@@ -45,7 +45,7 @@ touched. **A verifier added tomorrow cannot be silently skipped.**
 
 | | |
 |---|---|
-| **What makes it durable** | The invocation table is checked against the verifiers on disk — `tools/verify-*.sh` when this shipped, `tests/verify-*.sh` and `tools/verify-*.sh` since [#190](https://github.com/Calyx-Engineering/arc/issues/190) — so it fails on a verifier it does not know rather than quietly running the rest |
+| **What makes it durable** | The invocation table is checked against the verifiers on disk — `tools/verify-*.sh` when this shipped, both that and `tests/verify-*.sh` since [#190](https://github.com/Calyx-Engineering/arc/issues/190) — so it fails on a verifier it does not know rather than quietly running the rest |
 | **Out of scope** | CI. That is [#117](https://github.com/Calyx-Engineering/arc/issues/117), filed into *Self-improvement*, and blocked until the plugin is released — `hooks/hooks.json` resolves `${CLAUDE_PLUGIN_ROOT}` |
 
 ### Intent check
@@ -80,7 +80,7 @@ in *Why this arc exists*.
 
 | | |
 |---|---|
-| **A pure `for f in tests/verify-*.sh` loop** | `verify-hook.sh` needs a hook path and `verify-tracker-body.sh` needs `selftest`. A loop calling them bare would report usage errors as failures |
+| **A pure `for f in tools/verify-*.sh` loop** | `verify-hook.sh` needs a hook path and `verify-tracker-body.sh` needs `selftest`. A loop calling them bare would report usage errors as failures |
 | **A `Makefile` or task runner** | A second toolchain for four bash scripts. `CLAUDE.md`'s hook rules already assume bash and `gh` and nothing else |
 | **Doing CI in the same change** | It is blocked on the release, and CI covering the `tools/` gates while the hook-carried checks cannot run invites trusting it for both. Filed as [#117](https://github.com/Calyx-Engineering/arc/issues/117) with that constraint written into the body |
 

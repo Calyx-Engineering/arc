@@ -32,7 +32,7 @@
 # any version of the probe, including one predating the `qualified` field the probe now also
 # prints for the run log.
 #
-# THE CONTENT CHECK IS tests/verify-handoff-checks.sh's, not a second copy of the seven
+# THE CONTENT CHECK IS tests/verify-handoff-checks.sh's, not a second copy of the eight
 # literals. One list, tuned in one place — the same argument #208 made against keeping the
 # checks in two artifacts.
 #
@@ -133,7 +133,7 @@ EOF
   [ "$undecided" -gt 0 ] && echo "$undecided firing(s) could not be resolved to a file"
   echo
   echo "The transcript does not hold the skill text; this reports the bytes the named plugin"
-  echo "serves. Content verified by tests/verify-handoff-checks.sh — one list of the seven."
+  echo "serves. Content verified by tests/verify-handoff-checks.sh — one list of the eight."
 
   if [ "$bad" -gt 0 ]; then
     echo
@@ -146,7 +146,7 @@ EOF
     exit 2
   fi
   echo
-  echo "PASS  every resolved firing read a skill carrying all seven checks"
+  echo "PASS  every resolved firing read a skill carrying all eight checks"
   exit 0
 }
 
