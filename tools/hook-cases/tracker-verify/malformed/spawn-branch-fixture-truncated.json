@@ -1,0 +1,2 @@
+# a payload cut off inside arc_test_branch — no fixture parses, so the hook must stay silent rather than derive a parent from half a branch name
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh issue create --title x"},"arc_test_branch":"arc/03-camp-issue

@@ -1,0 +1,2 @@
+# transcript_path present — the directory names itself, no derivation is involved
+{"session_id":"verify-si-tp","cwd":"__FIXTURE_ISSUE__","transcript_path":"__FIXTURE_ISSUE__/x/session.jsonl","tool_name":"Bash","tool_input":{"command":"git status"}}

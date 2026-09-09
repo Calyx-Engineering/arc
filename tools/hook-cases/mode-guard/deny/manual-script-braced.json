@@ -1,0 +1,2 @@
+# manual mode, the script inside a brace group
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"{ bash tools/new-direct-pr.sh slug \"T\"; }","description":"Grouped"}}

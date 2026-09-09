@@ -1,0 +1,530 @@
+#!/usr/bin/env bash
+# session-index — PreToolUse hook (matchers: Edit|Write|NotebookEdit, and Bash). Carries m32.
+#
+# Transcripts survive worktree deletion. What dies is the ability to find them. Claude Code
+# stores a session under `~/.claude/projects/<path-slug>/`, where the slug is derived from the
+# WORKING DIRECTORY — so a worktree gets its own directory, and deleting the worktree leaves that
+# directory named after a path that no longer exists, with nothing tying it to an issue, a branch
+# or an arc. This hook writes the tie down while the worktree is still there.
+#
+# camp-reports: session-indexed
+# checks: index-entry, orphan-sweep
+# skips: index-entry (the payload names no session or no tool, there is no repository, or this session was already indexed), orphan-sweep (the same three)
+#
+# The three lines above are the `camp-reports:` declaration. They are why this hook is
+# visible when it fires — one declaration drives both the spoken report and the event-log
+# entry. Name every check, including the ones that always pass: only reporting failures
+# makes a silent hook indistinguishable from a working one.
+# Format: docs/product-architecture/camp-reports.md
+#
+# MEASURED IN THIS REPOSITORY, 2026-09-08 — the reason the numbers in #16 understate it:
+#
+#   live worktrees under R:/arc-wt      5
+#   transcript directories for them    22
+#   orphaned                           17
+#
+# Every one of those seventeen is a completed run whose reasoning is on disk and unreachable by
+# anything but a wildcard glob. `tools/arc-loop.sh` happens to name its worktrees after the issue,
+# so the number is recoverable here by luck; ROADZ's worktrees are not named that way, and there
+# the orphan is a bare path.
+#
+# IT IS AN INDEX, NOT A COPY. m32's first constraint. Copying transcripts duplicates gigabytes and
+# drifts, and the transcripts hold client and employer material that must not enter a repository.
+# The index is committed; the transcripts are not, and nothing here reads their contents.
+#
+# THE UNIT IS A DIRECTORY AND A BRANCH, NOT A SESSION. One transcript directory holds every
+# session ever run in that working directory, so a row per session would be a row per firing.
+# It is a row per (directory, branch) rather than per directory because of m32's measured ROADZ
+# case: #39 was worked on a branch in the MAIN repo, and its eighteen transcripts piled into one
+# shared directory spanning every branch ever checked out there, with no per-issue boundary at
+# all. The branch column is the only boundary that directory can be given.
+#
+# WRITE AT CREATION, MARK ORPHANED LATER. m32's second constraint, and #16's fourth requirement.
+# At deletion the branch and the issue are already gone — the worktree that knew them is what was
+# removed. So the entry is written at the first tool call of the first session in a directory, and
+# a later firing FROM SOMEWHERE ELSE flips its status to `orphaned`. Nothing is written at
+# deletion, because nothing can be.
+#
+# AND THE SWEEP IS SCOPED TO THIS MACHINE. The index is committed and the transcripts are not, so
+# a laptop that pulls the desktop's index sees worktree paths that never existed on it. Marking
+# those orphaned would be the index lying about a live worktree somewhere else. The rule: an entry
+# is marked orphaned only when its worktree is absent AND its transcript directory is present
+# HERE. The transcript directory is the thing that proves this machine ran that session. m32 lists
+# cross-machine as an open question; this is the smallest answer that does not corrupt the record.
+#
+# THE SLUG COMES FROM THE PAYLOAD WHERE IT CAN. `transcript_path` names the .jsonl Claude Code is
+# writing, so its parent directory IS the answer and no derivation is involved. Only when the
+# payload has none is the slug computed from the working directory — every character that is not
+# [A-Za-z0-9] becomes a hyphen, measured off the real store on 2026-09-08 (R:/arc-wt/16 is stored
+# as R--arc-wt-16). A computed slug is then checked against the store case-insensitively and the
+# real directory name wins, because the same machine holds `r--arc` and `R--arc-wt-16`: an older
+# Claude Code lowercased. A name the miner cannot open is not a locator.
+#
+# THIS IS THE PreToolUse PROXY FOR A COLD START, NOT A SessionStart HOOK — the same shape
+# `hooks/handoff-archive` and `hooks/camp-session-start` use, and for the same reason: CLAUDE.md
+# bars a SessionStart hook from being written autonomously. What it costs is the one session that
+# starts, reads, and exits without a single tool call; that session's transcript is a directory
+# listing with nothing in it.
+#
+# WHAT IT COSTS. Re-measured 2026-09-08 AFTER the lock and the pre-scan were added — the earlier
+# numbers in this header predated both and were stale within the hour. 20 iterations warm, 10 cold:
+#
+#   bash -c 'exit 0'         39 ms   the floor, this shell, this machine, this moment
+#   hooks/mode-guard         97 ms   the other PreToolUse Bash hooks, measured in the same run
+#   hooks/handoff-archive   175 ms
+#   hooks/session-index     109 ms   WARM — the marker exists, which is every call after the first
+#   hooks/session-index     167 ms   warm, without CLAUDE_PROJECT_DIR: the git fork the fast path avoids
+#   hooks/session-index     303 ms   COLD — once per session, and it does the whole rewrite
+#
+# So ~70 ms over the floor on the calls that matter, and one 303 ms call per session. The 58 ms
+# between the two warm rows is the whole reason `CLAUDE_PROJECT_DIR` is preferred over asking git
+# where the repository is.
+#
+# The warm path is bash reading this file, sourcing `lib/activation-log`, one `$(cat)` for stdin,
+# and then two file tests — it forks nothing of its own: `$ROOT/.git` is a test rather than a
+# `git rev-parse`, and the marker check is `[ -e ]`. The cold path adds the git call for the
+# branch, the store listing, two passes over the index, and `mkdir`/`mv`/`rmdir`.
+#
+# `handoff-archive`'s header records 27 ms and 147 ms where this run measured 39 and 175. The
+# machine and the moment, not the code: both were re-measured here so the comparison holds.
+#
+# IT IS SILENT ON EVERY PATH, INCLUDING THE EDIT TOOLS. `permissionDecision: "allow"` does not
+# annotate a call, it APPROVES it and skips the permission prompt. `handoff-archive` accepts that
+# trade on the edit tools because it has something a user needs to hear — a copy was taken, here
+# is where. This hook has nothing to say: an index entry is a record, not a finding, and there is
+# no action for the user to take. Speaking would buy nothing and spend a permission prompt. The
+# event log is where its firing shows up.
+#
+# WHAT IT STILL DOES NOT GUARANTEE, named rather than implied away:
+#
+#   The row is written into the WORKING TREE it describes, so its durability rides on that branch
+#   merging. A worktree whose branch is abandoned takes its own row with it — and an abandoned
+#   worktree is exactly the kind most likely to be forgotten. Nothing here can fix that from
+#   inside the worktree; the answer is that the index merges with the work, like the dev-log.
+#
+#   The index is CREATED untracked. `git add` is not this hook's to run — a hook that stages files
+#   surprises every `git commit -a` in the repository, and `hooks/mode-guard` governs what a
+#   session may commit. `skills/handoff`'s setup step names it alongside the two `.gitignore`
+#   entries, and `tools/verify-session-index.sh` fails if the file exists here and git does not
+#   track it. Requirement 3 of #16 is "committed", and an untracked file satisfies none of it.
+#
+# IT LEAVES MARKERS, AND THEY ARE NOT PRUNED. One empty file per session at
+# `$ROOT/.arc-work/session-index/<session>`. `.arc-work/` is gitignored here and
+# `skills/handoff`'s setup step tells a consuming repo to ignore it too, so they never enter the
+# record — but a long-lived clone accumulates one per session forever. Same as
+# `camp-session-start`'s and `handoff-archive`'s markers; this is the house pattern rather than a
+# new one.
+
+# ---- kill switch ----------------------------------------------------------------
+# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
+# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+# Ahead of every other line, so it reaches the WRITE and not merely a message: this hook never
+# speaks, so a switch that only silenced it would be indistinguishable from one that worked.
+[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- the activation log ---------------------------------------------------------
+# Sourced before anything can exit. This hook is silent on every path by design, so the log is
+# the only thing that says it ran at all. m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event session-indexed
+
+# A path taken before there is anything to weigh: both declared checks recorded as unrun, with
+# the reason, and the hook leaves quietly.
+nothing_to_weigh() {
+  arc_log_skip index-entry "$1"
+  arc_log_skip orphan-sweep "$1"
+  arc_log_outcome ok "$1"
+  exit 0
+}
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Never `set -e`. A guardrail bug must never block every tool call. This hook never denies at
+# all — it records. On anything unexpected, exit 0 and allow: losing an index entry is bad,
+# blocking every tool call is worse.
+set +e
+
+INPUT="$(cat 2>/dev/null)"
+
+# Parsed with bash's own parameter expansion — NO subprocess at all. This hook runs on every Bash
+# call in every repository the plugin is installed into, so the parse is the hot path. Copied from
+# `hooks/handoff-archive`, which measured the alternative at ~51 ms per field.
+#
+# It matches on the QUOTED key and takes the FIRST occurrence, which matters here: a Bash payload
+# carries the command text, so an unanchored search would match `cwd` or `session_id` written
+# inside a command string. The real keys precede `tool_input` in the payload Claude Code sends, so
+# first-match is the real one. It is a naive reader — it finds `"<key>"`, expects a string value,
+# and stops at the next quote — so a value containing an escaped quote would truncate. Paths and
+# ids do not, and the alternative is a `jq` dependency for a hook on this matcher.
+field() {  # field <key> — prints the string value of "<key>", or nothing
+  local rest="${INPUT#*\"$1\"}"
+  [ "$rest" = "$INPUT" ] && return 1          # key absent
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) ;; *) return 1 ;; esac  # not a string value
+  rest="${rest#\"}"
+  printf '%s' "${rest%%\"*}"
+}
+
+# A JSON string carries Windows separators escaped. Undo that, then work in forward slashes
+# throughout — git reports its own paths that way on every platform, and so does the slug.
+# Guarded so a path with no backslash costs nothing.
+unescape_path() {
+  case "$1" in
+    *\\*) printf '%s' "$1" | sed -e 's|\\\\|/|g' -e 's|\\|/|g' ;;
+    *)    printf '%s' "$1" ;;
+  esac
+}
+
+# Trim a table cell into $CELL: surrounding spaces, then the backticks a path or a slug is
+# written in. Sets a global rather than returning a string, because a command substitution is a
+# fork and this runs once per row of the index.
+cell() {
+  CELL="$1"
+  while [ "${CELL# }" != "$CELL" ]; do CELL="${CELL# }"; done
+  while [ "${CELL% }" != "$CELL" ]; do CELL="${CELL% }"; done
+  CELL="${CELL#\`}"
+  CELL="${CELL%\`}"
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+# A truncated payload can still yield a readable `cwd`, which is enough to write an entry — on
+# input that is not a real hook call. Requiring the session id and the tool name means a
+# half-written payload is silent rather than wrong.
+SESSION="$(field session_id)"
+[ -n "$SESSION" ] || nothing_to_weigh "the payload names no session"
+TOOL="$(field tool_name)"
+[ -n "$TOOL" ] || nothing_to_weigh "the payload names no tool"
+arc_log_event session-indexed "tool=$TOOL"
+
+# ---- the fast path, and why it forks nothing -------------------------------------
+# `CLAUDE_PROJECT_DIR` is set by Claude Code for a hook and by nothing else, so in a session the
+# root is known without asking git. `$ROOT/.git` is present in a main checkout (a directory) and
+# in a worktree (a file), so one file test settles "is this a repository" that `git rev-parse`
+# would have forked for. Only when the environment variable is absent — which is a verifier, or a
+# harness — is git consulted at all.
+ROOT="${CLAUDE_PROJECT_DIR:-}"
+if [ -z "$ROOT" ] || [ ! -e "$ROOT/.git" ]; then
+  CWD="$(unescape_path "$(field cwd)")"
+  [ -d "$CWD" ] || CWD="$PWD"
+  ROOT="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
+  [ -n "$ROOT" ] || nothing_to_weigh "not a git repository"
+fi
+
+# Once per session. The marker is keyed to the session id, and written whatever the outcome
+# below — including "there was nothing to change" — so the fast path is reached in the common
+# case and not only when work was done. `handoff-archive` shipped with that inverted and ran its
+# whole body on every Bash call in every repository without a handoff.
+MARKER_DIR="$ROOT/.arc-work/session-index"
+MARKER="$MARKER_DIR/$SESSION"
+if [ -e "$MARKER" ]; then
+  arc_log_skip index-entry "this session was already indexed"
+  arc_log_skip orphan-sweep "this session was already indexed"
+  arc_log_outcome ok "already indexed this session"
+  exit 0
+fi
+
+# ---- what this session is ---------------------------------------------------------
+PROJECTS="$HOME/.claude/projects"
+
+# `transcript_path` names the .jsonl Claude Code is writing right now, so its parent directory IS
+# the transcript directory — no derivation, no guess. Preferred over computing whenever present.
+SLUG=""
+TP="$(unescape_path "$(field transcript_path)")"
+if [ -n "$TP" ]; then
+  TPDIR="${TP%/*}"
+  [ "$TPDIR" != "$TP" ] && SLUG="${TPDIR##*/}"
+fi
+
+# Otherwise derive it: every character that is not [A-Za-z0-9] becomes a hyphen. Then let the
+# store correct the spelling — this machine holds `r--arc` and `R--arc-wt-16` side by side,
+# because an older Claude Code lowercased the slug, and a name the miner cannot open is not a
+# locator. The computed name is kept when nothing matches: the directory appears at the session's
+# first message, which may be after this hook has run.
+if [ -z "$SLUG" ]; then
+  SLUG="${ROOT//[!A-Za-z0-9]/-}"
+  # The store is listed rather than probed with `[ -d ]`, and that is the fix for a real false
+  # pass rather than a stylistic choice: this machine's /tmp is case-INSENSITIVE, so a test for
+  # `$PROJECTS/$SLUG` succeeds against a directory whose real name differs in case, and the
+  # computed spelling is then recorded as if it had been confirmed. Listing asks the directory
+  # for its own name, which is the only thing that answers on both kinds of filesystem.
+  if [ -d "$PROJECTS" ]; then
+    want="${SLUG,,}"
+    fold=""
+    for d in "$PROJECTS"/*; do
+      [ -d "$d" ] || continue
+      base="${d##*/}"
+      [ "$base" = "$SLUG" ] && { fold=""; break; }   # exact — nothing to correct
+      [ "${base,,}" = "$want" ] && fold="$base"      # same name, different case
+    done
+    [ -n "$fold" ] && SLUG="$fold"
+  fi
+fi
+
+# The branch, and the issue and arc it names. A detached HEAD is recorded rather than skipped:
+# `tools/arc-loop.sh` hands every run a detached worktree and the run checks its branch out
+# afterwards, so a hook that bailed here would miss the arc's own worktrees — which is every
+# worktree this index exists for. The next session in that directory writes the real branch as its
+# own row; a skipped directory never gets one at all.
+BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+[ -n "$BRANCH" ] && [ "$BRANCH" != "HEAD" ] || BRANCH=detached
+
+ISSUE="-"
+case "$BRANCH" in
+  *-issue-[0-9]*)
+    n="${BRANCH##*-issue-}"; n="${n%%-*}"
+    case "$n" in ''|*[!0-9]*) ;; *) ISSUE="#$n" ;; esac
+    ;;
+  *-pr[0-9]*)
+    # A direct PR's branch carries the PR's number instead of an issue's — `tools/new-direct-pr.sh`
+    # makes these, and there is no issue behind one. Recorded as what it is rather than as absent.
+    n="${BRANCH##*-pr}"; n="${n%%-*}"
+    case "$n" in ''|*[!0-9]*) ;; *) ISSUE="PR #$n" ;; esac
+    ;;
+esac
+
+ARC="-"
+case "$BRANCH" in
+  arc/*)
+    ARC="${BRANCH%%-issue-*}"
+    ARC="${ARC%%-pr[0-9]*}"
+    ;;
+esac
+
+if printf -v TODAY '%(%Y-%m-%d)T' -1 2>/dev/null && [ -n "$TODAY" ]; then :; else
+  TODAY="$(date -u +%Y-%m-%d 2>/dev/null)"
+fi
+[ -n "$TODAY" ] || TODAY="undated"
+
+# ---- rewrite the index -------------------------------------------------------------
+# Read, change, write to a temporary file, move it into place. The event log's rule — append,
+# never read — does not transfer: #16 requires an existing entry's status to change when its
+# worktree goes, and that is a rewrite by definition. It is affordable because this runs once per
+# session and the table holds one row per working directory, not one per firing.
+INDEX_DIR="$ROOT/.claude/arc"
+INDEX="$INDEX_DIR/sessions.md"
+mkdir -p "$INDEX_DIR" 2>/dev/null || nothing_to_weigh "the index directory could not be created"
+
+# THE SCRATCH FILES GO WHERE THE MARKERS GO, NOT BESIDE THE INDEX. `.claude/arc/` is a TRACKED
+# directory — it holds the event log, the camp documents and now the index — so a `sessions.md.lock`
+# or a `sessions.md.4711` left there by a crashed session shows up as untracked next to the record
+# and rides into the first `git add .` someone runs. `.arc-work/` is already gitignored for exactly
+# this, it is in the same repository so the `mv` below is still a rename rather than a copy, and
+# `$MARKER_DIR` is created here rather than at the end so both paths exist before they are used.
+mkdir -p "$MARKER_DIR" 2>/dev/null || nothing_to_weigh "the working directory could not be created"
+TMP="$MARKER_DIR/sessions.$$.tmp"
+
+# ---- one writer at a time ---------------------------------------------------------
+# Read, rewrite, move is not atomic, and two sessions sharing a repository ROOT — the main
+# checkout with two terminals open, not the worktree-per-run case — would each read the index
+# before either wrote, and the later `mv` would drop the earlier session's row.
+#
+# `mkdir` is the lock because it is atomic on every filesystem. It is NOT released by a trap:
+# `lib/activation-log` owns this hook's EXIT trap, and a second `trap ... EXIT` here would replace
+# it and silence the record. So the critical section below contains no `exit` of its own, and the
+# lock is released at exactly one place after the rewrite — one release rather than one per branch,
+# because a release per branch is how the failure path ends up leaking it.
+#
+# `OWNED` is not decoration. Without it a session that gave up waiting would `rmdir` the lock the
+# session still writing is holding, and the third arrival would then acquire it mid-write — the
+# race this exists to stop, reintroduced by the cleanup.
+#
+# It gives up after about half a second and writes anyway: a session that crashed mid-rewrite
+# leaves the directory behind, and blocking forever on a stale marker is a worse failure than the
+# race. Where `sleep` refuses a fractional argument — BusyBox, Solaris `/bin/sleep` — the loop
+# breaks on the first collision instead, so there is effectively no locking there at all. Both are
+# fail-open, which is the rule everywhere else here, and the second is named rather than implied.
+LOCK="$MARKER_DIR/sessions.lock"
+OWNED=0
+tries=0
+while [ "$tries" -lt 10 ]; do
+  if mkdir "$LOCK" 2>/dev/null; then OWNED=1; break; fi
+  tries=$((tries + 1))
+  sleep 0.05 2>/dev/null || break
+done
+
+# ---- what the file holds before this firing ---------------------------------------
+# Inside the lock, so the counts the guard below compares against are the ones the rewrite actually
+# started from. Read out here rather than inferred later: a count taken after the rewrite cannot
+# tell a correct one-row index from a rewrite that ate twelve.
+HAD_HEADER=0
+OLDROWS=0
+SEEN=0
+FRESH=1
+if [ -s "$INDEX" ]; then
+  FRESH=0
+  while IFS= read -r line || [ -n "$line" ]; do
+    SEEN=$((SEEN + 1))
+    case "$line" in
+      '| Transcript |'*) HAD_HEADER=1 ;;
+      '| `'*)            OLDROWS=$((OLDROWS + 1)) ;;
+    esac
+  done < "$INDEX"
+fi
+
+# A file that is on disk, is not empty, and yielded no lines at all could not be READ. That is the
+# case the row-count guard was written for, and the guard alone cannot catch it: the same failure
+# feeds the pre-scan, so `OLDROWS` comes back 0 and any rewrite clears it. The only safe answer to
+# an index that cannot be read is to leave it exactly as it is.
+if [ "$FRESH" = "0" ] && [ "$SEEN" = "0" ]; then
+  [ "$OWNED" = "1" ] && rmdir "$LOCK" 2>/dev/null
+  arc_log_skip index-entry "the index is on disk and could not be read"
+  arc_log_skip orphan-sweep "the index is on disk and could not be read"
+  arc_log_outcome failed "the index could not be read, so it was left untouched"
+  exit 0
+fi
+
+# The two table lines on their own. A file that still has its title and its note but has lost its
+# column names needs exactly these, in place, immediately above the first row — emitting the whole
+# block instead leaves the old title and note duplicated below the new ones, and the rows still do
+# not render as a table, which is the defect this repair is for.
+emit_table_header() {
+  NEWHEADER=1
+  printf '| Transcript | Worktree | Branch | Issue | Arc | Dates | Status |\n'
+  printf '| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n'
+}
+
+# Emitted before the first entry row of a file that came in without column names, and nowhere else.
+need_table_header() {
+  [ "$HAD_HEADER" = "0" ] && [ "$NEWHEADER" = "0" ] && emit_table_header
+  return 0
+}
+
+emit_header() {
+  cat <<'HEADER'
+# Session index — where each session's transcript went
+
+> **Written by `hooks/session-index`** at the first tool call of a session, and never by hand —
+> the hook rewrites the whole table. One row per working directory and branch. **The index is
+> committed; the transcripts it points at are not**, and they never leave the machine.
+>
+> Format and rules: [templates/session-index.md](https://github.com/Calyx-Engineering/arc/blob/main/templates/session-index.md) · Spec: [m32](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m32-session-preservation.md)
+
+HEADER
+  # The column names live in one function, not in two copies that can drift.
+  emit_table_header
+}
+
+row() {  # row <slug> <worktree> <branch> <issue> <arc> <first> <last> <status>
+  # Every cell that holds a name git or the filesystem would recognise is backticked; the issue,
+  # the dates and the status are prose and are not. `-` is the absent marker and is never
+  # backticked, so an empty cell cannot be mistaken for a branch called `-`.
+  NEWROWS=$((NEWROWS + 1))
+  local arc="$5"
+  [ -n "$arc" ] || arc="-"
+  [ "$arc" = "-" ] || arc="\`$arc\`"
+  printf '| `%s` | `%s` | `%s` | %s | %s | %s to %s | %s |\n' \
+    "$1" "$2" "$3" "$4" "$arc" "$6" "$7" "$8"
+}
+
+MATCHED=0
+SWEPT=0
+NEWROWS=0
+NEWHEADER=0
+
+{
+  if [ "$FRESH" = "0" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+      # Anything that is not an entry row — the heading, the note, the column headers, the
+      # alignment rule, a blank line — is passed through untouched. An entry row is the only
+      # line that opens with a backticked cell.
+      case "$line" in
+        '| `'*) ;;
+        *) printf '%s\n' "$line"; continue ;;
+      esac
+
+      # A file that lost its column names gets them back here — in place, immediately above the
+      # first row — rather than as a whole header block prepended at the top, which would leave the
+      # old title and note duplicated below the new ones and the rows still not rendering.
+      need_table_header
+
+      IFS='|' read -r _ r_slug r_wt r_branch r_issue r_arc r_dates r_status _rest <<< "$line"
+      cell "$r_slug";   e_slug="$CELL"
+      cell "$r_wt";     e_wt="$CELL"
+      cell "$r_branch"; e_branch="$CELL"
+      cell "$r_issue";  e_issue="$CELL"
+      cell "$r_arc";    e_arc="$CELL"
+      cell "$r_dates";  e_dates="$CELL"
+      cell "$r_status"; e_status="$CELL"
+
+      e_first="${e_dates%% to *}"
+      e_last="${e_dates##* to }"
+      [ -n "$e_first" ] || e_first="$TODAY"
+      [ -n "$e_last" ]  || e_last="$e_first"
+
+      if [ "$e_slug" = "$SLUG" ] && [ "$e_branch" = "$BRANCH" ]; then
+        # This directory and branch, seen again. Extend the span and re-assert the worktree
+        # path — the entry is being written from inside it, so it exists by definition.
+        MATCHED=1
+        row "$SLUG" "$ROOT" "$BRANCH" "$ISSUE" "$ARC" "$e_first" "$TODAY" live
+        continue
+      fi
+
+      # The sweep. Absent worktree AND a transcript directory present HERE — the second half is
+      # what keeps another machine's live worktree from being declared orphaned by this one.
+      if [ "$e_status" != "orphaned" ] && [ -n "$e_wt" ] && [ ! -d "$e_wt" ] \
+         && [ -n "$e_slug" ] && [ -d "$PROJECTS/$e_slug" ]; then
+        SWEPT=$((SWEPT + 1))
+        row "$e_slug" "$e_wt" "$e_branch" "$e_issue" "$e_arc" "$e_first" "$e_last" orphaned
+        continue
+      fi
+
+      # Passed through unchanged — and COUNTED. `OLDROWS` counts every row the file had, so a
+      # rewrite that counted only the rows it TOUCHED reports a loss on any index holding a row for
+      # another live worktree, and the guard below then blocks the write. Permanently: the next
+      # session reads the same unchanged file and reaches the same conclusion, so the mechanism
+      # stops on every repository with two unrelated rows and says nothing about it.
+      NEWROWS=$((NEWROWS + 1))
+      printf '%s\n' "$line"
+    done < "$INDEX"
+  else
+    emit_header
+  fi
+
+  if [ "$MATCHED" != "1" ]; then
+    need_table_header
+    row "$SLUG" "$ROOT" "$BRANCH" "$ISSUE" "$ARC" "$TODAY" "$TODAY" live
+  fi
+} > "$TMP" 2>/dev/null
+
+# Only replace the index when the rewrite is demonstrably not a loss. `[ -s ]` alone was the first
+# form of this guard and it does not hold: if the read loop yields nothing — an unreadable file, an
+# I/O error partway through — the current session's own row is still appended below, the file is
+# non-empty, and `mv` replaces a twelve-row index with one headerless row. Every other machine's
+# rows and every `orphaned` entry would be gone, and this hook would have destroyed the mapping it
+# exists to keep.
+#
+# So three conditions, and they are the smallest set that makes that impossible: something was
+# written, the table still has its column names, and it holds at least as many rows as it did
+# before. The row count is the load-bearing one — a rewrite may add rows and may never lose them.
+if [ -s "$TMP" ] && [ "$NEWROWS" -ge "$OLDROWS" ] \
+   && { [ "$HAD_HEADER" = "1" ] || [ "$NEWHEADER" = "1" ]; }; then
+  mv -f "$TMP" "$INDEX" 2>/dev/null
+  arc_log_pass "index-entry=$SLUG"
+  if [ "$SWEPT" -gt 0 ]; then
+    arc_log_fail "orphan-sweep=$SWEPT"
+    arc_log_outcome repaired "$SWEPT entr(y/ies) marked orphaned; $SLUG recorded on $BRANCH"
+  else
+    arc_log_pass orphan-sweep=none
+    arc_log_outcome ok "$SLUG recorded on $BRANCH"
+  fi
+else
+  rm -f "$TMP" 2>/dev/null
+  arc_log_skip index-entry "the rewrite would have lost rows, so the index was left alone"
+  arc_log_skip orphan-sweep "the rewrite would have lost rows, so the index was left alone"
+  arc_log_outcome failed "the rewrite held $NEWROWS rows against $OLDROWS before it; the index was not replaced"
+fi
+
+# One release, after the decision rather than inside each branch of it — a release per branch is
+# how the failure path ends up leaking the lock. `OWNED` is why a session that gave up waiting does
+# not delete the lock the session still writing is holding, which would hand the next arrival a
+# lock that is free while a write is in progress.
+[ "$OWNED" = "1" ] && rmdir "$LOCK" 2>/dev/null
+
+# Written whatever happened above. Retrying a failed rewrite on every tool call of the session
+# would turn one bad write into a tax on every call. The directory was created above.
+: > "$MARKER" 2>/dev/null
+
+# Silent, on both matchers — see the header. Stdout here is parsed as a permission decision, and
+# an "allow" would approve the call rather than annotate it.
+exit 0

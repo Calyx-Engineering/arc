@@ -1,0 +1,2 @@
+# an issue created on an issue branch with no Spawned by anywhere — this is the 2026-08-20 failure, four issues filed during #76's review with none of them recorded
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_body":"## Required\n\n- [ ] one thing\n\nNo parent recorded anywhere in this body.","tool_input":{"command":"gh issue create --title x --body-file body.md"}}

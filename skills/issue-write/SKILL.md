@@ -53,6 +53,26 @@ nothing.** That step has no gate, because prose truth is not mechanically checka
 is the only place it is recorded at all — and silence there is indistinguishable from a step
 nobody ran.
 
+**One thing in the body is gated, and it is not the prose.** An unticked box named here as not
+done, or as moved to the issue that owns it, is read back by `tools/verify-issue-boxes.sh` —
+which [`hooks/tracker-verify`](../../hooks/tracker-verify) runs on `gh pr ready`.
+
+**Copy the box's first eight words, unbroken and in order, then say what happened.** The quote
+is what ties the disposition to the box; a reason with no quote reads as prose about something
+else, and the check cannot match it to anything.
+
+```markdown
+- A read-back step in close-sequence.md, between step 4b — not done, it belongs to the skill
+- Selftest cases for every shape the check can meet — moved to #250
+```
+
+**Then at least three words the box does not carry.** `— moved to #250` is three; the box pasted
+back unchanged is none, and a copied checklist states nothing about what happened to it.
+`Box 4: not done` fails on the quote, not the reason.
+
+Punctuation, links and emphasis are all ignored in the comparison — only the words count, so a
+box carrying a markdown link keeps the link's text and drops its target.
+
 ---
 
 ## Titles
@@ -461,8 +481,9 @@ All three report and none blocks. `binding` is the only one that has to run afte
 — it reads the API. `title` and `body` are decidable from text, so running them afterwards
 means the wrong thing is already in the tracker.
 
-`hooks/tracker-verify` runs the mechanical half at branch create, PR open, and PR merge.
-The judgement half — *does this match what we agreed* — is this skill's.
+`hooks/tracker-verify` runs the mechanical half on `gh issue create|edit|close`, on
+`gh pr create|edit`, on `gh pr ready` and on `gh pr merge`. The judgement half — *does this
+match what we agreed* — is this skill's.
 
 ---
 

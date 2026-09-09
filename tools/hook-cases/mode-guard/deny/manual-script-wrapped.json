@@ -1,0 +1,2 @@
+# manual mode, the script behind a wrapper word and an environment assignment
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"ARC_LOOP_MAX_RETRY=1 nohup bash tools/arc-loop.sh 145","description":"Dispatch detached"}}
