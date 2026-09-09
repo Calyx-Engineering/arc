@@ -1,0 +1,2 @@
+# an issue created with a `Spawned` heading — its parent is recorded, so the heading is the only finding
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_body":"## Required\n\n- [ ] one thing\n\n### Spawned\n\n- a defect spotted in passing\n\n### Related\n\n| | Link | What it is |\n| :--- | :--- | :--- |\n| **Spawned by** | [#194](https://github.com/Calyx-Engineering/arc/issues/194) | the unit that surfaced it |","tool_input":{"command":"gh issue create --title x --body-file body.md"}}
