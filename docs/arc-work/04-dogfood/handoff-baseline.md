@@ -31,6 +31,9 @@ Their packets are condensed into [the appendix](#appendix--the-evidence-behind-e
 is the durable record: the transcripts stay on this machine, so a quote with a session id and a
 timestamp is the most that can be committed.
 
+**A later opening sits below in [The live opening](#the-live-opening--2026-09-08-beside-the-corpus),
+scored on the same two criteria.** It is outside this corpus, which is closed.
+
 ## The criteria
 
 | | Scored as |
@@ -127,6 +130,77 @@ control. Treat it as an observation.
 cold-start rule was right, but the two-human-prompt threshold is the knob that produces it. The
 threshold was set from what the excluded sessions *are* — one ran `/plugin install`, one asked for
 a transcript to be copied — not from the count it yields.
+
+## The live opening — 2026-09-08, beside the corpus
+
+**C1 pass, C2 pass.** One opening, scored on the same two criteria and kept in its own row: the
+corpus above is closed at `--until 2026-09-06`, so this is a later measurement placed beside the
+baseline, never a ninth member of it. Asked for by
+[#253](https://github.com/Calyx-Engineering/arc/issues/253); the change being measured is
+[#151](https://github.com/Calyx-Engineering/arc/issues/151).
+
+```sh
+bash tools/handoff-openings.sh r--arc --since 2026-09-08T12:00 --until 2026-09-09T12:00
+```
+
+| # | Opened | Session | C1 | C2 | Handoff it read | Age |
+|---|---|---|---|---|---|---|
+| L1 | 2026-09-08 20:38 EDT | `d8fadd56` | **pass** | **pass** | `803108a7` | 0.0 h |
+
+The enumeration returns one cold start, `handoff-read yes`, and the pair and age are the tool's
+`pairs` output — not a hand-made row. **Timestamps below are UTC**, as the transcripts record
+them: the opening is `2026-09-09T00:38Z`.
+
+**Locators.** Reader `~/.claude/projects/r--arc/d8fadd56-35a6-42d7-b419-c7dd7ca60bd0.jsonl`,
+first prompt `2026-09-09T00:38:32.642Z`. Writer
+`~/.claude/projects/r--arc/803108a7-5a24-4535-9a84-28113b5a2ae1.jsonl`. The handoff was
+`R:/arc/HANDOFF.md`, gitignored and since overwritten; the copy that was read is the
+`cat HANDOFF.md` result at `00:38:38.731Z` in the reader's transcript.
+
+### C1 — the first action, no correction
+
+The handoff's *Do these in order* row 1: *"You are #253's live cold start. Before anything else,
+note whether `skills/handoff` fired and ran its staleness checks … and what your first action is.
+Record it on #253."* Row 2: *"`bash tools/arc-loop.sh --status`."*
+
+| | |
+|---|---|
+| `00:38:36.633Z` | `Skill` call `arc:handoff` — the first tool call, before `HANDOFF.md` was opened |
+| `00:38:45` – `00:39:48` | The seven staleness checks, all agreeing with the tree |
+| `00:39:04.803Z` | `bash tools/arc-loop.sh --status` — row 2 |
+| `00:41:10.318Z` | The record posted on #253 — row 1 |
+| **User next**, `00:42:11.554Z` | *"ok continue your process"* — proceeding, no correction. The two after it are a question about issue routing (`00:46:27`) and *"agreed, do it"* (`00:49:51`) |
+
+**Unprompted verdict**, same session, `03:54:12.112Z`: *"Also, this is an example of where handoff
+worked well."* Not part of the criterion — no other row in this document has one.
+
+### C2 — the why, volunteered
+
+`00:40:57.547Z`, one minute and fourteen seconds before the user's first substantive message:
+
+> **Why this approach, unprompted** | Autonomous until the playlist completes because David took
+> the review workstream issues and left the orchestrator everything else; four tracks in parallel
+> because the set's files do not overlap; one probe track per set because the installed plugin is
+> one machine-wide cache
+
+**All three reasons were in the handoff and were lifted, not re-derived** — the *Execution mode*
+table's `Why` row, and two *Load-bearing decisions* rows (*the track is the parallel unit*, *one
+probe track per set*). That is the mechanism #151 changed: the four C2 failures above are openings
+whose handoff recorded the decision and not its reason.
+
+**Scored as volunteered, with one difference from the eight.** The reason was written into the
+tracker comment the handoff asked for, not into the chat reply. It is unprompted and inside the
+opening exchange, which is what the criterion asks; the surface is not the same one the eight were
+read on.
+
+### What this does not establish
+
+| | |
+|---|---|
+| **n = 1** | Two passes against a 5/8 and 4/8 baseline is one opening, not a trend. It moves #146's *Done when* from *no score* to *a score*, nothing further |
+| **The opening knew it was the measurement** | Row 1 of the handoff told it so. None of the eight did. A session told to record whether the skill fired and what its first action was is being asked half of C1 directly, and the C2 row it added is on the same page |
+| **`skills/handoff` firing is not readable where #253 says to read it** | The activation log records hooks, not skills — `handoff` rows and all seven check names are 0 across `.claude/arc/log.md`. Firing is evidenced from the transcript (`Skill` call, `00:38:36.633Z`) and nowhere else |
+| **The handoff was 0.0 h old and its stamp was wrong** | Title *2026-09-08 14:40*, mtime `20:37:16` EDT. The reader caught it in the checks. Age does not predict either column here any more than it did above |
 
 ## Appendix — the evidence behind each cell
 

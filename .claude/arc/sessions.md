@@ -15,3 +15,4 @@
 | `R--arc-wt-136` | `R:/arc-wt/136` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-252` | `R:/arc-wt/252` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-265` | `R:/arc-wt/265` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
+| `R--arc-wt-253` | `R:/arc-wt/253` | `arc/04-dogfood-issue-253-cold-start-score` | #253 | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | live |
