@@ -123,3 +123,14 @@ letting three green boxes imply the skill now fires.
 regress, and the natural gate — word overlap between prompt and description — was disproved by
 the corpus in the same session it was designed. `camp` outscored both skills that fired. Building
 it would have added a gate that goes green on the failure it was meant to catch.
+
+## Findings
+
+Moved verbatim from #156's body under [#271](https://github.com/Calyx-Engineering/arc/issues/271).
+
+| Finding | Where it routes |
+|---|---|
+| **The gate exits 1, not 0.** #155 recorded `plugin eval init --bare` returning 0 while gated. The *run* form returns **1**, so a gate wired to it fails closed rather than reporting a false PASS | #181 — refines it, and it is the safer form to wire |
+| **A lexical coverage gate would mispredict, so none was built.** #155 §1 R1 credits the two wrapped passes to prompts "whose exact words are in the description", but `autonomous mode` and `retrospective process` are not contiguous in `autonomy-set`'s or `plugin-retrospective`'s descriptions — the longest runs are `autonomous` and `retrospective`, one word each. `camp` scored a longer run than either and did not fire. No text metric separates the passes from the misses, which is R3's own point | #155's record. The rule holds; the *Because* column overstates its evidence |
+| **Both cases expect `handoff` and `camp`**, so neither can go green on this fix alone — the `handoff` half is a separate description | #157, which owns `handoff`'s frontmatter |
+| **`createLinkedBranch` succeeded and `issue.linkedBranches` still reads `totalCount: 0`**, with a `ConnectedEvent` in the timeline and the branch on the remote. Third occurrence — #194, #155, now #156 | [m12](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m12-issue-linking.md), which records that read as tested and working. Still needs an issue |

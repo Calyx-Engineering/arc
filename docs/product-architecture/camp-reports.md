@@ -150,8 +150,8 @@ it is what makes turning the volume down cost display only. Format in
 |---|---|---|
 | ran, passed | On the checked line | On the checked line |
 | ran, failed | On the checked line, and in the outcome | Both |
-| did not run | On the skipped line | On the skipped line |
-| not declared at all | Nothing | Nothing |
+| did not run | On the skipped line | On the skipped line — unless NO declared check ran and the outcome is `ok`, where the log carries no skipped line at all ([#238](https://github.com/Calyx-Engineering/arc/issues/238)) |
+| not declared at all | Nothing | Nothing, unless the artifact marks it by name anyway — `camp-branch-check`'s `base-is-arc` — which is logged, and goes with the line above |
 
 ---
 
