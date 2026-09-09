@@ -400,7 +400,7 @@ cmd_check() {  # cmd_check <issue>
 # IT IS A PRE-FILTER, NOT THE INTERLOCK, and it has two windows. `comments(last:100)`: an issue
 # whose own run has commented a hundred times since the claim was posted pushes it out of view.
 # `subIssues(first:50)`: a workstream with more children than that under-reports — the same cap
-# `open_children` in tools/arc-loop.sh selects through, so the two at least agree.
+# `open_child_rows` in tools/arc-loop.sh selects through, so the two at least agree.
 #
 # Either miss reports an issue free that is not. `take` reads every comment with `--paginate` and
 # is what actually decides, so the cost is a wasted selection, never a second dispatcher.

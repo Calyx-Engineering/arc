@@ -24,3 +24,4 @@
 | `R--arc-wt-190` | `R:/arc-wt/190` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-267` | `R:/arc-wt/267` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-271` | `R:/arc-wt/271` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
+| `R--arc-wt-274` | `R:/arc-wt/274` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |

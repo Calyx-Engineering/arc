@@ -14,11 +14,11 @@ flowchart TB
     U["the user types<br/>/arc-run"] --> C{"which workstream"}
     C -->|"arc parent #196's<br/>ordered children"| W["the next open<br/>workstream"]
     W --> M["arc-loop.sh sets<br/>HANDOFF.md to Autonomous,<br/>bounded to that workstream"]
-    M --> L["for each open child,<br/>in sub-issue order,<br/>whose blockers are closed"]
+    M --> L["for each open Agent-typed child,<br/>in sub-issue order,<br/>whose blockers are closed"]
     L --> R["a fresh claude -p<br/>reads run-instructions §1–5<br/>and one issue body"]
     R --> P["work, four review passes,<br/>dev-log, PR, merge"]
     P --> L
-    L -->|"no open children left"| B["a report run<br/>reads §6 and the<br/>workstream's record"]
+    L -->|"no open children left,<br/>of any type"| B["a report run<br/>reads §6 and the<br/>workstream's record"]
     B --> X["mode back to Manual,<br/>parent left OPEN,<br/>stop"]
 ```
 

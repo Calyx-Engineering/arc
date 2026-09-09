@@ -2,7 +2,7 @@
 name: issue-write
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [arc-intent, title-size, base-branch, milestone, label, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
+checks: [arc-intent, title-size, base-branch, milestone, label, issue-type, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
@@ -10,6 +10,7 @@ skips:
   - read-back-dispositions (the write is an issue, not a PR)
   - title-size (editing a body, not a title)
   - label (the prefix licenses none — `scope:`, `chore:`, `refactor:`, `test:`)
+  - issue-type (the write is a PR, or an edit to an issue body rather than its fields)
 ---
 
 # Writing issues and pull requests
@@ -170,11 +171,41 @@ Three labels say what a title cannot, and ride alongside the type label:
 one more thing to get wrong, and nothing the milestone view does not already show.
 
 ```sh
-tests/verify-labels.sh             every open issue, prefix against label
+tests/verify-labels.sh             every open issue: prefix against label, and the issue type
 tests/verify-labels.sh labels      the label set itself
 ```
 
 **The table above and the script's `MAP` are the same fact.** A new prefix needs both.
+
+### The issue type says who does the work
+
+**The prefix says what kind of work it is. The type says who does it.** They are different
+questions and they do not overlap — an issue holds exactly one type, so it is the field that
+can carry *who* without competing with the kind already in the prefix and its label.
+
+| Type | |
+|---|---|
+| `Agent` | **The loop's.** Sized for one unattended run. `tools/arc-loop.sh` dispatches these and nothing else |
+| Any other type | **A human's.** Needs judgement, hardware, an account nobody has delegated, or a call that is not the session's to make |
+| No type | **A defect.** The issue answers neither question. `tests/verify-labels.sh` reports it |
+
+**Which non-`Agent` type is a human's call, and no check has an opinion.** The rule is *who*,
+not *which*: `Task`, `Bug` and `Feature` all say the same thing here. A check that preferred one
+would invent a rule the tracker's own type set does not carry, and would report every type the
+org adds as a defect on the day it is created.
+
+**Set it at creation.** It is one of the fields that never appears in the body, so it is
+invisible once missed:
+
+```sh
+gh issue create --type Agent --milestone "<name>" --label <label> --title "…" --body-file body.md
+gh issue edit <N> --type Task                      # backfilling, or handing one back to a human
+gh issue view <N> --json issueType                 # the read-back
+```
+
+**Types are an organisation-level set, not a repository one.** `gh issue create --type` fails on
+a name the org has not defined, so a new type is a decision made once for every repository under
+the org — never worked around by inventing a label.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
@@ -509,10 +540,11 @@ milestone either way.
 had no other way to tell the two apart. `hooks/tracker-verify`'s `milestone` check reports
 both directions. #204.
 
-**The fields set at creation rather than written into the body — milestone, base, label — are
-listed at the top of [`templates/issue.md`](../../templates/issue.md) and
-[`templates/pr.md`](../../templates/pr.md).** Each is invisible once missed, which is why they
-are named where the body is assembled and not only here.
+**The fields set at creation rather than written into the body are listed at the top of
+[`templates/issue.md`](../../templates/issue.md) and
+[`templates/pr.md`](../../templates/pr.md)** — milestone, label, type and base for an issue;
+milestone, label, base and draft for a PR, which carries no issue type. Each is invisible once
+missed, which is why they are named where the body is assembled and not only here.
 
 After **every** create or edit:
 
