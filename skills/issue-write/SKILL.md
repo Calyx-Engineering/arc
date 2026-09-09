@@ -391,7 +391,7 @@ orphaned is indistinguishable from one that was forgotten.
 
 | | |
 |---|---|
-| `hooks/tracker-verify`'s `merge-close` | Fires on `gh pr merge` of a work PR whose base is not the trunk, and reports when the issue that branch names is still open |
+| `hooks/tracker-verify`'s `merge-close` | Fires on `gh pr merge` of a PR whose base is neither the default branch nor the trunk — that is, one where no keyword can bind — and reports when the issue its head branch names is still open |
 | `tools/arc-link-sweep.sh <milestone>` | The arc-checkpoint sweep — every issue in the milestone that is linked to nothing at all. m12 §4 |
 
 ### What the keyword is still for

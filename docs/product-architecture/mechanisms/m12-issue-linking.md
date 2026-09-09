@@ -85,6 +85,14 @@ to force it"*) is the clue that this is about parse timing.
 **Consequence: the default-branch switch is not required.** What is required is that the
 link is *verified after creation*, and re-triggered by a body re-save if absent.
 
+> **This section's conclusion is under test —
+> [#287](https://github.com/Calyx-Engineering/arc/issues/287).** [m42](m42-default-branch-flip.md)
+> opens by stating the opposite rule and quoting GitHub's documentation for it, and the two have
+> never been reconciled. PR #55 was created *after* the default switch, so its base **was** the
+> default at parse time — which is m42's rule rather than an exception to it. Nothing here is
+> re-measured; §5 no longer rests on it, and #287 settles it with one PR whose base was never the
+> default.
+
 ---
 
 ## What the API supports
@@ -215,21 +223,33 @@ issue side, and it is currently unused.
 The core of David's requirement — *"having claude ensure all this is happening."*
 
 ```sh
-gh pr view <N> --json closingIssuesReferences   # empty ⇒ the link did not form
+gh pr view <N> --json closingIssuesReferences   # what it means depends on the base — below
 ```
 
 Run after every PR creation and after any body edit. **Report loudly on failure.** This
 is the same silent-success class as
 [tracker-write-verification](m13-issue-write-back.md).
 
+**An empty array is not a verdict on its own.** On the default branch it is the defect; on an
+arc branch it is the expected reading and closure defers to the arc PR. `hooks/tracker-verify`'s
+`closing-keyword` check compares the base before it says which, and a verification that skipped
+that comparison would report a finding on every issue PR in an arc — which is a check that gets
+turned off.
+
 ### 2. Repair rather than reconfigure
 
-If the link is absent, the fix is a body re-save — not a repo setting change:
+If the link is absent **on a base that can carry one**, the fix is a body re-save — not a repo
+setting change:
 
 ```sh
 gh pr edit <N> --body "$(gh pr view <N> --json body -q .body)"
-gh pr view <N> --json closingIssuesReferences   # confirm it took
+gh pr view <N> --json closingIssuesReferences   # confirm it took — poll; one read is a false negative
 ```
+
+**On a base that was never the default branch there is nothing to re-parse**, and a re-save is
+not a slow repair but no repair at all — measured in [m42](m42-default-branch-flip.md), where
+five merged PRs stayed unbound after a flip and a re-save did not rescue them. §5's manual route
+is the repair there: the Development-panel click, then the close.
 
 ### 3. Link the branch to the issue explicitly
 
@@ -243,7 +263,7 @@ issue side.
 |---|---|---|
 | Branch created | Branch↔issue link established — `tools/verify-linked-branch.sh <NN> <branch>` | `issue.linkedBranches` |
 | PR created | `closingIssuesReferences` non-empty; base is the arc branch, not `main` | `closingIssuesReferences` — the branch record is gone by now, and that is correct |
-| PR merged | Issue actually closed — `hooks/tracker-verify`'s `merge-close`, on a work PR whose base is not the trunk | `issue.state` |
+| PR merged | Issue actually closed — `hooks/tracker-verify`'s `merge-close`, on a PR whose base is neither the default branch nor the trunk | `issue.state` |
 | Arc checkpoint | Sweep all arc issues for missing links — `tools/arc-link-sweep.sh <milestone>` | **both** — an issue before its PR has only the branch record, one after it has only the PR. A `git checkout -b` branch is **not** distinguishable here once its PR carries the keyword |
 
 The arc checkpoint sweep is the one that catches drift accumulated across days.
@@ -252,8 +272,16 @@ The arc checkpoint sweep is the one that catches drift accumulated across days.
 default-branch flip on, a work PR's keyword binds and GitHub closes the issue at the merge, so
 the check would be asking about a state GitHub is already producing. With the flip off nothing
 closes it, the merge reports success, and the issue stays open behind a correct-looking
-`Closes #NN` in the PR that did the work. So `merge-close` skips when the base IS the trunk —
-that PR is the arc PR, and `arc-merge-keyword` is its check.
+`Closes #NN` in the PR that did the work.
+
+**So the gate is the base against two branches, not one.** A trunk-only test gets the flipped
+case backwards, because the flip makes the default branch and the trunk two different branches:
+
+| Base | | |
+|---|---|---|
+| **= the default branch** | skip | GitHub parses the keyword and the merge closes the issue. With the flip on this is the **arc** branch, so a trunk-only test would run the check here and report that a keyword cannot bind on a base that is the default |
+| **= the trunk** | skip | The arc PR. `arc-merge-keyword` is its check |
+| neither, or either unreadable | run, or skip on the unreadable | The work PR this row is for. Nothing closes its issue |
 
 **The sweep asks a weaker question than a per-branch check, and permanently so.** Promotion
 survives its PR being closed, so an issue that ever had a closing PR reads as linked forever —

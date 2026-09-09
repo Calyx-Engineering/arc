@@ -50,8 +50,10 @@ USAGE
 #   $1  issue number   $2  issue state   $3  linkedBranches count   $4  closing-PR count
 #
 # Prints one line and returns 0 when the issue is linked to something, 1 when it is linked to
-# nothing. The line names WHICH field holds the link, because "linked" alone is the reading that
-# hid #155 — and a checkpoint report that cannot be argued with has to say what it saw.
+# nothing, and 2 when a count could not be read — which is the distinction the header calls this
+# file's whole point, and not a variant of 1. The line names WHICH field holds the link, because
+# "linked" alone is the reading that hid #155 — and a checkpoint report that cannot be argued
+# with has to say what it saw, including the value it could not parse.
 classify_issue() {
   local num="$1" state="$2" refs="$3" prs="$4"
 
@@ -65,11 +67,15 @@ classify_issue() {
   #
   # EACH COUNT SEPARATELY, NEVER CONCATENATED. `"$refs$prs"` with an empty `refs` and a `1` in
   # `prs` yields `1`, which passes both patterns and lands the empty one in the arithmetic.
-  case "${refs:-}" in ''|*[!0-9]*) refs="" ;; esac
-  case "${prs:-}" in ''|*[!0-9]*) prs="" ;; esac
-  if [ -z "$refs" ] || [ -z "$prs" ]; then
+  # THE RAW VALUE IS WHAT GOES IN THE MESSAGE, so the normalisation writes to its own variables.
+  # Blanking in place made a malformed count and an absent one print identically, and a run
+  # cannot then tell a parse bug from a field the query did not return.
+  local refs_ok=1 prs_ok=1
+  case "${refs:-}" in ''|*[!0-9]*) refs_ok=0 ;; esac
+  case "${prs:-}" in ''|*[!0-9]*) prs_ok=0 ;; esac
+  if [ "$refs_ok" = 0 ] || [ "$prs_ok" = 0 ]; then
     printf 'UNREAD  #%s — the link counts did not parse (branches=%s, closing PRs=%s)\n' \
-      "$num" "${refs:-<unreadable>}" "${prs:-<unreadable>}"
+      "$num" "${refs:-<absent>}" "${prs:-<absent>}"
     return 2
   fi
 

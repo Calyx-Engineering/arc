@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#136](https://github.com/Calyx-Engineering/arc/issues/136)  ·  **PR:** [#289](https://github.com/Calyx-Engineering/arc/pull/289)
+**Issue:** [#136](https://github.com/Calyx-Engineering/arc/issues/136)  ·  **PR:** opened after this commit
 
 ## Problem
 
@@ -14,8 +14,9 @@ replaced. m12 read `specified` for three weeks with nothing carrying it.
 
 The practical gap underneath the contradiction: this repository has the flip **off**. Trunk
 branch `main` is the GitHub default and every work PR targets an arc branch, so `Closes #NN`
-binds nothing and the merge closes nothing. Forty-seven of the Dogfood milestone's 102 issues are
-linked to nothing at all — measured, not estimated, by the sweep this issue added.
+binds nothing and the merge closes nothing. Forty-seven of the 102 issues the Dogfood milestone
+held on 2026-09-09 are linked to nothing at all — measured, not estimated, by the sweep this
+issue added.
 
 ## Intent and north star
 
@@ -31,7 +32,7 @@ linked to nothing at all — measured, not estimated, by the sweep this issue ad
 | | |
 |---|---|
 | **The hook reads the issue number off the head branch, not `closingIssuesReferences`** | The references are empty in exactly the case the check exists for. m46 §9's `-issue-<NN>` is what `createLinkedBranch` put in the branch name, and it survives the merge |
-| **`merge-close` skips when the base IS the trunk** | That PR is the arc PR, where keywords bind and GitHub closes natively. Asking there would fire on every arc merge about issues GitHub is closing as the read happens. `arc-merge-keyword` is that PR's check |
+| **`merge-close` skips on two bases, not one** | `BASE = DEFAULT` is where the keyword binds and GitHub closes natively; `BASE = TRUNK` is the arc PR, which is `arc-merge-keyword`'s. The flip makes those two different branches, so a trunk-only test — which is what the first draft had, and what pass 1 caught — runs the check on every work PR in a flipped repo and prints *"a closing keyword cannot bind on a base that is not the default branch"* about a base that is the default. #183 and #210's class, a third time |
 | **The PR's own `headRefName`, not `head_branch`** | `gh pr merge <NN>` runs from anywhere — an orchestrator merging a run's PR is not standing on that run's branch. `head_branch` stays right for `pr-base`, which is about a PR being created from here, and is the fallback when the field cannot be read |
 | **One bounded network call, like `close-link`** | A synchronous PostToolUse hook that hangs hangs the session. `timeout` proven by `--version`, because Windows ships a `timeout.exe` that rejects the syntax and exits 1 |
 | **The sweep is one GraphQL search, not an issue list and a call per issue** | An arc's hundred issues would be a hundred round trips, which is the shape nobody runs at a checkpoint. Paginated — Dogfood is 102 issues, past the 50-per-page window, and a sweep that silently stopped at 50 would be the false negative this mechanism is about |
@@ -55,10 +56,19 @@ linked to nothing at all — measured, not estimated, by the sweep this issue ad
 
 **[#286](https://github.com/Calyx-Engineering/arc/issues/286) caps this issue's own check.**
 `hooks/tracker-verify` derives the PR number with `grep -oE '(issue|pr) (edit|merge|view)
-+#?[0-9]+'` and exits 0 with no log entry when it finds none — so `gh pr merge --squash
---delete-branch`, the form a run merging its own PR from its own worktree would naturally type,
-turns every PR check off silently. Pre-existing and shared with `arc-merge-keyword`; fixing the
-extraction touches every PR check, which is a different unit.
++#?[0-9]+'`, which needs the digits immediately after the subcommand, and exits 0 without
+reaching a single PR check when it finds none. The entry is still written — every check lands as
+`(not reached)` — so the record shows the hook fired and says nothing about why it decided
+nothing. `gh pr merge --squash --delete-branch`, the form a run merging its own PR from its own
+worktree would naturally type, turns every PR check off that way. Pre-existing and shared with
+`arc-merge-keyword`; fixing the extraction touches every PR check, which is a different unit.
+
+**A second routing defect, found in pass 2 and folded into
+[#286](https://github.com/Calyx-Engineering/arc/issues/286).** The arm selector tests
+`*"gh issue"*` before `*"gh pr"*`, so `gh pr merge 200 && gh issue close 10` takes the **issue**
+arm with `NUM=200` and scans issue #200's body as the merged PR's. The comment above the
+fall-through says that chained form is what "reaching the PR checks it also deserves" is for, so
+the file already believes it is covered.
 
 **[#287](https://github.com/Calyx-Engineering/arc/issues/287) is the premise §5 rested on.** m12's
 *"The test that changes the design"* concludes *"`Closes #NN` works against a non-default base
@@ -71,14 +81,16 @@ that was never the default, which is #287.
 
 ## Retrospective
 
-Six boxes, four artifacts touched. The two documentation boxes were the issue's stated point —
-the contradiction between m12 and m42 — and the four lines of it that mattered were m12's §5
+Six boxes; three documents rewritten, two artifacts added to, one gate runner wired. The two
+documentation boxes were the issue's stated point — the contradiction between m12 and m42 — and
+the four lines of it that mattered were m12's §5
 heading, m12's status, m42's `Related` entry, and the skill's *"The fix is m42"* sentence, which
 told a session to change a repository's default branch when a keyword did not bind.
 
 The two build boxes are both reports, because neither can act: `merge-close` in
-`hooks/tracker-verify` fires on a work PR merging into a non-trunk base and names the issue that
-is still open; `tools/arc-link-sweep.sh` is m12 §4's fourth row and reads both link fields for
+`hooks/tracker-verify` fires on a PR merging into a base that is neither the default branch nor
+the trunk — where no keyword can bind — and names the issue that its head branch says it was
+for, if that issue is still open. `tools/arc-link-sweep.sh` is m12 §4's fourth row and reads both link fields for
 every issue in a milestone. The sweep found 47 of Dogfood's 102 issues linked to nothing, which
 is the number the mechanism existed to produce and nobody had.
 
