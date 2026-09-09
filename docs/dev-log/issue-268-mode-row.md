@@ -59,7 +59,14 @@ judgement is a hook that denies on a judgement.
 
 ## Spawned
 
-- **Issues:** none.
+- **Issues:** [#308](https://github.com/Calyx-Engineering/arc/issues/308) — `hooks/tracker-verify`
+  lines 58–61 carry literal newline, tab and CR characters where `
+`, `	` and `` were meant,
+  so the comment ends early and the next three lines are parsed as code. They contain backticks, so
+  every firing that reaches them runs a command substitution. `bash tools/verify-hook.sh
+  hooks/tracker-verify` is **60 passed, 57 failed** and `bash tools/verify-all.sh` is **54 gates, 1
+  failed** — pre-existing since `91faa09`, and nothing in this unit touches `hooks/`. Recorded and
+  routed rather than fixed here: one hook per commit, and this is not the unit that was handed out.
 
 ## Retrospective
 
