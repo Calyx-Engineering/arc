@@ -42,6 +42,26 @@ stale.
 
 **Verbosity governs display, never what reaches `.claude/arc/log.md`.**
 
+### Response verbosity — the session's own replies · [`chat-response`](https://github.com/Calyx-Engineering/arc/blob/main/skills/chat-response/SKILL.md)
+
+**Not Camp's.** The two settings above govern what Camp says about an action. This one governs
+how long every reply in the session is.
+
+- [ ] **brief** — the answer and nothing after it. **40 words** of prose
+- [x] **normal** — `chat-response`'s own table: ~150 words for a finding, ~200 for a proposal
+- [ ] **full** — the reasoning before the conclusion, at whatever length that takes
+- [ ] Other:
+
+**`normal` changes nothing.** It is the table `chat-response` already applies, so a repository
+that never touches this clause behaves exactly as it did before the clause existed.
+
+**Prose only** — tables, code blocks and headings are not budgeted, and an issue, a PR, a spec
+or a report is not a reply. `tools/response-length.sh` counts it the same way.
+
+**A number typed into `Other:` is the budget** — `Other: 25 words`. **A number the user states
+in conversation outranks it**, for the rest of that conversation: this is the standing default,
+not a ceiling on what can be asked for.
+
 ### Friction log — Arc's own rough edges · [`record-route`](https://github.com/Calyx-Engineering/arc/blob/main/skills/record-route/SKILL.md)
 
 - [ ] **on** — friction with Arc itself is appended to `docs/arc-work/<arc-slug>/friction-log.md`
@@ -88,6 +108,18 @@ Per-artifact exceptions go here, as rows.
 - [x] **Many small issues over few large ones.** An issue with a fourteen-point checklist is two or more issues
 - [ ] **Fewer, larger issues.** Multiple sections, twenty to forty checklist items, one issue per area of work
 - [ ] Other:
+
+### Work size — where *many small issues* stops being an opinion · [`decompose`](https://github.com/Calyx-Engineering/arc/blob/main/skills/decompose/SKILL.md)
+
+**Checklist ceiling:** `7`
+
+**One value, not a choice.** A proposed issue whose `Required` checklist is longer than this is
+split before it is filed. The setting above says which direction to lean; this says where the
+lean becomes a decision, which is the half `decompose` could not supply for itself.
+
+**Unset means `7`**, and so does an unreadable value. **Seven is a starting value, not a
+finding about your repository** — it is the 90th percentile of the `Required` checklists in the
+repository Arc was built in. Change it once your own issues give you a distribution to read.
 
 ### Issue bodies
 
@@ -161,6 +193,10 @@ State what the reader gets when it merges, comprehensible with no prior context.
 **Check one.**
 
 ### Chat length
+
+**The order, not the length.** How long a reply may be is section 1's **Response verbosity**;
+this is whether the answer or the reasoning comes first. Two clauses stating a number would be
+two numbers to keep in step.
 
 - [x] **Short.** Lead with the answer; detail on request
 - [ ] **Full.** Reasoning stated up front, before the conclusion
