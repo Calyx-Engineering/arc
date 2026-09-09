@@ -128,6 +128,86 @@ if [ "$SELFTEST" = "1" ]; then
   mk absent 20 zzz99999 1 2
   printf 'not on this machine\n' > "$E/absent/turns/1.md"
 
+  # A fixture case: no session, no transcript, and a budget that came from an operating
+  # agreement rather than from anything a user said. The checked box carries its own number,
+  # so a repository that edits 40 down to 25 is scored at 25 — the setting is the user's, and
+  # a scorer holding its own copy of the value would be scoring a different agreement. #174
+  agree() {  # agree <slug> <clause block>
+    mkdir -p "$E/$1/turns" "$E/$1/replies" "$E/$1/graders"
+    printf 'unit: words\nagreement: agreement.md\nsource:\n  kind: fixture\n  first_turn: 1\n  last_turn: 3\n' \
+      > "$E/$1/case.yaml"
+    printf '# grader\n' > "$E/$1/graders/within-budget.md"
+    { printf '## 1 Settings\n\n### Report verbosity\n\n- [x] **normal**\n\n### Response verbosity\n\n'
+      printf '%s\n' "$2"
+      printf '\n### Friction log\n\n- [x] **off**\n'
+    } > "$E/$1/agreement.md"
+  }
+  qs() { for i in $(seq 1 "$2"); do printf 'q%s\n' "$i" > "$E/$1/turns/$i.md"; done; }
+  # The shipped clause, copied verbatim from templates/camp/operating-agreement.md — the same
+  # three lines a repository gets on install, `normal` checked.
+  NORMAL_LINE='- [ ] **normal** — `chat-response`'"'"'s own table: ~150 words for a finding, ~200 for a proposal'
+  BRIEF_LINE='- [ ] **brief** — the answer and nothing after it. **40 words** of prose'
+
+  # brief, with the number in the clause. 21 / 149 / 12 words against it.
+  agree brief "$(printf -- '%s\n%s\n- [ ] Other:' "${BRIEF_LINE/\[ \]/[x]}" "$NORMAL_LINE")"
+  printf '%s\n' "$(words 21)"  > "$E/brief/replies/1.md"
+  printf '%s\n' "$(words 149)" > "$E/brief/replies/2.md"
+  printf '%s\n' "$(words 12)"  > "$E/brief/replies/3.md"
+  qs brief 3
+
+  # A number typed into `Other:` is the budget. Same three replies, so only the clause moved:
+  # at 25 words t1 is still UNDER, and the floor drops from 15 to 12.
+  agree other "$(printf -- '%s\n%s\n- [x] Other: 25 words' "$BRIEF_LINE" "$NORMAL_LINE")"
+  printf '%s\n' "$(words 21)"  > "$E/other/replies/1.md"
+  printf '%s\n' "$(words 149)" > "$E/other/replies/2.md"
+  printf '%s\n' "$(words 12)"  > "$E/other/replies/3.md"
+  qs other 3
+
+  # THE EDIT THE SETTING EXISTS FOR: the user changes 40 to 25, without bolding it, and is
+  # scored at 25. Asserting the shipped 40 tests nothing — it is also LEVEL_DEFAULT's fallback,
+  # so every assertion about it stays green with the number-reading deleted entirely.
+  agree edited "$(printf -- '- [x] **brief** — the answer and nothing after it. 25 words of prose\n%s\n- [ ] Other:' "$NORMAL_LINE")"
+  printf '%s\n' "$(words 21)"  > "$E/edited/replies/1.md"
+  printf '%s\n' "$(words 149)" > "$E/edited/replies/2.md"
+  qs edited 2
+
+  # `normal` IS THE SHIPPED STATE, and it must not produce a budget. Its line says "~150 words
+  # for a finding, ~200 for a proposal" — prose about chat-response's table, not a number the
+  # user set. A scorer reading 150 out of it hands every repository that never edited its
+  # agreement a flat budget it did not choose, which breaks the issue's second constraint in
+  # the one configuration almost every repository is in.
+  agree normal "$(printf -- '%s\n%s\n- [ ] Other:' "$BRIEF_LINE" "${NORMAL_LINE/\[ \]/[x]}")"
+  printf '%s\n' "$(words 149)" > "$E/normal/replies/1.md"
+  qs normal 1
+
+  # `full` is a level with no ceiling. It must report as unscorable, never pass by default —
+  # an agreement saying "as long as it takes" has not set a budget, and inventing one for it
+  # would be grading a rule nobody wrote.
+  agree full "$(printf -- '%s\n- [x] **full** — the reasoning first, at whatever length that takes\n- [ ] Other:' "$BRIEF_LINE")"
+  printf '%s\n' "$(words 149)" > "$E/full/replies/1.md"
+  qs full 1
+
+  # A clause present with every box unchecked, and a clause with two boxes checked. Both are
+  # states a mid-edit agreement is genuinely in, and neither may be reported as the OTHER
+  # states: "no clause found" points the user at the wrong fix, and resolving two checked boxes
+  # by file order makes the answer depend on the order the levels are listed in.
+  agree blank "$(printf -- '%s\n%s\n- [ ] Other:' "$BRIEF_LINE" "$NORMAL_LINE")"
+  printf '%s\n' "$(words 149)" > "$E/blank/replies/1.md"
+  qs blank 1
+
+  agree twice "$(printf -- '%s\n%s\n- [ ] Other:' "${BRIEF_LINE/\[ \]/[x]}" "${NORMAL_LINE/\[ \]/[x]}")"
+  printf '%s\n' "$(words 149)" > "$E/twice/replies/1.md"
+  qs twice 1
+
+  # No clause at all — the constraint the issue states as "default unchanged". A repository
+  # that never wrote the setting must not acquire a budget from this scorer. The heading is
+  # removed rather than left empty: an agreement written before the clause existed does not
+  # have the section, and that is the shape the fallback has to survive.
+  agree none "- [ ] Other:"
+  printf '## 1 Settings\n\n### Report verbosity\n\n- [x] **normal**\n' > "$E/none/agreement.md"
+  printf '%s\n' "$(words 149)" > "$E/none/replies/1.md"
+  qs none 1
+
   out="$(score "$T/projects" "$E" 2>&1)"; st=$?
   Pc=0; Fc=0
   t() {
@@ -158,6 +238,37 @@ if [ "$SELFTEST" = "1" ]; then
   t "the final-block count is reported beside it"     "final block only:"
   t "a rate below the threshold is a FAIL verdict"    "^verdict +FAIL"
   t "replay says it cannot see a skill change"        "cannot see a change to skills/chat-response"
+
+  # ---- the budget the agreement sets, #174 -----------------------------------------
+  t "a fixture case is scored without a transcript"   "^brief +\[fixture\]"
+  t "the budget is read out of the agreement"         "budget from agreement.md: brief, 40 words"
+  t "a long answer is graded against it"              "OVER +t2 +149 words"
+  t "a reply inside it still passes"                  "UNDER +t1 +21 words"
+  t "the case is scored at the agreement's number"    "within budget \(40 words\)"
+  t "a standing budget is not attributed to a turn"   "held 1 turns after it came into force"
+  # The setting belongs to the user, so the number in the clause is the number applied. A
+  # scorer keeping its own copy of "brief" would score every repository the same.
+  t "an edited level number is the budget"            "budget from agreement.md: brief, 25 words"
+  t "an edited number does not need to be bold"       "^edited +\[fixture\]"
+  t "a number typed into Other: is the budget"        "budget from agreement.md: other, 25 words"
+  t "the floor follows the agreement's number"        "thin floor 12 words"
+  # `full` and a missing clause are both "no budget stated", and neither may pass by default.
+  t "an uncapped level is not scored"                 "sets no scorable response verbosity — full"
+  t "the shipped level sets no budget"                "sets no scorable response verbosity — normal"
+  t "an agreement with no clause is not scored"       "sets no scorable response verbosity — no clause found"
+  # Distinct from "no clause found": the section is there and the user left it blank.
+  t "an unchecked clause says so, not no clause"      "sets no scorable response verbosity — nothing checked"
+  t "two checked boxes are not resolved by order"     "sets no scorable response verbosity — 2 boxes checked"
+  if printf '%s' "$out" | grep -qE "^(full|normal|none|blank|twice) +\[fixture\]"; then
+    echo "  FAIL  a case with no budget is not scored as though it had one"; Fc=$((Fc+1))
+  else
+    echo "  PASS  a case with no budget is not scored as though it had one"; Pc=$((Pc+1))
+  fi
+  if printf '%s' "$out" | grep -qE "(brief|other) t[0-9]"; then
+    echo "  FAIL  a whole fixture case reports no drift"; Fc=$((Fc+1))
+  else
+    echo "  PASS  a whole fixture case reports no drift"; Pc=$((Pc+1))
+  fi
   t "a missing transcript is reported, not scored"    "NOT SCORED"
   if printf '%s' "$out" | grep -q "TURN DRIFT"; then
     echo "  FAIL  a matching turn set is not reported as drift"; Fc=$((Fc+1))
@@ -185,6 +296,63 @@ if [ "$SELFTEST" = "1" ]; then
     echo "  FAIL  a transcript turn with no case file is caught as drift (exit $mst)"; Fc=$((Fc+1))
   fi
   printf 'and again\n' > "$E/held/turns/3.md"
+
+  # A fixture case has no transcript to drift from, so its two halves check each other. Both
+  # directions again: a reply nothing asked for widens the case, a turn whose reply was deleted
+  # narrows it, and neither leaves a trace anywhere else.
+  rm "$E/brief/turns/2.md"
+  printf '%s\n' "$(words 21)" > "$E/brief/replies/4.md"
+  printf 'q4\n' > "$E/brief/turns/4.md"
+  fout="$(score "$T/projects" "$E" 2>&1)"; fst=$?
+  if printf '%s' "$fout" | grep -q "replies/2.md with no turns/2.md" && [ "$fst" != "0" ]; then
+    echo "  PASS  a fixture reply with no turn is caught as drift"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  a fixture reply with no turn is caught as drift (exit $fst)"; Fc=$((Fc+1))
+  fi
+  # turns/4.md is inside the case's turns directory but outside first_turn..last_turn, so
+  # fixture_rows never reaches replies/4.md. An out-of-range pair must not be reported as drift.
+  if printf '%s' "$fout" | grep -q "brief t4"; then
+    echo "  FAIL  a pair outside first_turn..last_turn is not drift"; Fc=$((Fc+1))
+  else
+    echo "  PASS  a pair outside first_turn..last_turn is not drift"; Pc=$((Pc+1))
+  fi
+  printf 'q2\n' > "$E/brief/turns/2.md"
+  rm "$E/brief/replies/3.md" "$E/brief/replies/4.md" "$E/brief/turns/4.md"
+  gout="$(score "$T/projects" "$E" 2>&1)"; gst=$?
+  if printf '%s' "$gout" | grep -q "turns/3.md with no replies/3.md" && [ "$gst" != "0" ]; then
+    echo "  PASS  a fixture turn with no reply is caught as drift"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  a fixture turn with no reply is caught as drift (exit $gst)"; Fc=$((Fc+1))
+  fi
+  printf '%s\n' "$(words 12)" > "$E/brief/replies/3.md"
+
+  # Every reply deleted, not just one. Without the pairing check running BEFORE the scorer
+  # bails on an empty case, this is the one narrowing that reports as "not scored" and exits 0.
+  mv "$E/brief/replies" "$E/brief/replies.keep"
+  mkdir -p "$E/brief/replies"
+  eout="$(score "$T/projects" "$E" 2>&1)"; est=$?
+  if printf '%s' "$eout" | grep -q "turns/1.md with no replies/1.md" && [ "$est" != "0" ]; then
+    echo "  PASS  a fixture case emptied of replies is caught as drift"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  a fixture case emptied of replies is caught as drift (exit $est)"; Fc=$((Fc+1))
+  fi
+  rmdir "$E/brief/replies"; mv "$E/brief/replies.keep" "$E/brief/replies"
+
+  # No turns/ directory at all. One line naming the directory, not one per reply blaming a
+  # turn nobody ever wrote.
+  mv "$E/brief/turns" "$E/brief/turns.keep"
+  nout="$(score "$T/projects" "$E" 2>&1)"; nst=$?
+  if printf '%s' "$nout" | grep -q "fixture case has no turns/ directory" && [ "$nst" != "0" ]; then
+    echo "  PASS  a fixture case with no turns/ names the directory"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  a fixture case with no turns/ names the directory (exit $nst)"; Fc=$((Fc+1))
+  fi
+  if [ "$(printf '%s' "$nout" | grep -c "brief t[0-9]")" -gt 0 ]; then
+    echo "  FAIL  it does not also blame each reply individually"; Fc=$((Fc+1))
+  else
+    echo "  PASS  it does not also blame each reply individually"; Pc=$((Pc+1))
+  fi
+  mv "$E/brief/turns.keep" "$E/brief/turns"
 
   # --strict turns an absent transcript into a failure; the default does not.
   sst="$(RL_ROOT_DIR="$T/projects" RL_EVAL_DIR="$E" RL_STRICT=1 python "$HERE/response-length.py" >/dev/null 2>&1; echo $?)"
@@ -268,6 +436,14 @@ for CASEDIR in $(find "$EVAL_DIR" -name case.yaml | sort); do
   DIR="$(dirname "$CASEDIR")"
   NAME="$(printf '%s' "${DIR#"$EVAL_DIR"/}" | tr '\\' '/')"
   [ -n "$ONLY" ] && [ "$NAME" != "$ONLY" ] && continue
+  # A fixture case has nothing to probe. Its budget is a clause in an operating agreement, and
+  # the probe cannot install one into the session it opens — a live run would score the reply
+  # against THIS repository's agreement rather than the case's, and report the wrong number
+  # with no sign anything was substituted. Scored from its stored replies, never billed.
+  if grep -qE '^\s*kind:\s*fixture' "$CASEDIR"; then
+    echo "  $NAME  skipped — fixture case, no session to probe"
+    continue
+  fi
   for r in $(seq 1 "$RUNS"); do
     echo "  $NAME  run $r"
     RL_PROBE_CWD="$(pwd)" python "$HERE/response-length-probe.py" "$DIR" "$NAME" "$OUT" || exit 1

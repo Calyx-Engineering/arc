@@ -10,3 +10,4 @@
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `R--arc-wt-16` | `R:/arc-wt/16` | `arc/04-dogfood-issue-16-session-index` | #16 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | orphaned |
 | `R--arc-wt-204` | `R:/arc-wt/204` | `detached` | - | - | 2026-09-08 to 2026-09-08 | live |
+| `R--arc-wt-174` | `R:/arc-wt/174` | `arc/04-dogfood-issue-174-response-verbosity` | #174 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | live |
