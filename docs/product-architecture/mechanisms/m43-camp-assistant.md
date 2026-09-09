@@ -498,10 +498,6 @@ each delivers — not issues already in the tracker.
 
 #### 3.3.3 What is not designed
 
-**How fine is too fine.** *"Many small issues, not a couple with 14-point checklists"* is a
-stated preference, and the boundary is not defined. It belongs in the operating agreement as a
-work-size clause once first use produces examples.
-
 **The boundary against [m20](m20-arc-decomposition.md).** m20 sequences an arc's issues at
 kickoff; decomposition decomposes a single idea or spec at any point. They overlap when the
 idea being decomposed *is* the arc, and which owns that case is unsettled.
@@ -806,10 +802,10 @@ recorded rather than re-explained each session.
 
 | Section | Holds |
 |---|---|
-| **Register and verbosity** | Colleague · terse · character, and how loud |
+| **Register and verbosity** | Colleague · terse · character, and how loud. **Three verbosity settings, and only two are Camp's** — the report and the nudge. The third is the session's own reply length, read by [`chat-response`](../../../skills/chat-response/SKILL.md) through the same checked box, because a length preference is a property of the reader and not of the assistant that happens to be speaking |
 | **What Camp does unasked** | The triggers for the nudge and the report |
-| **Work size and shape** | Issue granularity, *and* the form work takes — checklist versus prose, table versus paragraph. The branch prefix sits here too: it is the shape a branch name takes, and `hooks/branch-guard` reads it |
-| **Response shape** | Where long is wanted, where short |
+| **Work size and shape** | Issue granularity and its ceiling — the checklist length past which [`decompose`](../../../skills/decompose/SKILL.md) splits an issue — *and* the form work takes: checklist versus prose, table versus paragraph. The branch prefix sits here too: it is the shape a branch name takes, and `hooks/branch-guard` reads it |
+| **Response shape** | Whether the answer or the reasoning comes first, and whether topics are numbered. **Not how long** — that is the response verbosity setting above, and two sections stating a number would be two numbers to keep in step |
 | **Standing corrections** | Things not to repeat — see below |
 
 **Shape is not a subset of size.** A preference for many small issues and a preference for

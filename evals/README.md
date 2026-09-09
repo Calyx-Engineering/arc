@@ -6,7 +6,7 @@ its own scorer:
 | Suite | Question | Scored by |
 |---|---|---|
 | **`skill-firing/`** | Did the skill fire? — [#155](https://github.com/Calyx-Engineering/arc/issues/155) | `tools/skill-cases.sh`, `tools/skill-probe.sh` |
-| **`response-length/`** | Was the reply within the budget the user stated? — [#158](https://github.com/Calyx-Engineering/arc/issues/158) | `tools/response-length.sh` |
+| **`response-length/`** | Was the reply within its budget — the one the user stated, or the one the repository's operating agreement holds? — [#158](https://github.com/Calyx-Engineering/arc/issues/158), [#174](https://github.com/Calyx-Engineering/arc/issues/174) | `tools/response-length.sh` |
 | **`topic-numbering/`** | Could the user answer this multi-topic reply by number? — [#160](https://github.com/Calyx-Engineering/arc/issues/160) | `tools/topic-numbering.sh` |
 | **`report-shape/`** | Does the report open with the conclusion, and does every claim say where it came from? — [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#164](https://github.com/Calyx-Engineering/arc/issues/164) | `tools/report-grade.sh` |
 | **`saturation/`** | Did the session propose handing off before the user said the context was full? — [#154](https://github.com/Calyx-Engineering/arc/issues/154) | `tools/saturation-cases.sh` |

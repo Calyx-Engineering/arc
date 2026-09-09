@@ -58,7 +58,7 @@ the work. Camp reports what occurred. It does not explain, expand, or instruct u
 
 ---
 
-## Verbosity — three levels, two settings
+## Verbosity — three levels, two of Camp's settings
 
 | Level | Shows |
 |---|---|
@@ -81,12 +81,17 @@ Two settings, because reports and nudges are different kinds of noise:
 | | Fires | So it should be |
 |---|---|---|
 | **Reports** — the report | On every completion | Brief |
-| **Nudges** | Because something looks wrong | Hard to miss |
+| **Nudges** — the nudge | Because something looks wrong | Hard to miss |
 
 **Which level is selected lives in [`operating-agreement.md`](operating-agreement.md)
 section 1**, where the checked box is the value. This file says what the levels mean; the
 agreement says which one is chosen. Two copies of a selection drift, and the agreement is the
 one a user edits.
+
+**Section 1 carries a third verbosity setting that is not Camp's** — *Response verbosity*, the
+length of the session's own replies, read by `chat-response`. It is not on this page because
+this page is how Camp sounds, and reply length is the reader's preference rather than Camp's
+voice.
 
 **`quiet` is not silence.** A failed check still surfaces at every level — what `quiet`
 suppresses is the machinery and the all-clear, never a finding. How each level renders:

@@ -23,9 +23,11 @@ and denies in manual. **You may set that row to manual and never to autonomous**
 
 These matter more than any finding in the documents.
 
+**How long a reply may be is not here.** It is [the operating agreement](.claude/arc/camp/operating-agreement.md)'s
+section 1, *Response verbosity*, so that it travels to every repository Arc is installed in.
+
 | | |
 |---|---|
-| **He reads slowly and deliberately** | Length costs him more than it costs most readers |
 | **Edit in place, never rewrite a file** | The diff is his review surface. A rewrite loses his in-progress comments |
 | **Wording fixes go in immediately** | Structural changes are discussed first. Never stop to ask about word choice |
 | **Verify before asserting** | Several documented beliefs have been disproved by direct test |

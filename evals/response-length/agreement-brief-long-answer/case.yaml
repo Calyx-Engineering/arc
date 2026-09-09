@@ -1,0 +1,15 @@
+unit: words
+agreement: agreement.md
+source:
+  kind: fixture
+  first_turn: 1
+  last_turn: 3
+why: >
+  The budget nobody stated. Every other case here starts with a user turn setting a number,
+  which is the only shape a recorded transcript can have — the agreement clause did not exist
+  when the corpus was captured. This case is the other half: a repository whose operating
+  agreement carries `brief`, a session that was never told a number in conversation, and
+  replies graded against the agreement anyway.
+  It is a fixture rather than a replay because there is no session to replay. That is the
+  condition, not a shortcut: a setting is scored by what a reply does with it, and the first
+  reply written against this one is the one stored here.
