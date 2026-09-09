@@ -49,6 +49,23 @@ setting.**
 `branch-guard` denial, an `issue-write` verification, a PR report. Filing it under a
 consumer's directory would imply an ownership no consumer has.
 
+**The live file is untracked; rotation is what commits an arc's events.** Every hook firing
+appends, so a tracked live log leaves every worktree dirty at every moment and one
+`git add -u` sweeps thousands of machine-written lines into a review diff
+([#273](https://github.com/Calyx-Engineering/arc/issues/273)). The path does not move — every
+reader still resolves `.claude/arc/log.md` — and nothing is lost, because the arc-close move
+to `docs/arc-log/events/` lands it somewhere git does carry.
+
+| | |
+|---|---|
+| **Live** | `.claude/arc/log.md` · gitignored · this arc's events, being appended to |
+| **Archived** | `docs/arc-log/events/arc-<NN>-<slug>.log.md` · tracked · a closed arc's events, committed by the rotation that moved them |
+
+**A record git does not hold is a record one `rm -rf` ends**, and that is the cost accepted
+here: an arc's events are recoverable only from the moment they are rotated. The alternative —
+a tracked file rewritten by machine on every tool call — makes every human diff unreadable,
+which loses the review the tracking was for.
+
 ---
 
 ## Consumers

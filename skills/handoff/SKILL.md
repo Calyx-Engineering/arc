@@ -320,10 +320,14 @@ The same rule covers any file git cannot restore: tracked files need no copy, gi
 The store is gitignored too. It is **recovery, not record** — nothing reads it as history,
 nothing prunes it, and getting a file back is a plain `cp` from the timestamped directory.
 
-**Add `/HANDOFF.md` *and* `.arc-work/` to `.gitignore` when starting an arc in a new repo.**
-It is the one setup step this skill needs, and it is **two entries, not one**: `.arc-work/archive/`
-is where the copies above land, so a repo that ignores only the handoff commits a copy of every
-handoff the arc ever had straight into the record — the exact opposite of what the store is for.
+**Add `/HANDOFF.md`, `.arc-work/` *and* `/.claude/arc/log.md` to `.gitignore` when starting an
+arc in a new repo.** It is the one setup step this skill needs, and it is **three entries, not
+one**. `.arc-work/archive/` is where the copies above land, so a repo that ignores only the
+handoff commits a copy of every handoff the arc ever had straight into the record — the exact
+opposite of what the store is for. `/.claude/arc/log.md` is the event log every hook firing
+appends to: tracked, it leaves the tree dirty at every moment and one `git add -u` sweeps
+thousands of machine-written lines into a review diff. Its record is committed by rotation at
+arc close instead, into `docs/arc-log/events/` — #273.
 
 Anchor the handoff entry at the root. A bare `HANDOFF.md` also matches `templates/handoff.md`,
 which is a shipped artifact and must be committed.
