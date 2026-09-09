@@ -1,2 +1,2 @@
 # the arc PR merging into the trunk with no closing keyword, while the default is still flipped onto the arc
-{"tool_name":"Bash","cwd":"__FIXTURE_ARC__","arc_test_pr_base":"main","arc_test_default":"arc/02-foundation","arc_test_title":"arc-02: the foundation arc","arc_test_body":"Everything this arc consumed.\n","tool_input":{"command":"gh pr merge 201 --merge"}}
+{"tool_name":"Bash","cwd":"__FIXTURE_ARC__","arc_test_pr_base":"main","arc_test_default":"arc/02-foundation","arc_test_milestone":"Dogfood","arc_test_title":"arc-02: the foundation arc","arc_test_body":"Everything this arc consumed.\n","tool_input":{"command":"gh pr merge 201 --merge"}}
