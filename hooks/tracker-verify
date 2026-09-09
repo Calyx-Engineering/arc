@@ -12,8 +12,8 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 
@@ -22,7 +22,7 @@
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
 
 # ---- the activation log ---------------------------------------------------------
-# Sourced before anything can exit. This hook has fourteen exit paths and fifteen declared
+# Sourced before anything can exit. This hook has fourteen exit paths and sixteen declared
 # checks, most of which do not run on any one invocation — so a declared check the run never
 # marked is written to the entry's `skipped:` line as `not reached`, rather than being
 # absent from the record. m44.
@@ -121,6 +121,64 @@ scan_dates() {
   done
   [ "$bad" = 1 ] && arc_log_fail date-sanity
   [ "$bad" = 1 ] || arc_log_pass date-sanity
+}
+
+# A `Spawned` section heading, which is not a shape this repo has.
+#
+# `skills/issue-write` — a body has ONE `Related` section, it is a table, and spawned work is a
+# row in it. Nine of arc 04's Fire children were written with a `Spawned` heading anyway and
+# eight of those held findings rather than units of work, because `run-instructions.md` §5 told
+# a run to record a discovery "in the issue's Spawned table". #270 fixes that sentence; this
+# catches the next writer who learned the old shape somewhere else.
+#
+# THE HEADING, NEVER THE ROWS. `| **Spawned** | [#NN](…) | … |` is the correct shape and stays
+# silent. Whether a given row is a unit of work is the author's judgement and is not decidable
+# from text; whether a section exists is. Same division `tools/verify-tracker-body.sh`'s
+# placement check draws.
+#
+# THE TITLE MUST BE THE WHOLE HEADING, also that check's rule: `## Spawned versus related` is
+# prose about the section, not the section, and a substring match reports it. Bold and
+# backticks are stripped; nothing else is allowed after the word. Matched case-insensitively
+# for the same reason that one is — `## SPAWNED` is the same section — so the two tools cannot
+# disagree about whether a legacy body has one.
+#
+# Headings inside a fenced block are not headings — a body quoting the old shape in order to
+# say it is wrong would otherwise be reported for quoting it.
+#
+# CARRIAGE RETURNS ARE STRIPPED BEFORE THE MATCH, because the pattern is anchored at `$` and a
+# live body read out of `gh issue view --json body` is CRLF. Some awks strip the CR and some do
+# not — Git Bash's gawk does, which is exactly why this would have passed every case here and
+# gone silent on a Linux runner. `tools/verify-tracker-body.sh`'s placement check carries the
+# same `tr -d '\r'` for the same reason. No fixture can cover it: a JSON case body cannot hold
+# a raw CR.
+#
+# A FIXTURE BODY CARRIES LITERAL `\n` AND A LIVE ONE CARRIES REAL NEWLINES. `fixture()` reads
+# the payload with parameter expansion and nothing unescapes it; every other scanner here is a
+# line-agnostic grep, so none of them ever noticed. This one is anchored, so a body with no
+# real newline in it is split on the escape first. Guarded on the absence of a real newline
+# rather than run unconditionally: a live body may legitimately contain a literal `\n` inside
+# a fence, and rewriting that would move the fence markers.
+scan_spawned_heading() {
+  local body="$1" what="$2" hit
+  case "$body" in
+    *'
+'*) ;;
+    *) body="$(printf '%s' "$body" | awk '{ gsub(/\\n/, "\n"); print }')" ;;
+  esac
+
+  hit="$(printf '%s\n' "$body" | tr -d '\r' | awk '
+    /^(```|~~~)/ { f = !f; next }
+    f { next }
+    tolower($0) ~ /^#+[[:blank:]]+[*`]*spawned[*`]*:?[[:blank:]]*$/ { print NR": "$0 }
+  ' | head -3)"
+
+  if [ -n "$hit" ]; then
+    arc_log_fail spawned-heading
+    add "$what carries a \`Spawned\` heading: $(printf '%s' "$hit" | tr '\n' ';') There is no \`Spawned\` section. A unit of work is a row in the \`Related\` table — \`| **Spawned** | [#NN](…) | <one clause> |\`, three columns — and a finding that is not a unit of work goes in the dev-log, not the tracker. skills/issue-write, *Related — one table, four kinds*."
+  else
+    arc_log_pass spawned-heading
+  fi
+  return 0
 }
 
 # The title rules live in `tools/verify-tracker-body.sh`, not here. A title is decidable
@@ -339,10 +397,10 @@ case "$INPUT" in
       # Named, rather than left to the `not reached` default. This is the one condition the
       # declaration calls out for every check at once, and a reason on the record is what
       # separates "the payload was truncated" from "the hook simply did not get that far".
-      for c in placeholder-scan date-sanity milestone arc-prefix closing-keyword \
-               arc-merge-keyword merge-close close-link issue-boxes spawn-parent \
-               issue-title-length issue-title-list issue-title-clause issue-title-scope \
-               issue-scope-type pr-base; do
+      for c in placeholder-scan date-sanity spawned-heading milestone arc-prefix \
+               closing-keyword arc-merge-keyword merge-close close-link issue-boxes \
+               spawn-parent issue-title-length issue-title-list issue-title-clause \
+               issue-title-scope issue-scope-type pr-base; do
         arc_log_skip "$c" "the payload names a fixture key whose value could not be parsed"
       done
       arc_log_outcome ok "a truncated fixture payload — nothing safe to read"
@@ -562,6 +620,13 @@ if [ -z "$FIXTURE_PR_BASE" ] && { [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE
   [ -n "$FIXTURE_BODY" ] && scan_placeholders "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_BODY" ] && scan_dates "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue" "$FIXTURE_BODY"
+  # An issue only. The `Spawned` row shape is `skills/issue-write`'s rule about an issue body,
+  # and a PR body reaching here with no `arc_test_pr_base` must not be judged by it.
+  case "$CMD" in
+    *"gh issue create"*|*"gh issue edit"*)
+      [ -n "$FIXTURE_BODY" ] && scan_spawned_heading "$FIXTURE_BODY" "the body"
+      ;;
+  esac
   case "$CMD" in
     *"gh issue create"*)
       SPAWN_PARENT="$(branch_parent "$(head_branch)")"
@@ -590,6 +655,9 @@ case "$CMD" in
     [ -n "$BODY" ] || exit 0
     scan_placeholders "$BODY" "issue #$NUM"
     scan_dates "$BODY" "issue #$NUM"
+    # Reached on `gh issue create` and `gh issue edit` only — a close returns above, before
+    # any of the scanners, because it carries no body to read.
+    scan_spawned_heading "$BODY" "issue #$NUM"
 
     ITITLE="$(cd "$CWD" && gh issue view "$NUM" --json title -q .title 2>/dev/null)"
     [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM" "$BODY"
@@ -681,7 +749,12 @@ case "$CMD" in
       # answer for pr-base, which is about the PR being created from here, and the wrong one
       # here. Falls back to it when the field cannot be read, which is where a fixture case
       # lands: a payload supplies no META at all.
-      PRHEAD="$(printf '%s' "$META" | grep -oE '"headRefName":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+      #
+      # `tail -n1`, for `TITLE`'s reason above. `gh` sorts the fields, so `body` precedes
+      # `headRefName`, and a body quoting the literal `"headRefName":"…"` puts a second line
+      # in front of the real one. A two-line branch name yields no issue number, which turns
+      # `merge-close` off in silence — the shape this hook exists to catch.
+      PRHEAD="$(printf '%s' "$META" | grep -oE '"headRefName":"[^"]*"' | tail -n1 | sed 's/.*:"//; s/"$//')"
     fi
 
     TRUNK="$(resolve_trunk "$DEFAULT")"

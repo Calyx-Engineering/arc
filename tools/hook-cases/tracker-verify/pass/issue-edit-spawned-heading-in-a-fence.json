@@ -1,0 +1,2 @@
+# the wrong shape quoted inside a fenced block to say it is wrong — not a heading, so this must be silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] one thing\n\nNever write this:\n\n```markdown\n## Spawned\n\n- a finding\n```\n","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}
