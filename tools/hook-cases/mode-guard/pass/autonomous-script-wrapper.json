@@ -1,0 +1,2 @@
+# autonomous mode, the same wrapper — the mode permits it
+{"tool_name":"Bash","cwd":"__FIXTURE_AUTONOMOUS__","tool_input":{"command":"bash tools/new-direct-pr.sh mode-guard-scripts \"Guard the wrappers\"","description":"Open a direct PR"}}

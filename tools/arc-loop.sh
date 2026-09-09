@@ -16,6 +16,14 @@
 #   tools/arc-loop.sh --resume 160           continue a stopped run's session in its kept worktree
 #   ARC_LOOP_RESUME_NOTE="PR #247 conflicts with the base — merge it, re-gate, mark ready" tools/arc-loop.sh --resume 201
 #
+# mode-guard: writes-outward
+# mode-guard-read-only: --dry-run --status --report
+#
+# The declaration above is read by hooks/mode-guard. This script raises the execution mode in
+# each worktree it creates and dispatches runs that commit, push, open PRs and merge them, so
+# starting it in manual mode is one of those actions taken at one remove — #201. The three
+# read-only switches report on runs and dispatch nothing, so they are exempt.
+#
 # Scope of one invocation is ONE workstream. When its children are all closed
 # the script dispatches a report run and exits; the next workstream is a
 # second invocation, after a human has read that report.
@@ -463,10 +471,18 @@ EOF
     return 0
   fi
   # The report run works in this tree — it writes the arc-log — so this tree's row is raised
-  # for it and restored after it, whatever it exits with.
-  set_mode Autonomous "#$PARENT $parent_title report"
-  printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE" || { set_mode Manual; return 1; }
-  set_mode Manual
+  # for it if it was not already, and put back the way it was found. Dropping it to Manual
+  # unconditionally cost the orchestrator its own grant on 2026-09-08: the user had raised the
+  # row for the whole playlist, Fire's report run ran here, and every merge after it was denied.
+  local prev_mode
+  prev_mode="$(grep -m1 -iE '^\|[^|]*mode[^|]*\|' HANDOFF.md 2>/dev/null | awk -F'|' '{print $3}' | tr -d '*` ' | tr '[:upper:]' '[:lower:]')"
+  if [ "$prev_mode" = autonomous ]; then
+    printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE"
+  else
+    set_mode Autonomous "#$PARENT $parent_title report"
+    printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE" || { set_mode Manual; return 1; }
+    set_mode Manual
+  fi
 }
 
 # --resume: a run that stopped — limit, crash, gave up — continues its own session.

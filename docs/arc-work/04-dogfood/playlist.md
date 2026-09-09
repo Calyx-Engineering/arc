@@ -46,6 +46,7 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **H2 the handoff document** | [#151](https://github.com/Calyx-Engineering/arc/issues/151) [#152](https://github.com/Calyx-Engineering/arc/issues/152) [#153](https://github.com/Calyx-Engineering/arc/issues/153) | `skills/handoff`, `templates/handoff.md` | — | H1 (#151 is blocked by #150) and Fire's F6 (#208, same skill) |
 | **H3 saturation check** | [#154](https://github.com/Calyx-Engineering/arc/issues/154) | `skills/work-watch` | probe | Nothing. Unblocks Fire's F8 — same file, same check count; F8 runs in the set after |
 | **H4 session index** | [#16](https://github.com/Calyx-Engineering/arc/issues/16) | new `hooks/session-index`, `hooks.json`, `agents/transcript-miner` | — | Fire's F7 (#166 instruments every hook) |
+| **H5 handoff, live** | [#252](https://github.com/Calyx-Engineering/arc/issues/252) [#253](https://github.com/Calyx-Engineering/arc/issues/253) | probe run on the eight openings; a scored live cold start on a real `HANDOFF.md` | probe | H2, F6. Filed after Handoff's boundary report: *no score moved, nothing soaked live* |
 
 ### 3.3 Tracker — [#147](https://github.com/Calyx-Engineering/arc/issues/147)
 
@@ -70,6 +71,8 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **U7 milestone rule** | [#204](https://github.com/Calyx-Engineering/arc/issues/204) | `hooks/tracker-verify`, `skills/issue-write`, ten PRs' milestones | — | T2, T4 |
 | **U8 verbosity setting** | [#174](https://github.com/Calyx-Engineering/arc/issues/174) | operating agreement, `skills/chat-response` | probe | Fire's F3 |
 | **Human** | [#134](https://github.com/Calyx-Engineering/arc/issues/134) [#175](https://github.com/Calyx-Engineering/arc/issues/175) [#202](https://github.com/Calyx-Engineering/arc/issues/202) | Decisions (#134, #175); `hooks/TEMPLATE` is never edited autonomously (#202) | — | David at the keyboard, any time. #202 after U6 |
+| **U10 plugin reload** | [#211](https://github.com/Calyx-Engineering/arc/issues/211) | `tools/plugin-reload.sh` | — | Nothing. Not beside a probe track |
+| **U11 one run per issue** | [#214](https://github.com/Calyx-Engineering/arc/issues/214) | `tools/arc-loop.sh` — refuse an `in-progress` issue | — | Nothing |
 | **U9 move to `tests/`** | [#190](https://github.com/Calyx-Engineering/arc/issues/190) | every verifier, every case directory, every citation | — | **Everything. Alone. Last.** `verify-hook.sh`'s move is a proposal to David |
 
 ## 4 The sets — whole arc, in order
@@ -83,20 +86,20 @@ Workstreams are **not** the parallel unit; the track is. Each set mixes workstre
 | **S3** | F1b (#163) · H1 · T3 · U2 · U4 | Fire · Handoff · Tracker · Upkeep | T3 |
 | **S4** | F7 (the only hook track) · H2 · H3 · T4 | Fire · Handoff · Tracker | H3 |
 | **S5** | F8 · T2 · H4 · U5 · U6 | Fire · Tracker · Handoff · Upkeep | F8 |
-| **S6** | U7 · U3 · U8 | Upkeep | U8 |
-| **S7** | T5 · human (#134 #175 #202) | Tracker · Upkeep | — |
+| **S6** | U7 · U3 · U8 · U11 | Upkeep | U8 |
+| **S7** | H5 · U10 · T5 · human (#134 #175 #202) | Handoff · Upkeep · Tracker | H5 |
 | **S8** | U9 alone | Upkeep | — |
 
 ```mermaid
 flowchart LR
   S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8
   S5 -.-> RF["Fire report"]
-  S5 -.-> RH["Handoff report"]
+  S7 -.-> RH["Handoff report"]
   S7 -.-> RT["Tracker report"]
   S8 -.-> RU["Upkeep report"]
 ```
 
-A workstream's report run fires when its last child closes — Fire and Handoff after S5, Tracker after S7, Upkeep after S8. The boundary is a review, not a scheduling unit.
+A workstream's report run fires when its last child closes — Fire after S5, Handoff and Tracker after S7, Upkeep after S8. The boundary is a review, not a scheduling unit.
 
 **Eight sets at ~45 min if the sub-agent passes hold: a working day of wall time, against thirty-plus serial runs.**
 

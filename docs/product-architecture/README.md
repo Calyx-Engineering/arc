@@ -110,7 +110,7 @@ moves next; this column only reports.
 | m30 | Transcript mining | 🔥 | **One pipeline, two filters.** *Knowledge filter promotes findings into the record; friction filter clusters corrections into mechanism candidates* | [spec](mechanisms/m30-transcript-mining.md) | ⚪ |
 | | **SELF-IMPROVEMENT** | | | | |
 | m31 | Self-improvement loop | 🔥 | **Tooling fixes land without leaving the work.** *Files the issue, makes the fix locally uncommitted, opens the diff* | [spec](mechanisms/m31-self-improvement-loop.md) | ⚪ |
-| m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | ⚪ |
+| m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | 🔵 |
 | m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../skills/plugin-retrospective/SKILL.md) | 🔵 |
 | m39 | Mechanism numbering | 📐 | **A new mechanism gets a number that is actually free.** *The number space spans all three plugins; a registry issues the next one and records the claim* | — | ⚪ |
 | m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | 🔵 |
@@ -203,8 +203,8 @@ function list, then read its Needs column to find what else must exist before it
 | Artifact | Form | Carries | Invoked by | Needs |
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
-| `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
-| `hooks/tracker-verify` | hook | m12 · m43 | Automatic, on issue create, PR open, PR merge | `skills/issue-write` for repair |
+| `hooks/branch-guard` | hook | m10 | Automatic, before any edit | `.claude/arc/camp/operating-agreement.md`'s *branch prefix* clause |
+| `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tools/verify-issue-boxes.sh` · `tools/verify-linked-branch.sh` · `tools/verify-tracker-body.sh` |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
 | `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry · `skills/handoff` to write the handoff the saturation check proposes |
@@ -242,25 +242,27 @@ function list, then read its Needs column to find what else must exist before it
 | `agents/transcript-miner` | agent | m30 | Invoked by `skills/plugin-retrospective` step 1; later by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
 | | **SELF-IMPROVEMENT** | | | |
 | `agents/improver` | agent | m31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue-write` |
-| `hooks/session-index` | hook | m32 | Automatic, at worktree creation | — |
+| `hooks/session-index` | hook | m32 | Automatic, at the first tool call of a session | `skills/handoff`'s setup step, which is what gets the index committed rather than merely written |
 | `skills/plugin-retrospective` | skill | m33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | m39 | Called when a mechanism is captured | The suite registry |
 | `.claude/arc/log.md` | record | m44 | Appended whenever any artifact fires | Every artifact that declares `camp-reports:` |
+| `.claude/arc/sessions.md` | record | m32 | Rewritten at a session's first tool call | `hooks/session-index`, which is the only thing that writes it |
 
 **Mostly one artifact per mechanism.** Four merges, each because the
 mechanisms fire together:
 
 | Artifact | Merges | Why |
 |---|---|---|
-| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | One always-on sweep, seven things it watches for. See below |
+| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | One always-on sweep, eight things it watches for. See below |
 | `skills/issue-write` | m11 · m13 | Write the issue and verify the write landed — one moment |
 | `skills/kickoff` | m09 · m20 | Scope agreement and decomposition happen in one sitting |
 | `skills/delegate` | m25 · m26 | Choosing the tier and shaping the brief are the same decision |
 
 ### `skills/work-watch` — the design-time evaluator
 
-Seven checks watch work as it proceeds. Splitting them into seven always-on
-checks means five separate sweeps competing for the same attention — and
+Eight checks watch work as it proceeds. Five of them notice something and say so; the other
+three are gates that fire on an act rather than a pause. **Splitting the five into
+always-on checks means five separate sweeps competing for the same attention** — and
 [test-obligation-capture](mechanisms/m23-test-obligation-capture.md) rejects the split
 outright: *"one of the things the design-time evaluator watches for, alongside commit
 timing. Not a separate always-on process — a check in the same sweep."*
@@ -274,16 +276,19 @@ timing. Not a separate always-on process — a check in the same sweep."*
 | A decision is settled and the next topic is opening | Writing it down before moving | m15 · m13 — a gate on your own moving on. Nudges only when the surface itself has stopped holding the state |
 | Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default |
 | This session has degraded far enough that the work should move | A handoff, now, while there is budget to write one | m15 — the only one about the session rather than the work. Turn count, a compaction, and the load having drifted off the work the session was opened for |
+| A failure is about to be blamed on the user's environment | One tested alternative on your own side, first | m13 — the skill's list says which checks block. [#165](https://github.com/Calyx-Engineering/arc/issues/165) |
 
 **Most of them propose and never act** — the skill's own list says which — and they share one
 open question: how often they may fire before the nudging becomes the annoyance. The saturation
 check carries that question in its own terms: a session nagged about its length at every pause
 is the failure that makes the whole sweep ignorable.
 
-**The fourth blocks instead of proposing.** Edit completeness gates the agent's own report
-that an edit is done — a `grep` for the replaced string, zero hits or it is not finished. It
-is m13's shape B in files, which m13 had recorded as already handled; arc 03 disproved that
-four times in one session.
+**Two of them block instead of proposing, and the skill's own list is the authority on
+which.** Edit completeness gates the agent's own report that an edit is done — a `grep` for the
+replaced string, zero hits or it is not finished. It is m13's shape B in files, which m13 had
+recorded as already handled; arc 03 disproved that four times in one session. The environment
+check gates the same shape in a *diagnosis*: naming the user's bench, install or wiring as the
+cause of a failure, with nothing tried on the session's own command path first.
 
 **Names are provisional.** Paths firm up when the plugin skeleton exists.
 

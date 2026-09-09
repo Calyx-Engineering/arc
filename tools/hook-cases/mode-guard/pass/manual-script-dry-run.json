@@ -1,0 +1,2 @@
+# manual mode, a gated script on its declared read-only flag — it writes nothing outward
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"bash tools/arc-loop.sh 145 --dry-run","description":"What the loop would dispatch"}}

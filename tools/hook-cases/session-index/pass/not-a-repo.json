@@ -1,0 +1,2 @@
+# not a git repository — there is no repo to commit an index to, so nothing is written
+{"session_id":"verify-si-norepo","cwd":"__FIXTURE_NOREPO__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_NOREPO__/a.c"}}

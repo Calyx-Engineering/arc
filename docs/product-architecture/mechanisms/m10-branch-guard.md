@@ -1,7 +1,7 @@
 # Mechanism — Branch / Worktree Guard
 
 **Status:** built — all three checks fire in `hooks/branch-guard` ([#161](https://github.com/Calyx-Engineering/arc/issues/161)).
-Where the guard learns the branch convention is still open.
+The coordination prefix comes from the operating agreement's *branch prefix* clause ([#203](https://github.com/Calyx-Engineering/arc/issues/203)); a work branch is recognised by an `issue-<N>` or `pr<N>` segment in its name, with or without a prefix before it ([#200](https://github.com/Calyx-Engineering/arc/pull/200)).
 **Home:** Arc — Workspace guard.
 **Src:** 🔥 observed.
 **Covers:** m10.
@@ -169,9 +169,15 @@ a branch nobody can edit.
 
 ## What is not decided
 
-**Where the guard learns what is correct.** Branch naming is per-repo — ROADZ names arcs
-after the product component being revised, TimeScope uses a free slug. The guard needs that
-convention from somewhere: repo config, the arc-log, or inference from the current branch.
+**One convention, read from two places.** `branch-guard` takes the coordination prefix from
+the operating agreement; `camp-branch-check` derives the labels a work branch may number
+itself with from `CLAUDE.md`'s branching section. Which file is the authority is not settled,
+and the two are not read against each other.
+
+**Which labels mark a work branch.** `branch-guard` compiles in `issue` and `pr`. A repo that
+declares a prefix and numbers its work branches some other way — `feat/ticket-12-slug` — has
+them classified as coordination and its source edits denied, while `camp-branch-check` accepts
+the same name. The prefix became a setting in #203; the label set did not.
 
 **Whether it denies or warns in a hardware repo.** Denying a source edit on the wrong branch
 is correct for software, and that is what ships. In guided hardware work the "source" is a CAD

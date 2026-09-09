@@ -1,0 +1,2 @@
+# an issue created on an issue branch whose body carries a Spawned by row — the edge is recorded, so this must be silent
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_body":"## Required\n\n- [ ] one thing\n\n### Related\n\n| | Link | Relationship |\n| --- | --- | --- |\n| **Spawned by** | [#194](https://github.com/Calyx-Engineering/arc/issues/194) | the unit that surfaced it |","tool_input":{"command":"gh issue create --title x --body-file body.md"}}

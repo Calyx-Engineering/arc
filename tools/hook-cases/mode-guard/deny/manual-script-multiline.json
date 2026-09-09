@@ -1,0 +1,2 @@
+# manual mode, the script on the second line of a multi-line command — a payload carries a newline as \n
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"git status --short\nbash tools/new-direct-pr.sh slug \"T\"","description":"Check, then open"}}

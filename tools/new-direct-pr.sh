@@ -4,6 +4,13 @@
 #   tools/new-direct-pr.sh <hint-slug> "<PR title>"
 #   tools/new-direct-pr.sh --dry-run <hint-slug> "<PR title>"
 #
+# mode-guard: writes-outward
+# mode-guard-read-only: --dry-run
+#
+# The declaration above is read by hooks/mode-guard, which otherwise sees a payload holding
+# none of the words it gates on — this script commits, pushes and opens a PR from inside, and
+# in manual mode ran unguarded until #201. --dry-run writes nothing outward, so it is exempt.
+#
 # A direct PR is one with no issue behind it. Its branch still carries a number, because the
 # branch name is often the only reference visible while the PR is being read — m46 §9. The
 # number it carries is the PR's, and the PR does not exist yet.

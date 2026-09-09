@@ -185,10 +185,10 @@ Each workstream's 200-word boundary report lands here when it closes.
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
-| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | **In progress.** [#163](https://github.com/Calyx-Engineering/arc/issues/163) closed; [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the activation log, every hook leaving a record — is in [#244](https://github.com/Calyx-Engineering/arc/pull/244). Spawned [#238](https://github.com/Calyx-Engineering/arc/issues/238) and [#239](https://github.com/Calyx-Engineering/arc/issues/239) |
-| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | Not started. Unblocked |
-| **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | Not started |
-| **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | Not started |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | **In progress.** [#163](https://github.com/Calyx-Engineering/arc/issues/163) closed; [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the activation log, every hook leaving a record — is in [#244](https://github.com/Calyx-Engineering/arc/pull/244); [#165](https://github.com/Calyx-Engineering/arc/issues/165) — `work-watch` check 8, one tested alternative before a failure is blamed on the user's environment — is in [#248](https://github.com/Calyx-Engineering/arc/pull/248). Spawned [#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239) and [#246](https://github.com/Calyx-Engineering/arc/issues/246) |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | **6 of 6 closed.** Report in [§6.4](#64-handoff--boundary-report). The parent stays open until the user closes it. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
+| **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | **In progress.** [#199](https://github.com/Calyx-Engineering/arc/issues/199) — `tools/verify-issue-boxes.sh`, the box count `hooks/tracker-verify` runs on `gh pr ready` — and [#83](https://github.com/Calyx-Engineering/arc/issues/83) — the same hook reporting a tracker object that records no parent — are built. [#140](https://github.com/Calyx-Engineering/arc/issues/140)'s *not a gate script* constraint is narrowed to the prose half |
+| **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — is in [#249](https://github.com/Calyx-Engineering/arc/pull/249) |
 
 ### 6.1 The retrospective and the plan
 
@@ -275,6 +275,147 @@ flowchart LR
 
 ---
 
+### 6.3 Fire — boundary report
+
+**Workstream:** Fire · **Closed:** 2026-09-08 · **200 words**, diagram excluded
+
+#### 6.3.1 Delivered
+
+1. Openings load `handoff` and `camp`: 0/12 to 0.83
+2. Four graders: length, numbering, report shape, environment blame
+3. 60-word budgets hold; 20-word do not
+4. Three hooks stop misreporting; `branch-guard` gains two checks
+5. Every hook logs its firing
+
+#### 6.3.2 Spawned
+
+| | | Routed |
+|---|---|---|
+| [#208](https://github.com/Calyx-Engineering/arc/issues/208) · [#210](https://github.com/Calyx-Engineering/arc/issues/210) · [#213](https://github.com/Calyx-Engineering/arc/issues/213) | Closed | Fire |
+| [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) | Hook extraction; log volume, rotation | Fire — open, **not sub-issues** |
+| [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#246](https://github.com/Calyx-Engineering/arc/issues/246) | Reload reverts edits; check 8 live | Dogfood — open |
+| Unfiled | Eleven *needs an issue* findings | Nowhere |
+
+#### 6.3.3 Unexpected
+
+- Firing and adherence move independently ([#155](https://github.com/Calyx-Engineering/arc/issues/155)), except at 20 words ([#213](https://github.com/Calyx-Engineering/arc/issues/213)). Unresolved
+- `createLinkedBranch` succeeds; `linkedBranches` reads 0, four times
+- `verify-hook.sh` left `HOOKS_OFF` on once; every hook inert
+- [#166](https://github.com/Calyx-Engineering/arc/issues/166) first claimed live firing off fixtures
+
+#### 6.3.4 Unplanned but needed
+
+| | |
+|---|---|
+| Five instruments | None existed |
+| `skill-firing.py` | Miscounted turns |
+| Log write cost | 1.4 s per call, now 91 ms |
+
+#### 6.3.5 Evidence
+
+| | |
+|---|---|
+| `verify-all.sh` | 11 → 38 gates, exit 0 every merge |
+| Live here | Exit 1 — local `grep -q` aborts; one gate reads an ignored file |
+| Baselines | Opening 1/3 · provenance 1/4 · topics 0/3 · environment `BLAMED` |
+| Activation log | 455 live entries today — first soak |
+
+#### 6.3.6 Not done
+
+- *Done when* unmet: [#156](https://github.com/Calyx-Engineering/arc/issues/156), [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#213](https://github.com/Calyx-Engineering/arc/issues/213), [#165](https://github.com/Calyx-Engineering/arc/issues/165)
+- Boxes unticked: [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#210](https://github.com/Calyx-Engineering/arc/issues/210), [#166](https://github.com/Calyx-Engineering/arc/issues/166)
+- [#160](https://github.com/Calyx-Engineering/arc/issues/160)'s case cannot discriminate
+- Everything merged unsoaked
+- `TEMPLATE`, `verify-hook.sh` edits proposed only
+
+#### 6.3.7 What it changed
+
+```mermaid
+flowchart LR
+    A["#155 three shapes<br/>wrapped 2/7"] --> B["#156 #157 #208<br/>openings load<br/>handoff + camp"]
+    A --> C["#158 #213 length<br/>#160 numbering<br/>#159 #164 report shape<br/>#165 environment"]
+    C --> D["four graders,<br/>baselines measured,<br/>none passing yet"]
+    E["#162 #183 #210 #163<br/>hooks read the repo,<br/>the arc, the close"] --> F["#166 every hook<br/>leaves a record"]
+    G["#161 branch-guard<br/>worktree + base"] --> F
+    H["#181 plugin eval"]:::blocked -.->|"gated"| B
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
+```
+
+*End of Fire's boundary report.*
+
+---
+
+
+### 6.4 Handoff — boundary report
+
+**Workstream:** Handoff · **Closed:** 2026-09-08 · **200 words**, diagram excluded
+
+#### 6.4.1 Delivered
+
+1. Baseline: 8 cold starts, first action 5/8, states why 4/8
+2. Decisions carry what would have to change; a swap trigger
+3. `handoff-archive` copies what git cannot restore
+4. Title re-stamped every write
+5. `work-watch` check 7: self-saturation, 52-turn eval
+6. `session-index` commits transcript locations for the miner
+
+#### 6.4.2 Spawned
+
+| | | Routed |
+| --- | --- | --- |
+| [#243](https://github.com/Calyx-Engineering/arc/issues/243) | Saturation probe | Dogfood — open, **not a sub-issue** |
+| Unfiled | Undelivered handoff; false claims; re-score unrouted | Handoff |
+| Unfiled | Bash overwrites unarchived; 147 ms tax; `SessionStart` variant | Handoff — needs the user |
+| Unfiled | Hooks carry issue numbers, not mechanism ids | Product architecture |
+
+#### 6.4.3 Unexpected
+
+- Rationale-stripping: 2 of 5 bad openings, and a written rule
+- Both criteria together invert the recalled split
+- Two handoffs last edited by Copilot Chat
+- 17 orphaned transcript directories; m32 said 2
+- Pass 2 caught two silent disables
+
+#### 6.4.4 Unplanned but needed
+
+| | |
+| --- | --- |
+| `Bash` matcher, both hooks | Shell overwrites skip edit tools |
+| `templates/dev-log.md` | Exclusions need a reason |
+| `verify-all.sh` | Fails on an unknown gate |
+
+#### 6.4.5 Evidence
+
+| | |
+| --- | --- |
+| `verify-all.sh` | 20 → 41 gates, exit 0 |
+| `verify-handoff-rationale.sh` | 5 failed before, green after |
+| Saturation baseline | `SILENT`, 52 turns |
+| Mutation test | 9 deleted, 9 caught |
+
+#### 6.4.6 Not done
+
+- [#146](https://github.com/Calyx-Engineering/arc/issues/146)'s *Done when*: no score moved; the live re-run is unrouted
+- [#154](https://github.com/Calyx-Engineering/arc/issues/154) box 2: check 7 never seen firing
+- Openings 1, 2 out of reach
+- Nothing soaked live
+- Backfilling the 17
+
+#### 6.4.7 What it changed
+
+```mermaid
+flowchart LR
+    A["#150 baseline<br/>5/8 · 4/8"] --> B["#151 constraint column,<br/>Why here, swap trigger"]
+    C["#152 handoff-archive"] --> D["#153 re-stamp gate<br/>needs the archived copy"]
+    E["#154 work-watch check 7"] --> F["#243 probe run"]:::blocked
+    G["#16 session-index"] --> H["transcript-miner<br/>reads the index"]
+    I["#181 plugin eval"]:::blocked -.->|"re-score unrouted"| B
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
+```
+
+*End of Handoff's boundary report.*
+
+---
 
 ## 7 Related analysis
 
@@ -318,6 +459,14 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 | `docs/product-architecture/close-sequence.md` — step 5, the read-back ([#140](https://github.com/Calyx-Engineering/arc/issues/140)) | **Its own unit**, three dispatches before its PR | **Fired, and found what the session could not.** 12 findings on pass 1, 16 on pass 2, and two contradictions left by pass 2's own fixes on pass 3. One was load-bearing: the constraint says the step is *confirmed in the PR body*, and `skills/issue-write` had no section for it — the step was unsatisfiable as first implemented. **None of the three passes was visible to the session from re-reading its own files** |
 | `skills/camp` — the `description:` rewrite ([#156](https://github.com/Calyx-Engineering/arc/issues/156)) | — | **Unsoaked, and unsoakable here.** The change is a trigger clause, so the only thing that exercises it is a real session opening that wraps Camp's name in an instruction. No gate in this repository invokes a skill, and `claude plugin eval` is gated ([#181](https://github.com/Calyx-Engineering/arc/issues/181)). **The next opening of this kind is its first exercise** — and the two prompts in `evals/skill-firing/wrapped/` say exactly what one looks like |
 | `hooks/lib/activation-log` and all six hooks ([#166](https://github.com/Calyx-Engineering/arc/issues/166)) | — | **Unsoaked, and it cannot be soaked from inside its own run.** The installed plugin is the main tree, which does not carry the library, and `tools/plugin-reload.sh` says a running session does not pick up a reload — so no hook has fired in a real session with this code. Everything asserted is the harness: 37 gates clean, 392 assertions over 115 cases, and a selftest that proves the gate can fail. **The next work stretch in this repo is its first exercise**, and the thing to read is whether `.claude/arc/log.md` fills with entries carrying real commands and file paths rather than fixtures — which is exactly the distinction the first version of this library got wrong |
+| `hooks/lib/activation-log` — first exercise | **[#165](https://github.com/Calyx-Engineering/arc/issues/165)'s run**, one `claude -p` session | **All six hooks fired, and the entries are real.** 1,285 activations in one issue run: `handoff-archive` 335, `mode-guard` 294, `tracker-verify` 287, `camp-branch-check` 287, `camp-session-start` 41, `branch-guard` 41. Every one carries its `checked:` / `outcome:` / `skipped:` lines against a real command — the fixture-versus-real distinction #166 asked to be read holds. **Two findings.** The volume is the story: ~5,000 lines from one issue, and the run's first commit swept them into the review diff because `git add -u` picked the file up. And `tracker-verify` was the only hook whose output a human acted on — it caught PR #248's missing `arc-04:` title prefix, which no gate here checks. **The bulk of it was taken back out of the PR** — a machine record is not review surface — and it cannot be taken out entirely: the hooks fire on the `git add` and `git commit` that would remove it, so 26 lines came back with the removal. Chasing zero is a race against the thing being measured |
+| `hooks/session-index` ([#16](https://github.com/Calyx-Engineering/arc/issues/16)) | **Its own run**, as a program against this worktree | **Soaked as a program, not as a hook, and the difference matters here.** It was run with this session's real `session_id` and `transcript_path` and wrote the first real row — `R--arc-wt-16` on `arc/04-dogfood-issue-16-session-index`, `#16`, `live` — with `.claude/arc/log.md` carrying the matching `session-indexed` entry, and re-firing left the file at one row. What it did **not** get is a live firing: the installed plugin is the main tree, and `tools/plugin-reload.sh` would have swapped the plugin under the five worktrees running concurrently. **Two findings.** The review passes found a guard that would have stopped the mechanism permanently and silently — it counted only the rows a rewrite touched, so any index holding a row for another live worktree looked like a loss — and every existing case stayed green because each fixture had one row. And the first regression case written for it was itself vacuous, because a *blocked* write leaves the row count exactly as unchanged as a correct one does. **The next work stretch in this repo is its first live exercise**, and the thing to read is whether `.claude/arc/sessions.md` gains a row per worktree without anyone asking |
+| `skills/work-watch` check 8 ([#165](https://github.com/Calyx-Engineering/arc/issues/165)) | — | **Unsoaked, and it cannot be soaked in this repository.** The check gates a diagnosis about a user's *instrument*, and nothing here has one. `evals/environment-blame/` reads the session the check was written from and reports `BLAMED` — the defect, not the fix — and it carries no probe, because a replayed session sits in front of no bench. **The first exercise is a live instrument session**, filed as [#246](https://github.com/Calyx-Engineering/arc/issues/246), and the thing to read is whether the reply that names the bench also names what it ran first |
+| `hooks/mode-guard` — the script-declaration half ([#201](https://github.com/Calyx-Engineering/arc/issues/201)) | **Its own unit**, four review passes | **Fired, and every pass found a defect the one before it introduced.** Pass 1: the read-only exemption matched the whole payload, so a real dispatch was allowed by a `--dry-run` in the description Claude wrote itself, and quoted reads were denied. Pass 2, on pass 1's fixes: the same class in a new shape — one script named twice, the first invocation's `--dry-run` exempting the second. Pass 4, as a reviewer: a payload carries a newline as `\n`, so **every line after the first was glued to its predecessor and never read as a command** — which is most of the surface the issue set out to close. **None of the four was visible from re-reading the hook** |
+| `tools/verify-issue-boxes.sh` and `hooks/tracker-verify`'s `gh pr ready` check ([#199](https://github.com/Calyx-Engineering/arc/issues/199)) | **The tool: its own unit, live.** **The hook: this PR's own `gh pr ready`, and it did not fire** | **Split result, and the second half is the useful one.** The tool read #140, #194 and #199 as real issues over the real GraphQL reads the selftest can only fixture — and `--pr 251` resolved both this PR's issues through its own closing keywords, which is the arc case the first draft got wrong. **The hook did not fire at all.** `gh pr ready 251` produced a `tracker-verify` entry reading `outcome: ok — not a tracker write`, with the old thirteen-check `skipped:` line — the installed plugin is the main tree, so the copy that ran is the one without this change. That is [#166](https://github.com/Calyx-Engineering/arc/issues/166)'s row restated as a measurement rather than a prediction: **a hook change cannot be soaked by the run that makes it**, and the next session in this repo is `issue-boxes`' first exercise |
+| `hooks/tracker-verify`'s `spawn-parent` check ([#83](https://github.com/Calyx-Engineering/arc/issues/83)) | **Its own build** — the case was written against [m46 §9](../product-architecture/mechanisms/m46-work-navigation.md)'s own example branch name | **The build found a live defect in a neighbouring check.** `pr-base`'s guard was `arc/*-issue-*`, which matches the literal `-issue-` in `arc/03-camp-pr75-no-issue-pr` — the shape `tools/new-direct-pr.sh` produces — so a correctly based no-issue PR was reported as misbased. Fixed here. **The hook half is otherwise unsoaked, and this run measured why.** `gh pr ready` on this unit's own PR produced a `tracker-verify` entry reading `not a tracker write` — the installed copy is the main tree's, without this change. The next session in this repo is `spawn-parent`'s first exercise |
+
+| `hooks/branch-guard` — the coordination prefix read from the agreement ([#203](https://github.com/Calyx-Engineering/arc/issues/203)) | — | **Unsoaked, and not soakable from inside its own run.** The hook fires from the installed plugin copy, current only after `tools/plugin-reload.sh`, and five runs were working in parallel worktrees off this base — reloading from one of them would change what the other four are running under. Everything asserted is the harness: 39 gates clean, and a new `tools/verify-branch-prefix.sh` at 17 cases whose decisive one fails when its guard is removed. **The next work stretch in this repo is its first exercise**, and the thing to read is whether `.claude/arc/log.md` carries `prefix=` on its `edit-checked` entries — no entry in the tree does yet |
 
 > **The miner's row is the first soak in this repository where the exercise found defects the
 > author could not see by reading.** That is what the soak rule is for, and it is the first

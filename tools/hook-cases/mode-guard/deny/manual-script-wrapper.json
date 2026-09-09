@@ -1,0 +1,2 @@
+# manual mode, a script that commits, pushes and opens a PR from inside — no literal in the command
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"bash tools/new-direct-pr.sh mode-guard-scripts \"Guard the wrappers\"","description":"Open a direct PR"}}
