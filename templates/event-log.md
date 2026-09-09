@@ -108,6 +108,16 @@ safe.
 Retention past that is **not decided** — m44 names it as open. The move preserves the file
 until it is.
 
+**Nobody is prompted to do either, so a gate notices when neither happened.**
+`tools/verify-log-rotation.sh` reads the live log's `**Arc:**` header against the arc the
+current branch belongs to and reports the disagreement, with the two commands that fix it. It
+was written because arc 04 ran its whole length appending to a file headed `arc/03-camp`
+&mdash; [#239](https://github.com/Calyx-Engineering/arc/issues/239).
+
+**Relative links move with the file.** The header's links are written from `.claude/arc/`; the
+archive is two levels deeper, so they are rewritten on the way &mdash; a rotation that leaves
+them is a rotation that breaks every link in the header.
+
 ## Writing an entry cheaply
 
 Append. Never read, never rewrite.

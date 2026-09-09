@@ -5,7 +5,7 @@ every exit path, via `hooks/lib/activation-log`
 ([#166](https://github.com/Calyx-Engineering/arc/issues/166)). The artifact, its independence
 from verbosity, its consumers, the entry format and volume control
 ([#238](https://github.com/Calyx-Engineering/arc/issues/238)) are settled.
-Per-arc rotation is specified and nothing performs it
+Per-arc rotation is specified, performed and gated
 ([#239](https://github.com/Calyx-Engineering/arc/issues/239)); retention after an arc closes
 is open.
 **Home:** Arc — Self-improvement.
@@ -156,5 +156,6 @@ is ever pruned, is undecided. The move preserves the file until that question ha
 - [m17](m17-k1-upkeep.md) — the `arc-log`, which records decisions rather than events
 - [`hooks/lib/activation-log`](../../../hooks/lib/activation-log) — the library every hook sources to write one
 - [`tools/verify-activation-log.sh`](../../../tools/verify-activation-log.sh) — the gate that asserts one entry per firing, on every path
+- [`tools/verify-log-rotation.sh`](../../../tools/verify-log-rotation.sh) — the gate that asserts the live log names the arc writing to it
 - [#37](https://github.com/Calyx-Engineering/arc/issues/37) — the issue that built the format and the file
 - [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the issue that gave it producers
