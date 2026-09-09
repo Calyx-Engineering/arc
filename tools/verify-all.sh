@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log verify-log-rotation miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks verify-log-rotation"
 
 RUN=0
 FAILED=0
@@ -125,6 +125,8 @@ run_gate "mechanism table cases" bash tools/verify-mechanisms.sh selftest
 run_gate "mechanism table" bash tools/verify-mechanisms.sh
 run_gate "dev-log name cases" bash tools/verify-dev-log-name.sh selftest
 run_gate "dev-log name" bash tools/verify-dev-log-name.sh
+run_gate "hook source cases" bash tools/verify-hook-source.sh selftest
+run_gate "hook source" bash tools/verify-hook-source.sh
 run_gate "activation log cases" bash tools/verify-activation-log.sh selftest
 run_gate "activation log" bash tools/verify-activation-log.sh
 run_gate "log rotation cases" bash tools/verify-log-rotation.sh selftest
