@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issues:** [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231)  ·  **PR:** _pending_
+**Issues:** [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231)  ·  **PR:** [#301](https://github.com/Calyx-Engineering/arc/pull/301)
 
 ## Problem
 
@@ -44,8 +44,15 @@ its own number. What #230 left is what #231 fixes: **only one body-carrying writ
 merge; `gh pr edit 200 … && gh pr edit 201 …` checked 200 twice rather than 200 and then 201.
 
 Three of the chained case files first claimed to demonstrate the pre-#230 defect. Measured
-against the commit they actually follow, they do not, and they say so now — the two that decide
-are `chained-issue-edit-then-merge` and `chained-two-pr-writes`.
+against the commit they actually follow, they do not, and they say so now.
+
+**Exactly one case decides #231, and that is a limit of the harness rather than of the cases.**
+Run against #230's hook, the whole suite gives `113 passed, 1 failed`, and the one that fails is
+`chained-issue-edit-then-merge`. `chained-two-pr-writes` and
+`chained-two-pr-creates-take-their-own-urls` emit one finding on the broken hook where they emit
+two on the fixed one — but `tools/verify-hook.sh` compares the verdict class and never the
+finding text, so both still pass. Their evidence is in this dev-log and in the PR body, not in
+the gate.
 
 ### #230 — the reader and the dispatch
 
@@ -144,14 +151,14 @@ number the flags happen to hold — `gh pr create --fill --draft && sleep 2` res
 ## The gate
 
 ```
-bash tools/verify-hook.sh hooks/tracker-verify   →  exit 0, 114 passed, 0 failed
-bash tools/verify-all.sh                         →  exit 0
+bash tools/verify-hook.sh hooks/tracker-verify   →  exit 0, 117 passed, 0 failed
+bash tools/verify-all.sh                         →  exit 0, 53 gates, all clean
 ```
 
 Baseline before any change: `78 passed, 0 failed`. After #230's commit: `106 passed, 0 failed`.
 
 Every case in the suite runs **offline**: with a shim `gh` first on `PATH` that logs its argv and
-exits 1, all 114 log zero invocations.
+exits 1, the whole suite logs zero invocations.
 
 Both shapes #230 names, run against the live hook with `arc_test_linked":"0"`:
 
@@ -164,7 +171,7 @@ gh -R Calyx-Engineering/arc issue close 163      before: exit 0, silent   after:
 
 **This heading is `templates/dev-log.md`'s, not an issue body's.**
 
-- **[#300](https://github.com/Calyx-Engineering/arc/issues/300) — the comma-split reader is in five other places.** `hooks/camp-branch-check:53,68`,
+- **[#300](https://github.com/Calyx-Engineering/arc/issues/300) — the comma-split reader is in four other hooks and the template.** `hooks/camp-branch-check:53,68`,
   `hooks/branch-guard:51`, `hooks/camp-session-start:41`, `hooks/mode-guard:69` and — the one that
   matters most — `hooks/TEMPLATE:48`, which propagates it into every hook written from the
   skeleton. `camp-branch-check:68` is the exact `CMD` read #230 names, in a sibling `PostToolUse`
@@ -183,6 +190,7 @@ mattered: `read_invocation` read the verb as *the first token that is not a flag
 reading any bare numeric token after the verb, so `gh pr create --fill && sleep 2` resolved PR #2.
 
 **Pass 2's subject was pass 1's own edits, and it found two regressions pass 1 had introduced.**
+Pass 4 then found a third of the same shape, which is the one worth reading twice.
 
 | | |
 |---|---|
@@ -191,6 +199,19 @@ reading any bare numeric token after the verb, so `gh pr create --fill && sleep 
 gh issue close 163` yields the token `/repo
 gh`. No case file had a newline in a command, so the suite was green while this was broken |
 | **`GH_ARGS` cut out of the string fell back to the whole command** | `${stripped#*$GH_SUB $GH_VERB}` cannot match when a flag sits between the two, and a `#` that matches nothing hands back everything. `gh pr view 200 && gh issue -R o/r close 163` then reported a missing link on issue **#200** — an issue nobody touched — and made two GraphQL calls to do it. **A wrong finding read over the network is worse than the silence it replaced** |
+
+**Pass 4 found the resolved `
+`'s second victim.** The quote strip was a `sed`, and `sed` is
+line-based. Once `json_string` resolved `
+` into a real newline, a quoted span containing one
+stopped being stripped — so a multi-line commit message or `--body` named an arm and sent the
+hook to the network about a number inside it. `git commit -m "fix: x
+
+Verified:
+gh issue
+close 42"` reported a missing link on issue #42. **That is the shape the strip exists to prevent,
+and the shape every heredoc-carrying write has.** It is now parameter expansion, which spans
+lines by construction and drops the four `sed` forks a firing was paying.
 
 **Pass 3 audited the boxes and caught the claims, not the code.** Three chained case descriptions
 said they demonstrated the pre-#230 defect; run against the commit they actually follow, they
@@ -205,6 +226,7 @@ case files reaching for a live `gh issue view` — a rule this hook states about
 | **A chain reports on writes that did not run** | `gh pr merge 1 \|\| gh pr merge 2` checks both, though only one executed. Nothing reads a per-segment exit status and `PostToolUse` supplies none. Before this change exactly one arm was exposed; now every arm is |
 | **Cost is linear in the number of arms** | Measured, offline: one arm 844 ms, five 1772 ms, ten 2935 ms, fifty 12.5 s. On the live path each close arm adds its own 20-second-bounded GraphQL call. **No regression on the path that matters** — `ls -la`, `git status` and `gh pr view` each cost one `printf \| sed`, the same as before |
 | **Two arms naming the same base still write two identical `pr-base=` marks** | `LOG_OBJ` removes the contradiction, not every ambiguity |
+| **`tools/verify-hook.sh` verdicts on the exit code alone** | A case asserting *each arm reports about its own number* passes when only one arm reports. Two of this branch's cases are in that position. The script is on `CLAUDE.md`'s never-edited-autonomously list |
 | **`_ARC_LOG_FAILED` repeats a check name once per failing arm** | `milestone, milestone found something`. Accurate — two objects failed — and it reads badly. `hooks/lib/activation-log`'s, not this hook's |
 
 ### One thing a future reader needs

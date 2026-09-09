@@ -24,7 +24,7 @@
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
 
 # ---- the activation log ---------------------------------------------------------
-# Sourced before anything can exit. This hook has several exit paths and seventeen declared
+# Sourced before anything can exit. This hook has six top-level exit paths and seventeen declared
 # checks, most of which do not run on any one invocation — so a declared check the run never
 # marked is written to the entry's `skipped:` line as `not reached`, rather than being
 # absent from the record. m44.
@@ -54,6 +54,14 @@ printf -v _ARC_CR  '\r'
 #
 # `json_string` below reads the `command` and the `cwd` the same way, for the same reason, and
 # `field` is gone: it was the last comma-split read in the file. #230.
+#
+# THE TWO READERS ARE NOT THE SAME, DELIBERATELY. `json_string` resolves `\"` `\` `
+` `	`
+# ``; this one resolves nothing and stops at the first `"`, escaped or not. A fixture value is
+# a CASE payload, and `scan_spawned_heading` depends on the literal `
+` surviving — see the
+# comment there. Teaching this one to resolve escapes would rewrite a live body's `	` and move
+# a fence marker, which is a change to what the scanners see rather than to how they are fed.
 #
 # Parameter expansion, no subprocess. There are ten of these, and a `printf | sed` each would
 # cost two processes on every Bash tool call in the session — more than the two the whole hook
@@ -179,15 +187,53 @@ GH_VERB=""
 GH_ARGS=""
 ARM=""
 
+# Removes every span of `$1` and its partner from the caller's `stripped`, in place. Bash scopes
+# dynamically, so this writes the variable `read_invocation` declared `local`.
+#
+# A span may contain NEWLINES, which is the whole reason this is not a `sed`. An unbalanced
+# quote drops everything after it: with no closing quote the rest of the command is inside the
+# string, and reading an arm out of it is exactly the mistake this strip exists to prevent.
+strip_quoted() {
+  local q="$1" head out=""
+  while :; do
+    case "$stripped" in *"$q"*) ;; *) break ;; esac
+    head="${stripped%%"$q"*}"
+    stripped="${stripped#*"$q"}"
+    out="$out$head"
+    case "$stripped" in
+      *"$q"*) stripped="${stripped#*"$q"}" ;;
+      *) stripped=""; break ;;
+    esac
+  done
+  stripped="$out$stripped"
+  return 0
+}
+
 read_invocation() {
   local stripped tok saw_gh=0 sub="" verb="" collect=0 want="${2:-}" skip="${3:-0}" seen=0
   GH_SUB=""; GH_VERB=""; GH_ARGS=""; ARM=""
 
-  # Quoted spans out, then every run of shell chain characters becomes ONE TOKEN of its own.
-  # A marker rather than a cut, because an operator is routinely glued to what it separates —
-  # `gh pr merge 200&&gh issue close 163` — and a cut there loses the invocation after it
-  # while a marker only ends the one before it.
-  stripped="$(printf '%s' "$1" | sed -e 's/"[^"]*"//g' -e "s/'[^']*'//g" -e 's/[;&|][;&|]*/ __ARC_CHAIN__ /g')"
+  # Quoted spans out, then every shell chain character becomes ONE TOKEN of its own. A marker
+  # rather than a cut, because an operator is routinely glued to what it separates —
+  # `gh pr merge 200&&gh issue close 163` — and a cut there loses the invocation after it while
+  # a marker only ends the one before it. `&&` yielding two markers costs nothing: both end the
+  # invocation before them.
+  #
+  # PARAMETER EXPANSION, AND THE QUOTE STRIP HAS TO SPAN LINES. This was one `sed`, and `sed`
+  # is line-based: once `json_string` started resolving `\n` into a real newline, a quoted span
+  # containing one stopped being stripped, so a multi-line `--body` or commit message named an
+  # arm and sent the hook to the network about a number inside it —
+  # `git commit -m "fix: x<newline><newline>Verified:<newline>gh issue close 42"` reported a
+  # missing link on issue #42. That is the shape the comment below calls out as the reason the
+  # strip exists at all, and it is the shape a heredoc-carrying write always has.
+  #
+  # A fork here is also paid four times per firing, once per call.
+  stripped="$1"
+  strip_quoted '"'
+  strip_quoted "'"
+  stripped="${stripped//;/ __ARC_CHAIN__ }"
+  stripped="${stripped//&/ __ARC_CHAIN__ }"
+  stripped="${stripped//|/ __ARC_CHAIN__ }"
 
   # `set -f` because the split is deliberate and the glob is not: a `*` in a flag value would
   # otherwise expand against whatever directory the session happens to be in.
@@ -273,7 +319,10 @@ read_invocation() {
 #
 #   $1  `issues` or `pull`   $2  how many of that kind this firing has already consumed
 payload_url_number() {
-  printf '%s' "$INPUT"     | grep -oE "https://github\.com/[^/]+/[^/]+/$1/[0-9]+"     | sed -n "$(( $2 + 1 ))p"     | grep -oE '[0-9]+$'
+  printf '%s' "$INPUT" |
+    grep -oE "https://github\.com/[^/]+/[^/]+/$1/[0-9]+" |
+    sed -n "$(( $2 + 1 ))p" |
+    grep -oE '[0-9]+$'
   return 0
 }
 

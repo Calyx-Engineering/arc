@@ -1,0 +1,2 @@
+# a multi-line commit message that mentions a close — the quote strip has to span lines. `sed` is line-based, so once `\n` was resolved into a real newline this named an arm and sent the hook to the network about #42, an issue nobody touched. Every heredoc-carrying write has this shape
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"git commit -m \"fix: the thing\n\nVerified:\ngh issue close 42\n\""}}
