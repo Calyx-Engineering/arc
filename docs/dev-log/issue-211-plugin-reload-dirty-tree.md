@@ -124,12 +124,18 @@ rejected-approach row two paragraphs down. An exclusion list fails safe on cover
 
 ## Spawned
 
-- **Issues:** none filed. One is owed: **what actually reverted `skills/chat-response/SKILL.md`
-  in #158 is unidentified**, and this unit ruled out the only named suspect by measurement. The
-  remaining candidates — a concurrent session or worktree in `R:\arc`, an editor restoring a
-  buffer, a `git checkout` whose reflog entry was read as the branch switch — were not
-  investigated, because doing so is not this issue and the evidence is three weeks cold. The
-  driver decides whether that is worth an issue.
+**Issues:** none filed, so #211's `Related` table gains no `Spawned` row. Everything below is a
+finding, and a finding is not a unit of work — it lives here.
+[#288](https://github.com/Calyx-Engineering/arc/pull/288) merged that rule into
+`run-instructions.md` §5 while this unit was in review, and the first draft of #211's body had
+the `Spawned` heading the rule forbids. Removed; the content is these four entries.
+
+| Finding | Where it went |
+|---|---|
+| **What actually reverted `skills/chat-response/SKILL.md` in #158 is unidentified.** This unit ruled out the only named suspect by measurement. The untested candidates: a concurrent session or worktree in `R:\arc`, an editor restoring a buffer, a `git checkout` whose reflog entry was read as the branch switch. Not investigated — that is not this issue, and the evidence is three weeks cold | Owed an issue. The driver decides |
+| **The issue's *Observed* table is wrong about `tools/`.** `verify-all.sh` is genuinely inert, but `hooks/tracker-verify` executes three of its siblings from the plugin root, and two skills link into `reference/` | Absorbed here — the guard covers both directories |
+| **`plugin-reload.sh` treated every argument as a plugin name.** `tools/plugin-reload.sh --anything` ran the uninstall/install cycle against a plugin called `--anything` and exited 0 | Fixed here, case `e4` |
+| **The first draft of the cases ran `rm -rf` against `%TEMP%`** | Fixed here; the retrospective below is the write-up, because the lesson is not about this file |
 
 ## Retrospective
 
