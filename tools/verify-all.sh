@@ -173,10 +173,15 @@ if [ "$LIST" = "1" ]; then
     prefix, and the label set of real open issues, and the label set itself, both read GitHub —
                               run bash tools/verify-labels.sh and
                               bash tools/verify-labels.sh labels
-    two dispatchers against    arc-claim.sh selftest drives take, release, refresh and the race
-    the real tracker           through a fixture backend. A real one needs two loops, a live
-                               workstream and a real issue — run
-                               bash tools/arc-claim.sh check <NN> against one
+    two dispatchers against   arc-claim.sh selftest drives take, release, refresh and the race
+    the real tracker          through a fixture backend, and one case drives the live path
+                              behind a stubbed gh. A real one needs two loops, a live
+                              workstream and a real issue — run
+                              bash tools/arc-claim.sh check <NN> against one
+    arc-loop's own claim      no case dispatches a run, so take_claim, reclaim_claim, the
+    wiring                    heartbeat, the per-issue release and the three traps are checked
+                              as source text only — tools/arc-claim.sh selftest's structural
+                              cases. --dry-run reaches selection and stops before the claim
     a real issue's boxes      verify-issue-boxes.sh selftest runs the whole script against a
     against its PR body       fixture backend. The live read needs GitHub, a real issue and the
                               PR that closes it — run bash tools/verify-issue-boxes.sh <NN> at
