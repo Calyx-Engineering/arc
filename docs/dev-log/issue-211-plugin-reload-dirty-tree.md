@@ -1,6 +1,6 @@
 # Issue #211 — fix: plugin-reload.sh reverts uncommitted edits to the plugin's own skills
 
-**Issue:** [#211](https://github.com/Calyx-Engineering/arc/issues/211)  ·  **PR:** _filled in when it opens_
+**Issue:** [#211](https://github.com/Calyx-Engineering/arc/issues/211)  ·  **PR:** [#289](https://github.com/Calyx-Engineering/arc/pull/289)
 
 ## Problem
 
@@ -16,7 +16,7 @@ showing only a branch checkout, and recovered it only because the diff was still
 | **What this issue is really for** | The dev loop installs from the repository itself, so a reload is the one routine command that reads a live working tree. Nothing checked what state that tree was in |
 | **North star** | The issue's verbatim *Done when*: "the script exits non-zero without touching the tree when a plugin component directory has uncommitted changes" |
 | **What makes it durable** | The decision is a function over a directory, and its cases run against throwaway repositories with a stub in place of `claude` — so the gate runs anywhere, needs no marketplace, and cannot install anything |
-| **Out of scope** | Finding what actually reverted #158's file. The measurement below rules out this script, which makes that a separate question with no lead — recorded in *Spawned* rather than guessed at here. Also out: making the reload itself stash and restore, because a reload that edits the tree to make itself runnable is a second way to lose work |
+| **Out of scope** | Finding what actually reverted #158's file. The measurement below rules out this script, which makes that a separate question with no lead — recorded under *Findings* rather than guessed at here. Also out: making the reload itself stash and restore, because a reload that edits the tree to make itself runnable is a second way to lose work |
 
 Pass 2 changed one thing. Pass 1, from the issue body alone, read the guard as protecting the
 tree *from the script*. The reproduction showed the script does not write to the tree at all, so
@@ -80,9 +80,10 @@ and explains, and never silently serves a stale snapshot.
 The draft claimed that and did not do it. Two paths reloaded unchecked and exited 0: a
 `known_marketplaces.json` that could not be read at all was treated as "this plugin ships no
 local tree", printing a reassuring line in front of a completely unguarded reload; and a
-`git status` that failed on a repository that exists — a concurrent worktree holding
-`.git/index.lock` is the likely cause here, since `tools/arc-loop.sh` runs several at once — came
-back as an empty result and read as clean. Both now return their own code, both route through one
+`git status` that failed on a repository that exists — a corrupt index, an I/O error, a
+permissions problem — came back as an empty result and read as clean. (Not a held
+`.git/index.lock`: status takes that lock with the non-fatal flag and still exits 0. An earlier
+draft of this paragraph and of the script's comment both asserted otherwise, on no test.) Both now return their own code, both route through one
 `cannot_check()` so the messages cannot drift apart, and each has a case. **"This ships no local
 tree" and "I could not find out" are opposite answers**, and collapsing them is exactly how a
 guard becomes a reassuring message. Same distinction `tools/verify-linked-branch.sh` draws
@@ -122,7 +123,7 @@ rejected-approach row two paragraphs down. An exclusion list fails safe on cover
 | Check `$PWD` | Silently correct only when the reload is run from the marketplace's own directory |
 | A new `tools/verify-plugin-reload.sh` | The decision and its cases belong in the file they are about. Same shape as `tools/arc-claim.sh selftest` |
 
-## Spawned
+## Findings
 
 **Issues:** none filed, so #211's `Related` table gains no `Spawned` row. Everything below is a
 finding, and a finding is not a unit of work — it lives here.
@@ -134,7 +135,7 @@ the `Spawned` heading the rule forbids. Removed; the content is these four entri
 |---|---|
 | **What actually reverted `skills/chat-response/SKILL.md` in #158 is unidentified.** This unit ruled out the only named suspect by measurement. The untested candidates: a concurrent session or worktree in `R:\arc`, an editor restoring a buffer, a `git checkout` whose reflog entry was read as the branch switch. Not investigated — that is not this issue, and the evidence is three weeks cold | Owed an issue. The driver decides |
 | **The issue's *Observed* table is wrong about `tools/`.** `verify-all.sh` is genuinely inert, but `hooks/tracker-verify` executes three of its siblings from the plugin root, and two skills link into `reference/` | Absorbed here — the guard covers both directories |
-| **`plugin-reload.sh` treated every argument as a plugin name.** `tools/plugin-reload.sh --anything` ran the uninstall/install cycle against a plugin called `--anything` and exited 0 | Fixed here, case `e4` |
+| **`plugin-reload.sh` treated every argument as a plugin name.** Observed, not inferred: a probe run of the old script as `plugin-reload.sh --source-only` printed `Reloading --source-only from the working tree...` and then `Done.`, so both `claude` calls returned 0 for a plugin that does not exist and `set -euo pipefail` never fired | Fixed here, case `e4` |
 | **The first draft of the cases ran `rm -rf` against `%TEMP%`** | Fixed here; the retrospective below is the write-up, because the lesson is not about this file |
 
 ## Retrospective
