@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep"
+KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks"
 
 RUN=0
 FAILED=0
@@ -85,10 +85,10 @@ run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 # the halt and the measured-runs denominator were added to it, all of which are JSON in and
 # text out. It replaces the billed half through PROBE_PY.
 #
-# The KNOWN guard above cannot help here either way. It globs `tools/verify-*.sh`, so it never
-# asks after a file named anything else — KNOWN carries a dozen such names already and they are
-# there for the reader, not for the guard. The gap is real and it is the guard's: a selftest
-# whose file is not named `verify-*` can only be noticed by reading this file.
+# Their names ARE in KNOWN, alongside the dozen others there that the guard cannot check. It
+# globs `tools/verify-*.sh` and never asks after a file named anything else, so those entries
+# are for the reader, not for the guard. The gap is real and it is the guard's: a selftest whose
+# file is not named `verify-*` can only be noticed by reading this file.
 run_gate "skill probe cases" python tools/skill-probe.py selftest
 run_gate "skill probe loop cases" bash tools/skill-probe.sh selftest
 run_gate "probe handoff check cases" bash tools/probe-handoff-checks.sh selftest

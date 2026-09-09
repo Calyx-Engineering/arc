@@ -8,6 +8,12 @@
 #
 #   PROBE_TRANSCRIPT_DIR=<dir> tools/skill-probe.sh --openings   keep every run's raw stream
 #
+#   PROBE_PY=<file>          the running half, replaced. The selftest's only use for it
+#   PROBE_SKIP_CLI_CHECK=1   do not require `claude` on PATH. Set with PROBE_PY and nothing
+#                            else — on the live path it removes the cheapest guard there is,
+#                            and the suite then halts on "the probe runner exited 1 with no
+#                            readable output" instead of saying the CLI is missing
+#
 # THE PARTS THAT DO NOT BILL HAVE SELFTESTS:
 #   python tools/skill-probe.py selftest          the stop condition, on canned streams
 #   bash tools/skill-probe.sh selftest            what this script does with the JSON it gets
@@ -33,10 +39,9 @@
 #
 # IT COSTS MONEY. Each probe is a real session. It runs until the session's `result` line, its
 # PROBE_TURN_CAP turns or its PROBE_TIMEOUT seconds, whichever comes first, and PROBE_BUDGET
-# caps the rest. That is why this
-# is not in tools/verify-all.sh: a gate that bills per run is not a gate. It does NOT stop at
-# the first Skill call and it does NOT stop at the first turn of prose — see tools/skill-probe.py,
-# which explains what each of those cost when it did.
+# caps the rest. That is why this is not in tools/verify-all.sh: a gate that bills per run is
+# not a gate. It does NOT stop at the first Skill call and it does NOT stop at the first turn
+# of prose — see tools/skill-probe.py, which explains what each of those cost when it did.
 #
 # A RUN A RATE LIMIT DESTROYED IS NOT A MISS. tools/skill-probe.py detects a session the CLI
 # cut short, states its back-off, and retries once; if the retry fails too it returns
@@ -285,7 +290,11 @@ for CASEDIR in $(find "$EVAL_DIR" -name case.yaml | sort); do
     # otherwise sends the operator looking for a back-off that never happened.
     FIRED=""; RETRIED=""; UNUSABLE=""
     if [ "$RC" -ne 0 ] || [ -z "$OUT" ]; then
-      UNUSABLE="the probe runner exited $RC with no readable output"
+      if [ "$RC" -ne 0 ]; then
+        UNUSABLE="the probe runner exited $RC with no readable output"
+      else
+        UNUSABLE="the probe runner printed nothing"
+      fi
     else
       # A parse failure is an unusable run, not an empty `fired` list. python exits non-zero on
       # bad JSON, and the || is what turns that into a stated reason instead of a silent miss.

@@ -1,16 +1,18 @@
 # Issue #269 — the probe runner warns or retries on a rate limit
 
-**Issue:** [#269](https://github.com/Calyx-Engineering/arc/issues/269)  ·  **Parent:** [#145](https://github.com/Calyx-Engineering/arc/issues/145) — Fire  ·  **From:** [#213](https://github.com/Calyx-Engineering/arc/issues/213)
+**Issue:** [#269](https://github.com/Calyx-Engineering/arc/issues/269)  ·  **Parent:** [#145](https://github.com/Calyx-Engineering/arc/issues/145) — Fire  ·  **From:** [#213](https://github.com/Calyx-Engineering/arc/issues/213)  ·  **PR:** [#298](https://github.com/Calyx-Engineering/arc/pull/298)
 
 ## The defect
 
-A rate limit during #213 destroyed two billed probe runs. Nothing warned, nothing retried, and
-the reason it went unnoticed is the shape a killed session leaves behind: an **empty `fired`
-list**, which is exactly what an honest miss leaves. The tally cannot tell them apart, so a run
-that never happened was scored as a skill that did not fire.
+A rate limit during #213 destroyed two billed probe runs. **Nothing warned and nothing
+retried** — the scorer there refused the runs correctly, and the operator learned of the limit
+by reading eleven `CUT` rows and one `$0.000`. That is the defect the issue is about.
 
-The `result` line is the only place the two differ. `tools/skill-probe.py` was reading its
-`total_cost_usd` and discarding everything else on it.
+`tools/skill-probe.py` was worse placed than the scorer that caught it. It read its `result`
+line for `total_cost_usd` and discarded everything else on it, so a killed session reaches the
+tally as an **empty `fired` list** — which is exactly what an honest miss leaves. The two cannot
+be told apart downstream, so a run that never happened would be scored as a skill that did not
+fire. That has not been observed; it is what this file closes off before it is.
 
 ## What it now detects, and what the issue called it
 
@@ -31,10 +33,12 @@ A session that answered and invoked nothing is **none of these**. It stays a mis
 one thing this instrument exists to record, and there is a case pinning it in both directions.
 
 **The named file is not the one that lost the money.** #213's two runs were 11-turn
-`response-length.sh --probe` runs, so the code that cost $18.01 with no warning is
-`tools/response-length-probe.py`, which `tools/skill-probe.py:95-106` is copied from. It still
-has no warning and no retry. The box names `tools/skill-probe.py`, so the unit was done as
-written and the other runner is filed as [#297](https://github.com/Calyx-Engineering/arc/issues/297).
+`response-length.sh --probe` runs, so the runner that cost $18.01 with no warning is
+`tools/response-length-probe.py`. Its detection is not the gap — it already reads `subtype` and
+`is_error` into a per-turn `cut`, and the `cut` handling added here was copied **from** it. What
+it lacks is the other half: nothing says so, nothing retries, and the turn loop bills on. The
+box names `tools/skill-probe.py`, so the unit was done as written and the rest is filed as
+[#297](https://github.com/Calyx-Engineering/arc/issues/297).
 
 ## The retry
 
@@ -45,7 +49,8 @@ billed per attempt and a rate limit does not clear on a schedule this tool can k
 `unusable` and `retried` travel out in the JSON, so `tools/skill-probe.sh` abandons the case
 rather than tallying a miss nobody measured — and then **stops the whole suite**. Stopping at
 the case boundary is not enough: a limit still in force would cost two more billed attempts and
-another back-off for every one of the remaining twelve cases, after the tool already knew.
+another back-off for every case left — seventeen of the eighteen in `evals/skill-firing`, if
+the first one halts — after the tool already knew.
 
 ## The deadline had to become a watchdog
 
@@ -81,6 +86,15 @@ before being kept.
 | `python tools/skill-probe.py selftest` | 27 cases, 27 passed — was 13 |
 | `bash tools/skill-probe.sh selftest` | 20 cases, 20 passed — **new**. The script's header used to say there was nothing in it to test without a billed session; the abandon branch, the halt, the denominator and the guards are all JSON in and text out, and `PROBE_PY` swaps the billed half for a canned one |
 | `bash tools/verify-all.sh` | 53 gates, all clean, exit 0 |
+
+## Not done
+
+| | |
+| :--- | :--- |
+| `tools/response-length-probe.py` | [#297](https://github.com/Calyx-Engineering/arc/issues/297). The runner #213 lost its two runs through is unchanged; only the file the checklist named was fixed |
+| The child's stderr is still discarded | `subprocess.DEVNULL` in `attempt()`. The CLI's own rate-limit message would name the limit and its retry-after, and would turn `PROBE_BACKOFF`'s fixed 60s into a wait the server asked for. Detection does not need it, so it stayed out |
+| `tempfile.mkdtemp` is never cleaned | One directory per billed attempt, now two on a retry. Pre-existing, and untouched here |
+| #213 has no `Spawned by` row | `hooks/tracker-verify` flags it on every tracker write from this branch. Another issue's body, so not edited from this unit |
 
 ## Billed by accident, and worth recording
 
