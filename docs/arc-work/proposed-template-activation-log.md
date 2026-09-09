@@ -53,6 +53,12 @@ And one line in the header block, above the `camp-reports:` declaration it depen
 # named there and never marked is written to the entry as `not reached`.
 ```
 
+**Except on a firing that reaches nothing.** Where no declared check ran and the outcome is
+`ok`, the entry carries no `skipped:` line at all — neither the unreached names nor any
+`arc_log_skip` reason, both of which restate the `outcome:` line there.
+[#238](https://github.com/Calyx-Engineering/arc/issues/238); the rule is
+[`templates/event-log.md`](../../templates/event-log.md)'s.
+
 ---
 
 ## What a hook then calls

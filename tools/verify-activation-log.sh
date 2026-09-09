@@ -17,6 +17,11 @@
 #                 exit path logged twice
 #   the shape     templates/event-log.md's — a header line, a `checked:` line and an
 #                 `outcome:` line, with the artifact named by its file
+#   compact       a firing that reached no declared check and reports nothing carries no
+#                 `skipped:` line at all — neither the declaration copied back nor the skip
+#                 reasons, which on such a firing restate the `outcome:` line. 50% of arc
+#                 03's 4.43 MB log — #238. The entry is still asserted, one per firing on
+#                 every path; only its length changed
 #   invisible     no entry text reaches stdout. A PreToolUse hook's stdout is parsed as a
 #                 permission decision, so an entry echoed there is a broken hook however
 #                 good the log looks
@@ -33,8 +38,8 @@
 #                 the real log are indistinguishable from real firings — one `verify-hook.sh`
 #                 run put ten fabricated entries in the tracked, append-only file before this
 #                 assertion existed
-#   no forks      the write path spawns no subprocess per field. Three of the five hooks are
-#                 on the Bash matcher, so anything here is paid three times per tool call —
+#   no forks      the write path spawns no subprocess per field. Five hook registrations are
+#                 on the Bash matcher, so anything here is paid five times per tool call —
 #                 the first version cost +1.4s and m44 lists `cheap to append` as a requirement
 #   verbosity     nothing on the write path reads a verbosity setting or the operating
 #                 agreement. That independence is the whole of m44: turning the volume down
@@ -203,7 +208,7 @@ library_checks() {
   # builtin. It is matched by name so that adding a second fork does not inherit the exemption.
   if code | grep -vF 'date -u +%Y-%m-%dT%H:%MZ' | grep -qE '\$\(|`|\| *(sed|tr|awk|grep|cut)'; then
     bad "$LIB forks a subprocess per field — m44 requires the append to be cheap" \
-        "three hooks are on the Bash matcher, so every fork here is paid three times per tool call"
+        "five hook registrations are on the Bash matcher, so every fork here is paid five times per tool call"
   else
     ok "no subprocess per field on the write path"
   fi
@@ -266,6 +271,22 @@ check_hook() {
           ok "$kind  entry shape        $desc"
         else
           bad "$kind  entry shape        $desc" "missing:$shape_bad" "$(head -c 300 "$log")"
+        fi
+
+        # #238's compression, asserted so it cannot come back unnoticed. The entry is not at
+        # stake — `one entry` above is what holds that line — only whether an entry that
+        # reached nothing and reports nothing drags the whole declaration with it.
+        #
+        # `ok` and no check reached is the condition, and it is the narrow one on purpose: a
+        # `denied` or `failed` entry keeps its list, so this assertion must not fire on one.
+        if grep -qE '^  checked: — none reached' "$log" && grep -qE '^  outcome: ok' "$log"; then
+          if grep -qE '^  skipped: ' "$log"; then
+            bad "$kind  a no-op entry carried the unreached list   $desc" \
+                "$(grep -E '^  skipped: ' "$log" | head -c 240)" \
+                "nothing ran and nothing was reported — the line restates the outcome and the declaration"
+          else
+            ok "$kind  no-op entry compact  $desc"
+          fi
         fi
       fi
 
@@ -361,6 +382,20 @@ printf '%s  noisy  fired  \\n' \"\$(date -u +%Y-%m-%dT%H:%MZ)\""
   write_hook nokill "$(self_entry nokill)"
   sed -i.bak '2d' "$SELF/hooks/nokill" && rm -f "$SELF/hooks/nokill.bak"
   run_self "a hook that logs through the kill switch" nokill fail
+
+  # #238, both directions. A no-op entry that drags every declared check behind it reads as a
+  # failure; the same entry without the list reads as a pass. Both are needed — an assertion
+  # that only ever fires one way is one nobody can tell from a constant.
+  write_hook noopfat 'printf "%s  noopfat  fired  \n  checked: — none reached\n  outcome: ok — nothing to report\n  skipped: alpha (not reached) · beta (not reached)\n" "$(date -u +%Y-%m-%dT%H:%MZ)" >> "$L" 2>/dev/null'
+  run_self "a no-op entry carrying the unreached list" noopfat fail
+
+  write_hook noopthin 'printf "%s  noopthin  fired  \n  checked: — none reached\n  outcome: ok — nothing to report\n" "$(date -u +%Y-%m-%dT%H:%MZ)" >> "$L" 2>/dev/null'
+  run_self "a no-op entry with no list" noopthin pass
+
+  # And the narrowness: a DENIED entry keeps its list, so the assertion above must be silent
+  # on one. Without this the cheapest way to pass is to ban the skipped line outright.
+  write_hook deniedfat 'printf "%s  deniedfat  fired  \n  checked: — none reached\n  outcome: denied — the branch is main\n  skipped: alpha (not reached)\n" "$(date -u +%Y-%m-%dT%H:%MZ)" >> "$L" 2>/dev/null'
+  run_self "a denied entry that keeps its list" deniedfat pass
 
   # No 2>/dev/null on the append, and a message when it fails: an unwritable log speaks up.
   write_hook fragile 'printf "%s  fragile  fired  \n  checked: none — nothing declared\n  outcome: ok — allowed\n" "$(date -u +%Y-%m-%dT%H:%MZ)" >> "$L" || printf "log write failed\n"'

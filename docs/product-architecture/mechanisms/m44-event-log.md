@@ -3,10 +3,11 @@
 **Status:** partial — implemented and unsoaked. Every registered hook writes an entry on
 every exit path, via `hooks/lib/activation-log`
 ([#166](https://github.com/Calyx-Engineering/arc/issues/166)). The artifact, its independence
-from verbosity, its consumers and the entry format are settled.
+from verbosity, its consumers, the entry format and volume control
+([#238](https://github.com/Calyx-Engineering/arc/issues/238)) are settled.
 Per-arc rotation is specified and nothing performs it
-([#239](https://github.com/Calyx-Engineering/arc/issues/239)); retention after an arc closes,
-and volume control ([#238](https://github.com/Calyx-Engineering/arc/issues/238)), are open.
+([#239](https://github.com/Calyx-Engineering/arc/issues/239)); retention after an arc closes
+is open.
 **Home:** Arc — Self-improvement.
 **Src:** 🔥 observed.
 **Covers:** m44.
@@ -93,6 +94,38 @@ not restated here, so the two cannot drift.
 machinery ran; only recording failures makes a silent artifact indistinguishable from a
 working one.
 
+### Volume
+
+**The rate is kept and the entry is what got smaller.** Five hook registrations sit on the
+`Bash` matcher — `mode-guard`, `handoff-archive` and `session-index` before the call,
+`tracker-verify` and `camp-branch-check` after — so an ordinary Bash tool call appends five
+entries. The log rotated out at arc 03's close measured **14,734 entries and 4.43 MB**, and
+**11,156 of them (75%)** recorded a hook that returned before any declared check ran. Every
+number in this section is measured against that file,
+[`docs/arc-log/events/arc-03-camp.log.md`](../../arc-log/events/arc-03-camp.log.md), as
+committed.
+
+| Considered | |
+|---|---|
+| **Sample** | Rejected. Sampling makes a missing entry ordinary, so a hook that stopped firing is indistinguishable from one that was not sampled — the absence m44 exists to fix. It also ends `tools/verify-activation-log.sh` as a gate, which can only assert *one entry per firing* if that is true on every path |
+| **Log at a lower rate** | Rejected. The hooks fire at that rate because the tool calls happen at that rate; a hook that logs only sometimes is the sampling case wearing different clothes |
+| **Accept the rate, shrink the entry** | **Chosen.** Every firing still writes exactly one entry |
+
+**An entry where no declared check ran, and which reports nothing, carries no `skipped:`
+line** — the whole line, not only the part of it the artifact did not write. **2.26 MB of
+4.43 MB, 50% of the file.** What that line held on such an entry is two things, and neither
+is evidence about the firing:
+
+| | |
+|---|---|
+| **The unreached list** | The artifact's own `checks:` declaration copied back, every name marked `not reached` — seventeen names for `tracker-verify`, 1.21 MB of that one log |
+| **Explicit skip reasons** | `arc_log_skip` calls made on the way out, which on a firing that reached nothing say what the `outcome:` line says: `skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)` under `outcome: ok — already indexed this session`. 1.05 MB |
+
+**The narrowness is the design, and it is a guard rather than a measurement.** A `denied`,
+`failed` or `repaired` entry keeps its `skipped:` line whatever else is true. No entry in that
+log was both — a hook that reports something has always reached a check first — so the clause
+costs nothing today and is what keeps the compression away from the entries someone reads.
+
 ---
 
 ## Relationship to the `arc-log`
@@ -112,10 +145,6 @@ both are required for a retrospective to say anything useful.
 **Retention after an arc closes.** Per-arc rotation is settled — the log moves to
 `docs/arc-log/events/` beside that arc's arc-log. How long it is kept there, and whether it
 is ever pruned, is undecided. The move preserves the file until that question has an answer.
-
-**Volume control.** An artifact firing on every tool call could dominate the file. Whether
-that needs sampling, or whether the artifact simply should not log at that rate, is unanswered
-until real volume exists.
 
 ---
 
