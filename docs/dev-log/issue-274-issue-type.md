@@ -99,3 +99,27 @@ cases are there so a future change to the row format cannot quietly reintroduce 
 
 `bash tools/verify-labels.sh` now exits 1 on 24 untyped issues outside the Dogfood milestone.
 That is the check working, and the debt is deliberate — the *Out of scope* row above says why.
+
+### The base moved twice, and the second move is why the gate went green
+
+`bash tools/verify-all.sh` failed on this branch with `hook: tracker-verify — 60 passed, 57
+failed`, every failure a bash syntax error thrown by the hook's own header. Nothing here
+touches `hooks/`, and the base at the fork point passed the same gate 118/118 — so the first
+reading was a corrupt checkout in this worktree. It was not. The blob genuinely differed:
+`git diff origin/arc/04-dogfood...HEAD -- hooks/` is empty because `...` diffs from the
+merge-base, and the merge-base was the tip this branch had already merged. **Two dots, not
+three, is the question to ask of a branch that has merged its base once**, and
+`git rev-parse <ref>:<path>` is the answer that cannot be argued with.
+
+The defect was [#305](https://github.com/Calyx-Engineering/arc/issues/305) — a comment in
+`hooks/tracker-verify` carrying literal control characters inside backticks, which bash parses
+as a command substitution. It was filed and fixed on the base while this issue was in flight.
+Merging the base a second time took the fix and the gate went green.
+
+**That second merge silently rewrote a file this issue has nothing to do with.**
+[#239](https://github.com/Calyx-Engineering/arc/issues/239) rotated `.claude/arc/log.md` into
+`docs/arc-log/events/arc-03-camp.log.md`, so git saw a rename with content on both sides. The
+conflict markers covered one hunk; 5,886 lines of this session's arc-04 entries merged into
+arc 03's rotated archive **outside** it, with no marker and no prompt. Resolving the marked
+hunk is not resolving the merge — `git diff origin/<base>..HEAD --stat` after the commit is
+what catches it, and it is the reason a rename conflict is worth reading whole.
