@@ -107,8 +107,8 @@ usually yours.
 
 **The edge is written from both ends.** The new issue's own body carries the same table with a
 `Spawned by` row naming yours. An issue filed without one cannot be reconstructed later, so
-`hooks/tracker-verify` reports a `gh issue create` whose body has none — whenever the branch you
-are on names an issue or a PR, which on a `arc/04-dogfood-issue-<NN>-<hint>` branch is always.
+`hooks/tracker-verify` reports a `gh issue create` whose body has none. It asks only when the
+branch you are on names an issue or a PR, which on §4's branch it always does.
 
 **A finding is not a unit of work, so it has no row.** Only an issue you actually filed, or a PR
 opened with no issue behind it, is a unit — [`skills/issue-write`](../../../skills/issue-write/SKILL.md),

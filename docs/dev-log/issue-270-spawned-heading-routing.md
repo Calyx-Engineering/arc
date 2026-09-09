@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#270](https://github.com/Calyx-Engineering/arc/issues/270)  ·  **PR:** PR_LINK_PLACEHOLDER
+**Issue:** [#270](https://github.com/Calyx-Engineering/arc/issues/270)  ·  **PR:** [#288](https://github.com/Calyx-Engineering/arc/pull/288)
 
 ## Problem
 
@@ -99,12 +99,12 @@ Before the hook change, with the two report cases already written: `67 passed, 2
 - **The nine existing Fire children still carry the wrong shape.** `hooks/tracker-verify` fires on
   `gh issue edit`, so the next edit of any of them reports it. Nobody has to sweep them, and
   nobody will fix them by accident either.
-- **`tools/verify-hook.sh`'s console output interleaves under this repo's parallel runner.** The
-  new cases ran and were counted — the totals moved `67 passed, 2 failed` → `70 passed, 0 failed`
-  across the work — but their description lines did not render in the captured output, and an
-  earlier `tail` showed duplicated half-lines. Every new case was re-run standalone to confirm its
-  verdict. That script is on `CLAUDE.md`'s never-edited-autonomously list, so this is a note, not
-  a change.
+- **A finding that was retracted, kept because retracting it is the point.** Mid-run this dev-log
+  said `tools/verify-hook.sh`'s output interleaves — the new cases' description lines were missing
+  from the captured output and an earlier `tail` showed duplicated half-lines. Both readings were
+  of a file the run was still writing. On a completed run every description renders in order.
+  **The tool was fine; the observation was taken too early.** Left here rather than deleted,
+  because a dev-log that only records findings that survived is a dev-log nobody can calibrate.
 
 ## Retrospective
 
@@ -122,6 +122,14 @@ Pass 1 found eight things and four of them changed the tree.
 | **Case-sensitive where the check it claimed parity with is not** | `## SPAWNED` passed. Now matched with `tolower($0) ~ /…/`, so the two tools cannot disagree about whether a legacy body has a section |
 | **Nothing pinned the issue-only gating** | The scan is deliberately gated to issue writes on both paths — an inner `case` on the fixture path, the outer `*"gh issue"*` arm on the live one — and every case still passed with that gating removed. `pass/pr-edit-spawned-heading.json` is the case that fails if it is hoisted out. **It pins the fixture path only.** The live gate needs a live `gh issue view`, so no fixture can reach it |
 | **Two cross-references were loose** | §5 said findings go where "§2 step 7 already sends it". Step 7 does write the dev-log — it reads *"Dev-log, commit, open the PR as a draft"* — so the old sentence was vague rather than false; it now says "the dev-log it writes at §2 step 7". The second was the real one: §5 told a run to add a `Spawned` row without mentioning that `tracker-verify` also reports a `gh issue create` whose body carries no `Spawned by`, a finding on the very write §5 had just asked for. That is this issue's own north star one level down |
+
+**Pass 2's subject was pass 1's own edits, and it found real damage — in this file.** The script
+that rewrote these sections was a Python heredoc, and the `\r` and `\n` it was documenting reached
+the file as a raw carriage return and a raw newline, splitting a table row in two and deleting the
+escape from the sentence whose whole subject was that escape. It also caught a measurement quoted
+in support of the CR guard that was simply wrong, and a claim that a cross-reference was broken
+when the text quoted alongside it showed it was not. **A scripted edit to a document about escape
+sequences will eat the escape sequences**; the repair used `chr(92)` rather than a literal.
 
 **`pass/issue-edit-spawned-row-not-heading.json` is intent documentation, not evidence.** It guards
 a line starting with `|`, which a `^#+` anchor cannot match under any plausible variant of the
