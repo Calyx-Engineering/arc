@@ -26,11 +26,16 @@
 #
 # THE QUEUE IS THE AGENT-TYPED CHILDREN, not every child. An issue holds one GitHub issue type
 # and it says who does the work: `Agent` is this loop's, any other type — or none — is a human's.
-# All four dispatch paths refuse anything else — selection, a hand-written `--issues` batch,
-# `--resume`, and the automatic resume after a rate limit — so an issue that needs a human at a
-# bench, or a judgement call, cannot be handed to an unattended session by being filed under the
-# wrong parent, and retyping one off `Agent` takes it back mid-run. Completeness still counts
-# EVERY open child, so a workstream holding a human's issue is not reported finished. #274.
+# All four paths that dispatch an ISSUE refuse anything else — selection, a hand-written
+# `--issues` batch, `--resume`, and the automatic resume after a rate limit — so an issue that
+# needs a human at a bench, or a judgement call, cannot be handed to an unattended session by
+# being filed under the wrong parent, and retyping one off `Agent` takes it back mid-run.
+#
+# THE REPORT RUN IS THE EXEMPTION, and it is not an omission. It carries no issue — it reads a
+# closed workstream's record and writes a report — and it is reachable only when EVERY child is
+# closed, so there is no issue for a type to speak for. That is also why completeness counts
+# every open child and not only the Agent-typed ones: a workstream still holding a human's
+# issue is not finished, and must not reach it. #274.
 #
 # Scope of one invocation is ONE workstream. When its children are all closed
 # the script dispatches a report run and exits; the next workstream is a
@@ -449,9 +454,15 @@ blocked() {
 
 # CLAIMED_SET is read by the caller, not here: this runs inside a command substitution, so a
 # `die` in it would kill only the subshell and read as "nothing eligible".
+#
+# WHICH IS WHY A FAILED READ RETURNS 2 AND NOT 1. `1` means *nothing eligible*, and the caller
+# answers that by naming a reason — blocked, claimed, or a human's. A `gh` failure that came
+# back as `1` would pick one of those three and say it with confidence about a queue nobody
+# read. `$( )` carries the status, so the caller can tell the two apart.
 next_issue() {
-  local n b
-  for n in $(agent_children); do
+  local n b rows
+  rows="$(open_child_rows)" || return 2
+  for n in $(printf '%s\n' "$rows" | agent_of_rows); do
     case "$CLAIMED_SET" in
       *" $n "*) echo "  #$n claimed by another dispatcher" >&2; continue ;;
     esac
@@ -579,7 +590,7 @@ sleep_heartbeat() {
 }
 
 wait_run() {
-  local id="$1" dir="$2" wt="$3" model_flag="$4" pid attempt=0 ticks=0
+  local id="$1" dir="$2" wt="$3" model_flag="$4" pid attempt=0 ticks=0 n itype
   while :; do
     pid="$(cat "$dir/pid")"
     while [ ! -f "$dir/exit" ]; do
@@ -872,8 +883,12 @@ last=""
 lost=0
 while :; do
   read_claimed
-  if ! issue=$(next_issue); then
-    # ONE READ, AND ITS STATUS IS CHECKED. "Nothing is left" and "I could not tell" are
+  pick=0; issue="$(next_issue)" || pick=$?
+  if [ "$pick" != 0 ]; then
+    # 2 IS A FAILED READ, NOT AN EMPTY QUEUE. Every message below names a reason, and naming one
+    # off a read that never happened is worse than stopping.
+    [ "$pick" = 2 ] && die "cannot read #$PARENT's children — refusing to choose blind"
+    # THE SECOND READ'S STATUS IS CHECKED TOO. "Nothing is left" and "I could not tell" are
     # different answers, and this branch acts on the first by dispatching the report run — so a
     # `gh` failure here announces a workstream finished that is not.
     remaining="$(open_child_rows)" \

@@ -58,7 +58,6 @@ names a measurement that settles it.
 
 Nothing.
 
-
 ## Unplanned but needed
 
 | | Why |
