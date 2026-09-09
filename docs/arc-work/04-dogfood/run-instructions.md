@@ -112,7 +112,7 @@ it a review rather than an announcement.
 | 3 | Write the report into the arc-log's status section, as `#### <n>.<m>.1` onward |
 | 4 | Post the same report as a comment on the **workstream parent issue** — that is where it gets read |
 | 5 | **Check `HANDOFF.md`'s Execution mode row says Manual.** The named boundary is reached, so the grant is spent. `tools/arc-loop.sh` sets it on every exit path — if you were dispatched by it, confirm rather than write. If you were not, set it yourself: dropping to manual is yours to do, raising it never is |
-| 6 | **Leave the parent issue open.** All children closed is mechanical completion, not review. Closing it removes the surface the report is read on and buries the report in a closed issue |
+| 6 | **Leave the parent issue open. A workstream parent closes when the user says so, not when its children do.** All children closed is mechanical completion, not review. Closing it removes the surface the report is read on and buries the report in a closed issue — [#144](https://github.com/Calyx-Engineering/arc/issues/144) was closed the moment its children closed, and had to be reopened |
 | 7 | Stop. The next workstream is a separate invocation and a separate grant |
 
 **Step 5 before step 7, not after.** A run that finishes the work and then keeps going has not
@@ -143,6 +143,15 @@ items.
 **Section 7 is optional and does not count against the 200.** Where there is no diagram, the
 report has six sections. Where there is one, it gets a heading — loose after section 6 it reads
 as a picture of what was not done.
+
+**The budget is checked — `bash tools/verify-report-budget.sh`, and `verify-all.sh` runs it.**
+Loop's first report was 302 words and the user caught it, because the budget was stated in three
+documents — this one, the arc-log and `execution-process.md` — and read by nothing. What counts
+as a word is in that script's header and is worth knowing before writing: section 7 and every
+fenced block, the section headings, the `**Workstream:**` line and the `*End of ...*` line are all
+outside the count, as are table pipes, delimiter rows, list markers and the URL half of a link.
+It reports and never truncates, and it does not check a report's self-declared count — that number
+is a hand count, and only the one the script prints binds.
 
 **Number the heading and frame the block.** The arc-log numbers every heading, `## 6`, `### 6.1`;
 a report landing there as an unnumbered `###` breaks the document's own convention and cannot be
