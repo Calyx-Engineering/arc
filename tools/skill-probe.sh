@@ -18,7 +18,7 @@
 #   python tools/skill-probe.py selftest          the stop condition, on canned streams
 #   bash tools/skill-probe.sh selftest            what this script does with the JSON it gets
 #   bash tools/probe-handoff-checks.sh selftest   what a kept stream can be asked afterwards
-# All three run in tools/verify-all.sh. This script's selftest replaces skill-probe.py with a
+# All three run in tests/verify-all.sh. This script's selftest replaces skill-probe.py with a
 # canned one through PROBE_PY, so it bills nothing: what it exercises is the abandon branch,
 # the denominator and the halt, all of which are JSON in and text out. Everything else here
 # needs a billed session and is not covered.
@@ -39,7 +39,7 @@
 #
 # IT COSTS MONEY. Each probe is a real session. It runs until the session's `result` line, its
 # PROBE_TURN_CAP turns or its PROBE_TIMEOUT seconds, whichever comes first, and PROBE_BUDGET
-# caps the rest. That is why this is not in tools/verify-all.sh: a gate that bills per run is
+# caps the rest. That is why this is not in tests/verify-all.sh: a gate that bills per run is
 # not a gate. It does NOT stop at the first Skill call and it does NOT stop at the first turn
 # of prose — see tools/skill-probe.py, which explains what each of those cost when it did.
 #
@@ -373,7 +373,7 @@ echo "A rate here is a measurement of the plugin as installed, not of this worki
 echo "Run tools/plugin-reload.sh after an edit or the after-run repeats the before-run."
 
 # 2, not 0 and not 1. A halt is "I could not measure what you asked", the same answer
-# tools/verify-linked-branch.sh gives to a read it could not make — never 1, which in this
+# tests/verify-linked-branch.sh gives to a read it could not make — never 1, which in this
 # repository marks a finding. A wrapper that redirects this to a file and moves on would
 # otherwise record a suite that stopped on its first case as a clean run.
 [ -n "$HALT" ] && exit 2

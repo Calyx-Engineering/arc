@@ -32,7 +32,7 @@
 # any version of the probe, including one predating the `qualified` field the probe now also
 # prints for the run log.
 #
-# THE CONTENT CHECK IS tools/verify-handoff-checks.sh's, not a second copy of the eight
+# THE CONTENT CHECK IS tests/verify-handoff-checks.sh's, not a second copy of the eight
 # literals. One list, tuned in one place — the same argument #208 made against keeping the
 # checks in two artifacts.
 #
@@ -117,7 +117,7 @@ report() {
       fi
       sha="$(sha1sum < "$skill" | cut -c1-12)"
       checked=$((checked + 1))
-      if HANDOFFCHK_ROOT="$root" bash "$HERE/verify-handoff-checks.sh" >/dev/null 2>&1; then
+      if HANDOFFCHK_ROOT="$root" bash "$HERE/../tests/verify-handoff-checks.sh" >/dev/null 2>&1; then
         printf '  %-44s %-22s CHECKS PRESENT  sha1 %s\n' "$(basename "$f")" "$n" "$sha"
       else
         printf '  %-44s %-22s CHECKS MISSING  sha1 %s\n' "$(basename "$f")" "$n" "$sha"
@@ -133,7 +133,7 @@ EOF
   [ "$undecided" -gt 0 ] && echo "$undecided firing(s) could not be resolved to a file"
   echo
   echo "The transcript does not hold the skill text; this reports the bytes the named plugin"
-  echo "serves. Content verified by tools/verify-handoff-checks.sh — one list of the eight."
+  echo "serves. Content verified by tests/verify-handoff-checks.sh — one list of the eight."
 
   if [ "$bad" -gt 0 ]; then
     echo

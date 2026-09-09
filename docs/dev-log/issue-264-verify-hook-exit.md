@@ -57,9 +57,9 @@ and #264's constraint row repeats it, so the ergonomic fix — resolving a bare 
 
 | | |
 |---|---|
-| `bash tools/verify-all.sh` | 52 gates, all clean, exit 0 |
+| `bash tests/verify-all.sh` | 52 gates, all clean, exit 0 |
 | `bash tools/verify-hook.sh hooks/tracker-verify` | 78 passed, 0 failed, exit 0 |
-| `bash tools/verify-linked-branch.sh 264 arc/04-dogfood-issue-264-verify-hook-exit` | PASS, exit 0 |
+| `bash tests/verify-linked-branch.sh 264 arc/04-dogfood-issue-264-verify-hook-exit` | PASS, exit 0 |
 
 ## Spawned
 

@@ -20,7 +20,7 @@ firings instead, and say so.
 |---|---|
 | **What this issue is really for** | The log is read by a human before any tooling reads it (m44's second consumer). At 4.6 million bytes of which half is one repeated line, that consumer is the one the volume defeats |
 | **North star** | m44's *volume control* leaves *what is not designed*, and every firing still writes exactly one entry |
-| **What makes it durable** | An assertion in `tools/verify-activation-log.sh`, in both directions. A compression nothing checks is a compression the next hook undoes |
+| **What makes it durable** | An assertion in `tests/verify-activation-log.sh`, in both directions. A compression nothing checks is a compression the next hook undoes |
 | **Out of scope** | Where the live log *lives* — [#273](https://github.com/Calyx-Engineering/arc/issues/273), the third commit on this branch. Retention after an arc closes — still open in m44, and it needs the rotation [#239](https://github.com/Calyx-Engineering/arc/issues/239) builds before it can be answered |
 
 ## Decisions & trade-offs
@@ -49,7 +49,7 @@ in the rotated arc-03 log have a header line and no `outcome:` line at all
 counted 50 more carrying two `outcome:` lines from merged concurrent writes. The library writes
 one entry as a single `printf` to an `O_APPEND` stream, which is atomic only up to the pipe
 buffer; five worktrees were running concurrently against one log. **This contradicts the one
-contract `tools/verify-activation-log.sh` asserts** — one entry per firing — and the gate cannot
+contract `tests/verify-activation-log.sh` asserts** — one entry per firing — and the gate cannot
 see it, because it runs one hook at a time against a fixture log. It is a defect in the record
 itself and wants its own issue.
 
@@ -67,5 +67,5 @@ and that is the narrow condition working — it reaches its checks on that call,
 full entry.
 
 The same stale claim was corrected in three places: the library's header and two lines of
-`tools/verify-activation-log.sh` said three hooks were on the `Bash` matcher, where `hooks.json`
+`tests/verify-activation-log.sh` said three hooks were on the `Bash` matcher, where `hooks.json`
 has five registrations.

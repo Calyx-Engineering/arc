@@ -92,7 +92,7 @@ worktree whose branch is abandoned takes its row with it — and an abandoned wo
 most likely to be forgotten. The index merges with the work, like the dev-log.
 
 **The file is created untracked.** `git add .claude/arc/sessions.md` the first time it appears;
-`skills/handoff`'s setup step says so, and `tools/verify-session-index.sh` fails when it exists and
+`skills/handoff`'s setup step says so, and `tests/verify-session-index.sh` fails when it exists and
 git does not know about it. An un-ignored file that nobody committed is not a committed one.
 
 ## Who reads it

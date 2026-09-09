@@ -13,7 +13,7 @@
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
 # checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tests/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tests/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tests/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tests/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 # The subcommand and the verb are read as WORDS, so a flag between `gh` and the subcommand —
@@ -448,7 +448,7 @@ scan_dates() {
 #
 # THE HEADING, NEVER THE ROWS. `| **Spawned** | [#NN](…) | … |` is the correct shape and stays
 # silent. Whether a given row is a unit of work is the author's judgement and is not decidable
-# from text; whether a section exists is. Same division `tools/verify-tracker-body.sh`'s
+# from text; whether a section exists is. Same division `tests/verify-tracker-body.sh`'s
 # placement check draws.
 #
 # THE TITLE MUST BE THE WHOLE HEADING, also that check's rule: `## Spawned versus related` is
@@ -463,7 +463,7 @@ scan_dates() {
 # CARRIAGE RETURNS ARE STRIPPED BEFORE THE MATCH, because the pattern is anchored at `$` and a
 # live body read out of `gh issue view --json body` is CRLF. Some awks strip the CR and some do
 # not — Git Bash's gawk does, which is exactly why this would have passed every case here and
-# gone silent on a Linux runner. `tools/verify-tracker-body.sh`'s placement check carries the
+# gone silent on a Linux runner. `tests/verify-tracker-body.sh`'s placement check carries the
 # same `tr -d '\r'` for the same reason. No fixture can cover it: a JSON case body cannot hold
 # a raw CR.
 #
@@ -496,14 +496,14 @@ scan_spawned_heading() {
   return 0
 }
 
-# The title rules live in `tools/verify-tracker-body.sh`, not here. A title is decidable
+# The title rules live in `tests/verify-tracker-body.sh`, not here. A title is decidable
 # from text alone, so the same rules have to run BEFORE the write as well — and two copies
 # of a threshold is one copy that goes stale. Run as a subprocess, never sourced: that file
 # sets `-u`, and a guardrail that has to fail open cannot inherit it.
 #
 # Absent, the title checks simply do not run. Fail open is the rule; a missing helper is
 # not a reason to break every Bash call.
-TITLE_LIB="$(dirname "$0")/../tools/verify-tracker-body.sh"
+TITLE_LIB="$(dirname "$0")/../tests/verify-tracker-body.sh"
 
 # THE FIVE TITLE CHECKS COME BACK AS PROSE, so each finding is matched to the check that
 # produced it before the entry is written. Marking all five failed because one fired would
@@ -512,7 +512,7 @@ scan_title() {
   local title="$1" what="$2" body="${3:-}" bodyfile="" line out rc c pat
   if [ ! -f "$TITLE_LIB" ]; then
     for c in issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type; do
-      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tools/verify-tracker-body.sh is missing"
+      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tests/verify-tracker-body.sh is missing"
     done
     return 0
   fi
@@ -535,7 +535,7 @@ scan_title() {
   # disagreeing with what was said.
   if [ "$rc" -ne 0 ]; then
     for c in issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type; do
-      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tools/verify-tracker-body.sh exited $rc"
+      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tests/verify-tracker-body.sh exited $rc"
     done
     [ -n "$bodyfile" ] && rm -f "$bodyfile"
     return 0
@@ -686,7 +686,7 @@ FIXTURE_DEFAULT="$(fixture arc_test_default)"
 FIXTURE_MILESTONE="$(fixture arc_test_milestone)"
 FIXTURE_LINKED="$(fixture arc_test_linked)"
 
-# The box check shells out to `tools/verify-issue-boxes.sh`, which reads the live issue and the
+# The box check shells out to `tests/verify-issue-boxes.sh`, which reads the live issue and the
 # bodies of the PRs that close it. A case supplies that tool's exit code and its output
 # directly, so the hook's own handling of all three verdicts — clean, findings, unreadable — is
 # exercised with no network and no live PR. The tool's own decision is covered by its selftest.
@@ -729,7 +729,7 @@ esac
 # is still open and cheap to fix; a close is where an issue that was never bound to a branch
 # or a PR leaves the record for good, and nothing fired there until #163.
 #
-# The question is `tools/verify-linked-branch.sh`'s one-argument form, exactly: is this issue
+# The question is `tests/verify-linked-branch.sh`'s one-argument form, exactly: is this issue
 # linked to ANYTHING — a branch record, or a PR that closes it. Shelling out rather than
 # asking GraphQL again here keeps one copy of a reading that took #155 and #206 to get right,
 # including which field holds the link once a PR has promoted it. Its own caveat — that the
@@ -756,11 +756,11 @@ check_close() {
   if [ -n "$FIXTURE_LINKED" ]; then
     linked="$FIXTURE_LINKED"
   else
-    link_lib="$(dirname "$0")/../tools/verify-linked-branch.sh"
+    link_lib="$(dirname "$0")/../tests/verify-linked-branch.sh"
     # Absent, the check does not run. Fail open is the rule; a missing helper is not a
     # reason to speak up about a link nothing read.
     if [ ! -f "$link_lib" ]; then
-      arc_log_skip "close-link=issue-$num" "tools/verify-linked-branch.sh is missing"
+      arc_log_skip "close-link=issue-$num" "tests/verify-linked-branch.sh is missing"
       return 0
     fi
     if ! command -v gh >/dev/null 2>&1; then
@@ -822,9 +822,9 @@ done
 # `run-instructions.md` §2 opens every PR as one so pass 4 can still take commits. `gh pr ready`
 # is the moment the answer stops being "not yet".
 #
-# The counting lives in `tools/verify-issue-boxes.sh`, not here, and is shelled out to for the
+# The counting lives in `tests/verify-issue-boxes.sh`, not here, and is shelled out to for the
 # same reason the title rules are: the question is decidable from the tracker alone, so it has
-# to be answerable by hand as well — `bash tools/verify-issue-boxes.sh <NN>` — and two copies of
+# to be answerable by hand as well — `bash tests/verify-issue-boxes.sh <NN>` — and two copies of
 # a rule is one copy that goes stale.
 #
 # THE PROSE HALF IS STILL #140'S. This says the record accounts for every box; whether the work
@@ -839,11 +839,11 @@ check_pr_ready() {
     rc="$FIXTURE_BOXES_RC"
     out="$FIXTURE_BOXES_OUT"
   else
-    tool="$(dirname "$0")/../tools/verify-issue-boxes.sh"
+    tool="$(dirname "$0")/../tests/verify-issue-boxes.sh"
     # Absent, the check does not run. Fail open is the rule; a missing helper is not a reason
     # to speak up about boxes nothing read.
     if [ ! -f "$tool" ]; then
-      arc_log_skip issue-boxes "tools/verify-issue-boxes.sh is missing"
+      arc_log_skip issue-boxes "tests/verify-issue-boxes.sh is missing"
       return 0
     fi
     if ! command -v gh >/dev/null 2>&1; then

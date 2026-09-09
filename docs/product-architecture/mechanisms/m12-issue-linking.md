@@ -12,7 +12,7 @@ build had gone somewhere else. What exists now, and what does not:
 
 | §4 row | | |
 |---|---|---|
-| Branch created | `tools/verify-linked-branch.sh <NN> <branch>` | built |
+| Branch created | `tests/verify-linked-branch.sh <NN> <branch>` | built |
 | PR created | `hooks/tracker-verify`'s `closing-keyword` and `pr-base` | built |
 | PR merged | `hooks/tracker-verify`'s `merge-close` — a work PR merged with its issue still open | built |
 | Arc checkpoint | `tools/arc-link-sweep.sh <milestone>` | built |
@@ -107,7 +107,7 @@ Tested against the live repo:
 | Force re-parse | Re-save the PR body (`gh pr edit --body`) | ✅ documented in ROADZ CLAUDE.md |
 | Create branch↔issue link | GraphQL `createLinkedBranch` | ✅ **Tested and works** — see below |
 | Remove a link | GraphQL `deleteLinkedBranch`, or delete the branch | ✅ Deleting the branch clears the link automatically — silently, with no timeline event |
-| Verify a link, either side | `tools/verify-linked-branch.sh <NN> <branch>` | ⚠️ reads both fields and says which holds the link — but **decisive only before the PR opens**, for the reason in the row above. Not an API capability; a script in this repo |
+| Verify a link, either side | `tests/verify-linked-branch.sh <NN> <branch>` | ⚠️ reads both fields and says which holds the link — but **decisive only before the PR opens**, for the reason in the row above. Not an API capability; a script in this repo |
 
 ### `createLinkedBranch` — tested 2026-08-16
 
@@ -170,8 +170,8 @@ properties of the promotion:
 
 **Consequence: an empty `linkedBranches` is a defect before a PR exists and correct after one
 does.** Any check that reads one field at one moment reports the opposite of the truth half the
-time. `tools/verify-linked-branch.sh` reads both and names which one holds the link; its
-selftest is a gate in `tools/verify-all.sh`.
+time. `tests/verify-linked-branch.sh` reads both and names which one holds the link; its
+selftest is a gate in `tests/verify-all.sh`.
 
 #### The check is only decisive at branch creation
 
@@ -261,7 +261,7 @@ issue side.
 
 | Moment | Check | Field that holds the answer |
 |---|---|---|
-| Branch created | Branch↔issue link established — `tools/verify-linked-branch.sh <NN> <branch>` | `issue.linkedBranches` |
+| Branch created | Branch↔issue link established — `tests/verify-linked-branch.sh <NN> <branch>` | `issue.linkedBranches` |
 | PR created | `closingIssuesReferences` non-empty; base is the arc branch, not `main` | `closingIssuesReferences` — the branch record is gone by now, and that is correct |
 | PR merged | Issue actually closed — `hooks/tracker-verify`'s `merge-close`, on a PR whose base is neither the default branch nor the trunk | `issue.state` |
 | Arc checkpoint | Sweep all arc issues for missing links — `tools/arc-link-sweep.sh <milestone>` | **both** — an issue before its PR has only the branch record, one after it has only the PR. A `git checkout -b` branch is **not** distinguishable here once its PR carries the keyword |

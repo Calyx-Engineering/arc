@@ -55,7 +55,7 @@ is the only place it is recorded at all — and silence there is indistinguishab
 nobody ran.
 
 **One thing in the body is gated, and it is not the prose.** An unticked box named here as not
-done, or as moved to the issue that owns it, is read back by `tools/verify-issue-boxes.sh` —
+done, or as moved to the issue that owns it, is read back by `tests/verify-issue-boxes.sh` —
 which [`hooks/tracker-verify`](../../hooks/tracker-verify) runs on `gh pr ready`.
 
 **Copy the box's first eight words, unbroken and in order, then say what happened.** The quote
@@ -138,7 +138,7 @@ mechanical completion; the boundary is a review, and closing removes the surface
 
 **`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
 inherits a capability-sized title, which is the first failure above. **`spec:` is retired**:
-one word per meaning, or the type sorts nothing. `tools/verify-labels.sh` reports an unmapped
+one word per meaning, or the type sorts nothing. `tests/verify-labels.sh` reports an unmapped
 prefix, so the retirement is enforced rather than remembered.
 
 ### Labels — the prefix decides, and only the prefix
@@ -171,8 +171,8 @@ Three labels say what a title cannot, and ride alongside the type label:
 one more thing to get wrong, and nothing the milestone view does not already show.
 
 ```sh
-tools/verify-labels.sh             every open issue: prefix against label, and the issue type
-tools/verify-labels.sh labels      the label set itself
+tests/verify-labels.sh             every open issue: prefix against label, and the issue type
+tests/verify-labels.sh labels      the label set itself
 ```
 
 **The table above and the script's `MAP` are the same fact.** A new prefix needs both.
@@ -187,7 +187,7 @@ can carry *who* without competing with the kind already in the prefix and its la
 |---|---|
 | `Agent` | **The loop's.** Sized for one unattended run. `tools/arc-loop.sh` dispatches these and nothing else |
 | Any other type | **A human's.** Needs judgement, hardware, an account nobody has delegated, or a call that is not the session's to make |
-| No type | **A defect.** The issue answers neither question. `tools/verify-labels.sh` reports it |
+| No type | **A defect.** The issue answers neither question. `tests/verify-labels.sh` reports it |
 
 **Which non-`Agent` type is a human's call, and no check has an opinion.** The rule is *who*,
 not *which*: `Task`, `Bug` and `Feature` all say the same thing here. A check that preferred one
@@ -253,7 +253,7 @@ where `Related` sits — is the furthest from the section list.
 **Spawned work lives in `Related`'s rows, and `Related` is the body's last section — so the
 spawn edges are in the last section, at the top of its table.** Not "at the end" as a habit —
 last in a stated order, which is what makes a heading appearing after that section a reportable
-defect rather than a matter of taste. `tools/verify-tracker-body.sh body`
+defect rather than a matter of taste. `tests/verify-tracker-body.sh body`
 reports a heading that follows the `Related` section — or a `Spawned` section, in a body written
 before this shape. *Related — one table, four kinds* below gives the table's shape.
 
@@ -442,7 +442,7 @@ empty. Write it anyway, on its own last line — *Placement* above is unchanged 
 | | |
 |---|---|
 | **What it does** | States which issue this PR was for, in one machine-readable line, in the record that outlives the branch |
-| **Who reads it** | The arc PR that later collects this work · `tools/verify-issue-boxes.sh`, which reads the bodies of the PRs that close an issue · a reviewer asking what a merged PR was for |
+| **Who reads it** | The arc PR that later collects this work · `tests/verify-issue-boxes.sh`, which reads the bodies of the PRs that close an issue · a reviewer asking what a merged PR was for |
 | **What it does not do** | Close the issue, form a link, or populate the Development panel |
 
 **Say so in the PR body as well as writing the line**, so a reader is not left concluding the
@@ -502,8 +502,8 @@ merged, and never something to propose because one keyword did not bind.** Wheth
 runs with the flip is a decision made once, at arc start, by the user.
 
 **The claim is a test, not a memory.**
-[`tools/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tools/tracker-cases/binding/merged-pr-keyword-bind.md)
-carries it, and `tools/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
+[`tests/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tests/tracker-cases/binding/merged-pr-keyword-bind.md)
+carries it, and `tests/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
 live API and restores what it changed. `verify-all.sh` does not run it — it writes to the
 tracker — and `selftest` names it as not covered rather than passing over it.
 
@@ -566,17 +566,17 @@ Three of the seven evaluation cases are mechanically catchable. Before and after
 | A number that was meant to change and did not | Diff the old body against the new |
 | A date inconsistent with reality | Compare against the current date |
 | A referenced commit or issue that does not exist | Check it resolves |
-| A closing keyword anywhere but the last line | `tools/verify-tracker-body.sh body <file>` |
-| A title that promises what merging will not deliver | `tools/verify-tracker-body.sh title "<title>" [file]` |
+| A closing keyword anywhere but the last line | `tests/verify-tracker-body.sh body <file>` |
+| A title that promises what merging will not deliver | `tests/verify-tracker-body.sh title "<title>" [file]` |
 
 The first four patterns are *scaffolding survived*. The last two are the opposite shape —
 text that is complete and correct-looking and promises something it should not. Each needs
 its own check, because reading for the first four does not surface either.
 
 ```sh
-tools/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
-tools/verify-tracker-body.sh body body.md      # before the write
-tools/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
+tests/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
+tests/verify-tracker-body.sh body body.md      # before the write
+tests/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
 ```
 
 All three report and none blocks. `binding` is the only one that has to run after the write
@@ -620,7 +620,7 @@ keyword entirely:
 
 **This trap shipped a defect while this section was loaded and read.** Prose does not stop
 it, so the rule is placement rather than phrasing: one keyword, on the last line, checked by
-`tools/verify-tracker-body.sh body` before the write. Escaping the keyword is a workaround
+`tests/verify-tracker-body.sh body` before the write. Escaping the keyword is a workaround
 for writing *about* the trap in a document, not a fix.
 
 ### Hand-attached links are separate from body keywords

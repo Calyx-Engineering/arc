@@ -34,7 +34,7 @@
 #
 # THE CORPUS IS LOCAL. Transcripts live under ~/.claude/projects on one machine, so a case whose
 # session is absent is reported and skipped. Only the selftest is portable, which is why it is
-# the part wired into tools/verify-all.sh.
+# the part wired into tests/verify-all.sh.
 
 set -u
 # Resolved BEFORE the cd, or `dirname "$0"` is read against the new working directory and a run

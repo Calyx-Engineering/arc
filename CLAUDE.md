@@ -139,7 +139,7 @@ tested.
 Hooks **fail open** — on unexpected failure, exit 0; deny only the specific condition. Write from
 the skeleton so the kill switch cannot be omitted.
 
-**`tools/verify-all.sh` runs every gate this repo has.** `--list` prints what it cannot cover:
+**`tests/verify-all.sh` runs every gate this repo has.** `--list` prints what it cannot cover:
 no hook fires in a live session here and no skill is invoked, so a green run is not a claim
 about either.
 

@@ -89,7 +89,7 @@ reader both this check and `pr-base` go through.
 $ bash tools/verify-hook.sh hooks/tracker-verify
 60 passed, 0 failed
 
-$ bash tools/verify-activation-log.sh hooks/tracker-verify
+$ bash tests/verify-activation-log.sh hooks/tracker-verify
 191 passed, 0 failed
 ```
 

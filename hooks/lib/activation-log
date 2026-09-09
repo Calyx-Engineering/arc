@@ -209,7 +209,7 @@ _arc_log_write() {
   # the two lines above them already said. #238.
   #
   # THE ENTRY IS NEVER OMITTED, and sampling was rejected for the same reason: one firing is
-  # one entry on every path, or `tools/verify-activation-log.sh` has nothing it can assert and
+  # one entry on every path, or `tests/verify-activation-log.sh` has nothing it can assert and
   # a hook that stopped firing becomes indistinguishable from one that was not sampled.
   #
   # THE CONDITION IS NARROW, AS A GUARD RATHER THAN FOR A POPULATION. `denied`, `failed` and

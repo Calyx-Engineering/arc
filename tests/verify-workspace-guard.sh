@@ -2,7 +2,7 @@
 # verify-workspace-guard.sh — branch-guard's worktree and base-freshness checks, against
 # fixtures that tools/verify-hook.sh cannot build.
 #
-#   tools/verify-workspace-guard.sh
+#   tests/verify-workspace-guard.sh
 #
 # WHY A SECOND SCRIPT. verify-hook.sh is the gate for every hook, and its fixtures are three
 # throwaway repos substituted into case payloads by placeholder. Two of branch-guard's three

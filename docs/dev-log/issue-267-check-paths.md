@@ -16,7 +16,7 @@ the transcript had been saved and stale rows removed — neither of which a read
 |---|---|
 | **What this issue is really for** | A declaration split across two paths is not complete until every check names its path. The half-annotated list reported confidently and wrongly on both paths, which is worse than reporting nothing |
 | **North star** | Every name in `checks:` resolves to a path, and a gate fails when the next check is added bare |
-| **What makes it durable** | `tools/verify-handoff-checks.sh` parses the frontmatter rather than grepping the file, and asserts the path rather than the presence of an entry — so a check added bare, or with a condition naming no path, fails the run that added it |
+| **What makes it durable** | `tests/verify-handoff-checks.sh` parses the frontmatter rather than grepping the file, and asserts the path rather than the presence of an entry — so a check added bare, or with a condition naming no path, fails the run that added it |
 | **Out of scope** | Extending `camp-reports.md`'s three fields. A `paths:` field would be a definition change routed through the product definition, and `skips` already carries a condition — a path is one |
 
 Pass 2, after reading `camp-reports.md` and `hooks/mode-guard`: unchanged. The hook's own
@@ -50,7 +50,7 @@ no longer declares.
 
 **The gate ships a selftest, because the denial runs were otherwise prose.** Its two sibling
 handoff gates carry one and this did not, so nothing in the tree reproduced the four ad-hoc
-fixture runs the first draft of this dev-log cited. `tools/verify-handoff-checks.sh selftest` is
+fixture runs the first draft of this dev-log cited. `tests/verify-handoff-checks.sh selftest` is
 seven cases — the skill as it stands, and six mutations of it — wired into `verify-all.sh`
 beside the gate itself.
 

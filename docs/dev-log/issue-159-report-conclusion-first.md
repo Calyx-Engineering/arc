@@ -22,7 +22,7 @@ the remedy.
 | `evals/report-shape/` | Three cases, each an excerpt copied verbatim from a real report in the ROADZ corpus, with the document and line range it came from. #164 added three more to the same suite |
 | `evals/README.md` | A fourth suite, and why it is keyed by document rather than by session and turn |
 | `skills/engineering-report/SKILL.md` | A new **The opening — conclusion first** section; the `description:` trigger clause rebuilt against #155 §1; a *No framing preamble* row in *Point of view*; a grader line in *Before finishing* |
-| `tools/verify-all.sh` | The new selftest is a gate. 19 after merging the arc branch, all clean |
+| `tests/verify-all.sh` | The new selftest is a gate. 19 after merging the arc branch, all clean |
 
 ## The result
 

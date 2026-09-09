@@ -56,7 +56,7 @@ verdict on the release.
 
 ## 3 The instrument
 
-**Run `bash tools/verify-all.sh` first.** It runs every gate this repo has — hooks, tracker
+**Run `bash tests/verify-all.sh` first.** It runs every gate this repo has — hooks, tracker
 rules, the autonomy arms and skill parity — and it closes several of this review's questions
 exactly rather than by eye. Its `--list` prints what it cannot cover — the same boundary as [§2.2](#22-what-a-clean-run-does-not-mean).
 
@@ -69,7 +69,7 @@ exactly rather than by eye. Its `--list` prints what it cannot cover — the sam
 
 ```mermaid
 flowchart TB
-    P0["<b>Pass 0 — the runner</b><br/><code>bash tools/verify-all.sh</code><br/><i>every gate. Red stops the review</i>"]
+    P0["<b>Pass 0 — the runner</b><br/><code>bash tests/verify-all.sh</code><br/><i>every gate. Red stops the review</i>"]
     P0 ==>|green| P1["<b>Pass 1 — it parses</b><br/>frontmatter · JSON · <code>bash -n</code><br/><i>nothing downstream is<br/>meaningful until this holds</i>"]
     P0 -.->|red| STOP(["<b>Stop</b><br/>fix the gate first —<br/>reviewing past a red<br/>runner reviews a<br/>known-broken tree"])
     P1 --> P2["<b>Pass 2 — it resolves</b><br/>every relative link, from<br/><b>both</b> trees, and from where<br/>a template is copied to"]
@@ -91,8 +91,8 @@ do not resolve to the mechanism.
 ### 4.1 Pass 0 — the runner
 
 ```sh
-bash tools/verify-all.sh          # every gate, one exit code
-bash tools/verify-all.sh --list   # what it runs, and what it cannot
+bash tests/verify-all.sh          # every gate, one exit code
+bash tests/verify-all.sh --list   # what it runs, and what it cannot
 ```
 
 | It closes | Leaving |
@@ -125,7 +125,7 @@ does not catch:
 
 | | |
 |---|---|
-| **A copy under `.claude/skills/`** | Deleted 2026-09-07 by [#142](https://github.com/Calyx-Engineering/arc/issues/142) — Arc is installed in this repository, so a copy shadows the plugin's skill rather than standing in for it. `tools/verify-skill-registry.sh` fails if one reappears |
+| **A copy under `.claude/skills/`** | Deleted 2026-09-07 by [#142](https://github.com/Calyx-Engineering/arc/issues/142) — Arc is installed in this repository, so a copy shadows the plugin's skill rather than standing in for it. `tests/verify-skill-registry.sh` fails if one reappears |
 | **A template** | Is copied somewhere else before anyone follows its links. Copy it to a scratch directory and resolve from **there** — ten template links shipped one directory too shallow because they were only ever checked in place |
 | **A spec's anchor links** | `#4-three-relations-not-two` breaks silently when a heading is reworded. A link to a missing anchor renders as a link to the top of the page |
 

@@ -21,11 +21,11 @@ mode says, or, for step 5, by a read-only sub-agent, because that one is judgeme
 
 | # | Step | Owned by | Confirmed by |
 |---|---|---|---|
-| 1 | **Every checklist item resolved** — ticked with evidence, named as not done with the reason, or moved to the issue that owns it | Camp names what is unresolved | The issue body, and `tools/verify-issue-boxes.sh <NN>` once step 6's PR exists. **A disposition is not a resolution until the PR body carries it**, so the exit code only settles here after the PR opens — and [`hooks/tracker-verify`](../../hooks/tracker-verify) asks again when the draft is marked ready, between steps 6 and 9 |
+| 1 | **Every checklist item resolved** — ticked with evidence, named as not done with the reason, or moved to the issue that owns it | Camp names what is unresolved | The issue body, and `tests/verify-issue-boxes.sh <NN>` once step 6's PR exists. **A disposition is not a resolution until the PR body carries it**, so the exit code only settles here after the PR opens — and [`hooks/tracker-verify`](../../hooks/tracker-verify) asks again when the draft is marked ready, between steps 6 and 9 |
 | 2 | The `dev-log` written for this **unit** — `issue-<NN>-` or `pr-<NN>-`, whichever identifier it carries | [`skills/record-route`](../../skills/record-route/SKILL.md) | The file exists |
 | 3 | The `arc-log` status row updated | [`skills/record-route`](../../skills/record-route/SKILL.md) | The row says what merged |
 | 4 | Changes committed — nothing uncommitted in the tree | [`skills/work-watch`](../../skills/work-watch/SKILL.md) | `git status --short` is empty |
-| 4b | **Every gate clean** | `tools/verify-all.sh` | Its own exit code — one command, not a claim per gate |
+| 4b | **Every gate clean** | `tests/verify-all.sh` | Its own exit code — one command, not a claim per gate |
 | 5 | **The work read back against the issue** — every changed file, whole, against the issue body | A read-only sub-agent the session dispatches — **judgement, so never a gate script**. [See below](#step-5-is-the-one-no-gate-can-do) | Its findings, and a disposition for each — the one step confirmed after the fact, since the record of them lands in the PR body at step 6 |
 | 6 | PR opened, titled with the arc prefix, and the **milestone set only on a direct PR** — a PR closing an issue takes none, because the issue is the unit of work and already carries it (#204) | [`skills/issue-write`](../../skills/issue-write/SKILL.md) | `gh pr view` |
 | 7 | `Closes #NN` present, and **verified to have bound** | [`hooks/tracker-verify`](../../hooks/tracker-verify) | **See below** |
@@ -55,7 +55,7 @@ named something that change had removed. All four were in sections the diff did 
 
 **Step 1 is not part of that, and [#140](https://github.com/Calyx-Engineering/arc/issues/140)'s
 constraint originally read as if it were.** Whether every `- [ ]` in the issue body is still
-unticked is a `gh` query and a count — `tools/verify-issue-boxes.sh`. Whether a tick has
+unticked is a `gh` query and a count — `tests/verify-issue-boxes.sh`. Whether a tick has
 evidence behind it is this step. The mechanical half was silent for want of the distinction,
 in both directions: [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing
 two of five requirements, and [#194](https://github.com/Calyx-Engineering/arc/issues/194)

@@ -102,7 +102,7 @@ assigns to this PR rather than a separate one.
 | 10 | m46 §11 | The two artifacts the table omits — *derived*, above |
 | 11 | Arc-log | m40's soak row, `verify-all.sh`'s soak line, §10 rows for [#119](https://github.com/Calyx-Engineering/arc/issues/119) and [#120](https://github.com/Calyx-Engineering/arc/issues/120), §14 naming the release |
 
-Then `tools/sync-local-skills.sh`, `bash tools/verify-all.sh`, and a grep of every box against
+Then `tools/sync-local-skills.sh`, `bash tests/verify-all.sh`, and a grep of every box against
 the file — the tenth acceptance item, and the one that makes the other nine checkable.
 
 ## Retrospective

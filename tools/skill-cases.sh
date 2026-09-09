@@ -23,7 +23,7 @@
 #
 # THE CORPUS IS LOCAL. Transcripts live under ~/.claude/projects on one machine, so a case whose
 # session is absent is reported and skipped rather than failed. Only the selftest is portable,
-# which is why it is the part wired into tools/verify-all.sh.
+# which is why it is the part wired into tests/verify-all.sh.
 
 set -u
 cd "${CASES_CD:-$(dirname "$0")/..}" || exit 1

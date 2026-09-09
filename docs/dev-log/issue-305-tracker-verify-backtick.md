@@ -26,7 +26,7 @@ Reproduced in a scratch repository with `bash -x`: six executions of comment tex
 | | |
 |---|---|
 | **Fix the comment, not the parser** | The code was never wrong. Four lines rewritten with the escapes as text |
-| **A structural gate, `tools/verify-hook-source.sh`** | `bash -n` cannot see this. The gate fails any hook or library line outside a comment with an odd backtick count. Selftest: a good file, a stray-backtick file, an unparseable file |
+| **A structural gate, `tests/verify-hook-source.sh`** | `bash -n` cannot see this. The gate fails any hook or library line outside a comment with an odd backtick count. Selftest: a good file, a stray-backtick file, an unparseable file |
 | **A pass case with the payload it was found on** | `git-commit-payload-runs-nothing.json`. The harness cannot assert *no commit was made*; the gate above is the assertion, the case is the record |
 | **Not a reload** | The installed plugin carried the pre-#301 hook throughout, so no live session ran the defect. The fixtures did, hundreds of times |
 

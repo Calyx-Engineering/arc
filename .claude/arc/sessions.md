@@ -21,6 +21,7 @@
 | `R--arc-wt-269` | `R:/arc-wt/269` | `arc/04-dogfood-issue-269-probe-rate-limit` | #269 | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | orphaned |
 | `R--arc-wt-264` | `R:/arc-wt/264` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
 | `R--arc-wt-263` | `R:/arc-wt/263` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-190` | `R:/arc-wt/190` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-267` | `R:/arc-wt/267` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-271` | `R:/arc-wt/271` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-274` | `R:/arc-wt/274` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |

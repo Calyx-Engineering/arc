@@ -152,7 +152,7 @@ number the flags happen to hold — `gh pr create --fill --draft && sleep 2` res
 
 ```
 bash tools/verify-hook.sh hooks/tracker-verify   →  exit 0, 117 passed, 0 failed
-bash tools/verify-all.sh                         →  exit 0, 53 gates, all clean
+bash tests/verify-all.sh                         →  exit 0, 53 gates, all clean
 ```
 
 Baseline before any change: `78 passed, 0 failed`. After #230's commit: `106 passed, 0 failed`.

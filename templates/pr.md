@@ -44,7 +44,7 @@ says so.&gt;
 
 | | |
 |---|---|
-| `bash tools/verify-all.sh` | &lt;N gates, all clean — exit 0&gt; |
+| `bash tests/verify-all.sh` | &lt;N gates, all clean — exit 0&gt; |
 
 ## Related
 

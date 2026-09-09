@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify-close-sequence.sh — the close sequence's step count is the same everywhere.
 #
-#   tools/verify-close-sequence.sh
+#   tests/verify-close-sequence.sh
 #
 # WHY THIS EXISTS. close-sequence.md's value is invariance: two sessions closing two issues
 # produce the same steps in the same order. The count is therefore load-bearing, and it is
@@ -31,7 +31,7 @@
 #
 # CLOSE_SEQUENCE_ROOT points the whole gate at another tree. It exists so the gate can be made to
 # fail on purpose against a fixture — the gate that has never failed is the gate nobody tested.
-# tools/verify-all.sh never sets it.
+# tests/verify-all.sh never sets it.
 
 set -u
 
@@ -75,7 +75,7 @@ WORDS="zero one two three four five six seven eight nine ten eleven twelve thirt
 EXPECT=$(printf '%s\n' $WORDS | sed -n "$((STEPS + 1))p")
 if [ -z "$EXPECT" ]; then
   fail "$STEPS steps is past this gate's number-word table" \
-       "extend WORDS in tools/verify-close-sequence.sh"
+       "extend WORDS in tests/verify-close-sequence.sh"
   summary
 fi
 pass "the Closing table has $STEPS steps ($EXPECT)"

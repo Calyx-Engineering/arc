@@ -55,17 +55,17 @@ dropped. The driver greps for that line; the table cell does not match it.
 
 | | |
 |---|---|
-| **A new repo gate for the three-column shape** | `hooks/tracker-verify` already reports the heading and `tools/verify-tracker-body.sh body` already reports placement. A third instrument for a nine-row one-off is a tool nobody runs again |
+| **A new repo gate for the three-column shape** | `hooks/tracker-verify` already reports the heading and `tests/verify-tracker-body.sh body` already reports placement. A third instrument for a nine-row one-off is a tool nobody runs again |
 | **Re-pointing every routing cell to its new home** | See above. It converts a verbatim move into an edit of twenty-nine judgements made by other runs |
 
 ## Evidence
 
 | | |
 |---|---|
-| `tools/verify-tracker-body.sh body` | All nine reshaped bodies exit 0 — `Related` is the last section in each |
-| `tools/verify-tracker-body.sh selftest` | 26 passed, 0 failed, exit 0 |
-| `bash tools/verify-all.sh` | **42 gates PASS, 0 FAIL — the run did not reach its exit line.** Five worktree runs share this machine and the runner stalled inside a hook gate; killed rather than left holding `$HOME/.claude/HOOKS_OFF`, which was confirmed absent afterwards. Not a green claim |
-| Gates not reached | Eleven, `verify-hook` among them — 42 run plus 11 unreached is the 53 `verify-all.sh --list` names. Ten read nothing this diff touches. **`activation log` does** — `tools/verify-activation-log.sh` reads `.claude/arc/log.md`, which the second commit grows by 4050 lines |
+| `tests/verify-tracker-body.sh body` | All nine reshaped bodies exit 0 — `Related` is the last section in each |
+| `tests/verify-tracker-body.sh selftest` | 26 passed, 0 failed, exit 0 |
+| `bash tests/verify-all.sh` | **42 gates PASS, 0 FAIL — the run did not reach its exit line.** Five worktree runs share this machine and the runner stalled inside a hook gate; killed rather than left holding `$HOME/.claude/HOOKS_OFF`, which was confirmed absent afterwards. Not a green claim |
+| Gates not reached | Eleven, `verify-hook` among them — 42 run plus 11 unreached is the 53 `verify-all.sh --list` names. Ten read nothing this diff touches. **`activation log` does** — `tests/verify-activation-log.sh` reads `.claude/arc/log.md`, which the second commit grows by 4050 lines |
 | Read-back of all nine live bodies | Identical to what was written, re-confirmed against the tracker after the last write. `Spawned` headings 0/9, three-column delimiter present 9/9, first row `**Spawned by**` 9/9, last section `Related` 9/9 |
 | Finding-row counts, source against dev-log | 4·4·3·5·4·3·6 — twenty-nine, no difference |
 

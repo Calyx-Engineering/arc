@@ -50,7 +50,7 @@ The `/tmp` line in the skill's table is written from this, not from memory.
 | **Both guards in the snippet, not one** | The issue permits either. `&&` alone misses an edit step that exits 0 having done nothing; `cmp` alone misses nothing but is easy to omit under time pressure. Shown together, the reader copies both |
 | **The read is guarded too** | Neither of the two named guards covers a failed *read*: the redirect truncates `body.md` before `gh` fails, `body.before` is an empty copy of it, the edit writes the new section into the empty file, and `cmp` sees a difference. `[ -s body.md ]`. Pass 2 found this in the canonical snippet after pass 1 had already fixed it in the #193 one — the same file teaching two standards for one operation |
 | **`cmp -s`, not a hash** | Present everywhere `gh` is, no second interpreter, and a no-op edit correctly skips the write |
-| **No new gate** | The requirement is the documented procedure. A hook cannot see a run's shell chaining, and `tools/verify-tracker-body.sh` reads bodies, not command sequences |
+| **No new gate** | The requirement is the documented procedure. A hook cannot see a run's shell chaining, and `tests/verify-tracker-body.sh` reads bodies, not command sequences |
 
 ## What the review passes found
 

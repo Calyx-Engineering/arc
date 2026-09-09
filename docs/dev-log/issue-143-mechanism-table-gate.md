@@ -79,9 +79,9 @@ two cases now pin it.
 
 | | |
 |---|---|
-| `bash tools/verify-mechanisms.sh selftest` | 29 passed, 0 failed |
-| `bash tools/verify-mechanisms.sh` | exit 0 — after the m40 fix; exit 1 before it, naming `no status: m40` |
-| `bash tools/verify-all.sh` | all gates clean, exit 0 |
+| `bash tests/verify-mechanisms.sh selftest` | 29 passed, 0 failed |
+| `bash tests/verify-mechanisms.sh` | exit 0 — after the m40 fix; exit 1 before it, naming `no status: m40` |
+| `bash tests/verify-all.sh` | all gates clean, exit 0 |
 | **Mutation testing** | 20 deliberate mutations of the script applied and run against the selftest. **19 are caught.** The survivor is equivalent — see below |
 
 **The one survivor is an equivalent mutant, not a gap.** `specified) return 0` in place of the

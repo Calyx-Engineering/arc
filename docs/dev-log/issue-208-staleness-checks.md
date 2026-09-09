@@ -80,7 +80,7 @@ wrong reason, and the shadow copy; pass 3 found m40 half-swept and box 1's evide
 stale by one assertion.
 
 **What a future reader needs.** The gate proves *location*, not behaviour — no gate in this
-repository invokes a skill, and both `tools/verify-all.sh --list` and the new script's own
+repository invokes a skill, and both `tests/verify-all.sh --list` and the new script's own
 header say so. Its three deny cases were run against fixtures under `HANDOFFCHK_ROOT`: block
 drifted below the write path, shadow copy left stale, one check row deleted — exit 1 each.
 
@@ -95,4 +95,4 @@ of this issue's own decisions, named where they were made.
 | **The command now has no fallback.** Stripped to a delegation, a `/arc-next` that fires without loading the skill yields nothing; before, it at least carried the read order and the checks. The issue records that this happens — `e349dc03`, the command fired and never invoked the skill | #157, which owns the trigger. This issue's constraint excludes trigger work |
 | **`skills/handoff`'s six pre-existing `checks:` are not path-annotated.** The seven added here declare the write path as a skip; `ordered-actions-present`, `open-threads-carried` and `stale-rows-removed` declare nothing, so a `handoff-read` report claims it checked them. Deciding which of the six are path-specific is a design call about the declaration, not a content move | Needs an issue. `skills/handoff` frontmatter |
 | **`skills/autonomy-set`'s re-read rule is covered by no staleness check.** None of the seven compares the handoff's *Execution mode* row against the arc-log, so *"re-read it before a commit, before a push"* rests on nothing mechanical. Pre-existing; this issue made it visible by scoping the checks to the read path | Needs an issue. m40 |
-| **The Done-when is proven as location, not behaviour.** The gate asserts the checks are in the read path; no gate in this repository invokes a skill — `tools/verify-all.sh --list` says so, and the new gate says it in its own header | #181, `claude plugin eval` |
+| **The Done-when is proven as location, not behaviour.** The gate asserts the checks are in the read path; no gate in this repository invokes a skill — `tests/verify-all.sh --list` says so, and the new gate says it in its own header | #181, `claude plugin eval` |

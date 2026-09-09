@@ -59,7 +59,7 @@ the arc-log records the user's proceed in §4.1. Not re-raised.
 | 4 | `hooks/tracker-verify` — a mechanical signal for length, and the verify-hook ceremony run and pasted | Done, `12c34a1` · moved to the tool in `2500659` |
 | 5 | `tools/sync-local-skills.sh` after any `skills/` edit | Done, every commit |
 | 6 | Four refining passes, three review passes, against this north star | Done |
-| + | **`tools/verify-tracker-body.sh title`** — not in the plan. Refining pass 2 found the hook cannot reach *before the write*, which the north star requires | Done, `2500659` |
+| + | **`tests/verify-tracker-body.sh title`** — not in the plan. Refining pass 2 found the hook cannot reach *before the write*, which the north star requires | Done, `2500659` |
 | + | **`.gitattributes`** — a `.txt` fixture escaped a `**/*.md` rule and committed CRLF-bound | Done, `5cbf96f` |
 | + | **m11's registry row** — pointed at the frozen ROADZ copy, where the rule does not exist | Done, `319e45e` |
 
@@ -67,7 +67,7 @@ the arc-log records the user's proceed in §4.1. Not re-raised.
 
 | | |
 |---|---|
-| **The title rules live in `tools/verify-tracker-body.sh`, not in the hook** | The hook is `PostToolUse` — by the time it speaks the wrong title is in the tracker, and the north star says *caught before the write*. That tool already carries the same argument for keyword placement. The hook calls it as a subprocess rather than sourcing it: the tool sets `-u`, and a guardrail that must fail open cannot inherit that |
+| **The title rules live in `tests/verify-tracker-body.sh`, not in the hook** | The hook is `PostToolUse` — by the time it speaks the wrong title is in the tracker, and the north star says *caught before the write*. That tool already carries the same argument for keyword placement. The hook calls it as a subprocess rather than sourcing it: the tool sets `-u`, and a guardrail that must fail open cannot inherit that |
 | **The mechanical threshold is twelve words; the guidance is eight** | Run against this repo's twenty-five open issues, a threshold of ten flagged three titles that were doing their job. Judgement lives in the skill and takes the borderline; the check takes what nobody would defend |
 | **A comma count, not a word count, catches the worst case** | `feat: carry work navigation in issue-write, decompose, …` is eleven words, under any defensible length gate. Six file names cost one word each. Three separators is the signal, and a serial list inside one name needs at most two |
 | **[#73](https://github.com/Calyx-Engineering/arc/issues/73) keeps its `spec:` prefix** | The skill decides the type is `scope:`, and the same section says *retitle before children exist, not after*. [#73](https://github.com/Calyx-Engineering/arc/issues/73) is referenced from three sections of the arc-log and from a pointer comment on the issue itself. Leaving it is the rule being followed, not a contradiction of it |
@@ -90,7 +90,7 @@ The plan grew by three rows, each from a refining axis rather than from the issu
 
 | Found by | |
 |---|---|
-| *Does this reach the north star?* | The north star says *before the write*, and a `PostToolUse` hook is by definition after. The rules moved into `tools/verify-tracker-body.sh`, whose own header already argued exactly this for keyword placement. The hook now calls it |
+| *Does this reach the north star?* | The north star says *before the write*, and a `PostToolUse` hook is by definition after. The rules moved into `tests/verify-tracker-body.sh`, whose own header already argued exactly this for keyword placement. The hook now calls it |
 | *Consistent with every file in the repo?* | m11's registry row pointed at the do-not-edit ROADZ copy, which has none of this. A session following the registry to m11's spec would have concluded the rule does not exist |
 | *Have all evaluating tests been run?* | Running the check over all twenty-five open issues is what set the threshold. At ten words it flagged three titles that were doing their job; at twelve it flags nine, every one of them a title this issue names |
 

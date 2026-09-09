@@ -7,7 +7,7 @@ hooks/* text eol=lf
 # a `.txt` title case escaped a `**/*.md` rule and was committed CRLF-bound, which puts a
 # stray carriage return on the end of every fixture title after checkout.
 tools/hook-cases/** text eol=lf
-tools/tracker-cases/** text eol=lf
+tests/tracker-cases/** text eol=lf
 
 # Markdown is LF too. `tools/sync-local-skills.sh` writes LF, so without this every sync
 # reports each skill copy as modified with no content change — noise in the diff that is

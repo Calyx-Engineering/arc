@@ -6,7 +6,7 @@
 
 The execution mode was a word in a gitignored file that nothing read at the moment it mattered. On 2026-09-07, in manual mode, three PRs were committed, pushed, opened and merged without the user asking — hours after [#138](https://github.com/Calyx-Engineering/arc/issues/138) consolidated that rule into one sentence and shipped a verifier for it.
 
-[#138](https://github.com/Calyx-Engineering/arc/issues/138) built one direction of the switch: it made a merge possible when the mode allows one, proved that by merging, and never built the half that stops one. `tools/verify-autonomy.sh` checks the rule is *stated* once — text, not behaviour — so it was green while the behaviour was broken.
+[#138](https://github.com/Calyx-Engineering/arc/issues/138) built one direction of the switch: it made a merge possible when the mode allows one, proved that by merging, and never built the half that stops one. `tests/verify-autonomy.sh` checks the rule is *stated* once — text, not behaviour — so it was green while the behaviour was broken.
 
 ## Decisions and trade-offs
 
@@ -52,7 +52,7 @@ malformed — expect allow
 14 passed, 0 failed
 ```
 
-`tools/verify-all.sh` — 11 gates, all clean.
+`tests/verify-all.sh` — 11 gates, all clean.
 
 ## What is not proven
 

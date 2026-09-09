@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # verify-mechanisms.sh — check the product definition's mechanism table against the specs.
 #
-#   tools/verify-mechanisms.sh            check this repository
-#   tools/verify-mechanisms.sh selftest   run the fixture cases
+#   tests/verify-mechanisms.sh            check this repository
+#   tests/verify-mechanisms.sh selftest   run the fixture cases
 #
 # WHY. The mechanism table in docs/product-architecture/README.md and the specs in
 # docs/product-architecture/mechanisms/ are kept in agreement by hand. Nothing read them
@@ -645,8 +645,8 @@ case "${1:-}" in
   *)
     cat >&2 <<'USAGE'
 usage:
-  tools/verify-mechanisms.sh            check this repository
-  tools/verify-mechanisms.sh selftest   run the fixture cases
+  tests/verify-mechanisms.sh            check this repository
+  tests/verify-mechanisms.sh selftest   run the fixture cases
 USAGE
     exit 2
     ;;

@@ -98,7 +98,7 @@ arc_log_pass "gating-command=$GATED"
 #   # mode-guard-read-only: --dry-run --status --report
 #
 # A SCRIPT DECLARES ITSELF, AND AN UNDECLARED ONE IS NOT GATED. Scanning a script's text for
-# `git commit` looks more thorough and is wrong: tools/verify-activation-log.sh carries that
+# `git commit` looks more thorough and is wrong: tests/verify-activation-log.sh carries that
 # string inside a test payload, so a content match would deny a read-only verifier. #201's
 # constraint is explicit — the guard must not block reads — so the guard asks the script
 # rather than guessing about it, and an unrecognised script fails open.
@@ -119,7 +119,7 @@ arc_log_pass "gating-command=$GATED"
 #
 # WHAT THIS CANNOT DO.
 #   · A new outward-writing script that omits the declaration is invisible here. Only the two
-#     #201 named carry one; tools/arc-default-branch.sh and tools/verify-tracker-body.sh also
+#     #201 named carry one; tools/arc-default-branch.sh and tests/verify-tracker-body.sh also
 #     write outward under some subcommands and do not. There is no repo-wide sweep for them.
 #   · `cd tools && bash arc-loop.sh` is not caught: resolution is against the payload's cwd and
 #     this hook's own root, and neither sees a `cd` earlier in the same command.

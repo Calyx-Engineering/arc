@@ -85,7 +85,7 @@ before being kept.
 | :--- | :--- |
 | `python tools/skill-probe.py selftest` | 27 cases, 27 passed — was 13 |
 | `bash tools/skill-probe.sh selftest` | 20 cases, 20 passed — **new**. The script's header used to say there was nothing in it to test without a billed session; the abandon branch, the halt, the denominator and the guards are all JSON in and text out, and `PROBE_PY` swaps the billed half for a canned one |
-| `bash tools/verify-all.sh` | 53 gates, all clean, exit 0 |
+| `bash tests/verify-all.sh` | 53 gates, all clean, exit 0 |
 
 ## Not done
 

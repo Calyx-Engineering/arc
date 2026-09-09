@@ -64,7 +64,7 @@ carries the measurements.
 reason in it is recoverable from nowhere else.
 
 **The entry itself is never omitted.** One firing is one entry, on every path; what changes
-is how long the entry is. `tools/verify-activation-log.sh` asserts both.
+is how long the entry is. `tests/verify-activation-log.sh` asserts both.
 
 ## The checked line is the point
 
@@ -109,7 +109,7 @@ Retention past that is **not decided** — m44 names it as open. The move preser
 until it is.
 
 **Nobody is prompted to do either, so a gate notices when neither happened.**
-`tools/verify-log-rotation.sh` reads the live log's `**Arc:**` header against the arc the
+`tests/verify-log-rotation.sh` reads the live log's `**Arc:**` header against the arc the
 current branch belongs to and reports the disagreement, with the two commands that fix it. It
 was written because arc 04 ran its whole length appending to a file headed `arc/03-camp`
 &mdash; [#239](https://github.com/Calyx-Engineering/arc/issues/239).

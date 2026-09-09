@@ -73,5 +73,5 @@ Format: [`docs/product-architecture/camp-reports.md`](https://github.com/Calyx-E
 installed, a copy loads alongside the plugin's and selection sees two identical candidates.
 
 **A new skill needs one thing before its PR:** a row in the product definition's artifact table,
-with a mechanism number. `tools/verify-skill-registry.sh` fails without it — a skill the
+with a mechanism number. `tests/verify-skill-registry.sh` fails without it — a skill the
 definition does not name is one nothing traces to.

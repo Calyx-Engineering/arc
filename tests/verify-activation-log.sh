@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # verify-activation-log.sh — every hook writes one activation-log entry per firing.
 #
-#   tools/verify-activation-log.sh                   every hook that has a case directory
-#   tools/verify-activation-log.sh hooks/mode-guard  one hook
-#   tools/verify-activation-log.sh selftest          this checker's own cases
+#   tests/verify-activation-log.sh                   every hook that has a case directory
+#   tests/verify-activation-log.sh hooks/mode-guard  one hook
+#   tests/verify-activation-log.sh selftest          this checker's own cases
 #
 # WHY A SECOND SCRIPT AND NOT A BLOCK IN verify-hook.sh. `tools/verify-hook.sh` is on
 # CLAUDE.md's never-edited-autonomously list. It asks one question — did the hook reach the

@@ -8,7 +8,7 @@
 
 ## What the close arm asks
 
-One question, and it is [`tools/verify-linked-branch.sh`](../../tools/verify-linked-branch.sh)'s one-argument form exactly: **is this issue linked to anything at all** — a branch record, or a PR that closes it.
+One question, and it is [`tests/verify-linked-branch.sh`](../../tests/verify-linked-branch.sh)'s one-argument form exactly: **is this issue linked to anything at all** — a branch record, or a PR that closes it.
 
 **Shelled out, not re-implemented.** Which field holds the link took [#155](https://github.com/Calyx-Engineering/arc/issues/155) and [#206](https://github.com/Calyx-Engineering/arc/issues/206) to get right, because opening a PR *promotes* a branch link out of `linkedBranches` into the PR's closing reference. A second copy of that reading here would be a second copy to get wrong. That tool's own caveat — the one-argument form answers yes forever once a link has been promoted — does not bite at a close, where the question is whether the record shows anything at all.
 
@@ -76,7 +76,7 @@ Three passes, three different questions, and each found something the last did n
 
 ```text
 bash tools/verify-hook.sh hooks/tracker-verify   →  47 passed, 0 failed   exit 0
-bash tools/verify-all.sh                         →  19 gates, all clean   exit 0
+bash tests/verify-all.sh                         →  19 gates, all clean   exit 0
 ```
 
 Live path, run standalone against the real tracker (no issue was closed):

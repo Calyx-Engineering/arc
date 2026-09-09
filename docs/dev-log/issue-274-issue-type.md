@@ -15,7 +15,7 @@ a judgement call was one mis-filing away from being handed to an unattended `cla
 | **What this issue is really for** | Giving *who does the work* a field of its own. The prefix and its label already answer *what kind of work is it*; there was no answer to *whose* |
 | **North star** | The loop's queue is the Agent-typed children, the sweep reports an untyped open issue, and the Dogfood milestone answers the question for every open issue in it |
 | **What makes it durable** | Three carriers, not one: a rule in `skills/issue-write`, a filter in the dispatcher, a gate in the sweep. A rule stated only in prose is re-derived wrongly by the next cold session |
-| **Out of scope** | Backfilling the Self-improvement and Onboarding milestones and the six unmilestoned ones — the issue names Dogfood, and typing 24 more issues means deciding ownership for arcs nobody is running. `tools/verify-labels.sh` reports them, so the debt is visible rather than silent. Also out: judging *which* non-`Agent` type an issue takes, and adding a hook that denies an untyped write |
+| **Out of scope** | Backfilling the Self-improvement and Onboarding milestones and the six unmilestoned ones — the issue names Dogfood, and typing 24 more issues means deciding ownership for arcs nobody is running. `tests/verify-labels.sh` reports them, so the debt is visible rather than silent. Also out: judging *which* non-`Agent` type an issue takes, and adding a hook that denies an untyped write |
 
 ## Decisions & trade-offs
 
@@ -64,7 +64,7 @@ Nothing.
 |---|---|
 | **`--resume` gained the type gate** | It is the path that skips selection, so nothing else stops it. Every run directory created before this change was dispatched with no type check at all, and each is still `--resume`-able. Without it, `skills/issue-write`'s *dispatches these and nothing else* was false |
 | **Three `gh` reads had their exit status checked** | `[ -n "$(…)" ]` around a command substitution discards it, so a failed `gh api graphql` returned empty and the loop read that as *nothing left* — dispatching the report run and announcing a workstream complete. Pre-existing on one read; this change would have added two more of the same shape. `verify-labels.sh` already states the principle in its own header (*a read that could not be made exits 2*) and arc-loop did not implement it |
-| **`tools/verify-all.sh`'s `--list` caption** | It told the reader the live sweep covers *a label against its prefix, and the label set*. The sweep now also judges the type, and `--list` is the document that says what a green run does **not** cover |
+| **`tests/verify-all.sh`'s `--list` caption** | It told the reader the live sweep covers *a label against its prefix, and the label set*. The sweep now also judges the type, and `--list` is the document that says what a green run does **not** cover |
 | **Four documents describing the old selection rule** | `docs/arc-log/arc-04-dogfood.md` §3.1 is what `arc-loop.sh`'s own header cites as its reasoning, so leaving it saying *first open sub-issue* would have pointed the code at a spec contradicting it. The loop's Mermaid diagram in `docs/arc-work/04-dogfood/execution-process.md`, and `tools/arc-claim.sh`'s comment naming the removed `open_children`, are the same class |
 
 ## Retrospective
@@ -97,12 +97,12 @@ The selftest grew from 27 cases to 39. Six of the twelve new ones are parse case
 separator putting the title into the wrong variable. The unit separator already handled it; the
 cases are there so a future change to the row format cannot quietly reintroduce it.
 
-`bash tools/verify-labels.sh` now exits 1 on 24 untyped issues outside the Dogfood milestone.
+`bash tests/verify-labels.sh` now exits 1 on 24 untyped issues outside the Dogfood milestone.
 That is the check working, and the debt is deliberate — the *Out of scope* row above says why.
 
 ### The base moved twice, and the second move is why the gate went green
 
-`bash tools/verify-all.sh` failed on this branch with `hook: tracker-verify — 60 passed, 57
+`bash tests/verify-all.sh` failed on this branch with `hook: tracker-verify — 60 passed, 57
 failed`, every failure a bash syntax error thrown by the hook's own header. Nothing here
 touches `hooks/`, and the base at the fork point passed the same gate 118/118 — so the first
 reading was a corrupt checkout in this worktree. It was not. The blob genuinely differed:

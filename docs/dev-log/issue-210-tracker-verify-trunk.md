@@ -69,7 +69,7 @@ below; out of scope for both issues in this batch.
 
 `bash tools/verify-hook.sh hooks/tracker-verify` — 33 passed, 0 failed, exit 0 at this commit;
 37 after the review passes added four cases and rewrote the malformed PR-fixture one.
-`bash tools/verify-all.sh` — 13 gates, all clean, exit 0.
+`bash tests/verify-all.sh` — 13 gates, all clean, exit 0.
 
 **The issue's third box was left unticked at the time.** `bash tools/verify-hook.sh tracker-verify` exits 2
 with `usage:` — the script takes a path, not a hook name. The substance is done and the gate

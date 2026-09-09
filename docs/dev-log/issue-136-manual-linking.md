@@ -39,7 +39,7 @@ issue added.
 | **The sweep reads both link fields** | `linkedBranches` alone reports every issue past its PR as unlinked, which is most of an arc. #155 read one field at one moment |
 | **A count that does not parse is exit 2, never "no link"** | Same distinction `verify-linked-branch.sh` draws. An unreadable read reported as a missing link is the defect wearing the fix's clothes |
 | **m12's status is `partial`, not `built`** | §4's four moments are now carried by artifacts; §1–§2's verify-and-repair loop and §3's `createLinkedBranch` call are still instructions to a session. The header names which is which rather than averaging them into one word |
-| **The `Closes #NN` line stays on a non-default base** | Recorded intent. It is the only machine-readable statement of what the PR was for, and `tools/verify-issue-boxes.sh` reads it. Leaving it out to avoid implying a link that does not exist loses that and leaves the issue looking orphaned anyway |
+| **The `Closes #NN` line stays on a non-default base** | Recorded intent. It is the only machine-readable statement of what the PR was for, and `tests/verify-issue-boxes.sh` reads it. Leaving it out to avoid implying a link that does not exist loses that and leaves the issue looking orphaned anyway |
 
 ## Rejected approaches
 

@@ -38,7 +38,7 @@ guard at all, silently.
 | Rejected | Why |
 |---|---|
 | Reading the prefix from `CLAUDE.md`'s branching section, as `camp-branch-check` does | The issue names the agreement, and the agreement is the file the user amends by reviewed diff. That the two hooks now read two files is recorded in [m10](../product-architecture/mechanisms/m10-branch-guard.md)'s *What is not decided* |
-| Adding the cases to `tools/verify-workspace-guard.sh` | Its name is the worktree check. A prefix section there makes the file's name wrong |
+| Adding the cases to `tests/verify-workspace-guard.sh` | Its name is the worktree check. A prefix section there makes the file's name wrong |
 | Deriving the coordination prefix from the current branch | Inference is what the hardcoded `arc/` already was, one level up |
 
 ## Retrospective
@@ -67,6 +67,6 @@ before this change**, which is what fail-open means here.
 reloading from one of them is not this unit's call. `.claude/arc/log.md` carries no
 `prefix=` entry, so the change is unsoaked in the record and soaks on the next work stretch.
 
-**Gates:** `bash tools/verify-all.sh` → exit 0, 39 gates clean, including the new
+**Gates:** `bash tests/verify-all.sh` → exit 0, 39 gates clean, including the new
 `branch prefix` gate at 17 cases. `bash tools/verify-hook.sh hooks/branch-guard` → 18 passed,
 0 failed.

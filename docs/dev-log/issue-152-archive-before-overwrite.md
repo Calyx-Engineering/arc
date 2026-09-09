@@ -51,7 +51,7 @@ the requirement is met and the user can `cp` a file back by hand.
 **The side effect needed its own gate.** `tools/verify-hook.sh` scores a hook's *verdict* —
 allow, deny, report — which is the right question for a guard and the wrong one for a hook whose
 entire job is a side effect. A hook could report "archived" and copy nothing and every case there
-would pass. `tools/verify-handoff-archive.sh` runs the hook against real repositories and reads
+would pass. `tests/verify-handoff-archive.sh` runs the hook against real repositories and reads
 the archive back.
 
 ## Rejected approaches
@@ -83,7 +83,7 @@ unrecoverable" exactly.
 
 Built: `hooks/handoff-archive` (PreToolUse on `Edit|Write|NotebookEdit` **and on `Bash`**,
 registered in `hooks/hooks.json`), nine cases under `tools/hook-cases/handoff-archive/`, and
-`tools/verify-handoff-archive.sh` — 6 live probes and 16 fixture cases, wired into
+`tests/verify-handoff-archive.sh` — 6 live probes and 16 fixture cases, wired into
 `verify-all.sh` as two gates.
 
 **What changed from the plan:** two hook-cases had to be withdrawn and rewritten as sequenced

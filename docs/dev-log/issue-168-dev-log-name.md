@@ -38,15 +38,15 @@ document disagreed with itself about its own name, at the one place the name is 
 |---|---|
 | **Renaming the artifact to *decision record*** | It would collide with `ddr/`, and it is the file and the mechanism that would have to move, not the banner. The banner is the thing that is wrong |
 | **Sweeping the dev-logs and leaving the generator** | Fastest, and it fails on the next direct PR. This is the whole reason the second `Required` box says *every place* |
-| **Grepping in `verify-all.sh` itself** | The issue's words are "checked by grep in `tools/verify-all.sh`", and `run_gate` takes a command, so an inline grep would have been an unreadable one-liner with nowhere to put the three exceptions or their cases. A small verifier that `verify-all.sh` runs satisfies the same sentence and can be tested |
+| **Grepping in `verify-all.sh` itself** | The issue's words are "checked by grep in `tests/verify-all.sh`", and `run_gate` takes a command, so an inline grep would have been an unreadable one-liner with nowhere to put the three exceptions or their cases. A small verifier that `verify-all.sh` runs satisfies the same sentence and can be tested |
 
 ## Evidence
 
 | | |
 |---|---|
-| `bash tools/verify-dev-log-name.sh selftest` | 11 passed, 0 failed |
-| `bash tools/verify-dev-log-name.sh` | `PASS no artifact calls the dev-log a 'decision log'`, exit 0 |
-| `bash tools/verify-all.sh` | 26 gates, all clean, exit 0 |
+| `bash tests/verify-dev-log-name.sh selftest` | 11 passed, 0 failed |
+| `bash tests/verify-dev-log-name.sh` | `PASS no artifact calls the dev-log a 'decision log'`, exit 0 |
+| `bash tests/verify-all.sh` | 26 gates, all clean, exit 0 |
 | **The Done-when, measured** | With the old banner restored in `templates/dev-log.md` alone: `26 gates, 1 failed — dev-log name`, exit **1**, naming `templates/dev-log.md:3`. Reverted after the measurement |
 
 **Scale of the sweep:** 42 files — the template, m15, m16, m17, `tools/new-direct-pr.sh`, and 37

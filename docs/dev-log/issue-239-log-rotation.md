@@ -16,7 +16,7 @@ arc 04 and every arc-04 firing was filed under arc 03's name.
 |---|---|
 | **What this issue is really for** | A specified step nobody performs is not a specification, it is a note. The header disagreeing with the branch was visible on every read of the file and nobody read the file |
 | **North star** | The live log's header names the arc that is writing to it, and something says so next time it does not |
-| **What makes it durable** | `tools/verify-log-rotation.sh`, in `tools/verify-all.sh`. The rotation itself is a one-off; the gate is what survives to the next arc boundary |
+| **What makes it durable** | `tests/verify-log-rotation.sh`, in `tests/verify-all.sh`. The rotation itself is a one-off; the gate is what survives to the next arc boundary |
 | **Out of scope** | Retention — how long an archived log is kept and whether it is ever pruned. m44 still lists it as undesigned, and this issue only had to give it something to retain |
 
 ## Decisions & trade-offs

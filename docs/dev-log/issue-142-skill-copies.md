@@ -16,7 +16,7 @@ The issue was marked blocked on the reload loop, because deleting the copies wou
 
 | | |
 |---|---|
-| **The registry check outlived the sync** | `sync-local-skills.sh` did two jobs. The second — fail when a shipping skill has no row in the artifact table with a mechanism number — is now `tools/verify-skill-registry.sh` |
+| **The registry check outlived the sync** | `sync-local-skills.sh` did two jobs. The second — fail when a shipping skill has no row in the artifact table with a mechanism number — is now `tests/verify-skill-registry.sh` |
 | **The new verifier also fails on a reappearing copy** | The deletion is a state to hold, not an event. A copy that comes back reintroduces the defect silently |
 | **`verify-sync-parity.sh` went with the sync** | Nine fixture cases for a script that no longer exists |
 | **Commands were left** | `.claude/commands/` shadows `commands/` the same way. #142's scope named skills; [#177](https://github.com/Calyx-Engineering/arc/issues/177) does the commands |

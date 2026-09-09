@@ -2,7 +2,7 @@
 # verify-branch-prefix.sh — branch-guard reads the coordination prefix from the operating
 # agreement, and falls back to `arc/` when it cannot.
 #
-#   tools/verify-branch-prefix.sh
+#   tests/verify-branch-prefix.sh
 #
 # WHY A SEPARATE SCRIPT. The prefix is a per-repo setting, so every case here needs a
 # repository holding an operating agreement that declares one — a fixture no case payload

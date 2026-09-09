@@ -2,9 +2,9 @@
 # verify-labels.sh — a label agrees with the title prefix, or it is not there; and an issue
 # says who does the work, or it is a finding.
 #
-#   tools/verify-labels.sh                 sweep this repository's open issues
-#   tools/verify-labels.sh labels          the label set itself, against the sanctioned one
-#   tools/verify-labels.sh selftest        the decision, on fixtures
+#   tests/verify-labels.sh                 sweep this repository's open issues
+#   tests/verify-labels.sh labels          the label set itself, against the sanctioned one
+#   tests/verify-labels.sh selftest        the decision, on fixtures
 #
 # WHY. Seven title prefixes were in use, nine stock labels existed, and nothing mapped one to
 # the other — so every `fix:` issue in the repo was unlabelled until a human noticed and
@@ -90,9 +90,9 @@ wontfix
 usage() {
   cat >&2 <<'USAGE'
 usage:
-  tools/verify-labels.sh              sweep this repository's open issues
-  tools/verify-labels.sh labels       the label set itself
-  tools/verify-labels.sh selftest
+  tests/verify-labels.sh              sweep this repository's open issues
+  tests/verify-labels.sh labels       the label set itself
+  tests/verify-labels.sh selftest
 USAGE
 }
 

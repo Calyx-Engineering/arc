@@ -134,7 +134,7 @@ the 96 torn and 50 merged entries below are excluded rather than guessed at.
 
 | Considered | |
 |---|---|
-| **Sample** | Rejected. Sampling makes a missing entry ordinary, so a hook that stopped firing is indistinguishable from one that was not sampled — the absence m44 exists to fix. It also ends `tools/verify-activation-log.sh` as a gate, which can only assert *one entry per firing* if that is true on every path |
+| **Sample** | Rejected. Sampling makes a missing entry ordinary, so a hook that stopped firing is indistinguishable from one that was not sampled — the absence m44 exists to fix. It also ends `tests/verify-activation-log.sh` as a gate, which can only assert *one entry per firing* if that is true on every path |
 | **Log at a lower rate** | Rejected. The hooks fire at that rate because the tool calls happen at that rate; a hook that logs only sometimes is the sampling case wearing different clothes |
 | **Accept the rate, shrink the entry** | **Chosen.** Every firing still writes exactly one entry |
 
@@ -187,7 +187,7 @@ is ever pruned, is undecided. The move preserves the file until that question ha
 - [m30](m30-transcript-mining.md) — what was said, beside this record of what ran
 - [m17](m17-k1-upkeep.md) — the `arc-log`, which records decisions rather than events
 - [`hooks/lib/activation-log`](../../../hooks/lib/activation-log) — the library every hook sources to write one
-- [`tools/verify-activation-log.sh`](../../../tools/verify-activation-log.sh) — the gate that asserts one entry per firing, on every path
-- [`tools/verify-log-rotation.sh`](../../../tools/verify-log-rotation.sh) — the gate that asserts the live log names the arc writing to it
+- [`tests/verify-activation-log.sh`](../../../tests/verify-activation-log.sh) — the gate that asserts one entry per firing, on every path
+- [`tests/verify-log-rotation.sh`](../../../tests/verify-log-rotation.sh) — the gate that asserts the live log names the arc writing to it
 - [#37](https://github.com/Calyx-Engineering/arc/issues/37) — the issue that built the format and the file
 - [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the issue that gave it producers

@@ -17,7 +17,7 @@ the row before a commit, a push — rested on nothing mechanical.
 |---|---|
 | **What this issue is really for** | Making a claim two documents already make come true. The gap is not that the mode is unchecked at the moment of a commit — `hooks/mode-guard` does that — but that a cold start acts on a handoff whose mode row nobody compared against the plan |
 | **North star** | A cold start that finds a row saying autonomous where the arc-log grants no such thing stops and says so, before it executes an ordered action |
-| **What makes it durable** | The check is in the skill's read-path slice, where `tools/verify-handoff-checks.sh` asserts each check's mechanical probe is present, and in `checks:` so a report can say it ran |
+| **What makes it durable** | The check is in the skill's read-path slice, where `tests/verify-handoff-checks.sh` asserts each check's mechanical probe is present, and in `checks:` so a report can say it ran |
 | **Out of scope** | Enforcement. `hooks/mode-guard` is the behaviour half and reads the same row; this is the staleness half. Also the asymmetry — a run may lower the mode and never raise it — which is m40 §4's and unchanged here |
 
 ## Decisions & trade-offs
@@ -59,7 +59,7 @@ judgement is a hook that denies on a judgement.
 
 ## Spawned
 
-- **Issues:** none, in the end. `bash tools/verify-all.sh` came back **54 gates, 1 failed** —
+- **Issues:** none, in the end. `bash tests/verify-all.sh` came back **54 gates, 1 failed** —
   `hook: tracker-verify`, 60 passed and 57 failed — from a defect nothing in this unit touches:
   lines 58–61 of `hooks/tracker-verify` carried literal newline, tab and CR characters where the
   escapes were meant, so the comment ended early and the next three lines were parsed as code,
@@ -74,7 +74,7 @@ judgement is a hook that denies on a judgement.
 ## Retrospective
 
 **The gate was written first and failed on the missing eighth check**, which is what put the row
-in the read-path slice rather than anywhere else in the skill: `tools/verify-handoff-checks.sh`
+in the read-path slice rather than anywhere else in the skill: `tests/verify-handoff-checks.sh`
 bounds its probes to that slice on purpose.
 
 **The gate asserts the row and the command separately, and pass 1 is why.** The first draft

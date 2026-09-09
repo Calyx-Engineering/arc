@@ -59,7 +59,7 @@ distribution artifact rather than a capability.
 | 2 | `docs/release/release-process.md` | What a release consists of, what is checked, how the version is decided, what a consumer does. **Two mermaid diagrams** — clean review to installable release, and the two install routes side by side |
 | 3 | `README.md` install section | **Local first**, because fix-and-reinstall is what makes a defect cheap. Both routes, and what the private repo requires |
 | 4 | `CLAUDE.md` | The local-copy deletion condition stated explicitly — releasing is not installing |
-| 5 | Cut and tag | `bash tools/verify-all.sh` first. **Outward-facing: retry once, then hand it over** |
+| 5 | Cut and tag | `bash tests/verify-all.sh` first. **Outward-facing: retry once, then hand it over** |
 
 ## Retrospective
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # verify-log-rotation.sh — the live event log names the arc that is writing to it.
 #
-#   tools/verify-log-rotation.sh            check this repository
-#   tools/verify-log-rotation.sh selftest   run the fixture cases
+#   tests/verify-log-rotation.sh            check this repository
+#   tests/verify-log-rotation.sh selftest   run the fixture cases
 #
 # WHY. `templates/event-log.md` specifies rotation at arc open and at arc close, and nothing
 # performed either. `.claude/arc/log.md` carried `**Arc:** arc/03-camp` in its header for the
@@ -170,7 +170,7 @@ check_tree() {
     # NOT A FAILURE, and this case decides whether the gate is usable at all. The library only
     # ever appends, so in a fresh clone or a new worktree the FIRST hook firing creates this
     # file with no header — seconds after checkout, before anyone could have rotated anything.
-    # Failing here fails tools/verify-all.sh on every new tree in the arc. The library cannot
+    # Failing here fails tests/verify-all.sh on every new tree in the arc. The library cannot
     # write the header either: it names the arc, and deriving that needs `git`, which is a fork
     # on a write path that forbids them.
     note "the live log has no **Arc:** header — a firing created it, rotation did not open it"

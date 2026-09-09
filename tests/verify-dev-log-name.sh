@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # verify-dev-log-name.sh — the dev-log is called the dev-log, everywhere it is named.
 #
-#   tools/verify-dev-log-name.sh            check this repository
-#   tools/verify-dev-log-name.sh selftest   run the fixture cases
+#   tests/verify-dev-log-name.sh            check this repository
+#   tests/verify-dev-log-name.sh selftest   run the fixture cases
 #
 # WHY. `templates/dev-log.md` opened by calling itself a *decision log*. The file is
 # `dev-log.md`, the artifact is the dev-log in m17 and everywhere else, and the name a cold
@@ -53,7 +53,7 @@ scan() {  # scan <root> — prints one "path:line:text" per offending occurrence
       | grep -v '^docs/reference-timescope/' \
       | grep -v '^docs/arc-work/04-dogfood/issue-plan\.md:' \
       | grep -v '^docs/dev-log/issue-168-dev-log-name\.md:' \
-      | grep -v '^tools/verify-dev-log-name\.sh:'
+      | grep -v '^tests/verify-dev-log-name\.sh:'
   )
 }
 

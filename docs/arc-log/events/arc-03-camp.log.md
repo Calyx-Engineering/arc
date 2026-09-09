@@ -14,7 +14,7 @@
 > format was built — **1,193 are 2026-09-08 and 13,538 are 2026-09-09**, all of them arc 04's.
 > The file keeps arc 03's name because that is the header it carried; its contents are arc 04's.
 > The entries are left where they are: the log is append-only, and moving one out of it is an
-> edit. `tools/verify-log-rotation.sh` is what makes the next omission visible.
+> edit. `tests/verify-log-rotation.sh` is what makes the next omission visible.
 >
 > It is also **one worktree's copy**. The live log is per-worktree, so four sibling trees held
 > their own; this is 238's.

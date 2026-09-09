@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # verify-issue-boxes.sh — is every `Required` box dispositioned before the PR is ready?
 #
-#   tools/verify-issue-boxes.sh <issue-number>     the issue's boxes, against its PRs' bodies
-#   tools/verify-issue-boxes.sh --pr <pr-number>   every issue that PR is answerable for
-#   tools/verify-issue-boxes.sh selftest
+#   tests/verify-issue-boxes.sh <issue-number>     the issue's boxes, against its PRs' bodies
+#   tests/verify-issue-boxes.sh --pr <pr-number>   every issue that PR is answerable for
+#   tests/verify-issue-boxes.sh selftest
 #
 # WHY. #140 put a read-back before the PR and ruled a script out — "prose correctness is not
 # mechanically checkable. This is judgement, so it is not a gate script." That is right about
@@ -49,7 +49,7 @@
 #   1  a finding — an unticked box the PR bodies do not account for
 #   2  the read could not be made, or the arguments were wrong. NEVER 1: "the record does not
 #      account for this box" and "I could not tell" are different answers, and only one is a
-#      defect. Same distinction tools/verify-linked-branch.sh draws, for the same reason
+#      defect. Same distinction tests/verify-linked-branch.sh draws, for the same reason
 #
 # THE FIXTURE BACKEND. `ARC_BOXES_FIXTURES=<dir>` swaps the `gh` reads for files of the same
 # shape, so the selftest exercises this file end to end — argument parsing, exit codes and all
@@ -71,9 +71,9 @@ SELF="${BASH_SOURCE[0]}"
 usage() {
   cat >&2 <<'USAGE'
 usage:
-  tools/verify-issue-boxes.sh <issue-number>
-  tools/verify-issue-boxes.sh --pr <pr-number>
-  tools/verify-issue-boxes.sh selftest
+  tests/verify-issue-boxes.sh <issue-number>
+  tests/verify-issue-boxes.sh --pr <pr-number>
+  tests/verify-issue-boxes.sh selftest
 USAGE
 }
 
@@ -258,7 +258,7 @@ b64_to_file() {
 }
 
 # GitHub parses FOUR closing-reference forms, and recognising only `#NN` misses three of them.
-# The vocabulary matches tools/verify-linked-branch.sh and tools/verify-tracker-body.sh
+# The vocabulary matches tests/verify-linked-branch.sh and tests/verify-tracker-body.sh
 # deliberately: one list, tuned in one place.
 #
 #   Closes #206 · Closes GH-206 · Closes owner/repo#206 · Closes https://…/issues/206

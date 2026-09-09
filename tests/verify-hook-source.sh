@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # verify-hook-source.sh — a hook's source parses, and no code line carries an unbalanced backtick.
 #
-#   tools/verify-hook-source.sh              every file in hooks/ and hooks/lib/
-#   tools/verify-hook-source.sh hooks/x      one file
-#   tools/verify-hook-source.sh selftest     this checker's own cases
+#   tests/verify-hook-source.sh              every file in hooks/ and hooks/lib/
+#   tests/verify-hook-source.sh hooks/x      one file
+#   tests/verify-hook-source.sh selftest     this checker's own cases
 #
 # WHY. #305: a header comment in hooks/tracker-verify was written with real control characters
 # where the escapes for newline, tab and return were meant. The line after the break began with

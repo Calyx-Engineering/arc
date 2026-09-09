@@ -44,7 +44,7 @@ because the first one cannot answer their question.
 which turn a keyword landed on are arithmetic, so none waits on
 [#181](https://github.com/Calyx-Engineering/arc/issues/181). Each carries a `selftest` on
 fixtures, and it is the selftest — not the real cases — that is wired into
-`tools/verify-all.sh`, because the corpus is on one machine.
+`tests/verify-all.sh`, because the corpus is on one machine.
 
 **`saturation/` and `environment-blame/` carry the weakest arithmetic, and both say so.**
 Whether a reply proposed handing off, and whether it tested an alternative before naming the
@@ -71,7 +71,7 @@ Everything below is `skill-firing/`'s. `response-length/`, `topic-numbering/`, `
 | **Reports** | `bash tools/report-grade.sh` — scores every `report-shape/` case, and checks each excerpt against its source document when the corpus is present. `--file <path>` grades one document and exits on its verdict |
 | **Saturation** | `bash tools/saturation-cases.sh` — replays the case's session and reports which turn a handoff was proposed on, if any. `--probe` replays the turns live instead; it is 52 turns of billing, and it needs `tools/plugin-reload.sh` first, which rewrites the installed plugin every other session on the machine is using |
 | **Environment blame** | `bash tools/environment-blame.sh` — replays the case's session and reports the first turn that handed the failure to the bench, with the sentence that did it and whatever was tested first. No `--probe`; see above |
-| **To score a change** | `bash tools/skill-probe.sh` — re-runs each `prompt.md` against the **installed** plugin and records what fired. `--openings` restricts it to `source.opening: true`, `--runs N` repeats. Run `tools/plugin-reload.sh` first or it measures the version before your edit. **It bills per run**, which is why it is not in `tools/verify-all.sh` |
+| **To score a change** | `bash tools/skill-probe.sh` — re-runs each `prompt.md` against the **installed** plugin and records what fired. `--openings` restricts it to `source.opening: true`, `--runs N` repeats. Run `tools/plugin-reload.sh` first or it measures the version before your edit. **It bills per run**, which is why it is not in `tests/verify-all.sh` |
 | **When `plugin eval` opens** | `claude plugin eval --eval-dir evals` — re-runs each `prompt.md` against the live plugin |
 
 **`tools/plugin-reload.sh` refuses on a dirty tree.** It installs from the working tree rather

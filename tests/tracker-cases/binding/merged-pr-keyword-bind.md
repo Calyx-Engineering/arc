@@ -1,6 +1,6 @@
 # Case — a merged PR binds a closing keyword added after the merge
 
-**Run it:** `bash tools/verify-tracker-body.sh live-bind <merged-pr> <issue>`
+**Run it:** `bash tests/verify-tracker-body.sh live-bind <merged-pr> <issue>`
 
 Not a text fixture and not run by `verify-all.sh`. The claim is about what GitHub does, so the
 only honest test writes to the API and reads it back.
@@ -32,7 +32,7 @@ only honest test writes to the API and reads it back.
 | 2026-09-07 | [#192](https://github.com/Calyx-Engineering/arc/pull/192) | #144 | Bound. The observation [#193](https://github.com/Calyx-Engineering/arc/issues/193) was filed from |
 | 2026-09-07 | [#215](https://github.com/Calyx-Engineering/arc/pull/215) | [#225](https://github.com/Calyx-Engineering/arc/issues/225) | Bound, on the second read. Issue stayed **open**. Body restored, reference cleared |
 | 2026-09-07 | [#215](https://github.com/Calyx-Engineering/arc/pull/215) | [#225](https://github.com/Calyx-Engineering/arc/issues/225) | The finished runner, end to end. Bound, restored, reference cleared. Two assertions failed correctly: #225 was already closed, and the byte-for-byte body comparison — since fixed to compare normalised text |
-| 2026-09-07 | [#200](https://github.com/Calyx-Engineering/arc/pull/200) | [#233](https://github.com/Calyx-Engineering/arc/issues/233) | **`bash tools/verify-tracker-body.sh live-bind 200 233` — five assertions, all PASS, exit 0.** The runner in its current form, green end to end |
+| 2026-09-07 | [#200](https://github.com/Calyx-Engineering/arc/pull/200) | [#233](https://github.com/Calyx-Engineering/arc/issues/233) | **`bash tests/verify-tracker-body.sh live-bind 200 233` — five assertions, all PASS, exit 0.** The runner in its current form, green end to end |
 
 **The second run is why two of the rows above exist.** The first read after the edit returned
 `[]` — a single read would have recorded the recovery as failed. And #225 stayed open, so the

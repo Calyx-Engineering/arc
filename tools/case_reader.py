@@ -22,8 +22,8 @@
 # scores. An unrecognised line is ignored here and a missing field fails loudly at the call site,
 # which is where the reader knows what it needed.
 #
-# ITS OWN CASES ARE `python tools/case_reader.py selftest`, wrapped by tools/verify-case-reader.sh
-# so verify-all.sh's `tools/verify-*.sh` sweep can see them.
+# ITS OWN CASES ARE `python tools/case_reader.py selftest`, wrapped by tests/verify-case-reader.sh
+# so verify-all.sh's `tests/verify-*.sh` sweep can see them.
 
 import io
 import re
