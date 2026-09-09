@@ -155,6 +155,14 @@ than silent.
 | | |
 |---|---|
 | `bash tools/plugin-reload.sh` | exit 0. Installed `skills/handoff/SKILL.md` sha1 `5a9b650c5e46`, byte-identical to this branch's and to the marketplace source `R:\arc` |
+
+**That reload command no longer behaves as it did when it was run here.**
+[#211](https://github.com/Calyx-Engineering/arc/issues/211) merged into `arc/04-dogfood` while
+this branch was open and made `plugin-reload.sh` refuse on a dirty tree. The marketplace source is
+`R:\arc`, which was dirty throughout, so re-running the command today reports a refusal rather than
+exit 0. **The measurement does not rest on the reload.** What it rests on is the sha1: the
+installed file and this branch's file are the same bytes, which is checked directly and is what
+`tools/probe-handoff-checks.sh` reports per firing.
 | `bash tools/skill-probe.sh --case <each of nine> --runs 3` | 27 runs, `handoff` 27/27 |
 | `bash tools/probe-handoff-checks.sh <dir>` | 27 dumps, 27 resolved, all seven checks present, exit 0 |
 | `bash tools/probe-handoff-checks.sh selftest` | 16 cases, 16 passed, exit 0 — including the deny case, a fixture skill with one check cut out, which reports CHECKS MISSING and exit 1 |
