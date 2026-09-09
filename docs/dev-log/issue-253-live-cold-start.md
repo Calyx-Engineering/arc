@@ -81,7 +81,10 @@ moved score — with the unit gone.
 `hooks/lib/activation-log` states it in its own header — *"NOT A HOOK. It is sourced by one"* —
 and `hooks/` holds seven hooks, none of which is a skill.
 
-**Re-counted after the live opening**, across this worktree's `.claude/arc/log.md` — one `awk` pass classifying every row by its source field, so the parts sum to the whole. **The totals are a snapshot**: a hook appends on every tool call, so they move while a session runs, and the zeros are what is stable. At the count, 8,366 rows:
+**Re-counted after the live opening**, across this worktree's `.claude/arc/log.md` — one `awk`
+pass classifying every row by its source field, so the parts sum to the whole. **The totals are
+a snapshot**: a hook appends on every tool call, so they move while a session runs, and the
+zeros are what is stable. At the count, 8,366 rows:
 
 | Row source | Rows |
 |---|---|
@@ -90,7 +93,7 @@ and `hooks/` holds seven hooks, none of which is a skill.
 | **`handoff`** | **0** |
 | **Any of the seven staleness-check names** — `handoff-age`, `transcripts-newer`, `branch-matches`, `tree-accounted`, `commits-accounted`, `open-prs-accounted`, `first-action-issue-open` | **0** |
 
-Zero in the main tree's log too. `skills/handoff` declares both `camp-reports:` and `checks:`, and
+Zero in the main tree's log too — re-checked on this branch: `handoff` rows 0, `issue-write` 3. `skills/handoff` declares both `camp-reports:` and `checks:`, and
 #208 added the seven to that declaration — but a declaration is read by whatever writes the row,
 and for a skill nothing does. The three `issue-write` rows are a session having written them by
 hand, not a mechanism, and nothing has written one since 2026-08-19.

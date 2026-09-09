@@ -31,7 +31,8 @@ Their packets are condensed into [the appendix](#appendix--the-evidence-behind-e
 is the durable record: the transcripts stay on this machine, so a quote with a session id and a
 timestamp is the most that can be committed.
 
-**A later opening sits below in [The live opening](#the-live-opening--2026-09-08-beside-the-corpus), scored on the same two criteria.** It is outside this corpus, which is closed.
+**A later opening sits below in [The live opening](#the-live-opening--2026-09-08-beside-the-corpus),
+scored on the same two criteria.** It is outside this corpus, which is closed.
 
 ## The criteria
 
