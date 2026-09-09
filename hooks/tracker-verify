@@ -24,7 +24,7 @@
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
 
 # ---- the activation log ---------------------------------------------------------
-# Sourced before anything can exit. This hook has fourteen exit paths and sixteen declared
+# Sourced before anything can exit. This hook has several exit paths and seventeen declared
 # checks, most of which do not run on any one invocation — so a declared check the run never
 # marked is written to the entry's `skipped:` line as `not reached`, rather than being
 # absent from the record. m44.
@@ -180,7 +180,7 @@ GH_ARGS=""
 ARM=""
 
 read_invocation() {
-  local stripped tok saw_gh=0 sub="" verb="" collect=0 want="${2:-}"
+  local stripped tok saw_gh=0 sub="" verb="" collect=0 want="${2:-}" skip="${3:-0}" seen=0
   GH_SUB=""; GH_VERB=""; GH_ARGS=""; ARM=""
 
   # Quoted spans out, then every run of shell chain characters becomes ONE TOKEN of its own.
@@ -246,6 +246,13 @@ read_invocation() {
     # that is not the one asked for. Keep looking: this invocation may yet name a verb, and a
     # later one may be the wanted arm.
     [ -n "$ARM" ] || continue
+    # AND NOT ONE ALREADY HANDLED. `$3` is how many matching invocations to walk past, which
+    # is what lets the caller loop over every arm a chained command names rather than the
+    # first — `gh pr merge 201 && gh issue close 163` names two, and both are owed their
+    # checks. #231.
+    if [ "$seen" -lt "$skip" ]; then
+      seen=$((seen + 1)); ARM=""; saw_gh=0; sub=""; continue
+    fi
     GH_SUB="$sub"
     GH_VERB="$verb"
     collect=1
@@ -253,6 +260,20 @@ read_invocation() {
   set +f
 
   GH_ARGS="${GH_ARGS# }"
+  return 0
+}
+
+# The Nth URL of one kind out of the payload — how a create learns its number, since `gh` prints
+# the URL rather than taking one.
+#
+# OF THE RIGHT KIND, AND THE RIGHT ONE OF THAT KIND. A single `(issues|pull)` grep taking the
+# first match sends an issue's number to `gh pr view` when a create of each is chained, and gives
+# two chained creates of the same kind the same number — the first one's, so the second is never
+# checked and the first's findings print twice. #231.
+#
+#   $1  `issues` or `pull`   $2  how many of that kind this firing has already consumed
+payload_url_number() {
+  printf '%s' "$INPUT"     | grep -oE "https://github\.com/[^/]+/[^/]+/$1/[0-9]+"     | sed -n "$(( $2 + 1 ))p"     | grep -oE '[0-9]+$'
   return 0
 }
 
@@ -285,29 +306,73 @@ invocation_number() {
   return 0
 }
 
-read_invocation "$CMD"
-if [ -z "$ARM" ]; then
-  arc_log_outcome ok "not a tracker write"
-  exit 0
-fi
-arc_log_event "$ARM"
+# EVERY ARM THE COMMAND NAMES. An entry holds one event, so the first names it and the rest go
+# in the subject: a chained firing recorded as one arm reads as having done less than it did,
+# and the old dispatch recorded whichever arm its `case` happened to list first. #231.
+ARMS=""
+ARM_N=0
+while :; do
+  read_invocation "$CMD" "" "$ARM_N"
+  [ -n "$ARM" ] || break
+  ARMS="$ARMS${ARMS:+ · }$ARM"
+  ARM_N=$((ARM_N + 1))
+done
+case "$ARMS" in
+  "")
+    arc_log_outcome ok "not a tracker write"
+    exit 0
+    ;;
+  *" · "*) arc_log_event "${ARMS%% ·*}" "chained: $ARMS" ;;
+  *)       arc_log_event "$ARMS" ;;
+esac
 
 CWD="$(json_string cwd)"
 [ -d "$CWD" ] || CWD="$PWD"
 
 FINDINGS=""
-add() { FINDINGS="$FINDINGS
-  - $1"; }
+
+# ONE FINDING PER CLAIM, however many arms produced it. A chain naming the same object twice —
+# `gh pr edit 200 --add-label a && gh pr merge 200` — runs the shared checks in both arms and
+# printed each finding verbatim twice. A finding carries its object's number, so identical text
+# is the identical claim. #231.
+# The match is anchored at BOTH ends — the stored finding must run to the start of the next one
+# or to the end of the string — so a finding whose text is a proper prefix of one already added
+# is still added.
+add() {
+  case "$FINDINGS" in
+    *"
+  - $1
+  - "*) return 0 ;;
+    *"
+  - $1") return 0 ;;
+  esac
+  FINDINGS="$FINDINGS
+  - $1"
+}
+
+# The object a check was about, appended to any check name that carries no value of its own.
+# A chained command runs the same check once per arm, and two bare `placeholder-scan` marks in
+# one entry cannot say which arm failed — worse, `arc-merge-keyword` landed in `checked:` as a
+# pass and in `skipped:` as "not a `gh pr merge`" in the SAME entry, which is a record
+# contradicting itself. Empty outside a per-object check, so a single-arm firing reads exactly
+# as it always did. `_arc_log_mark` strips at the first `=`, so the declared-check bookkeeping
+# is unaffected. A check that already carries a value takes the object INSIDE it —
+# `milestone=pr-200:Dogfood`, not `milestone=pr-200=Dogfood`. #231.
+LOG_OBJ=""
+
+# How many creates of each kind this firing has resolved a URL for. See the create arm below.
+CREATE_N_ISSUE=0
+CREATE_N_PR=0
 
 # Scaffolding that survived into a body. Each of these was a real case.
 scan_placeholders() {
   local body="$1" what="$2" hit
   hit="$(printf '%s' "$body" | grep -nE '\bTBD\b|\bXXX\b|\bTODO\b|placeholder|<value>|<link>|<N>|YYYY-MM-DD' | head -3)"
   if [ -n "$hit" ]; then
-    arc_log_fail placeholder-scan
+    arc_log_fail "placeholder-scan${LOG_OBJ:+=$LOG_OBJ}"
     add "$what still contains template scaffolding: $(printf '%s' "$hit" | tr '\n' ';')"
   else
-    arc_log_pass placeholder-scan
+    arc_log_pass "placeholder-scan${LOG_OBJ:+=$LOG_OBJ}"
   fi
 }
 
@@ -321,8 +386,8 @@ scan_dates() {
       add "$what carries a date that does not make sense: $year"
     fi
   done
-  [ "$bad" = 1 ] && arc_log_fail date-sanity
-  [ "$bad" = 1 ] || arc_log_pass date-sanity
+  [ "$bad" = 1 ] && arc_log_fail "date-sanity${LOG_OBJ:+=$LOG_OBJ}"
+  [ "$bad" = 1 ] || arc_log_pass "date-sanity${LOG_OBJ:+=$LOG_OBJ}"
 }
 
 # A `Spawned` section heading, which is not a shape this repo has.
@@ -375,10 +440,10 @@ scan_spawned_heading() {
   ' | head -3)"
 
   if [ -n "$hit" ]; then
-    arc_log_fail spawned-heading
+    arc_log_fail "spawned-heading${LOG_OBJ:+=$LOG_OBJ}"
     add "$what carries a \`Spawned\` heading: $(printf '%s' "$hit" | tr '\n' ';') There is no \`Spawned\` section. A unit of work is a row in the \`Related\` table — \`| **Spawned** | [#NN](…) | <one clause> |\`, three columns — and a finding that is not a unit of work goes in the dev-log, not the tracker. skills/issue-write, *Related — one table, four kinds*."
   else
-    arc_log_pass spawned-heading
+    arc_log_pass "spawned-heading${LOG_OBJ:+=$LOG_OBJ}"
   fi
   return 0
 }
@@ -399,7 +464,7 @@ scan_title() {
   local title="$1" what="$2" body="${3:-}" bodyfile="" line out rc c pat
   if [ ! -f "$TITLE_LIB" ]; then
     for c in issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type; do
-      arc_log_skip "$c" "tools/verify-tracker-body.sh is missing"
+      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tools/verify-tracker-body.sh is missing"
     done
     return 0
   fi
@@ -422,7 +487,7 @@ scan_title() {
   # disagreeing with what was said.
   if [ "$rc" -ne 0 ]; then
     for c in issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type; do
-      arc_log_skip "$c" "tools/verify-tracker-body.sh exited $rc"
+      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tools/verify-tracker-body.sh exited $rc"
     done
     [ -n "$bodyfile" ] && rm -f "$bodyfile"
     return 0
@@ -441,16 +506,16 @@ FINDINGS
       issue-title-clause) pat='carries a clause after the deliverable' ;;
       issue-title-scope)  pat='names more than one deliverable' ;;
     esac
-    if printf '%s' "$out" | grep -qE "$pat"; then arc_log_fail "$c"; else arc_log_pass "$c"; fi
+    if printf '%s' "$out" | grep -qE "$pat"; then arc_log_fail "$c${LOG_OBJ:+=$LOG_OBJ}"; else arc_log_pass "$c${LOG_OBJ:+=$LOG_OBJ}"; fi
   done
 
   # The scope-type check reads the body, so with no body it did not run at all.
   if [ -z "$bodyfile" ]; then
-    arc_log_skip issue-scope-type "no body to read"
+    arc_log_skip "issue-scope-type${LOG_OBJ:+=$LOG_OBJ}" "no body to read"
   elif printf '%s' "$out" | grep -qE 'the body describes a decomposition'; then
-    arc_log_fail issue-scope-type
+    arc_log_fail "issue-scope-type${LOG_OBJ:+=$LOG_OBJ}"
   else
-    arc_log_pass issue-scope-type
+    arc_log_pass "issue-scope-type${LOG_OBJ:+=$LOG_OBJ}"
   fi
 
   [ -n "$bodyfile" ] && rm -f "$bodyfile"
@@ -647,11 +712,11 @@ check_close() {
     # Absent, the check does not run. Fail open is the rule; a missing helper is not a
     # reason to speak up about a link nothing read.
     if [ ! -f "$link_lib" ]; then
-      arc_log_skip close-link "tools/verify-linked-branch.sh is missing"
+      arc_log_skip "close-link=issue-$num" "tools/verify-linked-branch.sh is missing"
       return 0
     fi
     if ! command -v gh >/dev/null 2>&1; then
-      arc_log_skip close-link "gh is not on PATH"
+      arc_log_skip "close-link=issue-$num" "gh is not on PATH"
       return 0
     fi
 
@@ -678,7 +743,7 @@ check_close() {
       1) linked=0 ;;
       # Exit 2 is "the read could not be made", which is a different answer from "no link"
       # and must not be reported as one. That distinction is the whole point of that tool.
-      *) arc_log_skip close-link "the link read could not be made" ; return 0 ;;
+      *) arc_log_skip "close-link=issue-$num" "the link read could not be made" ; return 0 ;;
     esac
   fi
 
@@ -688,10 +753,16 @@ check_close() {
   return 0
 }
 
-# The close invocation, asked for by name: `gh pr merge 200 && gh issue close 163` names two
-# arms and the close is not the one the dispatch landed on. Its checks are owed either way.
-read_invocation "$CMD" issue-close
-[ -n "$ARM" ] && check_close
+# EVERY close the command names, asked for by name. `gh pr merge 200 && gh issue close 163`
+# names two arms and the close is not the one the dispatch lands on; `gh issue close 1 &&
+# gh issue close 2` names two closes. Each is owed its own check, against its own number. #231.
+CLOSE_N=0
+while :; do
+  read_invocation "$CMD" issue-close "$CLOSE_N"
+  [ -n "$ARM" ] || break
+  check_close
+  CLOSE_N=$((CLOSE_N + 1))
+done
 
 # ---- a draft being marked ready --------------------------------------------------
 # The issue body's `Required` boxes are the acceptance criteria, and nothing mechanical ever
@@ -765,30 +836,45 @@ $(printf '%s' "$out" | sed 's/^/    /')" ;;
     # Anything else is "the read could not be made", which is a different answer from "there
     # are open boxes" and must not be reported as one. Exit 2 from the tool, 124 from
     # `timeout`, 3 from an unreadable directory all land here.
-    *) arc_log_skip issue-boxes "the box read could not be made" ;;
+    *) arc_log_skip "issue-boxes=pr-${num:-?}" "the box read could not be made" ;;
   esac
   return 0
 }
 
-# By name, for `check_close`'s reason.
-read_invocation "$CMD" pr-ready
-[ -n "$ARM" ] && check_pr_ready
+# By name and in a loop, for `check_close`'s reasons.
+READY_N=0
+while :; do
+  read_invocation "$CMD" pr-ready "$READY_N"
+  [ -n "$ARM" ] || break
+  check_pr_ready
+  READY_N=$((READY_N + 1))
+done
 
-# A close, and a ready, are the whole command unless chained to a write that has its own
-# checks below. Returning rather than exiting, and testing that here, is what keeps
-# `gh pr merge 201 && gh issue close 163` reaching the PR checks it also deserves.
-# From here on `GH_SUB`, `GH_VERB` and `GH_ARGS` are the body-carrying invocation's — the one
-# the checks below read a tracker object for.
-read_invocation "$CMD" write
-if [ -z "$ARM" ]; then
-  [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
-  exit 0
-fi
+# ---- one body-carrying write ------------------------------------------------------
+# `GH_SUB`, `GH_VERB` and `GH_ARGS` are the invocation this call is for, and the caller below
+# runs this once per write the command names. A close and a ready are handled above; the three
+# arms here are the ones that read a tracker object back.
+#
+# THE BODY IS NOT INDENTED AND NOT OTHERWISE CHANGED. Four hundred lines re-indented is four
+# hundred lines of diff over a change that is a loop, and the diff is the review surface. For
+# the same reason nothing here is `local` — a declaration list that long goes stale — so every
+# variable a second call could read from the first is cleared on entry instead.
+check_write() {
+# `LOG_OBJ` is set twice: to the arm's POSITION here, so the offline fixture path — which runs
+# the scanners before any number exists — still distinguishes a chain's arms, and to the object
+# itself once `NUM` is known. The first arm carries neither, so a single-arm firing's entry
+# reads exactly as it always did.
+LOG_OBJ=""
+[ "$WRITE_N" = 0 ] || LOG_OBJ="arm$((WRITE_N + 1))"
+NUM=""; BODY=""; BASE=""; TITLE=""; DEFAULT=""; META=""; SPAWN_PARENT=""
+MILESTONE=""; HAS_MILESTONE=""; LINKED=""; PRHEAD=""; TRUNK=""; WANTS_CLOSE=0
+HEADBR=""; ARCBASE=""; ARCNUM=""; WHAT=""
+MC_ISSUE=""; MC_PARENT=""; MC_STATE=""; MC_WHY=""; MC_RUNNER=""
 
 # A fixture case answers every question `gh` would have answered, so it must not be skipped
 # for want of `gh` — that turns a case that should report into a silent pass.
 if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE" ]; then
-  command -v gh >/dev/null 2>&1 || exit 0
+  command -v gh >/dev/null 2>&1 || return 0
 fi
 
 # The issue scanners take the offline path only when no PR fixture is present. A PR case
@@ -806,37 +892,53 @@ if [ -z "$FIXTURE_PR_BASE" ] && { [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE
     "issue create")
       SPAWN_PARENT="$(branch_parent "$(head_branch)")"
       if [ -z "$SPAWN_PARENT" ]; then
-        arc_log_skip spawn-parent "the branch names no issue or PR"
+        arc_log_skip "spawn-parent${LOG_OBJ:+=$LOG_OBJ}" "the branch names no issue or PR"
       else
         check_spawn_parent "$FIXTURE_BODY" "the new issue" "issue-new" \
           "It was created while the branch named ${SPAWN_PARENT%% *} #${SPAWN_PARENT##* }, so something caused it to exist and nothing says what."
       fi
       ;;
   esac
-  [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
-  exit 0
+  return 0
 fi
 
-# The number of whatever was just written. `gh` prints the URL on create; on edit the number
-# is an argument.
-# A create names no number — `gh` prints the URL, and the payload carries it. Asking `GH_ARGS`
-# for one there reads whatever bare number the flags happen to carry.
+# The number of whatever was just written, resolved PER ARM. It used to be resolved once for the
+# whole command from `(issue|pr) (edit|merge|view) +#?[0-9]+` and taken by whichever arm the
+# substring dispatch landed on, so `gh pr merge 201 && gh issue close 163` sent the PR's 201 to
+# the issue arm and read a tracker object nobody had touched. #231.
+#
+# A create names no number — `gh` prints the URL and the payload carries it. Asking `GH_ARGS`
+# for one there reads whatever bare number the flags happen to hold, and
+# `gh pr create --fill --draft && sleep 2` resolved PR #2.
 case "$GH_VERB" in
   create) NUM="" ;;
   *) case "$GH_SUB" in issue) NUM="$(invocation_number issues)" ;; *) NUM="$(invocation_number pull)" ;; esac ;;
 esac
-[ -n "$NUM" ] || NUM="$(printf '%s' "$INPUT" | grep -oE 'https://github\.com/[^/]+/[^/]+/(issues|pull)/[0-9]+' | head -1 | grep -oE '[0-9]+$')"
-[ -n "$NUM" ] || exit 0
+# THE URL OF THE RIGHT KIND, AND THE RIGHT ONE OF THAT KIND. A single `(issues|pull)` grep
+# taking the first match sends an issue's number to `gh pr view` when a create of each is
+# chained, and gives two chained creates of the same kind the same number — the first one's,
+# so the second is never checked and the first's findings print twice. `CREATE_N_*` counts the
+# creates of each kind this firing has already resolved.
+if [ -z "$NUM" ]; then
+  case "$GH_SUB" in
+    issue) NUM="$(payload_url_number issues "$CREATE_N_ISSUE")"; CREATE_N_ISSUE=$((CREATE_N_ISSUE + 1)) ;;
+    *)     NUM="$(payload_url_number pull   "$CREATE_N_PR")";    CREATE_N_PR=$((CREATE_N_PR + 1)) ;;
+  esac
+fi
+[ -n "$NUM" ] || return 0
+
+# Every check from here is about ONE tracker object, and the entry has to say which.
+LOG_OBJ="$GH_SUB-$NUM"
 
 case "$GH_SUB" in
   issue)
     BODY="$(gh issue view "$NUM" --repo "$(git -C "$CWD" remote get-url origin 2>/dev/null)" --json body -q .body 2>/dev/null)" \
       || BODY="$(cd "$CWD" && gh issue view "$NUM" --json body -q .body 2>/dev/null)"
-    [ -n "$BODY" ] || exit 0
+    [ -n "$BODY" ] || return 0
     scan_placeholders "$BODY" "issue #$NUM"
     scan_dates "$BODY" "issue #$NUM"
-    # Reached on `gh issue create` and `gh issue edit` only — a close returns above, before
-    # any of the scanners, because it carries no body to read.
+    # Reached on `gh issue create` and `gh issue edit` only. A close never enters `check_write`
+    # at all — the `write` filter excludes it — because it carries no body to read.
     scan_spawned_heading "$BODY" "issue #$NUM"
 
     ITITLE="$(cd "$CWD" && gh issue view "$NUM" --json title -q .title 2>/dev/null)"
@@ -849,7 +951,7 @@ case "$GH_SUB" in
       create)
         SPAWN_PARENT="$(branch_parent "$(head_branch)")"
         if [ -z "$SPAWN_PARENT" ]; then
-          arc_log_skip spawn-parent "the branch names no issue or PR"
+          arc_log_skip "spawn-parent${LOG_OBJ:+=$LOG_OBJ}" "the branch names no issue or PR"
         else
           check_spawn_parent "$BODY" "issue #$NUM" "issue-$NUM" \
             "It was created while the branch named ${SPAWN_PARENT%% *} #${SPAWN_PARENT##* }, so something caused it to exist and nothing says what."
@@ -878,7 +980,7 @@ case "$GH_SUB" in
       PRHEAD=""
     else
       META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,headRefName,milestone,title 2>/dev/null)"
-      [ -n "$META" ] || exit 0
+      [ -n "$META" ] || return 0
 
       # `closingIssuesReferences`, not `baseRefName`. `gh` returns the fields SORTED, so
       # `baseRefName` precedes `body` and that terminator never matched — the extracted body
@@ -961,19 +1063,19 @@ case "$GH_SUB" in
     # String comparisons throughout — `HAS_MILESTONE` carries `unknown`, and `-eq` on it is
     # an error rather than a false.
     if [ "$HAS_MILESTONE" = unknown ]; then
-      arc_log_skip milestone "the milestone field could not be read"
+      arc_log_skip "milestone${LOG_OBJ:+=$LOG_OBJ}" "the milestone field could not be read"
     elif [ "$WANTS_CLOSE" -eq 1 ]; then
       if [ "$HAS_MILESTONE" = 0 ]; then
-        arc_log_pass milestone=none
+        arc_log_pass "milestone=${LOG_OBJ:+$LOG_OBJ:}none"
       else
-        arc_log_fail "milestone=$MILESTONE"
+        arc_log_fail "milestone=${LOG_OBJ:+$LOG_OBJ:}$MILESTONE"
         add "PR #$NUM closes an issue and carries milestone \`$MILESTONE\`. The issue is the unit of work and already carries it — remove the milestone from the PR, or the same work counts twice."
       fi
     elif [ "$HAS_MILESTONE" = 0 ]; then
-      arc_log_fail milestone=none
+      arc_log_fail "milestone=${LOG_OBJ:+$LOG_OBJ:}none"
       add "PR #$NUM closes no issue, so it is the unit of work and needs a milestone. Without one it drops out of the milestone view, which is where the arc reads as one unit."
     else
-      arc_log_pass "milestone=$MILESTONE"
+      arc_log_pass "milestone=${LOG_OBJ:+$LOG_OBJ:}$MILESTONE"
     fi
 
     # An issue branch's PR belongs to its arc. Targeting anything else — the trunk, a
@@ -988,7 +1090,7 @@ case "$GH_SUB" in
     HEADBR="$(head_branch)"
     case "$HEADBR" in
       arc/*-issue-[0-9]*) ;;
-      *) arc_log_skip pr-base "HEAD is not an arc issue branch" ;;
+      *) arc_log_skip "pr-base${LOG_OBJ:+=$LOG_OBJ}" "HEAD is not an arc issue branch" ;;
     esac
     case "$HEADBR" in
       arc/*-issue-[0-9]*)
@@ -1003,12 +1105,12 @@ case "$GH_SUB" in
         # the check off silently.
         ARCBASE="$(printf '%s' "$HEADBR" | sed 's#-issue-[0-9][0-9]*.*##')"
         if [ -z "$ARCBASE" ] || [ -z "$BASE" ]; then
-          arc_log_skip pr-base "the base or the arc branch could not be read"
+          arc_log_skip "pr-base${LOG_OBJ:+=$LOG_OBJ}" "the base or the arc branch could not be read"
         elif [ "$BASE" = "$ARCBASE" ]; then
-          arc_log_pass "pr-base=$BASE"
+          arc_log_pass "pr-base=${LOG_OBJ:+$LOG_OBJ:}$BASE"
         fi
         if [ -n "$ARCBASE" ] && [ -n "$BASE" ] && [ "$BASE" != "$ARCBASE" ]; then
-          arc_log_fail "pr-base=$BASE"
+          arc_log_fail "pr-base=${LOG_OBJ:+$LOG_OBJ:}$BASE"
           WHAT="\`$BASE\`"
           [ "$BASE" = "$TRUNK" ] && WHAT="trunk branch \`$BASE\`"
           add "PR #$NUM targets $WHAT from an issue branch of \`$ARCBASE\`. It belongs to its arc — base it on \`$ARCBASE\` so the arc PR carries it."
@@ -1021,17 +1123,17 @@ case "$GH_SUB" in
     # amount of correct linking provides.
     case "$BASE" in
       arc/*) ;;
-      *) arc_log_skip arc-prefix "the base is not an arc branch" ;;
+      *) arc_log_skip "arc-prefix${LOG_OBJ:+=$LOG_OBJ}" "the base is not an arc branch" ;;
     esac
     case "$BASE" in
       arc/*)
         ARCNUM="$(printf '%s' "$BASE" | sed -n 's#^arc/\([0-9][0-9]*\).*#\1#p')"
-        [ -n "$ARCNUM" ] || arc_log_skip arc-prefix "the base name carries no number"
+        [ -n "$ARCNUM" ] || arc_log_skip "arc-prefix${LOG_OBJ:+=$LOG_OBJ}" "the base name carries no number"
         if [ -n "$ARCNUM" ] && printf '%s' "$TITLE" | grep -q "^arc-$ARCNUM:"; then
-          arc_log_pass "arc-prefix=arc-$ARCNUM"
+          arc_log_pass "arc-prefix=${LOG_OBJ:+$LOG_OBJ:}arc-$ARCNUM"
         fi
         if [ -n "$ARCNUM" ] && ! printf '%s' "$TITLE" | grep -q "^arc-$ARCNUM:"; then
-          arc_log_fail "arc-prefix=arc-$ARCNUM"
+          arc_log_fail "arc-prefix=${LOG_OBJ:+$LOG_OBJ:}arc-$ARCNUM"
           add "PR #$NUM targets \`$BASE\` but its title does not start with \`arc-$ARCNUM:\`. Without it the PR list has no thread back to the arc."
         fi
         ;;
@@ -1044,11 +1146,11 @@ case "$GH_SUB" in
     # branch, and a keyword there does bind.
     # `WANTS_CLOSE` is set by the milestone check above, which needs the same answer.
     if [ "$WANTS_CLOSE" -eq 1 ] && [ "$LINKED" -eq 1 ]; then
-      arc_log_pass closing-keyword=bound
+      arc_log_pass "closing-keyword=${LOG_OBJ:+$LOG_OBJ:}bound"
     elif [ "$WANTS_CLOSE" -eq 0 ]; then
-      arc_log_skip closing-keyword "the body carries no closing keyword"
+      arc_log_skip "closing-keyword${LOG_OBJ:+=$LOG_OBJ}" "the body carries no closing keyword"
     else
-      arc_log_fail closing-keyword=unbound
+      arc_log_fail "closing-keyword=${LOG_OBJ:+$LOG_OBJ:}unbound"
     fi
 
     if [ "$WANTS_CLOSE" -eq 1 ] && [ "$LINKED" -eq 0 ]; then
@@ -1070,7 +1172,7 @@ case "$GH_SUB" in
     case "$GH_VERB" in
       create)
         if [ "$WANTS_CLOSE" -ne 0 ] || [ "$LINKED" -ne 0 ]; then
-          arc_log_skip spawn-parent "not a no-issue \`gh pr create\`"
+          arc_log_skip "spawn-parent${LOG_OBJ:+=$LOG_OBJ}" "not a no-issue \`gh pr create\`"
         else
           check_spawn_parent "$BODY" "PR #$NUM" "pr-$NUM" \
             "It closes no issue, so nothing else will ever say where it came from — m46 §6."
@@ -1085,17 +1187,17 @@ case "$GH_SUB" in
     # wrong: it misses the arc PR, which targets the trunk, and it fires on every issue PR
     # merging into the arc — where closure correctly defers to the arc PR. #210.
     if [ -z "$TRUNK" ] || [ "$BASE" != "$TRUNK" ]; then
-      arc_log_skip arc-merge-keyword "the base is not the trunk"
+      arc_log_skip "arc-merge-keyword${LOG_OBJ:+=$LOG_OBJ}" "the base is not the trunk"
     else
       case "$GH_VERB" in
-        merge) [ "$WANTS_CLOSE" -eq 0 ] || arc_log_pass arc-merge-keyword ;;
-        *) arc_log_skip arc-merge-keyword "not a \`gh pr merge\`" ;;
+        merge) [ "$WANTS_CLOSE" -eq 0 ] || arc_log_pass "arc-merge-keyword${LOG_OBJ:+=$LOG_OBJ}" ;;
+        *) arc_log_skip "arc-merge-keyword${LOG_OBJ:+=$LOG_OBJ}" "not a \`gh pr merge\`" ;;
       esac
     fi
 
     if [ "$WANTS_CLOSE" -eq 0 ] && [ -n "$TRUNK" ] && [ "$BASE" = "$TRUNK" ]; then
       case "$GH_VERB" in
-        merge) arc_log_fail arc-merge-keyword=none
+        merge) arc_log_fail "arc-merge-keyword=${LOG_OBJ:+$LOG_OBJ:}none"
                          add "PR #$NUM merges to trunk branch \`$TRUNK\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
       esac
     fi
@@ -1138,21 +1240,21 @@ case "$GH_SUB" in
     case "$GH_VERB" in
       merge)
         if [ -z "$BASE" ] || [ -z "$DEFAULT" ]; then
-          arc_log_skip merge-close "the base or the default branch could not be read"
+          arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the base or the default branch could not be read"
         elif [ "$BASE" = "$DEFAULT" ]; then
-          arc_log_skip merge-close "the base IS the default branch, so the keyword binds"
+          arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the base IS the default branch, so the keyword binds"
         elif [ -n "$TRUNK" ] && [ "$BASE" = "$TRUNK" ]; then
-          arc_log_skip merge-close "the base IS the trunk"
+          arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the base IS the trunk"
         else
           [ -n "${PRHEAD:-}" ] || PRHEAD="$(head_branch)"
           MC_PARENT="$(branch_parent "${PRHEAD:-}")"
           case "$MC_PARENT" in
             "issue "*) MC_ISSUE="${MC_PARENT##* }" ;;
-            *) arc_log_skip merge-close "the head branch names no issue" ;;
+            *) arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the head branch names no issue" ;;
           esac
         fi
         ;;
-      *) arc_log_skip merge-close "not a \`gh pr merge\`" ;;
+      *) arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "not a \`gh pr merge\`" ;;
     esac
 
     if [ -n "$MC_ISSUE" ]; then
@@ -1177,7 +1279,7 @@ case "$GH_SUB" in
         fi
       fi
       case "$MC_STATE" in
-        '') arc_log_skip merge-close "$MC_WHY" ;;
+        '') arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "$MC_WHY" ;;
         OPEN|open)
           arc_log_fail "merge-close=issue-$MC_ISSUE"
           add "PR #$NUM merged into \`$BASE\` and issue #$MC_ISSUE is still open. A closing keyword cannot bind on a base that is not the default branch, so nothing closed it and nothing will. Attach the link by hand — PR #$NUM → Development panel → #$MC_ISSUE, which no API can do — then \`gh issue close $MC_ISSUE\`."
@@ -1187,6 +1289,21 @@ case "$GH_SUB" in
     fi
     ;;
 esac
+return 0
+}
+
+# EVERY WRITE THE COMMAND NAMES, not the first. #230 gave the close and the ready arms a lookup
+# by name, so a chain already reached those; what was left is that only ONE body-carrying write
+# ran. `gh issue edit 38 --body-file b.md && gh pr merge 200` checked the issue and left the
+# merge unread, and `gh pr edit 200 … && gh pr edit 201 …` checked 200 twice rather than 200 and
+# then 201. #231.
+WRITE_N=0
+while :; do
+  read_invocation "$CMD" write "$WRITE_N"
+  [ -n "$ARM" ] || break
+  check_write
+  WRITE_N=$((WRITE_N + 1))
+done
 
 [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
 
