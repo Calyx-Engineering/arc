@@ -12,8 +12,8 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
-# checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
+# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 
@@ -384,18 +384,23 @@ FIXTURE_BOXES_OUT="$(fixture arc_test_boxes_out)"
 # `pr<NN>` form is untestable through a fixture repository. A case names the branch instead.
 FIXTURE_BRANCH="$(fixture arc_test_branch)"
 
+# The state of the issue a merged work PR was supposed to close. Supplied directly because the
+# merge-close check is the one whose whole subject is what the tracker holds AFTER a merge, and
+# a case cannot merge a PR.
+FIXTURE_ISSUE_STATE="$(fixture arc_test_issue_state)"
+
 # A payload that names a fixture key and yields no value from any of them is truncated, not an
 # invocation. Stay silent: falling through would send a half-named PR to a live `gh` read.
 case "$INPUT" in
   *'"arc_test_'*)
-    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT$FIXTURE_BRANCH" ]; then
+    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT$FIXTURE_BRANCH$FIXTURE_ISSUE_STATE" ]; then
       # Named, rather than left to the `not reached` default. This is the one condition the
       # declaration calls out for every check at once, and a reason on the record is what
       # separates "the payload was truncated" from "the hook simply did not get that far".
       for c in placeholder-scan date-sanity spawned-heading milestone arc-prefix \
-               closing-keyword arc-merge-keyword close-link issue-boxes spawn-parent \
-               issue-title-length issue-title-list issue-title-clause issue-title-scope \
-               issue-scope-type pr-base; do
+               closing-keyword arc-merge-keyword merge-close close-link issue-boxes \
+               spawn-parent issue-title-length issue-title-list issue-title-clause \
+               issue-title-scope issue-scope-type pr-base; do
         arc_log_skip "$c" "the payload names a fixture key whose value could not be parsed"
       done
       arc_log_outcome ok "a truncated fixture payload — nothing safe to read"
@@ -688,8 +693,11 @@ case "$CMD" in
       # a `META` carrying neither `"milestone":null` nor `"milestone":{`.
       [ "$MILESTONE" = unreadable ] && HAS_MILESTONE=unknown
       LINKED="${FIXTURE_LINKED:-1}"
+      # No live PR to read a head ref off. The merge-close check falls back to `head_branch`,
+      # which a case steers with `arc_test_branch` or with the fixture repository it names.
+      PRHEAD=""
     else
-      META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
+      META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,headRefName,milestone,title 2>/dev/null)"
       [ -n "$META" ] || exit 0
 
       # `closingIssuesReferences`, not `baseRefName`. `gh` returns the fields SORTED, so
@@ -734,6 +742,19 @@ case "$CMD" in
       esac
       LINKED=1
       printf '%s' "$META" | grep -q '"closingIssuesReferences":\[\]' && LINKED=0
+
+      # THE PR'S OWN HEAD BRANCH, NOT THIS CHECKOUT'S. `gh pr merge <NN>` runs from anywhere —
+      # an orchestrator merging a run's PR is not standing on that run's branch — and the
+      # merge-close check below reads the issue number out of this. `head_branch` is the right
+      # answer for pr-base, which is about the PR being created from here, and the wrong one
+      # here. Falls back to it when the field cannot be read, which is where a fixture case
+      # lands: a payload supplies no META at all.
+      #
+      # `tail -n1`, for `TITLE`'s reason above. `gh` sorts the fields, so `body` precedes
+      # `headRefName`, and a body quoting the literal `"headRefName":"…"` puts a second line
+      # in front of the real one. A two-line branch name yields no issue number, which turns
+      # `merge-close` off in silence — the shape this hook exists to catch.
+      PRHEAD="$(printf '%s' "$META" | grep -oE '"headRefName":"[^"]*"' | tail -n1 | sed 's/.*:"//; s/"$//')"
     fi
 
     TRUNK="$(resolve_trunk "$DEFAULT")"
@@ -896,6 +917,92 @@ case "$CMD" in
       case "$CMD" in
         *"gh pr merge"*) arc_log_fail arc-merge-keyword=none
                          add "PR #$NUM merges to trunk branch \`$TRUNK\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
+      esac
+    fi
+
+    # ---- a work PR merged, and its issue is still open ---------------------------
+    # m12 §4 row 3: "PR merged → issue actually closed → `issue.state`". Nothing read it.
+    #
+    # WHY THIS IS THE ONE THE KEYWORD CANNOT COVER. A work PR inside an arc targets the arc
+    # branch, never the default, so `Closes #NN` in its body binds nothing and closes nothing —
+    # that is m42's whole finding, and the reason m42 offers to move the default branch at all.
+    # Where the flip is off — more than one collaborator, a protected trunk, no admin rights —
+    # closure is a manual act, and a manual act is one somebody forgets. The merge succeeds, the
+    # keyword is present and correct, and the issue silently stays open.
+    #
+    # THE BRANCH NAMES THE ISSUE, NOT THE KEYWORD. Reading `closingIssuesReferences` here would
+    # be empty in exactly the case this check exists for, so the number comes from the head
+    # branch's `-issue-<NN>` — m46 §9's form, which `createLinkedBranch` put there.
+    #
+    # WHERE A KEYWORD BINDS, THIS CHECK MUST NOT RUN, AND `TRUNK` ALONE DOES NOT SAY SO. Two
+    # bases close natively and both have to be excluded:
+    #
+    #   BASE = DEFAULT  GitHub parses the keyword and the merge closes the issue. With m42's
+    #                   flip on that base is the ARC branch, not the trunk — so a trunk-only
+    #                   guard runs the check on every work PR in a flipped repo and prints
+    #                   "a closing keyword cannot bind on a base that is not the default
+    #                   branch" about a base that IS the default. #183 and #210's class again:
+    #                   comparing against the wrong branch. It also invents a race, since a
+    #                   natively-closing issue can still read OPEN a second after the merge
+    #   BASE = TRUNK    the arc PR, whose keywords are `arc-merge-keyword`'s question. Excluded
+    #                   separately because the flip makes DEFAULT and TRUNK different branches,
+    #                   and with the flip on the arc PR's base is the trunk and not the default
+    #
+    # An unreadable DEFAULT skips rather than guesses — fail open, like everything else here.
+    #
+    # POST-MERGE, SO THERE IS NOTHING TO DENY. The finding hands over the two manual steps: the
+    # Development-panel click, which no API can make — tested in m42, and
+    # `POST /repos/{o}/{r}/issues/{n}/links` does not exist — and then the close, which needs no
+    # admin right.
+    MC_ISSUE=""
+    case "$CMD" in
+      *"gh pr merge"*)
+        if [ -z "$BASE" ] || [ -z "$DEFAULT" ]; then
+          arc_log_skip merge-close "the base or the default branch could not be read"
+        elif [ "$BASE" = "$DEFAULT" ]; then
+          arc_log_skip merge-close "the base IS the default branch, so the keyword binds"
+        elif [ -n "$TRUNK" ] && [ "$BASE" = "$TRUNK" ]; then
+          arc_log_skip merge-close "the base IS the trunk"
+        else
+          [ -n "${PRHEAD:-}" ] || PRHEAD="$(head_branch)"
+          MC_PARENT="$(branch_parent "${PRHEAD:-}")"
+          case "$MC_PARENT" in
+            "issue "*) MC_ISSUE="${MC_PARENT##* }" ;;
+            *) arc_log_skip merge-close "the head branch names no issue" ;;
+          esac
+        fi
+        ;;
+      *) arc_log_skip merge-close "not a \`gh pr merge\`" ;;
+    esac
+
+    if [ -n "$MC_ISSUE" ]; then
+      MC_STATE="$FIXTURE_ISSUE_STATE"
+      MC_WHY=""
+      if [ -z "$MC_STATE" ] && [ -n "$FIXTURE_PR_BASE" ]; then
+        # A fixture payload that supplies no state cannot reach a verdict, and must not go to
+        # the network to find one — an offline case that quietly makes a live read is not an
+        # offline case.
+        MC_WHY="the issue state was not supplied"
+      elif [ -z "$MC_STATE" ]; then
+        if ! command -v gh >/dev/null 2>&1; then
+          MC_WHY="gh is not on PATH"
+        else
+          # BOUNDED, for `check_close`'s reason: this is a synchronous PostToolUse hook and a
+          # hung call would hang the session. GNU's `timeout`, proven by `--version`, because
+          # Windows ships a `timeout.exe` of its own that rejects this syntax.
+          MC_RUNNER=""
+          timeout --version 2>/dev/null | grep -qi coreutils && MC_RUNNER="timeout 20"
+          MC_STATE="$(cd "$CWD" 2>/dev/null && $MC_RUNNER gh issue view "$MC_ISSUE" --json state -q .state 2>/dev/null)"
+          [ -n "$MC_STATE" ] || MC_WHY="the issue's state could not be read"
+        fi
+      fi
+      case "$MC_STATE" in
+        '') arc_log_skip merge-close "$MC_WHY" ;;
+        OPEN|open)
+          arc_log_fail "merge-close=issue-$MC_ISSUE"
+          add "PR #$NUM merged into \`$BASE\` and issue #$MC_ISSUE is still open. A closing keyword cannot bind on a base that is not the default branch, so nothing closed it and nothing will. Attach the link by hand — PR #$NUM → Development panel → #$MC_ISSUE, which no API can do — then \`gh issue close $MC_ISSUE\`."
+          ;;
+        *) arc_log_pass "merge-close=issue-$MC_ISSUE" ;;
       esac
     fi
     ;;

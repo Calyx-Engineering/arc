@@ -355,18 +355,70 @@ This is not a corner case in a nested-branch workflow — it is *every* issue PR
 | The default branch | **A defect.** The link should have formed |
 | An arc or integration branch | **Expected.** The link cannot form; it defers to the arc PR |
 
-**The fix is [m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md):
-point the default branch at the arc for its lifetime.** Where that is in force, keywords bind
-normally and the rest of this section does not apply. Where it is not — more than one
-collaborator, protected trunk — the following holds.
+**There are two routes, and the repository chooses one.**
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) points the default
+branch at the arc for its lifetime, and where that is in force keywords bind normally and the
+rest of this section does not apply. Where it is not — more than one collaborator, a protected
+trunk, no admin rights, or simply nobody flipped it — the manual route below is what runs.
+[m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md) §5 holds the comparison.
+**Neither is a fallback for the other**; do not propose switching a repository's default branch
+because a keyword did not bind.
 
 Two consequences:
 
-- On an issue PR into an arc branch, write the `Closes #NN` line anyway and say in the PR
-  that closure defers to the arc PR. The line documents intent even where it cannot bind.
-- **The arc PR into the default branch needs a `Closes` line for every issue the arc
-  consumed.** That is the one PR where an empty array is a real bug, and the only place the
-  issues actually close.
+- On an issue PR into an arc branch, write the `Closes #NN` line anyway — see *What the keyword
+  is still for* below — and then **run the manual route.** The issue closes at its own PR's
+  merge, by hand, not at the arc's close
+- **The arc PR into the default branch still needs a `Closes` line for every issue the arc
+  consumed.** That is the one PR where an empty array is a real bug. It is the backstop for
+  issues nobody closed, not the plan
+
+**"Closure defers to the arc PR" is the degraded state, not a practice**, and the earlier wording
+here read as though it were one. Leaving an issue open from its own merge until the arc's is what
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) lists as the *cost*
+of an unflipped repository — *"issues stay open after their work merges"* — and both mechanisms
+exist to remove it. Say it in the PR body so a reader is not left thinking the link failed; do
+not let it stand in for closing the issue.
+
+### The manual route — when a work PR merges into a non-default base
+
+**Do all three, in this order, immediately after the merge.** Not at the arc's close: the click
+is the one nobody remembers, and an issue left open reads as work not done.
+
+| | |
+|---|---|
+| 1 | **Merge the PR.** Nothing binds and nothing closes. `gh pr merge` reports success either way |
+| 2 | **Attach the link by hand.** The merged PR → the **Development** panel on its right-hand side → the issue. **No API does this.** No mutation creates or removes a hand-attached link, and `POST /repos/{o}/{r}/issues/{n}/links` does not exist — it 404s with full `repo` scope. This step needs a human, and saying so is part of the step |
+| 3 | **`gh issue close <NN>`.** Closing an issue is not an admin operation and needs no special right. Do it after step 2, not before — a closed issue with no link is what `hooks/tracker-verify`'s `close-link` check reports |
+
+**Do not skip step 2 because step 3 closes the issue anyway.** The link is what makes the work
+findable from the issue: without it the Development panel stays empty, and an issue that looks
+orphaned is indistinguishable from one that was forgotten.
+
+**Two things watch for the step nobody did.** Neither can do it for you.
+
+| | |
+|---|---|
+| `hooks/tracker-verify`'s `merge-close` | Fires on `gh pr merge` of a PR whose base is neither the default branch nor the trunk — that is, one where no keyword can bind — and reports when the issue its head branch names is still open |
+| `tools/arc-link-sweep.sh <milestone>` | The arc-checkpoint sweep — every issue in the milestone that is linked to nothing at all. m12 §4 |
+
+### What the keyword is still for
+
+**On a PR whose base is not the default branch, `Closes #NN` is recorded intent, not a working
+link.** It binds nothing, the merge closes nothing, and `closingIssuesReferences` comes back
+empty. Write it anyway, on its own last line — *Placement* above is unchanged by the base branch.
+
+| | |
+|---|---|
+| **What it does** | States which issue this PR was for, in one machine-readable line, in the record that outlives the branch |
+| **Who reads it** | The arc PR that later collects this work · `tools/verify-issue-boxes.sh`, which reads the bodies of the PRs that close an issue · a reviewer asking what a merged PR was for |
+| **What it does not do** | Close the issue, form a link, or populate the Development panel |
+
+**Say so in the PR body as well as writing the line**, so a reader is not left concluding the
+link failed: *"A keyword cannot bind on a base of `arc/NN-slug`, so #NN is linked and closed by
+hand at the merge."* Name the route, not a deferral — the issue closes here.
+Leaving the keyword out to avoid implying a link that does not exist is the wrong trade: it
+removes the only statement of what the PR was for and leaves the issue looking orphaned anyway.
 
 **Re-saving the body forces a re-parse, and the parse is not tied to the merge.** It cannot
 create a link the base branch forbids — that much still holds, and a failed re-save on an
@@ -408,11 +460,15 @@ the UI, which needs a human and cannot run unattended. This can.
 
 **A PR whose base was never the default branch.** The keyword cannot bind at all, so there is
 nothing for a re-save to re-parse — the base-branch rule above is not a timing problem and no
-edit gets around it. The fix is
-[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md), applied before
-the PR merges, and [#136](https://github.com/Calyx-Engineering/arc/issues/136) is where linking
-and closing without the flip is tracked. After the merge, on an unflipped base, the issue is
-closed by hand and the link is made by hand.
+edit gets around it. **The fix is *The manual route* above** — the click and the close, which
+work on any base and need no admin right. It is the same route whether the keyword was missed
+or could never have bound.
+
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) removes the
+question for a whole arc, but only if the flip is already in place before that arc's first PR is
+opened — it does not re-parse existing PRs. **So it is never the answer to a PR that has already
+merged, and never something to propose because one keyword did not bind.** Whether a repository
+runs with the flip is a decision made once, at arc start, by the user.
 
 **The claim is a test, not a memory.**
 [`tools/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tools/tracker-cases/binding/merged-pr-keyword-bind.md)

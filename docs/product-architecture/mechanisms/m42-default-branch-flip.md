@@ -159,7 +159,9 @@ left flipped.
 
 ## Related
 
-- [m12](m12-issue-linking.md) — the verification loop this removes most of the work from
+- [m12](m12-issue-linking.md) — **the other option, not one this replaces.** Where these
+  preconditions do not pass, m12 §5's manual route is what runs. The user chooses per repository
+  and neither is a default
 - [m13](m13-issue-write-back.md) — the base-branch case is the seventh entry in its evaluation set
 - [closing keywords and the base branch](../../arc-work/02-foundation/closing-keywords-and-base-branch.md) — the isolating comparison
 - [GitHub: linking a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue)
