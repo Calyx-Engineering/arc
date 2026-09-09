@@ -27,8 +27,9 @@ so a path stated as a skip condition is the established form, not a new one.
 
 **The path is declared as a `skips:` condition, not as a new field.** `camp-reports.md` gives
 `skips` one job: make a declared-but-unrun check visible, with the condition that suppressed it.
-"The write path" *is* that condition. Twelve of the thirteen checks are path-exclusive, so
-twelve entries.
+"The write path" *is* that condition. Twelve of the thirteen checks this issue found are
+path-exclusive, so twelve entries — thirteen of fourteen once
+[#268](https://github.com/Calyx-Engineering/arc/issues/268) adds its own in the same PR.
 
 **`ordered-actions-present` is the only both-path check, and it is named in the body.** It is
 read before the ordered actions are executed and required when the handoff is written, so it

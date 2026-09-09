@@ -2,7 +2,7 @@
 name: handoff
 description: Use when the user asks for the handoff to be read or written, in any wording — "read HANDOFF.md first", "read HANDOFF.md if it exists", "please read handoff", "ingest handoff", "get up to speed", "get back up to speed", "pick up from where we left off", "where did we leave off", "do these in order", "write the handoff", "give me the prompt for the next chat" — or runs /arc-next. Also fires when the request describes this work without naming it: copying or saving a session transcript to the arc's transcript directory, or being told the handoff was updated elsewhere. Fires when the read is wrapped inside other instructions rather than being the whole message: a read followed by a branch name and three further requests, or a read buried under "run autonomously", is still a handoff turn. Loading this skill does not answer the rest of the turn and does not replace another skill. When the same message also greets Camp or asks where things stand, that is a Camp turn as well — load camp too, on the same turn, rather than choosing between them. Covers the reading order, the staleness checks before acting on a handoff, what it holds, the ordered actions the next session executes, saving the transcript, and what belongs in the committed record instead.
 camp-reports: [handoff-written, handoff-read, transcript-saved]
-checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open]
+checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open, mode-row-agrees]
 skips:
   - handoff-exists (the write path — the handoff is being written, and its absence is what the write fixes)
   - transcript-saved (the read path — no handoff is being written, and the save is the write's first step)
@@ -16,6 +16,7 @@ skips:
   - commits-accounted (the write path — no handoff is being acted on)
   - open-prs-accounted (the write path — no handoff is being acted on)
   - first-action-issue-open (the write path — no handoff is being acted on)
+  - mode-row-agrees (the write path — no handoff is being acted on)
 ---
 
 # The handoff
@@ -72,7 +73,8 @@ done afterwards — including in another window, or by the user between sessions
 from it. Acting on a stale handoff is worse than having none, because it is specific and
 wrong.
 
-Run these before executing anything. They cost one command each.
+Run these before executing anything. They cost one command each — the last costs one command and
+a comparison against the arc-log, which the reading order has already opened.
 
 | Check | Stale when |
 |---|---|
@@ -83,6 +85,7 @@ Run these before executing anything. They cost one command each.
 | `git log --oneline -5` | The last commit is not one the handoff accounts for |
 | `gh pr list --state open` | An open PR the handoff calls merged, or says nothing about |
 | The issue in *Do these in order* row 1 | `gh issue view <NN> --json state` returns `CLOSED` |
+| **The *Execution mode* row, against the arc-log** | The row is absent, unreadable, or names a mode the arc-log's *How this arc is executed* does not grant |
 
 **Compare modification times, never the handoff's *Transcripts* table.** That table is
 curated — it names the few transcripts worth reading, not every file on disk — so measuring a
@@ -94,8 +97,27 @@ The saved transcript never trips this. The order at a break is fixed — save th
 then write the handoff — so the newest file is always older than `HANDOFF.md` by construction.
 
 **What it cannot see: a session that ran and saved no transcript.** Nothing on disk records
-it. The other six checks are what catch that one — a commit, a branch, or a PR the handoff
+it. The checks against the tree are what catch that one — a commit, a branch, or a PR the handoff
 does not account for.
+
+**The mode row is read with the command the hook reads it with** — the first table row whose
+first cell names the mode, `grep -m1 -iE` over `HANDOFF.md`, then the second cell with emphasis,
+backticks and **every space** removed, lowercased. [`hooks/mode-guard`](../../hooks/mode-guard) reads exactly that before
+every commit, push, PR and merge, so a check that located the row any other way could pass while
+the hook denies on the same file. **A cell that is not exactly `manual` or `autonomous` after that
+is unreadable, and the hook denies on it** — *Autonomous to wave 6*, or the template's own
+*Manual · Autonomous* left unedited, is not a mode. Read it here, where it costs a sentence,
+rather than at a denied commit. The arc-log side costs nothing extra: *How this
+arc is executed* is already row 3 of the reading order above.
+
+**Neither side is authority over the other's subject.** The arc-log is the plan and the handoff
+is this session, so a row that disagrees with it means the handoff is stale — the rule
+[`autonomy-set`](../autonomy-set/SKILL.md) states and
+[m40 §3](../../docs/product-architecture/mechanisms/m40-autonomy-switch.md) specifies. Quote both
+readings and stop, and **until it is settled the mode is manual** — absent or unreadable means
+manual, m40 §3. **The hook cannot settle this one**: it reads `HANDOFF.md` and never the arc-log,
+so a row saying autonomous is allowed by it whether the plan granted it or not. That gap is the
+reason this check is in the read path rather than left to the guard.
 
 **If any check disagrees, stop and report the specific contradiction** — what the handoff
 says, what the repository says. Do not reconcile it silently and do not proceed on a guess.

@@ -9,7 +9,8 @@
 # twenty wordings its description lists. The seven staleness checks lived only in the command, so
 # an opening that reached the skill got the read path with no check against the tree — 76e54966 is
 # that session — and an opening that reached the command got the checks without the skill's write
-# path and transcript rules. #208 moved them into the skill.
+# path and transcript rules. #208 moved them into the skill. #268 added the eighth — the mode
+# row read against the arc-log's stated mode — which lives here for the same reason the seven do.
 #
 # THE RULE THIS ENCODES. A cold start that loads `skills/handoff` and never touches `/arc-next`
 # runs the staleness checks. That is a property of where the content lives, so it is checkable as
@@ -82,6 +83,8 @@ selftest() {
   case_is 1 "a skip for a check not declared"       sed 's/^checks: \[handoff-exists, /checks: [handoff-present, /'
   case_is 1 "a name both skipped and both-path"     sed 's/^  - handoff-exists (/  - ordered-actions-present (/'
   case_is 1 "the both-path line deleted"            grep -v 'Both-path checks:'
+  case_is 1 "the mode row deleted"                  grep -vF '| **The *Execution mode* row'
+  case_is 1 "the mode-row parse rule deleted"       grep -vF 'grep -m1 -iE'
 }
 
 if [ "${1:-}" = "selftest" ]; then
@@ -111,9 +114,13 @@ if [ -n "$staleline" ] && [ -n "$execline" ] && [ "$staleline" -lt "$execline" ]
   SLICE=$(sed -n "${staleline},${execline}p" "$SKILL")
 fi
 
-# ---- the seven checks are in that slice --------------------------------------------------
+# ---- the eight checks are in that slice --------------------------------------------------
 # One probe per check, each the mechanical thing the check runs. m15 requires a check to cost one
-# command with one answer, so every one of them has a literal to match on.
+# command with one answer, so every one of them has a literal to match on. The eighth is split in
+# two: a markdown table cell splits on an unescaped `|` and its command is a regex made of them, so
+# the row states the condition and the prose below states the command. The probe here is the row —
+# anchored on the cell, not the phrase, so prose mentioning it elsewhere does not stand in for it —
+# and the command is a RULES probe.
 CHECKS="
 the handoff's title date|24 hours
 transcripts newer than the handoff|-newer HANDOFF.md
@@ -122,6 +129,7 @@ the tree|git status --short
 the commit log|git log --oneline
 open PRs|gh pr list --state open
 the first ordered action's issue|gh issue view
+the mode row, against the arc-log|| **The *Execution mode* row, against the arc-log**
 "
 
 missing=""
@@ -134,19 +142,21 @@ $CHECKS
 CHECKLIST
 
 if [ -z "$missing" ]; then
-  pass "all seven staleness checks are in $SKILL's read path"
+  pass "all eight staleness checks are in $SKILL's read path"
 else
-  fail "all seven staleness checks are in $SKILL's read path" \
+  fail "all eight staleness checks are in $SKILL's read path" \
        "a check the skill does not carry is one a skill-only cold start never runs" \
        "missing:$missing"
 fi
 
-# ---- the three rules that travel with them ------------------------------------------------
-# Each was written because a check misfired or was read as covering something it does not.
+# ---- the four rules that travel with them -------------------------------------------------
+# Three were written because a check misfired or was read as covering something it does not. The
+# fourth is the mode check's own command, which has nowhere else to live — see above.
 RULES="
 the mtime-not-the-table rule|modification times
 what the checks cannot see|saved no transcript
 the two exceptions that are not staleness|not staleness
+reading the mode row the hook's way|grep -m1 -iE
 "
 missingrule=""
 while IFS='|' read -r name probe; do
@@ -158,9 +168,9 @@ $RULES
 RULELIST
 
 if [ -z "$missingrule" ]; then
-  pass "the mtime rule, the blind spot and the two exceptions travel with them"
+  pass "the mtime rule, the blind spot, the two exceptions and the mode-row parse travel with them"
 else
-  fail "the mtime rule, the blind spot and the two exceptions travel with them" \
+  fail "the mtime rule, the blind spot, the two exceptions and the mode-row parse travel with them" \
        "the checks without them misfire — the transcript one tripped on every cold start" \
        "missing:$missingrule"
 fi
@@ -182,7 +192,9 @@ else
 fi
 
 # ---- no command file still carries them -----------------------------------------------------
-# Two copies of a rule drift. Each command keeps the typed-shortcut role and delegates.
+# Two copies of a rule drift. Each command keeps the typed-shortcut role and delegates. Both lists
+# are scanned, not only the checks: a literal that moves from one to the other would otherwise fall
+# out of this scan and let a command file carry it again.
 dupe=""
 for f in "$CMD" "$SHADOW"; do
   [ -f "$f" ] || continue
@@ -192,6 +204,7 @@ for f in "$CMD" "$SHADOW"; do
         $f: $name (found: $probe)"
   done <<CHECKLIST
 $CHECKS
+$RULES
 CHECKLIST
 done
 
