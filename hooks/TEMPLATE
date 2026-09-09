@@ -13,15 +13,24 @@
 # makes a silent hook indistinguishable from a working one.
 # Format: docs/product-architecture/camp-reports.md
 #
+# The `checks:` line above is read by the activation log as well as by the report — a check
+# named there and never marked is written to the entry as `not reached`.
+#
 # Copy this file to start a new hook. Everything above `# ---- hook body ----` and
 # everything below it is boilerplate that must not be removed: the kill switch, the
-# fail-open wrapper and the declaration are what make a mistake here survivable and
-# visible.
+# activation log, the fail-open wrapper and the declaration are what make a mistake here
+# survivable and visible.
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
 # escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
 [ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+
+# ---- the activation log ---------------------------------------------------------
+# Sourced here, before anything can exit, so an entry is written whichever way this hook
+# leaves — an early `exit 0` included. Nothing below needs to remember to log. m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event <event>
 
 # ---- fail-open wrapper ----------------------------------------------------------
 # Never `set -e`. A guardrail bug must never block every tool call. Deny only the one
@@ -33,6 +42,7 @@ INPUT="$(cat 2>/dev/null)"
 # Emit a PreToolUse deny decision and exit. Only ever called from the one branch that
 # has positively identified the condition being guarded against.
 deny() {
+  arc_log_outcome_default denied "the hook denied the call"
   printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$(json_string "$1")}}"
   exit 0
 }

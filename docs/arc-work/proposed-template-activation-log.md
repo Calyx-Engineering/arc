@@ -1,8 +1,10 @@
 # Proposal — `hooks/TEMPLATE` carries the activation-log boilerplate
 
-> **Not applied.** `hooks/TEMPLATE` is on CLAUDE.md's never-edited-autonomously list, beside
-> `settings.json`, `tools/verify-hook.sh` and any `SessionStart` hook. It comes to the user as
-> a proposal.
+> **Applied 2026-09-08**, on the user's explicit approval in chat — `hooks/TEMPLATE` is on
+> CLAUDE.md's never-edited-autonomously list, beside `settings.json`, `tools/verify-hook.sh`
+> and any `SessionStart` hook, so it waited here as a proposal until then. Verified by running
+> a hook copied from the changed template on the allow, deny and kill-switch paths: one entry
+> each for allow and deny, none under `HOOKS_OFF`, nothing on stdout but the deny decision.
 
 **Required by** [#166](https://github.com/Calyx-Engineering/arc/issues/166) — *"Every hook
 appends one line before exit, success or failure."* Every registered hook now does. The
