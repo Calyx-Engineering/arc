@@ -43,9 +43,10 @@ Exit 2 is the script's usage code. It collides with the report verdict the scrip
 
 [#210](https://github.com/Calyx-Engineering/arc/issues/210)'s third box named the failing form as
 its acceptance criterion, so the criterion was the defect. The box now reads
-`bash tools/verify-hook.sh hooks/tracker-verify` and is ticked, with the exit code recorded. The
-paragraph explaining why it was left unticked is replaced by what resolved it — the substance
-behind the box was already in the tree when #210 closed.
+`bash tools/verify-hook.sh hooks/tracker-verify` and is ticked, with the exit code recorded — the
+substance behind it was already in the tree when #210 closed. In the issue body the paragraph
+explaining the unticked box is replaced by what resolved it; in `issue-210-tracker-verify-trunk.md`
+it is kept and superseded, because a dev-log is a record of what was true at the time.
 
 `tools/verify-hook.sh` itself is untouched. It is on CLAUDE.md's never-edited-autonomously list,
 and #264's constraint row repeats it, so the ergonomic fix — resolving a bare name against
