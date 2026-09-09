@@ -103,9 +103,12 @@ there; add one and it starts.
 
 **This is the rule Camp applies when it breaks an idea or a base issue into issues.**
 
-- [x] **Many small issues over few large ones.** An issue with a fourteen-point checklist is two or more issues
-- [ ] **Fewer, larger issues.** Multiple sections, twenty to forty checklist items, one issue per area of work
+- [x] **Many small issues over few large ones.** One artifact or one decision each
+- [ ] **Fewer, larger issues.** Multiple sections, one issue per area of work
 - [ ] Other:
+
+**The direction, not the number.** How long a checklist may get is the ceiling below, and
+raising that ceiling is how the second option is made to mean what it says.
 
 ### Work size — where *many small issues* stops being an opinion · [`decompose`](../../../skills/decompose/SKILL.md)
 

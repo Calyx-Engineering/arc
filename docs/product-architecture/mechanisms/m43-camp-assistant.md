@@ -805,7 +805,7 @@ recorded rather than re-explained each session.
 | **Register and verbosity** | Colleague · terse · character, and how loud. **Three verbosity settings, and only two are Camp's** — the report and the nudge. The third is the session's own reply length, read by [`chat-response`](../../../skills/chat-response/SKILL.md) through the same checked box, because a length preference is a property of the reader and not of the assistant that happens to be speaking |
 | **What Camp does unasked** | The triggers for the nudge and the report |
 | **Work size and shape** | Issue granularity and its ceiling — the checklist length past which [`decompose`](../../../skills/decompose/SKILL.md) splits an issue — *and* the form work takes: checklist versus prose, table versus paragraph. The branch prefix sits here too: it is the shape a branch name takes, and `hooks/branch-guard` reads it |
-| **Response shape** | Where long is wanted, where short |
+| **Response shape** | Whether the answer or the reasoning comes first, and whether topics are numbered. **Not how long** — that is the response verbosity setting above, and two sections stating a number would be two numbers to keep in step |
 | **Standing corrections** | Things not to repeat — see below |
 
 **Shape is not a subset of size.** A preference for many small issues and a preference for
