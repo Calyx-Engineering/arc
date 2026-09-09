@@ -366,11 +366,19 @@ because a keyword did not bind.
 
 Two consequences:
 
-- On an issue PR into an arc branch, write the `Closes #NN` line anyway and say in the PR
-  that closure defers to the arc PR. See *What the keyword is still for* below.
-- **The arc PR into the default branch needs a `Closes` line for every issue the arc
-  consumed.** That is the one PR where an empty array is a real bug, and the only place the
-  issues actually close.
+- On an issue PR into an arc branch, write the `Closes #NN` line anyway — see *What the keyword
+  is still for* below — and then **run the manual route.** The issue closes at its own PR's
+  merge, by hand, not at the arc's close
+- **The arc PR into the default branch still needs a `Closes` line for every issue the arc
+  consumed.** That is the one PR where an empty array is a real bug. It is the backstop for
+  issues nobody closed, not the plan
+
+**"Closure defers to the arc PR" is the degraded state, not a practice**, and the earlier wording
+here read as though it were one. Leaving an issue open from its own merge until the arc's is what
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) lists as the *cost*
+of an unflipped repository — *"issues stay open after their work merges"* — and both mechanisms
+exist to remove it. Say it in the PR body so a reader is not left thinking the link failed; do
+not let it stand in for closing the issue.
 
 ### The manual route — when a work PR merges into a non-default base
 
@@ -407,7 +415,8 @@ empty. Write it anyway, on its own last line — *Placement* above is unchanged 
 | **What it does not do** | Close the issue, form a link, or populate the Development panel |
 
 **Say so in the PR body as well as writing the line**, so a reader is not left concluding the
-link failed: *"Closure defers to the arc PR — a keyword cannot bind on a base of `arc/NN-slug`."*
+link failed: *"A keyword cannot bind on a base of `arc/NN-slug`, so #NN is linked and closed by
+hand at the merge."* Name the route, not a deferral — the issue closes here.
 Leaving the keyword out to avoid implying a link that does not exist is the wrong trade: it
 removes the only statement of what the PR was for and leaves the issue looking orphaned anyway.
 

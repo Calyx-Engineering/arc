@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#136](https://github.com/Calyx-Engineering/arc/issues/136)  ·  **PR:** opened after this commit
+**Issue:** [#136](https://github.com/Calyx-Engineering/arc/issues/136)  ·  **PR:** [#290](https://github.com/Calyx-Engineering/arc/pull/290)
 
 ## Problem
 
@@ -35,7 +35,7 @@ issue added.
 | **`merge-close` skips on two bases, not one** | `BASE = DEFAULT` is where the keyword binds and GitHub closes natively; `BASE = TRUNK` is the arc PR, which is `arc-merge-keyword`'s. The flip makes those two different branches, so a trunk-only test — which is what the first draft had, and what pass 1 caught — runs the check on every work PR in a flipped repo and prints *"a closing keyword cannot bind on a base that is not the default branch"* about a base that is the default. #183 and #210's class, a third time |
 | **The PR's own `headRefName`, not `head_branch`** | `gh pr merge <NN>` runs from anywhere — an orchestrator merging a run's PR is not standing on that run's branch. `head_branch` stays right for `pr-base`, which is about a PR being created from here, and is the fallback when the field cannot be read |
 | **One bounded network call, like `close-link`** | A synchronous PostToolUse hook that hangs hangs the session. `timeout` proven by `--version`, because Windows ships a `timeout.exe` that rejects the syntax and exits 1 |
-| **The sweep is one GraphQL search, not an issue list and a call per issue** | An arc's hundred issues would be a hundred round trips, which is the shape nobody runs at a checkpoint. Paginated — Dogfood is 102 issues, past the 50-per-page window, and a sweep that silently stopped at 50 would be the false negative this mechanism is about |
+| **The sweep is one GraphQL search, not an issue list and a call per issue** | An arc's hundred issues would be a hundred round trips, which is the shape nobody runs at a checkpoint. Paginated — Dogfood held 102 on 2026-09-09, past the 50-per-page window, and a sweep that silently stopped at 50 would be the false negative this mechanism is about |
 | **The sweep reads both link fields** | `linkedBranches` alone reports every issue past its PR as unlinked, which is most of an arc. #155 read one field at one moment |
 | **A count that does not parse is exit 2, never "no link"** | Same distinction `verify-linked-branch.sh` draws. An unreadable read reported as a missing link is the defect wearing the fix's clothes |
 | **m12's status is `partial`, not `built`** | §4's four moments are now carried by artifacts; §1–§2's verify-and-repair loop and §3's `createLinkedBranch` call are still instructions to a session. The header names which is which rather than averaging them into one word |
@@ -78,6 +78,21 @@ read closely — #55 was created *after* the default switch, so its base **was**
 parse time, which is m42's rule and not an exception to it — but m12 states the opposite
 consequence in bold. §5 is rewritten here; settling the premise needs a live test against a base
 that was never the default, which is #287.
+
+## What the passes cost, and one thing this run got wrong
+
+Each pass found something the one before it could not have. Pass 1 found `merge-close`'s gate
+comparing against one branch where two were needed — the defect, not a nit. Pass 2 found five
+documents restating that one-branch rule, any of which would send the next session to
+"fix" the guard back. Pass 3 found the dev-log naming another issue's PR. Pass 4 found the
+skill saying two opposite things about when an issue closes, three paragraphs apart.
+
+**One process defect, recorded rather than rewritten.** `arc/04-dogfood` moved mid-run, so the
+work was committed before the merge and pass 2's two hook fixes landed on either side of it —
+`merge-close`'s two-branch gate in the feature commit, `PRHEAD`'s `tail -n1` guard inside the
+merge commit itself. `CLAUDE.md` wants one hook per commit so `git revert` is surgical, and a
+hook edit buried in a merge is not revertable that way. Rewriting a pushed merge to fix it costs
+more than the note does.
 
 ## Retrospective
 
