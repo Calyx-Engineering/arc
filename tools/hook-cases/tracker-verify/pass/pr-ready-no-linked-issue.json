@@ -1,0 +1,2 @@
+# a no-issue PR marked ready — m46 allows work spawned straight to a PR, and it has no checklist to disposition
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_boxes_rc":"0","arc_test_boxes_out":"PASS  PR #250 closes no issue — no checklist to disposition","tool_input":{"command":"gh pr ready 250"}}
