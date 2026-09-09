@@ -1,0 +1,2 @@
+# the same merge, with the issue actually closed — the manual route was followed, so there is nothing to say
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"main","arc_test_milestone":"null","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closure defers to the arc PR.\n\nCloses #10\n","arc_test_issue_state":"CLOSED","tool_input":{"command":"gh pr merge 200 --squash"}}
