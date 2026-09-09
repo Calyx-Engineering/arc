@@ -59,14 +59,17 @@ judgement is a hook that denies on a judgement.
 
 ## Spawned
 
-- **Issues:** [#308](https://github.com/Calyx-Engineering/arc/issues/308) — `hooks/tracker-verify`
-  lines 58–61 carry literal newline, tab and CR characters where `
-`, `	` and `` were meant,
-  so the comment ends early and the next three lines are parsed as code. They contain backticks, so
-  every firing that reaches them runs a command substitution. `bash tools/verify-hook.sh
-  hooks/tracker-verify` is **60 passed, 57 failed** and `bash tools/verify-all.sh` is **54 gates, 1
-  failed** — pre-existing since `91faa09`, and nothing in this unit touches `hooks/`. Recorded and
-  routed rather than fixed here: one hook per commit, and this is not the unit that was handed out.
+- **Issues:** none, in the end. `bash tools/verify-all.sh` came back **54 gates, 1 failed** —
+  `hook: tracker-verify`, 60 passed and 57 failed — from a defect nothing in this unit touches:
+  lines 58–61 of `hooks/tracker-verify` carried literal newline, tab and CR characters where the
+  escapes were meant, so the comment ended early and the next three lines were parsed as code,
+  backticks included. Filed as [#308](https://github.com/Calyx-Engineering/arc/issues/308), then
+  **closed as a duplicate**: [#305](https://github.com/Calyx-Engineering/arc/issues/305) had
+  already diagnosed the same four lines and PR
+  [#307](https://github.com/Calyx-Engineering/arc/pull/307) merged the fix into `arc/04-dogfood`
+  while this unit was running. **The lesson is about the base, not the hook:** a run that has
+  been on one commit for two hours is reading a tree the arc has moved past, and a gate result
+  from it can name a defect that is already fixed. The branch was merged up and the gates re-run.
 
 ## Retrospective
 
