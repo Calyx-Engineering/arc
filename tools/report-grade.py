@@ -83,12 +83,16 @@ import os
 import re
 import sys
 
+# The case scan and the fence rule, shared with the other three graders — #265. This file held
+# three copies of the fence rule on its own; they are all `case_reader.Fence` now. `tools/` is
+# sys.path[0] because report-grade.sh runs this file by path.
+import case_reader
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 
-FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*$")
 RULE = re.compile(r"^(-{3,}|\*{3,}|_{3,})$")
 # A "**Label:**" line. This is the status header's shape, and the skill requires one.
@@ -165,17 +169,11 @@ def opening(text):
     blocks are skipped so a heading inside a code sample is not mistaken for the section.
     """
     lines, header = strip_front_matter((text or "").splitlines())
-    prose, first, seen, fence = [], None, 0, ""
+    prose, first, seen, fence = [], None, 0, case_reader.Fence()
     for line in lines:
-        f = FENCE.match(line)
-        if f:
-            run = f.group(1)
-            if not fence:
-                fence = run
-            elif run[0] == fence[0] and len(run) >= len(fence):
-                fence = ""
+        if fence.delimiter(line):
             continue
-        if fence:
+        if fence.open:
             if first is None:
                 prose.append(line)
             continue
@@ -331,21 +329,15 @@ def tables(text):
     The lead-in is the non-blank block immediately above the table. That is where a report puts
     one source for the whole table, and it is the difference between the TABLE verdict and NONE.
     """
-    out, fence = [], ""
+    out, fence = [], case_reader.Fence()
     lines = (text or "").splitlines()
     i = 0
     while i < len(lines):
         line = lines[i]
-        f = FENCE.match(line)
-        if f:
-            run = f.group(1)
-            if not fence:
-                fence = run
-            elif run[0] == fence[0] and len(run) >= len(fence):
-                fence = ""
+        if fence.delimiter(line):
             i += 1
             continue
-        if fence or "|" not in line:
+        if fence.open or "|" not in line:
             i += 1
             continue
         # A table is a header row, a delimiter row of dashes, then body rows.
@@ -422,19 +414,15 @@ def conflict_prose(text):
     whole conflicts, silently, into ONESIDED.
 
     AND A FENCE IS TRACKED, because this is the third reader in the file and the other two track
-    it. A fenced sample mentioning two sources is sample text, not two claims.
+    it. A fenced sample mentioning two sources is sample text, not two claims. All three now
+    track it through tools/case_reader.py's `Fence` — #265, which is what "the third reader in
+    the file" was pointing at.
     """
-    out, fence = [], ""
+    out, fence = [], case_reader.Fence()
     for line in (text or "").splitlines():
-        f = FENCE.match(line)
-        if f:
-            run = f.group(1)
-            if not fence:
-                fence = run
-            elif run[0] == fence[0] and len(run) >= len(fence):
-                fence = ""
+        if fence.delimiter(line):
             continue
-        if fence or TABLE_ROW.match(line):
+        if fence.open or TABLE_ROW.match(line):
             continue
         out.append(line)
     return "\n".join(out)
@@ -512,8 +500,12 @@ def grade_conflict(text):
 
 
 def read_case(path):
-    """corpus, document, lines. Purpose-built, not a YAML parser — the same trade as
-    tools/topic-numbering.py, and the format is fixed by evals/report-shape.
+    """corpus, document, lines.
+
+    The scan is tools/case_reader.py's — one reader for the four graders, #265 — and the same
+    trade it always made: purpose-built, not a YAML parser, because the format is fixed by
+    evals/report-shape. What is left here is which fields this suite wants: three flat ones,
+    read whole rather than by first token, because `lines: 12 - 40` has spaces in it.
 
     A CASE DECLARES A DOCUMENT AND A REGION, AND NOTHING ELSE. There is deliberately no field
     for an expected verdict, an expected direction, or which columns to score. An earlier
@@ -523,13 +515,9 @@ def read_case(path):
     graded. That is the tick-without-evidence shape evals/README.md says this arc exists to fix,
     and it was in the same commit that wrote the rule down."""
     out = {"corpus": "", "document": "", "lines": ""}
-    for raw in io.open(path, encoding="utf-8"):
-        line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#") or line[:1].isspace():
-            continue
-        k, _, v = line.partition(":")
-        if k.strip() in out:
-            out[k.strip()] = v.strip()
+    for section, key, value in case_reader.fields(path):
+        if not section and key in out:
+            out[key] = value
     return out["corpus"], out["document"], out["lines"]
 
 

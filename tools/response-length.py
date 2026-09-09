@@ -40,12 +40,15 @@ import os
 import re
 import sys
 
+# The case scan and the fence rule, shared with the other three graders — #265. `tools/` is
+# sys.path[0] because response-length.sh runs this file by path.
+import case_reader
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 
-FENCE = re.compile(r"^\s*(```|~~~)")
 HEADING = re.compile(r"^\s{0,3}#{1,6}\s")
 TABLE_ROW = re.compile(r"^\s*\|")
 
@@ -56,13 +59,19 @@ def prose_words(text):
     skills/chat-response: "Prose means body text. Tables, code blocks, and headings are not
     budgeted — they are the form the answer should take." The budget is stated against that
     rule, so the count has to honour it or the two disagree about what 60 words means.
+
+    THE FENCE RULE IS tools/case_reader.py's, NOT A TOGGLE. This counted with
+    `in_fence = not in_fence` until #265, which cannot see that a fence closes only on a run of
+    the same character at least as long as the opener: a ~~~ line inside a ``` block flipped it,
+    and everything after was counted on the wrong side. The suite scores identically either way
+    — no case in evals/response-length nests a fence — so the change is a defect removed before
+    it fired, not a score corrected.
     """
-    n, in_fence = 0, False
+    n, fence = 0, case_reader.Fence()
     for line in (text or "").splitlines():
-        if FENCE.match(line):
-            in_fence = not in_fence
+        if fence.delimiter(line):
             continue
-        if in_fence or HEADING.match(line) or TABLE_ROW.match(line):
+        if fence.open or HEADING.match(line) or TABLE_ROW.match(line):
             continue
         n += len(line.split())
     return n
@@ -97,8 +106,11 @@ def turn_text(o):
 
 
 def read_case(path):
-    """The fields a response-length case.yaml carries. Purpose-built, not a YAML parser —
-    same trade as tools/skill-cases.py, and the format is fixed by evals/response-length.
+    """The fields a response-length case.yaml carries.
+
+    The scan is tools/case_reader.py's — one reader for the four graders, #265 — and the same
+    trade it always made: purpose-built, not a YAML parser, because the format is fixed by
+    evals/response-length. What is left here is which fields this suite wants.
 
     TWO SHAPES OF CASE, and the difference is where the budget came from.
 
@@ -113,38 +125,29 @@ def read_case(path):
     """
     c = {"budget": 0, "unit": "words", "session": "", "first": 0, "last": 0,
          "set_on": 0, "agreement": "", "kind": ""}
-    section = None
-    for raw in io.open(path, encoding="utf-8"):
-        line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#"):
+    for section, key, value in case_reader.fields(path):
+        if not section:
+            if key == "budget":
+                c["budget"] = case_reader.leading_int(value, c["budget"])
+            elif key in ("unit", "agreement"):
+                c[key] = case_reader.token(value) or c[key]
             continue
-        if not line[:1].isspace():
-            section = line.split(":", 1)[0].strip()
-            m = re.match(r"budget:\s*(\d+)", line)
-            if m:
-                c["budget"] = int(m.group(1))
-            m = re.match(r"unit:\s*(\S+)", line)
-            if m:
-                c["unit"] = m.group(1)
-            m = re.match(r"agreement:\s*(\S+)", line)
-            if m:
-                c["agreement"] = m.group(1)
-            continue
-        s = line.strip()
         if section != "source":
             continue
-        for key in ("session", "kind", "first_turn", "last_turn", "set_on"):
-            m = re.match(key + r":\s*(\S+)", s)
-            if m:
-                v = m.group(1)
-                if key in ("session", "kind"):
-                    c[key] = v
-                elif key == "first_turn":
-                    c["first"] = int(v)
-                elif key == "last_turn":
-                    c["last"] = int(v)
-                else:
-                    c["set_on"] = int(v)
+        t = case_reader.token(value)
+        if not t:
+            continue
+        # `first_turn`, `last_turn` and `set_on` go through `int()` rather than `leading_int`,
+        # because they always did: a turn number with trailing text is a broken case and the
+        # crash is how it says so.
+        if key in ("session", "kind"):
+            c[key] = t
+        elif key == "first_turn":
+            c["first"] = int(t)
+        elif key == "last_turn":
+            c["last"] = int(t)
+        elif key == "set_on":
+            c["set_on"] = int(t)
     c["set_on"] = c["set_on"] or c["first"]
     return c
 
