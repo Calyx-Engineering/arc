@@ -14,6 +14,7 @@
 #   tools/arc-loop.sh --status               every run under .arc-work/runs/, live or finished
 #   tools/arc-loop.sh --report               the same as a markdown table with totals — for the arc-log
 #   tools/arc-loop.sh --resume 160           continue a stopped run's session in its kept worktree
+#   ARC_LOOP_RESUME_NOTE="PR #247 conflicts with the base — merge it, re-gate, mark ready" tools/arc-loop.sh --resume 201
 #
 # mode-guard: writes-outward
 # mode-guard-read-only: --dry-run --status --report
@@ -74,9 +75,14 @@ INSTRUCTIONS="docs/arc-work/04-dogfood/run-instructions.md"
 PERMISSION_MODE="${ARC_LOOP_PERMISSION_MODE:-auto}"
 MODEL="${ARC_LOOP_MODEL:-}"
 # A run that ends on a rate or usage limit is resumed, not restarted: wait, then
-# `claude -p --continue` in its worktree. Twelve waits of ten minutes covers a reset window.
+# `claude -p --continue` in its worktree. A session limit resets on a five-hour window, and
+# twelve waits of ten minutes gave up twenty minutes short of one on 2026-09-08 — three runs
+# stopped with their worktrees kept. Thirty-six waits is six hours.
 RETRY_WAIT="${ARC_LOOP_RETRY_WAIT:-600}"
-MAX_RETRY="${ARC_LOOP_MAX_RETRY:-12}"
+# An extra line for the resume prompt — what the orchestrator saw that the run did not, e.g.
+# "PR #247 is CONFLICTING against arc/04-dogfood: merge the base, re-run the gates, mark ready."
+RESUME_NOTE="${ARC_LOOP_RESUME_NOTE:-}"
+MAX_RETRY="${ARC_LOOP_MAX_RETRY:-36}"
 DRY=0
 MAX=0
 ISSUES=""
@@ -367,8 +373,10 @@ wait_run() {
 # resume_run <run-dir> <worktree> <model-flag> — `claude -p --continue` in the worktree picks up
 # that run's own transcript, so it carries on rather than starting the issue over.
 resume_run() {
-  printf '%s\n' "You were interrupted by a rate limit. Continue the run from where it stopped." \
-    "Read the issue checklists on GitHub for the current state before acting; do not redo ticked boxes." \
+  printf '%s\n' "Your session ended before the run finished — a limit, or a turn that ended while waiting on background work. Continue the run from where it stopped." \
+    "Read the issue checklists on GitHub and git status for the current state before acting; do not redo ticked boxes." \
+    "Run sub-agents in the foreground: a claude -p session ends when you end your turn, and a background task's notification never arrives." \
+    ${RESUME_NOTE:+"$RESUME_NOTE"} \
     > "$1/resume.md"
   launch_run "$1" "$2" "$3" "$1/resume.md" "--continue"
 }
@@ -463,10 +471,18 @@ EOF
     return 0
   fi
   # The report run works in this tree — it writes the arc-log — so this tree's row is raised
-  # for it and restored after it, whatever it exits with.
-  set_mode Autonomous "#$PARENT $parent_title report"
-  printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE" || { set_mode Manual; return 1; }
-  set_mode Manual
+  # for it if it was not already, and put back the way it was found. Dropping it to Manual
+  # unconditionally cost the orchestrator its own grant on 2026-09-08: the user had raised the
+  # row for the whole playlist, Fire's report run ran here, and every merge after it was denied.
+  local prev_mode
+  prev_mode="$(grep -m1 -iE '^\|[^|]*mode[^|]*\|' HANDOFF.md 2>/dev/null | awk -F'|' '{print $3}' | tr -d '*` ' | tr '[:upper:]' '[:lower:]')"
+  if [ "$prev_mode" = autonomous ]; then
+    printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE"
+  else
+    set_mode Autonomous "#$PARENT $parent_title report"
+    printf '%s' "$prompt" | claude -p --permission-mode "$PERMISSION_MODE" || { set_mode Manual; return 1; }
+    set_mode Manual
+  fi
 }
 
 # --resume: a run that stopped — limit, crash, gave up — continues its own session.

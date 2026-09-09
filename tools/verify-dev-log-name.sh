@@ -47,6 +47,8 @@ scan() {  # scan <root> — prints one "path:line:text" per offending occurrence
     grep -rni --binary-files=without-match -- "$WRONG" . 2>/dev/null \
       | sed 's|^\./||' \
       | grep -v '^\.git/' \
+      | grep -v '^\.arc-work/' \
+      | grep -v '^\.claude/arc/' \
       | grep -v '^docs/product-architecture/archive/' \
       | grep -v '^docs/reference-timescope/' \
       | grep -v '^docs/arc-work/04-dogfood/issue-plan\.md:' \

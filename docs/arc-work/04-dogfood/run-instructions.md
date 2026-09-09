@@ -68,6 +68,11 @@ read that collapses to a small answer.
 **A sub-agent that edits files and reports *done* is the failure this arc exists to fix.** You
 cannot verify work you did not see, and step 4 is not satisfiable on a report.
 
+**Sub-agents run in the foreground.** You are a `claude -p` session: it ends when you end your
+turn, and a background task's notification never arrives. The run for
+[#151](https://github.com/Calyx-Engineering/arc/issues/151) ended after 62 minutes with a draft
+PR, waiting on a suite it had sent to the background.
+
 ## 4 Where the work goes
 
 Branch, commit and PR mechanics are `CLAUDE.md`'s. What this arc pins down:

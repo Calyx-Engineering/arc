@@ -111,6 +111,6 @@ A workstream's report run fires when its last child closes — Fire after S5, Ha
 | 2 | On a track's exit: read the usage summary. PR ready → rebase on the arc tip, merge, confirm the issues closed. Not ready → read `.arc-work/runs/<id>/err.log`, decide: relaunch, hand to a human, or park |
 | 3 | A worktree left behind is evidence; read it before `git worktree remove --force` |
 | 4 | Append the run's usage line to the arc-log — the soak record |
-| 5 | Set closed → next set. Every child closed → `tools/arc-loop.sh 145` for the report run |
+| 5 | Set closed → next set, without asking. A workstream's last child closed → its report run, `tools/arc-loop.sh <ws>` — and stop there: the boundary report is the review, and the next set waits for the yes that follows it |
 
-David's input: this document, and the report at each boundary.
+David's input: this document, a yes per workstream boundary, and the report at each.
