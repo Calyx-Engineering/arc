@@ -1,6 +1,6 @@
 # Issue #305 — tracker-verify executes text from its own comments
 
-**Issue:** [#305](https://github.com/Calyx-Engineering/arc/issues/305)  ·  **PR:** [#307](https://github.com/Calyx-Engineering/arc/pull/307) — predicted at branch time, confirmed below
+**Issue:** [#305](https://github.com/Calyx-Engineering/arc/issues/305)  ·  **PR:** [#307](https://github.com/Calyx-Engineering/arc/pull/307) — predicted at branch time, confirmed on open
 
 ## Problem
 
@@ -37,8 +37,8 @@ Reproduced in a scratch repository with `bash -x`: six executions of comment tex
 | Scratch repro, before | commit `ran gh issue close 42` created; 6 comment executions in the trace |
 | Scratch repro, after | no commit; 0 executions; entry written |
 | `verify-hook-source.sh` | selftest 3/3; every hook passes; the unfixed tip hook fails naming lines 59 and 62 |
-| `verify-hook.sh hooks/tracker-verify` | see the PR body |
-| `verify-all.sh` | see the PR body, with wall time |
+| `verify-hook.sh hooks/tracker-verify` | 117 passed, 0 failed, the new case included |
+| `verify-all.sh` | 55 gates, all clean, 2233 s wall — the unfixed tip never finished in 75 min |
 
 ## Soak
 
