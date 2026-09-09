@@ -122,6 +122,13 @@ gh pr view <N> --json closingIssuesReferences
 **An empty array means the issue is not closed, whatever the body says.** Read the array, not
 the keyword.
 
+**What it does not mean is that something went wrong.** On a base that is not the repository's
+default, empty is the expected reading and there was never a link to lose —
+[m12](mechanisms/m12-issue-linking.md) §1. The repair is m12 §5's manual route, carried by
+[`skills/issue-write`](../../skills/issue-write/SKILL.md): attach the link in the merged PR's
+**Development** panel, which no API can do, then `gh issue close <NN>`. Step 7 is verified by the
+issue being closed and linked, not by the array being non-empty.
+
 > **Camp refuses to call an issue closeable while step 7 is unverified.** This is the one step
 > phrased as a refusal, because a silently unbound keyword is the failure the whole sequence
 > exists to catch — and it is invisible in every other surface.

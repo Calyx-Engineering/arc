@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload"
+KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep"
 
 RUN=0
 FAILED=0
@@ -97,6 +97,7 @@ run_gate "saturation cases" bash tools/saturation-cases.sh selftest
 run_gate "environment blame cases" bash tools/environment-blame.sh selftest
 run_gate "issue claim cases" bash tools/arc-claim.sh selftest
 run_gate "plugin reload cases" bash tools/plugin-reload.sh selftest
+run_gate "link sweep cases" bash tools/arc-link-sweep.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -207,6 +208,9 @@ if [ "$LIST" = "1" ]; then
     against its PR body       fixture backend. The live read needs GitHub, a real issue and the
                               PR that closes it — run bash tools/verify-issue-boxes.sh <NN> at
                               PR-ready time, which is also where hooks/tracker-verify calls it
+    an arc's issues against   arc-link-sweep.sh selftest runs its decision on fixtures. The sweep
+    both link fields          itself searches GitHub and paginates — run
+                              bash tools/arc-link-sweep.sh <milestone> at an arc checkpoint
 CANNOT
   exit 0
 fi
