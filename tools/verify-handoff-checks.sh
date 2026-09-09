@@ -50,9 +50,10 @@ pass() { echo "  PASS  $1"; PASSED=$((PASSED + 1)); }
 fail() { echo "  FAIL  $1"; shift; for l in "$@"; do echo "        $l"; done; FAILED=$((FAILED + 1)); }
 
 # ---- selftest ---------------------------------------------------------------------------------
-# Fixture skills with a known defect each, to prove the frontmatter block can fail. A gate nobody
-# can make fail is a gate nobody should read a pass from — and the five denial runs this unit's
-# record cites were ad-hoc until they were written down here.
+# Fixture skills with a known defect each, to prove this gate can fail. A gate nobody can make
+# fail is a gate nobody should read a pass from — and the denial runs #267's and #268's records
+# cite were ad-hoc until they were written down here. Six cover the frontmatter block, two the
+# eighth check's two probes, and the ninth is the skill as it stands.
 #
 # EACH FIXTURE IS THE REAL SKILL WITH ONE LINE CHANGED, and the mutations are ASCII-only: the
 # entries they replace carry an em dash, and matching one through sed on Windows is a portability
@@ -88,7 +89,7 @@ selftest() {
 }
 
 if [ "${1:-}" = "selftest" ]; then
-  echo "verify-handoff-checks selftest — the frontmatter block can fail"
+  echo "verify-handoff-checks selftest — the gate can fail"
   echo
   selftest
   echo
@@ -121,6 +122,10 @@ fi
 # the row states the condition and the prose below states the command. The probe here is the row —
 # anchored on the cell, not the phrase, so prose mentioning it elsewhere does not stand in for it —
 # and the command is a RULES probe.
+#
+# THE DOUBLE PIPE ON THAT ROW IS NOT A TYPO. The list is read `IFS='|' read -r name probe`, so the
+# first `|` ends the name and everything after it is the probe — which here begins with the table
+# cell's own `|`. Deleting one breaks the anchor rather than tidying the line.
 CHECKS="
 the handoff's title date|24 hours
 transcripts newer than the handoff|-newer HANDOFF.md

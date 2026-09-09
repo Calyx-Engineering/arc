@@ -192,13 +192,16 @@ handoff is worse than having none, because it is specific and wrong.
 So the read path checks it before executing anything, against the branch, the tree, the
 commit log, open PRs, the age of the handoff, the state of its first ordered action, whether a
 session ran after it was written, and the *Execution mode* row against the mode the arc-log
-states — #268. **That last one meets the first constraint below on one half only**: absence is
-one command with one answer, and a disagreement is a comparison against a document the reading
-order has already opened. It is carried because two artifacts — `skills/autonomy-set` and
-[m40 §3](m40-autonomy-switch.md) — said the read path caught it while nothing did. **A disagreement stops the run and is reported**
-— never reconciled silently, and never guessed past. `skills/handoff` carries the current
+states — #268. **A disagreement stops the run and is reported** — never reconciled silently,
+and never guessed past. `skills/handoff` carries the current
 list, because the command is one opening and the skill's own wordings are the other; a check
 that lived only in the command was one a skill-only cold start never ran — #208.
+
+**The mode row meets the first constraint below on one half only.** Absence is one command with
+one answer; a disagreement is a comparison against a document the reading order has already
+opened. It is carried because two artifacts — `skills/autonomy-set` and
+[m40 §3](m40-autonomy-switch.md) — stated the read path caught it while nothing did, and because
+an unsettled mode is manual, which halts nothing that was not already halted.
 
 | A check must | Because |
 |---|---|

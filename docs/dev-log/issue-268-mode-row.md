@@ -1,6 +1,6 @@
 # Issue #268 — a staleness check on the handoff's mode row
 
-**Issue:** [#268](https://github.com/Calyx-Engineering/arc/issues/268)  ·  **PR:** <link>
+**Issue:** [#268](https://github.com/Calyx-Engineering/arc/issues/268)  ·  **PR:** [#304](https://github.com/Calyx-Engineering/arc/pull/304)
 
 ## Problem
 

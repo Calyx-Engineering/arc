@@ -1,6 +1,6 @@
 # Issue #267 — the handoff's six pre-existing checks declare a path
 
-**Issue:** [#267](https://github.com/Calyx-Engineering/arc/issues/267)  ·  **PR:** <link>
+**Issue:** [#267](https://github.com/Calyx-Engineering/arc/issues/267)  ·  **PR:** [#304](https://github.com/Calyx-Engineering/arc/pull/304)
 
 ## Problem
 
