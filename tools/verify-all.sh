@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes"
+KNOWN="verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes arc-claim"
 
 RUN=0
 FAILED=0
@@ -84,6 +84,7 @@ run_gate "topic numbering cases" bash tools/topic-numbering.sh selftest
 run_gate "report shape cases" bash tools/report-grade.sh selftest
 run_gate "saturation cases" bash tools/saturation-cases.sh selftest
 run_gate "environment blame cases" bash tools/environment-blame.sh selftest
+run_gate "issue claim cases" bash tools/arc-claim.sh selftest
 run_gate "autonomy switch" bash tools/verify-autonomy.sh
 run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
@@ -169,6 +170,10 @@ if [ "$LIST" = "1" ]; then
     prefix, and the label set of real open issues, and the label set itself, both read GitHub —
                               run bash tools/verify-labels.sh and
                               bash tools/verify-labels.sh labels
+    two dispatchers against    arc-claim.sh selftest drives take, release, refresh and the race
+    the real tracker           through a fixture backend. A real one needs two loops, a live
+                               workstream and a real issue — run
+                               bash tools/arc-claim.sh check <NN> against one
     a real issue's boxes      verify-issue-boxes.sh selftest runs the whole script against a
     against its PR body       fixture backend. The live read needs GitHub, a real issue and the
                               PR that closes it — run bash tools/verify-issue-boxes.sh <NN> at
