@@ -54958,3 +54958,1866 @@
   checked: gating-command=yes · mode-row=autonomous — all ok
   outcome: ok — autonomous — the command is allowed
   skipped: gating-script (the command names a gating command outright)
+2026-09-09T11:44Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:44Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:45Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:45Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:45Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T11:45Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:45Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:45Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:45Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:45Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:45Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:45Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:45Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:45Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:45Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:45Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:45Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:45Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:45Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:45Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:45Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+2026-09-09T11:45Z  tracker-verify  tracker-write
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:46Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:46Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:46Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:46Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:46Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:47Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:47Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:47Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:47Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:47Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:47Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:47Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:47Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:47Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:47Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:47Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:47Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:47Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:47Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:47Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:47Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:47Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:47Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:53Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:53Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:53Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:53Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:53Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:53Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:53Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:53Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:53Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:53Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:57Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:57Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:57Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:57Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:57Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:57Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:57Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:58Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:58Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:58Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:58Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:58Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:58Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:58Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:58Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T11:58Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T11:58Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T11:58Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T11:58Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T11:58Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:03Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:03Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:03Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:03Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:03Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:03Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:03Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:04Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:04Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:04Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:04Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:04Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:04Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:04Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:04Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:04Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:04Z  tracker-verify  pr-merge
+  checked: — none reached
+  outcome: ok — a truncated fixture payload — nothing safe to read
+  skipped: placeholder-scan (the payload names a fixture key whose value could not be parsed) · date-sanity (the payload names a fixture key whose value could not be parsed) · milestone (the payload names a fixture key whose value could not be parsed) · arc-prefix (the payload names a fixture key whose value could not be parsed) · closing-keyword (the payload names a fixture key whose value could not be parsed) · arc-merge-keyword (the payload names a fixture key whose value could not be parsed) · close-link (the payload names a fixture key whose value could not be parsed) · issue-boxes (the payload names a fixture key whose value could not be parsed) · spawn-parent (the payload names a fixture key whose value could not be parsed) · issue-title-length (the payload names a fixture key whose value could not be parsed) · issue-title-list (the payload names a fixture key whose value could not be parsed) · issue-title-clause (the payload names a fixture key whose value could not be parsed) · issue-title-scope (the payload names a fixture key whose value could not be parsed) · issue-scope-type (the payload names a fixture key whose value could not be parsed) · pr-base (the payload names a fixture key whose value could not be parsed)
+2026-09-09T12:04Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:04Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:04Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:04Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:04Z  tracker-verify  pr-merge
+  checked: — none reached
+  outcome: ok — nothing to report
+  skipped: close-link (the command names no issue number) · placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:05Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:05Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:05Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:05Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:05Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:05Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:05Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:05Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:05Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:05Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:05Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:05Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:05Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:05Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:05Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:06Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:06Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:06Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:06Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:06Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:06Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:06Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:06Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:06Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:06Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:06Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:06Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:06Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:06Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:06Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:06Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:06Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:06Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:06Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:06Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:06Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:06Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:06Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:07Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:07Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:07Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:07Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:07Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:07Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:07Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:07Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:07Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:07Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:07Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:07Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:07Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:07Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:07Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:07Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:07Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:08Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:08Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:08Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:08Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:08Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:08Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:08Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:08Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:09Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:09Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:09Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:09Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:09Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:09Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:09Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:09Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:09Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:09Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:09Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:09Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:09Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:09Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:09Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:09Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:09Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:09Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:09Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:09Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:09Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:09Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:09Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:11Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:11Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:11Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:11Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:11Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:14Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:14Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:14Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:14Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:14Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:14Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:14Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:14Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:14Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:14Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:17Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:17Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:17Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:17Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:17Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:18Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:18Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:18Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:18Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:18Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:18Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:18Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:18Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:18Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:18Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:18Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:18Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:19Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:19Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:19Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:19Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:19Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:19Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:19Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:19Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:19Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:19Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:19Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:19Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:19Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:19Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:19Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:19Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:19Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:19Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:19Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:19Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:19Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:19Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:19Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:19Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:19Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:20Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:20Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:20Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:20Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:20Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:20Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:20Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:20Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:20Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:20Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:20Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:20Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:20Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:20Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:20Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:21Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:21Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:21Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:21Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:21Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:21Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:21Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:21Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:21Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:21Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:22Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:22Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:22Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:22Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:22Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:22Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:22Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:22Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:22Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:22Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:22Z  session-index  session-indexed  tool=Edit
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:22Z  camp-session-start  session-start
+  checked: — none reached
+  outcome: ok — already checked this session
+  skipped: arc-active (no arc registry exists yet) · branch-is-work (already checked this session) · issue-in-branch-name (already checked this session)
+2026-09-09T12:22Z  handoff-archive  handoff-archived  tool=Edit
+  checked: handoff-snapshot=nothing-to-copy · user-authored-file-archived=nothing-to-copy — all ok
+  outcome: ok — nothing needed a copy
+2026-09-09T12:22Z  branch-guard  edit-checked  branch=arc/04-dogfood-issue-230-tracker-verify-dispatch prefix=arc/
+  checked: branch-kind=work · worktree-identity=own · base-freshness=current — all ok
+  outcome: ok — nothing to report
+  skipped: path-is-source (the branch is not a coordination branch)
+2026-09-09T12:23Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:23Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:23Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:23Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:23Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:23Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:23Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:23Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:23Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:23Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:23Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:23Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:23Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:26Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:26Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:26Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:26Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:26Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:26Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:26Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:26Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:26Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:26Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:26Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:26Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:26Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:26Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:26Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:26Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:26Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:26Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:26Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:26Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:26Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:26Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:27Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:27Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:27Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:27Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:27Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:27Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:27Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:27Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:27Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:27Z  tracker-verify  issue-write
+  checked: — none reached
+  outcome: ok — nothing to report
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:27Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:27Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:27Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:27Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:27Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:27Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:27Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:27Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:27Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:27Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:27Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:27Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:27Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:27Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:27Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:28Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:28Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:28Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:28Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:28Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:28Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:28Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Write
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  camp-session-start  session-start
+  checked: — none reached
+  outcome: ok — already checked this session
+  skipped: arc-active (no arc registry exists yet) · branch-is-work (already checked this session) · issue-in-branch-name (already checked this session)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Write
+  checked: handoff-snapshot=nothing-to-copy — all ok
+  outcome: ok — nothing needed a copy
+  skipped: user-authored-file-archived (the path lands outside the repository)
+2026-09-09T12:28Z  branch-guard  edit-checked  branch=arc/04-dogfood-issue-230-tracker-verify-dispatch prefix=arc/
+  checked: branch-kind=work · base-freshness=current — all ok
+  outcome: ok — nothing to report
+  skipped: path-is-source (the branch is not a coordination branch) · worktree-identity (the path lands outside any repository)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:28Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
+2026-09-09T12:28Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:28Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:28Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:28Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:28Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:28Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:28Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:28Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:29Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:29Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:29Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:29Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:29Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:29Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:29Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:29Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:29Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:29Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:29Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:29Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:29Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:29Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:29Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:29Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:29Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:29Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:29Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:29Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:29Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:29Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:29Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:39Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:39Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:39Z  mode-guard  mode-check
+  checked: gating-command=no · gating-script=no — all ok
+  outcome: ok — not a command the mode governs
+  skipped: mode-row (the command is not one the mode governs)
+2026-09-09T12:39Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:39Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:39Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+  skipped: placeholder-scan (not reached) · date-sanity (not reached) · milestone (not reached) · arc-prefix (not reached) · closing-keyword (not reached) · arc-merge-keyword (not reached) · close-link (not reached) · issue-boxes (not reached) · spawn-parent (not reached) · issue-title-length (not reached) · issue-title-list (not reached) · issue-title-clause (not reached) · issue-title-scope (not reached) · issue-scope-type (not reached) · pr-base (not reached)
+2026-09-09T12:39Z  camp-branch-check  branch-create
+  checked: — none reached
+  outcome: ok — the command creates no branch
+  skipped: base-is-arc (not built) · declared-convention-read (the command creates no branch) · issue-or-pr-number-present (the command creates no branch)
+2026-09-09T12:39Z  session-index  session-indexed  tool=Bash
+  checked: — none reached
+  outcome: ok — already indexed this session
+  skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)
+2026-09-09T12:39Z  handoff-archive  handoff-archived  tool=Bash
+  checked: — none reached
+  outcome: ok — the snapshot was already taken this session
+  skipped: handoff-snapshot (already taken this session) · user-authored-file-archived (the call names no file)
+2026-09-09T12:39Z  mode-guard  mode-check
+  checked: gating-command=yes · mode-row=autonomous — all ok
+  outcome: ok — autonomous — the command is allowed
+  skipped: gating-script (the command names a gating command outright)
