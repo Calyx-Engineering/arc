@@ -69,12 +69,15 @@ import os
 import re
 import sys
 
+# The case scan and the fence rule, shared with the other three graders — #265. `tools/` is
+# sys.path[0] because topic-numbering.sh runs this file by path.
+import case_reader
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 
-FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*$")
 # A bold run opening a line. Prose may follow it on the same line — that is how the exemplar
 # in the header is written, and a pattern anchored to the end of the line cannot see it.
@@ -87,23 +90,15 @@ def topics(text):
     """The reply's top-level section titles, and how they were found.
 
     Fenced blocks are skipped: a heading inside a code sample is sample text, not a section.
-    The opening fence is remembered — its character and its length — so neither a ~~~ line
-    inside a ``` block nor a ``` line inside a ```` block closes it.
+    The opening fence's character and length are remembered — so neither a ~~~ line inside a
+    ``` block nor a ``` line inside a ```` block closes it. That rule is tools/case_reader.py's
+    `Fence`, which is where it lives now for all four graders (#265).
     """
-    heads, bolds, fence = [], [], ""
+    heads, bolds, fence = [], [], case_reader.Fence()
     for line in (text or "").splitlines():
-        f = FENCE.match(line)
-        if f:
-            run = f.group(1)
-            if not fence:
-                fence = run
-            # CommonMark: a fence closes on a run of the SAME character, at least as long as
-            # the opener. A ``` line inside a ```` block is content, and a reply showing a
-            # fenced example inside a fenced block is a shape this corpus produces.
-            elif run[0] == fence[0] and len(run) >= len(fence):
-                fence = ""
+        if fence.delimiter(line):
             continue
-        if fence:
+        if fence.open:
             continue
         m = HEADING.match(line)
         if m:
@@ -199,32 +194,32 @@ def turn_text(o):
 
 
 def read_case(path):
-    """The fields a topic-numbering case.yaml carries. Purpose-built, not a YAML parser —
-    same trade as tools/response-length.py, and the format is fixed by evals/topic-numbering."""
+    """The fields a topic-numbering case.yaml carries.
+
+    The scan is tools/case_reader.py's — one reader for the four graders, #265 — and the same
+    trade it always made: purpose-built, not a YAML parser, because the format is fixed by
+    evals/topic-numbering. What is left here is which fields this suite wants.
+
+    `first_turn` and `last_turn` go through `int()` rather than `leading_int`, because they
+    always did: a turn number with trailing text is a broken case and should say so.
+    """
     min_topics, session, first, last = 2, "", 0, 0
-    section = None
-    for raw in io.open(path, encoding="utf-8"):
-        line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#"):
-            continue
-        if not line[:1].isspace():
-            section = line.split(":", 1)[0].strip()
-            m = re.match(r"min_topics:\s*(\d+)", line)
-            if m:
-                min_topics = int(m.group(1))
+    for section, key, value in case_reader.fields(path):
+        if not section:
+            if key == "min_topics":
+                min_topics = case_reader.leading_int(value, min_topics)
             continue
         if section != "source":
             continue
-        s = line.strip()
-        for key in ("session", "first_turn", "last_turn"):
-            m = re.match(key + r":\s*(\S+)", s)
-            if m:
-                if key == "session":
-                    session = m.group(1)
-                elif key == "first_turn":
-                    first = int(m.group(1))
-                else:
-                    last = int(m.group(1))
+        t = case_reader.token(value)
+        if not t:
+            continue
+        if key == "session":
+            session = t
+        elif key == "first_turn":
+            first = int(t)
+        elif key == "last_turn":
+            last = int(t)
     return min_topics, session, first, last
 
 

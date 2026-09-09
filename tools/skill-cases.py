@@ -3,7 +3,11 @@
 # For each case under the eval dir: find the transcript and prompt turn it names, check the
 # stored prompt still matches that turn verbatim, and report whether the expected skill fired
 # IN RESPONSE TO THAT TURN — between it and the next prompt turn, not somewhere later.
-import json, io, os, glob, sys, re
+import json, io, os, glob, sys
+
+# The case scan and the fence rule, shared with the other three graders — #265. `tools/` is
+# sys.path[0] because skill-cases.sh runs this file by path.
+import case_reader
 
 # The corpus carries em dashes and the user's own punctuation, and a Windows console defaults to
 # cp1252 — printing a verbatim prompt there raises UnicodeEncodeError or mangles it. Ask for
@@ -58,37 +62,30 @@ def text(o):
 
 
 def read_case(p):
-    """Read the four fields a case.yaml carries. Purpose-built, not a YAML parser.
+    """Read the four fields a case.yaml carries.
 
-    The format is fixed by evals/README.md and written by hand, so a general parser would add
-    a dependency and a class of silent mis-reads in exchange for flexibility no case uses.
-    An unrecognised line is ignored; a missing source fails loudly at the call site.
+    The scan is tools/case_reader.py's — one reader for the four graders, #265. What is left
+    here is the half that is this suite's alone: which fields it wants and what they mean. The
+    trade the scan makes has not changed — purpose-built, not a YAML parser, because the format
+    is fixed by evals/README.md and written by hand. An unrecognised line is ignored; a missing
+    source fails loudly at the call site.
     """
     shape, expect, session, turn, opening = "?", [], "", 0, False
-    section = None
-    for raw in io.open(p, encoding="utf-8"):
-        line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#"):
-            continue
-        if not line[:1].isspace():
-            section = line.split(":", 1)[0].strip()
-            m = re.match(r"shape:\s*(\S+)", line)
-            if m:
-                shape = m.group(1)
-            continue
-        s = line.strip()
-        if section == "expect" and s.startswith("- "):
-            expect.append(s[2:].strip())
+    for section, key, value in case_reader.fields(p):
+        if not section:
+            if key == "shape":
+                shape = case_reader.token(value) or shape
+        elif section == "expect" and key == "-":
+            expect.append(value)
         elif section == "source":
-            m = re.match(r"session:\s*(\S+)", s)
-            if m:
-                session = m.group(1)
-            m = re.match(r"turn:\s*(\d+)", s)
-            if m:
-                turn = int(m.group(1))
-            m = re.match(r"opening:\s*(\S+)", s)
-            if m:
-                opening = m.group(1).lower() == "true"
+            if key == "session":
+                session = case_reader.token(value) or session
+            elif key == "turn":
+                turn = case_reader.leading_int(value, turn)
+            elif key == "opening":
+                t = case_reader.token(value)
+                if t:
+                    opening = t.lower() == "true"
     return shape, expect, session, turn, opening
 
 
