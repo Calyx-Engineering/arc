@@ -78,6 +78,16 @@ run_gate "skill registry" bash tools/verify-skill-registry.sh
 run_gate "skill registry cases" bash tools/verify-skill-registry.sh selftest
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
+# The two halves of the probe. Neither invokes `claude`, so neither bills — what is excluded
+# from this file is tools/skill-probe.sh's live run, not the logic that reads its output. #252
+# added both and cited both as evidence; unregistered, nothing would ever run them again.
+#
+# They are NOT in KNOWN above. That guard globs `tools/verify-*.sh`, so neither name can ever
+# match it and an entry there would be inert — listing them would suggest a coverage the guard
+# does not have. The gap is real and it is the guard's, not theirs: a selftest whose file is not
+# named `verify-*` is invisible to it and can only be caught by reading this file.
+run_gate "skill probe cases" python tools/skill-probe.py selftest
+run_gate "probe handoff check cases" bash tools/probe-handoff-checks.sh selftest
 run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "response length cases" bash tools/response-length.sh selftest
@@ -157,6 +167,15 @@ if [ "$LIST" = "1" ]; then
                               report-grade.sh alone still scores from its stored excerpts when
                               the corpus is absent; it just cannot check them against their
                               source
+    whether a skill FIRES     tools/skill-probe.sh re-runs a case's prompt against the plugin
+    against a CHANGED         as installed and records whether the Skill tool was invoked. It
+    description               is the only instrument here that can see a description edit, and
+                              every run is a real billed session, so it is not a gate. The two
+                              gates above — skill probe cases, probe handoff check cases — are
+                              its selftests on canned streams; they say the reader is right,
+                              never that a skill fired. tools/probe-handoff-checks.sh then says
+                              which installed file a firing read, not what the session did with
+                              it
     three questions against   response-length.sh --probe, topic-numbering.sh --probe and
     a CHANGED skill — reply   saturation-cases.sh --probe re-run a case's turns live and score
     length, topic numbering,  the replies. All three bill per turn, and the saturation case is
