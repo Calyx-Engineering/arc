@@ -14,6 +14,15 @@ the same table.
 
 **Two vocabularies is the defect wearing a label.**
 
+## Intent and north star
+
+| | |
+|---|---|
+| **What this issue is really for** | #164 shipped the rule and left the vocabulary under-specified in two ways at once. Neither half is a wording fix: one is a missing distinction, the other is a merge of two live lists with a genuine ordering disagreement in it |
+| **North star** | A row saying `measured` means a bench result and nothing else, and every term the field writes has a rank. Tested by: the 2026-08-28 region stops grading `ONESIDED` |
+| **What makes it durable** | Every ordering claim has a fixture that goes red if the ladder moves. A term added to a table and not to the matcher is #164's own warning — a word and not a rule |
+| **Out of scope** | **A new eval case for the 2026-08-28 document** — it is #164's box 5, and after this change it still cannot be one for a different reason; recorded in *Findings*. **The conflict column's inability to tell whether two sources are about the same thing** — #164 recorded it and this issue does not narrow it. **`docs/arc-work/04-dogfood/issue-plan.md`'s copy of the old ladder** — the human's forest view, not a shipped artifact, and a run does not read it |
+
 ## Decisions & trade-offs
 
 | Decision | Why |
@@ -69,7 +78,11 @@ tools/report-grade.sh        byte-identical to the baseline on all six real case
 ```
 
 **Reverting the ladder is what proves the fixtures.** `schematic` back below `datasheet` and
-`vendor`, `instrument` to the bottom: **64 passed, 7 failed**.
+`vendor`, `instrument` to the bottom: **64 passed, 7 failed** — three ordering fixtures, the two
+`conflictweak` assertions and the two counts that move with them. Reproduce it by reordering the
+`PROVENANCE` tuple in a copy of `tools/` and running `report-grade.sh selftest` from there; there
+is no flag for it, and that is the one piece of this evidence a reader cannot re-run from a
+command in the tree.
 
 **The real suite does not move, and that is the honest reading.**
 `pin-allocation-ledger` scores `ROWS` off its `Provenance` header, so the adopted-term matching
@@ -83,6 +96,7 @@ closed with an invented case.
 | --- | --- |
 | **The 2026-08-28 document still cannot be an eval case.** `instrument` makes it a two-source region, which was the blocker #164 recorded — but `pr-68-gain-sweep-tool.md` carries no contrast marker across that pair, so it grades `SILENT` rather than a resolved conflict. The shape that cost the most is still the shape with no scoreable artifact | Needs an issue. It is #164's box 5, still unmet, for a **different** reason than before |
 | **Bare `firmware` still matches an inference.** *"a firmware implementation would reach for the register"* is a hypothesis about code that does not exist, and reads as firmware-sourced. `(?<!in )` catches the preposition, not the mood | Recorded in the grader |
+| **`hooks/tracker-verify` misreports the milestone on `gh pr create --body-file`.** It could not read the body from the file, so `WANTS_CLOSE` stayed 0 and it asked a closing PR to *add* a milestone — the opposite of the rule it enforces two branches later, and of `templates/pr.md`. Following it put a milestone on this PR, which review pass 4 caught | Needs an issue |
 | **A guard the corpus cannot exercise is a guard held by fixtures alone.** Seven of the fifteen new fixtures are negative, and every one is synthetic. The real suite's six cases contain none of the false shapes | Recorded in the grader |
 
 ## Retrospective

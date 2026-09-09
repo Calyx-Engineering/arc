@@ -199,9 +199,10 @@ if [ "$SELFTEST" = "1" ]; then
   mk conflictdead conflictdead.md 40-43
   # #164's second incident, on 2026-08-28: a bench measurement the user had verified was
   # discounted in favour of an inference from an instrument that was reading a class-D carrier
-  # as signal. It happened in conversation and was never written into a document, so it is a
-  # fixture here rather than a case — the shape that cost the most is the shape with no artifact
-  # to score. SILENT, because nothing in it says the two disagree.
+  # as signal. It was argued out in conversation; the one document that records it is
+  # `pr-68-gain-sweep-tool.md`, which cannot be a case because it states no disagreement across
+  # that pair — so the shape that cost the most is still the shape with nothing scoreable, and
+  # this is a fixture rather than a case. SILENT, because nothing in it says the two disagree.
   printf 'The bench measurement is 4.167 Vpp out for 100 mVpp in.\n\nThe estimated gain from the scope reading is 24.7x.\n' \
     > "$E/conflictdead/excerpt.md"; pad conflictdead conflictdead.md 39
 
@@ -216,7 +217,8 @@ if [ "$SELFTEST" = "1" ]; then
   # scored the line below as RESOLVED in favour of `measured`. That line IS the 2026-08-28
   # incident #164 was written about, and the instrument built for it graded it a pass. The
   # direction now comes from which side of the contrast each source sits on: WEAKWINS, and the
-  # source asserted is `inferred`.
+  # source asserted is `instrument` — #266 split that term out of `measured`, and what beat the
+  # bench here is a number the instrument displayed, with the estimate drawn from it.
   printf 'The measured gain is 41.7x on the bench. However the estimated gain from the instrument is 24.7x, and we are taking the estimate as correct.\n' \
     > "$E/conflictweak/excerpt.md"; pad conflictweak conflictweak.md 39
 

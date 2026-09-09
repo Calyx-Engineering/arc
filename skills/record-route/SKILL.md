@@ -102,6 +102,16 @@ specified for weeks, because nothing recorded where they came from.
 project may add a term it genuinely has, but it places the new term **in the order**, or it has
 added a word and not a rule.
 
+| | |
+|---|---|
+| **A table row carries its source, on the row** | Not once in a lead-in above it. A row gets quoted somewhere else; the lead-in does not travel with it |
+| **A strong claim is not overridden by a weak one without saying so** | If an inference wins over a measurement, the record says so where the claim is, with why |
+| **Raised as an option is not decided** | `conversation` is the provenance for something said and not yet written. An option recorded as a requirement is the same defect wearing different clothes |
+
+**This is not the same as the confidence split.** That groups a whole report; this travels with
+one row. [engineering-report](../engineering-report/SKILL.md#where-each-claim-came-from) carries
+the report side and the grader that scores it.
+
 ### A reading is not a measurement
 
 **`measured` is the bench. `instrument` is the display.** They read the same to anyone who did
@@ -136,16 +146,6 @@ reader could not tell whether a row reading `schematic` outranked one reading `d
 *this board* is settled by this board's own sheets, and neither the part's document nor the
 seller's label is about this board at all. Every other pair keeps the order at least one of the
 two vocabularies gave it.
-
-| | |
-|---|---|
-| **A table row carries its source, on the row** | Not once in a lead-in above it. A row gets quoted somewhere else; the lead-in does not travel with it |
-| **A strong claim is not overridden by a weak one without saying so** | If an inference wins over a measurement, the record says so where the claim is, with why |
-| **Raised as an option is not decided** | `conversation` is the provenance for something said and not yet written. An option recorded as a requirement is the same defect wearing different clothes |
-
-**This is not the same as the confidence split.** That groups a whole report; this travels with
-one row. [engineering-report](../engineering-report/SKILL.md#where-each-claim-came-from) carries
-the report side and the grader that scores it.
 
 ---
 
