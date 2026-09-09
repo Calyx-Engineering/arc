@@ -1,2 +1,2 @@
-# a PR fixture payload cut off mid-value, after the command — `field` cannot parse it, so it must stay silent rather than report a garbage branch
+# a PR fixture payload cut off mid-value, after the command — `fixture()` cannot parse it, so it must stay silent rather than report a garbage branch
 {"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","tool_input":{"command":"gh pr edit 200 --body-file body.md"},"arc_test_pr_base":"arc/02-found

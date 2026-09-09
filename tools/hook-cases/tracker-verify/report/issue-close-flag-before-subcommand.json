@@ -1,0 +1,2 @@
+# a close with `-R` between `gh` and the subcommand, unlinked — the dispatch matched the literal string `gh issue close`, so this ordinary invocation reached no arm at all. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh -R Calyx-Engineering/arc issue close 163"}}

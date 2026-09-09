@@ -1,0 +1,2 @@
+# `gh pr diff 200 && echo merge` — a chain operator ends the invocation being looked at, or `merge` is read as the diff's verb and a read becomes a merge
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh pr diff 200 && echo merge"}}

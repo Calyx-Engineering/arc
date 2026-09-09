@@ -1,0 +1,2 @@
+# a close whose flag value is itself a `gh` verb — `status` sits where the verb belongs, and the scan must keep looking inside the same invocation rather than giving up on it. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue --label status close 163"}}
