@@ -323,7 +323,7 @@ report() {
 }
 
 # ---- the self-test --------------------------------------------------------------------------
-# Fixture trees, never this repository's own — the shape tests/verify-sync-parity.sh used
+# Fixture trees, never this repository's own — the shape tools/verify-sync-parity.sh used
 # before #142 removed it, recovered from git and fitted to the `selftest` subcommand the
 # surviving verifiers use. Every case builds a complete miniature product definition under
 # mktemp and runs the real check against it, so a failed run leaves no residue and a case

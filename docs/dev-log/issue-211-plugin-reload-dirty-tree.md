@@ -121,7 +121,7 @@ rejected-approach row two paragraphs down. An exclusion list fails safe on cover
 | Refuse on any dirty file at all | `docs/` and `evals/` churn constantly and reach nothing at runtime. Refusing on them makes the guard the thing people work around |
 | List ignored files too, with `--ignored` | It would name every `__pycache__` on every run. The trade is stated where it is made: an ignored file inside `skills/` is shipped without being named, so "the installed plugin equals a commit" holds with that one exception |
 | Check `$PWD` | Silently correct only when the reload is run from the marketplace's own directory |
-| A new `tests/verify-plugin-reload.sh` | The decision and its cases belong in the file they are about. Same shape as `tools/arc-claim.sh selftest` |
+| A new `tools/verify-plugin-reload.sh` | The decision and its cases belong in the file they are about. Same shape as `tools/arc-claim.sh selftest` |
 
 ## Findings
 

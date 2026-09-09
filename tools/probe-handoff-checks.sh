@@ -117,7 +117,7 @@ report() {
       fi
       sha="$(sha1sum < "$skill" | cut -c1-12)"
       checked=$((checked + 1))
-      if HANDOFFCHK_ROOT="$root" bash "$HERE/verify-handoff-checks.sh" >/dev/null 2>&1; then
+      if HANDOFFCHK_ROOT="$root" bash "$HERE/../tests/verify-handoff-checks.sh" >/dev/null 2>&1; then
         printf '  %-44s %-22s CHECKS PRESENT  sha1 %s\n' "$(basename "$f")" "$n" "$sha"
       else
         printf '  %-44s %-22s CHECKS MISSING  sha1 %s\n' "$(basename "$f")" "$n" "$sha"

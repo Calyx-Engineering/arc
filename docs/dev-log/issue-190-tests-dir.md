@@ -34,6 +34,7 @@
 | **`.gitattributes` follows the directory** | `tools/tracker-cases/** text eol=lf` became `tests/tracker-cases/**`. Without it the fixtures check out CRLF-bound and every fixture title gains a stray carriage return — the exact failure the rule was written for |
 | **`plugin-reload.sh`'s fixture gains `tests/`** | `INERT_PATHS` is an exclusion list, so a new top-level directory is treated as loaded without being named, which is the direction that fails safe. The fixture repository still needed the directory to exist |
 | **Dev-logs were swept too** | The issue's *Done when* is "no reference to `tools/verify-` remains outside issue bodies". A path citation is a pointer to a file, not a claim about history, and 300 pointers into a directory that no longer holds the file is the problem this issue exists to fix |
+| **Except where the file never lived in `tests/`** | A blanket substitution over the record rewrote three claims about a **deleted** script, `tools/verify-sync-parity.sh` ([#142](https://github.com/Calyx-Engineering/arc/issues/142)), and two hypothetical paths — `tools/verify-plugin-reload.sh`, a rejected alternative, and `tools/verify-ghost.sh`, an evidence row's provoked failure. All five reverted. A pointer follows its file; a sentence about a file that was never there is a claim, and rewriting it makes the record wrong |
 
 ## Not done
 
@@ -48,6 +49,9 @@ The two boxes this leaves open are named on the issue with this reason rather th
 | **[#305](https://github.com/Calyx-Engineering/arc/issues/305) reproduced here before its fix was merged** | The branch point predated PR [#307](https://github.com/Calyx-Engineering/arc/pull/307). Two commits titled `ran gh issue close 42` landed on this branch, carrying this run's staged work under a message from a hook comment. They are the defect #305 names, not a new one. `git reset` is denied to this session, so they stay in history with the merge that brought the fix in |
 | **The branch point was ten merges stale by the time the work was ready** | Two of those merges added verifiers — `verify-hook-source.sh` and `verify-log-rotation.sh` — which had to move under the same rule. The gate count is 57 after the merge where it was 53 before it |
 | **The issue's *nothing else in flight* constraint did not hold** | Four sibling worktrees were dispatched against the same arc branch during this run, and `origin/arc/04-dogfood` advanced seventeen commits. A rename touching 150 files will conflict with every branch open against it |
+| **A string sweep cannot see a path built from a variable** | `tools/probe-handoff-checks.sh:120` reached its sibling as `bash "$HERE/verify-handoff-checks.sh"` — no literal `tools/verify-` anywhere in it, so the sweep passed over it and the first full sweep failed on that gate. It is the only such reach in the repository; `hooks/`, `tools/` and `tests/` were searched for `$HERE/verify-`, `$(dirname "$0")/verify-`, `$ROOT/verify-` and bare `../verify-` |
+| **Excluding the hook fixtures from the sweep hid two citations** | `mode-guard/pass/manual-script-undeclared.json` named `bash tools/verify-all.sh`. `hooks/mode-guard` does `[ -n "$SPATH" ] || continue` **before** it reads the `# mode-guard: writes-outward` declaration, so an unresolvable path made the case pass without ever reaching the read it was written for — green, and testing nothing. Repointed at `tests/verify-all.sh`, which restores exactly the pre-move behaviour rather than changing the check |
+| **One gate is flaky inside a live session** | `activation log` failed the first sweep on *branch-guard wrote to the real `.claude/arc/log.md` with no session set*, 111178 bytes before and 112059 after. That is this session's own hooks appending while the gate measured the file, not anything this change did |
 
 ## Evidence
 
@@ -58,8 +62,11 @@ The two boxes this leaves open are named on the issue with this reason rather th
 | `verify-hook.sh hooks/session-index` | 11 passed, 0 failed, exit 0 |
 | `verify-hook.sh hooks/handoff-archive` | 11 passed, 0 failed, exit 0 |
 | `bash tests/verify-all.sh --list` | 57 gates, no unknown-verifier finding |
-| `bash tests/verify-all.sh` | recorded below when the sweep completes |
-| Citation sweep | `grep -rn 'tools/verify-'` returns nothing outside `tools/verify-hook.sh`, the hook fixtures and the two intentional `tools/verify-*.sh` glob lines |
+| `bash tests/verify-all.sh`, first sweep | 57 gates, 2 failed — both diagnosed below, both fixed |
+| `bash tools/probe-handoff-checks.sh selftest` | 16 cases, 16 passed, 0 failed, after the sibling-path fix |
+| `bash tests/verify-all.sh`, final sweep | recorded when it completes |
+| Citation sweep | `grep -rn 'tools/verify-'` returns only `tools/verify-hook.sh`, the two intentional `tools/verify-*.sh` glob lines, and the five never-lived-in-`tests/` citations named under *Decisions* |
+| Orphan-citation sweep | every `tests/verify-*.sh` string cited anywhere resolves to a file that exists — 24 names, 24 files |
 
 ## Soak
 

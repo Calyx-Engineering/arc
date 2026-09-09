@@ -137,8 +137,9 @@ tell which file was read* are different answers, and only one is a defect. Same 
 `tests/verify-linked-branch.sh`.
 
 **Both new selftests are registered in `tests/verify-all.sh`.** Its unregistered-verifier guard
-scans `tests/verify-*.sh` only, so a tool named `probe-handoff-checks.sh` slips past it by
-filename. Cited as evidence and never run again is how a gate becomes decoration; neither invokes
+scans by filename — `tools/verify-*.sh` when this was written, `tests/verify-*.sh` and
+`tools/verify-*.sh` since [#190](https://github.com/Calyx-Engineering/arc/issues/190) — so a tool
+named `probe-handoff-checks.sh` slips past it whatever directory it sits in. Cited as evidence and never run again is how a gate becomes decoration; neither invokes
 `claude`, so neither bills. What stays out of `verify-all.sh` is the live probe, not the logic
 that reads its output.
 

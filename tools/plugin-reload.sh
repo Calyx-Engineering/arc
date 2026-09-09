@@ -77,11 +77,14 @@ set -u
 # by `git ls-files | awk -F/ '{print $1}' | sort -u`. A NEW top-level path is covered until
 # someone adds it here with a reason, which is the direction that fails safe.
 #
-# tools/ IS NOT INERT, and #211's "Survived" column reads as though it were. That column named
-# one file, `tests/verify-all.sh`, which nothing loads — but three of its siblings are executed
-# by a live hook: hooks/tracker-verify resolves ../tests/verify-tracker-body.sh,
-# ../tests/verify-linked-branch.sh and ../tests/verify-issue-boxes.sh against the plugin root,
-# which is the cache. An uncommitted verifier is copied there and then run on every issue write.
+# tests/ IS NOT INERT, and #211's "Survived" column reads as though tools/ were — the directory
+# these scripts sat in until #190 moved them. That column named one file, `tests/verify-all.sh`,
+# which nothing loads — but three of its siblings are executed by a live hook: hooks/tracker-verify
+# resolves ../tests/verify-tracker-body.sh, ../tests/verify-linked-branch.sh and
+# ../tests/verify-issue-boxes.sh against the plugin root, which is the cache. An uncommitted
+# verifier is copied there and then run on every issue write. tools/ is not inert either —
+# tools/verify-hook.sh and tools/hook-cases/ stayed behind, and hooks/lib/ is loaded on every
+# firing.
 # reference/ is not inert either: skills/record-route and skills/engineering-report both link
 # ../../reference/knowledge-tiers.md, so an edit there changes what two installed skills teach.
 # Generalising from one inert file to its whole directory is the mistake this comment exists to
