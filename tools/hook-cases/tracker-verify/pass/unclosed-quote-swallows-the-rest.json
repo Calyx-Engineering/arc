@@ -1,0 +1,2 @@
+# a command with an unbalanced quote — everything after it is inside the string, so no arm may be read out of it
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"echo \"unterminated && gh issue close 163"}}

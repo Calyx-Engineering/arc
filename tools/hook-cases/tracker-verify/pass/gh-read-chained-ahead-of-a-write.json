@@ -1,0 +1,2 @@
+# a read chained ahead of a close whose link is intact — the read must not become the invocation the dispatch lands on, and the close must still reach its check and find nothing
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"1","tool_input":{"command":"gh pr view 200 --json state && gh issue close 163"}}

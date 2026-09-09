@@ -16,6 +16,7 @@
 | `R--arc-wt-252` | `R:/arc-wt/252` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
 | `R--arc-wt-265` | `R:/arc-wt/265` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
 | `R--arc-wt-253` | `R:/arc-wt/253` | `arc/04-dogfood-issue-253-cold-start-score` | #253 | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-230` | `R:/arc-wt/230` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-272` | `R:/arc-wt/272` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-269` | `R:/arc-wt/269` | `arc/04-dogfood-issue-269-probe-rate-limit` | #269 | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-264` | `R:/arc-wt/264` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |

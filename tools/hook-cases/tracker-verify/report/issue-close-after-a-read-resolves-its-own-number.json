@@ -1,0 +1,2 @@
+# a read chained ahead of a flagged close, unlinked — the close's arguments must be collected from its own tokens. Cut out of the string by `${cmd#*issue close}` they cannot be, because the flag means that literal never appears, and the arm then reports about #200 — an issue nobody touched — over the network. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh pr view 200 --json state && gh issue -R Calyx-Engineering/arc close 163"}}

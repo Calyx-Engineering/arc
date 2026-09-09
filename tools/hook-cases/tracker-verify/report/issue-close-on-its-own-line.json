@@ -1,0 +1,4 @@
+# a close on the second line of a multi-line command, unlinked — the command is split into words, so a `
+` left unresolved glues `/repo
+gh` into one token and the whole invocation disappears. Every heredoc-carrying write is this shape. REGRESSION COVER: the substring dispatch this replaces caught it, and the tokeniser must not lose it. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"cd /repo\ngh issue close 163"}}
