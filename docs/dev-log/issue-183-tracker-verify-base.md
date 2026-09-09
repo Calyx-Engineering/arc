@@ -120,7 +120,8 @@ Measured on one case payload, 120 invocations each:
 
 The live-session half is the sharper edge — for the length of that window every Arc hook on the
 machine is inert, and nothing says so. `tools/verify-hook.sh` is hard-excluded from autonomous
-edits, so this is recorded rather than fixed. #210's `Spawned` table carries it.
+edits, so this is recorded rather than fixed. `docs/dev-log/issue-210-tracker-verify-trunk.md`'s
+*Findings* carries it.
 
 ## Evidence
 
