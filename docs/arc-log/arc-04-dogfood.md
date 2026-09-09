@@ -185,8 +185,8 @@ Each workstream's 200-word boundary report lands here when it closes.
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
-| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 13 | **In progress.** [#163](https://github.com/Calyx-Engineering/arc/issues/163) closed; [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the activation log, every hook leaving a record — is in [#244](https://github.com/Calyx-Engineering/arc/pull/244); [#165](https://github.com/Calyx-Engineering/arc/issues/165) — `work-watch` check 8, one tested alternative before a failure is blamed on the user's environment — is in [#248](https://github.com/Calyx-Engineering/arc/pull/248). Spawned [#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239) and [#246](https://github.com/Calyx-Engineering/arc/issues/246) |
-| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | Not started. Unblocked |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 16 | **16 of 16 closed.** Report in [§6.3](#63-fire--boundary-report). The parent stays open until the user closes it. Four spawned issues routed to Fire are open and not sub-issues — [#230](https://github.com/Calyx-Engineering/arc/issues/230), [#231](https://github.com/Calyx-Engineering/arc/issues/231), [#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239) |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 6 | **6 of 6 closed.** Report in [§6.4](#64-handoff--boundary-report). The parent stays open until the user closes it. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 7 | Not started |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | Not started |
 
@@ -275,6 +275,147 @@ flowchart LR
 
 ---
 
+### 6.3 Fire — boundary report
+
+**Workstream:** Fire · **Closed:** 2026-09-08 · **200 words**, diagram excluded
+
+#### 6.3.1 Delivered
+
+1. Openings load `handoff` and `camp`: 0/12 to 0.83
+2. Four graders: length, numbering, report shape, environment blame
+3. 60-word budgets hold; 20-word do not
+4. Three hooks stop misreporting; `branch-guard` gains two checks
+5. Every hook logs its firing
+
+#### 6.3.2 Spawned
+
+| | | Routed |
+|---|---|---|
+| [#208](https://github.com/Calyx-Engineering/arc/issues/208) · [#210](https://github.com/Calyx-Engineering/arc/issues/210) · [#213](https://github.com/Calyx-Engineering/arc/issues/213) | Closed | Fire |
+| [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) | Hook extraction; log volume, rotation | Fire — open, **not sub-issues** |
+| [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#246](https://github.com/Calyx-Engineering/arc/issues/246) | Reload reverts edits; check 8 live | Dogfood — open |
+| Unfiled | Eleven *needs an issue* findings | Nowhere |
+
+#### 6.3.3 Unexpected
+
+- Firing and adherence move independently ([#155](https://github.com/Calyx-Engineering/arc/issues/155)), except at 20 words ([#213](https://github.com/Calyx-Engineering/arc/issues/213)). Unresolved
+- `createLinkedBranch` succeeds; `linkedBranches` reads 0, four times
+- `verify-hook.sh` left `HOOKS_OFF` on once; every hook inert
+- [#166](https://github.com/Calyx-Engineering/arc/issues/166) first claimed live firing off fixtures
+
+#### 6.3.4 Unplanned but needed
+
+| | |
+|---|---|
+| Five instruments | None existed |
+| `skill-firing.py` | Miscounted turns |
+| Log write cost | 1.4 s per call, now 91 ms |
+
+#### 6.3.5 Evidence
+
+| | |
+|---|---|
+| `verify-all.sh` | 11 → 38 gates, exit 0 every merge |
+| Live here | Exit 1 — local `grep -q` aborts; one gate reads an ignored file |
+| Baselines | Opening 1/3 · provenance 1/4 · topics 0/3 · environment `BLAMED` |
+| Activation log | 455 live entries today — first soak |
+
+#### 6.3.6 Not done
+
+- *Done when* unmet: [#156](https://github.com/Calyx-Engineering/arc/issues/156), [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#213](https://github.com/Calyx-Engineering/arc/issues/213), [#165](https://github.com/Calyx-Engineering/arc/issues/165)
+- Boxes unticked: [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#210](https://github.com/Calyx-Engineering/arc/issues/210), [#166](https://github.com/Calyx-Engineering/arc/issues/166)
+- [#160](https://github.com/Calyx-Engineering/arc/issues/160)'s case cannot discriminate
+- Everything merged unsoaked
+- `TEMPLATE`, `verify-hook.sh` edits proposed only
+
+#### 6.3.7 What it changed
+
+```mermaid
+flowchart LR
+    A["#155 three shapes<br/>wrapped 2/7"] --> B["#156 #157 #208<br/>openings load<br/>handoff + camp"]
+    A --> C["#158 #213 length<br/>#160 numbering<br/>#159 #164 report shape<br/>#165 environment"]
+    C --> D["four graders,<br/>baselines measured,<br/>none passing yet"]
+    E["#162 #183 #210 #163<br/>hooks read the repo,<br/>the arc, the close"] --> F["#166 every hook<br/>leaves a record"]
+    G["#161 branch-guard<br/>worktree + base"] --> F
+    H["#181 plugin eval"]:::blocked -.->|"gated"| B
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
+```
+
+*End of Fire's boundary report.*
+
+---
+
+
+### 6.4 Handoff — boundary report
+
+**Workstream:** Handoff · **Closed:** 2026-09-08 · **200 words**, diagram excluded
+
+#### 6.4.1 Delivered
+
+1. Baseline: 8 cold starts, first action 5/8, states why 4/8
+2. Decisions carry what would have to change; a swap trigger
+3. `handoff-archive` copies what git cannot restore
+4. Title re-stamped every write
+5. `work-watch` check 7: self-saturation, 52-turn eval
+6. `session-index` commits transcript locations for the miner
+
+#### 6.4.2 Spawned
+
+| | | Routed |
+| --- | --- | --- |
+| [#243](https://github.com/Calyx-Engineering/arc/issues/243) | Saturation probe | Dogfood — open, **not a sub-issue** |
+| Unfiled | Undelivered handoff; false claims; re-score unrouted | Handoff |
+| Unfiled | Bash overwrites unarchived; 147 ms tax; `SessionStart` variant | Handoff — needs the user |
+| Unfiled | Hooks carry issue numbers, not mechanism ids | Product architecture |
+
+#### 6.4.3 Unexpected
+
+- Rationale-stripping: 2 of 5 bad openings, and a written rule
+- Both criteria together invert the recalled split
+- Two handoffs last edited by Copilot Chat
+- 17 orphaned transcript directories; m32 said 2
+- Pass 2 caught two silent disables
+
+#### 6.4.4 Unplanned but needed
+
+| | |
+| --- | --- |
+| `Bash` matcher, both hooks | Shell overwrites skip edit tools |
+| `templates/dev-log.md` | Exclusions need a reason |
+| `verify-all.sh` | Fails on an unknown gate |
+
+#### 6.4.5 Evidence
+
+| | |
+| --- | --- |
+| `verify-all.sh` | 20 → 41 gates, exit 0 |
+| `verify-handoff-rationale.sh` | 5 failed before, green after |
+| Saturation baseline | `SILENT`, 52 turns |
+| Mutation test | 9 deleted, 9 caught |
+
+#### 6.4.6 Not done
+
+- [#146](https://github.com/Calyx-Engineering/arc/issues/146)'s *Done when*: no score moved; the live re-run is unrouted
+- [#154](https://github.com/Calyx-Engineering/arc/issues/154) box 2: check 7 never seen firing
+- Openings 1, 2 out of reach
+- Nothing soaked live
+- Backfilling the 17
+
+#### 6.4.7 What it changed
+
+```mermaid
+flowchart LR
+    A["#150 baseline<br/>5/8 · 4/8"] --> B["#151 constraint column,<br/>Why here, swap trigger"]
+    C["#152 handoff-archive"] --> D["#153 re-stamp gate<br/>needs the archived copy"]
+    E["#154 work-watch check 7"] --> F["#243 probe run"]:::blocked
+    G["#16 session-index"] --> H["transcript-miner<br/>reads the index"]
+    I["#181 plugin eval"]:::blocked -.->|"re-score unrouted"| B
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
+```
+
+*End of Handoff's boundary report.*
+
+---
 
 ## 7 Related analysis
 
