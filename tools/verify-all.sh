@@ -107,6 +107,7 @@ run_gate "tracker body rules" bash tools/verify-tracker-body.sh selftest
 run_gate "template links" bash tools/verify-template-links.sh
 run_gate "template link cases" bash tools/verify-template-links.sh selftest
 run_gate "close-sequence count" bash tools/verify-close-sequence.sh
+run_gate "handoff check cases" bash tools/verify-handoff-checks.sh selftest
 run_gate "handoff staleness checks" bash tools/verify-handoff-checks.sh
 run_gate "handoff rationale cases" bash tools/verify-handoff-rationale.sh selftest
 run_gate "handoff rationale" bash tools/verify-handoff-rationale.sh
