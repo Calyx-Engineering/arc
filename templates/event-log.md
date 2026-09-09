@@ -38,7 +38,33 @@ first, and an append that has to read the file is an append that gets skipped un
 | `subject` | What it happened to. `key=value`, space separated. Omit if there is none | `pr=51 issue=39` |
 | `checked` | **Every check the artifact declared**, passes included | see below |
 | `outcome` | One of `ok` · `denied` · `repaired` · `failed`, then detail | `denied — branch is main` |
-| `skipped` | A declared check that did not run, and why. Omit the line when none | `placeholder-scan (no body edit)` |
+| `skipped` | A declared check that did not run, and why. Omit the line when none, and when nothing ran at all — see below | `placeholder-scan (no body edit)` |
+
+## An entry where nothing ran
+
+**No `skipped:` line.** An artifact that returns before any declared check runs writes three
+lines, not four:
+
+```text
+2026-09-08T14:00Z  tracker-verify  tracker-write
+  checked: — none reached
+  outcome: ok — not a tracker write
+```
+
+**The whole line goes, not only the unreached names.** What it held on such an entry is the
+artifact's `checks:` declaration copied back, plus any `arc_log_skip` reasons recorded on the
+way out — and on a firing that reached nothing those reasons restate the `outcome:` line.
+Neither is evidence about the firing. Most firings are this kind — 11,156 of arc 03's 14,734
+entries — and the line they carried was 50% of that file.
+[m44](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m44-event-log.md)
+carries the measurements.
+
+**Only when the outcome is `ok`.** A `denied`, `failed` or `repaired` entry keeps its
+`skipped:` line even where nothing ran — that is the entry someone reads, and a per-check
+reason in it is recoverable from nowhere else.
+
+**The entry itself is never omitted.** One firing is one entry, on every path; what changes
+is how long the entry is. `tools/verify-activation-log.sh` asserts both.
 
 ## The checked line is the point
 
@@ -63,8 +89,8 @@ on the `checked` line.
 |---|---|
 | **Declared, ran, passed** | On the `checked` line |
 | **Declared, ran, failed** | On the `checked` line, and in `outcome` |
-| **Declared, did not run** | On the `skipped` line, with the reason |
-| **Not declared** | Not logged. An artifact with no `camp-reports:` header writes nothing |
+| **Declared, did not run** | On the `skipped` line, with the reason — unless nothing ran at all, above |
+| **Not declared** | An artifact with no `camp-reports:` header writes nothing. A check marked by name without being declared — `hooks/camp-branch-check`'s `base-is-arc` — is logged, and disappears with the line above when nothing ran |
 
 **Verbosity never reaches this file.** It governs what surfaces in conversation. A `quiet`
 session and a `loud` one produce identical logs — which is what makes turning the volume down
@@ -81,6 +107,16 @@ safe.
 
 Retention past that is **not decided** — m44 names it as open. The move preserves the file
 until it is.
+
+**Nobody is prompted to do either, so a gate notices when neither happened.**
+`tools/verify-log-rotation.sh` reads the live log's `**Arc:**` header against the arc the
+current branch belongs to and reports the disagreement, with the two commands that fix it. It
+was written because arc 04 ran its whole length appending to a file headed `arc/03-camp`
+&mdash; [#239](https://github.com/Calyx-Engineering/arc/issues/239).
+
+**Relative links move with the file.** The header's links are written from `.claude/arc/`; the
+archive is two levels deeper, so they are rewritten on the way &mdash; a rotation that leaves
+them is a rotation that breaks every link in the header.
 
 ## Writing an entry cheaply
 
