@@ -56,7 +56,7 @@ neither run reads it.
 
 ## Cases
 
-`bash tools/arc-claim.sh selftest` — 49 cases, run by `verify-all.sh` as **issue claim cases**.
+`bash tools/arc-claim.sh selftest` — 56 cases, run by `verify-all.sh` as **issue claim cases**.
 The decision cases are pure functions over one list; the rest drive `take`, `refresh`, `release`,
 `check` and `claimed` end to end through a **mutable fixture backend** (`ARC_CLAIM_FIXTURES`,
 `ARC_CLAIM_NOW`), so argument parsing and exit codes are exercised with no network. One case
@@ -66,22 +66,23 @@ drives the live path instead, behind a stubbed `gh`.
 |---|---|
 | Two dispatchers racing | Both posted before either read, at the decision layer. Then through the real command, twice: the **pre-check**, which turns the second dispatcher away with no comment posted; and the **race proper**, where `ARC_CLAIM_AFTER_POST` lands a rival's lower-numbered claim between our post and our read-back — the one interleaving the pre-check cannot see, and so the only case that exercises the read-back and the withdrawal |
 | A claim left by a killed run | An expired claim locks nothing, the expiry boundary is exclusive, an unrefreshed claim stops being live after its TTL, and the next reader reaps it |
-| A claim released on every exit path | `release` removes ours and leaves an ordinary comment alone; releasing twice is not an error; and nine checks on `arc-loop.sh` — the three traps, `release_claims`, the per-issue release when a run ends, `take_claim` in `run_batch` and `reclaim_claim` in `--resume`, that `reclaim_claim` has **exactly one** caller, and that `run_batch`'s worktree and liveness guards precede its first claim |
+| A claim released on every exit path | The tool half, executed: `release` removes ours and **only** ours with a second dispatcher's claim standing beside it, leaves an ordinary comment alone, and is not an error twice over. The caller half, as source text: **fifteen** checks on `arc-loop.sh` — the three traps, `release_claims`, the per-issue release when a run ends, `take_claim` in `run_batch` and `reclaim_claim` in `--resume`, that `reclaim_claim` has **exactly one** caller, and that `run_batch`'s worktree and liveness guards precede its first claim |
 
 Structural checks follow `tools/verify-linked-branch.sh`'s precedent: the guarantee is one line of
 shell, it cannot be exercised without dispatching a real run, and the first draft of this
 integration released on the happy path only.
 
-**Eight mutations, each killing at least one case.** Dropping the unterminated-line guard (4
+**Eleven mutations, each killing at least one case.** Dropping the unterminated-line guard (5
 cases); a withdrawal that deletes nothing; `claims_on` swallowing a failed read; an inclusive
 expiry; ordering the winner by epoch instead of id; `read_comments` failing quietly; moving
-`run_batch`'s guards back below its claim; and `--resume` calling `take_claim` instead of
-`reclaim_claim`.
+`run_batch`'s guards back below its claim; `--resume` calling `take_claim` instead of
+`reclaim_claim`; `release` dropping its owner filter; `refresh` dropping its liveness filter; and
+`settle` back to the integer test that skipped the window in silence.
 
 ## Retrospective
 
-Four review passes. Passes 1 and 2 each found defects the pass before had introduced or missed,
-and pass 2's were in pass 1's own repairs.
+Four review passes. Each found defects the pass before had introduced or missed: pass 2's were in
+pass 1's own repairs, and pass 3's were in the cases rather than the code.
 
 **The live read found what 40 green fixture cases could not.** `read_comments` ended with
 `printf '%s' "$out"`; command substitution strips the trailing newline, and `while read` at an
@@ -97,7 +98,7 @@ delete filtered for its own token among the claims it could see, and its own was
 not. One bug, three symptoms.
 
 The fixture backend hid it because `sort` terminates its output. The fixture now `cat`s the file
-verbatim and `claims_on` carries `|| [ -n "$id" ]`, so **every** case runs through the guard — four
+verbatim and `claims_on` carries `|| [ -n "$id" ]`, so **every** case runs through the guard — five
 of them fail if it is removed, which is a stronger position than the one dedicated case it started
 as.
 
@@ -120,6 +121,17 @@ with no `hostname` — the fallback on the next line was unreachable, and it wou
 wait into **no wait**, and the new failed-read case exiting at `repo_nwo` rather than at the read
 it was written for.
 
+**Pass 3 audited the checklist and found the cases, not the code, wanting.** Every box was backed
+by code, but two mutations survived the whole suite: `cmd_release` dropping its owner filter, and
+`cmd_refresh` dropping its liveness filter. Both slipped through for the same reason — every case
+in the release family held **one** claim at a time, so *ours and only ours* was never tested with
+anybody else's claim beside it. One dispatcher's release would have destroyed another's live
+claim, and a lapsed dispatcher would have resurrected its own expired one and — holding the lower
+id — beaten the legitimate holder. Two cases now stand a second dispatcher's claim next to ours.
+Pass 3 also found `[ "$SETTLE" -gt 0 ] 2>/dev/null && sleep "$SETTLE"`: an integer test on `20s`
+is an **error**, not a false, so any value `sleep` would have accepted skipped the settle window
+in silence — the same class pass 2 had just fixed in `sleep_heartbeat`, one knob away.
+
 **Exercised live**, on #214 and #134 in the real repository:
 
 | | |
@@ -136,5 +148,5 @@ not exercised by the run it dispatched — this one. `--dry-run` reaches `read_c
 outside the structural checks. It soaks on the next `tools/arc-loop.sh` invocation from the main
 tree.
 
-**Gates:** `bash tools/verify-all.sh` → exit 0, 44 gates clean, including the new **issue claim
-cases** gate at 49. `bash tools/arc-claim.sh selftest` → 49 passed, 0 failed.
+**Gates:** `bash tools/verify-all.sh` → exit 0, 47 gates clean, including the new **issue claim
+cases** gate at 56. `bash tools/arc-claim.sh selftest` → 56 passed, 0 failed.

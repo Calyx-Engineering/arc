@@ -134,6 +134,20 @@ BODY
 
 iso() { date -u -d "@$1" +%FT%TZ 2>/dev/null || printf 'epoch %s' "$1"; }
 
+# settle <value> — the pause between the post and the read-back. `0` means none; a whole number
+# of seconds is slept; anything else `sleep` understands (`20s`, `0.5`) is slept and said out
+# loud, because an integer test on it is an error rather than a false and would skip the pause.
+settle() {
+  case "$1" in
+    0|0s) return 0 ;;
+    *[!0-9]*) echo "arc-claim: ARC_CLAIM_SETTLE=$1 is not a whole number of seconds" >&2
+              sleep "$1" || echo "arc-claim: sleep $1 failed — the read-back is not settled" >&2
+              return 0 ;;
+    '') return 0 ;;
+    *) sleep "$1"; return 0 ;;
+  esac
+}
+
 # parse_marker <body> — prints "<owner> <epoch> <ttl>" if the body carries a claim, else nothing.
 # A body with no marker is an ordinary comment and must produce no line at all: a claim tool that
 # reads every comment as a claim locks an issue the moment somebody talks on it.
@@ -326,7 +340,10 @@ cmd_take() {  # cmd_take <issue>
   fi
 
   post_comment "$issue" "$(claim_body "$self" "$t" "$TTL")" >/dev/null
-  [ "$SETTLE" -gt 0 ] 2>/dev/null && sleep "$SETTLE"
+  # `[ "20s" -gt 0 ]` is an ERROR, not a false — so `2>/dev/null &&` silently skipped the settle
+  # window for any value `sleep` would have accepted, and the guard against read-path replication
+  # lag disappeared without a word. Same defect class tools/arc-loop.sh's sleep_heartbeat fixes.
+  settle "$SETTLE"
 
   # THE READ-BACK IS THE INTERLOCK. The post's own return value says what we asked for, not what
   # the issue now holds — the same lesson tools/verify-linked-branch.sh is built on.
@@ -481,6 +498,28 @@ selftest() {
   marker_is "" "no marker at all" "Blocked by #211."
   marker_is "" "a v2 marker is not ours" "<!-- arc-claim v2 owner=x epoch=1 ttl=2 -->"
 
+  # ---- the settle window ---------------------------------------------------------
+  # `0` returns at once; a non-integer is slept and said out loud rather than skipped in silence.
+  # THE LOWER BOUND IS THE ASSERTION. The defect was a pause skipped in silence, so a case that
+  # only caps the elapsed time passes against it. The upper bound is slack for a second boundary.
+  settle_is() {  # settle_is <min-seconds> <max-seconds> <want-warning|quiet> <name> <value>
+    run=$((run + 1))
+    local t0 t1 d err
+    t0="$(date +%s)"
+    err="$(settle "$5" 2>&1 >/dev/null)"
+    t1="$(date +%s)"; d=$((t1 - t0))
+    if [ "$d" -lt "$1" ] || [ "$d" -gt "$2" ]; then
+      bad "settle: $4 — took ${d}s, wanted $1 to $2"; return; fi
+    if [ "$3" = warning ] && [ -z "$err" ]; then
+      bad "settle: $4 — slept without saying so"; return; fi
+    if [ "$3" = quiet ] && [ -n "$err" ]; then
+      bad "settle: $4 — said \"$err\""; return; fi
+    ok "settle: $4"
+  }
+  settle_is 0 1 quiet   "0 is no pause"                     0
+  settle_is 2 4 quiet   "a whole number of seconds sleeps"  2
+  settle_is 2 4 warning "2s sleeps too, and says so"        2s
+
   # ---- end to end, against the fixture backend ----------------------------------
   TMP="$(mktemp -d 2>/dev/null || echo "${TMPDIR:-/tmp}/arc-claim.$$")"
   mkdir -p "$TMP"
@@ -616,6 +655,30 @@ selftest() {
     ok "released — and the ordinary comment survived"; else
     bad "release did not leave the issue as it found it: $(cat "$TMP/comments-5.tsv")"; fi
   e2e gamma 0 "releasing twice is not an error" release 5 gamma
+
+  # AND ONLY OURS, WITH A SECOND DISPATCHER PRESENT. Every case above holds one claim at a time,
+  # so "ours and only ours" was never tested against anybody else's: dropping `cmd_release`'s
+  # owner filter passed the whole suite while one dispatcher's release destroyed another's live
+  # claim.
+  printf '500\t%s\n' "$(claim_body alpha 990 1800 | base64 | tr -d '\n')" > "$TMP/comments-8.tsv"
+  printf '501\t%s\n' "$(claim_body beta  991 1800 | base64 | tr -d '\n')" >> "$TMP/comments-8.tsv"
+  e2e beta 0 "release beta's claim while alpha's stands" release 8 beta
+  run=$((run + 1))
+  if [ "$(ARC_CLAIM_NOW=1000 bash "$SELF" check 8 2>&1)" = "#8 held  by alpha — comment 500, until $(iso 2790)" ]; then
+    ok "release took only its own — alpha still holds it"; else
+    bad "release crossed owners: $(ARC_CLAIM_NOW=1000 bash "$SELF" check 8 2>&1)"; fi
+
+  # AN EXPIRED CLAIM OF OUR OWN IS NOT REFRESHABLE. `refresh` is both the heartbeat and the
+  # adoption test in tools/arc-loop.sh, and both read its 0 as "you still hold this". Without
+  # `cmd_refresh`'s liveness filter a lapsed dispatcher resurrects its own expired claim and,
+  # holding the lower id, beats the legitimate holder that took the issue in the meantime.
+  printf '502\t%s\n' "$(claim_body zeta 100 1800 | base64 | tr -d '\n')" > "$TMP/comments-9.tsv"
+  e2e zeta 1 "an expired claim cannot be refreshed back to life" refresh 9 zeta
+  run=$((run + 1))
+  if [ "$(ARC_CLAIM_NOW=9000 bash "$SELF" check 9 2>&1)" = "#9 free" ]; then
+    ok "the expired claim stayed expired"; else
+    bad "refresh resurrected it: $(ARC_CLAIM_NOW=9000 bash "$SELF" check 9 2>&1)"; fi
+  rm -f "$TMP/comments-8.tsv" "$TMP/comments-9.tsv"
 
   # Arguments.
   e2e none 2 "no command"        ""
