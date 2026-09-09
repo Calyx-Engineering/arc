@@ -25,7 +25,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks verify-log-rotation"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation"
 
 RUN=0
 FAILED=0
@@ -93,6 +93,12 @@ run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 run_gate "skill probe cases" python tools/skill-probe.py selftest
 run_gate "skill probe loop cases" bash tools/skill-probe.sh selftest
 run_gate "probe handoff check cases" bash tools/probe-handoff-checks.sh selftest
+# report-shape-probe.sh's loop, on canned reports through RSP_PY, so it bills nothing. It is
+# the only gate here that runs ANOTHER gate's scorer live: the canned reports are graded by
+# tools/report-grade.sh as it is on disk, which is what notices if the verdict strings the
+# probe classifies ever drift from the ones the grader prints. Its billed half — a session
+# that writes a report — is excluded, like every other probe's.
+run_gate "report shape probe cases" bash tools/report-shape-probe.sh selftest
 run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "response length cases" bash tools/response-length.sh selftest
@@ -188,6 +194,14 @@ if [ "$LIST" = "1" ]; then
                               a skill fired. tools/probe-handoff-checks.sh then says
                               which installed file a firing read, not what the session did with
                               it
+    the SHAPE of a report     report-shape-probe.sh has the plugin as installed WRITE a report
+    against a CHANGED skill   from a fixed brief and grades it with report-grade.sh --file. It
+                              is the only instrument here that can see an edit to
+                              skills/engineering-report at all — the frozen suite grades
+                              documents the skill was never an input to, proven on #260 when a
+                              strengthened skill and an EMPTIED one scored identically. Every
+                              run is a billed session, so it is not a gate; the "report shape
+                              probe cases" gate above is its loop on canned reports
     three questions against   response-length.sh --probe, topic-numbering.sh --probe and
     a CHANGED skill — reply   saturation-cases.sh --probe re-run a case's turns live and score
     length, topic numbering,  the replies. All three bill per turn, and the saturation case is
