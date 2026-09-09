@@ -71,8 +71,12 @@ table; out of scope for both issues in this batch.
 37 after the review passes added four cases and rewrote the malformed PR-fixture one.
 `bash tools/verify-all.sh` — 13 gates, all clean, exit 0.
 
-**The issue's third box is left unticked.** `bash tools/verify-hook.sh tracker-verify` exits 2
+**The issue's third box was left unticked at the time.** `bash tools/verify-hook.sh tracker-verify` exits 2
 with `usage:` — the script takes a path, not a hook name. The substance is done and the gate
 passes on `hooks/tracker-verify`, but ticking a box whose command errors would assert something
 the tree contradicts. The reason is recorded in the issue body; correcting the criterion is the
 user's call.
+
+**Resolved on [#264](https://github.com/Calyx-Engineering/arc/issues/264)**, which is where the
+user made that call. The criterion was the defect. Box 3 now reads
+`bash tools/verify-hook.sh hooks/tracker-verify` and is ticked.
