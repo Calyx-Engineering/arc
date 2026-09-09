@@ -129,7 +129,7 @@ distinguish success from failure.
 | Writer transcript | `~/.claude/projects/r--arc/803108a7-5a24-4535-9a84-28113b5a2ae1.jsonl` |
 | Row classification of `.claude/arc/log.md` (one `awk` pass) | 8,366 rows: 8,363 from the seven hooks, 3 `issue-write` from 2026-08-19. `handoff` rows 0; each of the seven check names 0 |
 | `hooks/lib/activation-log` | *"NOT A HOOK. It is sourced by one"* |
-| `bash tools/verify-all.sh` | 51 gates, all clean (exit 0) |
+| `bash tools/verify-all.sh` | 51 gates, all clean (exit 0) at the write-up commit; 52 after the arc tip was merged in, all clean |
 
 **The one-shot opening is spent, once.** Session `d8fadd56`, 2026-09-08 20:38 EDT. It is not
 repeatable; a second opening would be a different measurement.
