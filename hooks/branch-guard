@@ -19,7 +19,7 @@
 #
 # camp-reports: edit-denied
 # checks: branch-kind, path-is-source, worktree-identity, base-freshness
-# skips: branch-kind (there is no branch — no repository, a detached HEAD, or git is unavailable), path-is-source (the branch is not a coordination branch, or the payload names no file), worktree-identity (the path is relative, lands outside any repository, resolves to no directory that exists, this session is not in a repository, or there is no branch or file to check), base-freshness (not a work branch, the branch name carries no base, the base ref is absent, this base commit was already reported, the reminder could not be recorded, or there is no branch or file to check)
+# skips: branch-kind (there is no branch — no repository, a detached HEAD, or git is unavailable), path-is-source (the branch is not a coordination branch, the payload names no file, the path lands outside every git worktree, or there is no branch to check), worktree-identity (the path is relative, is in a different repository, resolves to no directory that exists, this session is not in a repository, lands outside every git worktree, or there is no branch or file to check), base-freshness (not a work branch, the branch name carries no base, the base ref is absent, this base commit was already reported, the reminder could not be recorded, the path lands outside every git worktree, or there is no branch or file to check)
 
 # ---- kill switch ----------------------------------------------------------------
 # `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
@@ -141,6 +141,86 @@ NORM="$(printf '%s' "$FILE" | tr '\\' '/')"
 
 lower() { printf '%s' "$1" | tr 'A-Z' 'a-z'; }
 
+# ---- resolving the target -------------------------------------------------------
+# WHICH REPOSITORY THE WRITTEN PATH LANDS IN IS NEEDED BEFORE CHECK 1, not only by check 2.
+# Check 1 asks whether a path is source work; a path in no repository at all is not source
+# work in *this* one, and none of this hook's business. Resolving it inside check 2 put that
+# answer downstream of a denial already sent — a scratchpad `.py` written from
+# `arc/04-dogfood` was blocked as source work on a coordination branch, and the check that
+# exempts a path in no repository never ran. #272.
+#
+# Resolution happens once, here. Check 2 reads what this leaves behind and decides.
+# `$TOP` already holds it, from the same command against the same cwd. The hoist made
+# this unconditional, and a fork here is paid by every relative-path write — the common
+# case, which used to reach none of this.
+CWD_TOP="$TOP"
+TDIR=
+TGT_TOP=
+WT_ELSEWHERE=
+WT_SKIP="the path is relative, so it resolves inside this worktree"
+case "$NORM" in
+  /*|[A-Za-z]:/*)
+    # The reason a fall-through is logged with. After the early exit below there is one:
+    # a path in a *different* repository — the mirrored-file edit, which is not this hook's
+    # business but is emphatically inside a repository. It was logged as "outside any
+    # repository" until #272, which is wrong about the only case it now describes.
+    WT_SKIP="the path is in a different repository"
+    TDIR="$(dirname "$NORM")"
+    # A new file's directory may not exist yet. Walk up to the nearest one that does.
+    while [ -n "$TDIR" ] && [ ! -d "$TDIR" ]; do
+      TPARENT="$(dirname "$TDIR")"
+      [ "$TPARENT" = "$TDIR" ] && break
+      TDIR="$TPARENT"
+    done
+    # A path on a root that does not exist walks up to `.`, which is a directory — the
+    # hook's own cwd, not the target's. Anything that stopped being absolute is unresolved.
+    case "$TDIR" in /*|[A-Za-z]:/*|[A-Za-z]:) ;; *) TDIR= ;; esac
+    if [ -z "$TDIR" ] || [ ! -d "$TDIR" ]; then
+      TDIR=
+      WT_SKIP="the path resolves to no directory that exists"
+    fi
+    if [ -n "$TDIR" ]; then
+      TGT_TOP="$(git -C "$TDIR" rev-parse --show-toplevel 2>/dev/null)"
+      if [ -n "$CWD_TOP" ] && [ -n "$TGT_TOP" ]; then
+        if [ "$(lower "$CWD_TOP")" != "$(lower "$TGT_TOP")" ]; then
+          # The common dir is the shared `.git` of a repository's worktrees. Equal means one
+          # repository seen from two worktrees; unequal means two repositories, and those are
+          # not this hook's business.
+          CWD_COMMON="$(git -C "$CWD" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+          TGT_COMMON="$(git -C "$TDIR" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+          if [ -n "$CWD_COMMON" ] && [ "$(lower "$CWD_COMMON")" = "$(lower "$TGT_COMMON")" ]; then
+            WT_ELSEWHERE=yes
+          fi
+        else
+          WT_SKIP=""
+        fi
+      fi
+      [ -n "$CWD_TOP" ] || WT_SKIP="this session is not in a repository"
+    fi
+    ;;
+esac
+
+# A path in no worktree of any repository is allowed, and all three checks are skipped.
+#
+# Checks 1 and 2 have no question to ask about it: `~/.claude/settings.json` and a scratchpad
+# file under the system temp directory are on no branch and in no worktree. Check 3 is
+# different and the exemption is deliberate — base freshness is a property of the session's
+# BRANCH, not of the path, so it would still have something to say. It is skipped anyway,
+# because #272's requirement is that such a path is allowed, and a stale-base denial landing
+# on a write this guard has no claim over is the same denial the issue is about. Nothing is
+# lost: the stamp is written only where the reminder is delivered, so the next in-repo edit
+# on that branch still gets it.
+#
+# EXEMPTING HERE RATHER THAN CHECK BY CHECK IS THE FIX. Check 2 owned the resolution and
+# check 1 ran first, so the exemption was never reached.
+if [ -n "$TDIR" ] && [ -z "$TGT_TOP" ]; then
+  for c in path-is-source worktree-identity base-freshness; do
+    arc_log_skip "$c" "the path lands outside every git worktree"
+  done
+  arc_log_outcome ok "the path is in no repository"
+  exit 0
+fi
+
 # ---- check 1: branch kind -------------------------------------------------------
 # Writable on a coordination branch: the record, the process, and the plugin's own
 # agent-facing surface. This is what those branches exist to maintain.
@@ -174,48 +254,16 @@ fi
 # Same repository is the whole restriction, and it is what keeps this narrow. A different
 # clone is a legitimate target — CLAUDE.md requires 04-arc-execution-and-roles.md to be
 # edited in lodestar and arc in the same session — and a path in no repository at all
-# (~/.claude/settings.json) is none of this hook's business. Both stay allowed. A relative
-# path resolves against the session's own cwd, so it cannot land elsewhere.
-WT_SKIP="the path is relative, so it resolves inside this worktree"
-case "$NORM" in
-  /*|[A-Za-z]:/*)
-    WT_SKIP="the path lands outside any repository"
-    TDIR="$(dirname "$NORM")"
-    # A new file's directory may not exist yet. Walk up to the nearest one that does.
-    while [ -n "$TDIR" ] && [ ! -d "$TDIR" ]; do
-      TPARENT="$(dirname "$TDIR")"
-      [ "$TPARENT" = "$TDIR" ] && break
-      TDIR="$TPARENT"
-    done
-    # A path on a root that does not exist walks up to `.`, which is a directory — the
-    # hook's own cwd, not the target's. Anything that stopped being absolute is unresolved.
-    case "$TDIR" in /*|[A-Za-z]:/*|[A-Za-z]:) ;; *) TDIR= ;; esac
-    if [ -z "$TDIR" ] || [ ! -d "$TDIR" ]; then
-      WT_SKIP="the path resolves to no directory that exists"
-    fi
-    if [ -n "$TDIR" ] && [ -d "$TDIR" ]; then
-      CWD_TOP="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
-      TGT_TOP="$(git -C "$TDIR" rev-parse --show-toplevel 2>/dev/null)"
-      if [ -n "$CWD_TOP" ] && [ -n "$TGT_TOP" ] && [ "$(lower "$CWD_TOP")" != "$(lower "$TGT_TOP")" ]; then
-        # The common dir is the shared `.git` of a repository's worktrees. Equal means one
-        # repository seen from two worktrees; unequal means two repositories, and those are
-        # not this hook's business.
-        CWD_COMMON="$(git -C "$CWD" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
-        TGT_COMMON="$(git -C "$TDIR" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
-        if [ -n "$CWD_COMMON" ] && [ "$(lower "$CWD_COMMON")" = "$(lower "$TGT_COMMON")" ]; then
-          arc_log_fail worktree-identity=elsewhere
-          arc_log_outcome denied "the file is in another worktree of this repository"
-          deny "Edit blocked: \`$FILE\` is in \`$TGT_TOP\`, a different worktree of this repository. This session's worktree is \`$CWD_TOP\` — another run, or the orchestrator, is working in that one. Edit the copy under your own worktree, or open a session there."
-        fi
-      elif [ -n "$CWD_TOP" ] && [ -n "$TGT_TOP" ]; then
-        WT_SKIP=""
-      elif [ -z "$TGT_TOP" ]; then
-        WT_SKIP="the path lands outside any repository"
-      fi
-      [ -n "$CWD_TOP" ] || WT_SKIP="this session is not in a repository"
-    fi
-    ;;
-esac
+# (~/.claude/settings.json) is none of this hook's business. Both stay allowed; the second
+# never reaches here, having been allowed above. A relative path resolves against the
+# session's own cwd, so it cannot land elsewhere.
+#
+# The resolution is above, before check 1. This decides on it.
+if [ "$WT_ELSEWHERE" = yes ]; then
+  arc_log_fail worktree-identity=elsewhere
+  arc_log_outcome denied "the file is in another worktree of this repository"
+  deny "Edit blocked: \`$FILE\` is in \`$TGT_TOP\`, a different worktree of this repository. This session's worktree is \`$CWD_TOP\` — another run, or the orchestrator, is working in that one. Edit the copy under your own worktree, or open a session there."
+fi
 if [ -n "$WT_SKIP" ]; then
   arc_log_skip worktree-identity "$WT_SKIP"
 else
