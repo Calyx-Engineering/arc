@@ -24,7 +24,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep"
+KNOWN="verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks"
 
 RUN=0
 FAILED=0
@@ -78,15 +78,19 @@ run_gate "skill registry" bash tools/verify-skill-registry.sh
 run_gate "skill registry cases" bash tools/verify-skill-registry.sh selftest
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
-# The two halves of the probe. Neither invokes `claude`, so neither bills — what is excluded
+# The three selftests around the probe. None invokes `claude`, so none bills — what is excluded
 # from this file is tools/skill-probe.sh's live run, not the logic that reads its output. #252
-# added both and cited both as evidence; unregistered, nothing would ever run them again.
+# added the first two and cited both as evidence; unregistered, nothing would ever run them
+# again. The third is #269's: tools/skill-probe.sh became testable when the abandon branch,
+# the halt and the measured-runs denominator were added to it, all of which are JSON in and
+# text out. It replaces the billed half through PROBE_PY.
 #
-# They are NOT in KNOWN above. That guard globs `tools/verify-*.sh`, so neither name can ever
-# match it and an entry there would be inert — listing them would suggest a coverage the guard
-# does not have. The gap is real and it is the guard's, not theirs: a selftest whose file is not
-# named `verify-*` is invisible to it and can only be caught by reading this file.
+# Their names ARE in KNOWN, alongside the dozen others there that the guard cannot check. It
+# globs `tools/verify-*.sh` and never asks after a file named anything else, so those entries
+# are for the reader, not for the guard. The gap is real and it is the guard's: a selftest whose
+# file is not named `verify-*` can only be noticed by reading this file.
 run_gate "skill probe cases" python tools/skill-probe.py selftest
+run_gate "skill probe loop cases" bash tools/skill-probe.sh selftest
 run_gate "probe handoff check cases" bash tools/probe-handoff-checks.sh selftest
 run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
@@ -171,10 +175,11 @@ if [ "$LIST" = "1" ]; then
     whether a skill FIRES     tools/skill-probe.sh re-runs a case's prompt against the plugin
     against a CHANGED         as installed and records whether the Skill tool was invoked. It
     description               is the only instrument here that can see a description edit, and
-                              every run is a real billed session, so it is not a gate. The two
-                              gates above — skill probe cases, probe handoff check cases — are
-                              its selftests on canned streams; they say the reader is right,
-                              never that a skill fired. tools/probe-handoff-checks.sh then says
+                              every run is a real billed session, so it is not a gate. The
+                              three gates above — skill probe cases, skill probe loop cases,
+                              probe handoff check cases — are its selftests on canned input;
+                              they say the reader and the loop around it are right, never that
+                              a skill fired. tools/probe-handoff-checks.sh then says
                               which installed file a firing read, not what the session did with
                               it
     three questions against   response-length.sh --probe, topic-numbering.sh --probe and
