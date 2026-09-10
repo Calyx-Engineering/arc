@@ -1,7 +1,7 @@
 # Public audit — what a copy of this repository exposes
 
 **Swept:** 2026-09-10 · **Instrument:** [`tools/audit-public.sh`](../../../tools/audit-public.sh) ·
-**1,717 hits**, of which 1,139 are this repository's own tracker links and 578 need a decision.
+**1,718 hits**, of which 1,140 are this repository's own tracker links and 578 need a decision.
 
 **Nothing is changed by this document.** It is an inventory with a proposed disposition per hit.
 A second run applies the list once the `ask` rows are settled.
@@ -51,10 +51,14 @@ not cover.**
 [`.claude-plugin/marketplace.json`](../../../.claude-plugin/marketplace.json). There is **no
 `LICENSE` file**.
 
-**The risk a licence answers here is not redistribution.** It is that installing Arc on a machine
+**The risk a licence answers first is not redistribution.** It is that installing Arc on a machine
 owned by another employer, and improving it there, invites a work-for-hire claim over the
 improvements. A file at the repository root naming the copyright holder and the date is what
 answers that, and it costs one file.
+
+**Redistribution is the same decision seen from the other side, and §1.3 is where it arrives.**
+If the work machine cannot hold a personal GitHub credential, the remaining install route is a
+public repository — which is this decision, not that one.
 
 | | |
 | :--- | :--- |
@@ -76,7 +80,8 @@ answers that, and it costs one file.
 `gh auth setup-git` run once, both of which the README already states. Nothing to build.
 
 **What is untested** is whether a work machine permits a personal GitHub credential at all. If it
-does not, the remaining route is a public repository — which is D4's question, not this one.
+does not, the remaining route is a public repository — and that is D4, because publishing is a
+licensing decision before it is an install one.
 
 ### 1.4 Transcript, log and friction-log content — it ships
 
@@ -100,10 +105,16 @@ removes four measurements; the sweep's default of `anonymise` cannot be applied 
 discussion without destroying what it measures.
 
 **So the three client-content suites move rather than anonymise** — `report-shape`, `saturation`,
-`environment-blame`, 61 hits — into a corpus directory outside the published repository.
-`report-grade.sh` already reads `REPORT_CORPUS_DIR`; the other three need the same. The
+`environment-blame`, 82 rows — into a corpus directory outside the published repository. The
 `skill-firing` and `response-length` prompts stay and get `anonymise`, because their client
 content is a directory slug and one name.
+
+**All four scorers need an eval-directory override before any suite can move, and none has a real
+one.** `report-grade.sh:605` and `response-length.sh:409` each read an `*_EVAL_DIR_OVERRIDE`, but
+both exist for their own selftest rather than as a corpus knob; `saturation-cases.sh:238` and
+`environment-blame.sh:269` hardcode their paths outright. **`REPORT_CORPUS_DIR` is not it** —
+`report-grade.sh:12` documents it as where the source *repositories* live, used to re-verify an
+excerpt against the original client document, and it says nothing about where the cases are.
 
 ### 1.5 What the sweep cannot see
 
@@ -145,7 +156,7 @@ is the whole reason a row reads as it does.
 | **R7** | `docs/retrospectives/` | `profanity` | `ask` | The quote is the evidence, and masking a quote changes it |
 | **R8** | `docs/retrospectives/` | any | `anonymise` | The issue's own out-of-scope row: the content is processed and fine, the names are not |
 | **R9** | `agents/transcript-miner.md` | `profanity` | `ship` | A detector vocabulary. The word is a search term, not speech |
-| **R10** | any | `calyx-url` | `ship` | 1,139 links to this repository's own tracker. Decided once, here, and not enumerated. **No row cites it** — the bulk class is never listed, so the rule stands alone |
+| **R10** | any | `calyx-url` | `ship` | 1,140 links to this repository's own tracker. Decided once, here, and not enumerated. **No row cites it** — the bulk class is never listed, so the rule stands alone |
 | **R11** | any | `calyx-name` | `ship` | The publisher's identity. `arc@calyx-engineering` is the install command |
 | **R12** | `tools/hook-cases/`, `tests/`, `hooks/`, `tools/handoff-openings.sh`, `skills/issue-write/` | `local-path` | `ship` | The literal path form is what the case tests or the example warns about |
 | **R13** | any | `local-path` | `anonymise` | |
@@ -176,8 +187,9 @@ the repository.
 ```bash
 bash tools/audit-public.sh              # the hit list
 bash tools/audit-public.sh --summary    # counts by class, then by file
-bash tools/audit-public.sh --all        # the 1,139 tracker links too
+bash tools/audit-public.sh --all        # the 1,140 tracker links too
 bash tools/audit-public.sh --markdown   # §4's table, disposition column empty
+bash tools/audit-public.sh --root DIR   # scan somewhere else — the selftest's own entry point
 ```
 
 **`--markdown` leaves the disposition column empty on purpose.** The instrument reports what is
@@ -348,7 +360,7 @@ moves with every commit.
 | `tools/hook-cases/mode-guard/deny/manual-commit-chained.json` | 1 | ship 1 |
 | `tools/report-grade.py` | 1 | anonymise 1 |
 
-**The 1,139 `calyx-url` hits are not in this table.** They are R10, decided collectively, and
+**The 1,140 `calyx-url` hits are not in this table.** They are R10, decided collectively, and
 listing them would put `docs/arc-log/arc-03-camp.md` at the top of a table whose subject is client
 exposure.
 
@@ -370,8 +382,8 @@ a separate decision. Text is clipped to 160 characters; the file and line are th
 | `calyx-name` | `.claude-plugin/plugin.json:6` | "name": "Calyx Engineering" | **ship** R11 |
 | `calyx-name` | `docs/dev-log/issue-132-plugin-reload.md:31` | \| claude plugin marketplace update calyx-engineering \| Succeeds, does not refresh the plugin cache \| | **ship** R11 |
 | `calyx-name` | `docs/dev-log/issue-134-public-audit.md:27` | \| **One line can produce several rows** \| R:\work_lantern\roadz-sound-system is a machine path *and* a client name *and* a product name. Three separate decisi | **ship** R11 |
-| `calyx-name` | `docs/dev-log/issue-134-public-audit.md:28` | \| **calyx-url is counted, not listed** \| 1,139 links to this repository's own tracker. Enumerating them would bury the 573 rows that need a human, and the dec | **ship** R11 |
-| `calyx-name` | `docs/dev-log/issue-134-public-audit.md:37` | \| Enumerating the calyx-url class in the audit \| 1,139 identical rows. docs/arc-log/arc-03-camp.md would top a table whose subject is client exposure \| | **ship** R11 |
+| `calyx-name` | `docs/dev-log/issue-134-public-audit.md:28` | \| **calyx-url is counted, not listed** \| 1,140 links to this repository's own tracker. Enumerating them would bury the 578 rows that need a human, and the dec | **ship** R11 |
+| `calyx-name` | `docs/dev-log/issue-134-public-audit.md:37` | \| Enumerating the calyx-url class in the audit \| 1,140 identical rows. docs/arc-log/arc-03-camp.md would top a table whose subject is client exposure \| | **ship** R11 |
 | `calyx-name` | `docs/dev-log/issue-134-public-audit.md:75` | \| **heliman, a second GitHub identity**, was reported only as calyx-name and took ship — it would have survived publication \| Added to person \| | **ship** R11 |
 | `calyx-name` | `docs/dev-log/issue-158-length-budget.md:123` | The calyx-engineering marketplace is registered as {"source": "directory", "path": "R:\arc"} | **ship** R11 |
 | `calyx-name` | `docs/dev-log/issue-160-topic-numbering.md:146` | tools/plugin-reload.sh reinstalls from the marketplace, and the calyx-engineering | **ship** R11 |

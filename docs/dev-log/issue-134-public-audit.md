@@ -1,6 +1,6 @@
 # Issue #134 — review what ships before making Arc public
 
-**Issue:** [#134](https://github.com/Calyx-Engineering/arc/issues/134)  ·  **PR:** [#317](https://github.com/Calyx-Engineering/arc/pull/317)
+**Issue:** [#134](https://github.com/Calyx-Engineering/arc/issues/134)  ·  **PR:** [#319](https://github.com/Calyx-Engineering/arc/pull/319)
 
 ## Problem
 
@@ -25,7 +25,7 @@ user's own machine paths, and holds 124 files of verbatim conversation.
 | **The instrument carries no policy** | `tools/audit-public.sh --markdown` emits the rows with an **empty** disposition column. Dispositions live in the audit document's rules table, so regenerating the hit list after a fix cannot silently overwrite a decision the user made |
 | **Nine classes, each with its reason on its own line** | The class table is a tilde-separated here-doc rather than an array. A class added without a reason is a class nobody can review |
 | **One line can produce several rows** | `R:\work_lantern\roadz-sound-system` is a machine path *and* a client name *and* a product name. Three separate decisions, so three rows. The single exception is `calyx-name`, tested against the line with the repository's own GitHub URLs stripped — without that, every issue link in the repository reports as an organisation-name exposure |
-| **`calyx-url` is counted, not listed** | 1,139 links to this repository's own tracker. Enumerating them would bury the 578 rows that need a human, and the decision on them is collective anyway — one row in the audit, not 1,139 |
+| **`calyx-url` is counted, not listed** | 1,140 links to this repository's own tracker. Enumerating them would bury the 578 rows that need a human, and the decision on them is collective anyway — one row in the audit, not 1,140 |
 | **Dispositions come from eighteen ordered rules, not per-row judgment** | Every row cites the rule that produced it, so a reader can disagree with one rule instead of 578 rows. `R18`, the fallback, matched nothing — which is the check that the seventeen above it are complete |
 | **The gate checks the document against itself, not against the tree** | The live sweep takes **69 seconds** and its answer moves with every commit. A gate that re-swept would be slow on every unit and red on most of them. So `tests/verify-public-audit.sh` checks the four views inside the document for agreement, and `verify-all.sh --list` records the live sweep as the pre-publication step |
 | **The licence is left undone on purpose** | It is an `ask`, and the issue says the user ticks those. The recommendation is recorded with its reasoning; the box is not ticked |
@@ -34,7 +34,7 @@ user's own machine paths, and holds 124 files of verbatim conversation.
 
 | Rejected | Why |
 |---|---|
-| Enumerating the `calyx-url` class in the audit | 1,139 identical rows. `docs/arc-log/arc-03-camp.md` would top a table whose subject is client exposure |
+| Enumerating the `calyx-url` class in the audit | 1,140 identical rows. `docs/arc-log/arc-03-camp.md` would top a table whose subject is client exposure |
 | Encoding the dispositions in `tools/audit-public.sh` | It would make the tool's output authoritative over the user's edits. The second run reads the document, not the script |
 | Re-running the sweep inside `verify-all.sh` | 69 seconds on every unit, for an answer that legitimately changes with every commit |
 | `delete` as a disposition | The issue forbids it. The gate names it separately from "not in the set" so the error says which rule was broken |
@@ -49,7 +49,7 @@ user's own machine paths, and holds 124 files of verbatim conversation.
 | | |
 |---|---|
 | **Transcript content ships, and the box asking otherwise cannot be ticked** | 124 files in `evals/` are verbatim turns, prompts, client report excerpts and model replies. Two friction logs, two documents quoting turns with wall-clock timestamps, and `.claude/arc/sessions.md` are the rest |
-| **The eval corpus is both the exposure and the instruments** | `report-grade.sh`, `response-length.sh`, `saturation-cases.sh` and `environment-blame.sh` score against it. Anonymising a pinout discussion destroys what it measures, so the three client-content suites are `move` — into a corpus directory outside the published repository. `report-grade.sh` already reads `REPORT_CORPUS_DIR`; the other three need the same |
+| **The eval corpus is both the exposure and the instruments** | `report-grade.sh`, `response-length.sh`, `saturation-cases.sh` and `environment-blame.sh` score against it. Anonymising a pinout discussion destroys what it measures, so the three client-content suites are `move` — into a corpus directory outside the published repository. **No scorer can take a corpus path today**: `report-grade.sh:605` and `response-length.sh:409` have an `*_EVAL_DIR_OVERRIDE` that exists for their own selftest, and `saturation-cases.sh:238` and `environment-blame.sh:269` hardcode theirs. `REPORT_CORPUS_DIR` is the source-repository root and is unrelated — review pass 4 caught this claim |
 | **The committed event-log archive is clean** | 63,231 lines, zero hits in every class but one link in its own header. Machine telemetry exposes nothing, which is worth knowing before anyone proposes pruning it |
 | **The sweep matches named entities, not described work** | `docs/arc-work/04-dogfood/handoff-rationale.md:31` describes a real bench session — *"a DC-ramp capacitance rig ... for a setup that measures inductance"* — and carries no matchable token. The 578 rows are a floor |
 
@@ -101,7 +101,7 @@ the final sweep is why the committed totals are 578 rows across 153 files rather
 ## Retrospective
 
 Built an instrument, a gate and an inventory. `tools/audit-public.sh` sweeps every tracked file for
-nine classes of exposure and reports 1,717 hits; `docs/arc-work/04-dogfood/public-audit.md` carries
+nine classes of exposure and reports 1,718 hits; `docs/arc-work/04-dogfood/public-audit.md` carries
 578 of them as rows with a disposition each, the rules that produced those dispositions, a
 per-file summary and the three groups that need the user; `tests/verify-public-audit.sh` keeps the
 document's four views in agreement as the second run edits it.
