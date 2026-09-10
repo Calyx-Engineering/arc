@@ -57,6 +57,23 @@
 # tools/skill-probe.sh's convention and its reason: a wrapper that redirects this to a file must
 # not record a halted run as a clean one.
 #
+# THE TWO FIGURES, SIDE BY SIDE. #260, 2026-09-09, threshold 0.67, `claude -p` against the
+# plugin installed from this tree. The frozen suite is the BASELINE: it is a property of six
+# documents on disk and no skill edit moves it, which is the whole reason this file exists.
+#
+#                          opening        table source   conflict
+#   frozen suite           1/3   0.333    1/4   0.250    2/2   1.000    (six frozen excerpts)
+#   probe, before          2/2   1.000    1/3   0.333    3/3   1.000    (n=3)
+#   probe, after           1/1   1.000    3/3   1.000    2/3   0.667    (n=3)
+#   probe, after           4/4   1.000    3/6   0.500    4/6   0.667    (n=6, same plugin)
+#
+# THE TWO AFTER SIDES ARE THE FINDING, NOT THE PASS. Same installed plugin, same brief, same
+# grader: the table column read 1.000 at n=3 and 0.500 at n=6. n=3 cannot tell 1.00 from 0.50,
+# so a side of three runs is not evidence for a claim against a 0.67 bar and this file's --runs
+# default of 1 is a smoke test, never a measurement. Across all nine after runs the table column
+# is 6/9 and the conflict column 6/9 — both 0.667, both a hair under a threshold compared with
+# `>=`, the same arithmetic tools/report-grade.py and tools/skill-probe.sh use.
+#
 # IT READS THE INSTALLED PLUGIN, NOT THIS TREE. The plugin is served from
 # ~/.claude/plugins/cache/, so an edit to skills/engineering-report is invisible here until
 # tools/plugin-reload.sh runs. Reload between the before and the after, or the two sides measure
@@ -67,12 +84,13 @@
 # keeps the report AND the grader output that produced its verdict, so the figure can be checked
 # without paying for the side again.
 #
-# ONLY THE LOOP HAS A SELFTEST:
-#   bash tools/report-shape-probe.sh selftest   what this loop does with the reports it is handed
-# It runs in tests/verify-all.sh and replaces the billed half through RSP_PY, so it bills
-# nothing. What it exercises is JSON and text in, verdicts out: the column tallies, the empty
-# denominator, the abandon branch, the halt and the measured-runs denominator. Everything that
-# needs a session is not covered here and is not claimed to be.
+# THE PARTS THAT DO NOT BILL HAVE SELFTESTS:
+#   python tools/report-shape-probe.py selftest   which runs are measurements, where a report goes
+#   bash tools/report-shape-probe.sh selftest     what this loop does with the reports it is handed
+# Both run in tests/verify-all.sh. This one replaces the billed half through RSP_PY, so it bills
+# nothing: what it exercises is JSON and text in, verdicts out — the column tallies, the empty
+# denominator, the abandon branch, the halt and the measured-runs denominator. Everything else
+# here needs a billed session and is not covered.
 
 set -u
 SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
@@ -501,7 +519,11 @@ row() {  # row <label> <hits> <total>
     return
   fi
   V="$(python -c "print('PASS' if $2/$3 >= $THRESHOLD else 'FAIL')")"
-  R="$(python -c "print('%.2f' % ($2/$3))")"
+  # THREE DECIMALS, NOT TWO. The comparison is against the raw rate, so 2/3 is 0.6667 and fails
+  # a 0.67 threshold — correctly, and the same way tools/skill-probe.sh fails it. Printed to two
+  # places that reads `FAIL 2/3 0.67`, a verdict contradicting the number beside it, and the
+  # first thing a reader does is doubt the arithmetic instead of the sample size.
+  R="$(python -c "print('%.3f' % ($2/$3))")"
   printf '  %-14s %s  %d/%d  %s%s\n' "$1" "$V" "$2" "$3" "$R" "$MEASURED"
   [ "$V" = "FAIL" ] && BAD=$((BAD + 1))
   SCORED="$SCORED $1"
