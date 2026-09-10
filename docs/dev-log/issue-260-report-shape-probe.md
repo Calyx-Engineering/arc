@@ -21,8 +21,10 @@ Threshold 0.67, `claude -p` against the plugin installed from this tree, 2026-09
 | Probe, after — all nine runs | 5/5 · 1.000 | 6/9 · 0.667 | 6/9 · 0.667 | 9 |
 
 `engineering-report` fired on all 12 billed runs, so every figure is a measurement of the skill
-in context and not of a session that never loaded it. Cost: $8.24 measured, plus $1.20 lost to
-two cut runs before the budget was raised.
+in context and not of a session that never loaded it. Cost: **$8.24 measured** — $2.043 for the
+before side, $2.020 and $4.173 for the two after sides, each figure the sum of the `result`
+lines. Two further runs were lost before the budget was raised; both were cut and neither
+reported a cost, so what they spent is bounded by the 0.60 cap and not known.
 
 The frozen suite is unchanged and cannot move. It is a property of six documents on disk, which
 is exactly why it could not answer #260's question and why both figures are recorded together.
