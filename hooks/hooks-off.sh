@@ -163,11 +163,16 @@ cmd_clear() {
   ADD_HOOK="" ADD_EXP="" DROP=""
   if [ "$what" = "all-entries" ]; then
     echo "hooks-off — cleared. Every Arc hook in this repository is on again."
-  elif [ "$what" != "all" ] && arc_hooks_off "$what"; then
+  elif [ "$what" != "all" ] && arc_hooks_off "$what" "$STATE"; then
     # A live `all` mutes this hook too, so "it is on again" would be false — and false in the
     # direction that gets a guard trusted while it is off.
+    #
+    # $STATE, not the library's own resolution. `locate` deliberately reads $PWD — the
+    # repository the human is standing in — while `arc_hooks_off` prefers CLAUDE_PROJECT_DIR,
+    # which inside a session names the agent's repository. Asking the second about a write
+    # made to the first is how this line would come to answer about somewhere else entirely.
     echo "hooks-off — cleared '$what', but an \`all\` mute is still live and covers it."
-    echo "            It is NOT on yet. \`bash hooks/hooks-off.sh clear\` ends that one."
+    echo "            It is NOT on yet. \`bash $0 clear\` ends that one."
   else
     echo "hooks-off — cleared '$what'. It is on again."
   fi
@@ -205,7 +210,10 @@ cmd_mute() {
   printf '  scope      %s  (this repository and every worktree of it, nothing else)\n' "${top:-$PWD}"
   printf '  lapses     %s local, %s\n' "$(stamp "$exp")" "$(relative "$(( exp - now ))")"
   printf '  state      %s\n' "$STATE"
-  printf '  restore    bash hooks/hooks-off.sh clear %s\n' "$hook"
+  # $0, not a relative path. Run from a plugin cache — which is how anyone outside this
+  # repository reaches this command — `hooks/hooks-off.sh` resolves to nothing, and the one
+  # place the recovery line is delivered is the one place it has to be typeable.
+  printf '  restore    bash %s clear %s\n' "$0" "$hook"
   echo
   return 0
 }

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # hooks-off.sh — a delegator. The command itself is `hooks/hooks-off.sh`.
 #
-#   bash tools/hooks-off.sh <hook|all> [minutes]   mute; minutes defaults to 30, caps at 480
-#   bash tools/hooks-off.sh status                 what is muted here, and when each lapses
-#   bash tools/hooks-off.sh clear [<hook|all>]     end it now; with no argument, all of it
-#   bash tools/hooks-off.sh selftest               the gate
+# Every form works through it — `bash tools/hooks-off.sh status`, `… clear`, `… <hook> 30` —
+# and `-h` prints the real file's usage, because `exec` has already replaced this process by
+# then. There is deliberately no copy of that usage here: two statements of one interface is
+# one more than can be kept in step.
 #
 # WHY THE REAL FILE IS NOT HERE. Arc installs as a plugin, and an installed plugin ships
 # `hooks/` — it does not ship `tools/`. A kill switch whose only documented invocation is

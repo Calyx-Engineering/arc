@@ -32,12 +32,20 @@ FAILED=0
 FAILED_NAMES=""
 
 # ---- a mute in THIS repository would make every gate below lie ----------------------
-# Most gates invoke a hook with the payload's `cwd` and no CLAUDE_PROJECT_DIR, so the hook
-# resolves the kill switch from the directory this runner was started in. A live mute here
-# makes those hooks inert, and a gate whose assertions are all "the hook allowed" then passes
-# having proved nothing. Refuse, rather than report a green run over silenced guards. #202.
-if . hooks/lib/hooks-off 2>/dev/null && arc_hooks_off all; then
-  echo "verify-all: this repository carries a live mute — every Arc hook here is inert."
+# Most gates invoke a hook with the payload's `cwd`, and the hook resolves the kill switch the
+# way it always does — CLAUDE_PROJECT_DIR if this environment carries one, otherwise the
+# directory the runner was started in. Whichever it is, the question below is the one those
+# hooks will ask. A live mute there makes them inert, and a gate whose assertions are all "the
+# hook allowed" then passes having proved nothing. Refuse rather than report a green run over
+# silenced guards. #202.
+#
+# ANY mute, not just `all`. This runner cannot know which hook a given gate will fire, and a
+# single-hook mute is exactly the case where the refusal is easiest to miss.
+#
+# NOT UNDER --list, which fires no hook and asserts nothing. It is the listing someone reaches
+# for while working out what the runner does and does not cover, which includes while muted.
+if [ "$LIST" = "0" ] && . hooks/lib/hooks-off 2>/dev/null && arc_hooks_off_any; then
+  echo "verify-all: this repository carries a live mute — Arc hooks here are inert."
   echo "            A run now would report on guards that never fired. Clear it first:"
   echo "              bash hooks/hooks-off.sh status"
   echo "              bash hooks/hooks-off.sh clear"
@@ -169,10 +177,16 @@ run_gate "hooks-off cases" bash hooks/hooks-off.sh selftest
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
+#
+# A HOOK HAS NO EXTENSION. `branch-guard`, `mode-guard`, `TEMPLATE`. The extension is what
+# marks the other things that live here: `hooks/*.sh` is a command about hooks — the kill
+# switch, #202 — and `hooks/lib/` holds the libraries they source. Neither is registered in
+# hooks.json, neither is fired by anything, and demanding case directories of them turns this
+# runner red over a file that is not a hook.
 for h in hooks/*; do
   [ -f "$h" ] || continue
   n="$(basename "$h")"
-  case "$n" in TEMPLATE|*.json) continue ;; esac
+  case "$n" in TEMPLATE|*.json|*.sh) continue ;; esac
   if [ -d "tools/hook-cases/$n" ]; then
     run_gate "hook: $n" bash tools/verify-hook.sh "$h"
   else

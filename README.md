@@ -91,11 +91,13 @@ front of you** — the plugin's is under Claude Code's plugin cache, and the pat
 marketplace and the version:
 
 ```bash
-bash ~/.claude/plugins/cache/calyx-engineering/arc/0.1.0/hooks/hooks-off.sh branch-guard 30
+bash ~/.claude/plugins/cache/calyx-engineering/arc/<version>/hooks/hooks-off.sh branch-guard 30
 ```
 
-Nothing about the mute changes: it is still written into the repository you are standing in,
-because the command reads that from where you run it and not from where it lives.
+`<version>` is the one `/plugin` lists. Nothing about the mute changes: it is still written
+into the repository you are standing in, because the command reads that from where you run it
+and not from where it lives — and every line it prints back, including how to restore, names
+the path you invoked it by.
 
 | | |
 |---|---|

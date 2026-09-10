@@ -66,11 +66,19 @@ A mute is repo-scoped, and every gate here invokes a hook with the payload's `cw
 
 That is the same class of failure [#160](https://github.com/Calyx-Engineering/arc/issues/160) and [#210](https://github.com/Calyx-Engineering/arc/issues/210) found in the switch being replaced — a gate reporting on hooks that were inert. Both `tools/verify-hook.sh` and `tests/verify-all.sh` now refuse to start while this repository carries a live mute, and say how to clear it. Refuse rather than warn: the whole point of an expiring, per-repository switch is that the state is readable and short-lived, so there is nothing to work around.
 
-`tests/verify-all.sh --list` names the blind spot that remains: nothing exercises a mute against a real session's hook firing.
+The runner refuses over ANY live mute, not only an `all` — it cannot know which hook a given gate will fire, and a single-hook mute is where the refusal is easiest to miss. It does not refuse under `--list`, which fires no hook and asserts nothing: that listing is what someone reaches for while working out what the runner covers, which includes while muted. `--list` also names the blind spot that remains — nothing exercises a mute against a real session's hook firing.
+
+## A hook has no extension, and three loops did not know it
+
+Moving the command into `hooks/` broke the repository's own gates, and review pass 2 is what caught it: `tests/verify-all.sh` and `tests/verify-activation-log.sh` each iterate `hooks/*` and skip only `TEMPLATE` and `*.json`, so `hooks/hooks-off.sh` was demanded to have a case directory, a `camp-reports:` declaration and a call into `lib/activation-log`. Three failures in the top-level runner, from a file that is not a hook and fires at nothing.
+
+The convention was there and unstated: a hook has no extension — `branch-guard`, `mode-guard`, `TEMPLATE` — and the extension is what marks everything else in that directory. All three loops now skip `*.sh`, and `docs/release/pre-release-review.md` says the same thing to a human.
 
 ## `clear <hook>` could say something false
 
 `clear branch-guard` printed "It is on again" whether or not a live `all` entry still covered it — false in the direction that gets a guard trusted while it is off. It now reads the switch back after the write and says which it is.
+
+Pass 2 found the first version of that check asking the wrong repository. `locate` deliberately reads `$PWD` — the repository the human is standing in — while `arc_hooks_off` prefers `CLAUDE_PROJECT_DIR`, which inside a session names the agent's. `arc_hooks_off` therefore takes an optional state file, and the command passes the one it just wrote to. The same reasoning put `$0` into the `restore` and `clear` lines the command prints: run from a plugin cache, `bash hooks/hooks-off.sh clear …` resolves to nothing, and the one place a recovery instruction is delivered is the one place it has to be typeable.
 
 ## An edit to two hard-excluded files
 
@@ -84,7 +92,8 @@ Dev-log and arc-log references to `HOOKS_OFF` are left as they stand: they are a
 
 `hooks/session-index` gets none of `verify-hook.sh`'s five behavioural cases: it ships no `deny/` or `report/` cases because it is silent on every path by design, so that section is skipped for it and only the presence grep runs. Its own gate carries all four instead — active, expired, per-hook and wrong scope — each asserting on the index file rather than on speech.
 
-**A latent CRLF bug, found on the way.** `.gitattributes` said `hooks/* text eol=lf`, and a single star does not cross a slash — so `hooks/lib/`, which holds the libraries every hook sources, was outside the rule. `git ls-files --eol hooks/lib/activation-log` read `attr/` empty. A CRLF checkout of a sourced library gives every hook `$''`-terminated tokens. Fixed to `hooks/**` in its own commit.
+**A latent CRLF bug, found on the way.** `.gitattributes` said `hooks/* text eol=lf`, and a single star does not cross a slash — so `hooks/lib/`, which holds the libraries every hook sources, was outside the rule. `git ls-files --eol hooks/lib/activation-log` read `attr/` empty. A CRLF checkout of a sourced library gives every hook `$'
+'`-terminated tokens. Fixed to `hooks/**` in its own commit.
 
 ## Verification
 

@@ -215,11 +215,14 @@ library_checks() {
   fi
 
   # Every registered hook sources it. A hook that logs its own way is a second format.
+  #
+  # A HOOK HAS NO EXTENSION — `hooks/*.sh` is a command about hooks (the kill switch, #202)
+  # and `hooks/lib/` holds what hooks source. Neither fires, so neither has a firing to log.
   local h n
   for h in hooks/*; do
     [ -f "$h" ] || continue
     n="$(basename "$h")"
-    case "$n" in TEMPLATE|*.json) continue ;; esac
+    case "$n" in TEMPLATE|*.json|*.sh) continue ;; esac
     if grep -q 'lib/activation-log' "$h"; then
       ok "$n sources the library"
     else
@@ -428,7 +431,7 @@ else
   for h in hooks/*; do
     [ -f "$h" ] || continue
     n="$(basename "$h")"
-    case "$n" in TEMPLATE|*.json) continue ;; esac
+    case "$n" in TEMPLATE|*.json|*.sh) continue ;; esac
     if [ -d "tools/hook-cases/$n" ]; then
       check_hook "$h" "tools/hook-cases/$n"
     else

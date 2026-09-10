@@ -33,10 +33,14 @@ PASSED=0
 FAILED=0
 
 # ---- a mute in THIS repository would make this gate lie -----------------------------
-# The cases below run each hook with no CLAUDE_PROJECT_DIR, so the hook resolves the kill
-# switch from the directory this script was started in — this repository. A live mute here
-# silences every hook under test: the `deny` and `report` cases go red, but `pass` and
-# `malformed` go green having proved nothing, and a reader cannot tell that from coverage.
+# The cases below add nothing to the environment, so each hook resolves the kill switch the
+# way it always does: CLAUDE_PROJECT_DIR if this environment carries one, otherwise the
+# directory this script was started in. The question asked here is that same question, so it
+# lands on whichever repository the hooks are about to consult.
+#
+# A live mute there silences every hook under test: the `deny` and `report` cases go red, but
+# `pass` and `malformed` go green having proved nothing, and a reader cannot tell that from
+# coverage.
 #
 # Refuse rather than warn. This is the failure mode #160 and #210 found in the switch this
 # one replaces — a gate reporting on hooks that were inert — and the whole point of an
