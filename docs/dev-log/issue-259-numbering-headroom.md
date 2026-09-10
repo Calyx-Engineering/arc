@@ -222,7 +222,7 @@ alone — it is a third tool, outside this unit. `Findings` below routes it.
 
 | | |
 |---|---|
-| `bash tests/verify-all.sh` | **58 gates, all clean, exit 0** |
+| `bash tests/verify-all.sh` | **60 gates, all clean, exit 0** on the final tree. 58 when this branch was cut; merging `arc/04-dogfood` brought [#260](https://github.com/Calyx-Engineering/arc/issues/260)'s two in |
 | `bash tools/topic-numbering.sh selftest` | **57 passed, 0 failed, exit 0** — up from 35 |
 | `bash tools/topic-numbering.sh` | Both cases, **0/6 · 0.00**, no turn drift, exit 0 |
 | Billed | **$11.33** across four probe runs — $3.186 + $2.726 + $2.125 + $3.291, as the runner reported each session's total. The table above rounds each to the cent and those round-then-sum to $11.34; the figure here is the sum, not the sum of the roundings. The kept JSONs carry the replies, not the cost, so this is from the run output and is not re-derivable from the tree |
