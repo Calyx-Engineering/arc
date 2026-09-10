@@ -7,8 +7,11 @@
 #   tools/topic-numbering.sh --probe      re-run the turns live against the installed plugin
 #   tools/topic-numbering.sh selftest     fixtures only, no corpus needed
 #
+#   --compare BEFORE.json AFTER.json     score two kept probe runs against each other
+#
 #   --threshold N    the rate a case must clear. Default 0.67
-#   --case NAME      probe one case only. Ignored in replay, which always scores every case
+#   --case NAME      probe or compare one case only. Ignored in replay, which always scores
+#                    every case. Separation is a property of one case, so --compare needs it
 #   --runs N         repeat each case N times under --probe, scoring between runs
 #
 #   TN_PROBE_OUT=path   keep the probe's raw replies instead of losing them with the temp
@@ -40,6 +43,27 @@
 #   --probe           Replays the turns as one live conversation. Billed. This is the half
 #                     that can score a change to the skill.
 #
+# AND A THIRD THAT ASKS WHETHER THE FIX MOVED ANYTHING — #259. A probe rate on its own does not
+# say that. `camp-thoughts-multi-topic` scores 1.00 under --probe with #160's rule and 1.00
+# without it: the case passes and the control passes, so passing is not evidence.
+#
+#   --compare BEFORE.json AFTER.json
+#                     Scores two runs TN_PROBE_OUT already kept, side by side, and prints
+#                     `separates` FOR EACH CASE, never pooled — a suite's regression floor
+#                     would otherwise lend its passes to a case that did not move. Three
+#                     answers, because "did not separate" covers two different findings:
+#                       YES  below the threshold before, at or above it after
+#                       NO   HAD headroom and did not cross. A result about the change
+#                       n/a  no headroom, and the reason is printed beside it: a side had no
+#                            scorable turn, or the before side already passed
+#                     --case NAME asks about one. Bills nothing, and needs no corpus:
+#                     the scores come from the JSONs and the transcript is only what the drift
+#                     check reads, so a kept pair re-scores on any machine (--strict still
+#                     fails on the absence, because what is lost is the verbatim check).
+#                     It does not know which skill produced which file; that is the run's
+#                     record to state. One run per JSON, so take the two sides with separate
+#                     TN_PROBE_OUT paths.
+#
 # THE PROBE RUNNER IS SHARED. --probe calls tools/response-length-probe.py, which replays a
 # case's turns/ as one session and records what came back. Nothing in it is length-specific —
 # it produces replies, and the scorer asks the question. A second copy would be a second place
@@ -62,6 +86,8 @@ SELFTEST=0
 PROBE=0
 RUNS=1
 ONLY=""
+CMP_BEFORE=""
+CMP_AFTER=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -71,19 +97,27 @@ while [ "$#" -gt 0 ]; do
     --runs) RUNS="${2:-1}"; shift ;;
     --case) ONLY="${2:-}"; shift ;;
     --threshold) TN_THRESHOLD="${2:-0.67}"; export TN_THRESHOLD; shift ;;
-    -h|--help) sed -n "2,53p" "$0"; exit 0 ;;
+    # Two operands, and both are required. A --compare given one path would otherwise read the
+    # next flag as the second JSON and report a comparison of a file that is not one.
+    --compare)
+      CMP_BEFORE="${2:-}"; CMP_AFTER="${3:-}"; shift 2
+      if [ -z "$CMP_BEFORE" ] || [ -z "$CMP_AFTER" ]; then
+        echo "--compare needs two paths: BEFORE.json AFTER.json" >&2; exit 2
+      fi ;;
+    -h|--help) sed -n "2,77p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
 done
 
-score() {  # score <projects-root> <eval-dir> [probe-json]
+score() {  # score <projects-root> <eval-dir> [probe-json] [before-json]
   # As in response-length.sh: set the mode either way, so an empty TN_PROBE_JSON does not
   # leave the mode as the empty string and silently drop the replay-only notes.
   local mode=replay
   [ -n "${3:-}" ] && mode=probe
-  TN_ROOT_DIR="$1" TN_EVAL_DIR="$2" TN_STRICT="$STRICT" \
-  TN_MODE="$mode" TN_PROBE_JSON="${3:-}" python "$HERE/topic-numbering.py"
+  [ -n "${4:-}" ] && mode=compare
+  TN_ROOT_DIR="$1" TN_EVAL_DIR="$2" TN_STRICT="$STRICT" TN_MODE="$mode" TN_ONLY="$ONLY" \
+  TN_PROBE_JSON="${3:-}" TN_PROBE_JSON_BASE="${4:-}" python "$HERE/topic-numbering.py"
 }
 
 if [ "$SELFTEST" = "1" ]; then
@@ -144,6 +178,21 @@ if [ "$SELFTEST" = "1" ]; then
     hu 2026-09-01T10:14 '"fence inside a fence"'
     # A ``` run inside a ```` block is content. Closing on it leaks ## Sneaky into the topics.
     as "$(printf '## Only one\n\n````\n```\n## Sneaky\n```\n````\n')"
+    hu 2026-09-01T10:15 '"numbered bold lead-ins"'
+    # #259, and this is a live probe reply, not a fixture shape. Enumerated and not one label
+    # on it. Ordinary emphasis does not open "2 — ", so nothing here is ambiguous: the reply
+    # has topics and none of them can be answered by number. UNNUMBERED, a fail.
+    as "$(printf '**0 - Read status.** a.\n\n**1 - Files read.** b.\n\n**2 - What to change.** c.\n')"
+    hu 2026-09-01T10:16 '"labelled, then enumerated"'
+    # "Labels the first few, then stops" WITH the evidence that the rest are topics. The
+    # ambiguity BOLDONLY exists to respect is absent here, so the verdict is not withheld:
+    # PARTIAL, a fail. #160 recorded PARTIAL as reachable in the heading form only; two
+    # numbered unlabelled lead-ins put it within reach here for the same reason.
+    as "$(printf '**D1 - the first thing** a.\n\n**2 - the second** b.\n\n**3 - the third** c.\n')"
+    hu 2026-09-01T10:17 '"one number, otherwise emphasis"'
+    # A single numbered lead-in beside plain ones is a figure in a sentence, not an
+    # enumeration. Below the evidence bar, so the ambiguity stands: NOTOPICS.
+    as "$(printf '**1 - the first thing** a.\n\n**Fails closed.** Any check errors and it stops.\n')"
   } > "$P/ccc33333.jsonl"
 
   mk() {  # mk <slug> <session> <first> <last>
@@ -153,7 +202,7 @@ if [ "$SELFTEST" = "1" ]; then
     printf '# grader\n' > "$E/$1/graders/every-topic-labelled.md"
   }
 
-  mk shapes ccc33333 1 15
+  mk shapes ccc33333 1 18
   printf 'several topics please\n' > "$E/shapes/turns/1.md"
   printf 'again\n'                 > "$E/shapes/turns/2.md"
   printf 'and again\n'             > "$E/shapes/turns/3.md"
@@ -169,6 +218,9 @@ if [ "$SELFTEST" = "1" ]; then
   printf 'bold, all labelled\n'    > "$E/shapes/turns/13.md"
   printf 'section with sub-points\n' > "$E/shapes/turns/14.md"
   printf 'fence inside a fence\n'  > "$E/shapes/turns/15.md"
+  printf 'numbered bold lead-ins\n' > "$E/shapes/turns/16.md"
+  printf 'labelled, then enumerated\n' > "$E/shapes/turns/17.md"
+  printf 'one number, otherwise emphasis\n' > "$E/shapes/turns/18.md"
 
   mk absent zzz99999 1 2
   printf 'not on this machine\n' > "$E/absent/turns/1.md"
@@ -203,9 +255,12 @@ if [ "$SELFTEST" = "1" ]; then
   t "bold lead-ins all labelled score NUMBERED"       "NUMBERED +t13 +2/2 labelled, by bold lead-ins"
   t "a section with sub-points is one topic"          "SINGLE +t14 +0/1 labelled, by headings"
   t "a shorter fence run does not close a longer one" "SINGLE +t15 +0/1 labelled"
-  t "partial is counted as a fail, not part marks"    "partial 1 \(fails, not part marks\), unnumbered 4"
-  t "the rate counts partial in the denominator"      "every topic labelled: 3/8"
-  t "unscorable turns are counted apart, by shape"    "not scored 7 \(single topic 4, no sections 2, unlabelled bold lead-ins 1, cut short by the runner 0\)"
+  t "numbered bold lead-ins with no labels are a fail" "UNNUMBERED +t16 +0/3 labelled, by bold lead-ins, 3 bare numbers"
+  t "labelled then enumerated is PARTIAL, not withheld" "PARTIAL +t17 +1/3 labelled, by bold lead-ins, 2 bare numbers"
+  t "one numbered lead-in is not an enumeration"      "NOTOPICS +t18 +0/2 labelled, by bold lead-ins, 1 bare number"
+  t "partial is counted as a fail, not part marks"    "partial 2 \(fails, not part marks\), unnumbered 5"
+  t "the rate counts partial in the denominator"      "every topic labelled: 3/10"
+  t "unscorable turns are counted apart, by shape"    "not scored 8 \(single topic 4, no sections 3, unlabelled bold lead-ins 1, cut short by the runner 0\)"
   t "a rate below the threshold is a FAIL verdict"    "^verdict +FAIL"
   t "replay says it cannot see a skill change"        "cannot see a change to skills/chat-response"
   t "a missing transcript is reported, not scored"    "NOT SCORED"
@@ -291,6 +346,263 @@ PYJSON
     echo "  FAIL  --threshold reaches the scorer"; Fc=$((Fc+1))
   fi
 
+  # --compare, #259. Two kept runs of the SAME case scored against each other. The "before"
+  # side is the shape the corpus actually holds — the user's own step numbers carried onto the
+  # headings — and the "after" side is the same reply with labels. Fixtures, so the mode that
+  # decides whether a billed pair separates is itself checked without billing anything.
+  BJ="$T/before.json"
+  AJ="$T/after.json"
+  python - "$BJ" <<'PYJSON'
+import json, sys
+json.dump({"shapes": {
+    "1": {"text": "## 2. What repo trying to do\n\na.\n\n## 3. What to change\n\nb.\n",
+          "cut": "", "fired": []},
+    "2": {"text": "## What I got wrong\n\na.\n\n## What holds up\n\nb.\n", "cut": "", "fired": []},
+}}, open(sys.argv[1], "w"))
+PYJSON
+  # ensure_ascii=False and a UTF-8 handle, so the em dashes reach the file as bytes rather
+  # than as \u escapes. A probe JSON is the model's own prose and always looks like this; a
+  # fixture that escaped them would not exercise the guard the run below checks.
+  python - "$AJ" <<'PYJSON'
+import io, json, sys
+json.dump({"shapes": {
+    "1": {"text": "## D1 — what repo trying to do\n\na.\n\n## D2 — what to change\n\nb.\n",
+          "cut": "", "fired": ["chat-response"]},
+    "2": {"text": "## V1 — what I got wrong\n\na.\n\n## V2 — what holds up\n\nb.\n",
+          "cut": "", "fired": ["chat-response"]},
+}}, io.open(sys.argv[1], "w", encoding="utf-8"), ensure_ascii=False)
+PYJSON
+  cout="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+          bash "$HERE/topic-numbering.sh" --compare "$BJ" "$AJ" 2>&1)"
+  cst=$?
+  c() {
+    if printf '%s' "$cout" | grep -qE -- "$2"; then echo "  PASS  $1"; Pc=$((Pc+1))
+    else
+      echo "  FAIL  $1"; echo "        wanted /$2/"; echo "        got:"
+      printf '%s\n' "$cout" | sed 's/^/          /'; Fc=$((Fc+1))
+    fi
+  }
+  c "--compare scores both sides of one case"      "shapes +\[before\]"
+  c "the after side is scored too"                 "shapes +\[after\]"
+  c "the two rates print side by side"             "^ +every topic labelled +0/2  0\.00 +2/2  1\.00"
+  c "a moved rate is reported as separating"       "^separates +YES"
+  c "a separating pair is a PASS"                  "^verdict +PASS"
+  c "compare mode does not print the replay caveat" "^Neither side is billed here"
+  [ "$cst" = "0" ] && { echo "  PASS  a clean --compare exits 0"; Pc=$((Pc+1)); } \
+                   || { echo "  FAIL  a clean --compare exits 0 (got $cst)"; Fc=$((Fc+1)); }
+
+  # The mode's whole reason for existing: #160's case scored 1.00 with the rule and 1.00
+  # without, and the run reported it as a pass. Compared against itself, that must read NO.
+  sout="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+          bash "$HERE/topic-numbering.sh" --compare "$AJ" "$AJ" 2>&1)"
+  if printf '%s' "$sout" | grep -qE "^separates +NO" && printf '%s' "$sout" | grep -qE "^verdict +FAIL"; then
+    echo "  PASS  two identical runs do not separate"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  two identical runs do not separate"; Fc=$((Fc+1))
+  fi
+
+  # SEPARATION IS PER CASE, NEVER POOLED. A second case that passes on both sides is a
+  # regression floor; pooled with a case that did not move it can carry the suite over the
+  # threshold and print YES about the one question this mode exists to answer. `floor` scores
+  # 2/2 on both sides, `shapes` 0/2 then 2/2 — pooled that is 2/4 then 4/4, which clears 0.67
+  # from below. The verdict must still be FAIL, because `floor` did not move.
+  # The fixture is built so the POOL and the CASES give opposite answers.
+  #   floor   2/2 · 1.00 both sides — a saturated regression floor. It has no headroom, which
+  #           is not the same as failing to use it: n/a, and it neither lends its passes nor
+  #           withholds a verdict.
+  #   shapes  0/2 · 0.00 then 1/2 · 0.50 — headroom, and it did not cross 0.67. NO.
+  # Pooled that is 2/4 · 0.50 before and 3/4 · 0.75 after, which crosses the threshold from
+  # below and would print YES about a case that plainly did not move. Per case: FAIL.
+  mk floor ccc33333 1 2
+  printf 'several topics please\n' > "$E/floor/turns/1.md"
+  printf 'again\n'                 > "$E/floor/turns/2.md"
+  python - "$T/floor-before.json" <<'PYJSON'
+import io, json, sys
+floor = {"1": {"text": "**D1 — one**\n\na.\n\n**D2 — two**\n\nb.\n", "cut": "", "fired": []},
+         "2": {"text": "**V1 — one**\n\na.\n\n**V2 — two**\n\nb.\n", "cut": "", "fired": []}}
+json.dump({"floor": floor,
+           "shapes": {"1": {"text": "**1 — one**\n\na.\n\n**2 — two**\n\nb.\n", "cut": "", "fired": []},
+                      "2": {"text": "**3 — one**\n\na.\n\n**4 — two**\n\nb.\n", "cut": "", "fired": []}}},
+          io.open(sys.argv[1], "w", encoding="utf-8"), ensure_ascii=False)
+PYJSON
+  python - "$T/floor.json" <<'PYJSON'
+import io, json, sys
+floor = {"1": {"text": "**D1 — one**\n\na.\n\n**D2 — two**\n\nb.\n", "cut": "", "fired": []},
+         "2": {"text": "**V1 — one**\n\na.\n\n**V2 — two**\n\nb.\n", "cut": "", "fired": []}}
+json.dump({"floor": floor,
+           "shapes": {"1": {"text": "**D1 — one**\n\na.\n\n**D2 — two**\n\nb.\n", "cut": "", "fired": []},
+                      "2": {"text": "**3 — one**\n\na.\n\n**4 — two**\n\nb.\n", "cut": "", "fired": []}}},
+          io.open(sys.argv[1], "w", encoding="utf-8"), ensure_ascii=False)
+PYJSON
+  fl="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+        bash "$HERE/topic-numbering.sh" --compare "$T/floor-before.json" "$T/floor.json" 2>&1)"
+  if printf '%s' "$fl" | grep -qE "every topic labelled +2/4  0\.50 +3/4  0\.75" \
+     && printf '%s' "$fl" | grep -qE "^ +shapes +NO" \
+     && printf '%s' "$fl" | grep -qE "^verdict +FAIL"; then
+    echo "  PASS  a case that did not move is not carried by the pool"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  a case that did not move is not carried by the pool"; Fc=$((Fc+1))
+    printf '%s\n' "$fl" | sed 's/^/          /'
+  fi
+
+  # A SATURATED CASE IS n/a, NOT NO. `floor` never dropped below the threshold, so neither
+  # side can show the rule working through it. Filing that as a failure would make a verdict
+  # unreachable for any suite that keeps a regression floor — which this one does, by design.
+  if printf '%s' "$fl" | grep -qE "^ +floor +n/a +the before side already scored at or above" \
+     && printf '%s' "$fl" | grep -qE "^separates +NO +shapes had headroom"; then
+    echo "  PASS  a saturated case reads n/a, not a failure"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  a saturated case reads n/a, not a failure"; Fc=$((Fc+1))
+    printf '%s\n' "$fl" | sed 's/^/          /'
+  fi
+
+  # ...and --case is how you ask about one of them. Without it there is no way to put the
+  # question the issue asks to a single case. It narrows what is SCORED and nothing else.
+  fc="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+        bash "$HERE/topic-numbering.sh" --compare "$T/floor-before.json" "$T/floor.json" \
+        --case floor 2>&1)"
+  if printf '%s' "$fc" | grep -qE "^ +floor +n/a" \
+     && ! printf '%s' "$fc" | grep -q "^shapes " \
+     && printf '%s' "$fc" | grep -qE "^the case compared" \
+     && printf '%s' "$fc" | grep -qE "^verdict +FAIL"; then
+    echo "  PASS  --compare --case scores the named case alone"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  --compare --case scores the named case alone"; Fc=$((Fc+1))
+    printf '%s\n' "$fc" | sed 's/^/          /'
+  fi
+
+  # --case must not narrow the DRIFT check. A drifted turn in a case nobody selected is still
+  # drift, and a --case that hid it would turn the verbatim guarantee into an opt-in.
+  printf 'drifted\n' > "$E/floor/turns/1.md"
+  dc="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+        bash "$HERE/topic-numbering.sh" --compare "$T/floor-before.json" "$T/floor.json" \
+        --case shapes 2>&1)"; dcst=$?
+  if printf '%s' "$dc" | grep -q "TURN DRIFT" && printf '%s' "$dc" | grep -q "floor t1" \
+     && [ "$dcst" != "0" ]; then
+    echo "  PASS  --case does not hide drift in an unselected case"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  --case does not hide drift in an unselected case (exit $dcst)"; Fc=$((Fc+1))
+  fi
+  rm -rf "$E/floor"
+
+  # A KEPT PAIR RE-SCORES WITHOUT THE CORPUS. Replay needs the transcript; compare does not —
+  # its scores come from the two JSONs, and the transcript is only what the drift check reads.
+  # `absent`'s session is not on this machine, and skipping it outright would mean a pair of
+  # billed runs could not be re-scored on any machine but the one that took them, which is the
+  # whole claim TN_PROBE_OUT is sold on. It is scored, and the absence is still reported.
+  python - "$T/absent-before.json" <<'PYJSON'
+import io, json, sys
+json.dump({"absent": {"1": {"text": "**1 — one**\n\na.\n\n**2 — two**\n\nb.\n", "cut": "", "fired": []}}},
+          io.open(sys.argv[1], "w", encoding="utf-8"), ensure_ascii=False)
+PYJSON
+  python - "$T/absent-after.json" <<'PYJSON'
+import io, json, sys
+json.dump({"absent": {"1": {"text": "**D1 — one**\n\na.\n\n**D2 — two**\n\nb.\n", "cut": "", "fired": []}}},
+          io.open(sys.argv[1], "w", encoding="utf-8"), ensure_ascii=False)
+PYJSON
+  ab="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+        bash "$HERE/topic-numbering.sh" --compare "$T/absent-before.json" "$T/absent-after.json" \
+        --case absent 2>&1)"
+  abst=$?
+  if printf '%s' "$ab" | grep -qE "^ +absent +YES" \
+     && printf '%s' "$ab" | grep -q "scored anyway from the probe JSONs, turns unchecked" \
+     && [ "$abst" = "0" ]; then
+    echo "  PASS  compare scores a case whose transcript is absent"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  compare scores a case whose transcript is absent (exit $abst)"; Fc=$((Fc+1))
+    printf '%s\n' "$ab" | sed 's/^/          /'
+  fi
+
+  # --strict still fails on it. What the absence costs is the verbatim check, not the score,
+  # and the two have to be separable or "scored anyway" becomes "checked anyway".
+  #
+  # The output is KEPT and checked, not discarded. Asserting only "exit != 0" would pass on a
+  # traceback — which is exactly the regression this branch could introduce, since it is the
+  # one path that scores a case with no transcript behind it.
+  sout2="$(TN_ROOT_DIR="$T/projects" TN_EVAL_DIR="$E" TN_STRICT=1 TN_MODE=compare TN_ONLY=absent \
+           TN_PROBE_JSON="$T/absent-after.json" TN_PROBE_JSON_BASE="$T/absent-before.json" \
+           python "$HERE/topic-numbering.py" 2>&1)"
+  sabst=$?
+  if [ "$sabst" != "0" ] \
+     && ! printf '%s' "$sout2" | grep -q "Traceback" \
+     && printf '%s' "$sout2" | grep -q "SCORED, TURNS NOT CHECKED" \
+     && printf '%s' "$sout2" | grep -qE "^ +absent +YES"; then
+    echo "  PASS  --strict still fails on an absent transcript in compare"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  --strict still fails on an absent transcript in compare (exit $sabst)"; Fc=$((Fc+1))
+    printf '%s\n' "$sout2" | sed 's/^/          /'
+  fi
+
+  # Backwards is not a pass either. The sides are swapped, so the rate falls 1.00 to 0.00 —
+  # and it reads n/a rather than NO, because a before side already at or above the threshold
+  # never had headroom and neither side can show the rule working through it. What must not
+  # happen, and is what this asserts, is YES.
+  rout="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+          bash "$HERE/topic-numbering.sh" --compare "$AJ" "$BJ" 2>&1)"
+  if printf '%s' "$rout" | grep -qE "every topic labelled +2/2  1\.00 +0/2  0\.00" \
+     && printf '%s' "$rout" | grep -qE "^ +shapes +n/a" \
+     && ! printf '%s' "$rout" | grep -qE "^separates +YES" \
+     && printf '%s' "$rout" | grep -qE "^verdict +FAIL"; then
+    echo "  PASS  a rate that moved the wrong way does not separate"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  a rate that moved the wrong way does not separate"; Fc=$((Fc+1))
+  fi
+
+  # A side where every turn was unscorable has NO rate, and n/a for that reason must not read
+  # as n/a for the other one — "nothing could be scored" and "it already passed" are opposite
+  # findings. Reported as 0.00 it reads as "scored
+  # zero", which is a measurement — and it is the number the before side is expected to give,
+  # so the one line a reader takes away would be the one that misleads. Both billed runs of
+  # #259 hit this: the before side was 0/0.
+  NJ="$T/nothing.json"
+  python - "$NJ" <<'PYJSON'
+import io, json, sys
+json.dump({"shapes": {
+    "1": {"text": "Plain prose, no sections, nothing to number.\n", "cut": "", "fired": []},
+}}, io.open(sys.argv[1], "w", encoding="utf-8"), ensure_ascii=False)
+PYJSON
+  nout="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+          bash "$HERE/topic-numbering.sh" --compare "$NJ" "$AJ" 2>&1)"
+  # Two claims: the rate reads n/a rather than 0.00, and a side with no denominator can never
+  # be called a separation — 0/0 against 2/2 must not read as "moved from 0.00 to 1.00".
+  if printf '%s' "$nout" | grep -qE "every topic labelled +0/0  n/a" \
+     && ! printf '%s' "$nout" | grep -q "0\.00" \
+     && printf '%s' "$nout" | grep -qE "^ +shapes +n/a +the before side had no scorable turn" \
+     && printf '%s' "$nout" | grep -qE "^separates +NO +no case had headroom"; then
+    echo "  PASS  an unscorable side is not reported as 0.00"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  an unscorable side is not reported as 0.00"; Fc=$((Fc+1))
+  fi
+
+  # A probe JSON holds the model's own prose, so it holds em dashes. Read in the platform
+  # encoding it raises on Windows, and the guard below then calls a perfectly good run "not
+  # probe JSON" — which is how the first --compare of this issue's two billed runs was
+  # refused. Both guards here and response-length.sh's read it as UTF-8 now.
+  uout="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+          bash "$HERE/topic-numbering.sh" --compare "$BJ" "$AJ" 2>&1)"
+  if printf '%s' "$uout" | grep -q "not probe JSON"; then
+    echo "  FAIL  a probe JSON holding non-ASCII prose is readable"; Fc=$((Fc+1))
+  else
+    echo "  PASS  a probe JSON holding non-ASCII prose is readable"; Pc=$((Pc+1))
+  fi
+
+  # One path given, or one that is not JSON: refused before anything is scored, because an
+  # empty side scores 0.00 and 0.00 is exactly what the before side is expected to produce.
+  for bad in "one-path" "not-json"; do
+    case "$bad" in
+      one-path) oout="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+                        bash "$HERE/topic-numbering.sh" --compare "$BJ" 2>&1)"; ost=$? ;;
+      not-json) printf 'not json\n' > "$T/junk.json"
+                oout="$(TN_EVAL_DIR_OVERRIDE="$E" MINER_PROJECTS_ROOT="$T/projects" \
+                        bash "$HERE/topic-numbering.sh" --compare "$T/junk.json" "$AJ" 2>&1)"; ost=$? ;;
+    esac
+    if [ "$ost" = "2" ] && ! printf '%s' "$oout" | grep -q "separates"; then
+      echo "  PASS  --compare refuses a bad operand ($bad)"; Pc=$((Pc+1))
+    else
+      echo "  FAIL  --compare refuses a bad operand ($bad) (exit $ost)"; Fc=$((Fc+1))
+    fi
+  done
+
   echo
   echo "$Pc passed, $Fc failed"
   [ "$Fc" = "0" ] || exit 1
@@ -299,6 +611,20 @@ fi
 
 ROOT="${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}"
 EVAL_DIR="${TN_EVAL_DIR_OVERRIDE:-evals/topic-numbering}"
+
+if [ -n "$CMP_BEFORE" ]; then
+  # Named before either is opened, so a typo reads as a typo rather than as an empty side
+  # scoring 0.00 — which is the answer the "before" side is expected to give.
+  for f in "$CMP_BEFORE" "$CMP_AFTER"; do
+    [ -f "$f" ] || { echo "--compare: no such file: $f" >&2; exit 2; }
+    # An object, not merely valid JSON. `123` parses and then dies inside the scorer with an
+    # AttributeError, which reads as a bug in the tool rather than as the wrong file.
+    python -c "import io,json,sys;d=json.load(io.open(sys.argv[1],encoding='utf-8'));sys.exit(0 if isinstance(d,dict) else 1)" \
+      "$f" 2>/dev/null || { echo "--compare: not probe JSON: $f" >&2; exit 2; }
+  done
+  score "$ROOT" "$EVAL_DIR" "$CMP_AFTER" "$CMP_BEFORE"
+  exit $?
+fi
 
 if [ "$PROBE" = "0" ]; then
   score "$ROOT" "$EVAL_DIR"
@@ -316,7 +642,7 @@ command -v claude >/dev/null 2>&1 || { echo "claude CLI not on PATH — nothing 
 OUT="${TN_PROBE_OUT:-$(mktemp -d)/probe.json}"
 if [ -n "${TN_PROBE_OUT:-}" ]; then
   mkdir -p "$(dirname "$OUT")" 2>/dev/null
-  if [ -e "$OUT" ] && ! python -c "import json,sys;json.load(open(sys.argv[1]))" "$OUT" 2>/dev/null; then
+  if [ -e "$OUT" ] && ! python -c "import io,json,sys;d=json.load(io.open(sys.argv[1],encoding='utf-8'));sys.exit(0 if isinstance(d,dict) else 1)" "$OUT" 2>/dev/null; then
     echo "TN_PROBE_OUT=$OUT exists and is not probe JSON — refusing to overwrite it" >&2
     exit 2
   fi

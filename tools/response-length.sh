@@ -423,7 +423,7 @@ command -v claude >/dev/null 2>&1 || { echo "claude CLI not on PATH — nothing 
 OUT="${RL_PROBE_OUT:-$(mktemp -d)/probe.json}"
 if [ -n "${RL_PROBE_OUT:-}" ]; then
   mkdir -p "$(dirname "$OUT")" 2>/dev/null
-  if [ -e "$OUT" ] && ! python -c "import json,sys;json.load(open(sys.argv[1]))" "$OUT" 2>/dev/null; then
+  if [ -e "$OUT" ] && ! python -c "import io,json,sys;d=json.load(io.open(sys.argv[1],encoding='utf-8'));sys.exit(0 if isinstance(d,dict) else 1)" "$OUT" 2>/dev/null; then
     echo "RL_PROBE_OUT=$OUT exists and is not probe JSON — refusing to overwrite it" >&2
     exit 2
   fi
