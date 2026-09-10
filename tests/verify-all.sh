@@ -25,7 +25,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation verify-public-audit audit-public"
 
 RUN=0
 FAILED=0
@@ -149,6 +149,13 @@ run_gate "log rotation" bash tests/verify-log-rotation.sh
 run_gate "set-mode cases" bash tests/verify-set-mode.sh selftest
 run_gate "report budget cases" bash tests/verify-report-budget.sh selftest
 run_gate "report budget" bash tests/verify-report-budget.sh
+# The public audit, #134. Two gates and one thing they deliberately do not do: the sweep
+# itself. tools/audit-public.sh greps every tracked file for nine classes and takes about
+# seventy seconds, and its answer moves with every commit — so what runs here is its selftest
+# on fixture trees, and the document check, which reads the audit against itself. See --list.
+run_gate "public audit sweep cases" bash tools/audit-public.sh selftest
+run_gate "public audit doc cases" bash tests/verify-public-audit.sh selftest
+run_gate "public audit doc" bash tests/verify-public-audit.sh
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
@@ -241,6 +248,14 @@ if [ "$LIST" = "1" ]; then
     against its PR body       fixture backend. The live read needs GitHub, a real issue and the
                               PR that closes it — run bash tests/verify-issue-boxes.sh <NN> at
                               PR-ready time, which is also where hooks/tracker-verify calls it
+    what publishing this      tools/audit-public.sh selftest runs its nine classes against fixture
+    repository would expose   trees. The live sweep reads every tracked file and takes about seventy
+                              seconds, and its answer changes with every commit, so it is a
+                              pre-publication step rather than a gate — run bash
+                              tools/audit-public.sh and reconcile
+                              docs/arc-work/04-dogfood/public-audit.md against it. The three gates
+                              above check the fixtures and the document's internal agreement; none
+                              says the document still matches the tree
     an arc's issues against   arc-link-sweep.sh selftest runs its decision on fixtures. The sweep
     both link fields          itself searches GitHub and paginates — run
                               bash tools/arc-link-sweep.sh <milestone> at an arc checkpoint
