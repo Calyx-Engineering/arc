@@ -75,10 +75,11 @@ session needed to fix it. Three layers, cheapest first.
 ### 1. The kill switch — the one thing that must exist
 
 ```bash
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 ```
 
-`touch ~/.claude/HOOKS_OFF` from any terminal makes every hook inert. No editing JSON while
+`bash tools/hooks-off.sh <hook> 30` from any terminal makes that hook inert for a bounded
+window, in this repository only. No editing JSON while
 the broken thing fights back. **This is what makes the rest safe to attempt.**
 
 **It is a chat obligation, not only a README line.** The agent states the kill switch in
@@ -120,7 +121,7 @@ never be touched is right in spirit and wrong in mechanism:
 | | |
 |---|---|
 | A hook validating hook changes | Can be broken by the change it is validating |
-| It is the one thing the kill switch disables | `HOOKS_OFF` turns off the guard along with everything else |
+| It is the one thing the kill switch disables | A mute naming it, or `all`, turns the guard off for as long as that mute lasts |
 | A script works with hooks off | And produces output the user can see, rather than a silent pass |
 
 ### 4. One hook per commit

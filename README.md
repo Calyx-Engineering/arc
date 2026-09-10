@@ -75,16 +75,25 @@ The path is the repository root — the directory holding `.claude-plugin/`. Aft
 
 ## Turning hooks off
 
-Arc ships hooks that can deny a tool call. If one misbehaves, from any terminal:
+Arc ships hooks that can deny a tool call. If one misbehaves, from any terminal in the
+repository it is misbehaving in — PowerShell, cmd or bash, the same line in each:
 
 ```bash
-touch ~/.claude/HOOKS_OFF
+bash tools/hooks-off.sh branch-guard 30
 ```
 
-Every Arc hook goes inert immediately — no editing settings while the broken thing fights
-back. Restore with `rm ~/.claude/HOOKS_OFF`.
+That hook goes inert immediately, and the command prints what it muted, where it wrote, when
+the mute lapses, and how to end it early. `all` in place of a hook name mutes every one of
+them; `status` reads back what is muted; `clear` restores.
 
-Every hook opens with the line that checks for that file, and
+| | |
+|---|---|
+| **It is a command, not a file** | It refuses a name that is not a hook and prints the ones that are. Placing a file by hand had four ways to go wrong and feedback on none |
+| **Per hook** | Muting `branch-guard` to get past it leaves `mode-guard` guarding |
+| **It expires** | Thirty minutes by default, eight hours at most. A forgotten mute heals itself |
+| **This repository only** | The state lives in this repository's git directory, so no other repository on the machine is touched — and being inside `.git`, a muted repository cannot be committed |
+
+Every hook opens with the line that consults it, and
 [`tools/verify-hook.sh`](tools/verify-hook.sh) fails a hook that has lost it. The full
 reasoning is in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md#safe-hook-development).
 

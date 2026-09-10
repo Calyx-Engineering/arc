@@ -111,7 +111,7 @@ every later finding is suspect.
 |---|---|
 | Every `SKILL.md`, both trees | The frontmatter block parses as YAML, and `name:` matches the directory |
 | Every `commands/*.md` | Frontmatter parses and carries a `description:` |
-| Every `hooks/*` | `bash -n` is clean, **and the first line after the shebang block is the kill switch** — `[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0` |
+| Every `hooks/*` | `bash -n` is clean, **and the first line after the shebang block is the kill switch** — `. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0` |
 | `hooks/hooks.json` · `.claude-plugin/plugin.json` | Valid JSON |
 
 **The colon trap is why this pass exists.** An unquoted colon inside a `description:` made

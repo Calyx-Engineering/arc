@@ -257,10 +257,10 @@ The user is explicit about not being a hook author. The design goal is therefore
 Every hook the plugins ship begins with:
 
 ```bash
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 ```
 
-`touch ~/.claude/HOOKS_OFF` from any terminal makes every hook inert — no editing JSON
+`bash tools/hooks-off.sh <hook> 30` from any terminal makes that hook inert — no editing JSON
 while the broken thing fights back.
 
 **This must be in each plugin's README**, and the agent must state it in chat before
