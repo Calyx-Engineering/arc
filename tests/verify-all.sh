@@ -170,7 +170,6 @@ run_gate "log rotation" bash tests/verify-log-rotation.sh
 run_gate "set-mode cases" bash tests/verify-set-mode.sh selftest
 run_gate "report budget cases" bash tests/verify-report-budget.sh selftest
 run_gate "report budget" bash tests/verify-report-budget.sh
-<<<<<<< HEAD
 # The public audit, #134. Two gates and one thing they deliberately do not do: the sweep
 # itself. tools/audit-public.sh greps every tracked file for nine classes and takes about
 # seventy seconds, and its answer moves with every commit — so what runs here is its selftest
@@ -178,12 +177,10 @@ run_gate "report budget" bash tests/verify-report-budget.sh
 run_gate "public audit sweep cases" bash tools/audit-public.sh selftest
 run_gate "public audit doc cases" bash tests/verify-public-audit.sh selftest
 run_gate "public audit doc" bash tests/verify-public-audit.sh
-=======
 # The kill switch every hook consults. The per-hook `verify-hook.sh` runs assert the READ
 # side against each hook; this asserts the WRITE side — the command a human types when a
 # guard misbehaves — and the two agreeing is the only property that matters. #202.
 run_gate "hooks-off cases" bash hooks/hooks-off.sh selftest
->>>>>>> origin/arc/04-dogfood
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
