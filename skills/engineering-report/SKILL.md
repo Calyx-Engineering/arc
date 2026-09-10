@@ -157,6 +157,7 @@ holds the mapping.
 | | |
 |---|---|
 | **Every claim table carries a `Provenance` column** | Or each row names its source inline. A table of numbers with no basis is a table a reader has to take on trust, and *the trust is what fails* |
+| **So does the second table** | The margin table, the comparison, the summary of the rows above. A derived number is still a claim, and a reader who quotes that row cannot see the rows it came from. Give it the column, or say in the row which measurement it is derived from. **This is the rule that gets dropped**, and it is dropped while the main table is perfect: measured over [#260](https://github.com/Calyx-Engineering/arc/issues/260)'s probe runs, the claim table carried provenance every time and a second table in the same report carried it once in three |
 | **A strong claim is never overridden by a weak one silently** | If an inference wins over a measurement, the document says so, in the same sentence as the claim it is overriding, with why. The rule is not *cite the stronger source* — it is **say so when the weaker one wins** |
 | **A weak row is interrogated before anything is built on it** | `photograph`, `conversation` and `inferred` are hypotheses. They belong in *Not established* with what would settle them |
 
@@ -175,7 +176,9 @@ that side.
 ### How it is scored
 
 [`tools/report-grade.sh`](../../tools/report-grade.sh) returns `ROWS`, `NONE` or `TABLE` per
-claim table, and `RESOLVED` or `SILENT` where two sources disagree. It matches how provenance
+claim table, and `RESOLVED` or `SILENT` where two sources disagree. **The worst table in the
+document is the verdict** — a perfect claim table beside an unsourced margin table reads `NONE`,
+which is the rule above being enforced and not a scoring artefact. It matches how provenance
 is actually written — *"from the product label"*, *"the scope reported"*, *"most likely
 explanation"* — not only the vocabulary words themselves, so a report is scored on the defect
 and not on adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
@@ -398,8 +401,10 @@ printed pack or a stitched PDF.
 - **The opening grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0.
   **That is the opening only**: read every `LOOK` line as well, and read the first section's body
   yourself for development narrative, which no check covers
-- **Every claim table carries a source**, per row. Where two sources disagree, the document says
-  which won — [Where each claim came from](#where-each-claim-came-from)
+- **Every table of claims carries a source**, per row — **count the tables, not the table.** The
+  derived one, the margin table and the summary are claims too, and they are where the rule gets
+  dropped. Where two sources disagree, the document says which won —
+  [Where each claim came from](#where-each-claim-came-from)
 - All internal links resolve
 - Filenames carry a class prefix and no numbers; README lists companions in reading order
 
