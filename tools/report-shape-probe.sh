@@ -66,6 +66,7 @@
 #   probe, before          2/2   1.000    1/3   0.333    3/3   1.000    (n=3)
 #   probe, after           1/1   1.000    3/3   1.000    2/3   0.667    (n=3)
 #   probe, after           4/4   1.000    3/6   0.500    4/6   0.667    (n=6, same plugin)
+#   probe, after           5/5   1.000    6/9   0.667    6/9   0.667    (all nine after runs)
 #
 # THE TWO AFTER SIDES ARE THE FINDING, NOT THE PASS. Same installed plugin, same brief, same
 # grader: the table column read 1.000 at n=3 and 0.500 at n=6. n=3 cannot tell 1.00 from 0.50,
