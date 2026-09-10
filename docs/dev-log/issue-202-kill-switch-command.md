@@ -80,6 +80,15 @@ The convention was there and unstated: a hook has no extension — `branch-guard
 
 Pass 2 found the first version of that check asking the wrong repository. `locate` deliberately reads `$PWD` — the repository the human is standing in — while `arc_hooks_off` prefers `CLAUDE_PROJECT_DIR`, which inside a session names the agent's. `arc_hooks_off` therefore takes an optional state file, and the command passes the one it just wrote to. The same reasoning put `$0` into the `restore` and `clear` lines the command prints: run from a plugin cache, `bash hooks/hooks-off.sh clear …` resolves to nothing, and the one place a recovery instruction is delivered is the one place it has to be typeable.
 
+## What the checklist audit changed
+
+Pass 3 reads every tick as a claim about the tree. Four were overstated, and none of them was wrong about whether the work was done — they were wrong about the evidence:
+
+- *six assertions per hook, run against all seven* — six hooks. `session-index` ships no `deny/` or `report/` cases, so that section is skipped for it and only the presence grep runs.
+- *four `selftest` assertions cover it* — over a five-line block, one of which was a filesystem test. The `hook` and `scope` lines were asserted by nothing. Two assertions were added rather than the claim softened: a covered block with two uncovered lines is how a print statement gets dropped in an edit and nothing notices.
+- *`<git common dir>`* — true in effect, but resolved by a hand-rolled walk rather than by `git rev-parse`, and the box cited only the case proving the cross-repository half.
+- *one hook per commit, verify output in each body, the template last* — true of the seven hook commits, not of the template commit (docs, no gate output) or of the two review-pass commits, which each touch several hooks at once.
+
 ## An edit to two hard-excluded files
 
 `hooks/TEMPLATE` and `tools/verify-hook.sh` are both on `CLAUDE.md`'s *never edited autonomously* list. The user's approval for this issue is on record in the dispatch — 2026-09-09 22:20, *"you have my approval for that"* — and the issue's `Required` list names the `verify-hook.sh` cases as acceptance criteria, so the approval is read as covering both. Neither file is edited beyond what the switch needs: the template swaps its kill-switch block, and `verify-hook.sh` swaps its kill-switch section and gains two fixtures.

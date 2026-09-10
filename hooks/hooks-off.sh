@@ -263,6 +263,17 @@ selftest() {
     *"hooks-off.sh clear branch-guard"*) ok "it says how to restore" ;;
     *)                                   bad "it says how to restore" "$out" ;;
   esac
+  # Every line of the block, not most of it. #202's box 5 is "it says what it did and when it
+  # lapses", and a covered block with two uncovered lines is how a print statement gets
+  # dropped in an edit and nothing notices.
+  case "$out" in
+    *"hook       branch-guard"*) ok "it names the hook it muted" ;;
+    *)                           bad "it names the hook it muted" "$out" ;;
+  esac
+  case "$out" in
+    *"scope      "*"$T"*) ok "it names the repository the mute covers" ;;
+    *)                    bad "it names the repository the mute covers" "$out" ;;
+  esac
 
   if reads_muted "$T" branch-guard; then ok "a hook reads the mute the command wrote"
   else bad "a hook reads the mute the command wrote" "$(cat "$T/.git/arc-hooks-off" 2>&1)"; fi
