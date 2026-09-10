@@ -199,13 +199,24 @@ over every case regardless, or the verbatim guarantee becomes opt-in.
 
 | | |
 |---|---|
-| **Probe JSON was read in the platform encoding** | `json.load(open(path))` in the `TN_PROBE_OUT` guards. A probe JSON holds the model's own prose, so it holds em dashes, and on Windows the guard called a perfectly good billed run *"not probe JSON"* and refused. It refused this issue's first `--compare`. Fixed in all three guards — two in `topic-numbering.sh`, one in `response-length.sh` |
-| **The guard accepted any JSON scalar** | `123` parsed, then died inside the scorer with an `AttributeError` that reads as a bug in the tool rather than as the wrong file. All three guards require an object now |
+**Two guards were broken, not three.** `TN_PROBE_OUT`'s in `topic-numbering.sh` and
+`RL_PROBE_OUT`'s in `tools/response-length.sh` — **that is why a topic-numbering change edits
+the response-length tool**, and it is the only line it touches. The third guard, the
+`--compare` operand check, is added by this issue and was written correctly from the first
+line; it was never broken and never fixed.
+
+| | |
+|---|---|
+| **Probe JSON was read in the platform encoding** | `json.load(open(path))`. A probe JSON holds the model's own prose, so it holds em dashes, and on Windows the guard called a perfectly good billed run *"not probe JSON"* and refused. It refused this issue's first `--compare` |
+| **The guards accepted any JSON scalar** | `123` parsed, then died inside the scorer with an `AttributeError` that reads as a bug in the tool rather than as the wrong file. All three require an object now |
 
 **Only the `--compare` guard has a test.** `a probe JSON holding non-ASCII prose is readable` is
-in `topic-numbering.sh`'s selftest; the two `TN_PROBE_OUT` guards are on the billed `--probe`
-path, which no selftest reaches. The fix is one line and identical in all three, and it is
+in `topic-numbering.sh`'s selftest; the two `*_PROBE_OUT` guards are on the billed `--probe`
+path, which no selftest reaches. The fix is one line and identical in all three, and that is
 recorded here rather than left to look tested.
+
+**`tools/saturation-cases.sh:249` still carries the same broken guard** and is deliberately left
+alone — it is a third tool, outside this unit. `Findings` below routes it.
 
 ## Evidence
 
@@ -214,7 +225,7 @@ recorded here rather than left to look tested.
 | `bash tests/verify-all.sh` | **58 gates, all clean, exit 0** |
 | `bash tools/topic-numbering.sh selftest` | **57 passed, 0 failed, exit 0** — up from 35 |
 | `bash tools/topic-numbering.sh` | Both cases, **0/6 · 0.00**, no turn drift, exit 0 |
-| Billed | **$11.34** across four probe runs — $3.186, $2.726, $2.125, $3.291, as the runner reported each session's total. The kept JSONs carry the replies, not the cost, so this figure is from the run output and is not re-derivable from the tree |
+| Billed | **$11.33** across four probe runs — $3.186 + $2.726 + $2.125 + $3.291, as the runner reported each session's total. The table above rounds each to the cent and those round-then-sum to $11.34; the figure here is the sum, not the sum of the roundings. The kept JSONs carry the replies, not the cost, so this is from the run output and is not re-derivable from the tree |
 
 The selftest grew by 22 cases: the three new bold outcomes, the enumeration evidence bar, the
 per-case separation verdict against a pooled fixture built to cross the threshold when pooled,
@@ -238,7 +249,9 @@ produces bare-numbered replies to this turn.
 | **The probe reads the repository it runs in** | It can read the arc-log, the run instructions and this issue — **the documents that state the rule under test.** Run 2's reply names #259 and its own worktree. A control that can read the rule is not a clean control, and this applies to every `--probe` case in this suite, #160's included. It is a better explanation of that issue's 1.00/1.00 than the cold-replay one it recorded |
 | **`CLAUDE.md` carries the bare-number rule too** | Present in both sides, and present at session time in 2026-08-17's `CLAUDE.md`. Not an anachronism — the recorded defect happened with the rule in `CLAUDE.md`, which is part of why #160 put it in the skill's `description:` |
 | **Turn 2 cannot complete** | `CUT` in 4 of 4 at a $1.00 per-turn cap, after roughly half the run's budget |
+| **`camp-thoughts-multi-topic`'s 1.00/1.00 predates this scorer** | It is the number the whole argument rests on and it is cited in five places, and it was measured by #160's instrument, before the bold-form rule and the `min_topics` gate changed here. Those runs were **not** re-taken — they are billed, and re-taking them is not this unit. That case's **replay** is unchanged at 0/3, so there is no observed regression; the probe figure is simply unverified under the new instrument |
 | **The corpus is local** | `~/.claude/projects` on one machine. `--compare` no longer needs it; replay still does |
+| **`turns/3.md` has trailing whitespace on two lines, and it must keep it** | The file is a verbatim cut of a recorded turn and the drift check compares it byte for byte. `git diff --check` flags it; stripping it breaks the replay |
 
 ## Findings
 

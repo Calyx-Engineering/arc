@@ -48,11 +48,9 @@ numbering is `NOTOPICS`, one with all of them labelled is `NUMBERED`, and the am
 is `BOLDONLY` and scores in neither column. **Crediting that middle would score the defect as a
 pass**, which is the one answer this instrument must never give.
 
-**Where the unlabelled lead-ins are numbered, nothing is ambiguous and nothing is withheld** —
-[#259](https://github.com/Calyx-Engineering/arc/issues/259), above. Two or more of them and the
-reply is enumerated: none labelled scores `UNNUMBERED`, some labelled scores `PARTIAL`. Both are
-fails. So `PARTIAL` is reachable in the bold form after all, but only on the evidence that the
-unlabelled sections are sections.
+**The one exception is stated with the verdict table above, and only there** — two or more
+unlabelled lead-ins numbered, which is the case where the ambiguity this paragraph turns on is
+absent. `PARTIAL` is reachable in the bold form on that evidence and on no other.
 
 **A bare number is not a label.** `## 1. Branch from the sub-branch` scores unlabelled and is
 reported as a bare number. `skills/chat-response` and `CLAUDE.md` both forbid it: issue
