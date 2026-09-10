@@ -72,6 +72,10 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **T6 findings to the dev-log** | [#270](https://github.com/Calyx-Engineering/arc/issues/270) | `run-instructions.md`, `hooks/tracker-verify` | — | Nothing. **S7** — every later run follows the rule it sets. F9 edits the same hook, so F9 waits for S8 |
 | **T7 Fire's bodies reshaped** | [#271](https://github.com/Calyx-Engineering/arc/issues/271) | nine issue bodies, nine dev-logs | — | T6. **S9** |
 | **T8 the issue type** | [#274](https://github.com/Calyx-Engineering/arc/issues/274) | `skills/issue-write`, `tools/arc-loop.sh`, `tools/verify-labels.sh` | — | U11 (#214, `arc-loop.sh`). **S9** |
+| **T9 the body and close-sequence gates** | [#226](https://github.com/Calyx-Engineering/arc/issues/226) [#234](https://github.com/Calyx-Engineering/arc/issues/234) | `tests/verify-close-sequence.sh`, `tests/verify-tracker-body.sh`, their cases | — | Nothing. **S11**. Spawned by #87's run; routed at Tracker's report review 2026-09-09 |
+| **T10 tracker-verify PR checks** | [#286](https://github.com/Calyx-Engineering/arc/issues/286) | `hooks/tracker-verify`, its cases | — | Nothing. **S11**, the set's only hook track. Spawned by #136's run |
+| **T11 m12 and m42 agree** | [#287](https://github.com/Calyx-Engineering/arc/issues/287) | `m12`, `m42` | — | Nothing. **S11**. Docs only |
+| **Human** | [#242](https://github.com/Calyx-Engineering/arc/issues/242) | six stock labels deleted — the token was denied the delete | — | David |
 
 ### 3.4 Upkeep — [#148](https://github.com/Calyx-Engineering/arc/issues/148)
 
@@ -124,7 +128,7 @@ Workstreams are **not** the parallel unit; the track is. Each set mixes workstre
 | **S8** | F9 · F16 · F17 · F18 · F19 | Fire | — |
 | **S9** | U9 · F10 · H6 · T7 · T8 | Upkeep · Fire · Handoff · Tracker | — |
 | **S10** | F12 · F13 · F14 (#266) | Fire | F13 |
-| **S11** | F15 | Fire | F15 |
+| **S11** | F15 · T9 · T10 · T11 | Fire · Tracker | F15 |
 | **S12** | F14 (#261) | Fire | F14 |
 | **S13** | K1 · K2 | Skills | — |
 | **S14** | K3 · K4 · K5 | Skills | K5 |
@@ -141,7 +145,7 @@ flowchart LR
   S15 -.-> RK["Skills report"]
 ```
 
-A workstream's report run fires when its last child closes — Fire after S5 and again after S12 (fifteen issues reopened it 2026-09-08), Handoff, Tracker and Upkeep after S9, Skills after S15. The boundary is a review, not a scheduling unit.
+A workstream's report run fires when its last child closes — Fire after S5 and again after S12 (fifteen issues reopened it 2026-09-08), Handoff and Tracker after S9 (both reported 2026-09-09; Tracker reopened by T9–T11), Upkeep after S9 with the user's four, Skills after S15. The boundary is a review, not a scheduling unit.
 
 **Fifteen sets at ~45 min if the sub-agent passes hold: a working day of wall time, against thirty-plus serial runs.**
 
