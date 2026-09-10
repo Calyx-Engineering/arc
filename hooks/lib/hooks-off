@@ -98,7 +98,9 @@ _arc_hooks_off_locate() {
 # `hooks-off.sh`, which reads $PWD because it speaks for the terminal rather than for the
 # agent. A hook never passes it.
 arc_hooks_off() {
-  local hook="${1:-${0##*/}}" now exp who
+  # `now` is initialised, not merely declared: a caller may run under `set -u` — both gates do
+  # — and a `printf -v` that failed to assign would abort that caller rather than fail open.
+  local hook="${1:-${0##*/}}" now="" exp who
   _ARC_HOOKS_OFF=0
   if [ -n "${2:-}" ]; then
     _ARC_HOOKS_OFF_FILE="$2"
@@ -128,7 +130,7 @@ arc_hooks_off() {
 # cannot know which hook a given case will fire and must refuse over any of them. Never on a
 # hook's path: a hook only ever asks about itself.
 arc_hooks_off_any() {
-  local now exp who
+  local now="" exp who
   _arc_hooks_off_locate "${1:-}" || return 1
   [ -f "$_ARC_HOOKS_OFF_FILE" ] || return 1
   printf -v now '%(%s)T' -1 2>/dev/null
