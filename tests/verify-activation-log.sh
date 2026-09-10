@@ -99,8 +99,13 @@ substitute() {
 # The kill switch is repo-scoped and expiring (#202), so the case points CLAUDE_PROJECT_DIR at a
 # throwaway repository carrying an unexpired `all` entry. Nothing global is written — the same
 # reasoning verify-hook.sh records for its own kill-switch test.
+#
+# THE ENTRY IS MINTED AT THE MOMENT OF USE, not here. This gate fires every hook against every
+# case and takes tens of minutes on a loaded machine; a mute written once at the top expires
+# part-way through, and every case after that point reads as "the kill switch wrote an entry"
+# when the switch had simply lapsed. Measured — one FAIL, in the last block to run.
 make_repo ks main
-printf '%s all\n' "$(( $(date +%s) + 600 ))" > "$FIXTURES/ks/.git/arc-hooks-off"
+ks_mute() { printf '%s all\n' "$(( $(date +%s) + 3600 ))" > "$FIXTURES/ks/.git/arc-hooks-off"; }
 
 # A path whose parent is a regular file. `mkdir -p` and `>>` both fail on it, on every
 # platform, without needing chmod to mean anything.
@@ -321,6 +326,7 @@ check_hook() {
       # The kill switch suppresses the entry, not only the decision.
       : > "$log"
       reset_state
+      ks_mute
       printf '%s' "$payload" | ARC_EVENT_LOG="$log" CLAUDE_PROJECT_DIR="$FIXTURES/ks" bash "$hook" >/dev/null 2>&1
       if [ "$(entries "$log")" = "0" ]; then
         ok "$kind  kill switch quiet    $desc"
