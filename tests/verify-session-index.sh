@@ -71,10 +71,10 @@ report() {
 
   # The kill switch, asserted rather than trusted. A hook that writes to disk is the one where
   # losing the switch matters most, so it is checked at both gates.
-  if grep -q 'HOOKS_OFF' "$hook"; then
+  if grep -q 'lib/hooks-off' "$hook"; then
     pass "the kill switch line is present"
   else
-    fail "the kill switch line is present" "HOOKS_OFF must make this hook inert"
+    fail "the kill switch line is present" "hooks/lib/hooks-off must make this hook inert"
   fi
 
   # Registered, and on both matchers. A session that only ever runs Bash — every `claude -p` run
@@ -240,10 +240,10 @@ if [ "${1:-}" = "selftest" ]; then
   passed=0; failed=0
   WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
 
-  # A fixture HOME, for two reasons. It carries no kill switch, so a real HOOKS_OFF on the machine
-  # running this gate cannot turn every case below into a false pass. And the hook reads the
-  # transcript store from $HOME/.claude/projects, so the fixture store is what the orphan sweep
-  # sees — the machine's real one is never touched, and never read.
+  # A fixture HOME. The hook reads the transcript store from $HOME/.claude/projects, so the
+  # fixture store is what the orphan sweep sees — the machine's real one is never touched, and
+  # never read. It reads nothing else from there: the kill switch it consults is repo-scoped
+  # (#202), and that one is isolated by the mute being written into the fixture repository.
   RUN_HOME="$WORK/home"; mkdir -p "$RUN_HOME/.claude/projects"
 
   ok()  { echo "  PASS  $1"; passed=$((passed + 1)); }
@@ -446,19 +446,60 @@ if [ "${1:-}" = "selftest" ]; then
         "the index is committed and shared; this one belongs to another machine" "row: $foreign"
   fi
 
-  # ---- 9 · HOOKS_OFF suppresses the WRITE, not just a message -----------------------------
+  # ---- 9 · the mute suppresses the WRITE, not just a message ------------------------------
   # This hook is silent on every path, so a kill switch that only stopped it speaking would be
-  # indistinguishable from one that worked.
+  # indistinguishable from one that worked. Repo-scoped and expiring (#202): the mute lives in
+  # the fixture repository, and the second half proves it lapses on its own.
   repo=$(make_repo killswitch arc/04-dogfood-issue-50-ks)
-  KS="$WORK/ks"; mkdir -p "$KS/.claude"; touch "$KS/.claude/HOOKS_OFF"
+  printf '%s session-index\n' "$(( $(date +%s) + 600 ))" > "$repo/.git/arc-hooks-off"
   printf '{"session_id":"s7","cwd":"%s","tool_name":"Edit","tool_input":{"file_path":"%s"}}' \
-    "$repo" "$repo/src/a.c" | HOME="$KS" CLAUDE_PROJECT_DIR="$repo" bash "$HOOK" >/dev/null 2>&1
+    "$repo" "$repo/src/a.c" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
   if [ ! -f "$(index "$repo")" ]; then
-    ok "HOOKS_OFF suppresses the write, not just the message"
+    ok "an unexpired mute suppresses the write, not just the message"
   else
-    bad "HOOKS_OFF suppresses the write, not just the message" \
+    bad "an unexpired mute suppresses the write, not just the message" \
         "the kill switch has to reach the side effect, or it is not a kill switch"
   fi
+
+  printf '%s session-index\n' "$(( $(date +%s) - 600 ))" > "$repo/.git/arc-hooks-off"
+  printf '{"session_id":"s7b","cwd":"%s","tool_name":"Edit","tool_input":{"file_path":"%s"}}' \
+    "$repo" "$repo/src/a.c" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
+  if [ -f "$(index "$repo")" ]; then
+    ok "an expired mute does not — the hook indexes again"
+  else
+    bad "an expired mute does not — the hook indexes again" \
+        "a switch that never lapses is the one this replaced"
+  fi
+  rm -f "$repo/.git/arc-hooks-off"
+
+  # ---- 9b · per-hook and wrong scope, which verify-hook.sh cannot give this hook ----------
+  # It ships no deny/ or report/ cases — silent on every path by design — so verify-hook.sh's
+  # behavioural switch section is skipped for it entirely and only the grep runs. Both cases
+  # assert the hook still WRITES, which is the only thing it does.
+  repo=$(make_repo ksscope arc/04-dogfood-issue-50-ks2)
+  printf '%s branch-guard\n' "$(( $(date +%s) + 600 ))" > "$repo/.git/arc-hooks-off"
+  printf '{"session_id":"s7c","cwd":"%s","tool_name":"Edit","tool_input":{"file_path":"%s"}}' \
+    "$repo" "$repo/src/a.c" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
+  if [ -f "$(index "$repo")" ]; then
+    ok "another hook's mute leaves this one indexing"
+  else
+    bad "another hook's mute leaves this one indexing" \
+        "per-hook scope is the point — muting branch-guard must not stop the index"
+  fi
+  rm -f "$repo/.git/arc-hooks-off"
+
+  other=$(make_repo ksother arc/04-dogfood-issue-50-ks3)
+  repo=$(make_repo ksscope2 arc/04-dogfood-issue-50-ks4)
+  printf '%s all\n' "$(( $(date +%s) + 600 ))" > "$other/.git/arc-hooks-off"
+  printf '{"session_id":"s7d","cwd":"%s","tool_name":"Edit","tool_input":{"file_path":"%s"}}' \
+    "$repo" "$repo/src/a.c" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
+  if [ -f "$(index "$repo")" ]; then
+    ok "another repository's \`all\` leaves this one indexing"
+  else
+    bad "another repository's \`all\` leaves this one indexing" \
+        "repo scope is the point — a mute elsewhere must not reach this repository"
+  fi
+  rm -f "$other/.git/arc-hooks-off"
 
   # ---- 10 · silent on every matcher --------------------------------------------------------
   # `permissionDecision: "allow"` APPROVES a call rather than annotating it. On Bash that would

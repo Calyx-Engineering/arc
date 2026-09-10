@@ -120,10 +120,18 @@ run allow "the base ref does not exist — nothing to compare" \
 echo
 
 echo "kill switch"
-KS_HOME="$FIXTURES/ks-home"
-mkdir -p "$KS_HOME/.claude" && touch "$KS_HOME/.claude/HOOKS_OFF"
-run allow "HOOKS_OFF suppresses the worktree deny" \
-    "$FIXTURES/home" "$FIXTURES/home-wt2/src/index.ts" "HOME=$KS_HOME"
+# Repo-scoped and expiring (#202): the mute goes into the fixture repository under test, and
+# the second case proves it lapses without anyone restoring it.
+KS_STATE="$FIXTURES/home/.git/arc-hooks-off"
+printf '%s all
+' "$(( $(date +%s) + 600 ))" > "$KS_STATE"
+run allow "an unexpired mute in this repository suppresses the worktree deny" \
+    "$FIXTURES/home" "$FIXTURES/home-wt2/src/index.ts" "CLAUDE_PROJECT_DIR=$FIXTURES/home" "ARC_EVENT_LOG=/dev/null"
+printf '%s all
+' "$(( $(date +%s) - 600 ))" > "$KS_STATE"
+run deny  "and an expired mute does not — it lapses with nobody restoring it" \
+    "$FIXTURES/home" "$FIXTURES/home-wt2/src/index.ts" "CLAUDE_PROJECT_DIR=$FIXTURES/home" "ARC_EVENT_LOG=/dev/null"
+rm -f "$KS_STATE"
 echo
 
 echo "$PASSED passed, $FAILED failed"

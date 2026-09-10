@@ -116,11 +116,12 @@
 # new one.
 
 # ---- kill switch ----------------------------------------------------------------
-# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
-# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+# `bash hooks/hooks-off.sh session-index 30` from any terminal in this repository mutes this one
+# hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
 # Ahead of every other line, so it reaches the WRITE and not merely a message: this hook never
 # speaks, so a switch that only silenced it would be indistinguishable from one that worked.
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 
 # ---- the activation log ---------------------------------------------------------
 # Sourced before anything can exit. This hook is silent on every path by design, so the log is

@@ -16,7 +16,7 @@
 # edit to have happened. The sequencing cases live here, where each is driven explicitly.
 #
 # AND ITS KILL-SWITCH CHECK IS VACUOUS FOR THIS HOOK, WHICH IS WHY CASE 10 EXISTS. `verify-hook.sh`
-# re-runs the first `report/` case with HOME pointed at a fixture holding HOOKS_OFF. That payload
+# re-runs the first `report/` case inside a repository carrying an unexpired mute. That payload
 # carries the session id the earlier run already used, so this hook's once-per-session marker is
 # set and it is silent on the second run whether or not the kill switch works. Case 10 below uses
 # a fresh repository and a fresh session, and asserts the switch suppresses THE COPY rather than
@@ -59,10 +59,10 @@ report() {
 
   # The kill switch, asserted rather than trusted. verify-hook.sh checks this too; a hook that
   # writes to disk is the one where losing it matters most, so it is checked at both gates.
-  if grep -q 'HOOKS_OFF' "$hook"; then
+  if grep -q 'lib/hooks-off' "$hook"; then
     pass "the kill switch line is present"
   else
-    fail "the kill switch line is present" "HOOKS_OFF must make this hook inert"
+    fail "the kill switch line is present" "hooks/lib/hooks-off must make this hook inert"
   fi
 
   # Registered, and on the tools that replace file content.
@@ -139,8 +139,9 @@ if [ "${1:-}" = "selftest" ]; then
   HOOK="$(cd "$(dirname "$SELF")/.." && pwd)/$HOOK_REL"
   passed=0; failed=0
   WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
-  # A fixture HOME with no kill switch, so a real HOOKS_OFF on the machine running this gate
-  # cannot silence the hook and turn every case below into a false pass.
+  # A fixture HOME. This hook reads nothing from $HOME any more — the kill switch it consults
+  # is repo-scoped (#202) — but the fixture keeps a real ~/.claude out of reach of anything
+  # below, and the switch's own isolation is the mute written into the fixture repository.
   RUN_HOME="$WORK/home"; mkdir -p "$RUN_HOME/.claude"
 
   ok()  { echo "  PASS  $1"; passed=$((passed + 1)); }
@@ -278,15 +279,28 @@ Load-bearing: the 3.3 V rail cannot source 500 mA.'
 
   # ---- 10 · the kill switch really suppresses the copy, not only the report ---------------
   repo=$(make_repo killswitch "$ORIG")
-  KS="$WORK/ks"; mkdir -p "$KS/.claude"; touch "$KS/.claude/HOOKS_OFF"
+  # Repo-scoped and expiring (#202). The mute is written into the fixture repository, and the
+  # second half proves it lapses rather than sitting on disk forgotten.
+  printf '%s all\n' "$(( $(date +%s) + 600 ))" > "$repo/.git/arc-hooks-off"
   printf '{"session_id":"s8","cwd":"%s","tool_name":"Write","tool_input":{"file_path":"%s"}}' \
-    "$repo" "$repo/HANDOFF.md" | HOME="$KS" bash "$HOOK" >/dev/null 2>&1
+    "$repo" "$repo/HANDOFF.md" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
   if [ -z "$(archived_copies "$repo" "HANDOFF.md")" ]; then
-    ok "HOOKS_OFF suppresses the copy, not just the message"
+    ok "an unexpired mute suppresses the copy, not just the message"
   else
-    bad "HOOKS_OFF suppresses the copy, not just the message" \
+    bad "an unexpired mute suppresses the copy, not just the message" \
         "the kill switch has to reach the side effect, or it is not a kill switch"
   fi
+
+  printf '%s all\n' "$(( $(date +%s) - 600 ))" > "$repo/.git/arc-hooks-off"
+  printf '{"session_id":"s8b","cwd":"%s","tool_name":"Write","tool_input":{"file_path":"%s"}}' \
+    "$repo" "$repo/HANDOFF.md" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
+  if [ -n "$(archived_copies "$repo" "HANDOFF.md")" ]; then
+    ok "an expired mute does not — the hook archives again"
+  else
+    bad "an expired mute does not — the hook archives again" \
+        "a switch that never lapses is the one this replaced"
+  fi
+  rm -f "$repo/.git/arc-hooks-off"
 
   # ---- 10b · a Bash call takes the snapshot too -------------------------------------------
   # `cat > HANDOFF.md`, `mv`, `sed -i` and `rm` never reach Edit or Write. Registered only on the

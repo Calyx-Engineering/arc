@@ -26,7 +26,7 @@
 #                 permission decision, so an entry echoed there is a broken hook however
 #                 good the log looks
 #   fails open    an unwritable log path changes neither the verdict nor the exit code
-#   kill switch   HOOKS_OFF suppresses the entry along with everything else
+#   kill switch   a mute suppresses the entry along with everything else
 #
 # And once, over the shared library every hook sources:
 #
@@ -96,10 +96,16 @@ substitute() {
       -e "s#__FIXTURE_PR__#$(p pr)#g"
 }
 
-# HOOKS_OFF lives under $HOME, so the kill-switch case points HOME at a fixture holding one.
-# Nothing global is written — the reasoning verify-hook.sh records for its own kill-switch test.
-KS_HOME="$FIXTURES/ks-home"
-mkdir -p "$KS_HOME/.claude" && touch "$KS_HOME/.claude/HOOKS_OFF"
+# The kill switch is repo-scoped and expiring (#202), so the case points CLAUDE_PROJECT_DIR at a
+# throwaway repository carrying an unexpired `all` entry. Nothing global is written — the same
+# reasoning verify-hook.sh records for its own kill-switch test.
+#
+# THE ENTRY IS MINTED AT THE MOMENT OF USE, not here. This gate fires every hook against every
+# case and takes tens of minutes on a loaded machine; a mute written once at the top expires
+# part-way through, and every case after that point reads as "the kill switch wrote an entry"
+# when the switch had simply lapsed. Measured — one FAIL, in the last block to run.
+make_repo ks main
+ks_mute() { printf '%s all\n' "$(( $(date +%s) + 3600 ))" > "$FIXTURES/ks/.git/arc-hooks-off"; }
 
 # A path whose parent is a regular file. `mkdir -p` and `>>` both fail on it, on every
 # platform, without needing chmod to mean anything.
@@ -157,10 +163,10 @@ library_checks() {
   code() { grep -vE '^[[:space:]]*(#|$)' "$LIB"; }
 
   # The kill switch, first, as CLAUDE.md requires of anything a hook runs.
-  if code | head -n1 | grep -q 'HOOKS_OFF'; then
+  if code | head -n1 | grep -q 'hooks-off'; then
     ok "kill switch is the first line of code"
   else
-    bad "$LIB does not open with the HOOKS_OFF kill switch" "first line of code: $(code | head -n1)"
+    bad "$LIB does not open with the hooks-off kill switch" "first line of code: $(code | head -n1)"
   fi
 
   # Plugin-level: one path, and it is the one m44 names.
@@ -214,11 +220,14 @@ library_checks() {
   fi
 
   # Every registered hook sources it. A hook that logs its own way is a second format.
+  #
+  # A HOOK HAS NO EXTENSION — `hooks/*.sh` is a command about hooks (the kill switch, #202)
+  # and `hooks/lib/` holds what hooks source. Neither fires, so neither has a firing to log.
   local h n
   for h in hooks/*; do
     [ -f "$h" ] || continue
     n="$(basename "$h")"
-    case "$n" in TEMPLATE|*.json) continue ;; esac
+    case "$n" in TEMPLATE|*.json|*.sh) continue ;; esac
     if grep -q 'lib/activation-log' "$h"; then
       ok "$n sources the library"
     else
@@ -317,7 +326,8 @@ check_hook() {
       # The kill switch suppresses the entry, not only the decision.
       : > "$log"
       reset_state
-      printf '%s' "$payload" | ARC_EVENT_LOG="$log" HOME="$KS_HOME" bash "$hook" >/dev/null 2>&1
+      ks_mute
+      printf '%s' "$payload" | ARC_EVENT_LOG="$log" CLAUDE_PROJECT_DIR="$FIXTURES/ks" bash "$hook" >/dev/null 2>&1
       if [ "$(entries "$log")" = "0" ]; then
         ok "$kind  kill switch quiet    $desc"
       else
@@ -336,7 +346,7 @@ check_hook() {
 SELF=""
 
 write_hook() {
-  printf '#!/usr/bin/env bash\n[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0\nset +e\ncat >/dev/null 2>&1\nL="${ARC_EVENT_LOG:-/dev/null}"\n%s\nexit 0\n' "$2" > "$SELF/hooks/$1"
+  printf '#!/usr/bin/env bash\n. "${0%%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0\nset +e\ncat >/dev/null 2>&1\nL="${ARC_EVENT_LOG:-/dev/null}"\n%s\nexit 0\n' "$2" > "$SELF/hooks/$1"
 }
 
 # A well-formed entry, written the way a hook writes one: append, never read.
@@ -358,7 +368,11 @@ run_self() {
 
 selftest() {
   SELF="$FIXTURES/self"
-  mkdir -p "$SELF/cases/pass" "$SELF/hooks"
+  mkdir -p "$SELF/cases/pass" "$SELF/hooks/lib"
+  # The fake hooks open with the real kill-switch line, so they need the real library beside
+  # them — `. "${0%/*}/lib/hooks-off"`. Without it the source fails, every fake hook logs
+  # through an unexpired mute, and the three cases that should read as a pass read as a fail.
+  cp "$(dirname "$LIB")/hooks-off" "$SELF/hooks/lib/hooks-off"
   printf '# a trivial payload\n{"tool_name":"Bash"}\n' > "$SELF/cases/pass/one.json"
 
   write_hook good "$(self_entry good)"
@@ -423,7 +437,7 @@ else
   for h in hooks/*; do
     [ -f "$h" ] || continue
     n="$(basename "$h")"
-    case "$n" in TEMPLATE|*.json) continue ;; esac
+    case "$n" in TEMPLATE|*.json|*.sh) continue ;; esac
     if [ -d "tools/hook-cases/$n" ]; then
       check_hook "$h" "tools/hook-cases/$n"
     else

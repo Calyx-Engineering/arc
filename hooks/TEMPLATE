@@ -19,9 +19,12 @@
 # visible.
 
 # ---- kill switch ----------------------------------------------------------------
-# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
-# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+# `bash hooks/hooks-off.sh <hook-name> 30` from any terminal in this repository mutes this one
+# hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. The escape hatch when a
+# hook misbehaves: no editing JSON while the broken thing fights back, and nothing to remember
+# beyond one command. #202.
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 
 # ---- fail-open wrapper ----------------------------------------------------------
 # Never `set -e`. A guardrail bug must never block every tool call. Deny only the one
