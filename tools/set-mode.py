@@ -364,7 +364,7 @@ def selftest():
         bad("the round trip to mode-guard", "no hooks/mode-guard in this tree — box 5 cannot run")
     else:
         # A CLEAN HOME, so the round trip is never skipped and never silently inert. Every Arc
-        # hook exits 0 when ~/.claude/HOOKS_OFF exists, and with the real HOME an allow would
+        # hook exits 0 when this repository carries an unexpired mute, and with the real HOME an allow would
         # prove nothing while the deny half simply failed. Same technique as
         # tools/verify-hook.sh. CLAUDE_PROJECT_DIR and ARC_EVENT_LOG go with it: they are what
         # makes hooks/lib/activation-log write, and a test firing must not append to the tracked
