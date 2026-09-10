@@ -25,11 +25,32 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation hooks-off"
 
 RUN=0
 FAILED=0
 FAILED_NAMES=""
+
+# ---- a mute in THIS repository would make every gate below lie ----------------------
+# Most gates invoke a hook with the payload's `cwd`, and the hook resolves the kill switch the
+# way it always does — CLAUDE_PROJECT_DIR if this environment carries one, otherwise the
+# directory the runner was started in. Whichever it is, the question below is the one those
+# hooks will ask. A live mute there makes them inert, and a gate whose assertions are all "the
+# hook allowed" then passes having proved nothing. Refuse rather than report a green run over
+# silenced guards. #202.
+#
+# ANY mute, not just `all`. This runner cannot know which hook a given gate will fire, and a
+# single-hook mute is exactly the case where the refusal is easiest to miss.
+#
+# NOT UNDER --list, which fires no hook and asserts nothing. It is the listing someone reaches
+# for while working out what the runner does and does not cover, which includes while muted.
+if [ "$LIST" = "0" ] && . hooks/lib/hooks-off 2>/dev/null && arc_hooks_off_any; then
+  echo "verify-all: this repository carries a live mute — Arc hooks here are inert."
+  echo "            A run now would report on guards that never fired. Clear it first:"
+  echo "              bash hooks/hooks-off.sh status"
+  echo "              bash hooks/hooks-off.sh clear"
+  exit 2
+fi
 
 run_gate() {
   local label="$1"; shift
@@ -149,13 +170,23 @@ run_gate "log rotation" bash tests/verify-log-rotation.sh
 run_gate "set-mode cases" bash tests/verify-set-mode.sh selftest
 run_gate "report budget cases" bash tests/verify-report-budget.sh selftest
 run_gate "report budget" bash tests/verify-report-budget.sh
+# The kill switch every hook consults. The per-hook `verify-hook.sh` runs assert the READ
+# side against each hook; this asserts the WRITE side — the command a human types when a
+# guard misbehaves — and the two agreeing is the only property that matters. #202.
+run_gate "hooks-off cases" bash hooks/hooks-off.sh selftest
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
+#
+# A HOOK HAS NO EXTENSION. `branch-guard`, `mode-guard`, `TEMPLATE`. The extension is what
+# marks the other things that live here: `hooks/*.sh` is a command about hooks — the kill
+# switch, #202 — and `hooks/lib/` holds the libraries they source. Neither is registered in
+# hooks.json, neither is fired by anything, and demanding case directories of them turns this
+# runner red over a file that is not a hook.
 for h in hooks/*; do
   [ -f "$h" ] || continue
   n="$(basename "$h")"
-  case "$n" in TEMPLATE|*.json) continue ;; esac
+  case "$n" in TEMPLATE|*.json|*.sh) continue ;; esac
   if [ -d "tools/hook-cases/$n" ]; then
     run_gate "hook: $n" bash tools/verify-hook.sh "$h"
   else
@@ -169,6 +200,10 @@ if [ "$LIST" = "1" ]; then
   cat <<'CANNOT'
 
   cannot run — and no gate here should be read as covering them:
+    a mute in a live session   The kill-switch cases fire each hook standalone with the mute
+                              written into a fixture repository. Nothing here exercises
+                              hooks/hooks-off.sh against a real session's hook firing, and the
+                              runner refuses to start while this repository carries one.
     hooks in a live session   Arc is installed here, so hooks do fire — camp-branch-check and
                               tracker-verify were both observed. The cases above still run each
                               hook standalone against the WORKING TREE; a live firing uses the

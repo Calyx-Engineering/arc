@@ -176,10 +176,19 @@ run deny  "and the fallback to \`arc/\` still applies" \
 echo
 
 echo "kill switch"
-KS_HOME="$FIXTURES/ks-home"
-mkdir -p "$KS_HOME/.claude" && touch "$KS_HOME/.claude/HOOKS_OFF"
-run allow "HOOKS_OFF suppresses the declared-prefix deny" \
-    declared-coord "src/index.ts" "HOME=$KS_HOME"
+# The switch is repo-scoped and expiring (#202), so the mute is written into the fixture
+# repository this case runs against — never anywhere global. `all` rather than the hook's own
+# name, because `all` is the entry a human under pressure actually writes.
+KS_STATE="$FIXTURES/declared-coord/.git/arc-hooks-off"
+printf '%s all
+' "$(( $(date +%s) + 600 ))" > "$KS_STATE"
+run allow "an unexpired mute in this repository suppresses the declared-prefix deny" \
+    declared-coord "src/index.ts" "CLAUDE_PROJECT_DIR=$FIXTURES/declared-coord" "ARC_EVENT_LOG=/dev/null"
+printf '%s all
+' "$(( $(date +%s) - 600 ))" > "$KS_STATE"
+run deny  "and an expired mute does not — it lapses with nobody restoring it" \
+    declared-coord "src/index.ts" "CLAUDE_PROJECT_DIR=$FIXTURES/declared-coord" "ARC_EVENT_LOG=/dev/null"
+rm -f "$KS_STATE"
 echo
 
 echo "$PASSED passed, $FAILED failed"

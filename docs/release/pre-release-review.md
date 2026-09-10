@@ -30,7 +30,7 @@ does not state its boundary is read as covering everything.
 | | |
 |---|---|
 | `skills/*/SKILL.md` | Every shipping skill, **and its copy under `.claude/skills/`** until the local-copy arrangement is deleted |
-| `hooks/*` and `hooks/hooks.json` | Every hook, and the registration that fires it |
+| `hooks/*` and `hooks/hooks.json` | Every hook, and the registration that fires it. `hooks/hooks-off.sh` is the kill-switch command and `hooks/lib/*` is what hooks source — neither is a hook, and neither is registered |
 | `commands/*.md` | Every slash command |
 | `templates/*` | Every template, checked **from where it gets copied to**, not from where it lives |
 | `.claude-plugin/plugin.json` | Every field, against what an installer displays |
@@ -111,7 +111,7 @@ every later finding is suspect.
 |---|---|
 | Every `SKILL.md`, both trees | The frontmatter block parses as YAML, and `name:` matches the directory |
 | Every `commands/*.md` | Frontmatter parses and carries a `description:` |
-| Every `hooks/*` | `bash -n` is clean, **and the first line after the shebang block is the kill switch** — `[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0` |
+| Every hook in `hooks/` | `bash -n` is clean, **and the first line after the shebang block is the kill switch** — `. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0`. A hook has no extension: `hooks/*.sh` is a command about hooks and `hooks/lib/*` is what hooks source, and neither carries the line |
 | `hooks/hooks.json` · `.claude-plugin/plugin.json` | Valid JSON |
 
 **The colon trap is why this pass exists.** An unquoted colon inside a `description:` made

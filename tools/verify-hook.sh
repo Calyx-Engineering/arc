@@ -9,7 +9,7 @@
 #
 # WHY A SCRIPT AND NOT A HOOK. The instinct to make the gate itself a hook is right in
 # spirit and wrong in mechanism: a hook validating hook changes can be broken by the change
-# it is validating, and `HOOKS_OFF` would disable the gate along with everything else. A
+# it is validating, and a mute would disable the gate along with everything else. A
 # script works with hooks off and produces output a human can read, rather than a silent pass.
 #
 # This file is hard-excluded from autonomous edits. Changes come to the user as a proposal.
@@ -31,6 +31,29 @@ fi
 
 PASSED=0
 FAILED=0
+
+# ---- a mute in THIS repository would make this gate lie -----------------------------
+# The cases below add nothing to the environment, so each hook resolves the kill switch the
+# way it always does: CLAUDE_PROJECT_DIR if this environment carries one, otherwise the
+# directory this script was started in. The question asked here is that same question, so it
+# lands on whichever repository the hooks are about to consult.
+#
+# A live mute there silences every hook under test: the `deny` and `report` cases go red, but
+# `pass` and `malformed` go green having proved nothing, and a reader cannot tell that from
+# coverage.
+#
+# Refuse rather than warn. This is the failure mode #160 and #210 found in the switch this
+# one replaces — a gate reporting on hooks that were inert — and the whole point of an
+# expiring, per-repository switch is that the state is readable and short-lived.
+if . "$(dirname "$0")/../hooks/lib/hooks-off" 2>/dev/null; then
+  if arc_hooks_off all || arc_hooks_off "$(basename "$HOOK")"; then
+    echo "verify-hook.sh: this repository carries a live mute, so every hook here is inert." >&2
+    echo "                Nothing below would mean anything. Clear it first:" >&2
+    echo "                  bash hooks/hooks-off.sh status" >&2
+    echo "                  bash hooks/hooks-off.sh clear" >&2
+    exit 2
+  fi
+fi
 
 # ---- fixtures -------------------------------------------------------------------
 # A branch check must read a real `git rev-parse`, not a mocked one, or it proves nothing
@@ -141,39 +164,129 @@ for kind in pass deny report malformed; do
   echo
 done
 
-# The kill switch is not a case the payloads can express — it is a file on disk. Assert the
-# line is present rather than trusting it was not dropped in an edit.
-if grep -q 'HOOKS_OFF' "$HOOK"; then
+# ---- the kill switch ------------------------------------------------------------
+# Five states, and four of them are ways the switch can be OFF while a reader assumes it is
+# on. It is no longer a file anyone can place by hand: `hooks/hooks-off.sh <hook> [minutes]`
+# writes an entry scoped to one repository and one hook, and that entry lapses on its own. #202.
+#
+#   absent       no state file — the hook speaks up as normal
+#   active       an unexpired entry naming this hook — suppressed
+#   expired      an entry whose expiry has passed — speaks up again, nobody having restored it
+#   per-hook     an unexpired entry naming a DIFFERENT hook — this one is unaffected
+#   wrong scope  an unexpired `all` in ANOTHER repository — this one is unaffected
+#
+# The switch it replaced failed the last four by construction: one file, no expiry, every
+# hook, every repository on the machine.
+
+# The line, asserted rather than trusted. A hook that has lost it cannot be muted at all,
+# which is the state the switch exists to rescue someone from.
+if grep -q 'lib/hooks-off' "$HOOK"; then
   echo "  PASS  kill switch present"
   PASSED=$((PASSED + 1))
 else
-  echo "  FAIL  kill switch line missing — HOOKS_OFF must make this hook inert"
+  echo "  FAIL  kill switch line missing — hooks/lib/hooks-off must make this hook inert"
   FAILED=$((FAILED + 1))
 fi
 
-# And prove it works, rather than only that the line exists. The switch the hook reads is
-# $HOME/.claude/HOOKS_OFF, so the test points HOME at a fixture directory holding one — for this
-# one invocation only. It used to touch the real file: with runs verifying in parallel worktrees,
-# one verifier's kill-switch test made every other verifier's deny cases pass as allow, and
-# silenced every real hook on the machine for that moment. Nothing global is written now.
-KS_HOME="$FIXTURES/ks-home"
-mkdir -p "$KS_HOME/.claude" && touch "$KS_HOME/.claude/HOOKS_OFF"
+# And prove it works, rather than only that the line exists.
+#
+# WHY `CLAUDE_PROJECT_DIR` AND NOT `cd`. The switch is repo-scoped, and a hook resolves its
+# repository from `CLAUDE_PROJECT_DIR` first and the directory it was started in second. The
+# environment variable is the lever here because `cd` is not available: several of
+# `camp-branch-check`'s payloads carry a repo-RELATIVE `cwd` — `.`, and a path under
+# `tools/hook-cases/` — which is only meaningful from the repository root, so a verifier that
+# moves loses those cases silently and reads the loss as a working kill switch.
+#
+# What matters either way is that every entry written below lands inside `$FIXTURES`: a verifier
+# cannot mute the repository it is running in. That is the promise the old test could not make —
+# it wrote `$HOME/.claude/HOOKS_OFF`, and overlapping runs left it there (#160, #210).
+make_repo ks      main
+make_repo ksother main
+HOOK_ABS="$(cd "$(dirname "$HOOK")" && pwd)/$(basename "$HOOK")"
+HOOK_NAME="$(basename "$HOOK")"
+
 SPEAKS_UP=deny
 [ -d "$CASES_DIR/report" ] && SPEAKS_UP=report
-if [ -d "$CASES_DIR/$SPEAKS_UP" ]; then
+
+ks_state() { printf '%s' "$FIXTURES/$1/.git/arc-hooks-off"; }
+
+# ks_set <repo> <hook-or-all> <seconds-from-now>. A negative offset writes an expired entry.
+ks_set() {
+  local now
+  now="$(date +%s)"
+  printf '%s %s\n' "$((now + $3))" "$2" > "$(ks_state "$1")"
+}
+
+ks_clear() { rm -f "$(ks_state ks)" "$(ks_state ksother)"; }
+
+# Several hooks act once per session and are silent afterwards — a marker in the fixture's
+# `.git`, or a work directory. The cases above have already fired them, and each case below
+# fires them again, so without this the whole section reads as "the hook never speaks" and the
+# switch appears to work when nothing is being suppressed. Cleared before every run rather than
+# once, because the runs are what consume it.
+ks_reset() {
+  rm -f  "$FIXTURES"/*/.git/arc-camp-session-* 2>/dev/null
+  rm -f  "$FIXTURES"/*/.git/arc-archive-*      2>/dev/null
+  rm -rf "$FIXTURES"/*/.git/arc-branch-guard   2>/dev/null
+  rm -rf "$FIXTURES"/*/.arc-work               2>/dev/null
+  return 0
+}
+
+# Run the hook's first speaking case from inside the `ks` repository, and say whether it spoke.
+ks_speaks() {
+  local f out rc
   for f in "$CASES_DIR/$SPEAKS_UP"/*.json; do
     [ -e "$f" ] || continue
-    out="$(tail -n +2 "$f" | substitute | HOME="$KS_HOME" bash "$HOOK" 2>&1)"
+    ks_reset
+    out="$(tail -n +2 "$f" | substitute            | CLAUDE_PROJECT_DIR="$FIXTURES/ks" ARC_EVENT_LOG="$FIXTURES/ks-log.md" bash "$HOOK_ABS" 2>&1)"
     rc=$?
-    if printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"' || [ "$rc" -eq 2 ]; then
-      echo "  FAIL  kill switch did not suppress a $SPEAKS_UP case"
-      FAILED=$((FAILED + 1))
-    else
-      echo "  PASS  kill switch suppresses $SPEAKS_UP"
-      PASSED=$((PASSED + 1))
-    fi
-    break
+    # BOTH shapes, and the second is why this is not the old test with new cases. The switch
+    # assertion that stood here recognised only a deny and `exit 2`, so for a `report/` hook —
+    # camp-session-start, camp-branch-check, tracker-verify — the failing branch was
+    # unreachable and the test passed whether the switch worked or not.
+    printf '%s' "$out" | grep -q '"permissionDecision" *: *"deny"'      && return 0
+    printf '%s' "$out" | grep -q '"permissionDecisionReason" *: *"[^"]' && return 0
+    [ "$rc" -eq 2 ] && return 0
+    return 1
   done
+  return 1
+}
+
+# ks_case <label> <spoke|silent>
+ks_case() {
+  local got
+  if ks_speaks; then got=spoke; else got=silent; fi
+  if [ "$got" = "$2" ]; then
+    printf '  PASS  %s\n' "$1"
+    PASSED=$((PASSED + 1))
+  else
+    printf '  FAIL  %s\n' "$1"
+    printf '        expected the hook to be %s, it was %s\n' "$2" "$got"
+    FAILED=$((FAILED + 1))
+  fi
+}
+
+if [ -d "$CASES_DIR/$SPEAKS_UP" ]; then
+  ks_clear
+  ks_case "kill switch absent — the hook speaks up" spoke
+
+  ks_set ks all 600
+  ks_case "kill switch active — \`all\` suppresses the $SPEAKS_UP" silent
+
+  ks_set ks "$HOOK_NAME" 600
+  ks_case "kill switch active — this hook by name suppresses the $SPEAKS_UP" silent
+
+  ks_set ks "$HOOK_NAME" -600
+  ks_case "kill switch expired — it lapses with nobody restoring it" spoke
+
+  ks_set ks not-this-hook 600
+  ks_case "kill switch per-hook — another hook's entry leaves this one on" spoke
+
+  ks_clear
+  ks_set ksother all 600
+  ks_case "kill switch wrong scope — another repository's \`all\` leaves this one on" spoke
+
+  ks_clear
 fi
 
 # ---- declaration check ----------------------------------------------------------

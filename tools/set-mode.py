@@ -363,13 +363,20 @@ def selftest():
         # skip here would collapse the control and seven cases into one line and still exit 0.
         bad("the round trip to mode-guard", "no hooks/mode-guard in this tree — box 5 cannot run")
     else:
-        # A CLEAN HOME, so the round trip is never skipped and never silently inert. Every Arc
-        # hook exits 0 when ~/.claude/HOOKS_OFF exists, and with the real HOME an allow would
-        # prove nothing while the deny half simply failed. Same technique as
-        # tools/verify-hook.sh. CLAUDE_PROJECT_DIR and ARC_EVENT_LOG go with it: they are what
-        # makes hooks/lib/activation-log write, and a test firing must not append to the tracked
-        # log — that file's own header records a verifier run that appended ten fabricated
-        # entries.
+        # A CLEAN ENVIRONMENT, so the round trip is never silently inert. Two things are
+        # dropped and one is replaced.
+        #
+        # CLAUDE_PROJECT_DIR is dropped, and that is what isolates the kill switch: with it
+        # unset, mode-guard resolves the switch from its own working directory, which every
+        # call below sets to a fixture under `work` — outside any repository, so no mute can
+        # reach it. It also stops hooks/lib/activation-log writing, and a test firing must not
+        # append to the tracked log; that file's own header records a verifier run that
+        # appended ten fabricated entries. ARC_EVENT_LOG is dropped for the same reason.
+        #
+        # HOME is pointed at a fixture as well. Nothing mode-guard reads lives there any more —
+        # the switch it consults is repo-scoped (#202) — but the guard-live control below is
+        # what actually proves the hook ran, and it is cheap to leave the machine's ~/.claude
+        # out of reach of a gate that runs a hook seven times.
         home = os.path.join(work, "home")
         os.makedirs(os.path.join(home, ".claude"))
         env = dict(os.environ)

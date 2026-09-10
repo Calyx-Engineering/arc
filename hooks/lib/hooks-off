@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+# hooks-off — the kill switch every Arc hook opens with. Carries #202.
+#
+# NOT A HOOK. It is sourced as the first line of code in one, and nothing else:
+#
+#     . "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
+#
+# WHAT IT REPLACED, AND WHY. Every hook used to open with `[ -f "$HOME/.claude/HOOKS_OFF" ]`.
+# That switch was global — one file muted every hook in every repository; permanent — a
+# forgotten file disabled every guard indefinitely and silently; and all-or-nothing — muting
+# `branch-guard` to get past it also muted `mode-guard`. It was also unusable at the moment it
+# was needed: an extensionless file, in a hidden folder, created with a verb PowerShell does
+# not have, on a platform where Explorer appends `.txt`. Observed 2026-09-07 — the switch was
+# needed, attempted, and landed at `r:\arc\HOOKS_OFF.txt`, with no effect.
+#
+# WHAT WRITES THE STATE. `hooks/hooks-off.sh <hook|all> [minutes]`, typed by a human in a
+# terminal. A command can validate the hook name, bound the window, and print where it wrote
+# and when it lapses; a file placed by hand can do none of those, which is why nothing here
+# is reachable by `touch`.
+#
+# THE STATE FILE. `<the repository's git directory>/arc-hooks-off`, one entry per line:
+#
+#     1757458800 branch-guard
+#     1757460000 all
+#
+# An expiry as epoch seconds, then a hook basename or `all`. Inside `.git`, so it is untracked
+# by construction — a muted repository can never be committed or pushed to anyone else — and
+# the git COMMON directory, so every worktree of one repository shares one switch. That is
+# what makes it usable here: five worktrees, and the human muting from whichever terminal is
+# already open unblocks the session that is stuck.
+#
+# REPOSITORY SCOPE, NOT MACHINE SCOPE. The repository is `CLAUDE_PROJECT_DIR`, which Claude
+# Code sets for every hook, falling back to the directory the hook was started in. Muting a
+# guard while fixing this repository leaves every other repository on the machine guarded.
+#
+# NO SUBPROCESSES ON THE COMMON PATH, and this is a requirement rather than a preference —
+# the same one `lib/activation-log` records. Five hooks fire on a single Bash tool call, and
+# this runs before any of them do anything else. The walk below is `[ -d ]`, `[ -f ]`, `read`
+# and parameter expansion; the only fork is `date`, and only where the shell has no time
+# builtin AND a state file actually exists. With no switch set — which is almost always — the
+# cost is a handful of stats.
+#
+# IT FAILS TOWARDS THE GUARD BEING ON. A missing library, an unresolvable repository, an
+# unparseable line: each leaves `arc_hooks_off` returning non-zero, and the hook goes on to do
+# its job. The opposite failure — a switch that mutes when nobody asked — is a guardrail that
+# reports success while off, which is the failure the whole file exists to remove.
+#
+# BASH, NOT POSIX SH. Every hook is invoked as `bash <file>`, so `${v//a/b}` and
+# `printf -v` are available, and they are what make the no-subprocess rule reachable.
+
+[ -n "${_ARC_HOOKS_OFF_LIB:-}" ] && return 0
+_ARC_HOOKS_OFF_LIB=1
+_ARC_HOOKS_OFF=0
+_ARC_HOOKS_OFF_FILE=""
+
+# Locate the state file for a directory's repository, into `_ARC_HOOKS_OFF_FILE`. Sets a
+# variable rather than printing, because a command substitution is a fork and this is the
+# common path. Returns non-zero when there is no repository to scope to.
+_arc_hooks_off_locate() {
+  local d="${1:-${CLAUDE_PROJECT_DIR:-$PWD}}" line n=0
+  # Claude Code hands a Windows path through as it received it, and `${d%/*}` cannot walk a
+  # backslash. One expansion, no fork. Two bash traps here, both measured rather than assumed:
+  # `${d//\\//}` written inline parses as "delete every slash", and an UNQUOTED `$bs` in the
+  # pattern is read as an escape rather than a backslash. Hence the variables, and the quotes.
+  local bs='\' fs='/'
+  d="${d//"$bs"/$fs}"
+  while [ -n "$d" ] && [ "$n" -lt 40 ]; do
+    if [ -d "$d/.git" ]; then
+      _ARC_HOOKS_OFF_FILE="$d/.git/arc-hooks-off"
+      return 0
+    fi
+    # A worktree's `.git` is a file holding `gitdir: <common>/worktrees/<name>`. Trimming
+    # `/worktrees/<name>` gives the common directory, which is the whole point: every
+    # worktree of one repository reads and writes one switch.
+    if [ -f "$d/.git" ]; then
+      read -r line < "$d/.git" 2>/dev/null || return 1
+      line="${line#gitdir: }"
+      line="${line//"$bs"/$fs}"
+      case "$line" in */worktrees/*) line="${line%/worktrees/*}" ;; esac
+      case "$line" in
+        /*|?:/*) : ;;
+        *) line="$d/$line" ;;
+      esac
+      _ARC_HOOKS_OFF_FILE="$line/arc-hooks-off"
+      return 0
+    fi
+    case "$d" in */*) d="${d%/*}" ;; *) break ;; esac
+    n=$((n + 1))
+  done
+  return 1
+}
+
+# arc_hooks_off [<hook-name> [<state-file>]] — is this hook muted right now? The hook name
+# defaults to the running hook. Returns 0 when it is, and that is the caller's signal to
+# `exit 0`.
+#
+# The second argument is for a caller that has already decided which repository it means —
+# `hooks-off.sh`, which reads $PWD because it speaks for the terminal rather than for the
+# agent. A hook never passes it.
+arc_hooks_off() {
+  # `now` is initialised, not merely declared: a caller may run under `set -u` — both gates do
+  # — and a `printf -v` that failed to assign would abort that caller rather than fail open.
+  local hook="${1:-${0##*/}}" now="" exp who
+  _ARC_HOOKS_OFF=0
+  if [ -n "${2:-}" ]; then
+    _ARC_HOOKS_OFF_FILE="$2"
+  else
+    _arc_hooks_off_locate || return 1
+  fi
+  [ -f "$_ARC_HOOKS_OFF_FILE" ] || return 1
+
+  # `printf '%(%s)T'` is a builtin; `date` is a fork, taken only where the builtin is absent.
+  printf -v now '%(%s)T' -1 2>/dev/null
+  case "$now" in ''|*[!0-9]*) now="$(date +%s 2>/dev/null)" ;; esac
+  case "$now" in ''|*[!0-9]*) return 1 ;; esac
+
+  while read -r exp who _; do
+    # An unparseable expiry is not a mute. A corrupted file leaves every guard on.
+    case "$exp" in ''|*[!0-9]*) continue ;; esac
+    [ "$exp" -gt "$now" ] || continue
+    if [ "$who" = "all" ] || [ "$who" = "$hook" ]; then
+      _ARC_HOOKS_OFF=1
+      return 0
+    fi
+  done < "$_ARC_HOOKS_OFF_FILE"
+  return 1
+}
+
+# arc_hooks_off_any [<dir>] — is ANY hook muted in this repository? For the gates, which
+# cannot know which hook a given case will fire and must refuse over any of them. Never on a
+# hook's path: a hook only ever asks about itself.
+arc_hooks_off_any() {
+  local now="" exp who
+  _arc_hooks_off_locate "${1:-}" || return 1
+  [ -f "$_ARC_HOOKS_OFF_FILE" ] || return 1
+  printf -v now '%(%s)T' -1 2>/dev/null
+  case "$now" in ''|*[!0-9]*) now="$(date +%s 2>/dev/null)" ;; esac
+  case "$now" in ''|*[!0-9]*) return 1 ;; esac
+  while read -r exp who _; do
+    case "$exp" in ''|*[!0-9]*) continue ;; esac
+    [ "$exp" -gt "$now" ] && return 0
+  done < "$_ARC_HOOKS_OFF_FILE"
+  return 1
+}
+
+:
