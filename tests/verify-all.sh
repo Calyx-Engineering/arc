@@ -31,6 +31,19 @@ RUN=0
 FAILED=0
 FAILED_NAMES=""
 
+# ---- a mute in THIS repository would make every gate below lie ----------------------
+# Most gates invoke a hook with the payload's `cwd` and no CLAUDE_PROJECT_DIR, so the hook
+# resolves the kill switch from the directory this runner was started in. A live mute here
+# makes those hooks inert, and a gate whose assertions are all "the hook allowed" then passes
+# having proved nothing. Refuse, rather than report a green run over silenced guards. #202.
+if . hooks/lib/hooks-off 2>/dev/null && arc_hooks_off all; then
+  echo "verify-all: this repository carries a live mute — every Arc hook here is inert."
+  echo "            A run now would report on guards that never fired. Clear it first:"
+  echo "              bash hooks/hooks-off.sh status"
+  echo "              bash hooks/hooks-off.sh clear"
+  exit 2
+fi
+
 run_gate() {
   local label="$1"; shift
   RUN=$((RUN + 1))
@@ -152,7 +165,7 @@ run_gate "report budget" bash tests/verify-report-budget.sh
 # The kill switch every hook consults. The per-hook `verify-hook.sh` runs assert the READ
 # side against each hook; this asserts the WRITE side — the command a human types when a
 # guard misbehaves — and the two agreeing is the only property that matters. #202.
-run_gate "hooks-off cases" bash tools/hooks-off.sh selftest
+run_gate "hooks-off cases" bash hooks/hooks-off.sh selftest
 
 # One per hook that has a case directory. A hook without cases is reported rather than
 # skipped — CLAUDE.md requires pass, deny and malformed cases before a hook is registered.
@@ -173,6 +186,10 @@ if [ "$LIST" = "1" ]; then
   cat <<'CANNOT'
 
   cannot run — and no gate here should be read as covering them:
+    a mute in a live session   The kill-switch cases fire each hook standalone with the mute
+                              written into a fixture repository. Nothing here exercises
+                              hooks/hooks-off.sh against a real session's hook firing, and the
+                              runner refuses to start while this repository carries one.
     hooks in a live session   Arc is installed here, so hooks do fire — camp-branch-check and
                               tracker-verify were both observed. The cases above still run each
                               hook standalone against the WORKING TREE; a live firing uses the

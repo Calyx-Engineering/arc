@@ -240,10 +240,10 @@ if [ "${1:-}" = "selftest" ]; then
   passed=0; failed=0
   WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
 
-  # A fixture HOME, for two reasons. It is not the machine's, so nothing there
-  # running this gate cannot turn every case below into a false pass. And the hook reads the
-  # transcript store from $HOME/.claude/projects, so the fixture store is what the orphan sweep
-  # sees — the machine's real one is never touched, and never read.
+  # A fixture HOME. The hook reads the transcript store from $HOME/.claude/projects, so the
+  # fixture store is what the orphan sweep sees — the machine's real one is never touched, and
+  # never read. It reads nothing else from there: the kill switch it consults is repo-scoped
+  # (#202), and that one is isolated by the mute being written into the fixture repository.
   RUN_HOME="$WORK/home"; mkdir -p "$RUN_HOME/.claude/projects"
 
   ok()  { echo "  PASS  $1"; passed=$((passed + 1)); }
@@ -471,6 +471,35 @@ if [ "${1:-}" = "selftest" ]; then
         "a switch that never lapses is the one this replaced"
   fi
   rm -f "$repo/.git/arc-hooks-off"
+
+  # ---- 9b · per-hook and wrong scope, which verify-hook.sh cannot give this hook ----------
+  # It ships no deny/ or report/ cases — silent on every path by design — so verify-hook.sh's
+  # behavioural switch section is skipped for it entirely and only the grep runs. Both cases
+  # assert the hook still WRITES, which is the only thing it does.
+  repo=$(make_repo ksscope arc/04-dogfood-issue-50-ks2)
+  printf '%s branch-guard\n' "$(( $(date +%s) + 600 ))" > "$repo/.git/arc-hooks-off"
+  printf '{"session_id":"s7c","cwd":"%s","tool_name":"Edit","tool_input":{"file_path":"%s"}}' \
+    "$repo" "$repo/src/a.c" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
+  if [ -f "$(index "$repo")" ]; then
+    ok "another hook's mute leaves this one indexing"
+  else
+    bad "another hook's mute leaves this one indexing" \
+        "per-hook scope is the point — muting branch-guard must not stop the index"
+  fi
+  rm -f "$repo/.git/arc-hooks-off"
+
+  other=$(make_repo ksother arc/04-dogfood-issue-50-ks3)
+  repo=$(make_repo ksscope2 arc/04-dogfood-issue-50-ks4)
+  printf '%s all\n' "$(( $(date +%s) + 600 ))" > "$other/.git/arc-hooks-off"
+  printf '{"session_id":"s7d","cwd":"%s","tool_name":"Edit","tool_input":{"file_path":"%s"}}' \
+    "$repo" "$repo/src/a.c" | CLAUDE_PROJECT_DIR="$repo" ARC_EVENT_LOG=/dev/null bash "$HOOK" >/dev/null 2>&1
+  if [ -f "$(index "$repo")" ]; then
+    ok "another repository's \`all\` leaves this one indexing"
+  else
+    bad "another repository's \`all\` leaves this one indexing" \
+        "repo scope is the point — a mute elsewhere must not reach this repository"
+  fi
+  rm -f "$other/.git/arc-hooks-off"
 
   # ---- 10 · silent on every matcher --------------------------------------------------------
   # `permissionDecision: "allow"` APPROVES a call rather than annotating it. On Bash that would

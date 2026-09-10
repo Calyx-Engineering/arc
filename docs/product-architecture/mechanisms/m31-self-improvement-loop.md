@@ -260,7 +260,7 @@ Every hook the plugins ship begins with:
 . "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 ```
 
-`bash tools/hooks-off.sh <hook> 30` from any terminal makes that hook inert — no editing JSON
+`bash hooks/hooks-off.sh <hook> 30` from any terminal makes that hook inert — no editing JSON
 while the broken thing fights back.
 
 **This must be in each plugin's README**, and the agent must state it in chat before

@@ -61,7 +61,7 @@
 # no-subprocess rule above achievable at all.
 
 # ---- kill switch ----------------------------------------------------------------
-# `bash tools/hooks-off.sh <hook> 30` makes that hook inert, and inert includes leaving no
+# `bash hooks/hooks-off.sh <hook> 30` makes that hook inert, and inert includes leaving no
 # record. The functions are still defined so a sourcing hook cannot die on a missing
 # command; only the trap that writes is skipped. `lib/hooks-off` guards against being
 # sourced twice, so the hook that already consulted it pays nothing here. #202.

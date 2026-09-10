@@ -32,6 +32,25 @@ fi
 PASSED=0
 FAILED=0
 
+# ---- a mute in THIS repository would make this gate lie -----------------------------
+# The cases below run each hook with no CLAUDE_PROJECT_DIR, so the hook resolves the kill
+# switch from the directory this script was started in — this repository. A live mute here
+# silences every hook under test: the `deny` and `report` cases go red, but `pass` and
+# `malformed` go green having proved nothing, and a reader cannot tell that from coverage.
+#
+# Refuse rather than warn. This is the failure mode #160 and #210 found in the switch this
+# one replaces — a gate reporting on hooks that were inert — and the whole point of an
+# expiring, per-repository switch is that the state is readable and short-lived.
+if . "$(dirname "$0")/../hooks/lib/hooks-off" 2>/dev/null; then
+  if arc_hooks_off all || arc_hooks_off "$(basename "$HOOK")"; then
+    echo "verify-hook.sh: this repository carries a live mute, so every hook here is inert." >&2
+    echo "                Nothing below would mean anything. Clear it first:" >&2
+    echo "                  bash hooks/hooks-off.sh status" >&2
+    echo "                  bash hooks/hooks-off.sh clear" >&2
+    exit 2
+  fi
+fi
+
 # ---- fixtures -------------------------------------------------------------------
 # A branch check must read a real `git rev-parse`, not a mocked one, or it proves nothing
 # about the hook as deployed. Throwaway repos are built on the branches the cases need and
@@ -143,7 +162,7 @@ done
 
 # ---- the kill switch ------------------------------------------------------------
 # Five states, and four of them are ways the switch can be OFF while a reader assumes it is
-# on. It is no longer a file anyone can place by hand: `tools/hooks-off.sh <hook> [minutes]`
+# on. It is no longer a file anyone can place by hand: `hooks/hooks-off.sh <hook> [minutes]`
 # writes an entry scoped to one repository and one hook, and that entry lapses on its own. #202.
 #
 #   absent       no state file — the hook speaks up as normal

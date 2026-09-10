@@ -79,12 +79,23 @@ Arc ships hooks that can deny a tool call. If one misbehaves, from any terminal 
 repository it is misbehaving in — PowerShell, cmd or bash, the same line in each:
 
 ```bash
-bash tools/hooks-off.sh branch-guard 30
+bash hooks/hooks-off.sh branch-guard 30
 ```
 
 That hook goes inert immediately, and the command prints what it muted, where it wrote, when
 the mute lapses, and how to end it early. `all` in place of a hook name mutes every one of
 them; `status` reads back what is muted; `clear` restores.
+
+**In a repository that has Arc installed as a plugin, there is no `hooks/` directory in
+front of you** — the plugin's is under Claude Code's plugin cache, and the path carries the
+marketplace and the version:
+
+```bash
+bash ~/.claude/plugins/cache/calyx-engineering/arc/0.1.0/hooks/hooks-off.sh branch-guard 30
+```
+
+Nothing about the mute changes: it is still written into the repository you are standing in,
+because the command reads that from where you run it and not from where it lives.
 
 | | |
 |---|---|

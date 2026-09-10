@@ -32,16 +32,16 @@
 # so the asymmetry stays a rule — m40 §4. What it enforces is that the row is read at the moment
 # of the action rather than recalled.
 #
-# WHAT THIS CANNOT DO. `tools/hooks-off.sh mode-guard` disables it for as long as that mute
+# WHAT THIS CANNOT DO. `hooks/hooks-off.sh mode-guard` disables it for as long as that mute
 # lasts. It fails open on its own errors. It sees Bash and nothing else. It stops the command,
 # never the decision. There is no second layer: a static deny in settings.json would block
 # autonomous mode permanently, and lifting one is an edit no agent may make. This is the only
 # mechanism, and its gaps are accepted.
 
 # ---- kill switch ----------------------------------------------------------------
-# `bash tools/hooks-off.sh mode-guard 30` from any terminal in this repository mutes this one
+# `bash hooks/hooks-off.sh mode-guard 30` from any terminal in this repository mutes this one
 # hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
-# `tools/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
 . "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 
 # ---- the activation log ---------------------------------------------------------

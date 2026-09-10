@@ -20,9 +20,9 @@
 # `gh -R owner/repo issue close 163` — is an ordinary invocation rather than an invisible one.
 
 # ---- kill switch ----------------------------------------------------------------
-# `bash tools/hooks-off.sh tracker-verify 30` from any terminal in this repository mutes this one
+# `bash hooks/hooks-off.sh tracker-verify 30` from any terminal in this repository mutes this one
 # hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
-# `tools/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
 . "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 
 # ---- the activation log ---------------------------------------------------------

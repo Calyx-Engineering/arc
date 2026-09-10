@@ -20,12 +20,14 @@ The global scope had already cost the gate twice on its own. `tools/verify-hook.
 ## What it is now
 
 ```bash
-bash tools/hooks-off.sh branch-guard 30      # mute one hook here for thirty minutes
-bash tools/hooks-off.sh status               # what is muted, and when each lapses
-bash tools/hooks-off.sh clear branch-guard   # end it early
+bash hooks/hooks-off.sh branch-guard 30      # mute one hook here for thirty minutes
+bash hooks/hooks-off.sh status               # what is muted, and when each lapses
+bash hooks/hooks-off.sh clear branch-guard   # end it early
 ```
 
-Two files carry it. `hooks/lib/hooks-off` is the read side, sourced as the first line of code in every hook; `tools/hooks-off.sh` is the write side, typed by a human. The command sources the library rather than recomputing the state path, because a writer and a reader that each work the location out separately eventually disagree — and that failure is silent in the direction that matters, a switch reporting success while muting nothing.
+**The command lives beside the hooks, not in `tools/`.** Arc installs as a plugin, and the installed plugin ships `agents/ commands/ docs/ evals/ hooks/ reference/ skills/ templates/` — no `tools/`. A kill switch documented only as `bash tools/hooks-off.sh …` would work in this repository and nowhere else, which is the 2026-09-07 failure relocated rather than removed: a line typed by someone already dealing with a broken guardrail, that silently does nothing. `tools/hooks-off.sh` survives as a two-line delegator so this repository's path muscle-memory keeps working. Review pass 1 found this; the first version of the change shipped the command in `tools/` only.
+
+Two files carry it. `hooks/lib/hooks-off` is the read side, sourced as the first line of code in every hook; `hooks/hooks-off.sh` is the write side, typed by a human. The command sources the library rather than recomputing the state path, because a writer and a reader that each work the location out separately eventually disagree — and that failure is silent in the direction that matters, a switch reporting success while muting nothing.
 
 ## Decisions and trade-offs
 
@@ -37,7 +39,7 @@ Two files carry it. `hooks/lib/hooks-off` is the read side, sourced as the first
 | **It fails towards the guard being ON** | A missing library, an unresolvable repository, an unparseable line: each leaves `arc_hooks_off` returning non-zero and the hook doing its job. The opposite failure is a guardrail that reports success while off |
 | **A cap, not just a default** | Thirty minutes by default, 480 at most, and the cap is announced when it bites. Expiry is only a property if nobody can opt out of it |
 | **The command validates the hook name** | An unknown name is refused with the real names printed, and nothing is written. This is the 2026-09-07 failure directly: a name that is not a hook used to be accepted in silence |
-| **One bash implementation, no PowerShell twin** | `bash tools/hooks-off.sh …` runs verbatim in PowerShell, cmd and bash — `bash` is on PATH from PowerShell here (`C:\Program Files\Git\usr\bin\bash.exe`), and every hook and gate in this repository is already invoked through it. A `.ps1` twin would be a second implementation to keep in step for no reachability gained |
+| **One bash implementation, no PowerShell twin** | `bash hooks/hooks-off.sh …` runs verbatim in PowerShell, cmd and bash — `bash` is on PATH from PowerShell here (`C:\Program Files\Git\usr\bin\bash.exe`), and every hook and gate in this repository is already invoked through it. A `.ps1` twin would be a second implementation to keep in step for no reachability gained |
 | **`all` is kept** | Per-hook scope is the point, but `all` is the entry a human under pressure actually writes, and refusing it would send them back to editing JSON |
 
 ## Two bash traps, both measured
@@ -58,6 +60,18 @@ The first version of the new cases ran each hook from inside a throwaway reposit
 
 `camp-session-start` and `handoff-archive` act once per session and are silent afterwards. The switch section fires the same case six times, so it clears the fixtures' session markers before each run; without that the whole section reads as "the hook never speaks".
 
+## The gate could still report on hooks it had silenced
+
+A mute is repo-scoped, and every gate here invokes a hook with the payload's `cwd` and no `CLAUDE_PROJECT_DIR` — so the hook resolves the switch from the directory the *runner* was started in, which is this repository. A live mute there makes every hook under test inert: the `deny` and `report` cases go red, but the `pass` and `malformed` cases go green having proved nothing, and a reader cannot tell that from coverage.
+
+That is the same class of failure [#160](https://github.com/Calyx-Engineering/arc/issues/160) and [#210](https://github.com/Calyx-Engineering/arc/issues/210) found in the switch being replaced — a gate reporting on hooks that were inert. Both `tools/verify-hook.sh` and `tests/verify-all.sh` now refuse to start while this repository carries a live mute, and say how to clear it. Refuse rather than warn: the whole point of an expiring, per-repository switch is that the state is readable and short-lived, so there is nothing to work around.
+
+`tests/verify-all.sh --list` names the blind spot that remains: nothing exercises a mute against a real session's hook firing.
+
+## `clear <hook>` could say something false
+
+`clear branch-guard` printed "It is on again" whether or not a live `all` entry still covered it — false in the direction that gets a guard trusted while it is off. It now reads the switch back after the write and says which it is.
+
 ## An edit to two hard-excluded files
 
 `hooks/TEMPLATE` and `tools/verify-hook.sh` are both on `CLAUDE.md`'s *never edited autonomously* list. The user's approval for this issue is on record in the dispatch — 2026-09-09 22:20, *"you have my approval for that"* — and the issue's `Required` list names the `verify-hook.sh` cases as acceptance criteria, so the approval is read as covering both. Neither file is edited beyond what the switch needs: the template swaps its kill-switch block, and `verify-hook.sh` swaps its kill-switch section and gains two fixtures.
@@ -67,6 +81,10 @@ The first version of the new cases ran each hook from inside a throwaway reposit
 The switch is quoted verbatim in six places outside the hooks, and leaving any of them would have the repository documenting a mechanism it no longer has: `README.md` (the section a user reads when a hook misbehaves), `CLAUDE.md` (*Safe hook editing*), [m10](../product-architecture/mechanisms/m10-branch-guard.md), [m31](../product-architecture/mechanisms/m31-self-improvement-loop.md), `docs/release/pre-release-review.md`, and a comment in `tools/set-mode.py`. Five gates carried the old switch in their own fixtures and now write a mute into the repository under test — four of them gained an **expired** case alongside, which the old switch had no version of.
 
 Dev-log and arc-log references to `HOOKS_OFF` are left as they stand: they are a record of what was true when they were written.
+
+`hooks/session-index` gets none of `verify-hook.sh`'s five behavioural cases: it ships no `deny/` or `report/` cases because it is silent on every path by design, so that section is skipped for it and only the presence grep runs. Its own gate carries all four instead — active, expired, per-hook and wrong scope — each asserting on the index file rather than on speech.
+
+**A latent CRLF bug, found on the way.** `.gitattributes` said `hooks/* text eol=lf`, and a single star does not cross a slash — so `hooks/lib/`, which holds the libraries every hook sources, was outside the rule. `git ls-files --eol hooks/lib/activation-log` read `attr/` empty. A CRLF checkout of a sourced library gives every hook `$''`-terminated tokens. Fixed to `hooks/**` in its own commit.
 
 ## Verification
 

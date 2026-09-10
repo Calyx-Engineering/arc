@@ -13,7 +13,7 @@
 # not have, on a platform where Explorer appends `.txt`. Observed 2026-09-07 — the switch was
 # needed, attempted, and landed at `r:\arc\HOOKS_OFF.txt`, with no effect.
 #
-# WHAT WRITES THE STATE. `tools/hooks-off.sh <hook|all> [minutes]`, typed by a human in a
+# WHAT WRITES THE STATE. `hooks/hooks-off.sh <hook|all> [minutes]`, typed by a human in a
 # terminal. A command can validate the hook name, bound the window, and print where it wrote
 # and when it lapses; a file placed by hand can do none of those, which is why nothing here
 # is reachable by `touch`.

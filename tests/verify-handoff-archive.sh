@@ -139,8 +139,9 @@ if [ "${1:-}" = "selftest" ]; then
   HOOK="$(cd "$(dirname "$SELF")/.." && pwd)/$HOOK_REL"
   passed=0; failed=0
   WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
-  # A fixture HOME, so nothing on the machine running this gate
-  # cannot silence the hook and turn every case below into a false pass.
+  # A fixture HOME. This hook reads nothing from $HOME any more — the kill switch it consults
+  # is repo-scoped (#202) — but the fixture keeps a real ~/.claude out of reach of anything
+  # below, and the switch's own isolation is the mute written into the fixture repository.
   RUN_HOME="$WORK/home"; mkdir -p "$RUN_HOME/.claude"
 
   ok()  { echo "  PASS  $1"; passed=$((passed + 1)); }

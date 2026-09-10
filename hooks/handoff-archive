@@ -76,9 +76,9 @@
 # named here because review pass 4 found it undocumented.
 
 # ---- kill switch ----------------------------------------------------------------
-# `bash tools/hooks-off.sh handoff-archive 30` from any terminal in this repository mutes this one
+# `bash hooks/hooks-off.sh handoff-archive 30` from any terminal in this repository mutes this one
 # hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
-# `tools/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
 # Ahead of every other line, so a misbehaving copy can be silenced without editing JSON.
 . "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 

@@ -78,7 +78,7 @@ session needed to fix it. Three layers, cheapest first.
 . "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 ```
 
-`bash tools/hooks-off.sh <hook> 30` from any terminal makes that hook inert for a bounded
+`bash hooks/hooks-off.sh <hook> 30` from any terminal makes that hook inert for a bounded
 window, in this repository only. No editing JSON while
 the broken thing fights back. **This is what makes the rest safe to attempt.**
 

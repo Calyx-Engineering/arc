@@ -131,7 +131,7 @@ tested.
 
 | | |
 |---|---|
-| **Say the kill switch in chat before proposing any hook change** | `bash tools/hooks-off.sh <hook> 30` — per hook, this repository only, expiring. A README line is a rule with no trigger |
+| **Say the kill switch in chat before proposing any hook change** | `bash hooks/hooks-off.sh <hook> 30` — per hook, this repository only, expiring. A README line is a rule with no trigger |
 | **Paste real `tools/verify-hook.sh` output before asking for approval** | Pass case, deny case, malformed case |
 | **One hook per commit** | Verify output in the commit body, so `git revert` is surgical |
 | **Never edited autonomously** | `settings.json` outside the plugin's hooks block, the verify script, the hook template, any `SessionStart` hook |

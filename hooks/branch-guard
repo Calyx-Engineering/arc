@@ -22,9 +22,9 @@
 # skips: branch-kind (there is no branch — no repository, a detached HEAD, or git is unavailable), path-is-source (the branch is not a coordination branch, the payload names no file, the path lands outside every git worktree, or there is no branch to check), worktree-identity (the path is relative, is in a different repository, resolves to no directory that exists, this session is not in a repository, lands outside every git worktree, or there is no branch or file to check), base-freshness (not a work branch, the branch name carries no base, the base ref is absent, this base commit was already reported, the reminder could not be recorded, the path lands outside every git worktree, or there is no branch or file to check)
 
 # ---- kill switch ----------------------------------------------------------------
-# `bash tools/hooks-off.sh branch-guard 30` from any terminal in this repository mutes this
+# `bash hooks/hooks-off.sh branch-guard 30` from any terminal in this repository mutes this
 # one hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
-# `tools/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
 . "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 
 # ---- the activation log ---------------------------------------------------------
