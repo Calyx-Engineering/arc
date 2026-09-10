@@ -79,8 +79,9 @@ session needed to fix it. Three layers, cheapest first.
 ```
 
 `bash hooks/hooks-off.sh <hook> 30` from any terminal makes that hook inert for a bounded
-window, in this repository only. No editing JSON while
-the broken thing fights back. **This is what makes the rest safe to attempt.**
+window, in this repository only — the command prints what it muted and when the mute lapses,
+and `status` reads it back. No editing JSON while the broken thing fights back. **This is what
+makes the rest safe to attempt.**
 
 **It is a chat obligation, not only a README line.** The agent states the kill switch in
 chat *before proposing any hook change* — the reminder fires at the moment it is needed.

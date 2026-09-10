@@ -30,7 +30,7 @@ does not state its boundary is read as covering everything.
 | | |
 |---|---|
 | `skills/*/SKILL.md` | Every shipping skill, **and its copy under `.claude/skills/`** until the local-copy arrangement is deleted |
-| `hooks/*` and `hooks/hooks.json` | Every hook, and the registration that fires it |
+| `hooks/*` and `hooks/hooks.json` | Every hook, and the registration that fires it. `hooks/hooks-off.sh` is the kill-switch command and `hooks/lib/*` is what hooks source — neither is a hook, and neither is registered |
 | `commands/*.md` | Every slash command |
 | `templates/*` | Every template, checked **from where it gets copied to**, not from where it lives |
 | `.claude-plugin/plugin.json` | Every field, against what an installer displays |
