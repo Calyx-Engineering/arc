@@ -122,17 +122,35 @@ inference from a dead instrument.
 | | Is | And |
 |---|---|---|
 | `measured` | A bench result | Name the rig and its limits |
+| `instrument` | A number an instrument displayed | **Not a measurement.** Nothing yet says it was measuring what the claim names |
+| `schematic` | This board's own sheets | |
 | `datasheet` | The part's own document | Cite the page |
 | `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
-| `schematic` | This board's own sheets | |
+| `firmware` | Shipped source | What the code *does*, not what the hardware requires |
+| `drawing` | A reviewed diagram | As strong as the review behind it |
+| `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
+| `thread` | An issue thread | A decision was reached; no artifact records it yet |
 | `photograph` | A picture of a circuit not in hand | **Treat as a hypothesis, never as a specification** |
 | `conversation` | Said, not written down | Not a decision until it is |
 | `inferred` | Extrapolated, assumed, calculated from something else | The weakest, and the easiest to mistake for a measurement |
 
 **The order is the point.** Without it, *record the source* is a label with no consequence. A
-project may add a term where it genuinely has one — a shipped firmware source, a reviewed
-drawing, a merged report — but it places the new term **in the order**, or it has added a word
-and not a rule.
+project may add a term where it genuinely has one, but it places the new term **in the order**,
+or it has added a word and not a rule.
+
+**`instrument` is the one most often written as `measured`.** On 2026-08-28 a scope reported
+2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading cannot separate a tone from a
+tone plus a 433 kHz class-D carrier — and an estimate drawn from that reading was taken over a
+bench measurement the user had verified. Under one word for both, a report of that afternoon
+names one source and shows no disagreement at all. A reading becomes `measured` when the rig and
+its limits are **written down beside it**, not when it has been thought about.
+
+**These twelve are two vocabularies reconciled** —
+[#266](https://github.com/Calyx-Engineering/arc/issues/266). `firmware`, `drawing`, `report` and
+`thread` are adopted from the ledger the user had been keeping by hand, `photo` maps to
+`photograph`, and `schematic` rises above `datasheet` and `vendor` both — a claim about *this
+board* is settled by this board's own sheets. [record-route](../record-route/SKILL.md#these-twelve-are-the-fields-and-the-specs-reconciled)
+holds the mapping.
 
 ### The three rules
 
@@ -162,8 +180,8 @@ claim table, and `RESOLVED` or `SILENT` where two sources disagree. **The worst 
 document is the verdict** — a perfect claim table beside an unsourced margin table reads `NONE`,
 which is the rule above being enforced and not a scoring artefact. It matches how provenance
 is actually written — *"from the product label"*, *"the scope reported"*, *"most likely
-explanation"* — not only the seven words, so a report is scored on the defect and not on
-adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+explanation"* — not only the vocabulary words themselves, so a report is scored on the defect
+and not on adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
 
 ---
 

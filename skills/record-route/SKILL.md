@@ -85,17 +85,22 @@ specified for weeks, because nothing recorded where they came from.
 
 | Provenance | Is | Strength |
 |---|---|---|
-| `measured` | A bench result | **Strongest** |
-| `datasheet` | The part's own document | |
-| `vendor` | A label, a listing, a product page | |
+| `measured` | A bench result, with the rig and its limits named | **Strongest** |
+| `instrument` | A number an instrument displayed, with nothing establishing it was measuring what the claim names | Becomes `measured` when the rig is written down beside it |
 | `schematic` | This board's own sheets | |
+| `datasheet` | The part's own document | Cite the page |
+| `vendor` | A label, a listing, a product page, silkscreen | |
+| `firmware` | Shipped source. What the code *does*, not what the hardware requires | |
+| `drawing` | A reviewed diagram | As strong as the review behind it |
+| `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
+| `thread` | An issue thread. A decision was reached; no artifact records it yet | |
 | `photograph` | A picture of a circuit not in hand | Treat as a hypothesis |
 | `conversation` | Said, not written down | Not a decision until it is |
 | `inferred` | Extrapolated, assumed, calculated from something else | **Weakest** |
 
 **The order is the point.** Without it, *record the source* is a label with no consequence. A
-project may add a term it genuinely has — shipped firmware, a reviewed drawing, a merged report
-— but it places the new term **in the order**, or it has added a word and not a rule.
+project may add a term it genuinely has, but it places the new term **in the order**, or it has
+added a word and not a rule.
 
 | | |
 |---|---|
@@ -106,6 +111,41 @@ project may add a term it genuinely has — shipped firmware, a reviewed drawing
 **This is not the same as the confidence split.** That groups a whole report; this travels with
 one row. [engineering-report](../engineering-report/SKILL.md#where-each-claim-came-from) carries
 the report side and the grader that scores it.
+
+### A reading is not a measurement
+
+**`measured` is the bench. `instrument` is the display.** They read the same to anyone who did
+not run the rig, and separating them is the whole of [#266](https://github.com/Calyx-Engineering/arc/issues/266).
+
+On 2026-08-28 a scope reported 2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading
+cannot separate a tone from a tone plus a 433 kHz class-D carrier — and an estimate drawn from
+that reading was taken over a bench measurement the user had verified by hand. Written down with
+one word for both, that page holds a single source and no visible disagreement.
+
+| | |
+|---|---|
+| **A reading is `instrument` until the rig is written down** | Name the instrument, the setting, and what would make it lie. Then it is `measured` |
+| **The promotion is the record, not the intent** | An `instrument` row that has been *thought about* is still `instrument` |
+
+### These twelve are the field's and the spec's, reconciled
+
+[#266](https://github.com/Calyx-Engineering/arc/issues/266). Two vocabularies were in use: the
+seven [#164](https://github.com/Calyx-Engineering/arc/issues/164) specified, and the eight
+`rp2040-pin-allocation.md` had carried since the user repaired this defect by hand. **Two
+vocabularies is the defect wearing a label** — a row reading `drawing` had no rank, and a
+reader could not tell whether a row reading `schematic` outranked one reading `datasheet`.
+
+| The field's term | |
+|---|---|
+| `schematic`, `datasheet`, `conversation` | Already specified. Unchanged |
+| `photo` | **Mapped** to `photograph`. The same claim, spelled shorter |
+| `firmware`, `drawing`, `report`, `thread` | **Adopted**, in the field's own relative order. Each is a source this project genuinely has, and `thread` is not `conversation`: a thread is written down and can be read back |
+
+**The ladder above is both orders merged, and exactly one term moves:** `schematic` rises above
+`datasheet` and `vendor` both. That is the field's ordering and it is right — a claim about
+*this board* is settled by this board's own sheets, and neither the part's document nor the
+seller's label is about this board at all. Every other pair keeps the order at least one of the
+two vocabularies gave it.
 
 ---
 
