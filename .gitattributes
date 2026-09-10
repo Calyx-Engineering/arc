@@ -1,7 +1,10 @@
 # Shell scripts and hooks must keep LF. A CRLF checkout makes bash fail with
 # "bad interpreter: /usr/bin/env bash^M" — which on a hook means every tool call errors.
 *.sh text eol=lf
-hooks/* text eol=lf
+# `hooks/**`, not `hooks/*`: a single star does not cross a slash, so hooks/lib/ — the
+# shared libraries every hook sources — was outside the rule and would have been checked
+# out CRLF-bound on Windows. Found when hooks/lib/hooks-off was added (#202).
+hooks/** text eol=lf
 
 # Test fixtures, whatever extension they carry. Matched by directory rather than by suffix:
 # a `.txt` title case escaped a `**/*.md` rule and was committed CRLF-bound, which puts a
