@@ -106,4 +106,12 @@ Dev-log and arc-log references to `HOOKS_OFF` are left as they stand: they are a
 
 ## Verification
 
-See the PR body for the full gate output.
+`bash tests/verify-all.sh` — **61 gates, all clean, exit 0.** `hooks/hooks-off.sh selftest` — 20 passed, 0 failed. Per-hook `tools/verify-hook.sh` output is in each hook's own commit body; every one of the seven carries `kill switch present` plus the six behavioural assertions, except `session-index`, whose four equivalents are in its own gate.
+
+## What running the gate taught, which is not about the switch
+
+**A fixture mute is a clock, and a clock can run out mid-suite.** The first clean run was 61 gates, 1 failed. `verify-activation-log.sh` wrote its `all` entry once at the top with a ten-minute window and then fired every hook against every case; that gate alone runs for tens of minutes on this machine, so the mute lapsed part-way and the cases after it read as *the kill switch wrote an entry* when the switch had simply expired. The entry is minted at the moment of use now. Expiry is the property this issue adds, and this is its first cost: nothing in this repository's fixtures had a lifetime before.
+
+**Editing a file while a suite is executing it corrupts the run, not just the result.** An earlier run produced `tests/verify-all.sh: line 153: h: command not found` and two failures that did not reproduce — bash reads a script by byte offset as it goes, and `tests/verify-all.sh` was edited underneath it. Everything that run reported after the edit is unusable. The evidence above is from a run with the tree frozen.
+
+**The tracked-log assertion is not concurrency-safe.** `verify-activation-log.sh` fires a hook with no session set and asserts `.claude/arc/log.md` did not grow. Arc is installed in this repository, so a live session's own hook firings grow that file — one run reported *branch-guard wrote to the real .claude/arc/log.md*, 222905 bytes before and 223786 after, from a firing that was not the fixture's. It is the same shared-machine problem [#210](https://github.com/Calyx-Engineering/arc/issues/210) measured for the old kill switch, in a different assertion.
