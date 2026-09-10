@@ -17,9 +17,11 @@
 # Format: docs/product-architecture/camp-reports.md
 
 # ---- kill switch ----------------------------------------------------------------
-# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
-# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+# `bash tools/hooks-off.sh camp-session-start 30` from any terminal in this repository mutes this one
+# hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `tools/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+# The escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 
 # ---- the activation log ---------------------------------------------------------
 # Sourced before anything can exit. This hook speaks once per session and is otherwise
