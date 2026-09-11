@@ -377,7 +377,12 @@ needed.
 
 **A closing keyword binds only when the PR targets the repository's default branch.**
 Isolated 2026-08-17: two PRs, identical keyword form, one into `main` bound five issues and
-one into an arc branch bound none.
+one into an arc branch bound none. Isolated again 2026-09-11 on a base that had **never** been
+the default: [#323](https://github.com/Calyx-Engineering/arc/pull/323) into `probe/287-base`
+bound nothing before the merge, after it, or after an unchanged body re-save, and the merge left
+its issue open — [`tests/tracker-cases/binding/never-default-base-keyword.md`](../../tests/tracker-cases/binding/never-default-base-keyword.md).
+That run is what settled [#287](https://github.com/Calyx-Engineering/arc/issues/287): m12 once
+read the same rule as a parse-time quirk that a re-save could get around, and it cannot.
 
 This is not a corner case in a nested-branch workflow — it is *every* issue PR.
 
@@ -491,7 +496,8 @@ the UI, which needs a human and cannot run unattended. This can.
 
 **A PR whose base was never the default branch.** The keyword cannot bind at all, so there is
 nothing for a re-save to re-parse — the base-branch rule above is not a timing problem and no
-edit gets around it. **The fix is *The manual route* above** — the click and the close, which
+edit gets around it. Measured, not inferred: #323's unchanged re-save after the merge read
+`[]` on every poll. **The fix is *The manual route* above** — the click and the close, which
 work on any base and need no admin right. It is the same route whether the keyword was missed
 or could never have bound.
 
