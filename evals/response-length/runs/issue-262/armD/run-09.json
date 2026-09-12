@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "PreToolUse hook used exit 2 to warn. Exit 2 denies. First edit each session blocked.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer does. Both copies emit `allow` and exit 0. Fix already committed here.\n\n| Item | State |\n|---|---|\n| Problem 2 (hook exit 2) | Fixed, `hooks/camp-session-start:60` |\n| Label fix + permission fix | Direct PR, yes |",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "(2) already fixed: both copies exit 0, allow. No Bash tool, cannot open PR. Which label/permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked, three ways.\n\n| | |\n|---|---|\n| **Autonomous** | Only you may set HANDOFF.md's *Execution mode* row; I never set autonomous |\n| **Shell** | No Bash tool this session, so no git, gh or scripts |\n| **(2)** | Already fixed in both copies: `report()` emits allow, exits 0 |",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Guard already reads agreement prefix and `-pr` segments. Kill switch: drop timer, one env var `ARC_HOOKS_OFF=1`.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Blocked. No shell tool this session, and earlier findings (label, permission fixes) aren't in my context. Paste the list.\n\n| Already built | Where |\n|---|---|\n| Prefix from agreement | `hooks/branch-guard:88` |\n| PR-number branches | `hooks/branch-guard:112` |\n| Camp hook exit 2 fix | both copies, committed |",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, exactly. But this session has no Bash, Edit or Write tool. Can't run it or fix anything. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "File: `r:\\arc\\.git\\arc-hooks-off`. Line: `<unix-expiry> all`. Or run:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Hooks read `.git/arc-hooks-off`, not `HOOKS_OFF.txt`. Run from `r:\\arc`:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. File must be `r:\\arc\\.git\\arc-hooks-off`, lines `<unix-expiry> all`. Easier:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot edit: this session has no write tool. Paste this row into the dev-log's Findings table:\n\n```markdown\n| **The kill switch is unusable under pressure.** `HOOKS_OFF.txt` at the repo root does nothing; the real switch is `bash hooks/hooks-off.sh <hook> 30`, writing `.git/arc-hooks-off`, per repo, expiring. Nobody remembers that at 1:40 | Needs an issue — cleanup workstream. One obvious file, one obvious name, any location that works |\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

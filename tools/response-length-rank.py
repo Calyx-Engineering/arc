@@ -225,9 +225,16 @@ def main(argv):
         print("arm %s — %s" % (label, d))
         rates, pooled_u, pooled_d, fired_rows, unfired_rows, void = [], 0, 0, [], [], []
         for run_label, cases in runs:
+            # A run that contributes NO row is VOID, not absent — and the question can only be
+            # asked here, after --case has been applied. A file the runner was killed before
+            # writing holds no case at all; a file holding only the other case of the suite is
+            # the likelier one, and both used to vanish in silence, missing from the n this tool
+            # prints. n is the whole claim it exists to make.
+            emitted = 0
             for name, row in sorted(cases.items()):
                 if only and name != only:
                     continue
+                emitted += 1
                 if row.get("void"):
                     print("  VOID   %-22s %-28s %s" % (run_label, name, row["void"]))
                     void.append((run_label, name, row["void"]))
@@ -240,6 +247,11 @@ def main(argv):
                 pooled_u += row["under"]
                 pooled_d += row["denom"]
                 (fired_rows if row["fired_on_set"] else unfired_rows).append(row)
+            if not emitted:
+                why = ("holds no probe output at all" if not cases
+                       else "holds no %s — only %s" % (only, ", ".join(sorted(cases))))
+                print("  VOID   %-22s %-28s %s" % (run_label, only or "(any case)", why))
+                void.append((run_label, only, why))
         if not rates:
             raise SystemExit("arm %s has no scoreable run" % label)
         print("  %-22s n=%d runs, %d void   median run rate %.2f   pooled %d/%d %.2f"
@@ -271,11 +283,13 @@ def main(argv):
         print()
 
     # ---- the firing split, pooled across every arm -------------------------------------
-    # #213 found it and could not test it: every run where chat-response fired scored 0.30-0.91
-    # and every run where it did not scored 0.09-0.20, n=4 either side. The split is reported
-    # across ALL arms because it is a question about the mechanism, not about a wording — and
-    # it is an OBSERVED split, never an assigned one. Nothing here randomises firing, so this
-    # ranks runs by something the run did, and a difference is an association.
+    # #213 found a clean split with no overlap at n=4 either side, called it a finding to test
+    # rather than a proven mechanism, and could not test it. #262 did, at n=29, and the ranges
+    # overlap almost entirely. The split is reported across ALL arms because it is a question
+    # about the mechanism, not about a wording — and it is an OBSERVED split, never an assigned
+    # one. Nothing here randomises firing, so this ranks runs by something the run did, and a
+    # difference is an association. Read which arms each side is made of before believing it:
+    # when one arm fires on every run, "did not fire" is that arm's complement, not a condition.
     fired = [r for s in summary.values() for r in s["fired"]]
     unfired = [r for s in summary.values() for r in s["unfired"]]
     print("chat-response fired on the turn the budget was stated — pooled across arms")
@@ -349,10 +363,17 @@ def selftest():
         # A seventh B run the rate limit destroyed: every turn cut, and one surviving 18-word
         # reply that would otherwise enter the ranking as a perfect 1/1.
         run(os.path.join(B, "run-7-ratelimited.json"), [18] * 6, cuts=(1, 2, 3, 4, 5))
+        # An eighth the runner never got to write, and a ninth holding only the OTHER case of a
+        # suite. Under --case both used to be dropped in silence rather than counted as void,
+        # and the filter is in every documented invocation, so the silence was the normal path.
+        json.dump({}, io.open(os.path.join(B, "run-8-empty.json"), "w", encoding="utf-8"))
+        json.dump({"sixty": {"1": {"text": words(18), "cut": "", "fired": []}}},
+                  io.open(os.path.join(B, "run-9-other-case-only.json"), "w", encoding="utf-8"))
 
         env = dict(os.environ, RLR_EVAL_DIR=E)
         out = subprocess.run(
-            [sys.executable, os.path.abspath(__file__), "A=" + A, "B=" + B],
+            [sys.executable, os.path.abspath(__file__), "A=" + A, "B=" + B,
+             "--case", "twenty"],
             capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
         text = out.stdout + out.stderr
 
@@ -373,7 +394,7 @@ def selftest():
         print("response-length-rank selftest")
         print()
         t("a run is scored from its probe JSON", r"run-1\s+twenty\s+1/6\s+0\.17")
-        t("the arm's per-run rates are summarised", r"n=6 runs, 1 void")
+        t("the arm's per-run rates are summarised", r"n=6 runs, 0 void")
         # The whole reason the tool exists: 12 runs are 12 observations, not 72.
         t("the ranking's n is runs, not turns", r"n\s+6 vs 6")
         t("a fully separated pair ranks at the exact p", r"exact p\s+0\.0022")
@@ -382,7 +403,13 @@ def selftest():
         # A run the rate limit destroyed must not be averaged in. Left in, its surviving turn
         # scores 1/1 and drags arm B's median up on evidence that does not exist.
         t("a mostly-cut run is void, not averaged in", r"VOID\s+run-7-ratelimited\s+twenty\s+5 of 6 turns cut")
-        t("the void run is excluded from the arm's n", r"arm B[\s\S]*n=6 runs, 1 void")
+        t("the void run is excluded from the arm's n", r"arm B[\s\S]*n=6 runs, 3 void")
+        # Both under --case, which is what every documented invocation passes and what used to
+        # filter the report of an empty run straight back out again.
+        t("a run the runner never wrote is void, not absent",
+          r"VOID\s+run-8-empty\s+twenty\s+holds no probe output at all")
+        t("a run holding only the other case is void, not absent",
+          r"VOID\s+run-9-other-case-only\s+twenty\s+holds no twenty — only sixty")
         t("the firing split is reported", r"chat-response fired on the turn the budget was stated")
         t("the split names how many runs each side", r"fired\s+6 run\(s\)")
         t("the pooled turn figure is printed beside the run figure",

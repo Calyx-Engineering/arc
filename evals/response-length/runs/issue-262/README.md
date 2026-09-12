@@ -1,26 +1,29 @@
 # The billed probe runs behind [#262](https://github.com/Calyx-Engineering/arc/issues/262)
 
-Every `RL_PROBE_OUT` file from the runs that ranked three wordings of `skills/chat-response`
+Every `RL_PROBE_OUT` file from the runs that ranked four wordings of `skills/chat-response`
 against `evals/response-length/too-many-words-20-words`. One file per run, scored by
 
 ```sh
-python tools/response-length-rank.py   A=evals/response-length/runs/issue-262/armA   B=evals/response-length/runs/issue-262/armB   C=evals/response-length/runs/issue-262/armC   --case too-many-words-20-words
+python tools/response-length-rank.py   A=evals/response-length/runs/issue-262/armA   B=evals/response-length/runs/issue-262/armB   C=evals/response-length/runs/issue-262/armC   D=evals/response-length/runs/issue-262/armD   --case too-many-words-20-words
 ```
 
 They are here because [#213](https://github.com/Calyx-Engineering/arc/issues/213) could not put
 its own there: *"These are billed live runs; the raw replies are not in the tree, so no reviewer
-can re-derive them from the repository."* Every figure in
+can re-derive them from the repository."* Every **probed** score in
 [the dev-log](../../../../docs/dev-log/issue-262-twenty-word-threshold.md) and in #262 comes out
-of these files, and the scorer that reads them is in the tree beside them.
+of these files, and the scorer that reads them is in the tree beside them. The suite's third
+case, `agreement-brief-long-answer`, is a fixture scored from its own stored replies and is not
+here; neither are the cost figures, which are summed from terminal output that is not retained.
 
 | Arm | Runs | What it is |
 |---|---|---|
 | [`armA`](armA) | 10 | `skills/chat-response` as [#213](https://github.com/Calyx-Engineering/arc/issues/213) left it. The control |
 | [`armB`](armB) | 9 | The same file with the `description:` reordered so the invocation instruction leads. One line differs from `armA`, and nothing else |
 | [`armC-draft`](armC-draft) | 10 + 5 | `armB` plus the count-and-cut rule, before two figures in the body were corrected against this issue's own runs |
-| [`armC`](armC) | 10 + 5 | What ships. `armC-draft` with those two figures corrected; [`armB-to-armC.diff`](armB-to-armC.diff) is the whole change from `armB` |
+| [`armC`](armC) | 10 + 5 | `armC-draft` with those two figures corrected; [`armB-to-armC.diff`](armB-to-armC.diff) is the whole change from `armB` |
+| [`armD`](armD) | 10 + 5 | **What ships.** Review found more of the same defect in `armC` — the body quoting the draft arm's 60-word score, the `description:` attributing arms A and B's medians to a rule neither has. Corrected and re-measured rather than shipped on C's numbers; [`armC-to-armD.diff`](armC-to-armD.diff) is the whole change |
 
-`armC-draft` and `armC` carry a second case each: `run-01` to `run-05` also hold
+`armC-draft`, `armC` and `armD` carry a second case each: `run-01` to `run-05` also hold
 `verbose-again-60-words`, so those five files are whole-suite runs and the rest are the 20-word
 case alone. The runner writes one case's entry at a time into the file it is given, which is why
 a suite run is a file with two entries rather than a different kind of file.
@@ -30,6 +33,10 @@ breaks every turn after it decays, so the ranking treats the run as the unit and
 `tools/response-length-rank.py` says so where it prints the pooled turn figure.
 
 ## The `description:` each arm was measured with
+
+`armC-draft` and `armC` share one, because what separated them was two figures in the body.
+`armD`'s differs from `armC`'s by one sentence — see [`armC-to-armD.diff`](armC-to-armD.diff)
+for that and for the body changes beside it.
 
 ### `armA`
 
@@ -49,3 +56,7 @@ breaks every turn after it decays, so the ranking treats the run as the unit and
 ### `armC`
 
 > INVOKE THIS SKILL ON THE TURN A LENGTH BUDGET IS STATED OR TIGHTENED — not later, once a reply has already run long. The trigger is the user saying "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complaining "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that". Invoke it again on every conversational reply after that one, because THE BUDGET IS STILL IN FORCE: that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. A TIGHT BUDGET NEEDS AN UNDERSHOOT: at 25 words or fewer, aim at two-thirds of the number and stop — about 13 words when told 20. THEN COUNT WHAT YOU WROTE AND CUT IT BEFORE SENDING. With this rule in force the breach is a near miss, not a blow-out: measured over nineteen runs, the median reply that breaks a 20-word ceiling lands at 30 words and the median reply overall at 26. That is one clause and one qualifier too many, and both can be removed after the sentence exists — the restatement of the question, the second example, the hedge, the sentence that says what you are about to say. Aiming low is not enough by itself; count the prose you actually wrote and delete words until the number fits. THE REPOSITORY MAY HAVE SET ONE TOO, and it applies with nobody stating it: `.claude/arc/camp/operating-agreement.md`, section 1, **Response verbosity** — the checked box is the value, and its own line states the number. `normal`, a missing clause and a missing file all mean the default table in this skill. Read it at the start of a session rather than when a reply already feels long. A number the user states in conversation outranks it. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block, and linking every issue and PR number rather than writing it bare. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
+
+### `armD` — the file in the tree
+
+> INVOKE THIS SKILL ON THE TURN A LENGTH BUDGET IS STATED OR TIGHTENED — not later, once a reply has already run long. The trigger is the user saying "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complaining "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that". Invoke it again on every conversational reply after that one, because THE BUDGET IS STILL IN FORCE: that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. A TIGHT BUDGET NEEDS AN UNDERSHOOT: at 25 words or fewer, aim at two-thirds of the number and stop — about 13 words when told 20. THEN COUNT WHAT YOU WROTE AND CUT IT BEFORE SENDING. Aiming low without this second step leaves a near miss, not a blow-out: measured over nineteen runs aiming low and not cutting, the median reply that broke a 20-word ceiling landed at 30 words and the median reply at 26. That is one clause and one qualifier too many, and both can be removed after the sentence exists — the restatement of the question, the second example, the hedge, the sentence that says what you are about to say. Aiming low is not enough by itself; count the prose you actually wrote and delete words until the number fits. THE REPOSITORY MAY HAVE SET ONE TOO, and it applies with nobody stating it: `.claude/arc/camp/operating-agreement.md`, section 1, **Response verbosity** — the checked box is the value, and its own line states the number. `normal`, a missing clause and a missing file all mean the default table in this skill. Read it at the start of a session rather than when a reply already feels long. A number the user states in conversation outranks it. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block, and linking every issue and PR number rather than writing it bare. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
