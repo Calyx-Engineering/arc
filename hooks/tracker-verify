@@ -366,10 +366,15 @@ invocation_number() {
 # THE OUTPUT, NEVER THE WHOLE PAYLOAD. The command string sits ahead of `tool_response` in it,
 # so a grep over `INPUT` let `--subject "revert pull request #300"` name the PR — a quoted
 # span winning, which is the constraint the quote strip in `read_invocation` exists for.
+#
+# `merged pull request`, NOT `pull request`. A failed merge names the PR too — `X Pull request
+# owner/repo#200 is not mergeable` — and so does `--auto`'s `Pull request #200 will be
+# automatically merged`. Only a merge that happened says `merged pull request`, in the three
+# forms `Merged`, `Squashed and merged`, `Rebased and merged`; case-insensitive for the first.
 payload_merged_number() {
   local rest
   case "$INPUT" in *'"tool_response"'*) rest="${INPUT#*\"tool_response\"}" ;; *) return 0 ;; esac
-  printf '%s' "$rest" | grep -oE 'pull request [^ "]*#[0-9]+' | head -1 | grep -oE '[0-9]+$'
+  printf '%s' "$rest" | grep -oiE 'merged pull request [^ "]*#[0-9]+' | head -1 | grep -oE '[0-9]+$'
   return 0
 }
 
@@ -1039,11 +1044,12 @@ fi
 # printed none failed, or found a PR already open on the branch, and resolving that PR would
 # run the create checks against something the command did not write.
 #
-# A MERGE THAT REPORTED NO MERGED PR DID NOT MERGE. `gh pr merge` names the PR on every success,
-# so an output that names none — `is not mergeable`, `--auto` queued it — is a merge that did
-# not happen, and the branch's PR is still checked out: resolving it would report "merged and
-# the issue is still open" about a merge nobody made. Skip instead. An absent `tool_response`
-# is a fixture, and falls through to the branch read the case supplies.
+# A MERGE THAT REPORTED NO MERGED PR DID NOT MERGE. `gh pr merge` says `merged pull request
+# …#N` on every success and never on a failure — `is not mergeable` and `--auto`'s queued
+# message name the PR without that phrase, which is what `payload_merged_number` anchors on.
+# A merge that did not happen leaves the branch's PR checked out, and resolving it would
+# report "merged and the issue is still open" about a merge nobody made. Skip instead. An
+# absent `tool_response` is a fixture, and falls through to the branch read the case supplies.
 if [ -z "$NUM" ] && [ "$GH_SUB" = pr ] && [ "$GH_VERB" != create ]; then
   NUM="$(payload_merged_number)"
   if [ -z "$NUM" ] && [ "$GH_VERB" = merge ]; then

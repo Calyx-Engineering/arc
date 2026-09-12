@@ -44,6 +44,8 @@ stands, so an `ok` written first would turn a firing with findings into a clean 
 | 1 | `gh` absent still hit a bare `return 0` | `skip_arm "gh is not on PATH"` |
 | 2 | The fallback was gated on `GH_SUB = pr`, so a `gh pr create` whose output carried no URL went to `gh pr view` and could run the create checks against a PR the command did not write | Gated on `GH_VERB != create` |
 | 2 | A merge that **failed** — `is not mergeable`, or `--auto` queued it — printed no merged PR, the branch was still checked out, `current_pr_number` resolved it, and the hook reported "merged and the issue is still open" about a merge nobody made | For `merge`, a `tool_response` naming no merged PR skips: `the merge's output names no merged PR, so nothing merged`. An absent `tool_response` is a fixture and falls through to the branch read. `pass/pr-merge-no-number-merge-did-not-happen.json` |
+| 4 | The failed-merge output **does** name the PR — `X Pull request …#200 is not mergeable` — and the case passed only because the grep was case-sensitive and `Pull` is capitalised | The reader anchors on `merged pull request`, case-insensitive, which every success prints and no failure does |
+| 4 | No case exercised the after-`tool_response` slice from pass 1: the quoted-span case carried no output, so the reader returned before the slice | `pass/pr-merge-no-number-quoted-number-with-output.json` — a failed merge whose quoted `--subject` carries `merged pull request #300`: read from the output alone it skips; read from the whole payload, #300 wins and it would report |
 
 **Pre-existing and not fixed here:** the same false report exists for a **numbered** merge that fails —
 `gh pr merge 200 --squash` against an unmergeable PR runs `merge-close` on #200 as if it merged. The
@@ -54,7 +56,7 @@ than filed.
 
 ```
 $ bash tools/verify-hook.sh hooks/tracker-verify
-131 passed, 0 failed
+132 passed, 0 failed
 
 $ bash tests/verify-all.sh
 64 gates, all clean
@@ -82,11 +84,26 @@ tracker-verify  pr-merge
 The same third payload against the base hook: exit 0, `checked: — none reached`, `outcome: ok — nothing
 to report`. That entry is the defect the issue describes.
 
+The chained case, `gh pr merge 200 && gh issue close 10`, fired the same way — one entry, both arms, each
+against its own number:
+
+```
+tracker-verify  pr-merge  chained: pr-merge · issue-close
+  checked: close-link=issue-10 · placeholder-scan=pr-200 · date-sanity=pr-200 · milestone=pr-200:none · pr-base=pr-200:arc/02-foundation · arc-prefix=pr-200:arc-02 · closing-keyword=pr-200:bound · merge-close=issue-10 — merge-close found something
+  outcome: failed — the write landed, with findings
+```
+
 ## Findings about the run
 
-- `run-instructions.md` §2 step 3 and §4 name `tools/verify-all.sh` and `tools/verify-linked-branch.sh`.
-  Neither exists; both live in `tests/`. `tools/verify-hook.sh` is in `tools/`. The run used the `tests/`
-  paths.
+- The dispatch prompt this run received named `tools/verify-all.sh` and `tools/verify-linked-branch.sh`,
+  neither of which exists. `run-instructions.md` on the base already says `tests/` for both, since
+  `865f989` on 2026-09-09 — the prompt the driver hands a run is a copy, and it was stale. The run used
+  the `tests/` paths.
+- The `tracker-verify` that fired on this run's `gh pr create` was `R:\arc/hooks/tracker-verify` — the
+  main tree's copy, checked out on `arc/04-dogfood-issue-145-fire-review` with a hook from before #204 —
+  and it reported "PR #328 has no milestone" on a PR that closes an issue, which the current hook passes.
+  A hook fires from wherever the plugin is registered, not from the worktree whose change it is meant to
+  soak; a soak line for this change has to come from a session whose main tree carries it.
 - `tests/verify-all.sh` takes over ten minutes here, past the Bash tool's 600 s ceiling, so it ran in the
   background with its exit code written to a file and read back at the end.
 - `tools/verify-hook.sh` judges the verdict class only, so a case cannot pin **which** PR a finding is
