@@ -21,7 +21,7 @@
 |---|---|
 | **No `Required` checklist, no `Constraints`** | The issue holds both |
 | **Sections the issue has none of** | `What changed`, `Review passes`, `Evidence` |
-| **`Closes #<NN>` is the last line** | After the `Related` table |
+| **`Closes #<NN>` is the last line** | After the `Related` table. A PR closing several issues ends with one `Closes` line per issue, nothing between them |
 
 ---
 

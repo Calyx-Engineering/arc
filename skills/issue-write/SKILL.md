@@ -572,7 +572,7 @@ Three of the seven evaluation cases are mechanically catchable. Before and after
 | A number that was meant to change and did not | Diff the old body against the new |
 | A date inconsistent with reality | Compare against the current date |
 | A referenced commit or issue that does not exist | Check it resolves |
-| A closing keyword anywhere but the last line | `tests/verify-tracker-body.sh body <file>` |
+| A closing keyword anywhere but the closing block — the final lines, one keyword each | `tests/verify-tracker-body.sh body <file>` |
 | A title that promises what merging will not deliver | `tests/verify-tracker-body.sh title "<title>" [file]` |
 
 The first four patterns are *scaffolding survived*. The last two are the opposite shape —
@@ -625,9 +625,10 @@ keyword entirely:
 - ✓ "This does not complete the capability — the deliverable in #42 is …"
 
 **This trap shipped a defect while this section was loaded and read.** Prose does not stop
-it, so the rule is placement rather than phrasing: one keyword, on the last line, checked by
-`tests/verify-tracker-body.sh body` before the write. Escaping the keyword is a workaround
-for writing *about* the trap in a document, not a fix.
+it, so the rule is placement rather than phrasing: keywords only in the closing block — the
+final lines, one keyword per line and nothing else on them; one line for one issue, one line
+per issue for several — checked by `tests/verify-tracker-body.sh body` before the write.
+Escaping the keyword is a workaround for writing *about* the trap in a document, not a fix.
 
 ### Hand-attached links are separate from body keywords
 

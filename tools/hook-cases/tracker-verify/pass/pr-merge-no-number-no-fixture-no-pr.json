@@ -1,0 +1,2 @@
+# `gh pr merge --squash --delete-branch` live, from a repository with no remote — `gh pr view` cannot resolve a PR, so the arm skips rather than reporting or going further. #286
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","tool_input":{"command":"gh pr merge --squash --delete-branch"}}

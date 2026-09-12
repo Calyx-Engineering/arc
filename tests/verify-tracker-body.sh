@@ -21,8 +21,8 @@
 # checked BEFORE the write — a PostToolUse hook is too late, the wrong body is already in
 # the tracker. Binding is only decidable after, from the API. Neither subsumes the other.
 #
-# `body` carries two rules, not one: where the closing keyword sits, and whether a `Spawned`
-# heading is the last section. Both are decidable from the file alone and both are the same
+# `body` carries two rules, not one: where the closing keywords sit, and whether the `Related`
+# or `Spawned` heading is the last section. Both are decidable from the file alone and both are the same
 # caller's question — "is this body safe to write" — so they share one subcommand and one exit
 # code. #135.
 #
@@ -51,43 +51,68 @@ USAGE
 }
 
 # ---- check 1 — placement --------------------------------------------------------
-# A keyword-plus-number is allowed exactly once, on the last non-empty line. Anywhere else
-# it is either a second binding nobody intended or a mention inside prose that will bind.
+# A closing keyword is allowed only in the CLOSING BLOCK: the final N consecutive non-empty
+# lines, each holding one keyword-plus-number and nothing else. One line for a PR that closes
+# one issue; N lines for a PR that closes N — `skills/issue-write`: when a PR closes several,
+# the title drops the number and the body lists them. A keyword anywhere above the block is
+# either a second binding nobody intended or a mention inside prose that will bind, and it is
+# reported whether or not the block below it is well formed. #234 — the check used to allow
+# exactly one keyword, which failed every batch PR this arc's own loop produces.
+#
+# THE BLOCK IS READ FROM THE BOTTOM UP. Trailing blank lines are skipped — they are normal in
+# a written body and must not shift where the block sits. Then every line that is a bare
+# keyword joins the block, and the first line that is not ends it. A blank line between two
+# keyword lines ends the block too: "consecutive" means no line of any other kind between them.
+#
+# A BLOCK LINE IS ONE KEYWORD BY CONSTRUCTION — the whole line is one keyword and one number —
+# so the block's line count is its keyword count, and `Closes #1 and closes #2` on the last
+# line is not a block line at all: it is reported as a keyword outside the block.
+KEYWORD_LINE_RE='^[[:space:]]*(close[sd]?|closed|fix|fixes|fixed|resolve[sd]?)[[:space:]]+#[0-9]+[[:space:]]*$'
+
 check_keyword_placement() {
   local file="$1"
-  local last_line_no hits count
-  # The last non-empty line — trailing blank lines are normal in a written body and must not
-  # shift where the keyword is allowed to sit.
-  last_line_no="$(grep -n '[^[:space:]]' "$file" | tail -n1 | cut -d: -f1)"
-  [ -n "$last_line_no" ] || last_line_no=0
+  local hits block_top block_lines above line n text
 
-  # `-o` counts MATCHES, not lines. `Closes #1 and closes #2` on one line is two bindings,
-  # and a per-line count would report it as one and pass it.
-  count="$(grep -oEi "$KEYWORD_RE" "$file" | grep -c . || true)"
-  if [ "$count" -eq 0 ]; then
+  # Every line carrying a keyword. A line can carry two; the block test below is per line and
+  # rejects such a line, so the per-line list is enough.
+  hits="$(grep -nEi "$KEYWORD_RE" "$file" || true)"
+  if [ -z "$hits" ]; then
     echo "PASS  no closing keyword — this change closes nothing"
     return 0
   fi
 
-  # Line-numbered form, for reporting only.
-  hits="$(grep -nEi "$KEYWORD_RE" "$file" || true)"
+  # The block: walk up from the last non-empty line while each line is a bare keyword.
+  # `block_top` is the first line of the block, or one past the end of the file when there is
+  # no block — so "above the block" then means every hit.
+  block_lines=0
+  block_top="$(( $(grep -c '' "$file") + 1 ))"
+  while IFS= read -r line; do
+    n="${line%%:*}"; text="${line#*:}"
+    if [ "$block_lines" -eq 0 ] && ! printf '%s' "$text" | grep -q '[^[:space:]]'; then
+      continue                                  # trailing blank line
+    fi
+    printf '%s' "$text" | grep -qEi "$KEYWORD_LINE_RE" || break
+    block_lines=$((block_lines + 1))
+    block_top="$n"
+  done < <(grep -n '' "$file" | tac)
 
-  if [ "$count" -gt 1 ]; then
-    echo "FAIL  $count closing keywords; exactly one is allowed, on the last line"
-    printf '%s\n' "$hits" | sed 's/^/        /'
+  above="$(printf '%s\n' "$hits" | awk -F: -v top="$block_top" '$1 + 0 < top + 0')"
+  if [ -n "$above" ]; then
+    if [ "$block_lines" -eq 0 ]; then
+      echo "FAIL  closing keyword outside a closing block — the body does not end in keyword-only lines"
+    else
+      echo "FAIL  closing keyword above the closing block"
+    fi
+    printf '%s\n' "$above" | sed 's/^/        /'
+    echo "        A keyword anywhere but the final keyword-only lines still binds. Negation is not understood."
     return 1
   fi
 
-  local hit_line
-  hit_line="$(printf '%s' "$hits" | cut -d: -f1)"
-  if [ "$hit_line" != "$last_line_no" ]; then
-    echo "FAIL  closing keyword on line $hit_line, not the last line ($last_line_no)"
-    printf '%s\n' "$hits" | sed 's/^/        /'
-    echo "        A keyword anywhere but the last line still binds. Negation is not understood."
-    return 1
+  if [ "$block_lines" -eq 1 ]; then
+    echo "PASS  one closing keyword, on the last line"
+  else
+    echo "PASS  $block_lines closing keywords, one per line, on the final $block_lines lines"
   fi
-
-  echo "PASS  one closing keyword, on the last line"
   return 0
 }
 
