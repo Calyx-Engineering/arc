@@ -1,7 +1,12 @@
 # response-length-rank.py — rank two candidate wordings of a skill across MANY probe runs.
 #
 #   python tools/response-length-rank.py A=<dir> B=<dir> [--case <name>] [--eval-dir <dir>]
+#   python tools/response-length-rank.py A=<dir> --medians      the shape of the overrun
 #   python tools/response-length-rank.py selftest
+#
+#   THE RANKING NEEDS EXACTLY TWO ARMS. More are scored and reported, but the Mann-Whitney
+#   block is a statement about a pair, so three arms print rates and no ranking. Rank the pairs
+#   you mean, one invocation each.
 #
 # WHY THIS EXISTS. tools/response-length.sh --probe scores ONE run. #158 compared two skills at
 # n=1, #213 at n=3, and #213's own constraint says why neither could settle anything: the
@@ -150,6 +155,7 @@ def score_run(path, casedir_of, min_scored):
             "breach": breach,
             "fired_on_set": "chat-response" in fired.get(set_on, []),
             "set_on": set_on,
+            "pairs": pairs,
             "void": "",
         }
         # Both halves of the rate-limit refusal, and CUT is asked FIRST because it names the
@@ -175,6 +181,37 @@ def arm_runs(d, casedir_of, min_scored):
             for f in files]
 
 
+def overrun_shape(runs, only, budget_of):
+    """Median prose after the budget was set, median breach, and the 21-25 band share.
+
+    THE SCORE SAYS WHICH ARM IS BETTER AND NOT WHAT TO CHANGE. #262's whole fix came out of this
+    view and not out of a rate: the skill was telling the model its overruns were three times the
+    budget when they had become one clause over, so the rule was aimed past the failure. That was
+    read with a throwaway script, which means the figures it produced could not be re-derived by
+    anyone reading the write-up. This is that script, kept.
+
+    Same population the rate uses — THIN and CUT turns excluded, because a truncated or
+    declining reply is short for a reason that is not the budget — minus the turn the budget was
+    stated on, which is the one turn every arm gets right and would drag every median down.
+    """
+    after, breach = [], []
+    for _, cases in runs:
+        for name, rows in cases.items():
+            if (only and name != only) or rows.get("void") or "budget" not in rows:
+                continue
+            budget, floor = rows["budget"], rows["floor"]
+            for turn, words, cut in rows["pairs"]:
+                if cut or words < floor or turn == rows["set_on"]:
+                    continue
+                after.append(words)
+                if words > budget:
+                    breach.append(words)
+    band = [b for b in breach if b <= budget_of + 5]
+    return {"turns": len(after), "median": median(after), "within": sum(1 for x in after if x <= budget_of),
+            "breaches": len(breach), "median_breach": median(breach),
+            "band": len(band), "band_pct": (100.0 * len(band) / len(breach)) if breach else 0.0}
+
+
 def median(xs):
     s = sorted(xs)
     if not s:
@@ -186,6 +223,7 @@ def median(xs):
 def main(argv):
     evaldir = os.environ.get("RLR_EVAL_DIR", "evals/response-length")
     only = ""
+    medians = False
     min_scored = int(os.environ.get("RLR_MIN_SCORED", "3"))
     threshold = float(os.environ.get("RL_THRESHOLD", "0.67"))
     arms = []
@@ -198,6 +236,8 @@ def main(argv):
         elif a == "--eval-dir":
             i += 1
             evaldir = argv[i]
+        elif a == "--medians":
+            medians = True
         elif "=" in a:
             label, d = a.split("=", 1)
             arms.append((label, d))
@@ -219,9 +259,10 @@ def main(argv):
     print("The run is the unit. A pooled turn figure is printed beside it, never tested on.")
     print()
 
-    summary = {}
+    summary, arm_rows = {}, {}
     for label, d in arms:
         runs = arm_runs(d, casedir_of, min_scored)
+        arm_rows[label] = runs
         print("arm %s — %s" % (label, d))
         rates, pooled_u, pooled_d, fired_rows, unfired_rows, void = [], 0, 0, [], [], []
         for run_label, cases in runs:
@@ -262,6 +303,23 @@ def main(argv):
             "rates": rates, "u": pooled_u, "d": pooled_d, "void": len(void),
             "fired": fired_rows, "unfired": unfired_rows,
         }
+
+    if medians:
+        print("the shape of the overrun — turns after the budget was set, thin and cut excluded")
+        for label, _ in arms:
+            b = 0
+            for _, cases in arm_rows[label]:
+                for name, row in cases.items():
+                    if (not only or name == only) and "budget" in row:
+                        b = row["budget"]
+            if not b:
+                continue
+            m = overrun_shape(arm_rows[label], only, b)
+            print("  arm %-10s %3d turns   median %-5s within %d   %d breaches, median %-5s   "
+                  "%d in the %d-%d band (%.0f%%)"
+                  % (label, m["turns"], m["median"], m["within"], m["breaches"],
+                     m["median_breach"], m["band"], b + 1, b + 5, m["band_pct"]))
+        print()
 
     # ---- the ranking -----------------------------------------------------------------
     labels = [l for l, _ in arms]
@@ -359,7 +417,7 @@ def selftest():
                 [18] * (6 - over) + [70] * over, fired_first=False)
         for i, over in enumerate([1, 0, 1, 2, 0, 1], start=1):
             run(os.path.join(B, "run-%d.json" % i),
-                [18] * (6 - over) + [70] * over, fired_first=True)
+                [18] * (6 - over) + [23] * over, fired_first=True)
         # A seventh B run the rate limit destroyed: every turn cut, and one surviving 18-word
         # reply that would otherwise enter the ranking as a perfect 1/1.
         run(os.path.join(B, "run-7-ratelimited.json"), [18] * 6, cuts=(1, 2, 3, 4, 5))
@@ -373,7 +431,7 @@ def selftest():
         env = dict(os.environ, RLR_EVAL_DIR=E)
         out = subprocess.run(
             [sys.executable, os.path.abspath(__file__), "A=" + A, "B=" + B,
-             "--case", "twenty"],
+             "--case", "twenty", "--medians"],
             capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
         text = out.stdout + out.stderr
 
@@ -419,6 +477,20 @@ def selftest():
         # the arithmetic this line exists to keep visible rather than quotable.
         t("the cross-arm pooled figure says it is not a suite score",
           r"A pooled figure over two arms is not a suite score")
+        # --medians is the view the fix came out of, and the one that used to be produced by a
+        # throwaway script — so the figures a write-up quotes from it could not be re-derived.
+        # Six runs of six turns is 36; the turn the budget was set on is dropped from all six,
+        # leaving 30. Getting 36 here would mean the medians include the one turn every arm
+        # gets right, which drags all of them toward the budget.
+        t("the medians drop the turn the budget was set on",
+          r"arm A\s+30 turns")
+        # Arm A breaches at 70 and arm B at 23 against the same 20-word budget — identical
+        # rates, opposite shapes. #262 turned on exactly this distinction: a rule aimed at a
+        # blow-out, given to a model missing by a clause, is aimed past the failure.
+        t("a blow-out reports its median breach and an empty band",
+          r"arm A.*28 breaches, median 70\.0\s+0 in the 21-25 band \(0%\)")
+        t("a near miss reports the same rate and a full band",
+          r"arm B.*5 breaches, median 23\s+5 in the 21-25 band \(100%\)")
 
         print()
         print("%d passed, %d failed" % (P, F))

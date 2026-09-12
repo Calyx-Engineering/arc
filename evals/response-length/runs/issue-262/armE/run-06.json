@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "The hook already returns `allow` and exits 0. That finding was stale. No problem remains.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't anymore. Both checkouts exit 0 with an explicit allow.\n\n| | |\n|---|---|\n| Why it was exit 2 | Pattern copied from `camp-branch-check`, a PostToolUse hook, where exit 2 only prints stderr. In PreToolUse, exit 2 denies |\n| Fixed where | On disk in `R:\\arc` and this worktree. Whether `main` has it: unverified, no shell here |\n| Direct PR | Label fix, permission fix, and this one only if `main` lacks it |",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked: no shell tool here. Hook already exits 0, both checkouts. Which label/permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked. No shell tool: cannot run git, gh or new-direct-pr.sh. Earlier context lost: which label and permission fixes?",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Guard already handles both here: `*-pr[0-9]*` and agreement prefix. Kill switch: keep only per-hook expiring one, delete global `HOOKS_OFF`.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "No Edit or Bash tools here. Code handles PR numbers, prefix, exit 0. Kill switch: drop it, hooks fail open.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Not a hook. This session has no Edit, Write or Bash tools. Kill switch changes nothing. Start fresh session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`R:\\arc\\.git\\arc-hooks-off`, one line: `<unix-expiry> all`. Simpler: from `R:\\arc` run:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong file. Run from `r:\\arc`:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `.git/arc-hooks-off`, mutes every hook thirty minutes.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. That file is ignored. Switch lives at `.git/arc-hooks-off`, one line: `<unix-expiry> all`. Simplest:\n\n```bash\ncd /r/arc && bash hooks/hooks-off.sh all 120\n```\n\nOr write `.git/arc-hooks-off` containing `1789300000 all` (mutes everything about a day).",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write it: no edit or shell tool this session. Also: switch is per repo, `.git/arc-hooks-off`; `HOOKS_OFF.txt` does nothing.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

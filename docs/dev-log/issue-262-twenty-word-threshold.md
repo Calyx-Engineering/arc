@@ -12,13 +12,13 @@ The decisive pair is arms B and C below. **B fires on 9 of 9 runs and scores 0.3
 them is the wording of the rule. And B against A — 9 of 9 firing against 4 of 10 — is worth
 nothing at all: 0.37 against 0.34, `p=0.72`.
 
-The 20-word case alone is **72/100 · 0.72** over ten runs of the shipped file, against
+The 20-word case alone is **78/102 · 0.76** over ten runs of the shipped file, against
 [#213](https://github.com/Calyx-Engineering/arc/issues/213)'s 15/33 · 0.45.
 
-The suite clears the threshold. **88/114 · 0.77** on the file that ships, median run 0.77, and
+The suite clears the threshold. **93/119 · 0.78** on the file that ships, median run 0.75, and
 all five runs `PASS`.
 
-## What the four arms are
+## What the five arms are
 
 Each arm is a whole copy of the plugin, differing from the one before it inside
 `skills/chat-response/SKILL.md` and nowhere else. `diff -rq` between arm directories reports one
@@ -29,12 +29,14 @@ file, every time.
 | **A** | — | The skill as [#213](https://github.com/Calyx-Engineering/arc/issues/213) left it. The control |
 | **B** | A, one line | The `description:` reordered so the invocation instruction leads instead of trailing at word 400. Same length either way — 500 words against 505 |
 | **C** | B, the rule | The count-and-cut rule, in the `description:` and the body |
-| **D** | C, its own figures | Review found C's body quoting the draft arm's 60-word score and its `description:` attributing arms A and B's medians to a rule neither of them has. Corrected, and **re-measured rather than shipped on C's numbers**. `armC-to-armD.diff` is the whole change. **What ships** |
+| **D** | C, its own figures | Review found C's body quoting the draft arm's 60-word score and its `description:` attributing arms A and B's medians to a rule neither of them has. Corrected, and re-measured rather than shipped on C's numbers. `armC-to-armD.diff` |
+| **E** | D, minus the self-quotes | A fourth pass found D quoting **C's** scores — the same defect, one generation back, because every correction edits the file that was measured. The rows scoring this skill's own state are **removed** rather than corrected again. `armD-to-armE.diff`. **What ships** |
 
-**D exists because the alternative was shipping an unmeasured file and calling it C.** Two
+**D and E exist because the alternative was shipping an unmeasured file and calling it C.** Four
 review passes edited the measured artifact; that is how a PR reaches the state where three
 documents say *what ships* about a file nobody ran. Ten more runs cost less than the sentence
-explaining why they were not done.
+explaining why they were not done — and the third time it happened, the answer was to stop
+correcting the figure and delete it, because the regress has no end inside the skill.
 
 The raw replies of every run are in
 [`evals/response-length/runs/issue-262`](../../evals/response-length/runs/issue-262), with each
@@ -57,7 +59,8 @@ difference being which arm directory `--plugin-dir` pointed at. The 20-word case
 | A | 10 | 0.29 | 37/109 · **0.34** | 0.09 – 0.91 | 4 of 10 |
 | B | 9 | 0.36 | 35/95 · **0.37** | 0.09 – 0.82 | 9 of 9 |
 | C | 10 | 0.79 | 76/106 · **0.72** | 0.36 – 1.00 | 10 of 10 |
-| **D** — ships | 10 | **0.71** | 72/100 · **0.72** | **0.40 – 1.00** | 10 of 10 |
+| D | 10 | 0.71 | 72/100 · **0.72** | 0.40 – 1.00 | 10 of 10 |
+| **E** — ships | 10 | **0.76** | 78/102 · **0.76** | **0.40 – 1.00** | 10 of 10 |
 
 **The run is the unit, not the turn.** Eleven turns inside one run are not eleven independent
 observations — a run that decays breaks every turn after it decays. Pooling turns would make 29
@@ -76,8 +79,10 @@ at these n the approximation's tail is wrong by enough to change the answer.
 | B against A | 9 vs 10 | 50.0 of 90 | **0.72** | **No** — and *not distinguishable* is all it licenses. Nothing here bounds how large a difference these n could have missed |
 | C against A | 10 vs 10 | 88.5 of 100 | **0.0021** | **C** |
 | C against B | 10 vs 9 | 78.0 of 90 | **0.0057** | **C** |
-| **D against A** | 10 vs 10 | 89.0 of 100 | **0.0021** | **D** — the file that ships, against the control |
-| D against C | 10 vs 10 | 48.0 of 100 | **0.91** | **No**, and that is the claim: correcting C's own figures changed its behaviour by nothing measurable |
+| D against A | 10 vs 10 | 89.0 of 100 | **0.0021** | **D** |
+| **E against A** | 10 vs 10 | 89.0 of 100 | **0.0021** | **E** — the file that ships, against the control |
+| D against C | 10 vs 10 | 48.0 of 100 | 0.91 | **No**, and that is the claim: correcting C's own figures changed its behaviour by nothing measurable |
+| E against D | 10 vs 10 | 58.0 of 100 | 0.58 | **No**, the same claim a third time: removing them changed nothing either |
 
 **The count is n = 10 on A, C and D, and n = 9 on B, and it is enough to rank.** Complete
 separation at 10 against 10 reaches `p = 0.0001`, and three pairs rank at `p ≤ 0.006`.
@@ -92,32 +97,32 @@ that ten runs a side could see.
 
 ### The suite
 
-`tools/response-length.sh --probe` over all three cases, arm D — the file that ships — five runs.
+`tools/response-length.sh --probe` over all three cases, arm E — the file that ships — five runs.
 
 | Run | 20-word | 60-word | Suite | Verdict |
 |---|---|---|---|---|
-| 1 | 7/10 · 0.70 | 10/11 · 0.91 | 18/24 · 0.75 | PASS |
-| 2 | 7/10 · 0.70 | 7/8 · 0.88 | 15/21 · 0.71 | PASS |
-| 3 | 8/11 · 0.73 | 8/8 · 1.00 | 17/22 · 0.77 | PASS |
-| 4 | 9/11 · 0.82 | 9/10 · 0.90 | 19/24 · 0.79 | PASS |
-| 5 | 8/10 · 0.80 | 10/10 · 1.00 | 19/23 · 0.83 | PASS |
-| **Pooled** | 39/52 · 0.75 | 44/47 · 0.94 | **88/114 · 0.77** | — |
+| 1 | 8/11 · 0.73 | 9/10 · 0.90 | 18/24 · 0.75 | PASS |
+| 2 | 6/10 · 0.60 | 10/11 · 0.91 | 17/24 · 0.71 | PASS |
+| 3 | 9/10 · 0.90 | 10/11 · 0.91 | 20/24 · 0.83 | PASS |
+| 4 | 7/10 · 0.70 | 8/9 · 0.89 | 16/22 · 0.73 | PASS |
+| 5 | 11/11 · 1.00 | 10/11 · 0.91 | 22/25 · 0.88 | PASS |
+| **Pooled** | 41/52 · 0.79 | 47/52 · 0.90 | **93/119 · 0.78** | — |
 
 **The suite has a third case, and the two columns above do not add up to it.**
 `agreement-brief-long-answer` is a fixture — its budget comes from an operating agreement, it has
 no session to probe, and it is scored from stored replies — so it contributes the same **1/3** to
-every run and to the pooled figure, unchanged by anything here. 39 + 44 + 5 = 88, 52 + 47 + 15 =
-114.
+every run and to the pooled figure, unchanged by anything here. 41 + 47 + 5 = 93, 52 + 52 + 15 =
+119.
 
 Against [#213](https://github.com/Calyx-Engineering/arc/issues/213)'s 33/55 · 0.60. **These five
 runs are the first five of the twenty-word case's ten**, which is why its column here reads
-39/52 · 0.75 and its own row above reads 72/100 · 0.72 — a subset and its whole, not two
+41/52 · 0.79 and its own row above reads 78/102 · 0.76 — a subset and its whole, not two
 measurements.
 
-**What has not narrowed is the spread.** Arm D's ten runs span 0.40 to 1.00, against C's 0.36 to
-1.00 and A's 0.09 to 0.91. The floor has risen and the range has not closed; arm C's five suite
-runs included one at 0.60 that failed, and D's five did not, which at five runs each is a
-difference nothing here is entitled to call real.
+**What has not narrowed is the spread.** Arm E's ten runs span 0.40 to 1.00, against A's 0.09 to
+0.91. The floor has risen and the range has not closed; arm C's five suite runs included one at
+0.60 that failed, and D's and E's did not, which at five runs each is a difference nothing here
+is entitled to call real.
 
 ## Why C works, and how it was found
 
@@ -139,33 +144,40 @@ So arm C replaces *build the margin in before the sentence is written* with **co
 after writing it and delete until the number fits**, and replaces the 58 with the measured 30.
 A rule aimed at a 3× overrun, given to a model overrunning by 30%, is aimed past the failure.
 
-**Correcting a figure in the body does not move the score, and that was tested twice rather
-than assumed.** The first time, two figures were corrected after C's first ten runs: 0.63 against
-0.72, `U=58.5`, `p=0.53`. The second time, review found more of them, and arm D is the corrected
-file re-measured: 0.72 against 0.72, `U=48.0`, `p=0.91`. Every set of runs is kept — `armC-draft`,
-`armC` and `armD` — because *"we corrected only prose"* is a claim, and this is what checking it
-looks like.
+**Correcting a figure in the body does not move the score, and that was tested three times
+rather than assumed.** Two figures corrected after C's first ten runs: 0.63 against 0.72,
+`U=58.5`, `p=0.53`. Review found more, and arm D is that corrected file re-measured: 0.72 against
+0.72, `U=48.0`, `p=0.91`. A fourth pass found the same defect again, one generation back, and arm
+E is the file with the self-scoring rows **deleted**: 0.76 against 0.72, `U=58.0`, `p=0.58`. Every
+set of runs is kept — `armC-draft`, `armC`, `armD`, `armE` — because *"we corrected only prose"*
+is a claim, and this is what checking it costs.
+
+**The third time is why the rows are gone rather than right.** A figure in a skill that scores
+that skill cannot be corrected in place: correcting it edits the measured file, so the correction
+needs its own ten runs, which produce a new figure. What stays in `skills/chat-response` is the
+failure each rule was written against — 58 words, then 30 — which no later edit can falsify.
+Where the skill stands now lives here, next to the runs.
 
 ## The firing question, answered
 
 | `chat-response` on the turn the budget was stated | Runs | Rate | Pooled |
 |---|---|---|---|
-| Fired | 33 | 0.09 – 1.00 | 200/345 · 0.58 |
+| Fired | 43 | 0.09 – 1.00 | 278/447 · 0.62 |
 | Did not fire | 6 | 0.09 – 0.91 | 20/65 · 0.31 |
 
-`U=157.5`, `p=0.020`. An association, at n=39 across four arms — and **not the lever**, for two
+`U=208.5`, `p=0.013`. An association, at n=49 across five arms — and **not the lever**, for two
 reasons the pooled figure hides. Note first what the split is made of: **all six non-firing runs
-are arm A**, because B, C and D fire on essentially every run. The comparison is therefore part
+are arm A**, because B, C, D and E fire on essentially every run. The comparison is therefore part
 of the control against everything else, not firing against not-firing within an arm.
 
 | | |
 |---|---|
 | **Firing saturated without moving the score** | Arm B raised firing from 4 of 10 to 9 of 9 and moved the rate from 0.34 to 0.37, `p=0.72`. If firing were the lever that is where it would have shown |
-| **The gain came with firing held constant** | B, C and D all fire on essentially every run. All of C's 0.37 → 0.72 happened with the surface unchanged |
+| **The gain came with firing held constant** | B, C, D and E all fire on essentially every run. All of C's 0.37 → 0.72 happened with the surface unchanged |
 
 **[#213](https://github.com/Calyx-Engineering/arc/issues/213)'s clean split does not survive
 the run count.** It reported *no overlap* — fired 0.36–0.91, did not fire 0.09–0.27, n=4 either
-side. At n=39 the two ranges are 0.09–1.00 and 0.09–0.91: they overlap almost entirely. The
+side. At n=49 the two ranges are 0.09–1.00 and 0.09–0.91: they overlap almost entirely. The
 single widest-scoring run in arm A, 0.91, is a run where the skill never fired.
 
 **Within arm A, the only place the contrast is not confounded with the wording, it is weak.**
@@ -201,15 +213,16 @@ files quoted the marker back, and each arm quoted its own opening words.
 | **n = 10 on A, C and D, 9 on B** | Enough to rank three pairs at `p ≤ 0.006`. **Not** enough to put an interval on any arm's rate, and not enough to turn B-against-A's `p = 0.72` into equivalence — no minimum detectable effect is computed anywhere here |
 | **The firing split is observational** | Nothing here randomises firing. Runs are grouped by something the run did, so a difference is an association — which is exactly the reading [#213](https://github.com/Calyx-Engineering/arc/issues/213) took further than it should have been taken |
 | **The probe can read the tree it runs in** | `Read`, `Grep` and `Glob` are allowed so the turns can be answered, and the worktree held arm C's `SKILL.md` throughout. No turn in the case asks about `chat-response` and no reply quoted it, but a run could in principle have read a skill other than the one `--plugin-dir` gave it |
-| **The 60-word case is five runs** | 44/47 · 0.94 on the shipped arm. No matched control, so it is a candidate-side number |
-| **It cost about `$120`** | `$96.11` across the 58 runs logged before review, at `$1.66` mean, and fifteen more for arm D. [#213](https://github.com/Calyx-Engineering/arc/issues/213) spent `$18.01` on ten. The count is what the second box asked for, and the count is what it costs |
+| **The 60-word case is five runs, and has no control** | 47/52 · 0.90 on the shipped arm. #213's 18/22 · 0.82 was taken on a different skill at a different run count, so the two are not a before and after |
+| **It cost about `$145`** | `$96.11` across the 58 runs logged before review, at `$1.66` mean, then fifteen runs for arm D and fifteen for arm E. [#213](https://github.com/Calyx-Engineering/arc/issues/213) spent `$18.01` on ten. The count is what the second box asked for, and the count is what it costs |
 
 ## Findings
 
 | Finding | Where it routes |
 |---|---|
-| **Firing is not the lever, and #213's split was a small-n artefact.** Fired 0.09–1.00 against did not fire 0.09–0.91, n=39 — overlapping, where #213 reported no overlap at n=4 either side. Arm B saturated firing and moved nothing. #213's third box called it *a finding to test, not a proven mechanism*; tested, it does not hold | Answered here. The claim is **not** propagated into `skills/chat-response` |
-| **The skill carried a measurement of its own previous version.** Its body described a 58-word median breach — true of the skill before #213's undershoot rule, false of the skill that shipped from it, where the breach is 30. A rule aimed at a 3× overrun was being given to a model overrunning by 30%, and correcting the aim is most of this issue's gain | Fixed in this PR. **A skill that quotes a measurement of itself goes stale the moment it works**, and nothing checks for it — needs an issue |
+| **Firing is not the lever, and #213's split was a small-n artefact.** Fired 0.09–1.00 against did not fire 0.09–0.91, n=49 — overlapping, where #213 reported no overlap at n=4 either side. Arm B saturated firing and moved nothing. #213's third box called it *a finding to test, not a proven mechanism*; tested, it does not hold | Answered here. The claim is **not** propagated into `skills/chat-response` |
+| **The skill carried a measurement of its own previous version.** Its body described a 58-word median breach — true of the skill before #213's undershoot rule, false of the skill that shipped from it, where the breach is 30. A rule aimed at a 3× overrun was being given to a model overrunning by 30%, and correcting the aim is most of this issue's gain | Fixed in this PR |
+| **A skill that quotes a measurement of itself cannot be kept correct in place.** Review caught the figure three times in this PR alone, and each correction edited the file that had been measured — arms C, D and E are the three re-measurements that cost. The rows scoring the skill's own state are now deleted rather than maintained, and nothing in `tests/verify-all.sh` would have caught any of it | Needs an issue. The general check — a skill asserting a number the repository can score — does not exist |
 | **A candidate skill could not be measured without mutating a machine-wide singleton.** `claude plugin install` writes one cache directory shared by every session; the `calyx-engineering` marketplace is a directory source pointing at the main checkout, so a worktree could not install its own branch at all. `--plugin-dir` plus a generated settings file replaces it | Done in this PR. `tools/response-length.sh` |
 | **Ten identical runs of the shipped skill span 0.40 to 1.00.** The floor rose from 0.09 and the range did not close. The threshold is met on the pooled figure and on the median; run-to-run variance of that size is untouched by anything in this issue, and it is what stands between *clears the threshold* and *holds the budget* | Needs an issue. It is the next question after this one |
 | **The instrument could not aggregate.** Every figure in #158 and #213 was a person reading terminal scrollbacks, which is why neither could raise its run count. `tools/response-length-rank.py` is the aggregator, and `RL_PROBE_OUT` per run is what feeds it | Done in this PR |

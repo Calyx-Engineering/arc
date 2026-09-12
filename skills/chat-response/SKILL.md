@@ -109,17 +109,22 @@ conversation withdrew them.
 A 60-word budget is held once the rule is in force. A 20-word one is not, on the target alone.
 Across nineteen probe runs of the 20-word case aiming low without cutting, the budget was **met
 on the turn it was stated in eighteen of them and broken on the very next turn in fourteen** —
-met where it was set, gone on the following reply.
+met where it was set, gone on the following reply. The ten of those nineteen that the row below
+counts are the ten with the shipped ordering.
 
-Every row counts every scoreable turn, the turn the budget was stated on included, which is the
-scorer's own denominator:
-
-| Budget, and which rules were in force | Median prose after it was set | Within it |
+| 20 words, and which of the two rules was in force | Median prose after it was set | Within it |
 | --- | --- | --- |
-| 60 words, aim low and cut | — | 47 of 50 |
-| 20 words, neither | 55 words | 6 of 32 |
-| 20 words, aim low only | 26 words | 37 of 109 |
-| 20 words, aim low **and cut** | **19 words** | **76 of 106** |
+| Neither | 55 words | 6 of 32 |
+| Aiming low only | 26 words | 37 of 109 |
+
+Both rows count every scoreable turn, the turn the budget was stated on included, which is the
+scorer's own denominator. **Neither row is this skill's current score, and that is deliberate** —
+a rule that quotes its own measurement is stale the moment it works, and correcting such a figure
+edits the file that was measured, so the correction needs a fresh measurement of its own.
+[#262](https://github.com/Calyx-Engineering/arc/issues/262) did that twice before removing the
+rows. What is above is the failure each rule was written against, which no later edit falsifies.
+Where the skill stands today is in
+[its dev-log](../../docs/dev-log/issue-262-twenty-word-threshold.md), beside the runs.
 
 **Aiming low turns a blow-out into a near miss, and the near miss is what the cut is for.**
 Aiming low alone, the median reply that breaks the ceiling lands at **30 words** and 28% of
@@ -134,10 +139,9 @@ delete until the number fits: the sentence that says what you are about to say, 
 example, the hedge, the clause restating the question.
 
 **Aim low, then cut.** At 25 words or fewer, write to two-thirds of the number — about 13 when
-told 20 — and then count what came out and cut it down. The target alone moved the case from
-0.19 to 0.34 and stopped there; adding the cut took it to 0.72, ten probe runs each way,
-`p=0.0021`. Scored by `tools/response-length.sh` and ranked by
-`tools/response-length-rank.py`; the runs behind every figure here are in
+told 20 — and then count what came out and cut it down. The target alone stalled at 0.34 and the
+cut roughly doubled it, ten probe runs each way, `p=0.0021`. Scored by
+`tools/response-length.sh`, ranked by `tools/response-length-rank.py`, and every run is kept in
 `evals/response-length/runs/issue-262`.
 
 
