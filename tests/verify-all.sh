@@ -141,6 +141,7 @@ run_gate "autonomy switch" bash tests/verify-autonomy.sh
 run_gate "tracker body rules" bash tests/verify-tracker-body.sh selftest
 run_gate "template links" bash tests/verify-template-links.sh
 run_gate "template link cases" bash tests/verify-template-links.sh selftest
+run_gate "close-sequence cases" bash tests/verify-close-sequence.sh selftest
 run_gate "close-sequence count" bash tests/verify-close-sequence.sh
 run_gate "handoff check cases" bash tests/verify-handoff-checks.sh selftest
 run_gate "handoff staleness checks" bash tests/verify-handoff-checks.sh
