@@ -9,8 +9,9 @@
 m12 and m42 stated opposite rules for the same 2026-08-16 data and neither cited the other. m12
 read ROADZ PR #55 as proof that a keyword binds on a non-default base; m42 quotes GitHub's
 documentation saying it does not. PR #55 was opened after its base became the default, so it
-could not tell the two apart. `skills/issue-write` already stated m42's rule, but without a
-measurement that isolated the base.
+could not tell the two apart. `skills/issue-write` already stated m42's rule from a 2026-08-17
+isolation whose base later became the default, so no measurement had isolated a base that never
+was.
 
 ## The live test
 
