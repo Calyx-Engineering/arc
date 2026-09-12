@@ -13,7 +13,7 @@
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
 # checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tests/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tests/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tests/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tests/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# skips: every check (the payload names a fixture key whose value could not be parsed), every check of one write arm (`gh` is not on PATH; the command names no issue number; the command names no PR and none could be resolved from its output or the current branch; the merge's output names no merged PR; the PR, or the issue's body, could not be read), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tests/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tests/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tests/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tests/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
 #
 # Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
 # The subcommand and the verb are read as WORDS, so a flag between `gh` and the subcommand —
@@ -356,6 +356,43 @@ invocation_number() {
   return 0
 }
 
+# The PR `gh pr merge` said it merged, read out of the payload — `✓ Squashed and merged pull
+# request owner/repo#200 (title)`, or `… pull request #200 …` from an older `gh`. The number is
+# looked for here BEFORE the current branch's PR is asked for, because `--delete-branch` is the
+# usual companion of a numberless merge and it leaves the checkout on the base: the current
+# branch's PR is then the arc PR, or nothing, and a check run against the arc PR would report
+# a missing closing keyword on a PR nobody touched. #286
+#
+# THE OUTPUT, NEVER THE WHOLE PAYLOAD. The command string sits ahead of `tool_response` in it,
+# so a grep over `INPUT` let `--subject "revert pull request #300"` name the PR — a quoted
+# span winning, which is the constraint the quote strip in `read_invocation` exists for.
+#
+# `merged pull request`, NOT `pull request`. A failed merge names the PR too — `X Pull request
+# owner/repo#200 is not mergeable` — and so does `--auto`'s `Pull request #200 will be
+# automatically merged`. Only a merge that happened says `merged pull request`, in the three
+# forms `Merged`, `Squashed and merged`, `Rebased and merged`; case-insensitive for the first.
+payload_merged_number() {
+  local rest
+  case "$INPUT" in *'"tool_response"'*) rest="${INPUT#*\"tool_response\"}" ;; *) return 0 ;; esac
+  printf '%s' "$rest" | grep -oiE 'merged pull request [^ "]*#[0-9]+' | head -1 | grep -oE '[0-9]+$'
+  return 0
+}
+
+# The current branch's PR, the way `gh` itself resolves a `gh pr merge`, `gh pr edit` or
+# `gh pr ready` that names none. That form is ordinary — a run merging its own PR from its own
+# worktree has no reason to type the number — and declining to read it turned every PR check
+# off in silence for exactly the way the hook is actually invoked. A fixture case supplies the
+# answer directly; a live read is bounded, for `check_close`'s reason. Prints nothing when no
+# PR can be resolved, and the caller skips. #286
+current_pr_number() {
+  local runner=""
+  if [ -n "$FIXTURE_PR_BASE" ]; then printf '%s' "$FIXTURE_PR_NUMBER"; return 0; fi
+  command -v gh >/dev/null 2>&1 || return 0
+  timeout --version 2>/dev/null | grep -qi coreutils && runner="timeout 20"
+  (cd "$CWD" 2>/dev/null && $runner gh pr view --json number -q .number 2>/dev/null) | grep -oE '^[0-9]+$'
+  return 0
+}
+
 # EVERY ARM THE COMMAND NAMES. An entry holds one event, so the first names it and the rest go
 # in the subject: a chained firing recorded as one arm reads as having done less than it did,
 # and the old dispatch recorded whichever arm its `case` happened to list first. #231.
@@ -413,6 +450,24 @@ LOG_OBJ=""
 # How many creates of each kind this firing has resolved a URL for. See the create arm below.
 CREATE_N_ISSUE=0
 CREATE_N_PR=0
+
+# Every check an arm would have run, marked skipped with one reason, when the arm cannot find
+# its object. Before this, an arm with no number `return`ed and the entry read `not reached`
+# on every line — which is what the record says when the hook simply did not get that far,
+# and here it got there and decided. The reason is also kept for the entry's outcome line,
+# because a firing that reaches no check writes no `skipped:` line at all (see `volume` in
+# `lib/activation-log`), and that line is the only other place the why could go. #286
+SKIP_WHY=""
+skip_arm() {
+  local c list
+  case "$GH_SUB" in
+    issue) list="placeholder-scan date-sanity spawned-heading spawn-parent issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type" ;;
+    *)     list="placeholder-scan date-sanity milestone arc-prefix closing-keyword arc-merge-keyword merge-close spawn-parent pr-base" ;;
+  esac
+  for c in $list; do arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "$1"; done
+  SKIP_WHY="$SKIP_WHY${SKIP_WHY:+ · }$GH_SUB $GH_VERB: $1"
+  return 0
+}
 
 # Scaffolding that survived into a body. Each of these was a real case.
 scan_placeholders() {
@@ -706,11 +761,16 @@ FIXTURE_BRANCH="$(fixture arc_test_branch)"
 # a case cannot merge a PR.
 FIXTURE_ISSUE_STATE="$(fixture arc_test_issue_state)"
 
+# The current branch's PR, for a `gh pr merge` or `gh pr edit` that names none — the read
+# `current_pr_number` would otherwise make live. A PR case with no number and no value here
+# resolves nothing and skips, which is the offline shape of "none could be resolved". #286
+FIXTURE_PR_NUMBER="$(fixture arc_test_pr_number)"
+
 # A payload that names a fixture key and yields no value from any of them is truncated, not an
 # invocation. Stay silent: falling through would send a half-named PR to a live `gh` read.
 case "$INPUT" in
   *'"arc_test_'*)
-    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT$FIXTURE_BRANCH$FIXTURE_ISSUE_STATE" ]; then
+    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT$FIXTURE_BRANCH$FIXTURE_ISSUE_STATE$FIXTURE_PR_NUMBER" ]; then
       # Named, rather than left to the `not reached` default. This is the one condition the
       # declaration calls out for every check at once, and a reason on the record is what
       # separates "the payload was truncated" from "the hook simply did not get that far".
@@ -855,10 +915,9 @@ check_pr_ready() {
 
     # `gh pr ready` with no argument means the current branch's PR, which is the ordinary form.
     # Reading the number here rather than declining is what keeps the check from being silently
-    # off for the way it is actually invoked.
-    if [ -z "$num" ]; then
-      num="$(cd "$CWD" 2>/dev/null && gh pr view --json number -q .number 2>/dev/null)"
-    fi
+    # off for the way it is actually invoked. `current_pr_number` is the one reader for it,
+    # shared with the write arms since #286.
+    [ -n "$num" ] || num="$(current_pr_number)"
     if [ -z "$num" ]; then
       arc_log_skip issue-boxes "the command names no PR and none could be read"
       return 0
@@ -924,7 +983,7 @@ MC_ISSUE=""; MC_PARENT=""; MC_STATE=""; MC_WHY=""; MC_RUNNER=""
 # A fixture case answers every question `gh` would have answered, so it must not be skipped
 # for want of `gh` — that turns a case that should report into a silent pass.
 if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE" ]; then
-  command -v gh >/dev/null 2>&1 || return 0
+  if ! command -v gh >/dev/null 2>&1; then skip_arm "gh is not on PATH"; return 0; fi
 fi
 
 # The issue scanners take the offline path only when no PR fixture is present. A PR case
@@ -975,7 +1034,38 @@ if [ -z "$NUM" ]; then
     *)     NUM="$(payload_url_number pull   "$CREATE_N_PR")";    CREATE_N_PR=$((CREATE_N_PR + 1)) ;;
   esac
 fi
-[ -n "$NUM" ] || return 0
+# A PR write naming no number means the current branch's PR — `gh pr merge --squash
+# --delete-branch` is how a run merges its own PR from its own worktree, and this used to be
+# a bare `return 0`: the entry said the hook fired, every check read `not reached`, and nothing
+# said why. The merge's own output is asked first, then the branch, and a resolve that cannot
+# be made SKIPS — a guess here would run merge-close against the wrong PR. #286
+#
+# NOT A CREATE. A create's number is the URL `gh` printed and nothing else — a create that
+# printed none failed, or found a PR already open on the branch, and resolving that PR would
+# run the create checks against something the command did not write.
+#
+# A MERGE THAT REPORTED NO MERGED PR DID NOT MERGE. `gh pr merge` says `merged pull request
+# …#N` on every success and never on a failure — `is not mergeable` and `--auto`'s queued
+# message name the PR without that phrase, which is what `payload_merged_number` anchors on.
+# A merge that did not happen leaves the branch's PR checked out, and resolving it would
+# report "merged and the issue is still open" about a merge nobody made. Skip instead. An
+# absent `tool_response` is a fixture, and falls through to the branch read the case supplies.
+if [ -z "$NUM" ] && [ "$GH_SUB" = pr ] && [ "$GH_VERB" != create ]; then
+  NUM="$(payload_merged_number)"
+  if [ -z "$NUM" ] && [ "$GH_VERB" = merge ]; then
+    case "$INPUT" in
+      *'"tool_response"'*) skip_arm "the merge's output names no merged PR, so nothing merged"; return 0 ;;
+    esac
+  fi
+  [ -n "$NUM" ] || NUM="$(current_pr_number)"
+fi
+if [ -z "$NUM" ]; then
+  case "$GH_SUB" in
+    issue) skip_arm "the command names no issue number" ;;
+    *)     skip_arm "the command names no PR and none could be resolved from its output or the current branch" ;;
+  esac
+  return 0
+fi
 
 # Every check from here is about ONE tracker object, and the entry has to say which.
 LOG_OBJ="$GH_SUB-$NUM"
@@ -984,7 +1074,7 @@ case "$GH_SUB" in
   issue)
     BODY="$(gh issue view "$NUM" --repo "$(git -C "$CWD" remote get-url origin 2>/dev/null)" --json body -q .body 2>/dev/null)" \
       || BODY="$(cd "$CWD" && gh issue view "$NUM" --json body -q .body 2>/dev/null)"
-    [ -n "$BODY" ] || return 0
+    if [ -z "$BODY" ]; then skip_arm "issue #$NUM's body could not be read"; return 0; fi
     scan_placeholders "$BODY" "issue #$NUM"
     scan_dates "$BODY" "issue #$NUM"
     # Reached on `gh issue create` and `gh issue edit` only. A close never enters `check_write`
@@ -1030,7 +1120,7 @@ case "$GH_SUB" in
       PRHEAD=""
     else
       META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,headRefName,milestone,title 2>/dev/null)"
-      [ -n "$META" ] || return 0
+      if [ -z "$META" ]; then skip_arm "PR #$NUM could not be read"; return 0; fi
 
       # `closingIssuesReferences`, not `baseRefName`. `gh` returns the fields SORTED, so
       # `baseRefName` precedes `body` and that terminator never matched — the extracted body
@@ -1356,5 +1446,9 @@ while :; do
 done
 
 [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
+
+# After `report`, never before it: `report` records `failed` only where no outcome stands, so
+# an `ok` written here first would turn a firing with findings into a clean entry. #286
+[ -n "$SKIP_WHY" ] && arc_log_outcome ok "$SKIP_WHY"
 
 exit 0
