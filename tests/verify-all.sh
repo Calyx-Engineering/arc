@@ -25,7 +25,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation hooks-off verify-public-audit audit-public"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length response-length-rank topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation hooks-off verify-public-audit audit-public"
 
 RUN=0
 FAILED=0
@@ -130,6 +130,14 @@ run_gate "report shape probe loop cases" bash tools/report-shape-probe.sh selfte
 run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "response length cases" bash tools/response-length.sh selftest
+# The ranker's selftest, on synthetic probe JSON — no `claude`, no corpus, no bill, and
+# nothing here that a billed run could be repeated to check. #262 added it because the
+# three things it has to get right are all invisible in a terminal: that a run destroyed
+# by a rate limit is excluded rather than averaged in, that the ranking's n is runs and
+# not the eleven correlated turns inside each one, and that the exact Mann-Whitney null
+# is the exact one. Its name is in KNOWN for the reader; the guard above globs
+# `verify-*.sh` and never asks after this file.
+run_gate "response length ranking cases" python tools/response-length-rank.py selftest
 run_gate "topic numbering cases" bash tools/topic-numbering.sh selftest
 run_gate "report shape cases" bash tools/report-grade.sh selftest
 run_gate "saturation cases" bash tools/saturation-cases.sh selftest

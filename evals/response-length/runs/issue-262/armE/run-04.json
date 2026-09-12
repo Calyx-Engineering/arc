@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Already fixed in this tree. Hook used `exit 2`, which denies pre-tool. Now emits allow JSON.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check (PostToolUse), where exit 2 just prints. PreToolUse exit 2 denies. Already fixed, both copies. (2) done.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Exit 2 copied from PostToolUse hook; already fixed. No edit or shell tools here, cannot PR.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked. Two limits.**\n\n| | |\n|---|---|\n| exit 2 | Already fixed. `report()` now returns allow, exit 0, both copies |\n| Autonomous | Rule: I may set manual, never autonomous. You set the row |\n| Shell | No Bash tool this session. Cannot branch, commit, or open PR |\n| Label + permission fix | Lost from context. Say which files |",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "**D1 — PR number.** Built: guard treats `-pr<N>` as work (`hooks/branch-guard:125`).\n\n**D2 — prefix.** Built: read from agreement (`hooks/branch-guard:88`).\n\n**D3 — kill switch.** Drop it.\n\n| Keep | Drop |\n|---|---|\n| fail-open exits, `git revert` per hook | timer, per-hook names, chat announcement rule |",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Blocked: this session has no Edit, Write or Bash tools. Cannot fix, commit or PR.\n\n| Item | State |\n|---|---|\n| camp-session-start exit 2 | Already fixed in both copies: `report()` allows, exits 0 |\n| Branch guard, `pr<N>` | Already matches `*-pr[0-9]*` |\n| Branch guard, prefix | Already reads it from the operating agreement |\n| Kill switch | Suggest: keep only `hooks-off.sh`, drop the chat announcement rule |\n\nRestart a session with tools and I will do the label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes one hook. This session has no Edit, Write or Bash tools at all. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Not a file. Run from any terminal in this repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `R:\\arc\\.git\\arc-hooks-off` itself. Shared by every worktree.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. The state file must be `.git/arc-hooks-off`, written by `hooks/hooks-off.sh`. Nothing hand-placed counts.\n\nSeparately: this session has no Bash, Edit or Write tools. That is not a hook. A fresh session is needed.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Fix: an empty `.git/arc-hooks-off` mutes every hook, no expiry, `touch`-able. Script stays optional.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write here. No Edit, Write or Bash tool this session. Paste this issue; it routes as Dogfood, unattached.\n\n```text\nTitle: hooks-off mutes every worktree of the repository, and hand-placed files do nothing\n\nDefect\n- `.git/arc-hooks-off` lives in the git common dir, so one mute silences all worktrees\n- Only `hooks/hooks-off.sh` can write it; a file the user places by hand is ignored\n- The user's first instinct under a broken hook was a file in the repo root — it did nothing\n\nRequired\n- [ ] Scope the switch per worktree by default; `all-worktrees` as the explicit wider form\n- [ ] Accept a hand-placed marker with a sane default expiry, or print exactly where to put one\n- [ ] Every deny message names the kill switch command verbatim\n- [ ] Update m10, `hooks/lib/hooks-off`, `hooks/TEMPLATE`, README\n\nConstraints\n- No subprocess on the common path\n- Still fails towards the guard being on\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, as I understand it:\n\n1. `/ralph-loop \"<prompt>\" --max-iterations N --completion-promise \"DONE\"` writes state file `.claude/ralph-loop.local.md`.\n2. Stop hook fires each time I end turn. Reads state. If iterations remain and promise string absent, blocks stop, re-feeds same prompt.\n3. Same session, context grows. Ends on promise, max iterations, or `/cancel-ralph`.\n\nWhere is disconnect?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Prior turns not in my context. Cannot re-read what I sent. Agreed on ralph loops: one fresh agent per issue, context reset each iteration.\n\nLeft for #262:\n\n| Item | State |\n|---|---|\n| `skills/chat-response/SKILL.md` edit | Uncommitted |\n| `tools/response-length-rank.py` edit | Uncommitted |\n| Commit, push, PR | Not done. No Bash tool this session |\n\nFresh session recommended.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked: no Bash tool in this session, and `git add`/`git commit` via the shell monitor needs approval I cannot get non-interactively. Run these yourself:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add -A\ngit commit -m \"fix: chat-response and rank script — pass 4 review edits\"\nCopy-Item (Get-ChildItem ~\\.claude\\projects\\R--arc-wt-262\\*.jsonl | Sort-Object LastWriteTime -Desc | Select-Object -First 1) R:\\arc-transcripts\\2026-09-12-arc04-issue-262-twenty-word-threshold.jsonl\n```\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "**Blocked.** No shell tool in this session; commit attempt denied at approval.\n\n| | State |\n|---|---|\n| Branch | `arc/04-dogfood-issue-262-twenty-word-threshold`, uncommitted: `skills/chat-response/SKILL.md`, `tools/response-length-rank.py` |\n| Commit | not done |\n| Transcript | not saved; target `R:\\arc-transcripts\\` |\n| Left | commit, save transcript, open PR |\n\nApprove shell, or commit yourself.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. That discussion is gone from my context. Only your quoted summary survives.\n\nStatus:\n\n| Step | State |\n|---|---|\n| Commit | Blocked. No Bash tool this session; Monitor route needs your approval for `git add`/`git commit` |\n| Transcript save | Not done, same blocker |\n| Ralph loop plan | Not in context. Restate it and I follow |",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "No. That file already exists: `docs/arc-work/04-dogfood/run-instructions.md`. The driver hands each iteration that plus one issue body. It reads the issue, what the issue links, and CLAUDE.md. Nothing else. Arc-log §3.1 and issue-plan stay out on purpose. Whatever the loop needs from them must be in the issue body.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "**Decision needed.**\n\n**That file already exists: `docs/arc-work/04-dogfood/run-instructions.md`. Extend it, or build a separate one?**\n\nIt already covers what a run reads (issue body, linked files, `CLAUDE.md`), the four review passes, branch rules, and the arc-log report. Arc-log status and flow are not in it yet.\n\nAlso: no Write or Bash tool is loaded this session, so I can read but not edit or commit.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No. Three different things:\n\n| Where | Who reads it |\n|---|---|\n| `issue-plan.md` §12 Filing | You, when filing issues. Runs never read this file |\n| arc-log §3.1 | The driver (`tools/arc-loop.sh`), to pick the next issue |\n| `run-instructions.md` | The run itself, beside the issue |\n\nInstruction file already exists. Nothing to build.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "**Decision needed. I sent nothing on my last five turns, so there is no plan to \"do\".**\n\nFacts:\n\n| | |\n|---|---|\n| Instruction file | Already exists: `docs/arc-work/04-dogfood/run-instructions.md`. Arc-log §3.1 is the queue rule it points at |\n| Commit | Blocked. This session has no Bash or Write tool; the commit command needs your approval |\n\nApprove the commit, or run `git add -A && git commit` yourself?",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it and measure it\" is not in the tree, and neither is a 15-minute figure. Issue-plan §11.1 says only two things:\n\n| | |\n|---|---|\n| 1 | Issue [#138](https://github.com/Calyx-Engineering/arc/issues/138) is a manual session we run together, first in the arc |\n| 2 | No merge here has ever run without a per-merge request, so the merge route must be built |\n\nPaste the passage and I explain it.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11 is every point the loop needs you. Three parts:\n\n| | |\n|---|---|\n| 11.1 | #138, the merge route. Manual session, you and me. First in the arc |\n| 11.2 | One number you set: skill-firing threshold, proposed 0.8 over 3 runs |\n| 11.3 | Six issues whose output is your judgement, so each stops and hands it to you |\n\nRecommend: cut §11.1's second paragraph. Line one is enough.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

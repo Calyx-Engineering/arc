@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Checked: no problem. `camp-session-start` already returns `allow`, not `exit 2`. Earlier claim wrong.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't. Comment records old bug; both copies now `allow`, exit 0. Direct PR: label fix only.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. Two gaps:\n\n- No Edit, Write or Bash tool in this session. Cannot branch, edit or open PR.\n- \"Label fix\" not in my context. Which file, what label?\n\nGive both and I proceed.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Still blocked. This session has no Edit, Write or Bash tools. Cannot write the mode row, branch, or PR.\n\nAlso need: which file and label to fix.\n\nStart a session with tools, name the label fix, and I run it.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Reading branch-guard. Both already built. Now kill switch.\n\n`branch-guard` already reads prefix from agreement and treats `-prNNN-` as work. Nothing to fix there.\n\nKill switch: keep `hooks-off.sh`, but stop *requiring* it in chat. Recommendation:\n\n| Change | Effect |\n|---|---|\n| Drop \"say kill switch before hook change\" rule from CLAUDE.md | No ceremony per edit |\n| Keep `hooks-off.sh` as documented escape hatch only | Used when hook actually misbehaves |\n| Rely on fail-open + `verify-hook.sh` output | Safety stays |",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no Edit, Write or Bash tools. Read-only.\n\nWhat's left after verification:\n\n| Item | State |\n|---|---|\n| Session-start deny | Already fixed |\n| Branch-guard PR number | Already built |\n| Branch-guard prefix from agreement | Already built |\n| Kill-switch rule in CLAUDE.md | Needs edit |\n| \"Label fix\" | Unknown to me |\n\nOpen a session with tools. Say \"remove kill-switch rule\" plus what the label fix is. I do it.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks aren't blocking me. This session has no Edit/Write/Bash tools at all. Kill switch mutes hooks, cannot add tools. Restart session with tools.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`R:\\arc\\.git\\arc-hooks-off` (common git dir, shared by all worktrees). One line:\n\n```text\n1757470800 all\n```\n\nEpoch seconds expiry, then hook name or `all`. Or just run:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. File not saved, and wrong place. Wrong name too.\n\nPut it here, no extension:\n\n```text\nR:\\arc\\.git\\arc-hooks-off\n```\n\nContents (expires 2026-09-12 00:00 UTC, all hooks):\n\n```text\n1789171200 all\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Epoch seconds in a hidden dir, hand-typed, is not a switch.\n\n| Replace with | |\n|---|---|\n| Tracked-ignored file `HOOKS_OFF` at repo root | Exists = all hooks off. Delete = on |\n| No expiry | Session-start hook warns while present |\n\nWant issue filed?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "One repo only, all its worktrees. Still bad. Cannot file it here: no Write or Bash tool. Paste this:\n\n**Title:** `fix: kill switch mutes by repo, not by session (#202)`\n\n**Body:**\n\n```markdown\nDefect: `hooks-off.sh` writes `.git/arc-hooks-off`; every worktree and session of the repo goes silent. Needs epoch arithmetic by hand.\n\nRequired:\n- [ ] scope: one hook, one session or worktree\n- [ ] `hooks-off.sh off <hook>` with no epoch math; `on` to end\n- [ ] hook denial text names the switch command verbatim\n\nConstraint: still fail-open, still untracked.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

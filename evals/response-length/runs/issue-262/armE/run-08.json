@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook camp-session-start documents warn-only, but exits 2, which denies. Fix exit code.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Already fixed: comment at line 52. Pattern copied from PostToolUse hook, where exit 2 only surfaces stderr. Now emits explicit allow.\n\nDirect PR: label fix plus permission fix. Say go.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. This session has no edit or shell tools, so no PR possible.\n\nHook already fixed: `report()` exits 0 with `allow`, both checkouts. Only label and permission fixes remain.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked. This session has no shell or edit tools; cannot branch, edit, or open PR. Also I never set autonomous mode.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Deny message carries its own kill-switch line. Branch guard reads prefix from agreement, accepts PR numbers.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot fix here. This session has no shell or edit tools, only read and search.\n\nHook exit 2 is already fixed on `main` (line 61 exits 0 with an allow decision).\n\nRestart me in a session with Bash and Edit enabled, then say \"go\".",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes hooks. This session has no Edit or Bash tools at all. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Kill switch is a command:\n\n```powershell\nbash hooks/hooks-off.sh all 30\n```\n\nWon't help here: this session has no Bash or Edit tools loaded. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing. Kill switch is a command:\n\n```powershell\nbash hooks/hooks-off.sh all 30\n```\n\nBut my blocker is not hooks: this session has no shell or edit tools. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. File does nothing. Run:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nBut hooks aren't my blocker. This session has no edit or shell tools. Restart it.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "`r:\\arc\\HOOKS_OFF.txt` does nothing. Use `bash hooks/hooks-off.sh all 30` in the repo instead.\n\nI cannot edit or run anything this session. No Edit, Write or Bash tools loaded. Restart the session and I will file the cleanup item and open the PR.",
+   "cut": "error_max_budget_usd",
+   "fired": []
+  }
+ }
+}

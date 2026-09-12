@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "`camp-session-start` hook blocks where its docs promise only a warning.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "No longer does. PR [#200](https://github.com/Calyx-Engineering/arc/pull/200) made `report()` exit 0 with allow; (2) done. Label and permission fixes: which issues?",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Exit 2 already fixed by PR [#200](https://github.com/Calyx-Engineering/arc/pull/200). This session lacks edit and shell tools. Restate label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot go autonomous here. This session has no Edit, Write or Bash tools, so no file change, commit or PR is possible. Start a new session.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Numbers and prefixes: fixed in PR [#200](https://github.com/Calyx-Engineering/arc/pull/200); rest is issue [#203](https://github.com/Calyx-Engineering/arc/issues/203). Kill switch: delete it. Hooks fail open; revert suffices.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no Edit, Write or Bash tools. Open a fresh session and paste this thread's fix list.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; here the tools are absent from the harness entirely. No switch restores a missing tool.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Repo root: `R:\\arc-wt\\262\\HANDOFF.md`. The next session reads it first.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing, and the script's header records exactly that failure. Run this instead:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nHooks are not this session's blocker anyway. The tools are missing.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Next session: delete the kill switch, keep fail-open hooks, and `git revert` as the only off switch.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "It is per repository, not everywhere. I cannot write the cleanup item here; no tools. Add it to `HANDOFF.md` for the next session.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

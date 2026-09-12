@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook already fixed in this tree. Earlier claim was stale. No problem remains.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't. Both copies exit 0 with JSON `allow`. (2) already fixed. PR needs only label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Decision needed.**\n\n**Which label fix and permission fix? Context lost.** Item 2 already fixed: hook returns allow, not exit 2.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked.** Autonomous mode is yours to set, not mine. No edit tools here. Which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both: `pr<N>` and agreement prefix. Kill switch: delete it; `git revert` suffices.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. No edit, write or shell tools this session. Nothing left to fix; label and permission fixes unknown.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, that is its purpose. My \"delete it\" was wrong. Blocker here is different: no edit or shell tools this session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Run in this repo, any shell:\n\n```\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Hooks ignore files now. Run:\n\n```powershell\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Command fails when bash fails. Suggest: hooks also honour `HOOKS_OFF.txt` at repo root.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Correction: it mutes this repository only, not everywhere. Can't write the cleanup item; no edit tools here.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

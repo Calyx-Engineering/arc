@@ -1,0 +1,122 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook `camp-session-start` header says \"warning\" but its output blocks edits with deny. Doc and code disagree.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Already fixed in both copies. Pattern copied from PostToolUse hook, where exit 2 only surfaces stderr. PreToolUse exit 2 denies.\n\nDirect PR: yes. Label fix, permission fix. What is (2)? Say it and I'll scope it.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Context lost. Which label fix and permission fix? Exit 2 already fixed, exit 0.**",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Cannot set autonomous, only you can, in HANDOFF.md. Still need the two fixes named.**",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Drop the timed switch. One env var, `ARC_HOOKS_OFF=1`, all hooks read it. PR number and prefix: noted.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "**Branch guard already handles PR numbers and agreement prefix, all three copies. Exit 2 gone. Kill switch: drop the chat ritual, keep the line.**",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes. The switch is right for this. The pain is the chat ritual around it, not the switch.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file to place. Run from repo root:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\n```\n\nIt writes `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` is not read. Nothing at `.git/arc-hooks-off`. Run:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\nbash hooks/hooks-off.sh status\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. It did not work. Agree. Fix: honour a plain `HOOKS_OFF` file at repo root too. Want that?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "**Can't write it: this session has no edit or shell tool. Text for the cleanup issue:**\n\n```text\nKill switch mutes every hook in the repo for 30 min. Replace with per-hook, per-worktree off, no chat ritual.\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, as I understand it:\n\n- `/ralph-loop \"<prompt>\"` writes a state file: prompt, iteration count, max, completion promise\n- Stop hook fires when I try to end turn; reads state; blocks stop; re-feeds same prompt\n- Same session, context accumulates\n- Ends on max iterations, promise string in output, or `/cancel-ralph`\n\nWhere is the disconnect?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Left for #262. No shell tool in this session, so fresh session does it:\n\n| Step | |\n|---|---|\n| 1 | Commit 4 modified files: dev-log, evals README, `SKILL.md`, `response-length-rank.py` |\n| 2 | Run `tests/verify-all.sh` |\n| 3 | Push, open PR, body ends `Closes #262` |\n| 4 | Skill change unsoaked. Note in PR |\n\nDev-log complete. Mode autonomous until merge.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked. Neither step can run from here:\n\n- **Commit**: no Bash tool in this session. The `Monitor` workaround was denied twice by the permission gate (`cd`, then multi-command).\n- **Transcript save**: no Write or shell tool either.\n\nRun these yourself, then compact:\n\n```powershell\ngit add -A\ngit commit -m \"chore: #262 review edits — dev-log, eval README, chat-response, ranker\"\n```\n\nTranscript: newest `.jsonl` under `~/.claude/projects/R--arc-wt-262/` to your transcript dir as `2026-09-12-arc04-issue-262.jsonl`.",
+   "cut": "",
+   "fired": [
+    "handoff"
+   ]
+  },
+  "75": {
+   "text": "Nothing done yet. Both steps blocked: no Bash tool in this session, and Monitor-run git commands were denied.\n\n| Step | State |\n|---|---|\n| Commit | Not done. Four files modified, uncommitted |\n| Transcript save | Not done. Destination dir unknown |\n\nNeed: approve git via Monitor, or you run `git add -A && git commit` yourself.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Not in my context. This session starts at your \"2 big issues\" message. Ralph-loop discussion you quoted is gone; I only have your summary of it.\n\nStill open from your last request: commit (blocked, no Bash tool here, only Monitor, denied twice), transcript save. Say how you want to proceed.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Yes, and it already exists. Arc-log §3.1 stays the plan; `docs/arc-work/04-dogfood/run-instructions.md` is the instruction file each `claude -p` iteration reads before its issue. The driver `tools/arc-loop.sh` picks the issue and injects both. Arc-log §3.2 says the same: restating it in the arc-log would give it two sources.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Already built. `docs/arc-work/04-dogfood/run-instructions.md` is that file. `tools/arc-loop.sh` line 86 feeds it plus one issue body into each cold `claude -p` run.\n\nArc-log §3.1 stays the plan; run-instructions.md is what the run reads. Nothing to build. Say what it lacks and I edit it.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No §12 in the arc-04 log. The run-instructions file is arc-log §3.1/§3.2's, already built and read by `tools/arc-loop.sh`.\n\n§12 exists only here:\n\n| File | §12 |\n|---|---|\n| `issue-plan.md` | Filing |\n| `arc-03-camp.md` | Wave 5 review |\n| `m43`, `m46` | Not designed / Related |\n\nWhich one did you mean?",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "My last several replies went out empty on my side, so I have nothing proposed to \"do\".\n\nWhat exists now:\n\n| | |\n|---|---|\n| Loop instruction file | `docs/arc-work/04-dogfood/run-instructions.md`, already read by `tools/arc-loop.sh` |\n| Uncommitted | four files for #262 |\n\n**Which \"it\": commit #262 now, or edit run-instructions?**",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it · measure it\" is the Loop workstream's two halves:\n\n| Half | Issue | Means |\n|---|---|---|\n| Land it | [#138](https://github.com/Calyx-Engineering/arc/issues/138) | a run merges its own PR from a standing grant, no per-merge ask |\n| Measure it | [#149](https://github.com/Calyx-Engineering/arc/issues/149) | a skill change yields a firing score, not an opinion |\n\n\"15min\" is not in the tree. Came from a reply lost to compaction.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1 is two paragraphs, nothing more.\n\n| Line | Says |\n|---|---|\n| 1 | Issue [#138](https://github.com/Calyx-Engineering/arc/issues/138) is a manual session you run with me, first in the arc |\n| 2 | Context only: no merge here has ever run without a per-merge ask, so the merge route must be built, not recovered. Diagnose inside the issue |\n\nLine 2 is padding. Cut it.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

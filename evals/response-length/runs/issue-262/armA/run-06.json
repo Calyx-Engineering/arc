@@ -1,0 +1,59 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Working tree already fixed it. Problem was: camp-session-start used exit 2 as a PreToolUse hook, silently denying the first Edit each session.",
+   "cut": "",
+   "fired": []
+  },
+  "12": {
+   "text": "Copied from camp-branch-check, a PostToolUse hook, where exit 2 only prints. PreToolUse exit 2 denies.\n\nAlready fixed: both copies now emit `permissionDecision: allow`. No permission fix left. Label fix only.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Lost the earlier thread. Which label fix? Also no shell tool this session, so I can't branch or open a PR.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Three blockers, can't proceed:\n\n- Autonomous is yours to set, never mine (CLAUDE.md). Flip the HANDOFF.md row.\n- No shell tool this session. No git, no gh.\n- Still don't know which label fix. Earlier context gone.\n\nRestart a session with Bash, state the label fix, and I'll run the direct PR.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both already built: `*-pr[0-9]*` counted as work at `hooks/branch-guard:125`; prefix read from the agreement at line 98, `arc/` only as fallback.\n\nKill switch: make guards advisory in manual mode. Allow with reason, deny only when HANDOFF says autonomous. Then hooks-off is only ever needed in auto.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot edit this session: no Edit, Write or Bash tool loaded. Read-only. Restart session with tools.\n\nAlready built in branch-guard: `-pr[0-9]*` form recognised, prefix read from the agreement's Branch prefix clause, `arc/` only as fallback.\n\nKill switch: drop the chat ritual. Keep hooks-off.sh, delete the \"say it before proposing\" rule. Verify output in the commit body is the real safety.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes a hook. My problem is upstream: session launched without Edit, Write or Bash tools at all. No hook is denying anything. Restart the session and the tools return.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Checking where transcripts live.\n\nNowhere. Transcripts stay where Claude Code writes them, `C:\\Users\\class\\.claude\\projects\\R--arc-wt-262\\`. The session index points at that folder. Nothing to copy.\n\nIf you meant a different file, name it.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing; that path was retired. Hooks read `.git/arc-hooks-off`, written only by:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nNothing there now. Not the fix anyway: this session has no Edit, Write or Bash tools. Restart.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No, it did not work. The lib comment even records that exact attempt at `r:\\arc\\HOOKS_OFF.txt` failing. Switch lives at `.git/arc-hooks-off`, written only by:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nAgreed on the design. A switch you cannot set by dropping a file is not a kill switch. Fix for the PR: accept `HOOKS_OFF` in repo root or `~/.claude` too.\n\nAnd this session's problem is not hooks. Tools are missing. Restart.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't write it: still no Edit or Bash tool this session. Paste-ready issue:\n\n```\nchore: kill switch that a human can flip without a terminal\n\nToday: `bash hooks/hooks-off.sh <hook> <minutes>` writes `.git/arc-hooks-off`. A dropped\n`HOOKS_OFF.txt` does nothing. Muting by hand needs bash and the right path.\n\nWork:\n- [ ] one file at repo root, `.arc-hooks-off`, gitignored; present = every Arc hook exits 0\n- [ ] optional first line `<hook> <until-ISO>` narrows it; absent = all, no expiry\n- [ ] hooks print one line to stderr when muted, so silence is never mistaken for pass\n- [ ] `tests/verify-hook.sh` covers file present, file absent, malformed line\n- [ ] delete `hooks-off.sh` and the \"say the kill switch in chat\" rule from CLAUDE.md\n```\n\nYour HOOKS_OFF.txt did nothing. Nothing is muted.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

@@ -1,0 +1,124 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Already fixed. `hooks/camp-session-start` now returns allow, exit 0. Finding was stale.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't. Line 50 is history; both copies exit 0 with allow. Permission fix already landed.\n\n**Which label fix?** No context here.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Can't. \"Label fix\" is not in this session, the handoff, or the worktree. Point me at the issue or file.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked three ways. No shell tool this session, so no git or gh. Label fix still unidentified. Row stays manual.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Drop `hooks-off.sh`. Keep the one global `~/.claude/HOOKS_OFF` file plus fail-open. Revert handles the rest.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Can't. This session has no edit, write or shell tool. Only read and search. Restart with file tools enabled.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; they can't remove tools from my list. Missing tools is the harness config, not a hook.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`C:\\Users\\class\\.claude\\HOOKS_OFF`, empty file. Silences hooks only. Won't restore my missing tools.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong place and name. Move it to `C:\\Users\\class\\.claude\\HOOKS_OFF`, no `.txt` extension.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Fix: hooks also honour `HOOKS_OFF*` in the repo root. Log it as an issue; needs file tools.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't file it here. Paste-ready, milestone cleanup workstream, label `bug`, type Agent:\n\n```markdown\nfix: kill switch scoped to one repo and one hook\n\n| | |\n|---|---|\n| Defect | `~/.claude/HOOKS_OFF` silences every hook in every repo. `hooks-off.sh` is per-hook but nobody can remember its path or args |\n| Work | Hooks honour `HOOKS_OFF` in the repo root, any extension; optional hook-name list inside it. Delete `hooks-off.sh` and the global file |\n| Constraints | Fail open. One hook per commit. `tools/verify-hook.sh` output in the body |\n\nSpawned by #262\n```",
+   "cut": "",
+   "fired": [
+    "issue-write"
+   ]
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop as I understand it:\n\n| | |\n|---|---|\n| Idea | Same prompt, run repeatedly, until done |\n| Plugin mechanics | Stop hook fires when I try to end turn. It re-feeds original prompt instead of stopping |\n| State | Carries only via files and git, not memory. Each iteration re-reads repo |\n| Exit | Completion promise string in output, or max iterations |\n\nWhere does your view differ?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "No Bash here, so unverified. From tree: six files edited, `tools/response-length-rank.py` new, no dev-log, nothing committed.\n\nLeft, per run-instructions §2:\n\n| Step | State |\n|---|---|\n| Gate `tests/verify-all.sh` exit code | not run |\n| Passes 1–3 via sub-agents | not done |\n| Dev-log, commit, draft PR | not done |\n| Pass 4, ready, merge, drop label | not done |\n\nEscape: end this session. Re-dispatch fresh run on same worktree; files carry.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked: this session has no Bash tool, and shell via Monitor is denied for git and cp. Cannot commit or copy transcript myself.\n\nRun these:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add -A\ngit commit -m \"wip: #262 checkpoint before compact — undershoot rule, rank tool, probe changes\"\nmkdir ~\\arc-transcripts -Force\nGet-ChildItem ~\\.claude\\projects\\R--arc-wt-262\\*.jsonl | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Copy-Item -Destination ~\\arc-transcripts\\2026-09-12-arc04-262-twenty-word-threshold.jsonl\n```\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Blocked. Session has no Bash or Write tool. Commit and transcript save both denied at permission layer.\n\n| | |\n|---|---|\n| Branch | `arc/04-dogfood-issue-262-twenty-word-threshold` |\n| Uncommitted | chat-response SKILL.md, verify-all.sh, response-length tools, new rank.py |\n| Commit | not done, needs approved shell |\n| Transcript | not saved |\n\nRun this yourself:\n\n```\ngit add -A && git commit -m \"wip: #262 checkpoint before compact\"\n```",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. Only your quotes survive: ralph loop = one fresh agent per issue, context reset each iteration. Nothing else from that discussion is in this context.\n\nAlso: commit and transcript save did not run. No Bash tool here; shell via Monitor was permission-blocked. Working tree still uncommitted. Need you to commit, or grant shell.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already exists. `docs/arc-work/04-dogfood/run-instructions.md` is that file. `tools/arc-loop.sh` feeds it plus issue body to each fresh `claude -p` run. Arc-log §3.1 describes the driver, not run reading. §3.2 is source of run-instructions §2.\n\nStatus: commit and transcript save still blocked. This session has no Bash tool. Shell via Monitor needs your approval.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Already exists: `docs/arc-work/04-dogfood/run-instructions.md`. `tools/arc-loop.sh` feeds it plus issue body to each fresh `claude -p` run. arc-log §3.1 is the driver's, not run's.\n\nStatus: commit and transcript save did **not** happen. This session has no Bash/Write tool; the shell attempt needed your approval. Tree still uncommitted.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "Status first: **commit and transcript save did not run.** This session has no Bash tool. Shell via Monitor was blocked pending approval. Working tree still uncommitted.\n\nOn the instruction file: it already exists, `docs/arc-work/04-dogfood/run-instructions.md`. Issue-plan §12 is filing rules, not it. Arc-log §3.1 is the driver script's contract. What is missing from run-instructions that you want added?",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "My last several turns sent nothing. Apologies. Where things stand:\n\n| | |\n|---|---|\n| Commit + transcript save | Not done. This session has no Bash or Write tool. Shell via Monitor needed approval, not granted |\n| Instruction file | Already exists: `docs/arc-work/04-dogfood/run-instructions.md`. Arc-log §3.1 points at it. §12 is filing rules |\n\nI cannot edit or commit here. Run `git add -A && git commit` yourself, then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it · measure it\" is the Loop workstream's job in two verbs:\n\n| Verb | Means | Issue |\n|---|---|---|\n| Land it | A run can merge its own PR from a standing grant, no per-merge ask | [#138](https://github.com/Calyx-Engineering/arc/issues/138) |\n| Measure it | A change yields a score, not an opinion. Eval suite, threshold | [#149](https://github.com/Calyx-Engineering/arc/issues/149) |\n\nSection 11.1's \"15 min\" is not in the file. Which document?",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "Section 11.1 says three things:\n\n| Line | Plain meaning |\n|---|---|\n| 1 | #138 is a session you and I run together, manual, before anything else |\n| \"already known\" | Every merge so far needed you to approve it individually. No past setup to recover |\n| \"route does not exist\" | #138 builds the standing grant so a run merges without asking. Figure out how inside the issue |\n\nThat is all.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

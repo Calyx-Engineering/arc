@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "`camp-session-start` exits 2 on PreToolUse. Comment calls it a warning; it blocks.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from a PostToolUse hook, where exit 2 only warns. Already fixed here: `report()` now exits 0 with an allow decision.\n\nDirect PR: label fix, permission fix, and this. Ready when you say.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. No edit or shell tools this session. Also which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked three ways:\n\n| | |\n|---|---|\n| Autonomous | You flip the HANDOFF row; I may not |\n| Tools | No Bash, Edit or Write in this session |\n| Scope | Label and permission fixes: context lost, restate them |",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard in tree already handles `pr200` and the agreement prefix. Your session runs an older installed copy.\n\nKill switch: drop it. Make branch-guard allow-with-reason, like camp-session-start. Nothing to mute.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot: this session has no edit or shell tool. Fixes already sit in the tree. Reinstall plugin from this branch.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; they cannot remove tools. Edit and Bash are absent from this session entirely. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Which file? If the kill switch: don't hand-write it. Run from the repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Hand-placed files are ignored by design. Run from a terminal:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `.git/arc-hooks-off`. Still won't restore this session's missing tools.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. Hand-placed file ignored by design; only `hooks/hooks-off.sh` writes it. Agreed: replace with plain `touch .git/arc-hooks-off`.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write it: no Write tool here. Paste this into the cleanup issue:\n\n```\n- [ ] Replace hooks-off: no script, no state file. One env var or a settings.json toggle, per hook.\n```\n\nNote: current switch is repo-scoped, not machine-wide. Hand-placed files are ignored by design.",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, mechanically:\n\n1. `/ralph-loop \"<prompt>\"` writes state file, registers Stop hook.\n2. Each time I try to end turn, hook blocks exit and feeds same prompt back.\n3. Repeats until completion phrase appears or max iterations hit.\n\nSame session, context accumulates. Original Huntley form was `while true; cat PROMPT.md | claude` with fresh context per pass.\n\nWhich part disagrees with yours?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Work on issue [#262](https://github.com/Calyx-Engineering/arc/issues/262) is done in the tree. Remaining:\n\n| Step | State |\n|---|---|\n| Commit four modified files | not done |\n| Push, open PR against arc branch `arc/04-dogfood` | not done |\n| Merge | not done |\n\nMode autonomous until merge. This session has no shell tool, so fresh session runs those three.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Cannot commit or copy: this session has no shell tool, and the workaround needed approval it cannot get. Run these yourself:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add docs/dev-log/issue-262-twenty-word-threshold.md evals/response-length/runs/issue-262/README.md skills/chat-response/SKILL.md tools/response-length-rank.py\ngit commit -m \"docs: #262 dev-log and eval README carry the measured figures; chat-response cites them\"\nCopy-Item \"$env:USERPROFILE\\.claude\\projects\\R--arc-wt-262\\90070a9d-e224-4dae-b4ad-f3cf6d3561a8.jsonl\" \"R:\\arc-transcripts\\2026-09-12-arc04-issue-262-twenty-word-threshold.jsonl\"\n```\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Nothing committed yet. Session has no shell tool; my commit-and-copy attempt was denied at permission.\n\n| | |\n|---|---|\n| Tree | 4 files modified, uncommitted, on `arc/04-dogfood-issue-262-twenty-word-threshold` |\n| Dev-log | complete, `#262` cleared threshold |\n| Transcript | not saved |\n\nNext: you commit, or approve the command, then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. Ralph-loop discussion not in my context; only your quotes from it survive.\n\nStatus: commit and transcript save both blocked, no shell tool available here and command denied. Four files still uncommitted on branch `arc/04-dogfood-issue-262-twenty-word-threshold`.\n\nFastest path: you run `git add -A && git commit` yourself.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Yes, already built. `docs/arc-work/04-dogfood/run-instructions.md` is that file. Each `claude -p` iteration reads it plus one issue body, nothing else. Arc-log §3.1 is the reasoning behind the loop, not read by runs. Run-instructions sections: what you read, sequence, sub-agents, where work goes, when you stop, boundary report.\n\nStatus: commit and transcript save still blocked on your approval prompt.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "**Decision needed.**\n\n**That file already exists and is complete: `docs/arc-work/04-dogfood/run-instructions.md`, seven sections, read by every `arc-loop.sh` iteration. Extend it, or build a new generic one under `templates/` for any repo?**\n\nAlso: this session has no Write or Edit tool loaded, so I can read and plan but cannot write files until that changes.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No section 12 exists in arc-04's arc-log. It has ten sections. Which document do you mean? Candidates: issue-plan.md §12 \"Filing\" (how issues get parented as sub-issues), or arc-03's §12 \"Wave 5 review\". Neither is the loop's instruction file. That is `run-instructions.md`, named by arc-log §3.1.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Cannot do it. This session has no write, edit or shell tool, so nothing can be built or committed. Commit from earlier is still unapproved.\n\nAlso, no proposal was made: my last two turns went out empty. And arc-04's arc-log ends at §10 Soak. No §12 exists there. Say which document §12.0 is in.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "Loop workstream's two halves, from `issue-plan.md` line 60:\n\n| | Meaning | Issue |\n|---|---|---|\n| **Land it** | A run can merge its own PR from a standing grant, no per-merge ask | Loop-1, [#138](https://github.com/Calyx-Engineering/arc/issues/138) |\n| **Measure it** | A change yields a score, not an opinion | Loop-2 [#149](https://github.com/Calyx-Engineering/arc/issues/149), Loop-3 [#141](https://github.com/Calyx-Engineering/arc/issues/141) |\n\n§11.1 says #138 is a joint manual session, run first. Loop gates the other four workstreams.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11 is \"what needs you\" — the human's points in an otherwise autonomous arc.\n\n| Sub-section | Says |\n|---|---|\n| 11.1 | #138 is a pairing session with you, done first. No standing merge grant exists yet; build it inside the issue |\n| 11.2 | One number still unset: skill-firing threshold, proposed 0.8 |\n| 11.3 | Six issues stop and hand you a judgement instead of a pass/fail |\n\nFor #138: just the first line matters. Rest is context.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

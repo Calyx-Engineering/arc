@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Session-start hook copied a PostToolUse pattern; exit 2 there means warn, in PreToolUse it denies.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer exits 2. Current code returns `allow` plus message, exit 0. Comment at line 52 records old bug, already fixed.\n\nSo (2) needs nothing. Direct PR: label fix plus permission fix only.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Context lost. Exit 2 already fixed; hook now allows. Which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked.** Set HANDOFF.md Execution mode yourself; I can't. No shell tool this session. Hook already exits 0. Restate label/permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch-guard already handles both. `camp-session-start` and `session-index` hard-code `arc/`, fix those.\n\nKill switch: replace with one repo-wide file, no timers, no per-hook args.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Can't fix here: this session has no Edit, Write or Bash tools. Only read tools.\n\nNeeds new session. Fix list for it:\n\n| Fix | Where |\n|---|---|\n| Hard-coded `arc/*` | `hooks/camp-session-start:133`, read prefix from agreement like branch-guard does |\n| Label fix, permission fix | Lost with earlier context. Restate in new session |\n\nBranch-guard already handles `pr<N>` and the agreement prefix.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes hooks. My problem is different: tools themselves absent, not hook-denied. Session config, not Arc.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`R:\\arc\\.git\\arc-hooks-off`. Shared by all worktrees. Don't hand-place it. Run:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nBut note: my problem is missing Edit/Write/Bash tools, not hooks. Kill switch won't restore those. Needs new session.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong place, and hooks aren't the blocker. Still no Edit, Write or Bash tools here.\n\nKill switch file, if wanted:\n\n```\nr:\\arc\\.git\\arc-hooks-off\n```\n\nOne line, expiry as epoch seconds, then `all`:\n\n```\n1757700000 all\n```\n\nBut missing tools are a session problem. Restart session to fix.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. Wrong file, and kill switch not the blocker.\n\n| | |\n|---|---|\n| Right path | `r:\\arc\\.git\\arc-hooks-off`, line `9999999999 all` |\n| Real blocker | This session has no Edit/Write/Bash tools. Hooks did not remove them |\n\nStart a fresh session. Kill switch unneeded for this fix.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't write it: no Edit, Write or Bash here. Paste this into the cleanup workstream:\n\n```text\nKill switch redesign (#202 follow-up)\n- A file under .git nobody can find by hand; `all` mutes every hook in the repo\n- Replace with: `/hooks-off <hook>` skill, plus per-hook allow-once from the deny message itself\n- Hooks that only report (camp-session-start) never need muting; drop them from the switch\n```\n\nScope note: `all` mutes this repo only, not the machine.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

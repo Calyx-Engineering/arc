@@ -1,0 +1,59 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "`camp-session-start` used exit 2. In PreToolUse that denies, not warns. Already fixed: `allow` + exit 0.",
+   "cut": "",
+   "fired": []
+  },
+  "12": {
+   "text": "It doesn't. Exit 2 is history; comment explains it. Both copies exit 0. Drop (2).\n\nLabel and permission fixes: remind me which files. Context lost.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Can't. Two blockers:\n\n- Context for \"label fix\" and \"permission fix\" is gone. Name the file or issue.\n- No shell tool this session, so no branch, commit or PR from me.\n\nGive me the two fixes and I edit files; you run `tools/new-direct-pr.sh`.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Three blockers, still:\n\n- I can't set the mode. Only you may set `HANDOFF.md`'s *Execution mode* row to autonomous.\n- No shell tool this session. No branch, commit, or PR possible from me.\n- The two fixes are unnamed. Context lost.\n\nFix: new session with shell, mode row set, and the two fixes named.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch-guard already does both: `*-pr[0-9]*` counts as work (`hooks/branch-guard:125`), prefix read from agreement's **Branch prefix** line (`:88-104`). If it misfired, send the branch name.\n\nKill switch: keep tool, drop ritual. Cut \"say it in chat\" and \"paste verify output\" from CLAUDE.md. `tests/verify-all.sh` green is the gate. One line in hook header keeps it discoverable.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Can't edit here: this session has no Edit, Write or Bash tool, only read tools. Restart session.\n\nPaste to next session:\n\n```\nDirect PR. 1) CLAUDE.md \"Safe hook editing\": delete rows \"Say the kill switch in chat\" and \"Paste real verify-hook.sh output\"; keep hooks-off line in hook headers; verify-all.sh green is the gate. 2) label fix + permission fix from earlier review. Branch-guard already handles prNNN and agreement prefix — no change.\n```",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; they can't remove tools. Edit, Write and Bash aren't in this session's tool list at all. Session config, not a hook. Kill switch wouldn't help.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. From `R:\\arc`:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `R:\\arc\\.git\\arc-hooks-off`, one line `<expiry-epoch> all`. Shared by every worktree.\n\nBut that won't help here. Hooks can only deny tool calls; they can't remove tools. This session lacks Edit/Write/Bash entirely. That's session setup, not hooks. New session needed.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong file, and wrong problem.\n\n- Switch file is `R:\\arc\\.git\\arc-hooks-off`, one line: `<unix-expiry> all`. Or run `bash hooks/hooks-off.sh all 30`.\n- Hooks can't remove tools. Edit and Bash are absent from this session itself. Only a restart fixes that.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Didn't work: wrong file. Switch lives at `r:\\arc\\.git\\arc-hooks-off`, one line `<expiry-epoch> all`. Easier: `bash hooks/hooks-off.sh all 30`.\n\nBut hooks aren't the blocker. This session has no Edit or Bash tool at all; no hook can remove tools. Restart session. Kill switch irrelevant here.\n\nAgree design is bad: hidden file, epoch seconds, per-hook names. Fix in the PR: plain `HOOKS_OFF` file at repo root, presence = all off, delete = on.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't write it: this session has no Edit, Write or Bash tool. Nothing I can file.\n\nFor record: `HOOKS_OFF.txt` did nothing. Real file is `.git/arc-hooks-off`, line `<expiry-epoch> all`, this repo only. Missing tools aren't a hook problem; hooks can't remove tools. New session fixes it.\n\nCleanup item text, for next session:\n\n```\nKill switch redesign (#202 follow-up): one command, no epoch math, discoverable from the error it mutes. Deny messages must name the exact command.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

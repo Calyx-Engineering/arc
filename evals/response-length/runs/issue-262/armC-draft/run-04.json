@@ -1,0 +1,122 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook already fixed: it now allows with a reason, not exit 2. No remaining problem.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check (PostToolUse, harmless there). PreToolUse: exit 2 denies. Fix for (2) already on this branch: `hooks/camp-session-start:60`.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Hook already fixed, both copies: allow, exit 0. No edit or shell tools this session. Which label/permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked: no Edit, Write or Bash tools here. Cannot set mode, commit or open PR. Restart session.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Guard already reads branch forms, PR numbers from CLAUDE.md; move source to agreement. Kill switch: delete it, fail-open suffices.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still no Edit, Write or Bash tools in this session. Cannot change files. Start a fresh session; I will fix all three there.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; kill switch mutes hooks. Here Edit and Bash tools are missing: harness config, not a hook.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`R:\\arc\\.git\\arc-hooks-off`, one line: `<expiry-epoch> all`. Easier: `bash hooks/hooks-off.sh all 30`. Won't restore missing tools though.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong path: hooks read `R:\\arc\\.git\\arc-hooks-off`, not `HOOKS_OFF.txt`. Tools still missing regardless; new session needed.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Replace with `touch .arc-hooks-off` at repo root, no expiry, no script. Your HOOKS_OFF.txt isn't read; tools still missing.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't write files this session. Paste into cleanup:\n\n```text\n- Replace hooks-off kill switch (#202): one env var, no timer, no state file. Session-scoped, not repo-scoped.\n```\n\nIt mutes one repository only, not everywhere.",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop: one prompt fed back at every turn end. Mechanics:\n\n1. `/ralph-loop \"<prompt>\" --max-iterations N --completion-promise \"<text>\"` writes state file `.claude/ralph-loop.local.md`.\n2. I work, try to stop.\n3. Stop hook reads state: active, under max, promise absent from output? Blocks stop, re-injects same prompt.\n4. Same session, context accumulates. Ends on promise, max, or `/cancel-ralph`.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Agreed. Ralph loop = fresh `claude -p` per issue, repo is only state, context resets every run. Your premise was right.\n\nLeft on #262, edits in tree, no dev-log, no commit:\n\n| | |\n|---|---|\n| 1 | `verify-all.sh` exit code |\n| 2 | Passes 1–3 via sub-agent |\n| 3 | Dev-log, commit, draft PR |\n| 4 | Pass 4, ready, merge |\n\nNo Bash in this session. Escape: end here, redispatch #262 with `tools/arc-loop.sh` on this branch.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Cannot do either from here. This session has no Bash tool, and the shell fallback needs an approval this session cannot receive. Nothing was committed.\n\nRun these yourself, then compact:\n\n```powershell\ngit add -A\ngit commit -m \"feat: undershoot rule for tight budgets, response-length-rank (#262)\"\nGet-ChildItem ~\\.claude\\projects\\R--arc-wt-262\\*.jsonl | Sort-Object LastWriteTime -Desc | Select-Object -First 1\n```\n\nCopy that newest file to your transcript folder as `2026-09-12-arc04-262-twenty-word.jsonl`.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Branch `arc/04-dogfood-issue-262-twenty-word-threshold`, worktree `R:\\arc-wt\\262`, mode autonomous until #262 merges.\n\n| | |\n|---|---|\n| Done | Undershoot rule in chat-response skill, `response-length-rank.py`, probe and gate edits |\n| Not done | Commit (yours to run), `verify-all.sh`, passes 1–3, dev-log, PR, pass 4, merge |\n\nCompact next, then resume at the gate.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Only from your quotes. Earlier discussion is gone from my context.\n\nPlan as I hold it: this session finishes #262 after compaction. Remaining issues run through `tools/arc-loop.sh`, one fresh `claude -p` per issue, repository as the only carried state. No handoff document. Correct me if that differs from what we agreed.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already done. That file is `docs/arc-work/04-dogfood/run-instructions.md`. Arc-log §3 says a run reads it, then the issue body, nothing else. The driver `tools/arc-loop.sh` passes both into each fresh `claude -p`. §3.1 itself stays in the arc-log as the human record of how the driver picks. Nothing further to extract.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "It exists already. `docs/arc-work/04-dogfood/run-instructions.md` is the file `tools/arc-loop.sh` feeds every run alongside the issue body, per arc-log §3.1. It covers what a run reads, the four review passes, sub-agent limits, branch and PR mechanics, stop conditions, and the boundary report.\n\nNote this session has no write or shell tools, so edits to it need a fresh session.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No section 12.0 in the arc-04 arc-log or run-instructions. The only `## 12` nearby is issue-plan's *Filing*, which is about opening issues, not run behaviour.\n\n**Which do you mean?** Something from the lost conversation, issue-plan §12, or a mechanism `m12`? Point me at the file and I will read it.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Read issue-plan §12. Nothing to build from it: its three rules already live in run-instructions.\n\n| §12 rule | Where a run reads it |\n|---|---|\n| Sub-issue queue is the execution order | arc-log §3.1, driver only |\n| `Blocked by #NN` line | arc-log §3.1 |\n| `createLinkedBranch`, never `checkout -b` | run-instructions §4 |\n\nThe instruction file is complete for this. Next step stays: commit, compact, finish #262.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it · measure it\" is the Loop workstream's two instruments, in the plan's §4 diagram.\n\n| | Issue | Means |\n|---|---|---|\n| Land it | [#138](https://github.com/Calyx-Engineering/arc/issues/138) | A merge runs from a standing grant, no per-merge ask |\n| Measure it | [#149](https://github.com/Calyx-Engineering/arc/issues/149) | Eval suite gives a skill change a score |\n\n\"15min\" I cannot place. Where is it written?",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1's other two lines, plainly:\n\n| Line | Means |\n|---|---|\n| \"no merge has ever run without an explicit per-merge request\" | Every merge so far, you typed \"merge it\". Autonomous mode has never merged on its own |\n| \"no standing grant to recover… has to be built\" | Nothing to debug. The mechanism does not exist yet |\n| \"Diagnosis inside the issue\" | Work it out in #138's session, not in this plan |\n\nRest of §11 is other issues' stop points, not #138.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "The hook says it only reports, but its exit code denies the session's first edit.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check, PostToolUse, where exit 2 only prints. PreToolUse exit 2 denies. Fixed here. Direct PR: all three.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Blocked.** No shell tool this session, and prior context lost: what are label fix and permission fix?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked.** This session has no shell or edit tools. Cannot commit, push or open PR.\n\nPrior context also lost: which label and permission fix. Restart session, restate both.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Agree, both. Kill switch: keep one repo-wide `hooks-off.sh all`, drop per-hook and the chat-announcement rule.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Blocked. This session has no Edit, Write or Bash tool. Cannot change files, run `verify-hook.sh`, commit or open PR.\n\nRestart session with edit and shell tools, then say \"continue\". Work queued:\n\n| Fix | Where |\n|---|---|\n| Hook exit 2 already allow, both copies | `hooks/camp-session-start` |\n| PR-number branches | `hooks/branch-guard` |\n| Prefix read from agreement, not `arc/` | `hooks/branch-guard` |\n| Kill switch | recommend drop per-hook, keep one repo-wide `hooks-off` |\n| Label, permission fixes | pending, need context from HANDOFF.md |",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Not hook. This session has no Bash, Edit or Write tools at all. Kill switch cannot fix that. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`R:\\arc\\.git\\arc-hooks-off`. Shared by all worktrees. One line:\n\n```text\n<unix-epoch-expiry> all\n```\n\nOr run:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong file, wrong place. Hooks read `R:\\arc\\.git\\arc-hooks-off`, one line:\n\n```text\n<unix-epoch-expiry> all\n```\n\nEpoch about `1789200000` gives hours of mute. Or from any terminal:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Epoch in `.git` is unfindable. Better: repo-root `HOOKS_OFF` file exists, hooks off. Delete to restore.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Correction: `all` mutes this repo only, every hook. Still blunt.\n\nNo write tools this session. Cleanup item to file when they return:\n\n| Item | Ask |\n|---|---|\n| Kill switch | `hooks-off.sh` picks hook by symptom, or a `/hooks-off` skill. No epoch, no hidden file |",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

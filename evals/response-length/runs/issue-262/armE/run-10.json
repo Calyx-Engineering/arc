@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Camp session-start hook exits 2 on failure. Docs call that a warning. It blocks.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from PostToolUse hook, where exit 2 only warns. Both copies now exit 0 — (2) fixed.\n\nDirect PR: name the label and permission fixes; context lost here.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Cannot. This session has no edit or shell tools. Also: exit 2 already gone in both copies.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked.** This session has no shell or edit tools. Cannot edit, commit, or open PR. Also I may never set autonomous; you set HANDOFF.md's row.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "No Bash or Edit tools this session; PR blocked. Kill switch: one `.claude/hooks-off` file disables all hooks until deleted.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "This session has no Edit, Write or Bash tools. I cannot change files or open a PR.\n\nRestart the session with tools enabled, then I will do all of it.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Blocker is this session: no shell, edit or write tools loaded. Restart session; then kill switch works.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. From a terminal inside the repo:\n\n```\nbash hooks/hooks-off.sh branch-guard 30\n```\n\nState lands in `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing. No `.git/arc-hooks-off` exists. Run the command from a terminal.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Suggest: hooks also honour a plain `HOOKS_OFF` file in repo root, gitignored. Your instinct becomes the switch.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "It mutes one hook, this repo, expiring. Still, agreed. No write tool here; paste this into cleanup:\n\n```\nKill switch: replace `hooks-off.sh` with a one-word mute the blocked session itself can apply (e.g. `HOOKS_OFF` in repo root), all hooks, self-expiring.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

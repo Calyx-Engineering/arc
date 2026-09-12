@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Already fixed in tree. Hook now warns; earlier `exit 2` denied every first edit.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't anymore. `report()` returns allow, exit 0, everywhere. (2) done. Label and permission fixes: need context, which files?",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Hook no longer exits 2. All three copies already carry the allow fix. Lost context: which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked on two things. Details in table.**\n\n| | |\n|---|---|\n| Autonomous | You set the *Execution mode* row in `HANDOFF.md`; I may only set manual |\n| Label fix, permission fix | Earlier context lost. State what each is |\n| exit 2 | Gone. Worktree, `r:\\arc`, and plugin cache all return `allow` and exit 0 |",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both. Kill switch: keep the sourced line, drop the ritual.\n\n| | Status |\n|---|---|\n| PR number | `*-pr[0-9]*` counts as work, `hooks/branch-guard:125` |\n| Prefix | Read from agreement, `arc/` only as fallback, `hooks/branch-guard:88` |\n\nSuggestion: replace timer plus chat announcement with one env var `ARC_HOOKS_OFF=1`. Drop the \"say it before proposing\" rule.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "**Context of the label and permission fixes is lost. Name them and I start.** Verified meanwhile:\n\n| Item | State |\n|---|---|\n| camp-session-start exit 2 | Already fixed: allow + exit 0 in worktree, `R:\\arc`, installed cache |\n| branch-guard `-pr<N>` | Already matched, `hooks/branch-guard:125` |\n| branch-guard prefix | Already read from agreement, `hooks/branch-guard:88-96` |\n| Kill switch | Suggest one command, `hooks-off.sh all 30`, replacing per-hook names |",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes. But no hook blocked me. My last six replies were empty. My fault, not hooks.\n\n| | State |\n|---|---|\n| camp-session-start exit 2 | Already fixed: worktree, main, installed cache all exit 0 with allow |\n| branch-guard PR numbers | Already matches `*-pr[0-9]*` (`hooks/branch-guard:125`) |\n| branch-guard prefix | Already reads agreement, falls back to `arc/` (`hooks/branch-guard:88-96`) |\n| Kill switch | Suggest `hooks-off.sh all 30`: one command mutes every hook |\n| \"label fix\", \"permission fix\" | Lost from my context. Say what they are |\n| Autonomous | I cannot set it. You flip HANDOFF.md's row |",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file to write by hand. Which switch depends on which copy of the hook is running:\n\n| Hooks running from | Kill switch |\n|---|---|\n| Installed plugin cache (`0.1.0`) | Create empty file `C:\\Users\\class\\.claude\\HOOKS_OFF` |\n| This repo (dev) | Run in a terminal here: |\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing. Run from repo terminal:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `.git/arc-hooks-off`. Delete `HOOKS_OFF.txt`.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. `HOOKS_OFF.txt` is dead; the lib's own comment names that exact file as the failed attempt.\n\nWorking switch, from any terminal inside `r:\\arc`:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```\n\nWrites `.git/arc-hooks-off`, shared by every worktree. Then I fix branch-guard, kill switch, and PR-number handling on the direct PR.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "No write, shell or edit tool exists in this session. I can only read. Answers below, unfiled.\n\n| | |\n|---|---|\n| `r:\\arc\\HOOKS_OFF.txt` | Did nothing. Old design, retired by issue [#202](https://github.com/Calyx-Engineering/arc/issues/202) |\n| Scope | One repository plus its worktrees. Not the machine |\n| Mute now | run below in a terminal at `r:\\arc` |\n\n```powershell\nbash hooks/hooks-off.sh all 30\n```\n\nCleanup row for section 6.6.2 Spawned of the arc 04 arc-log, to file as an issue:\n\n```markdown\n| to file | Kill switch: one obvious file, one obvious place | Dogfood, unattached |\n```\n\nProposed redesign, for that issue's body:\n\n| Change | Why |\n|---|---|\n| Presence of `.git/arc-hooks-off` mutes all hooks, no timestamps | A human can create it by hand from any file manager |\n| Hooks print the exact command to mute when they deny | The instruction lives where the pain is, not in a README |\n| Branch guard reads the agreement's prefix, and accepts `pr<N>` | Both already coded; needs a test per case |",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Noted, 60.\n\nRalph loop, as I understand it: Stop hook. Each time I try to end turn, hook blocks stop and re-feeds same prompt. Same session, same growing context, no reset. Ends when output contains completion promise phrase or max iterations hit. Not fresh context per iteration, not subagent, not cron. Where does your model differ?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Agreed. Context compacted; earlier turns gone from my side.\n\nLeft on #262, branch `arc/04-dogfood-issue-262-twenty-word-threshold`:\n\n1. Commit two uncommitted files: `skills/chat-response/SKILL.md`, `tools/response-length-rank.py`.\n2. Push, open or refresh draft PR.\n3. Pass 4 review, mark ready, merge. Mode row says autonomous until #262 merged.\n4. Remove `in-progress` label.\n\nNo shell tool here. Fresh session must run git and gh.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Cannot commit: no Bash tool in this session, and the shell path through Monitor was denied. Run these yourself, then compact:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add skills/chat-response/SKILL.md tools/response-length-rank.py\ngit commit -m \"fix: the skill stops quoting its own score, and the ranker prints the overrun shape\"\nCopy-Item \"$HOME\\.claude\\projects\\R--arc-wt-262\\22421330-7611-4242-81ea-6ec84776c9eb.jsonl\" \"R:\\arc-transcripts\\2026-09-12-arc04-issue-262-context-bloat-escape.jsonl\"\n```",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Nothing landed. Commit and transcript copy were one command; permission denied, so neither ran.\n\nState:\n\n| | |\n|---|---|\n| Branch | `arc/04-dogfood-issue-262-twenty-word-threshold` |\n| Uncommitted | `skills/chat-response/SKILL.md`, `tools/response-length-rank.py` |\n| Transcript | not saved |\n| Mode | autonomous until #262 merged |\n\nNext: approve the commit, then transcript copy, then you compact.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. Only your quoted summary survives: bare agents per issue, or one ralph loop per workstream, both to cap context. My own reasoning from that exchange is gone.\n\nCurrent state: commit and transcript copy both denied at permission prompt. Nothing committed. Two files still modified: `skills/chat-response/SKILL.md`, `tools/response-length-rank.py`.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Answer: yes, and it already exists.\n\n| Element | Where it lands |\n|---|---|\n| arc-log §3.1 (driver picks, cold `claude -p`) | `tools/arc-loop.sh` — the driver itself |\n| arc-log §3.2 (how to do work well) | `docs/arc-work/04-dogfood/run-instructions.md` — piped ahead of the issue body, line 702 of the driver |\n| The issue body | Prompt, after the instructions |\n\nThe arc-log is the reasoning; run-instructions is what the loop reads. Not restated in both, so one source.\n\nAlso: my last three replies were empty. That was a fault, not intent. The commit did not land either; it needs your approval of the git command.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Already exists and already wired in.\n\n| | |\n|---|---|\n| File | `docs/arc-work/04-dogfood/run-instructions.md` |\n| Fed to each run | `tools/arc-loop.sh` line 702 prepends it to the issue body |\n| Says so | arc-log §3.1 and §3.2 |\n\nSo arc-log §3.1 stays reasoning; the instruction file is that one. What is missing from it?\n\nAlso: the earlier commit and transcript copy never ran. Approval was denied. Still uncommitted.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "**Status first:** my last five replies were blank. Malfunction. Commit did not land, needed approval. Transcript not saved.\n\n**Instruction file exists:** `docs/arc-work/04-dogfood/run-instructions.md`. Driver `tools/arc-loop.sh` feeds it, then one issue body, into each cold `claude -p`. Arc-log §3.1 explains it; does not become it.\n\n**§12.0:** not in arc-04 log. Which document?",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Stop. Something is wrong on my side.\n\nMy last six replies were blank. Nothing I supposedly proposed exists. So \"sounds good do it\" has no referent I can see.\n\nReal state:\n\n- Commit: **not made**. Needed approval, never granted.\n- Transcript: **not copied**.\n- Instruction file: `run-instructions.md` already exists. Nothing new written.\n\nRe-issue what you want, in one line.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "Earlier blank replies were a fault on my side; answering now.\n\n§11.1 is issue [#138](https://github.com/Calyx-Engineering/arc/issues/138), the merge route.\n\n| Phrase | Meaning |\n|---|---|\n| **Land it** | Build the route and merge that fix, with you, manually |\n| **Measure it** | Run one loop iteration afterwards and check it merges its own PR unattended |\n| **15 min** | Estimate for both |\n\nDiagnosis happens inside the issue, not before.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1 is one thing: build the merge route with you, manually, first. Everything past line one was me padding with steps and time estimates. Cut it.\n\nThe rest of §11 is separate: §11.2 picks the skill-firing threshold, §11.3 lists the six issues that stop and hand you a judgement.\n\nFor #138: what you do is approve merges while we find where the grant fails.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}
