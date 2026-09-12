@@ -1,7 +1,8 @@
 # Mechanism — Tracker Linking Without the Default-Branch Trick
 
-**Status:** partial. Its key assumption was tested and disproved 2026-08-16, and the
-`linkedBranches` read was re-measured and corrected 2026-09-07 — see [the link's lifecycle](#the-links-lifecycle--measured-2026-09-07).
+**Status:** partial. Its founding reading of the 2026-08-16 data was struck 2026-09-11 — see
+[the test that changes the design](#the-test-that-changes-the-design) — and the `linkedBranches`
+read was re-measured and corrected 2026-09-07 — see [the link's lifecycle](#the-links-lifecycle--measured-2026-09-07).
 **Home:** Arc — Workspace guard.
 
 **Read `specified` from 2026-08-16 to 2026-09-09, and nothing carried it.**
@@ -51,18 +52,17 @@ link verification — one moment, one sweep.
 
 Note this interacts with the default-branch finding below: with the arc branch as repo
 default, the base is right by accident. Where [m42](m42-default-branch-flip.md)'s flip is off —
-§5, and the state of this repository — the check is load-bearing.
+§5 — the check is load-bearing.
 
 ---
 
 ## The test that changes the design
 
-ROADZ currently sets the arc branch as repo default so `gh` auto-links `Closes #NN`.
-CLAUDE.md records the belief that GitHub *only* honours the keyword when the PR base is
-the default branch.
+ROADZ set the arc branch as repo default so `gh` auto-links `Closes #NN`, and its CLAUDE.md
+records the rule that GitHub *only* honours the keyword when the PR base is the default
+branch. This section once read that rule as a belief to be tested; it is the measured rule.
 
-**Measured directly, 2026-08-16.** Two merged PRs, both based on
-`interface-pcba/rev_b` (not `main`):
+**Measured 2026-08-16.** Two merged PRs, both based on `interface-pcba/rev_b` (not `main`):
 
 | PR | Base | `closingIssuesReferences` | Created |
 |---|---|---|---|
@@ -71,27 +71,39 @@ the default branch.
 
 Same base branch. Opposite outcomes.
 
-### What this actually proves
+### What it proves, and what it was read as proving
 
-> **`Closes #NN` works against a non-default base branch.** GitHub parses the keyword
-> **when the PR body is written**, against whatever the default branch was *at that
-> moment*.
+This section used to conclude from that table that *"`Closes #NN` works against a non-default
+base branch"* — a parse-time quirk, not a base-branch restriction — and that the default-branch
+switch was therefore not required. **That reading was wrong, and
+[#287](https://github.com/Calyx-Engineering/arc/issues/287) struck it.** PR #55 was opened
+*after* the switch, so its base **was** the default at parse time: the table shows
+[m42](m42-default-branch-flip.md)'s rule, not an exception to it. Both readings fit the ROADZ
+data, which is why a re-reading could not settle it.
 
-It is a **parse-time quirk, not a base-branch restriction.** The ROADZ workaround was
-solving the right symptom with the wrong model — and CLAUDE.md's own recovery note
-(*"Changing the default does not re-parse PRs opened before the switch. Re-save the body
-to force it"*) is the clue that this is about parse timing.
+**Isolated 2026-09-11, in this repository**, on a base that had never been the default —
+[`tests/tracker-cases/binding/never-default-base-keyword.md`](../../../tests/tracker-cases/binding/never-default-base-keyword.md):
 
-**Consequence: the default-branch switch is not required.** What is required is that the
-link is *verified after creation*, and re-triggered by a body re-save if absent.
+| PR | Base | Default at the time | `closingIssuesReferences` |
+|---|---|---|---|
+| [#323](https://github.com/Calyx-Engineering/arc/pull/323) | `probe/287-base`, created for the run | `arc/04-dogfood`, throughout | **Empty** before the merge, after it, and after an unchanged body re-save. The merge left [#322](https://github.com/Calyx-Engineering/arc/issues/322) open |
 
-> **This section's conclusion is under test —
-> [#287](https://github.com/Calyx-Engineering/arc/issues/287).** [m42](m42-default-branch-flip.md)
-> opens by stating the opposite rule and quoting GitHub's documentation for it, and the two have
-> never been reconciled. PR #55 was created *after* the default switch, so its base **was** the
-> default at parse time — which is m42's rule rather than an exception to it. Nothing here is
-> re-measured; §5 no longer rests on it, and #287 settles it with one PR whose base was never the
-> default.
+**So the rule is m42's: a closing keyword binds only when the PR targets the repository's
+default branch.** Three states are measured, and they are all that is known:
+
+| Base | Binds | Measured |
+|---|---|---|
+| Never the default | **No** — not at open, not at merge, not on re-save | #323, above |
+| The default throughout | Yes, and a re-save after the merge binds too | [m42](m42-default-branch-flip.md) 2026-08-17; [`merged-pr-keyword-bind.md`](../../../tests/tracker-cases/binding/merged-pr-keyword-bind.md) 2026-09-07 |
+| Became the default after the PR was opened | **No** — the flip did not re-parse, and a re-save did not rescue | m42 2026-08-17, five PRs. ROADZ's CLAUDE.md claims a re-save does rescue in that repository; not re-run |
+
+The ROADZ table above is the second and third rows seen from one repository, not a third rule.
+
+**Consequence: on a base that was never the default, nothing makes the keyword bind.** Not a
+re-save, not the merge. Where the flip is not in force the link is verified after creation and,
+when absent, made by hand — §5. The earlier consequence stated here, that the switch was not
+required, was the claim #287 suspected `skills/issue-write` had inherited. It had not — the skill
+already stated m42's rule — and it now cites the measurement.
 
 ---
 
@@ -104,7 +116,7 @@ Tested against the live repo:
 | Read PR → closing issues | `gh pr view N --json closingIssuesReferences` | ✅ works |
 | Read issue → linked branches | GraphQL `issue.linkedBranches` | ⚠️ works, **but only until a PR is opened on the branch** — see [the lifecycle](#the-links-lifecycle--measured-2026-09-07) |
 | Sub-issues | `repos/{o}/{r}/issues/{n}/sub_issues` | ✅ responds |
-| Force re-parse | Re-save the PR body (`gh pr edit --body`) | ✅ documented in ROADZ CLAUDE.md |
+| Force re-parse | Re-save the PR body (`gh pr edit --body`) | ✅ on a base that is the default — measured after a merge, 2026-09-07. On a base that never was, nothing to re-parse — #323 |
 | Create branch↔issue link | GraphQL `createLinkedBranch` | ✅ **Tested and works** — see below |
 | Remove a link | GraphQL `deleteLinkedBranch`, or delete the branch | ✅ Deleting the branch clears the link automatically — silently, with no timeline event |
 | Verify a link, either side | `tests/verify-linked-branch.sh <NN> <branch>` | ⚠️ reads both fields and says which holds the link — but **decisive only before the PR opens**, for the reason in the row above. Not an API capability; a script in this repo |
@@ -247,9 +259,12 @@ gh pr view <N> --json closingIssuesReferences   # confirm it took — poll; one 
 ```
 
 **On a base that was never the default branch there is nothing to re-parse**, and a re-save is
-not a slow repair but no repair at all — measured in [m42](m42-default-branch-flip.md), where
-five merged PRs stayed unbound after a flip and a re-save did not rescue them. §5's manual route
-is the repair there: the Development-panel click, then the close.
+not a slow repair but no repair at all — measured on
+[#323](https://github.com/Calyx-Engineering/arc/pull/323), whose unchanged re-save after the
+merge read `[]` on every poll. [m42](m42-default-branch-flip.md) measured the neighbour: five
+merged PRs whose base became the default only after a flip stayed unbound, and a re-save did not
+rescue those either. §5's manual route is the repair in both states: the Development-panel
+click, then the close.
 
 ### 3. Link the branch to the issue explicitly
 
@@ -310,8 +325,8 @@ keyword bind, and the switch is genuinely the cheaper route wherever its precond
 | **Fails** | Silently, if the restore is forgotten | Silently, if nobody clicks — which is what `merge-close` is for |
 
 **Neither is removed and neither is a default.** m42 states that Arc never flips a default branch
-on its own; this route is what runs when it has not, which is the current state of this
-repository — trunk branch `main` is the GitHub default, and every arc PR targets an arc branch.
+on its own; this route is what runs when it has not. Every arc PR targets an arc branch either
+way — this repository ran arc 04 with the flip on, `arc/04-dogfood` the default on 2026-09-11.
 
 **The manual route in full**, for a work PR merged into a non-default base:
 

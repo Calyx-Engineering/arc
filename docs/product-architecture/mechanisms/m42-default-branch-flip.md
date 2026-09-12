@@ -19,7 +19,12 @@ Repeated across weeks, and disbelieved each time it was raised:
 **GitHub ignores a closing keyword unless the PR targets the repository's default branch.**
 Their documentation states it outright: *"If the pull request targets any other branch, then
 these keywords are ignored, no links are created, and merging the pull request has no effect
-on the issues."*
+on the issues."* Isolated in this repository 2026-09-11 on a base that had never been the
+default: [#323](https://github.com/Calyx-Engineering/arc/pull/323) bound nothing before the
+merge, after it, or after a body re-save —
+[`tests/tracker-cases/binding/never-default-base-keyword.md`](../../../tests/tracker-cases/binding/never-default-base-keyword.md).
+[m12](m12-issue-linking.md) once read the 2026-08-16 ROADZ data as a parse-time quirk that a re-save could
+get around; [#287](https://github.com/Calyx-Engineering/arc/issues/287) struck that.
 
 An arc runs issue branches into an arc branch, and the arc branch into the trunk. **Every
 issue PR in an arc therefore targets a non-default base by construction** — so every one of
