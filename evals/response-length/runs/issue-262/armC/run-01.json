@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Point 2 was wrong. `hooks/camp-session-start` returns `allow` now, not deny. Withdrawn.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't. Comment is history; body sends `allow`. Point 2 needs no fix.\n\n**Decision needed.** Context lost. Which label fix and permission fix, in one line each?",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Cannot. Context compacted; no record of the label or permission finding survives. Restate each in one line.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot set autonomous; only you can, in `HANDOFF.md`. Still need the two fixes named.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both already in `branch-guard`: prefix read from agreement (line 88), `-prNN` accepted (line 125). Paste denial if it recurs.\n\n**Kill switch:** move it into one wrapper `hooks/run` that `hooks.json` calls; delete per-hook boilerplate and chat ritual.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Nothing left to fix here. Branch-guard already handles both. Kill-switch refactor touches 18 files, including `tools/verify-hook.sh` and `hooks/TEMPLATE`, which I may never edit alone. File it as an issue tomorrow.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes a hook at runtime. My block is CLAUDE.md's rule: `verify-hook.sh` and `TEMPLATE` are never edited autonomously. Say \"edit them\" and I proceed.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Say \"edit them\" in chat. For autonomous mode, set `HANDOFF.md`'s *Execution mode* row yourself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Hooks read `.git/arc-hooks-off`, never `HOOKS_OFF.txt`. Run:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Fix: a root file `HOOKS_OFF`, gitignored, mutes every hook. Creatable in the IDE, no script. Build it tomorrow, once `TEMPLATE` edits are approved.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Session has no edit or shell tools; cannot write the file or run `gh`. Paste this under Upkeep [#148](https://github.com/Calyx-Engineering/arc/issues/148):\n\n```text\nTitle: Kill switch mutes every hook everywhere; replace with a scoped one\n\nDefect: `hooks/hooks-off.sh all 30` is the only usable switch and it silences all hooks in the repo. Per-hook boilerplate in eight hooks; a state file under `.git/` nobody finds; a `HOOKS_OFF.txt` at repo root does nothing (documented in `hooks/lib/hooks-off` line 14, and it happened again 2026-09-12).\n\nWork:\n- [ ] One wrapper (`hooks/run`) that `hooks.json` calls; per-hook kill-switch lines removed\n- [ ] Mute scoped to one hook, one repo, one session by default; `all` requires an explicit flag\n- [ ] A plain file at the repo root the IDE can create, gitignored\n- [ ] Drop the \"say the kill switch in chat\" ritual from CLAUDE.md\n\nConstraint: `tools/verify-hook.sh` and `hooks/TEMPLATE` change; David approves those edits explicitly.\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Stop hook, not new sessions.\n\n1. `/ralph-loop \"<prompt>\" --max-iterations N --completion-promise \"X\"` writes prompt and counters to a state file.\n2. Each time I try to end my turn, Stop hook reads that file.\n3. Promise absent and iterations remain: hook blocks stop, re-injects same prompt as next message. Context accumulates.\n4. Ends on promise, max, or `/cancel-ralph`.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Context lost past summary; no shell tool in this session, so I cannot run the gate or commit.\n\nLeft on #262 (tree has all six files edited, nothing committed, no dev-log):\n\n| Step | State |\n|---|---|\n| `bash tests/verify-all.sh` | not run |\n| Passes 1–3 via sub-agent | not done |\n| Dev-log, commit, draft PR | not done |\n| Pass 4, ready, merge, drop `in-progress` | not done |\n\nEmergency escape: start a fresh session in `R:\\arc-wt\\262` and resume at step 3.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked on both steps; the session has no Bash tool, and the commit via the background runner was denied for approval.\n\n| Step | State |\n|---|---|\n| 1 Commit | Not done. Run yourself: `git add -A && git commit -m \"wip: #262 checkpoint before compaction\"` |\n| 2 Transcript | Live file is `C:\\Users\\class\\.claude\\projects\\R--arc-wt-262\\f7a3d97e-e30b-4a01-b935-2de07e8478fe.jsonl`. No destination directory is named anywhere in the repo, so copy it to your transcript folder as `2026-09-12-arc04-262-twenty-word.jsonl` |\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Commit blocked. No Bash tool this session; the git commit via Monitor was denied for approval.\n\n| Step | State |\n|---|---|\n| 1 Commit | **Not done** — needs your approval or you run it |\n| 2 Transcript | Live file is `~/.claude/projects/R--arc-wt-262/f7a3d97e-….jsonl`; destination directory not named anywhere in repo |\n| 3 Compact | Waiting on 1 and 2 |\n\nTree: six files, 128 lines added, unstaged.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. That discussion is gone from my context; only your quotes survive. What I hold: a ralph loop is a driver script that re-launches a fresh agent per iteration, one issue each, so context never accumulates.\n\nStatus: commit **not done**, git calls denied here (no Bash tool). Transcript destination unknown. Tree still dirty, six files.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "No. Already split that way:\n\n| Element | Becomes |\n|---|---|\n| arc-log §3.1 (queue, next issue, blocked, done) | `tools/arc-loop.sh` — driver code, run never reads it |\n| How a run behaves (sequence, passes, stop) | `run-instructions.md` — passed to `claude -p` with the issue body |\n| Issue body | The spec |\n\nRun reads run-instructions, issue, CLAUDE.md. Nothing else.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "**It already exists.** `docs/arc-work/04-dogfood/run-instructions.md` is that file: the driver `tools/arc-loop.sh` starts each cold `claude -p` with it plus the issue body (arc-log §3.1). Arc-log itself is never read by a run.\n\nSeven sections: what to read, sequence, sub-agents, where work goes, stopping, report run, never.\n\nWhat does it lack? Name gap, I edit in place.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No section 12 exists in the arc-04 arc-log. It stops at `## 10 Soak`. Section 12 turns up only in the arc-03 log (wave 5 review) and issue-plan.md (`## 12 Filing`).\n\nWhich document did you mean? If it is the issue plan, the run must not read that file, so the instruction file cannot point there.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Nothing to do yet: my last replies were empty, so no proposal exists on my side. Context was lost.\n\nWhat I can verify:\n\n| | |\n|---|---|\n| Instruction file | already exists: `docs/arc-work/04-dogfood/run-instructions.md`, read by `tools/arc-loop.sh` with the issue body |\n| Section 12 | `issue-plan.md` §12 *Filing* |\n\nSay what \"it\" is in one line.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "§11.1 is issue #138, the merge route. \"Land it\" meant: build the standing merge grant with you, then merge one real PR through it. \"Measure it\" meant: count turns to correct the merge, which §7 says must be zero. Fifteen minutes was my guess for one guided pass, and the phrasing was too compressed.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1 in the file is two paragraphs only:\n\n| Line | Says |\n|---|---|\n| 1 | #138 is a manual session you run with me, first in the arc |\n| 2 | Context: no merge here has ever run without a per-merge request, so the merge route has to be built, not recovered |\n\n\"15min\" and \"land it and measure it\" are not in the tree. They came from a reply now lost to compaction.\n\nRecommend: cut §11.1 to line one.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

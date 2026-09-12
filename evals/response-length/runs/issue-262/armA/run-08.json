@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook name says session-start; it is a PreToolUse edit hook. Already fixed to allow, not deny.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It does not. Already exits 0 with explicit allow, both copies. (2) needs nothing.\n\nDirect PR for label and permission fixes: name the two files, I'll do it.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Cannot: this session has no edit or shell tools. Also lost what \"label fix\" and \"permission fix\" were. Restate both?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked twice. No Bash, Edit or Write tools this session. And I may never set autonomous myself; only you edit HANDOFF.md's Execution mode row.\n\nAlso still missing: what \"label fix\" and \"permission fix\" are. Start a fresh session with tools, state both fixes, set the row.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both: reads prefix from the agreement (line 88 onward), and matches `-pr[0-9]` as work (line 125). Verify by test before trusting.\n\nKill switch: keep it, but make it default silent. Suggest replacing per-hook thirty-minute mute with one `hooks-off.sh all` plus a repo-level `hooks.off` file. One command, one file, no timers.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no Edit, Write or Bash tools; confirmed twice. Open a fresh session; paste this list:\n\n1. Label fix\n2. Permission fix\n3. Verify branch guard on `-pr` branches and non-`arc/` prefix\n4. Kill switch: single `hooks-off.sh all` file, no timers",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; here the tools are absent from the session entirely. Harness config, not a hook. Kill switch cannot add tools back.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Which file? Two guesses:\n\n- **Kill-switch state**: `.git/arc-hooks-off`, written by `hooks/hooks-off.sh`. Not hand-placed.\n- **The fix list**: `HANDOFF.md`, repo root, under ordered actions.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Tools still absent. And hooks read `.git/arc-hooks-off`, not `HOOKS_OFF.txt`. File goes nowhere useful; delete it.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No, still no tools. Wrong place anyway: state file is `.git/arc-hooks-off`, written by `hooks-off.sh`. Agreed on design. Missing tools are harness, not hooks; new session fixes it.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write files this session. Also: hooks read only `.git/arc-hooks-off`, repo-scoped. Your `HOOKS_OFF.txt` turns nothing off anywhere.\n\nPaste into cleanup:\n\n```text\nKill switch redesign: one command, one obvious file, no timers, discoverable from the deny message.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

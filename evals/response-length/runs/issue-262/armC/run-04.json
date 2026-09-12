@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook exits 2 on PreToolUse. That denies the edit. Its header says it only warns.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Already fixed in PR [#200](https://github.com/Calyx-Engineering/arc/pull/200). Pattern copied from a PostToolUse hook. Nothing left for (2).",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked: this session has no shell or edit tools. Cannot branch, edit or open PR. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Two blocks. I may never set autonomous myself. And this session still lacks shell or edit tools. New session needed.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both branch fixes landed in PR [#200](https://github.com/Calyx-Engineering/arc/pull/200). Kill switch: one repo-wide mute, no timer, no per-hook.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still cannot. No Bash, Edit or Write here. Open a fresh session; I will fix all of it there.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes Arc's hooks. Missing tools are the harness, not hooks. Nothing here to mute.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. Run this in the repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Nothing at `.git/arc-hooks-off`, and `HOOKS_OFF.txt` does not exist. Run the command in a terminal.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Replace: a plain `HOOKS_OFF` file at repo root, no script, no timer.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write here. Next session: file it in cleanup, per-hook, per-repo, one command, no timer.",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, as I understand it:\n\nSame prompt fed to Claude repeatedly until done. Plugin version: a Stop hook catches session end, re-injects the prompt, same session, up to max iterations. Exit when output contains the completion promise string. State carried by files on disk, not memory. Each pass re-reads them.\n\nCorrect me where wrong.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Left on #262, nothing committed yet:\n\n1. Gate: `bash tests/verify-all.sh` (rank selftest added, unrun).\n2. Passes 1–3 via sub-agent.\n3. Dev-log `docs/dev-log/issue-262-*.md` (missing).\n4. Commit, draft PR, pass 4, ready, merge, drop label.\n\nThis session has no Bash/Edit/Write tools now. Cannot finish here. Kill it; fresh run resumes from worktree.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Cannot. This session has no Bash, Edit or Write tool loaded. Read, Grep, Glob only. I cannot run `git commit` or save a transcript file.\n\nRun these yourself from `R:\\arc-wt\\262`:\n\n```powershell\ngit add -A\ngit commit -m \"wip: #262 twenty-word threshold — rank tool, probe and skill edits, mid-run checkpoint\"\n```\n\nTranscript: `/export` in this session to `.claude/arc/transcripts/`. Then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Where we are:\n\n- Branch `arc/04-dogfood-issue-262-twenty-word-threshold`, autonomous mode, uncommitted edits to `skills/chat-response/SKILL.md`, four `tools/response-length*` scripts, `tests/verify-all.sh`.\n- No dev-log for #262 yet. No PR.\n- Commit and transcript save did not happen: Bash, Edit, Write tools missing in this session. Need a fresh session with them.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Only what you quoted. Your question: spawn bare agents per issue, or run the workstream on a Ralph loop. My contradiction, then agreement. No plan details survive in my context.\n\nAlso: your commit and transcript-save requests did not happen. This session has no shell or write tools loaded, only read and search. You will need to commit yourself.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already exists. The loop's instruction file is `docs/arc-work/04-dogfood/run-instructions.md`. `tools/arc-loop.sh` feeds it plus the issue body to each fresh `claude -p` session.\n\nArc-log §3.1 is the driver's spec, not run input. It says the shell script picks the issue, holds queue position, and starts each cold session. §3.2 says the run rules live only in run-instructions.md to avoid two sources drifting.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "It already exists: `docs/arc-work/04-dogfood/run-instructions.md`, 216 lines. Arc-log §3.1 points at it: the driver `tools/arc-loop.sh` starts each cold `claude -p` session with that file plus the issue body. §3.2 says restating it in the arc-log is forbidden, so it drifts nowhere.\n\nWhat is missing from it that you want added?",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "Issue-plan §12 is filing mechanics: milestone, sub-issue queue, `createLinkedBranch`. It feeds the driver, not the run.\n\nThe loop's instruction file already exists: `docs/arc-work/04-dogfood/run-instructions.md`. arc-log §3.1 and §3.2 point at it and deliberately do not restate it.\n\nNothing to build. Gaps in it, if any, get edited in place.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Blocked. This session has no Bash, Edit or Write tool. Only Read, Grep, Glob. My last several replies went out empty for that reason. Cannot commit, edit or save transcript.\n\nState of the question: `run-instructions.md` already is the loop's instruction file. Arc-log §3.1 stays the driver's. Issue-plan §12 Filing duplicates run-instructions §4; the edit is to merge §12 into it.\n\nRestart in a session with write tools.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it · measure it\" is Loop's job, two instruments:\n\n| | Means | Issue |\n|---|---|---|\n| Land it | a run can merge its own PR from a standing grant | #138, the one you guide |\n| Measure it | a change yields a score, not an opinion | #149 eval suite, #141 miner scope |\n\n§11.1 is the land half. Loop gates the other four workstreams.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "Second paragraph says one thing: the merge route was never built, only ever done per-request, so #138 builds it rather than repairs it. Third sentence: don't investigate beforehand; do the diagnosis inside the #138 session itself. Rest is padding. Cut it to line one plus \"never existed, build it\".",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

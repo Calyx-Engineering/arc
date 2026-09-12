@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook exits 2 on first edit. PreToolUse exit 2 denies, so every session's first Edit silently fails.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check, a PostToolUse hook, where exit 2 only prints. Already fixed here: line 62 allows.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. This session has no edit or shell tools, so no PR possible. Also the hook is already fixed here: exit 0 with an explicit allow. Which label and permission fixes did you mean?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked. This session has no edit or shell tools, and I may not set autonomous. Also \"label fix\" and \"permission fix\" context is lost. Restate them and reopen with tools.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch-guard already reads the agreement prefix and accepts `pr200`. Kill switch: delete it. Hooks fail open; `git revert` is the escape hatch.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no edit, write or shell tools. Branch guard already reads the prefix from the agreement and handles `-pr` segments. Kill switch: drop it, rely on `git revert`. Reopen with tools to fix.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks are not blocking me. The tools themselves are absent from this session. Kill switch cannot add tools.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Which file? If the kill-switch state: `.git/arc-hooks-off`, written by `bash hooks/hooks-off.sh <hook> 30`.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing. Run in a terminal:\n\n```\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No, `HOOKS_OFF.txt` does nothing. Only `bash hooks/hooks-off.sh <hook> 30` writes the switch, into `.git/arc-hooks-off`.\n\nAgreed. A hand-placed file should work. Worth an issue.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write it: no edit tools this session. Note: switch is per hook, this repository only, not everywhere. Add to cleanup: \"kill switch honours a hand-placed file\".",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

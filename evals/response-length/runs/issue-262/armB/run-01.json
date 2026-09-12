@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Camp's first-edit hook used `exit 2`, which denies in PreToolUse. First edit each session got blocked. Current file already fixed.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't anymore. Both copies now return `allow` and `exit 0`. Only the comment says \"was exit 2\".\n\n(2) needs no fix. Direct PR: label fix plus permission fix only.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Decision needed.**\n\nExit 2 already gone in both checkouts. Context lost: which label fix, which permission fix?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked. Three things:\n\n- No shell tool in this session, so no git or PR.\n- Autonomous mode is yours to set, not mine.\n- Context lost: restate the label fix and permission fix.\n\nExit 2 already fixed, both checkouts.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already reads prefix from the agreement and matches `-pr123`. Say what it denied and I will trace it.\n\nKill switch: drop it. Hooks fail open already, and `git revert` is the undo.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no Edit, Write or shell tool. Read-only.\n\nStart a new session in this worktree and I will fix all three there.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes a hook. Missing tools is the harness, not a hook. Nothing here to mute.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file by hand. Run from any terminal in the repo:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\n```\n\nIt writes `r:\\arc\\.git\\arc-hooks-off` for every worktree.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing. State file `r:\\arc\\.git\\arc-hooks-off` does not exist.\n\nRun in a terminal at `r:\\arc`:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Recommend delete it. Hooks fail open, `git revert` undoes a bad one. Fold into the direct PR.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Not everywhere: one hook, this repo, 30 minutes. Still clunky.\n\nCannot write the cleanup item here, no write tools. Next session, first action.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

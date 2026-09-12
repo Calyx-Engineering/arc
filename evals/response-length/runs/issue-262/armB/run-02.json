@@ -1,0 +1,65 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook says it only warns, but its exit code denied the edit. Already fixed to allow.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copy-paste from camp-branch-check, a PostToolUse hook. There exit 2 only prints stderr. PreToolUse: exit 2 denies.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Permission fix already in both copies. No edit or shell tool here. Label fix: which file?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked. This session has no edit or shell tool. Cannot write the mode row, commit or open the PR. Rerun in a session with Bash.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Branch guard already handles both: reads the agreement prefix, matches `pr200`. If it denied yours, paste the message.\n\nKill switch: drop per-hook timers. One file, `.git/arc-hooks-off`, all hooks, no expiry. `git revert` covers the rest.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no Edit, Write or Bash tool. Open a fresh session in this worktree and say \"fix everything\"; the list is in this chat.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. No hook denied anything. This session was started without Edit, Write or Bash tools at all. Kill switch cannot add tools. Start a new session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Not a hook problem. This session lacks Edit and Bash tools entirely. Muting changes nothing.\n\nTo mute anyway, from any terminal in the repo:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nIt writes `.git/arc-hooks-off` for you. Then open a new session with tools.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong path, and hooks are not what blocks me. This session has no edit or shell tool at all. Run:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Replace with one hand-placed file, no expiry, no command:\n\n```text\n.git/arc-hooks-off   (empty = all hooks off)\n```\n\nOpen an issue; I cannot write files this session.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Not everywhere. It lives in `.git`, so one repository only. Cannot file it. Paste this:\n\n**Title:** `fix: kill switch by hand, no timer` — label `bug`, type `Agent`, cleanup workstream milestone.\n\n```markdown\n## Defect\n\n`hooks/hooks-off.sh` needs a terminal, a hook name and a timer. Muting to fix a hook is\nslower than the hook it mutes.\n\n## Work\n\n- [ ] `touch .git/arc-hooks-off` mutes every Arc hook in that repository, no expiry\n- [ ] `hooks/lib/hooks-off` reads an empty file as `all`; an entry list still works\n- [ ] `hooks/hooks-off.sh` becomes `on` / `off` / `status`\n- [ ] `hooks/TEMPLATE`, README line and `tests/verify-hooks-off.sh` updated\n\n## Constraints\n\n| | |\n|---|---|\n| Scope | One repository, every worktree. Never machine-wide |\n| Fail | Towards the guard on. Unreadable file = hooks on |\n\n## Related\n\n| | | |\n|---|---|---|\n| Spawned by | #202 | the current kill switch |\n```",
+   "cut": "",
+   "fired": [
+    "issue-write"
+   ]
+  }
+ }
+}

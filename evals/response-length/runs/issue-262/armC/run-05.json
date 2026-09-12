@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Checked the hook. It already emits `allow`, not `exit 2`. Problem 2 no longer exists in this tree.\n\nNothing to fix. Was stale finding from an older read.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't. Both copies emit `allow`, exit 0. Finding 2 is stale.\n\nPR needs shell access. None this session.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Cannot. This session has no shell or edit tools. Restart session; give me the label and permission fix specifics.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot switch to autonomous. Only you set that row in HANDOFF.md. Session still lacks shell and edit tools.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already reads the agreement prefix and `pr<N>`. Which branch failed?\n\nKill switch: replace with an agreement checkbox, drop the chat recitation.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot from here. No edit or shell tool in this session. Paste this into a fresh session in `R:\\arc-wt\\262`:\n\n```text\nDirect PR on branch arc/04-dogfood-pr<N>-hook-fixes, manual mode, leave uncommitted for my review:\n1. Kill switch: replace hooks/hooks-off.sh timer with a \"Hooks: on/off\" checkbox in .claude/arc/camp/operating-agreement.md; every hook reads it via hooks/lib/hooks-off. Delete the \"say the kill switch in chat\" rule from CLAUDE.md and m10.\n2. hooks/branch-guard: accept pr-<N> and PR-<N> as well as pr<N>; confirm prefix comes from the agreement, not arc/.\n3. Label fix and permission fix from the previous session's findings (read .claude/arc/sessions.md).\n4. Run tests/verify-all.sh and tools/verify-hook.sh for each touched hook; paste output.\n```",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No hook is blocking me. Edit and Bash tools aren't loaded in this session at all. That's harness config, not hooks.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file needed. Project settings deny nothing. Tools are missing because of how this session was launched. Open a normal `claude` session in `R:\\arc-wt\\262` and paste the prompt.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing. The switch is a command:\n\n```powershell\nbash hooks/hooks-off.sh all 30\n```\n\nRun it in the repo terminal. But hooks are not why this session lacks tools.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. `HOOKS_OFF.txt` does nothing; the lib even documents that failed attempt. Kill switch wants `.git/arc-hooks-off`, written by the script.\n\nFix: a plain file, no timer, no script.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't file it from here. Paste-ready issue for the cleanup workstream:\n\n```markdown\nTitle: fix: replace the hooks-off kill switch with a per-repo file, no timer, no script\n\n## Defect\n\n| | |\n|---|---|\n| Today | `bash hooks/hooks-off.sh <hook> 30` writes `.git/arc-hooks-off`; expires; must be typed in a terminal |\n| Failure | A dropped `HOOKS_OFF.txt` at repo root does nothing. Documented in `hooks/lib/hooks-off` as a known failed attempt, and it happened again 2026-09-12 |\n| Cost | Kill switch unusable exactly when a hook is misbehaving |\n\n## Required\n\n- [ ] Kill switch is a plain file at the repo root, e.g. `.claude/arc/hooks-off`. Present = all Arc hooks in this repo exit 0. No timer, no argument, no script.\n- [ ] Scoped to one repository. Never global.\n- [ ] `hooks/lib/hooks-off` reads it; `hooks/hooks-off.sh` deleted or reduced to `touch`/`rm`.\n- [ ] CLAUDE.md \"say the kill switch in chat\" rule and m10 text updated.\n- [ ] `tools/verify-hook.sh` pass/deny/malformed output in the PR body.\n\n## Constraints\n\n- Fail open stays. Absent file = hooks run.\n- Soak on the next work stretch before push.\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, as I understand it: `/ralph-loop \"prompt\"` writes state file (prompt, iteration, max, completion promise). Stop hook fires each time I try to end turn. If last message lacks `<promise>...</promise>` and iteration under max, hook blocks stop and re-feeds same prompt. Same session, same context, no reset. Ends on promise, max, or `/cancel-ralph`. Unverified against plugin source.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Agreed on bloat. This context holds no memory of those exchanges. State of #262 in tree:\n\n| Left | Status |\n|---|---|\n| Edits (skill, probe, rank, verify-all) | in tree, uncommitted |\n| Dev-log `issue-262` | missing |\n| Gate `tests/verify-all.sh` | unrun. No Bash tool this session |\n| Passes 1–3, commit, draft PR, pass 4, merge, unlabel | not done |\n\nRecommend: fresh session finishes from tree.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked. Every shell command in this session is denied, so I cannot commit or copy the transcript. Run these yourself:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add -A\ngit commit -m \"feat: undershoot rule for tight budgets, ranking selftest in the gate (#262)\"\nCopy-Item \"$env:USERPROFILE\\.claude\\projects\\R--arc-wt-262\\2175394e-7ee7-4a44-ae83-9dc2a81747d6.jsonl\" .arc-work\\transcripts\\\n```\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Shell denied this session, so nothing committed and no transcript copied. Work for #262 sits uncommitted on branch `arc/04-dogfood-issue-262-twenty-word-threshold`. Run yourself:\n\n```powershell\ngit add -A\ngit commit -m \"feat: undershoot rule for tight budgets, ranking selftest in the gate (#262)\"\ncopy C:\\Users\\class\\.claude\\projects\\R--arc-wt-262\\2175394e-7ee7-4a44-ae83-9dc2a81747d6.jsonl .arc-work\\transcripts\\\n```\n\nThen compact. Left after: dev-log, PR, passes 1 to 4, merge.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Only your quoted summary survives: you proposed agents or ralph loop per issue to control context; I wrongly argued, then agreed. No plan detail retained.\n\nAlso: commit did not happen. Shell calls denied every attempt, so nothing committed, transcript not copied. Tree still holds the #262 changes uncommitted. You commit, or grant shell.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already exists. `docs/arc-work/04-dogfood/run-instructions.md` is that file. Each run reads it, then the issue, nothing else. Arc-log §3.1 stays driver-side: `tools/arc-loop.sh` picks the issue, run never reads the arc-log.\n\nStatus: commit and transcript save blocked. Every shell call denied this session, no Bash tool. Commands for you:\n\n```powershell\ngit add -A; git commit -m \"feat: undershoot rule for tight budgets, ranking selftest in the gate (#262)\"\nCopy-Item C:\\Users\\class\\.claude\\projects\\R--arc-wt-262\\2175394e-7ee7-4a44-ae83-9dc2a81747d6.jsonl .arc-work\\\n```",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "**Decision needed.**\n\n**Extend `docs/arc-work/04-dogfood/run-instructions.md`, or write a sibling `ralph-instructions.md`?**\n\nThat file already is the run's instruction file: arc-log §3.1 says a run reads it, then the issue. It assumes `claude -p` fresh sessions. A Ralph loop differs: same session, Stop hook re-feeds the prompt, context persists.\n\nAlso: every shell command here is denied, so the commit did not happen. Run it yourself:\n\n```\ngit add -A && git commit -m \"feat: undershoot rule for tight budgets, ranking selftest in the gate (#262)\"\n```",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No. Issue-plan §12 *Filing* is about how issues get filed, not what a run reads.\n\nThe instruction file already exists: `docs/arc-work/04-dogfood/run-instructions.md`. Each run reads it, then its issue. Arc-log §3.1 is the driver's, not the run's.\n\nBlocked: every shell command is denied in this session, so the commit and transcript save did not happen.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "My last six replies never reached you. Nothing was proposed, so nothing to do.\n\nState:\n\n| | |\n|---|---|\n| Commit | **Blocked.** Every shell command denied this session. Tree uncommitted |\n| Transcript | Not saved, same reason |\n| Ralph instruction file | Already exists: `docs/arc-work/04-dogfood/run-instructions.md`. Issue-plan §12 is filing rules, not that |\n\nCommit yourself, then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "**Silence for six turns was mine, nothing was built.** Status:\n\n| | |\n|---|---|\n| Commit | Blocked. Every shell call denied this session, no Bash tool. You commit |\n| Transcript | Not saved, same block |\n| Loop instruction file | Not started |\n\n\"Land it · measure it\" is Loop's two deliverables: merge route (#138), eval suite. \"15min\" appears nowhere in the plan. Where did you read it?",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1 says three things:\n\n- **#138 builds the merge route.** How an autonomous run merges its own PR. That's \"land it\".\n- **Nothing exists to restore.** Every merge so far needed you asking per-merge. No standing permission was ever granted, so #138 builds one from scratch.\n- **Investigate inside #138.** Not before starting it.\n\n\"Measure it\" = the eval suite, Loop-2. Separate issue.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

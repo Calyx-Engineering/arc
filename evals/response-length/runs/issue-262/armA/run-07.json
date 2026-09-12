@@ -1,0 +1,59 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Already fixed in file. Comment header says \"warn\" for `exit 2`, which denies. Now uses allow decision.",
+   "cut": "",
+   "fired": []
+  },
+  "12": {
+   "text": "(2) already fixed. All three copies (worktree, r:\\arc, plugin cache) return `allow`; line 52 comment records old bug.\n\nLabel and permission fixes: context lost. Name them, I open direct PR.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked: I do not know what the label fix or permission fix are. Name them.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot proceed. No shell tool in this session, and label and permission fixes still unnamed. Blocked.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both already built. branch-guard line 125 accepts `*-pr[0-9]*`; lines 88-100 read prefix from operating agreement, `arc/` only as fallback.\n\nKill switch: what hurts? Guess: per-hook name, 30-minute lapse, bash invocation. Suggest one marker file `.git/arc-hooks-off`. Touch mutes every Arc hook in this repo, no expiry, each muted hook prints one line so silence is never mysterious. `rm` restores. Retire `hooks-off.sh`.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Nothing left to fix in what you named. All three copies (worktree, r:\\arc, plugin cache) already handle `-prNN` branches, read the agreement's prefix, and return `allow` from camp-session-start.\n\nStill unknown: label fix, permission fix. Also this session has no Bash tool, so no branch, commit or PR from here.\n\nKill switch: drop the \"say it in chat\" rule from CLAUDE.md. Keep the script. One line in the hook's deny message (\"mute: `bash hooks/hooks-off.sh <hook> 30`\") puts it where it is needed, when it is needed.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Not a hook. This session has no Bash tool, so I cannot run git or gh at all. Kill switch cannot help.\n\nAlso: branch-guard and camp-session-start already carry both fixes in worktree, r:\\arc and plugin cache. Nothing left to fix there.\n\nOpen a fresh session with Bash for the direct PR.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "State file: `R:\\arc\\.git\\arc-hooks-off` (common git dir, shared by every worktree). Lines: `<unix-expiry> <hook|all>`.\n\nEasier: run from any terminal in repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nWrites it for you. Note: hooks fire from plugin cache copy, but state file lives in repo `.git`, so this mutes them.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Neither file exists on disk: not `R:\\arc\\HOOKS_OFF.txt`, not `R:\\arc\\.git\\arc-hooks-off`. Unsaved, or wrong place.\n\nKill switch file is `R:\\arc\\.git\\arc-hooks-off`, one line:\n\n```\n<unix-epoch-expiry> all\n```\n\nSimpler: run from any terminal in the repo:\n\n```\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Hidden `.git/arc-hooks-off` with epoch lines is unfindable by hand.\n\nSuggest: `HOOKS_OFF` file at repo root, gitignored. Exists means all hooks mute. Delete to restore. No timer, no script.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "You've hit your weekly limit · resets 9am (America/New_York)",
+   "cut": "error",
+   "fired": []
+  }
+ }
+}

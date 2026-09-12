@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Re-read the hook. It allows with a message, never denies. Problem 2 withdrawn.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Hook no longer exits 2. Comment describes old bug; `report()` now allows, exit 0.\n\nLost the label and permission items from earlier context. Restate them, then I'll draft the direct PR.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Both fixes already merged: branch-guard reads the agreement's prefix and accepts `pr200` branches; camp-session-start allows. Nothing left to PR.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Can't set autonomous; only you can, in HANDOFF.md. No PR needed: fixes already merged.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already does both: reads agreement's prefix, accepts `pr200` branches.\n\nKill switch: keep `hooks-off.sh`, it's already the one-command version. Drop nothing.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Branch guard already handles both. Kill switch already replaced by `hooks/hooks-off.sh <hook> 30`, expiring. Nothing to fix.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, that's its purpose. But nothing is blocking now; fixes already merged.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. Run the script; it writes `.git/arc-hooks-off` itself:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` is ignored; no `.git/arc-hooks-off` exists. Run the script from `r:\\arc`.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Simpler: honour a plain `HOOKS_OFF` file at repo root too. Want that filed?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "No Edit tool in this session; cannot write it. Row belongs in arc-log §6.3.2 Spawned, Fire: \"kill switch redesign, per-hook, discoverable\".",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

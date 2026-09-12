@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "`camp-session-start` documents itself as a warning but its exit code denies the tool call.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer does. Both copies exit 0 with an explicit allow; the comment records the old bug.\n\n**Decision needed.** Which label fix and permission fix? Neither is in this worktree's changes or handoff.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. No shell tool this session, so no git or gh. And the label and permission fixes are still unnamed.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot. Only you set autonomous; I may only set manual. Also no shell tool here, so no PR anyway.\n\nFix both in a fresh session: set `HANDOFF.md` mode row yourself, then name the label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both already built in `hooks/branch-guard`: `*-pr[0-9]*` counts as work, and the prefix is read from the agreement.\n\nKill switch: drop the per-hook timed script and the chat ritual. Keep only the global `~/.claude/HOOKS_OFF` file.\n\n| Keep | Drop |\n|---|---|\n| `~/.claude/HOOKS_OFF` file, touch to mute all | `hooks-off.sh <hook> 30`, expiry, status, clear |\n| Fail-open exit 0 | \"Say the kill switch in chat\" rule |\n| `git revert` per hook | Kill-switch line in every hook header |",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session is read-only: no Edit, Write or Bash tools loaded. Nothing can change here.\n\nRestart the session with tools, then say \"do the kill-switch simplification\" and I will.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; here the tools are absent from the session entirely. The kill switch cannot add tools. Likely a launch flag or permission profile, not Arc.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "The global mute file goes at `C:\\Users\\class\\.claude\\HOOKS_OFF`. Empty file, any content. Delete it to re-enable.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong path and name: it must be `C:\\Users\\class\\.claude\\HOOKS_OFF` with no `.txt`. And tools are still absent, so it would not help this session anyway.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. One file, one path, no expiry, documented in one place. That is the whole fix, next session with tools.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write it here. Paste this into the cleanup issue:\n\n```markdown\n## Hook kill switch is global and clumsy\n\nDefect: `~/.claude/HOOKS_OFF` mutes every hook in every repo. The per-hook `hooks-off.sh <hook> 30` needs a name, a timer and a chat ritual, and its path is easy to get wrong.\n\nRequired work:\n- [ ] One switch, per repository, no expiry: a file under `.git/` (e.g. `.git/arc-hooks-off`), never committed\n- [ ] Every hook checks it first, via `lib/hooks-off` only\n- [ ] Drop the timed script, `status`, `clear`, and the \"say the kill switch in chat\" rule\n- [ ] `hooks/TEMPLATE` and CLAUDE.md updated to the single form\n\nConstraint: fail-open stays. One hook per commit, verify output in the body.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}
