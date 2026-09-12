@@ -1,6 +1,6 @@
 # response-length-rank.py — rank two candidate wordings of a skill across MANY probe runs.
 #
-#   tools/response-length-rank.sh A=<dir> B=<dir> [--case <name>]
+#   python tools/response-length-rank.py A=<dir> B=<dir> [--case <name>] [--eval-dir <dir>]
 #   python tools/response-length-rank.py selftest
 #
 # WHY THIS EXISTS. tools/response-length.sh --probe scores ONE run. #158 compared two skills at

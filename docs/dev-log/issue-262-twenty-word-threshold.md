@@ -73,17 +73,22 @@ at these n the approximation's tail is wrong by enough to change the answer.
 
 | | n | U | exact p | Ranked |
 |---|---|---|---|---|
-| B against A | 9 vs 10 | 50.0 of 90 | **0.72** | **No.** The two wordings do not differ |
+| B against A | 9 vs 10 | 50.0 of 90 | **0.72** | **No** — and *not distinguishable* is all it licenses. Nothing here bounds how large a difference these n could have missed |
 | C against A | 10 vs 10 | 88.5 of 100 | **0.0021** | **C** |
 | C against B | 10 vs 9 | 78.0 of 90 | **0.0057** | **C** |
 | **D against A** | 10 vs 10 | 89.0 of 100 | **0.0021** | **D** — the file that ships, against the control |
 | D against C | 10 vs 10 | 48.0 of 100 | **0.91** | **No**, and that is the claim: correcting C's own figures changed its behaviour by nothing measurable |
 
-**The count is n = 10 on A and C and n = 9 on B, and it is enough.** Complete separation at 10
-against 10 reaches `p = 0.0001`; B against A is not close to separating at any count this
-instrument could pay for, because the effect is not there. [#213](https://github.com/Calyx-Engineering/arc/issues/213)'s
-constraint asked for a count that could rank two wordings — this one ranks three, and says which
-pair cannot be ranked because they are the same.
+**The count is n = 10 on A, C and D, and n = 9 on B, and it is enough to rank.** Complete
+separation at 10 against 10 reaches `p = 0.0001`, and three pairs rank at `p ≤ 0.006`.
+[#213](https://github.com/Calyx-Engineering/arc/issues/213)'s constraint asked for a count that
+could rank two wordings; this one ranks three.
+
+**It is not enough to call B and A the same.** `p = 0.72` says these runs do not separate them,
+and no equivalence bound is computed anywhere here, so nothing licenses *the effect is not
+there* over *this design did not find one*. What can be said is narrower and still useful: the
+reorder bought a large, obvious change in firing — 4 of 10 to 9 of 9 — and no change in score
+that ten runs a side could see.
 
 ### The suite
 
@@ -163,6 +168,13 @@ the run count.** It reported *no overlap* — fired 0.36–0.91, did not fire 0.
 side. At n=39 the two ranges are 0.09–1.00 and 0.09–0.91: they overlap almost entirely. The
 single widest-scoring run in arm A, 0.91, is a run where the skill never fired.
 
+**Within arm A, the only place the contrast is not confounded with the wording, it is weak.**
+Four runs fired and six did not, on identical files: 0.27 / 0.36 / 0.45 / 0.45 against 0.09 /
+0.09 / 0.18 / 0.27 / 0.30 / **0.91**. `U=18.5`, `p=0.17`. It points the same way as the pooled
+figure and does not reach significance, and the single best run of the ten is on the non-firing
+side. This is the cleanest test of #213's claim the tree contains, and it is the one the pooled
+split was standing in for.
+
 **What it does do is put the body in context.** C's rule is in the `description:` *and* the
 body, and no arm separates the two, so nothing here shows which of them carries the gain —
 C-draft against C is the only body-only contrast in the tree and it is null. Building C on B's
@@ -186,7 +198,7 @@ files quoted the marker back, and each arm quoted its own opening words.
 | | |
 |---|---|
 | **The spread has not closed** | Ten identical runs of the shipped arm span 0.40 to 1.00. All five of its suite runs pass and the pooled figure clears the threshold, but arm C's fifth suite run scored 0.60 and failed, and nothing here makes five passes evidence that the next one will |
-| **n = 10 on A and C, 9 on B** | Enough to rank C against both others at `p < 0.006`, and enough to say A and B do not differ. Not enough to put an interval on any single arm's rate |
+| **n = 10 on A, C and D, 9 on B** | Enough to rank three pairs at `p ≤ 0.006`. **Not** enough to put an interval on any arm's rate, and not enough to turn B-against-A's `p = 0.72` into equivalence — no minimum detectable effect is computed anywhere here |
 | **The firing split is observational** | Nothing here randomises firing. Runs are grouped by something the run did, so a difference is an association — which is exactly the reading [#213](https://github.com/Calyx-Engineering/arc/issues/213) took further than it should have been taken |
 | **The probe can read the tree it runs in** | `Read`, `Grep` and `Glob` are allowed so the turns can be answered, and the worktree held arm C's `SKILL.md` throughout. No turn in the case asks about `chat-response` and no reply quoted it, but a run could in principle have read a skill other than the one `--plugin-dir` gave it |
 | **The 60-word case is five runs** | 44/47 · 0.94 on the shipped arm. No matched control, so it is a candidate-side number |
@@ -196,7 +208,7 @@ files quoted the marker back, and each arm quoted its own opening words.
 
 | Finding | Where it routes |
 |---|---|
-| **Firing is not the lever, and #213's split was a small-n artefact.** Fired 0.09–1.00 against did not fire 0.09–0.91, n=29 — overlapping, where #213 reported no overlap at n=4 either side. Arm B saturated firing and moved nothing. #213's third box called it *a finding to test, not a proven mechanism*; tested, it does not hold | Answered here. The claim is **not** propagated into `skills/chat-response` |
+| **Firing is not the lever, and #213's split was a small-n artefact.** Fired 0.09–1.00 against did not fire 0.09–0.91, n=39 — overlapping, where #213 reported no overlap at n=4 either side. Arm B saturated firing and moved nothing. #213's third box called it *a finding to test, not a proven mechanism*; tested, it does not hold | Answered here. The claim is **not** propagated into `skills/chat-response` |
 | **The skill carried a measurement of its own previous version.** Its body described a 58-word median breach — true of the skill before #213's undershoot rule, false of the skill that shipped from it, where the breach is 30. A rule aimed at a 3× overrun was being given to a model overrunning by 30%, and correcting the aim is most of this issue's gain | Fixed in this PR. **A skill that quotes a measurement of itself goes stale the moment it works**, and nothing checks for it — needs an issue |
 | **A candidate skill could not be measured without mutating a machine-wide singleton.** `claude plugin install` writes one cache directory shared by every session; the `calyx-engineering` marketplace is a directory source pointing at the main checkout, so a worktree could not install its own branch at all. `--plugin-dir` plus a generated settings file replaces it | Done in this PR. `tools/response-length.sh` |
 | **Ten identical runs of the shipped skill span 0.40 to 1.00.** The floor rose from 0.09 and the range did not close. The threshold is met on the pooled figure and on the median; run-to-run variance of that size is untouched by anything in this issue, and it is what stands between *clears the threshold* and *holds the budget* | Needs an issue. It is the next question after this one |
