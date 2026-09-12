@@ -44,6 +44,28 @@ BUDGET = os.environ.get("RL_PROBE_BUDGET", "0.60")
 TIMEOUT = int(os.environ.get("RL_PROBE_TIMEOUT", "600"))
 CWD = os.environ.get("RL_PROBE_CWD") or os.getcwd()
 
+# WHICH COPY OF THE PLUGIN THE PROBE MEASURES — #262.
+#
+# Without these, a probe measures whatever `claude plugin install` last wrote into
+# ~/.claude/plugins/cache, and that is a machine-wide singleton. Two consequences, and the
+# second is the one that cost this issue its design:
+#
+#   The candidate has to be installed to be measured, so comparing two wordings means
+#   installing one, running, installing the other, running — and the marketplace entry for
+#   this plugin is a DIRECTORY source pointing at the main checkout, so a worktree cannot
+#   install its own branch at all without first pushing it through the main tree.
+#
+#   Every other session on the machine reads the same cache. Four arc worktrees were live
+#   while #262 ran. Installing a candidate skill to measure it changes how they all behave,
+#   and any of them reloading the plugin mid-run silently swaps the arm being measured.
+#
+# --plugin-dir loads a plugin from a directory FOR ONE SESSION. RL_PROBE_SETTINGS carries a
+# settings file disabling the installed copy of the same plugin, so the session sees one
+# chat-response rather than two. Verified 2026-09-11 from this worktree: with a marker word
+# prepended to the arm's `description:`, the session quoted the marker back.
+PLUGIN_DIR = os.environ.get("RL_PROBE_PLUGIN_DIR", "")
+SETTINGS = os.environ.get("RL_PROBE_SETTINGS", "")
+
 # Comma-separated, as ONE argument each. --allowedTools and --disallowedTools are both
 # variadic, so two of them space-separated on the same command line run together and the
 # second flag's names get read as the first's. The comma form has no such edge.
@@ -66,6 +88,14 @@ def run(prompt, session, first):
            "--permission-mode", "manual", "--max-budget-usd", BUDGET]
     cmd += ["--session-id", session] if first else ["--resume", session]
     cmd += ["--allowedTools", ALLOW, "--disallowedTools", DENY]
+    # Both flags go on EVERY turn, not only the first. --resume continues a conversation, it
+    # does not restore the flags the session was opened with, so a second turn without them
+    # would answer out of the installed plugin while the first answered out of the arm — and
+    # the decay this instrument exists to measure would be a change of skill halfway through.
+    if PLUGIN_DIR:
+        cmd += ["--plugin-dir", PLUGIN_DIR]
+    if SETTINGS:
+        cmd += ["--settings", SETTINGS]
 
     p = subprocess.Popen(cmd, cwd=CWD, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
                          stdin=subprocess.DEVNULL, text=True, encoding="utf-8",

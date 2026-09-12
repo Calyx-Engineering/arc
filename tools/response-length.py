@@ -552,4 +552,10 @@ def main():
     raise SystemExit(1 if (drift or (missing and strict)) else 0)
 
 
-main()
+# IMPORTED BY tools/response-length-rank.py, WHICH IS WHY main() IS GUARDED. #262 needed a
+# second consumer of this file's scoring — prose_words, thin_floor, verdicts and read_case —
+# to rank two candidate wordings over many runs. The alternative was a second copy of the
+# counter, the floor and the CUT rule, and the moment they disagree the ranking and the suite
+# score are measuring different things while both call themselves "within budget".
+if __name__ == "__main__":
+    main()

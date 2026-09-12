@@ -5,7 +5,14 @@
 #   tools/response-length.sh              replay the transcripts the cases came from
 #   tools/response-length.sh --strict     also fail when a case's transcript is not on this machine
 #   tools/response-length.sh --probe      re-run the turns live against the installed plugin
+#   tools/response-length.sh --probe --plugin-dir <dir>
+#                                         ...against the plugin in <dir> instead, for this
+#                                         session only, with the installed copy disabled
 #   tools/response-length.sh selftest     fixtures only, no corpus needed
+#
+#   Ranking two wordings needs many runs and something to aggregate them:
+#     tools/response-length.sh --probe --plugin-dir armA --case <c>   (RL_PROBE_OUT per run)
+#     python tools/response-length-rank.py A=runs/armA B=runs/armB
 #
 #   RL_PROBE_OUT=path   keep the probe's raw replies instead of losing them with the temp
 #                       directory, so a billed run can be re-scored after the scorer changes
@@ -51,6 +58,7 @@ SELFTEST=0
 PROBE=0
 RUNS=1
 ONLY=""
+PLUGIN_DIR=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -59,8 +67,9 @@ while [ "$#" -gt 0 ]; do
     --probe) PROBE=1 ;;
     --runs) RUNS="${2:-1}"; shift ;;
     --case) ONLY="${2:-}"; shift ;;
+    --plugin-dir) PLUGIN_DIR="${2:-}"; shift ;;
     --threshold) RL_THRESHOLD="${2:-0.67}"; export RL_THRESHOLD; shift ;;
-    -h|--help) sed -n "2,41p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,50p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -428,8 +437,51 @@ if [ -n "${RL_PROBE_OUT:-}" ]; then
     exit 2
   fi
 fi
-echo "response-length --probe — ${RUNS} run(s) per case, live against the INSTALLED plugin"
-echo "Run tools/plugin-reload.sh first or this measures the version before your edit."
+# ---- which copy of the plugin gets measured, #262 ----------------------------------
+# --plugin-dir <path> loads the plugin AT THAT PATH for the probe's sessions only, and writes a
+# settings file turning off every installed copy of the same plugin name so the session sees
+# one chat-response rather than two. Without it the probe measures ~/.claude/plugins/cache,
+# which is one directory shared by every session on the machine: a worktree cannot install its
+# own branch there (the marketplace source is a directory pointing at the main checkout), and
+# installing a candidate to measure it changes what every other live session is running.
+#
+# A DIRECTORY THAT IS NOT A PLUGIN IS REFUSED BEFORE A TURN IS BILLED, the same trade as the
+# RL_PROBE_OUT check above: `claude` would start anyway, silently serve the installed plugin,
+# and the whole run would be a measurement of the wrong arm with nothing in the output saying so.
+if [ -n "$PLUGIN_DIR" ]; then
+  if [ ! -f "$PLUGIN_DIR/.claude-plugin/plugin.json" ]; then
+    echo "--plugin-dir $PLUGIN_DIR has no .claude-plugin/plugin.json — that is not a plugin" >&2
+    exit 2
+  fi
+  PLUGIN_NAME="$(python -c "import io,json,sys;print(json.load(io.open(sys.argv[1],encoding='utf-8')).get('name',''))" "$PLUGIN_DIR/.claude-plugin/plugin.json")"
+  [ -n "$PLUGIN_NAME" ] || { echo "$PLUGIN_DIR/.claude-plugin/plugin.json names no plugin" >&2; exit 2; }
+  # A directory rather than `$(mktemp).json`, which leaves the mktemp'd file behind under a
+  # name nothing ever opens. `claude --settings` wants a path it can read; the name inside is
+  # fixed so a failed run leaves one findable file rather than a scatter.
+  RL_PROBE_SETTINGS="$(mktemp -d -t rl-probe-settings.XXXXXX)/settings.json"
+  python - "$PLUGIN_NAME" "$RL_PROBE_SETTINGS" <<'PYOFF'
+import io, json, os, sys
+name, out = sys.argv[1], sys.argv[2]
+# Every INSTALLED entry whose plugin half matches, across every marketplace — the key is
+# "<plugin>@<marketplace>" and only the plugin half is the thing --plugin-dir is replacing.
+# A machine with no installed_plugins.json has nothing to disable, which is not an error.
+off, path = {}, os.path.join(os.path.expanduser("~"), ".claude", "plugins", "installed_plugins.json")
+try:
+    for key in json.load(io.open(path, encoding="utf-8")).get("plugins", {}):
+        if key.split("@")[0] == name:
+            off[key] = False
+except Exception:
+    pass
+json.dump({"enabledPlugins": off}, io.open(out, "w", encoding="utf-8"))
+print("  plugin %s from %s; installed copies disabled: %s"
+      % (name, sys.argv[1], ", ".join(sorted(off)) or "none"))
+PYOFF
+  export RL_PROBE_PLUGIN_DIR="$PLUGIN_DIR" RL_PROBE_SETTINGS
+  echo "response-length --probe — ${RUNS} run(s) per case, live against $PLUGIN_DIR"
+else
+  echo "response-length --probe — ${RUNS} run(s) per case, live against the INSTALLED plugin"
+  echo "Run tools/plugin-reload.sh first or this measures the version before your edit."
+fi
 echo
 
 for CASEDIR in $(find "$EVAL_DIR" -name case.yaml | sort); do
