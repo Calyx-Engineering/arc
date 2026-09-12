@@ -95,7 +95,7 @@ default branch.** Three states are measured, and they are all that is known:
 |---|---|---|
 | Never the default | **No** — not at open, not at merge, not on re-save | #323, above |
 | The default throughout | Yes, and a re-save after the merge binds too | [m42](m42-default-branch-flip.md) 2026-08-17; [`merged-pr-keyword-bind.md`](../../../tests/tracker-cases/binding/merged-pr-keyword-bind.md) 2026-09-07 |
-| Became the default after the PR merged | **No** — the flip did not re-parse, and a re-save did not rescue | m42 2026-08-17, five PRs. ROADZ's CLAUDE.md claims a re-save does rescue in that repository; not re-run |
+| Became the default after the PR was opened | **No** — the flip did not re-parse, and a re-save did not rescue | m42 2026-08-17, five PRs. ROADZ's CLAUDE.md claims a re-save does rescue in that repository; not re-run |
 
 The ROADZ table above is the second and third rows seen from one repository, not a third rule.
 

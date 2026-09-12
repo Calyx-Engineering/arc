@@ -497,7 +497,7 @@ the UI, which needs a human and cannot run unattended. This can.
 **A PR whose base was never the default branch.** The keyword cannot bind at all, so there is
 nothing for a re-save to re-parse — the base-branch rule above is not a timing problem and no
 edit gets around it. Measured, not inferred: #323's unchanged re-save after the merge read
-`[]` on every poll. **The fix is *The manual route* above** — the click and the close, which
+`[]` on every poll — [`never-default-base-keyword.md`](../../tests/tracker-cases/binding/never-default-base-keyword.md). **The fix is *The manual route* above** — the click and the close, which
 work on any base and need no admin right. It is the same route whether the keyword was missed
 or could never have bound.
 
