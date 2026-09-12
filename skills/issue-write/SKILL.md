@@ -621,8 +621,8 @@ keyword entirely:
 **This trap shipped a defect while this section was loaded and read.** Prose does not stop
 it, so the rule is placement rather than phrasing: keywords only in the closing block — the
 final lines, one keyword per line and nothing else on them; one line for one issue, one line
-per issue for several — checked by `tests/verify-tracker-body.sh body` before the write. Escaping the keyword is a workaround
-for writing *about* the trap in a document, not a fix.
+per issue for several — checked by `tests/verify-tracker-body.sh body` before the write.
+Escaping the keyword is a workaround for writing *about* the trap in a document, not a fix.
 
 ### Hand-attached links are separate from body keywords
 
