@@ -28,4 +28,5 @@
 | `R--arc-wt-report` | `R:/arc-wt/report` | `arc/04-dogfood` | - | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | live |
 | `R--arc-wt-260` | `R:/arc-wt/260` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
 | `R--arc-wt-266` | `R:/arc-wt/266` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
-| `R--arc-wt-134` | `R:/arc-wt/134` | `detached` | - | - | 2026-09-09 to 2026-09-09 | live |
+| `R--arc-wt-134` | `R:/arc-wt/134` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-262` | `R:/arc-wt/262` | `detached` | - | - | 2026-09-11 to 2026-09-11 | live |
