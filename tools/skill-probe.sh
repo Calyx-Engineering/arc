@@ -111,6 +111,8 @@ elif mode == "garbage":
     print("this is not json")
 elif mode == "schemaless":
     print(json.dumps({"cut": "", "retried": "", "unusable": ""}))
+elif mode == "twothirds":
+    print(json.dumps(good if c < 2 else dict(good, fired=[])))
 else:
     print(json.dumps(good))
 FAKE
@@ -191,6 +193,13 @@ FAKE
   want "a fully measured suite exits 0"              "status 0" "status $ST"
   probe bad --runs 1 >/dev/null 2>&1; ST=$?
   want "a halted suite exits 2"                      "status 2" "status $ST"
+
+  # #315: `0.67` is this repo's shorthand for two-thirds, and `2/3` is `0.6666...` — a bare
+  # `>=` against the raw rate rejected the exact ratio the constant was named for. Case aaa
+  # fires on the first two of its three runs and misses the third, a genuine 2/3 with nothing
+  # unusable, so this must read PASS, not FAIL.
+  O="$(probe twothirds --runs 3)"
+  want "a 2 of 3 firing rate clears the 0.67 threshold" "handoff                              PASS  2/3" "$O"
 
   echo
   echo "$RUN cases, $PASSED passed, $FAILED failed"
@@ -350,7 +359,11 @@ for CASEDIR in $(find "$EVAL_DIR" -name case.yaml | sort); do
     done <<EOF
 $RUNLOG
 EOF
-    VERDICT="$(python -c "import sys; h=$HIT; n=$DONE; print('PASS' if n and h/n >= $THRESHOLD else 'FAIL')")"
+    # #315: `0.67` is this repo's shorthand for two-thirds, and `2/3` is `0.6666...` — a bare
+    # `>=` rejected the exact ratio the constant was named for. Rounded to the threshold's own
+    # two decimal places before comparing, matching `tools/report-grade.py` and
+    # `tools/report-shape-probe.sh`, which make the same comparison.
+    VERDICT="$(python -c "import sys; h=$HIT; n=$DONE; print('PASS' if n and round(h/n, 2) >= round($THRESHOLD, 2) else 'FAIL')")"
     printf '    %-36s %s  %d/%d%s\n' "$SK" "$VERDICT" "$HIT" "$DONE" \
       "$([ "$DONE" -lt "$RUNS" ] && printf '   (%d of %d runs measured)' "$DONE" "$RUNS")"
     TALLY="${TALLY}${SK} ${HIT} ${DONE}

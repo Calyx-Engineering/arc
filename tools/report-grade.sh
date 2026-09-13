@@ -608,6 +608,37 @@ if [ "$SELFTEST" = "1" ]; then
     echo "  FAIL  --threshold reaches the scorer"; F=$((F+1))
   fi
 
+  # #315: `0.67` is this repo's shorthand for two-thirds, and a bare `>=` against the raw rate
+  # rejected the exact ratio the constant was named for. Three cases, one column each with a
+  # 2/3 rate (opening 2 CONCLUSION + 1 NARRATIVE, tables 2 ROWS + 1 NONE, conflict 2 RESOLVED +
+  # 1 SILENT) at the default threshold — every column has to read PASS, or the rounding fix in
+  # tools/report-grade.py has regressed.
+  TT="$T/twothirds"; mkdir -p "$TT"
+  mk2() {
+    mkdir -p "$TT/$1/graders"
+    printf 'corpus: fixture\ndocument: docs/%s.md\nlines: %s\n' "$1" "$2" > "$TT/$1/case.yaml"
+    printf '# grader\n' > "$TT/$1/graders/conclusion-first.md"
+  }
+  mk2 tt1 1-6
+  printf '# A title\n\n**Status:** current\n\n## 1. Findings\n\n| Claim | Provenance |\n|---|---|\n| It works | measured |\n' \
+    > "$TT/tt1/excerpt.md"
+  mk2 tt2 1-6
+  printf '# A title\n\n**Status:** current\n\n## 1. Findings\n\n| Claim | Provenance |\n|---|---|\n| It works | measured |\n' \
+    > "$TT/tt2/excerpt.md"
+  mk2 tt3 1-6
+  printf '# A title\n\n## Background\n\nThis describes the session.\n\n| Claim | Value |\n|---|---|\n| It works | yes |\n' \
+    > "$TT/tt3/excerpt.md"
+  ttout="$(RG_CORPUS_DIR="$T/nowhere" RG_EVAL_DIR="$TT" python "$HERE/report-grade.py" 2>&1)"
+  if printf '%s' "$ttout" | grep -qE "opens with the conclusion +2/3" \
+     && printf '%s' "$ttout" | grep -qE "table rows carry a source +2/3" \
+     && printf '%s' "$ttout" | grep -qE "conflicts resolved out loud +0/0" \
+     && printf '%s' "$ttout" | grep -qE "^verdict +PASS"; then
+    echo "  PASS  a 2/3 rate clears the 0.67 threshold, not just close to it"; P=$((P+1))
+  else
+    echo "  FAIL  a 2/3 rate clears the 0.67 threshold, not just close to it"; F=$((F+1))
+    printf '%s\n' "$ttout" | sed 's/^/        /'
+  fi
+
   echo
   echo "$P passed, $F failed"
   [ "$F" = "0" ] || exit 1

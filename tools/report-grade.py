@@ -824,8 +824,16 @@ def main():
     # Every column that has anything in its denominator has to clear the threshold. A suite
     # that passed on the average of three questions would let a fixed opening hide an unsourced
     # table, which is the two halves of this suite reporting each other's work as their own.
+    #
+    # ROUNDED TO THE THRESHOLD'S OWN PRECISION, NOT COMPARED RAW. #315: `0.67` is this repo's
+    # shorthand for two-thirds, printed to two places, and `2/3` is `0.6666...` — below it by
+    # more than floating-point noise, so a bare `>=` rejected the exact ratio the constant was
+    # named for. Rounding both sides to the threshold's own two decimal places is the tolerance
+    # that follows from what `0.67` already claims to mean: `round(2/3, 2) == round(0.67, 2)`.
+    # The same fix is applied in the same commit to `tools/skill-probe.sh` and
+    # `tools/report-shape-probe.sh`, which make this comparison too.
     cols = [(denom, rate), (tdenom, trate), (cdenom, crate)]
-    ok = any(d for d, _ in cols) and all(r >= threshold for d, r in cols if d)
+    ok = any(d for d, _ in cols) and all(round(r, 2) >= round(threshold, 2) for d, r in cols if d)
     print("%-32s %s" % ("verdict", "PASS" if ok else "FAIL"))
     print()
     print("A rate here is a property of the DOCUMENTS, not of a skill. Whether")
