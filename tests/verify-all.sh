@@ -130,6 +130,9 @@ run_gate "report shape probe loop cases" bash tools/report-shape-probe.sh selfte
 run_gate "handoff opening cases" bash tools/handoff-openings.sh selftest
 run_gate "skill eval cases" bash tools/skill-cases.sh selftest
 run_gate "response length cases" bash tools/response-length.sh selftest
+# The case-level stop-and-retry rule response-length-probe.py runs on, ported from
+# tools/skill-probe.py's own with_retry() above. No `claude`, no billing — #297.
+run_gate "response length probe cases" python tools/response-length-probe.py selftest
 # The ranker's selftest, on synthetic probe JSON — no `claude`, no corpus, no bill, and
 # nothing here that a billed run could be repeated to check. #262 added it because the
 # three things it has to get right are all invisible in a terminal: that a run destroyed
