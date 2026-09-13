@@ -5,11 +5,6 @@ candidates run against one real skill — `skills/record-route/SKILL.md`, 213 bo
 against the whole tree wherever a candidate runs on it. Line counts measured on `skills/`, per
 [#90](https://github.com/Calyx-Engineering/arc/issues/90)'s constraint.
 
-**Every count here moves as the skills are edited, and one already did** — `issue-write` gained 30
-lines mid-run from a merge into the base. The reproducible number is
-`bash tools/verify-skill-length.sh`; the tables below are that command's answer on 2026-09-13, and
-a reader who finds them stale should trust the command.
-
 > **No installed tool reviews a skill.** Both authoring tools are shaped to rewrite one, and the
 > only candidate that read the body scored Arc's house style as defects. What Arc adopts is one
 > instrument applied statically, one mechanical pre-pass that is free, and a named list of
@@ -103,6 +98,25 @@ one is evidence; the other twelve either route out of it or were already decided
 should expect — **a static reviewer's largest output class on an Arc skill is house style**, which
 is why §4.1 is read before §1.
 
+### 2.3 The writing arm's 6 findings
+
+The other half of the comparison, so 17 against 6 is auditable rather than asserted. **Only the
+first is reproducible without a model or a person** — which is the whole reason this arm is the
+writer and not the reviewer.
+
+| Finding | Bucket | Reproducible |
+|---|---|---|
+| Frontmatter is not parseable YAML — a `: ` inside an unquoted `description` | **C** | **Yes** — `python quick_validate.py skills/record-route`, exit 1 |
+| Three frontmatter keys outside the spec's allowed set | **C** | **Yes** — same run |
+| No `evals/evals.json`; the instrument treats test cases as part of the artifact | **E** | No |
+| No `scripts/` despite prescribing a repeated mechanical procedure | **C** | No |
+| `tools/new-direct-pr.sh` cited with no `compatibility` declaring the dependency | **J** | No |
+| Description is not "pushy" in the instrument's sense | **D** | No — [#155](https://github.com/Calyx-Engineering/arc/issues/155) settled the wording by measurement |
+
+**`quick_validate.py` reports at most one finding per run** — it returns on the first failure — so
+the first two rows are one invocation each. The remaining four came from the arm reading the
+instrument and the target, which is a model run; nothing in the tree derives them.
+
 ## 3 The length limit
 
 **500 lines** of SKILL.md **body**, frontmatter excluded —
@@ -114,6 +128,18 @@ the dev-logs for [#42](https://github.com/Calyx-Engineering/arc/issues/42) and
 [#73](https://github.com/Calyx-Engineering/arc/issues/73), where it records what was true when
 they were written and stays. There is nothing to delete, so the retirement is this section plus
 `tests/verify-skill-method.sh`, which fails if a live artifact ties a limit to 180 again.
+
+**Every count here moves as the skills are edited, and one already did** — `issue-write` gained 30
+lines mid-run from a merge into the base, so a reader who finds a number below stale should
+re-measure rather than trust it. Two commands, and they answer different questions:
+
+```sh
+bash tools/verify-skill-length.sh   # the verdict: which skills are over, counting the FILE
+awk 'f{n++} /^---$/{c++; if(c==2) f=1} END{print FILENAME, n}' skills/*/SKILL.md  # body lines, all 13
+```
+
+The §3 table is the second command's answer on 2026-09-13. The gate is the first, and it prints
+only the skills it finds over — never the eleven it passes.
 
 | | Body lines | |
 |---|---|---|

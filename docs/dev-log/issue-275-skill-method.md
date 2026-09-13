@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#275](https://github.com/Calyx-Engineering/arc/issues/275)  ·  **PR:** filled in when it opens
+**Issue:** [#275](https://github.com/Calyx-Engineering/arc/issues/275)  ·  **PR:** [#345](https://github.com/Calyx-Engineering/arc/pull/345)
 
 ## Problem
 
@@ -16,7 +16,7 @@ in two dev-logs and in no live artifact, and eleven of thirteen skills exceeded 
 |---|---|
 | **What this issue is really for** | To make the five review issues below it comparable. Without one method they produce five differently shaped answers about thirteen skills, and nothing can be read across them |
 | **North star** | A session about to edit a skill knows which tool to reach for, what the limit is, and what will report on it — without reading this document |
-| **What makes it durable** | The decision is named in a hook that fires on the write, not in prose. `tests/verify-skill-method.sh` fails if the decision record loses a decision, or if 180 comes back |
+| **What makes it durable** | `tests/verify-skill-method.sh` fails if the decision record loses a decision — anchored on the tools and the buckets named, not on the labels above them — or if a live artifact ties a limit to 180 again. The hook that fires on the write is named in §5 and **does not exist yet**; it lands with #282 |
 | **Out of scope** | Reviewing any skill — #277–#281. Building the length gate — #276, which merged mid-run. Writing the `CLAUDE.md` line or the hook — #282. Fixing the frontmatter the trial found broken — #338, filed. Each exclusion is a filed issue in the same workstream, so none of them is lost by being out of this unit |
 
 ## Decisions & trade-offs

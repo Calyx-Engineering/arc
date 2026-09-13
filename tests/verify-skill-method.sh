@@ -4,14 +4,15 @@
 #   tests/verify-skill-method.sh            check this repository
 #   tests/verify-skill-method.sh selftest   fixtures only
 #
-# WHY THIS EXISTS. #275 settles four things: which tool reviews a skill, which writes one, that
-# the length limit is 500 lines and not 180, and what fires when a skill changes. All four are
-# decisions, and a decision with no gate is a sentence in a document nobody re-reads. Eleven of
+# WHY THIS EXISTS. #275 settles which tool reviews a skill, which writes one, the four buckets a
+# skill's rules route into, that the length limit is 500 lines and not 180, and what fires when a
+# skill changes. Each is a decision, and a decision with no gate is a sentence in a document
+# nobody re-reads. Eleven of
 # thirteen skills sat over the old limit for weeks because the limit was written down and read by
 # nothing — the same failure this file exists to not repeat about the method itself.
 #
 # WHAT IT CHECKS, AND WHAT IT DELIBERATELY DOES NOT. It checks that the decision record exists
-# and still carries all four decisions, and that no live artifact contradicts the retirement by
+# and still carries every decision, and that no live artifact contradicts the retirement by
 # asserting a 180-line limit. It does NOT measure any skill's length: that is #276's
 # `tools/verify-skill-length.sh`, and two gates reporting the same number is how they drift.
 #
@@ -30,18 +31,21 @@ SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 
 DOC="docs/arc-work/04-dogfood/skill-method-decision.md"
 
-# The four decisions, as a grep-able claim each. A heading would be the obvious anchor, but a
-# heading is renamed in a tidy-up and the check then reports a missing decision that is present.
-# These are the words the decision itself is made of, which cannot be reworded without changing
-# what was decided.
+# EACH PATTERN MATCHES THE DECISION, NOT THE LABEL IT SITS UNDER. An earlier draft anchored on
+# `^\| \*\*Reviews a skill\*\*` and on the heading `^## 5 The keeper`, and got both halves
+# backwards: every tool name in the document could be replaced with `TBD` and the gate still
+# reported all decisions present, while renumbering a heading in a tidy-up failed it. So a pattern
+# names the thing chosen — `writing-skills`, `skill-creator`, `hooks/skill-guard` — which cannot be
+# reworded without changing what was decided, and no pattern depends on a section number.
 #
 # tab-separated: label <TAB> extended regex
 DECISIONS="$(cat <<'EOF'
-review tool	^\| \*\*Reviews a skill\*\*
-write tool	^\| \*\*Writes a skill\*\*
+review tool	^\| \*\*Reviews a skill\*\*.*writing-skills
+write tool	^\| \*\*Writes a skill\*\*.*skill-creator
 the 500-line limit	\*\*500 lines\*\*
 180 retired	180.*[Rr]etired|[Rr]etired.*180
-the keeper	^## 5 The keeper
+the four buckets	^\| \*\*D\*\* \| \*\*Deviation\*\*
+the keeper	hooks/skill-guard
 EOF
 )"
 
@@ -62,7 +66,9 @@ selftest() {
   # than literal quotes, so a TMPDIR holding a quote cannot break the trap open.
   trap "rm -rf $(printf %q "$tmp")" EXIT
 
-  # a complete decision record, as the fixture's starting point
+  # A COMPLETE DECISION RECORD, and every line of it is load-bearing. The fixture names the real
+  # tools because the patterns match the tools, not the labels — a fixture saying `something` would
+  # go red and take every case with it.
   good_doc() {
     cat <<'EOF'
 # The skill-writing method
@@ -71,16 +77,22 @@ selftest() {
 
 | | Tool |
 |---|---|
-| **Reviews a skill** | something |
-| **Writes a skill** | something else |
+| **Reviews a skill** | superpowers `writing-skills`, applied statically |
+| **Writes a skill** | `skill-creator` |
 
 ## 2 Length
 
 **500 lines** of body. The 180-line working limit is retired.
 
+## 4 The buckets
+
+| | Bucket | Where it goes |
+|---|---|---|
+| **D** | **Deviation** — flagged and kept anyway | Recorded once |
+
 ## 5 The keeper
 
-a hook.
+`hooks/skill-guard`, on the write.
 EOF
   }
 
@@ -120,9 +132,25 @@ EOF
   assert_case 1 "the record is missing" "$r" \
     "FAIL  the decision record"
 
-  r="$tmp/nokeeper"; build_root "$r"; grep -v '^## 5 The keeper' "$r/$DOC" > "$r/d" && mv "$r/d" "$r/$DOC"
+  r="$tmp/nokeeper"; build_root "$r"; grep -v 'hooks/skill-guard' "$r/$DOC" > "$r/d" && mv "$r/d" "$r/$DOC"
   assert_case 1 "a decision dropped out of the record" "$r" \
     "FAIL  the decision record" "the keeper"
+
+  # THE INVERSION THIS GATE WAS WRITTEN WRONG FOR, BOTH HALVES. Anchored on labels and a heading
+  # number, it passed a record whose every tool name had been replaced with TBD, and failed one
+  # whose sections had merely been renumbered. Both are cases now.
+  r="$tmp/gutted"; build_root "$r"
+  sed -e 's/superpowers `writing-skills`, applied statically/TBD/' \
+      -e 's/`skill-creator`/TBD/' \
+      -e 's/`hooks\/skill-guard`, on the write./TBD/' "$r/$DOC" > "$r/d" && mv "$r/d" "$r/$DOC"
+  assert_case 1 "the labels survive, the decisions are gutted" "$r" \
+    "FAIL  the decision record" "review tool, write tool, the keeper"
+
+  r="$tmp/renumbered"; build_root "$r"
+  sed -e 's/^## 1 The choice/## 2 The choice/' -e 's/^## 5 The keeper/## 7 The keeper/' \
+      "$r/$DOC" > "$r/d" && mv "$r/d" "$r/$DOC"
+  assert_case 0 "a tidy-up renumbered the sections" "$r" \
+    "PASS  the decision record"
 
   # THE WORD ALONE IS NOT THE DECISION. `retired` unanchored passes on any sentence carrying it,
   # including one retiring something else, so the pattern requires 180 and `retired` on ONE LINE.
@@ -185,6 +213,10 @@ if [ ! -f "$DOC" ]; then
   RC=1
 else
   MISSING=""
+  # Counted from the table, not written as a literal — a pattern added without touching the
+  # message is how "all four decisions" outlived the fourth being joined by a fifth.
+  WANTED="$(printf '%s
+' "$DECISIONS" | grep -c .)"
   while IFS="$(printf '\t')" read -r label pattern; do
     [ -n "${label:-}" ] || continue
     grep -Eq -- "$pattern" "$DOC" || MISSING="${MISSING:+$MISSING, }$label"
@@ -195,7 +227,7 @@ EOF
     echo "FAIL  the decision record — $DOC does not state: $MISSING"
     RC=1
   else
-    echo "PASS  the decision record — $DOC states all four decisions"
+    echo "PASS  the decision record — $DOC states all $WANTED decisions"
   fi
 fi
 
