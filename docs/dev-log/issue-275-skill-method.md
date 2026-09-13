@@ -82,10 +82,22 @@ exactly like a hang. `tail` buffers to EOF, so a backgrounded run piped through 
 progress at all. Redirect to a log instead. Worth knowing before anyone concludes the suite has
 stalled — two `TaskOutput` blocks were spent on it.
 
+**`hooks/tracker-verify`'s scaffolding scan printed the entire PR body as its excerpt.** The
+finding was correct — the body quoted a fixture value that is on the pattern list — and unusable.
+The same scan on `gh issue edit` bounded its excerpt to one line, so the defect is on the PR path
+only. Filed as [#346](https://github.com/Calyx-Engineering/arc/issues/346), whose own body trips
+the scan on the two rows that have to name the patterns: there is no way to quote one.
+
+**The base branch moved four times during this run** — #342, #343, #344 and #276's own merge. #276
+is the consequential one: it shipped the length gate this decision depends on, and `issue-write`
+grew 30 lines in the same window, which is what made two of the document's measurements stale
+between pass 1 and pass 3. A run whose deliverable quotes the tree needs to re-measure after every
+merge, not once at the start.
+
 ## Spawned
 
 - **Arc work:** [the skill-writing method](../arc-work/04-dogfood/skill-method-decision.md)
-- **Issues:** [#338](https://github.com/Calyx-Engineering/arc/issues/338) — frontmatter is not spec-conformant, found by the trial's mechanical pre-pass · [#341](https://github.com/Calyx-Engineering/arc/issues/341) — the length gate measures the file where the limit is the body
+- **Issues:** [#338](https://github.com/Calyx-Engineering/arc/issues/338) — frontmatter is not spec-conformant, found by the trial's mechanical pre-pass · [#341](https://github.com/Calyx-Engineering/arc/issues/341) — the length gate measures the file where the limit is the body · [#346](https://github.com/Calyx-Engineering/arc/issues/346) — `tracker-verify`'s scaffolding-scan report prints the whole body
 
 ## Retrospective
 
@@ -99,6 +111,14 @@ evidence, checkable — and the trial showed that a reviewer with no concept of 
 deviation would push Arc's own measured decisions back into review five times over. §4.1 is the
 list that stops that, and it is the part of the document a reviewer needs before the part that
 chose the tools.
+
+**The gate this unit shipped was backwards for four commits, and pass 4 is what caught it.** It
+anchored each decision on the label in the record's left-hand column and on a heading number, so a
+record whose every tool name had been blanked out reported all decisions present, while renumbering
+a section in a tidy-up failed it — the precise inversion the file's own comment claimed the design
+avoided. Passes 1 to 3 all read that comment and none tested it. What caught it was the pass that
+probes the artifact instead of reading it, which is the argument for pass 4 existing at all: three
+reads of a claim are not one test of it.
 
 **#276 merged into the base mid-run**, which is how #341 was found: its gate counts file lines
 where §3 had just adopted body lines. A future reader should note the order — the divergence was
