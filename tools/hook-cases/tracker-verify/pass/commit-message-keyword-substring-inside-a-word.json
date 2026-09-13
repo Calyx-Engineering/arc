@@ -1,0 +1,2 @@
+# a commit message where the keyword is a substring of an ordinary word, not the keyword itself — "prefix" contains "fix" and must not report, or every commit mentioning a word ending in a keyword becomes a false positive
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"git commit -m \"fix: rename the prefix #42 handling helper\""}}
