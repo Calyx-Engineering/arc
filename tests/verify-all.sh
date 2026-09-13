@@ -25,7 +25,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length response-length-rank topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation hooks-off verify-public-audit audit-public"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-camp-agreement-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length response-length-rank topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation hooks-off verify-public-audit audit-public"
 
 RUN=0
 FAILED=0
@@ -149,6 +149,8 @@ run_gate "autonomy switch" bash tests/verify-autonomy.sh
 run_gate "tracker body rules" bash tests/verify-tracker-body.sh selftest
 run_gate "template links" bash tests/verify-template-links.sh
 run_gate "template link cases" bash tests/verify-template-links.sh selftest
+run_gate "camp agreement links" bash tests/verify-camp-agreement-links.sh
+run_gate "camp agreement link cases" bash tests/verify-camp-agreement-links.sh selftest
 run_gate "close-sequence cases" bash tests/verify-close-sequence.sh selftest
 run_gate "close-sequence count" bash tests/verify-close-sequence.sh
 run_gate "handoff check cases" bash tests/verify-handoff-checks.sh selftest
