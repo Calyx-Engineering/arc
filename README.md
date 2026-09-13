@@ -112,6 +112,38 @@ reasoning is in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md#s
 
 ---
 
+## Using Arc
+
+The `/` menu lists more than what you type. Three commands are meant to be typed:
+
+| Command | What it does |
+|---|---|
+| `/arc-next` | Resumes the arc from the handoff — reads it, then runs its ordered actions |
+| `/arc-run` | Runs the next set of the arc's playlist — names its tracks, waits for a yes, then dispatches them |
+| `/camp` | Asks Camp where the arc stands, what was decided, or what comes next |
+
+Everything else in the menu is a skill. **Skills fire on their own, from what you say — they are
+not typed.** The table below is reference for what each one does when it fires, not a list of
+commands.
+
+| Skill | What it does when it fires |
+|---|---|
+| `arc-intent` | Classifies proposed work — Agreed, Derived, or Escalate — against the arc's stated intent |
+| `autonomy-set` | Switches the session between manual and autonomous mode, and announces which |
+| `camp` | Answers where the arc stands, what was decided, and what comes next, from the record. Also addressable by name, or `/camp` |
+| `chat-response` | Shapes a reply's length and structure to the stated budget |
+| `decompose` | Turns a spec, idea, or accumulated `Spawned` section into a proposed, ordered set of issues |
+| `engineering-report` | Writes or revises a report, README, or findings write-up |
+| `handoff` | Reads or writes the session handoff: the staleness checks, what it holds, and the ordered actions the next session runs. Also addressable by name |
+| `issue-write` | Checks an issue or PR body before it is created or edited, and reads the write back |
+| `plugin-retrospective` | Mines a work stretch's transcripts for tooling friction and turns it into plugin fixes. Also addressable by name |
+| `record-route` | Decides which file a decision, finding, or measurement belongs in, across the K1–K4 ladder |
+| `relief-valve` | Offers a way back to the point when questioning has run long with nothing written |
+| `spec-interview` | Interviews for an unspecified capability, then writes up the decisions |
+| `work-watch` | Runs an ongoing sweep for eight things — commit points, test obligations, drift — while work proceeds |
+
+---
+
 ## What Arc does
 
 | Piece | What it covers |

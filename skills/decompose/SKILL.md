@@ -1,5 +1,6 @@
 ---
 name: decompose
+user-invocable: false
 description: Use when turning a specification, a rough idea, or an accumulated Spawned section into a proposed set of issues — reading the source and the arc's intent, listing every part that must exist, grouping into one artifact or one decision each, ordering by dependency, and naming what each delivers when it merges. Presents the set for approval and files nothing unapproved.
 camp-reports: [decomposition-proposed]
 checks: [intent-read, origin-recorded, parts-listed, one-artifact-each, dependency-ordered, deliverable-named, intent-classified, approval-held]

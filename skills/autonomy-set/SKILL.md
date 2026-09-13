@@ -1,5 +1,6 @@
 ---
 name: autonomy-set
+user-invocable: false
 description: Use when the mode the session is working in is in question — the user says switch to autonomous or back to manual, a handoff or arc-log states a mode, a wave boundary is reached, or an exchange turns from executing work into a conversation. Holds the three states, what each permits, how auto is entered and left, the announcement, and the self-test that ends auto when the session degrades. Not for whether work belongs in the arc; that is arc-intent's.
 camp-reports: [mode-entered, mode-left, mode-resumed, self-test-failed]
 checks: [mode-located, entry-was-explicit, boundary-named, announced]

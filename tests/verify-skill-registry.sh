@@ -12,6 +12,14 @@
 # It checks the same thing of commands. A repo-local command is allowed; one that shadows a
 # shipping command is #142's defect in the directory #142's scope did not name — #177.
 #
+# IT ALSO CHECKS THAT MENU VISIBILITY WAS DECIDED, NOT INHERITED. A skill with no
+# `user-invocable` key defaults to `true` — a slash entry nobody chose. #283 found thirteen
+# skills in exactly that state: fired on wording, but each also sitting in the `/` menu because
+# nothing said otherwise. The fix is per skill; this is the check that keeps a fourteenth from
+# landing the same way. A skill clears it either by carrying the `user-invocable` key at all —
+# either value, because the decision is what matters, not which way it went — or by shipping its
+# own `commands/<name>.md`, which is its own explicit menu entry.
+#
 # REPORTS, NEVER BLOCKS beyond its exit code. Same precedent as the other verifiers.
 
 set -u
@@ -86,10 +94,13 @@ selftest() {
     for f in "$@"; do
       mkdir -p "$root/$(dirname "$f")"
       : > "$root/$f"
-      # A planted shipping skill gets its registry row, so only the check under test can fail.
+      # A planted shipping skill gets its registry row and a `user-invocable` key, so only the
+      # check under test can fail — otherwise every case here would also trip the menu-decided
+      # check below, which is exercised on its own fixtures instead.
       case "$f" in
         skills/*/SKILL.md)
-          printf '| `%s` | m99 |\n' "$(dirname "$f")" >> "$root/docs/product-architecture/README.md" ;;
+          printf '| `%s` | m99 |\n' "$(dirname "$f")" >> "$root/docs/product-architecture/README.md"
+          printf -- '---\nuser-invocable: true\n---\n' > "$root/$f" ;;
       esac
     done
     assert_case "$want" "$name" "$root" "$t1" "$t2"
@@ -146,7 +157,9 @@ selftest() {
     shift
     local root="$tmp/$name" line
     mkdir -p "$root/docs/product-architecture" "$root/skills/$name"
-    : > "$root/skills/$name/SKILL.md"
+    # A `user-invocable` key, so the row/mechanism check under test is the only one that can
+    # fail — otherwise this fixture also trips the menu-decided check below, silently.
+    printf -- '---\nuser-invocable: true\n---\n' > "$root/skills/$name/SKILL.md"
     : > "$root/docs/product-architecture/README.md"
     for line in "$@"; do
       printf '%s\n' "$line" >> "$root/docs/product-architecture/README.md"
@@ -165,6 +178,40 @@ selftest() {
            "FAIL  every row carries a mechanism number" \
            "no mechanism: registry-row-no-mech" \
            -- '| `skills/registry-row-no-mech` | no mechanism here |'
+
+  # case_menu <want> <name> <t1> <t2> <SKILL.md-content> [command-file-basename]
+  # #283: a skill's menu visibility has to be a decision, not the default it inherits by saying
+  # nothing. The registry row is planted directly, same as `case_row`, so only the menu check
+  # under test can move the exit code.
+  case_menu() {
+    local want="$1" name="$2" t1="$3" t2="$4" content="$5" cmd="${6:-}"
+    local root="$tmp/$name"
+    mkdir -p "$root/docs/product-architecture" "$root/skills/$name" "$root/commands"
+    printf '%s\n' "$content" > "$root/skills/$name/SKILL.md"
+    printf '| `skills/%s` | m99 |\n' "$name" > "$root/docs/product-architecture/README.md"
+    [ -n "$cmd" ] && : > "$root/commands/$cmd"
+    assert_case "$want" "$name" "$root" "$t1" "$t2"
+  }
+
+  # Neither a command nor the key: exactly the state all thirteen skills were in before #283.
+  case_menu 1 "menu-undeclared" \
+            "FAIL  every skill declares user-invocable, or ships its own command" \
+            "undeclared: menu-undeclared" \
+            $'---\nname: menu-undeclared\n---'
+
+  # The key clears it whichever way it's set — the decision is what's checked, not its direction.
+  case_menu 0 "menu-hidden" \
+            "PASS  every skill declares user-invocable, or ships its own command" "" \
+            $'---\nname: menu-hidden\nuser-invocable: false\n---'
+  case_menu 0 "menu-kept" \
+            "PASS  every skill declares user-invocable, or ships its own command" "" \
+            $'---\nname: menu-kept\nuser-invocable: true\n---'
+
+  # No key, but the skill ships its own command — an explicit menu entry by a different route.
+  case_menu 0 "menu-commanded" \
+            "PASS  every skill declares user-invocable, or ships its own command" "" \
+            $'---\nname: menu-commanded\n---' \
+            menu-commanded.md
 
   echo
   echo "$passed passed, $failed failed"
@@ -262,6 +309,28 @@ else
        "Arc is installed here — a copy loads alongside the plugin's, and the slash command" \
        "resolves to two identical candidates. Delete the copy; the shipping one is the product." \
        "shadowing:$cmddupes"
+fi
+
+# ---- every skill's menu visibility was decided, not inherited -------------------------
+# A skill with no `user-invocable` key defaults to `true` — a slash entry nobody chose. #283
+# found all thirteen shipping skills in that state. A skill clears this either by carrying the
+# key at all (either value — the decision is what's checked, not its direction) or by shipping
+# its own `commands/<name>.md`, which is its own explicit menu entry.
+noflag=""
+for d in skills/*/; do
+  [ -f "$d/SKILL.md" ] || continue
+  s=$(basename "$d")
+  [ -f "commands/$s.md" ] && continue
+  grep -qE '^user-invocable:' "$d/SKILL.md" && continue
+  noflag="$noflag $s"
+done
+if [ -z "$noflag" ]; then
+  pass "every skill declares user-invocable, or ships its own command"
+else
+  fail "every skill declares user-invocable, or ships its own command" \
+       "no commands/<name>.md wires it and no user-invocable key says whether it belongs" \
+       "in the menu — its slash entry is inherited, not decided" \
+       "undeclared:$noflag"
 fi
 
 echo

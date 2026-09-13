@@ -1,5 +1,6 @@
 ---
 name: record-route
+user-invocable: false
 description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Also fires when the question is where a claim came from: "where did that number come from", "is that measured or assumed", "did we verify that", "that was from a photo, not the schematic", "who said that". Decides which file it belongs in across the K1–K4 ladder, requires a dev-log of every merged unit whether or not an issue exists, requires every claim to carry its source strongest-first, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
 camp-reports: [record-routed, arc-log-updated, dev-log-written]
 checks: [tier, destination-exists, arc-log-status-current, dev-log-exists]
