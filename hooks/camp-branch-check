@@ -50,9 +50,67 @@ set +e
 
 INPUT="$(cat 2>/dev/null)"
 
+# The three whitespace escapes `field` resolves. `printf -v` is a builtin, so the resolver
+# below forks nothing — and a raw tab or carriage return sitting in this file would not
+# survive an editor or a line-ending normalisation.
+printf -v _ARC_NL  '\n'
+printf -v _ARC_TAB '\t'
+printf -v _ARC_CR  '\r'
+
 # Read a top-level or nested field out of the hook payload without requiring jq.
+# Usage: field file_path
+#
+# NOT `tr ',{}' | grep | sed`, which is what this was, and which was wrong twice. It split
+# the payload on commas, so a value carrying one arrived truncated at the comma; and when its
+# `sed` could not parse the fragment it printed that fragment unchanged, so the caller was
+# handed the key and its quotes back as if they were the value. Both are silent. #230, #300.
+#
+# A JSON string ends at the first quote that is NOT escaped, so the scan counts the
+# backslashes in front of each quote rather than stopping at the first one. The escapes `\"`,
+# `\\`, `\n`, `\t` and `\r` are then resolved, because the resolved form is the one the caller
+# acts on: a Windows `cwd` arrives with its separators doubled, and a multi-line command
+# carries its line breaks as the two characters `\` and `n`.
+#
+# NO CLOSING QUOTE MEANS THE PAYLOAD WAS CUT OFF MID-VALUE. Yield nothing, never the rest —
+# half a value is the shape a hook must be silent about rather than act on.
+#
+# Parameter expansion, no subprocess. The old form cost five processes on every tool call.
 field() {
-  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+  local rest raw out chunk bs key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+
+  raw=""
+  while :; do
+    case "$rest" in *'"'*) ;; *) return 0 ;; esac
+    chunk="${rest%%\"*}"
+    rest="${rest#"$chunk"\"}"
+    # The backslash run immediately before the quote. An odd count escapes it.
+    bs="${chunk##*[!\\]}"
+    if [ $(( ${#bs} % 2 )) -eq 0 ]; then raw="$raw$chunk"; break; fi
+    raw="$raw$chunk\""
+  done
+
+  out=""
+  while [ -n "$raw" ]; do
+    case "$raw" in *'\'*) ;; *) out="$out$raw"; break ;; esac
+    chunk="${raw%%\\*}"
+    out="$out$chunk"
+    raw="${raw#"$chunk"\\}"
+    case "$raw" in
+      '"'*) out="$out\"";        raw="${raw#?}" ;;
+      '\'*) out="$out\\";        raw="${raw#?}" ;;
+      n*)   out="$out$_ARC_NL";  raw="${raw#?}" ;;
+      t*)   out="$out$_ARC_TAB"; raw="${raw#?}" ;;
+      r*)   out="$out$_ARC_CR";  raw="${raw#?}" ;;
+      # Not an escape this reader resolves — a shell escape, a `\u`. Left as it is.
+      *)    out="$out\\" ;;
+    esac
+  done
+  printf '%s' "$out"
+  return 0
 }
 
 # Speak, without blocking. exit 2 surfaces stderr to the transcript.
@@ -67,7 +125,13 @@ report() {
 # The command ends at its closing quote, not at the end of the line — a payload that carries
 # `"command":"…"}}` leaves the braces attached otherwise, and they end up inside the branch
 # name the report quotes back.
-CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/".*$//')"
+#
+# THIS WAS ITS OWN `tr ',' '\n' | grep | sed`, a second copy of the reader above and the exact
+# shape #230 replaced in `tracker-verify`. It split the payload on commas, so a commit message
+# carrying one truncated the command at it — `git commit -m "checkpoint, wip" && git checkout
+# -b _wip` arrived as `git commit -m \`, which creates no branch, so every check below was
+# skipped and the numberless branch went unreported. Silently, which is the whole defect. #300.
+CMD="$(field command)"
 [ -n "$CMD" ] || nothing_to_check "the payload names no command"
 
 # Only branch creation. `git checkout <existing>` and `git switch` without -c are moves,
@@ -117,10 +181,11 @@ case "$NAME" in main|master|develop) nothing_to_check "trunk — camp-session-st
 # declares it, and it is the file the session was already given. The nearest one up the tree
 # wins, so a subproject that declares its own is read instead of its parent's.
 #
-# The payload holds a JSON string, so a Windows cwd arrives as `R:\\arc-wt\\162`. Unescape it
-# and take the forward-slash form, or every session on Windows silently falls back to `$PWD`
-# and the walk-up above never runs where it was meant to.
-CWD="$(field cwd | sed -e 's/\\\\/\\/g' | tr '\\' '/')"
+# The payload holds a JSON string, so a Windows cwd arrives with its separators doubled. The
+# unescape is `field`'s own now — it resolves `\\` along with the rest — so only the
+# forward-slash form is taken here. Without one or the other, every session on Windows
+# silently falls back to `$PWD` and the walk-up above never runs where it was meant to.
+CWD="$(field cwd | tr '\\' '/')"
 { [ -n "$CWD" ] && [ -d "$CWD" ]; } || CWD="$PWD"
 
 CONVENTION=""
