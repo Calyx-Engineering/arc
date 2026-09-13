@@ -1,0 +1,2 @@
+# an unrelated command's own quoted `-m` value, chained ahead of a clean real commit — the scan starts at the literal `git commit`, so the other command's text is never read as if it were the commit message
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"sometool -m \"this closes #42 in prose\" && git commit -m \"fix: real change\""}}
