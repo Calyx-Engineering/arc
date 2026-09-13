@@ -12,12 +12,13 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
-# checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), every check of one write arm (`gh` is not on PATH; the command names no issue number; the command names no PR and none could be resolved from its output or the current branch; the merge's output names no merged PR; the PR, or the issue's body, could not be read), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tests/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tests/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tests/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tests/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base, commit-keyword
+# skips: every check (the payload names a fixture key whose value could not be parsed), every check of one write arm (`gh` is not on PATH; the command names no issue number; the command names no PR and none could be resolved from its output or the current branch; the merge's output names no merged PR; the PR, or the issue's body, could not be read), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tests/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tests/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tests/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tests/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read), commit-keyword (not a `git commit`, or the command names no `-m`/`--message`)
 #
-# Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
-# The subcommand and the verb are read as WORDS, so a flag between `gh` and the subcommand —
-# `gh -R owner/repo issue close 163` — is an ordinary invocation rather than an invisible one.
+# Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, `gh pr ready`, and
+# `git commit`. The subcommand and the verb are read as WORDS, so a flag between `gh` and the
+# subcommand — `gh -R owner/repo issue close 163` — is an ordinary invocation rather than an
+# invisible one.
 
 # ---- kill switch ----------------------------------------------------------------
 # `bash hooks/hooks-off.sh tracker-verify 30` from any terminal in this repository mutes this one
@@ -310,6 +311,84 @@ read_invocation() {
   return 0
 }
 
+# ---- a commit closing an issue by prose -------------------------------------------
+# GitHub parses a closing keyword out of a commit message under the same rule it uses for a PR
+# body, and a commit reaching the default branch closes exactly what a merged PR would — during
+# an arc that is the arc branch itself, m42's flip. Nothing here read a commit message at all
+# until #300: commit 81b5a41 (PR #301) put the word *resolve* and #300's number in one prose
+# clause, and GitHub closed it with all four boxes unticked.
+#
+# STRUCTURAL FIRST, TEXT SECOND. `commit_has_dash_m` answers "is there really a `git commit`
+# invocation carrying `-m` or `--message` here" off a quote-stripped copy of the command — the
+# same copy `read_invocation` builds, and for the same reason: a `-m` sitting inside a quoted
+# span elsewhere in the command must not count. `commit_message_text` then reads the value out
+# of the ORIGINAL command, which still has its quotes, and is the one place in this file that
+# wants what the quote-stripped copy throws away.
+#
+# `stripped` is read and written by `strip_quoted` through the caller's variable, the same
+# dynamic-scope trick `read_invocation` relies on above — this is not a coincidence, it is the
+# same shape for the same reason.
+commit_has_dash_m() {
+  local stripped tok saw_git=0 saw_commit=0 found=0
+  stripped="$1"
+  strip_quoted '"'
+  strip_quoted "'"
+  stripped="${stripped//;/ __ARC_CHAIN__ }"
+  stripped="${stripped//&/ __ARC_CHAIN__ }"
+  stripped="${stripped//|/ __ARC_CHAIN__ }"
+  set -f
+  for tok in $stripped; do
+    case "$tok" in
+      __ARC_CHAIN__) saw_git=0; saw_commit=0; continue ;;
+      git|*/git|git.exe|*/git.exe) saw_git=1; saw_commit=0; continue ;;
+    esac
+    [ "$saw_git" = 1 ] || continue
+    if [ "$saw_commit" = 0 ]; then
+      case "$tok" in commit) saw_commit=1 ;; esac
+      continue
+    fi
+    case "$tok" in -m|--message|--message=*) found=1 ;; esac
+  done
+  set +f
+  [ "$found" = 1 ]
+}
+
+# The message VALUE(s), read out of the ORIGINAL command. Quotes are read the way
+# `strip_quoted` reads them everywhere else in this file: the first occurrence of the matching
+# quote character ends the span, with no escape handling — this file's quote handling has never
+# gone further than that, and a message escaping its own quote character is not the shape #300
+# was. `-F <file>` never puts the text on the command line, so there is nothing here to read
+# for it — out of scope.
+#
+# EVERY `-m`/`--message` IN THE COMMAND, not just the first — `git commit` joins several `-m`
+# paragraphs with a blank line between them, and a keyword sharing a sentence with a number
+# could sit in any of them.
+commit_message_text() {
+  local rest="$1" msg="" q val
+  while :; do
+    case "$rest" in
+      *' -m '*)        rest="${rest#*' -m '}" ;;
+      *' --message '*) rest="${rest#*' --message '}" ;;
+      *' --message='*) rest="${rest#*' --message='}" ;;
+      *) break ;;
+    esac
+    case "$rest" in
+      '"'*) q='"'; rest="${rest#?}" ;;
+      "'"*) q="'"; rest="${rest#?}" ;;
+      # A bare (unquoted) value — keep scanning past it for a later `-m` that IS quoted,
+      # rather than stopping here having read nothing.
+      *) continue ;;
+    esac
+    case "$rest" in
+      *"$q"*) val="${rest%%"$q"*}"; rest="${rest#*"$q"}" ;;
+      *) val=""; rest="" ;;
+    esac
+    msg="$msg
+$val"
+  done
+  printf '%s' "$msg"
+}
+
 # The Nth URL of one kind out of the payload — how a create learns its number, since `gh` prints
 # the URL rather than taking one.
 #
@@ -393,6 +472,27 @@ current_pr_number() {
   return 0
 }
 
+# A `git commit` naming `-m`/`--message`, checked structurally before anything is read out of
+# it — the `*commit*` guard is cheap and skips the scan for the overwhelming majority of Bash
+# calls that mention it nowhere.
+#
+# THE SCAN STARTS AT THE LITERAL `git commit`, NEVER AT THE START OF THE COMMAND.
+# `commit_message_text` cannot tell one command's `-m` from another's — it only recognises the
+# flag, not who it belongs to — so `sometool -m "closes #42 in prose" && git commit -m "fix:
+# real change"` would otherwise hand `sometool`'s quoted argument to the scanner as if it were
+# the commit message. Cutting the string at the FIRST `git commit` before it is ever read
+# removes everything that could be misread as one.
+COMMIT_MSG=""
+case "$CMD" in
+  *commit*)
+    if commit_has_dash_m "$CMD"; then
+      case "$CMD" in
+        *git\ commit*) COMMIT_MSG="$(commit_message_text "${CMD#*git commit}")" ;;
+      esac
+    fi
+    ;;
+esac
+
 # EVERY ARM THE COMMAND NAMES. An entry holds one event, so the first names it and the rest go
 # in the subject: a chained firing recorded as one arm reads as having done less than it did,
 # and the old dispatch recorded whichever arm its `case` happened to list first. #231.
@@ -406,8 +506,13 @@ while :; do
 done
 case "$ARMS" in
   "")
-    arc_log_outcome ok "not a tracker write"
-    exit 0
+    if [ -z "$COMMIT_MSG" ]; then
+      arc_log_outcome ok "not a tracker write"
+      exit 0
+    fi
+    # A commit is not a `gh` arm — it carries no body-read, no number, none of the machinery
+    # below — so it gets its own event name rather than falling through as an unnamed write.
+    arc_log_event commit-write
     ;;
   *" · "*) arc_log_event "${ARMS%% ·*}" "chained: $ARMS" ;;
   *)       arc_log_event "$ARMS" ;;
@@ -436,6 +541,34 @@ add() {
   FINDINGS="$FINDINGS
   - $1"
 }
+
+# A BARE LINE IS THE ONLY FORM ALLOWED TO CLOSE — skills/issue-write's rule for a PR body,
+# read here out of a commit message instead. Lines that ARE a bare closing line are removed
+# first; whatever the keyword pattern still finds afterward is a keyword sharing a sentence
+# with its number, which is prose and is the defect #300 shipped.
+#
+# THE KEYWORD SET IS GITHUB'S, matching `closing-keyword` above exactly: close(s/d), fix(es/ed),
+# resolve(s/d), each followed by `#<N>`. Case-insensitive, because GitHub's own parser is.
+#
+# `\<` ANCHORS THE LEFT EDGE. With none, `fix(e[sd])?` matches the substring `fixed` inside
+# `disclosed` and `fix` inside `prefix` — "the prefix #42 handling helper" is not a closing
+# keyword, and reporting it would be a false positive on ordinary prose. The right edge needs
+# nothing extra: the pattern already ends at the run of digits, and a word character never
+# follows those.
+check_commit_keyword() {
+  local msg="$1" scrubbed hit
+  scrubbed="$(printf '%s\n' "$msg" | grep -viE '^[[:space:]]*\<(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+#[0-9]+[[:space:]]*$')"
+  hit="$(printf '%s\n' "$scrubbed" | grep -inE '\<(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+#[0-9]+' | head -3)"
+  if [ -n "$hit" ]; then
+    arc_log_fail commit-keyword
+    add "the commit message carries a closing keyword and an issue number outside a bare line: $(printf '%s' "$hit" | tr '\n' ';'). GitHub closes the issue the same way a merged PR does once the commit reaches the default branch — during an arc that is the arc branch itself, m42's flip. Put the keyword on its own line, \`Closes #NN\`, or reword the sentence so it does not read as one."
+  else
+    arc_log_pass commit-keyword
+  fi
+  return 0
+}
+
+[ -n "$COMMIT_MSG" ] && check_commit_keyword "$COMMIT_MSG"
 
 # The object a check was about, appended to any check name that carries no value of its own.
 # A chained command runs the same check once per arm, and two bare `placeholder-scan` marks in

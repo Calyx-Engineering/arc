@@ -356,6 +356,36 @@ When a PR closes exactly one issue, cite it in the title: `<type>: <name> (#42)`
 closes several, omit the number from the title and list them in the body. The title number
 is cosmetic — the body still needs its own line.
 
+### Commit messages close the same way, and just as silently
+
+**A closing keyword binds from a commit message exactly as it does from a PR body** — the same
+keyword set, followed by `#<N>`, and the same placement rule: **a bare line, never a clause
+inside a sentence.** GitHub does not care which write puts the words next to each other. Commit
+`81b5a41` ([PR #301](https://github.com/Calyx-Engineering/arc/pull/301)) put the word *resolve*
+and #300's number in one prose clause of its body; the commit reached the default branch — during
+an arc that is the arc branch itself,
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md)'s flip — and GitHub
+closed #300 with all four of its boxes still unticked.
+
+Put a closing keyword in a commit message only on its own bare line, at the end of the message,
+exactly as *Placement* above requires for a PR body:
+
+```text
+Closes #42
+```
+
+Never inside a sentence describing the change — *"this is expected to resolve #42"* closes #42
+exactly as reliably as `Closes #42` does, with none of the review a PR body gets before it is
+written and merged.
+
+**The post-merge read-back names what the merge closed.** `gh pr view --json
+closingIssuesReferences` and the issue's own state are what confirm it — never a memory of which
+line was meant to close something. A commit's prose can close an issue nobody intended to touch,
+and the read-back is what catches that before a checklist ticked from memory is trusted.
+
+`hooks/tracker-verify` reports a `git commit` whose message carries a closing keyword and a
+number anywhere but a bare line.
+
 ### PR titles inside an arc take the arc's prefix
 
 An issue PR inside an arc is titled:
