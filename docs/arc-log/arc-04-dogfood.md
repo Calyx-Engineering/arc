@@ -639,6 +639,54 @@ flowchart LR
 
 ---
 
+### 6.8 Tracker, second closing — boundary report
+
+**Workstream:** Tracker · **Closed:** 2026-09-13 · **197 words**, diagram excluded
+
+§6.6 covered through 2026-09-09. This covers what it left open: #226, #234, #286, #287, #336.
+
+#### 6.8.1 Delivered
+
+1. The close-sequence gate stops reporting ordinary prose as a step-count drift, still catches a real one
+2. A PR body closing several issues passes the tracker check as one well-formed closing block
+3. `tracker-verify` resolves a numberless `gh pr merge`'s target from its output or the branch, and logs why when it cannot
+4. m12 and m42's contradictory non-default-base rule resolved by a live test; m12's reading struck
+5. `tracker-verify` catches a closing keyword in commit-message prose, not only `gh` arguments
+
+#### 6.8.2 Spawned
+
+| | | Routed |
+|---|---|---|
+| [#322](https://github.com/Calyx-Engineering/arc/issues/322) | Probe for #287's live test | This workstream, closed |
+
+#### 6.8.3 Unexpected
+
+- m12 and m42 read the same 2026-08-16 data as opposite rules; a live test settled it (#287)
+- Two of #286's five requirements had already landed under #231, before this branch
+- #336's own fix commit tripped the defect it fixed — caught only by a reviewer's read
+
+#### 6.8.4 Unplanned but needed
+
+| | |
+|---|---|
+| Shared PR-number resolver | `merge-close` and `check_pr_ready` each had one; #286 unified them |
+
+#### 6.8.5 Evidence
+
+| | |
+|---|---|
+| `verify-hook.sh tracker-verify` | 78 → 136 passed, 0 failed |
+| `verify-all.sh` | 58 → 69 gates, exit 0 |
+
+#### 6.8.6 Not done
+
+- #286's numbered-merge case still misreports `merge-close` — recorded, not filed
+- `issue-write`'s two lingering "closure defers to the arc PR" sentences — pre-existing, untouched
+
+*End of Tracker's second boundary report.*
+
+---
+
 ## 7 Related analysis
 
 - [`friction-log.md`](https://github.com/Lantern-Systems/roadz-sound-system/blob/main/docs/arc-work/interface-pcba-rev-b/friction-log.md) — ROADZ's hand-written log, 296 lines, the higher-signal half of the evidence
