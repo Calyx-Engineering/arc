@@ -80,7 +80,25 @@ list rather than the defect.
 | `ROWS` | A provenance column, **or** the terms carried in **every** row. The only pass |
 | `NONE` | Nothing says where the numbers came from. A fail |
 | `TABLE` | One source stated once in the lead-in, for a uniform-source table. **Not scored** |
-| `NOTABLE` | No table in the region. Not scored |
+| `OPEN` | Under the confidence split's `Not established` heading. **Not scored** — [#314](https://github.com/Calyx-Engineering/arc/issues/314) |
+| `NOTABLE` | No table in the region, or every table in it is `OPEN`. Not scored |
+
+**`OPEN` is decided by the heading above the table, never by its column names.**
+`skills/engineering-report` fixes the confidence split's third group's name —
+`Not established` — and mandates writing it as a table of open questions, each with what would
+settle it. It does not fix the columns, and real reports use several: `Item`, `Unknown`,
+`Open point`, `Open item`. Reading any of those as a claim table's header — the earlier
+approach — is a losing game against every column name an author might reach for. The heading is
+the one thing the skill holds fixed, so that is what is matched. A table anywhere under a
+`### Not established` heading (any level, carried until the next heading) is `OPEN`; the claim
+table beside it, however it is worded, still reads on its own merits.
+
+**Why the grader moved and not the skill.** The alternative was a `Provenance`-shaped column on
+the open-questions table itself — rejected, because an item in *Not established* is by
+definition not yet settled, and inventing a source for why it is unsettled reshapes a structure
+the skill mandates for a different reason in order to move a score. [#260](https://github.com/Calyx-Engineering/arc/issues/260)'s
+probe measured the shape before this fix: three of nine after-runs read `NONE` with a fully
+sourced claim table beside an open-questions table carrying none.
 
 **`ROWS` accepts both shapes, and the inline shape needs every row.** A ledger that names its
 sources inline is sourced; demanding the column shape would fail it for formatting rather than

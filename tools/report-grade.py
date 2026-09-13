@@ -399,25 +399,56 @@ CONTRAST = re.compile(
 # not a contrast marker, and both put a false RESOLVED in the numerator.
 
 
+# The confidence split's third group, mandatory and fixed-named by skills/engineering-report —
+# "Verified / Measured / Not established". A table that falls under this heading asks what would
+# settle an open question; it does not assert a value, so it is not the claim table #164 names.
+# Matched on the HEADING, never the table's own header cells: real reports write this group's
+# table under many column names — "Item", "Unknown", "Open point", "Open item" — and #314 was
+# filed because three of those variants still tripped grade_tables into scoring them anyway. The
+# heading is the one thing the skill fixes the name of. Matched against the heading TEXT (the
+# `#` marks and their following space are already stripped by the time it is stored), so the
+# pattern names no `#` of its own — "### Not established" and "#### 4. Not established" both
+# store as text ending in "Not established" and both match.
+NOT_ESTABLISHED_HEADING = re.compile(r"\bnot established\b", re.I)
+
+
 def tables(text):
-    """[(lead-in text, header cells, body rows)] for each pipe table outside a fenced block.
+    """[(lead-in text, header cells, body rows, section heading)] for each pipe table outside a
+    fenced block.
 
     The lead-in is the non-blank block immediately above the table. That is where a report puts
     one source for the whole table, and it is the difference between the TABLE verdict and NONE.
+
+    The section heading is the nearest markdown heading line at or above the table, of any level
+    — "### Not established" for a table sitting directly under it, carried forward past blank
+    lines and prose until the next heading changes it. It is what lets grade_tables tell the
+    confidence split's open-questions table from a claim table without guessing at column names.
     """
     out, fence = [], case_reader.Fence()
     lines = (text or "").splitlines()
+    heading = ""
     i = 0
     while i < len(lines):
         line = lines[i]
         if fence.delimiter(line):
             i += 1
             continue
-        if fence.open or "|" not in line:
+        if fence.open:
             i += 1
             continue
-        # A table is a header row, a delimiter row of dashes, then body rows.
-        if i + 1 >= len(lines) or not re.match(r"^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$", lines[i + 1]):
+        # A table is a header row, a delimiter row of dashes, then body rows. Decided BEFORE
+        # the heading check below, never after: a header cell that is itself a bare `#` (a
+        # row-number column, `| # | What would settle it |`) is valid GFM and would otherwise
+        # be read as an ATX heading, silently overwriting the tracked section heading with the
+        # row's own text — and since a heading is carried forward until the next one, that
+        # misreads every later table in the section too.
+        is_header_row = ("|" in line and i + 1 < len(lines) and
+                          re.match(r"^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$", lines[i + 1]))
+        if not is_header_row:
+            m = HEADING.match(line)
+            if m:
+                heading = m.group(2).strip()
+        if "|" not in line or not is_header_row:
             i += 1
             continue
         # The lead-in is the nearest non-blank block above the table. A blank line between the
@@ -435,7 +466,7 @@ def tables(text):
         while k < len(lines) and "|" in lines[k] and lines[k].strip():
             body.append([c.strip() for c in lines[k].strip().strip("|").split("|")])
             k += 1
-        out.append(("\n".join(lead), header, body))
+        out.append(("\n".join(lead), header, body, heading))
         i = k
     return out
 
@@ -449,14 +480,19 @@ def grade_tables(text):
            license dropping the column; scoring it as a fail would report a correctly sourced
            table as unsourced. Same reasoning as BOLDONLY in tools/topic-numbering.py.
     NONE   nothing says where the numbers came from. The fail.
-    NOTABLE no table in the region. Not scored.
+    OPEN   under the confidence split's "Not established" heading. Not scored — #314: the
+           mandated group asks what would settle an open question, and a row can carry that
+           without naming where the OPEN ITEM came from, because it has not been settled yet.
+    NOTABLE no table in the region, or every table in it is OPEN. Not scored.
     """
     ts = tables(text)
-    if not ts:
+    claims = [(lead, header, body) for lead, header, body, heading in ts
+              if not NOT_ESTABLISHED_HEADING.search(heading)]
+    if not claims:
         return "NOTABLE", ""
     worst, detail = None, ""
     order = {"NONE": 0, "TABLE": 1, "ROWS": 2}
-    for lead, header, body in ts:
+    for lead, header, body in claims:
         if any(SOURCE_HEADER.match(c) for c in header):
             v = "ROWS"
             d = "column: %s" % next(c for c in header if SOURCE_HEADER.match(c))

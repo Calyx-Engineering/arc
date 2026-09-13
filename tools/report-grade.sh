@@ -183,6 +183,19 @@ if [ "$SELFTEST" = "1" ]; then
   printf 'Prose only.\n\n```\n| a | b |\n|---|---|\n| 1 | 2 |\n```\n' \
     > "$E/provfenced/excerpt.md"; pad provfenced provfenced.md 39
 
+  mk provopennone provopennone.md 40-44
+  # #314: the confidence split's mandated third group. A table of open questions is not a claim
+  # table, and the region has no other table in it — NOTABLE, not NONE.
+  printf '### Not established\n\n| Item | What would settle it |\n|---|---|\n| Whether X holds | A bench test |\n' \
+    > "$E/provopennone/excerpt.md"; pad provopennone provopennone.md 39
+
+  mk provopenbeside provopenbeside.md 40-48
+  # #314's exact reported shape: a fully sourced claim table beside the mandated open-questions
+  # table. Before the fix, `grade_tables` returned the worst of the two and this read NONE —
+  # the skill instructing authors to write the table that fails the check it points them at.
+  printf '| GP | Provenance | Function |\n|---|---|---|\n| 13 | report PR #48 | PWM |\n\n### Not established\n\n| Item | What would settle it |\n|---|---|\n| Pin choice | A bench test |\n' \
+    > "$E/provopenbeside/excerpt.md"; pad provopenbeside provopenbeside.md 39
+
   mk conflictok conflictok.md 40-44
   # Two strengths in play and the disagreement said out loud. RESOLVED, and the source it
   # asserts is read off the sentence, not off the ordering — they coincide here, which is why
@@ -438,7 +451,7 @@ if [ "$SELFTEST" = "1" ]; then
   t "a heading inside a fence is not the first section"   "CONCLUSION +fenced$"
   t "fails are counted by kind"                           "narrative 2, deferred 2, preamble 1"
   t "a region that is not an opening is not scored"       "NOTOPENING +midtable +\(region 40-44 does not start at line 1\)"
-  t "unscored verdicts are counted apart, by kind"        "not scored 35 \(unclear heading 2, no section 1, not an opening 32\)"
+  t "unscored verdicts are counted apart, by kind"        "not scored 37 \(unclear heading 2, no section 1, not an opening 34\)"
   t "the rate counts every fail in the denominator"       "opens with the conclusion +5/10"
   t "a rate below the threshold is a FAIL verdict"        "^verdict +FAIL"
   t "the score is not what the exit code reports"         "Not the score"
@@ -448,6 +461,14 @@ if [ "$SELFTEST" = "1" ]; then
   t "a claim table with no source scores NONE"            "NOTOPENING +provnone"
   # If the fence leaked, provfenced would carry a NONE table and both counts below would move.
   t "a table inside a fence is not a claim table"         "NOTOPENING +provfenced +\(region 40-46"
+  # #314: a table under "Not established" is open questions, not a claim, and it is the only
+  # table in the region — NOTABLE, so no "table source:" line prints for it at all (`tv !=
+  # "NOTABLE"` is the only gate on that print).
+  t "the confidence split's open table alone is not scored" "NOTOPENING +provopennone"
+  # #314's exact reported shape, pinned: a sourced claim table beside the mandated open-questions
+  # table reads ROWS, not NONE. Before the fix this was the worst-of NONE.
+  tc "an OPEN table beside a claim table does not drag it to NONE" provopenbeside \
+    "table source: ROWS +column: Provenance"
   t "a conflict said out loud scores RESOLVED"            "conflict:     RESOLVED in play: measured, vendor, inferred"
   t "the source a conflict asserts is derived, not assumed" "asserted over the rest: measured"
   t "a silent conflict is the fail #164 names"            "conflict:     SILENT   in play: schematic, photograph"
@@ -458,9 +479,9 @@ if [ "$SELFTEST" = "1" ]; then
   # the instrument displayed, and naming the estimate alone hid the instrument behind it.
   t "the weaker source it asserts is named"                "asserted over the rest: instrument"
   t "a sourced ledger is not read as a silent conflict"    "table source: ROWS +terms carried in every row"
-  t "table verdicts are counted by kind"                  "tables: sourced by row 4, unsourced 3, one source in the lead-in 1 \(not scored\), no table 37"
-  t "conflict verdicts are counted by kind"               "conflicts: resolved out loud 7, silent 3, one source only 31 \(not scored\), weaker source asserted 3 \(reported\)"
-  t "the table column has its own rate"                   "table rows carry a source +4/7"
+  t "table verdicts are counted by kind"                  "tables: sourced by row 5, unsourced 3, one source in the lead-in 1 \(not scored\), no table 38"
+  t "conflict verdicts are counted by kind"               "conflicts: resolved out loud 7, silent 3, one source only 33 \(not scored\), weaker source asserted 3 \(reported\)"
+  t "the table column has its own rate"                   "table rows carry a source +5/8"
   t "the conflict column has its own rate"                "conflicts resolved out loud +7/10"
   t "an unclassified heading does not hide a deferral" "DEFERRED   +uncleardeferred +flags: deferred"
   t "Investigation is reachable as a first word"       "NARRATIVE  +investigation +flags: background-first"
@@ -497,7 +518,7 @@ if [ "$SELFTEST" = "1" ]; then
   # and a global-absence check keyed on it can never go red.
   nt "in firmware is behaviour, not provenance"        "in play: datasheet, firmware"
   nt "an instrument in prose is not an instrument"     "in play: instrument, datasheet"
-  t "a matching corpus is not reported as drift"       "report-grade — 45 case"
+  t "a matching corpus is not reported as drift"       "report-grade — 47 case"
   if printf '%s' "$out" | grep -q "EXCERPT DRIFT"; then
     echo "  FAIL  a matching excerpt is not reported as drift"; F=$((F+1))
   else
@@ -558,7 +579,7 @@ if [ "$SELFTEST" = "1" ]; then
   [ "$mst" = "2" ] && { echo "  PASS  --file on a missing file exits 2"; P=$((P+1)); }                    || { echo "  FAIL  --file on a missing file exits 2 (got $mst)"; F=$((F+1)); }
 
   # A threshold every column clears must flip the verdict, or the verdict is not reading them.
-  # 0.33 is below the lowest of the three fixture rates — opening 5/10, tables 4/7,
+  # 0.33 is below the lowest of the three fixture rates — opening 5/10, tables 5/8,
   # conflicts 7/10.
   tout="$(RG_CORPUS_DIR="$T/nowhere" RG_EVAL_DIR="$E" RG_THRESHOLD=0.33 python "$HERE/report-grade.py" 2>&1)"
   if printf '%s' "$tout" | grep -qE "^verdict +PASS"; then
