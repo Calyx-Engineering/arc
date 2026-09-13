@@ -5,6 +5,11 @@ candidates run against one real skill — `skills/record-route/SKILL.md`, 213 bo
 against the whole tree wherever a candidate runs on it. Line counts measured on `skills/`, per
 [#90](https://github.com/Calyx-Engineering/arc/issues/90)'s constraint.
 
+**Every count here moves as the skills are edited, and one already did** — `issue-write` gained 30
+lines mid-run from a merge into the base. The reproducible number is
+`bash tools/verify-skill-length.sh`; the tables below are that command's answer on 2026-09-13, and
+a reader who finds them stale should trust the command.
+
 > **No installed tool reviews a skill.** Both authoring tools are shaped to rewrite one, and the
 > only candidate that read the body scored Arc's house style as defects. What Arc adopts is one
 > instrument applied statically, one mechanical pre-pass that is free, and a named list of
