@@ -4,10 +4,10 @@
 #   tools/verify-skill-length.sh              this repository's skills
 #   tools/verify-skill-length.sh selftest     fixture cases
 #
-# WHY. Nothing measured skill length. Twelve of thirteen skills exceeded the old limit for
+# WHY. Nothing measured skill length. Eleven of thirteen skills exceeded the old limit for
 # weeks unnoticed — #276.
 #
-# REPORTS, NEVER FAILS. Exit 0 always, hits or none. Twelve of thirteen skills were already
+# REPORTS, NEVER FAILS. Exit 0 always, hits or none. Eleven of thirteen skills were already
 # over the limit the day this shipped, and a gate that fails on a hit would turn `verify-all.sh`
 # red over pre-existing length rather than a regression this run introduced. The list is the
 # point; a human decides which skill to split and when. Precedent: every verifier here reports

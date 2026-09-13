@@ -25,7 +25,7 @@ LIST=0
 [ "${1:-}" = "--list" ] && LIST=1
 
 # name  →  how to invoke it. Scripts needing a per-target argument are expanded below.
-KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-tracker-body verify-hook verify-template-links verify-camp-agreement-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length response-length-rank topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation hooks-off verify-public-audit audit-public verify-skill-length"
+KNOWN="verify-hook-source verify-case-reader verify-autonomy verify-skill-registry verify-skill-method verify-tracker-body verify-hook verify-template-links verify-camp-agreement-links verify-close-sequence verify-handoff-checks verify-handoff-rationale verify-handoff-archive verify-handoff-stamp verify-workspace-guard verify-branch-prefix verify-linked-branch verify-labels verify-mechanisms verify-dev-log-name verify-activation-log miner-scope skill-firing handoff-openings skill-cases response-length response-length-rank topic-numbering report-grade saturation-cases environment-blame verify-session-index verify-issue-boxes verify-report-budget verify-set-mode arc-claim plugin-reload arc-link-sweep skill-probe probe-handoff-checks report-shape-probe verify-log-rotation hooks-off verify-public-audit audit-public verify-skill-length"
 
 RUN=0
 FAILED=0
@@ -98,6 +98,8 @@ fi
 run_gate "case reader cases" bash tests/verify-case-reader.sh selftest
 run_gate "skill registry" bash tests/verify-skill-registry.sh
 run_gate "skill registry cases" bash tests/verify-skill-registry.sh selftest
+run_gate "skill method" bash tests/verify-skill-method.sh
+run_gate "skill method cases" bash tests/verify-skill-method.sh selftest
 run_gate "miner scope cases" bash tools/miner-scope.sh selftest
 run_gate "skill firing cases" bash tools/skill-firing.sh selftest
 # The three selftests around the probe. None invokes `claude`, so none bills — what is excluded
