@@ -17,7 +17,7 @@ against the whole tree wherever a candidate runs on it. Line counts measured on 
 | **Reviews a skill** | superpowers `writing-skills`, its `anthropic-best-practices.md` checklist applied statically | The only candidate that reads the body at all. 17 findings on one skill, no model run |
 | **Writes a skill** | `skill-creator` | The only candidate with intent capture, a description optimiser and an eval scaffold. It drafts into `templates/SKILL.md` |
 | **Mechanical pre-pass, both paths** | `skill-creator`'s `scripts/quick_validate.py` | The only candidate that found a real defect — [#338](https://github.com/Calyx-Engineering/arc/issues/338). Free, and it exits non-zero |
-| **Precondition, not a review** | `claude plugin validate skills --strict` | Exit 0 on all thirteen, including an 822-line skill and five whose frontmatter a conformant YAML parser rejects |
+| **Precondition, not a review** | `claude plugin validate skills --strict` | Exit 0 on all thirteen, including an 852-line skill and five whose frontmatter a conformant YAML parser rejects |
 | **Unavailable** | `claude plugin eval` | `` `plugin eval` is currently in early access ``, exit 1 — [#181](https://github.com/Calyx-Engineering/arc/issues/181) |
 | **Not a reviewer** | `/skill-doctor` | Built in, `supportsNonInteractive`. Its own description is *"Show which loaded skills are unused and costing context"* — a session usage report, not a reading of a skill |
 
@@ -51,7 +51,7 @@ reviewer's output is a proposal and never an edit.
 
 **The one finding that was decisive was mechanical and free.** `quick_validate.py` exited 1 on
 `record-route` with `Invalid YAML in frontmatter: mapping values are not allowed here`, which
-`claude plugin validate --strict` passes. Confirmed independently against every skill with
+`claude plugin validate skills --strict` passes. Confirmed independently against every skill with
 `yaml.safe_load`: five of thirteen do not parse. That is
 [#338](https://github.com/Calyx-Engineering/arc/issues/338).
 
@@ -112,7 +112,7 @@ they were written and stays. There is nothing to delete, so the retirement is th
 
 | | Body lines | |
 |---|---|---|
-| `issue-write` | **822** | over |
+| `issue-write` | **852** | over |
 | `work-watch` | **600** | over |
 | `chat-response` | 453 | |
 | `engineering-report` | 422 | |
@@ -125,20 +125,20 @@ they were written and stays. There is nothing to delete, so the retirement is th
 | `arc-intent` | 183 | |
 | `relief-valve` | 167 | |
 | `decompose` | 161 | |
-| **13 skills** | **4,580** | two over |
+| **13 skills** | **4,610** | two over |
 
 **Lines, not words.** `writing-skills`' own SKILL.md carries a second budget — *"Other skills:
 <500 words"* — which puts **all thirteen** over, the smallest being `relief-valve` at 1,171
 words. That is scope reduction, not compression.
 Anthropic's number is lines; Arc takes Anthropic's number.
 
-**Measured as body, not as file.** `skills/issue-write/SKILL.md` is 836 lines; its body is 822.
+**Measured as body, not as file.** `skills/issue-write/SKILL.md` is 866 lines; its body is 852.
 The 14-line difference is a description tuned for firing
 ([#155](https://github.com/Calyx-Engineering/arc/issues/155)), and a limit that counts it charges
 a skill for being findable.
 
 **The gate that shipped counts the file** — `tools/verify-skill-length.sh`
-([#276](https://github.com/Calyx-Engineering/arc/issues/276)) reports 836 and 608. It is stricter
+([#276](https://github.com/Calyx-Engineering/arc/issues/276)) reports 866 and 608. It is stricter
 than the rule by the length of the description, and today's verdict is the same on either count,
 so it names no skill wrongly yet. It misreports a skill between 500 body lines and 500 file
 lines. Its header reasons about `awk` against `wc -l` and not about frontmatter, so the
@@ -159,7 +159,7 @@ buckets, and every rule lands in exactly one.
 
 **The input is already written.** Ten of thirteen skills declare a `checks:` list in
 frontmatter — 67 entries. That list is the review's starting set for bucket **C**, not something
-to re-derive by reading 4,580 lines. Three skills declare none: `chat-response`,
+to re-derive by reading 4,610 lines. Three skills declare none: `chat-response`,
 `plugin-retrospective`, `spec-interview`.
 
 **The output shape is fixed**, so five review issues produce one comparable table: one row per
@@ -188,7 +188,7 @@ excluded — they name most artifacts and carry no rule.
 |---|---|---|---|
 | `camp` | **7** | 19 | The most-carried skill in the tree. What is left in it that is not judgement? |
 | `handoff` | **3** | 23 | 14 `checks:` and 13 `skips:`. Is the skip table itself a script's job? |
-| `issue-write` | **2** | 4 | 822 body lines against `tracker-verify`, which already enforces much of it — which of its 11 `checks:` are duplicated? |
+| `issue-write` | **2** | 4 | 852 body lines against `tracker-verify`, which already enforces much of it — which of its 11 `checks:` are duplicated? |
 | `chat-response` | — | 7 | No `checks:` declared, and `response-length.py` already scores it. What rule does the skill hold that the scorer does not? |
 | `work-watch` | — | 3 | 600 body lines, 8 `checks:`, no hook. Eight watches in one file — is that one skill? |
 | `engineering-report` | — | 3 | `verify-report-budget.sh` and `report-grade.py` exist. Which of its 3 `checks:` is not already scored? |

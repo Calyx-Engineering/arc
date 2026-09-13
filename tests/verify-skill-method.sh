@@ -140,6 +140,15 @@ EOF
   assert_case 1 "a live skill still asserts 180 lines" "$r" \
     "FAIL  180 retired" "skills/example/SKILL.md"
 
+  # THE WIDENED TARGETS ARE EXERCISED, not just listed. `agents/`, `commands/`, `reference/` and
+  # `docs/suite-architecture/` hold no 180 today, so dropping one back out of the target list would
+  # leave the live run green and the loss invisible. This case plants the claim in `agents/`.
+  r="$tmp/agents180"; build_root "$r"
+  mkdir -p "$r/agents"
+  printf 'Keep the brief under 180 lines.\n' > "$r/agents/example.md"
+  assert_case 1 "a live agent definition asserts 180 lines" "$r" \
+    "FAIL  180 retired" "agents/example.md"
+
   # 1800, 180 ms and PR #180 are not the limit. A gate that trips on them gets muted.
   r="$tmp/nearmiss"; build_root "$r"
   mkdir -p "$r/tools"

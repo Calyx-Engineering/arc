@@ -6,7 +6,7 @@
 
 ## Problem
 
-Thirteen skills, 4,580 body lines, none written or reviewed with a skill-writing tool. Five tools
+Thirteen skills, 4,610 body lines, none written or reviewed with a skill-writing tool. Five tools
 were installed or built in and no run had invoked any. The limit in force was 180 lines, recorded
 in two dev-logs and in no live artifact, and eleven of thirteen skills exceeded it unnoticed.
 
@@ -44,7 +44,7 @@ records what was true when they were written. The retirement is a statement plus
 if a live artifact ties a limit to 180 again — what made 180 invisible was that nothing read it.
 
 **The reviews' input was already written.** Ten skills declare a `checks:` list in frontmatter, 67
-entries. That is the candidate set for bucket **C**, so no review re-derives it by reading 4,580
+entries. That is the candidate set for bucket **C**, so no review re-derives it by reading 4,610
 lines. The three declaring none are a finding in themselves.
 
 ## Rejected approaches
@@ -52,7 +52,7 @@ lines. The three declaring none are a finding in themselves.
 | Rejected | Why |
 |---|---|
 | `claude plugin eval` as the reviewer | `` `plugin eval` is currently in early access ``, exit 1. Gated — [#181](https://github.com/Calyx-Engineering/arc/issues/181) |
-| `claude plugin validate --strict` as the reviewer | Exit 0 on all thirteen skills, including an 822-line body and five whose frontmatter a conformant YAML parser rejects. On a fixture it caught a missing `description` and missed a 900-line body, a 1,500-character description, and a `name:` matching neither its directory nor the naming rules. Kept as a precondition |
+| `claude plugin validate skills --strict` as the reviewer | Exit 0 on all thirteen skills, including an 852-line body and five whose frontmatter a conformant YAML parser rejects. On a fixture it caught a missing `description` and missed a 900-line body, a 1,500-character description, and a `name:` matching neither its directory nor the naming rules. Kept as a precondition |
 | `/skill-doctor` as the reviewer | Its own description is *"Show which loaded skills are unused and costing context"*. It reads one session's usage, not a skill |
 | Adopting `writing-skills`' TDD cycle | Its Iron Law is *"NO SKILL WITHOUT A FAILING TEST FIRST… applies to NEW skills AND EDITS… Write skill before testing? Delete it. Start over."* Thirteen exercised, tuned skills cannot be deleted and re-derived, and #90 says *Edit in place* and *No rule is lost* |
 | Answering the cheaper-carrier question for all thirteen skills here | The issue's own box routes it — *"the question the reviews below answer"*. §4.2 gives each review its first question and marks itself a starting point, not a verdict |
