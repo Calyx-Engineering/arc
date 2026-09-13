@@ -193,6 +193,7 @@ Each workstream's 200-word boundary report lands here when it closes.
 | **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 10 | **10 of 10 closed.** Reports in [§6.4](#64-handoff--boundary-report) — the original six — and [§6.5](#65-handoff-reopened--boundary-report) — [#252](https://github.com/Calyx-Engineering/arc/issues/252), [#253](https://github.com/Calyx-Engineering/arc/issues/253), [#267](https://github.com/Calyx-Engineering/arc/issues/267) and [#268](https://github.com/Calyx-Engineering/arc/issues/268), attached after the first report. The parent stays open until the user closes it. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 12 | **12 of 12 closed.** Report in [§6.6](#66-tracker--boundary-report). Three children — [#270](https://github.com/Calyx-Engineering/arc/issues/270), [#271](https://github.com/Calyx-Engineering/arc/issues/271), [#274](https://github.com/Calyx-Engineering/arc/issues/274) — were filed by the parent mid-run. Spawned [#226](https://github.com/Calyx-Engineering/arc/issues/226), [#234](https://github.com/Calyx-Engineering/arc/issues/234), [#242](https://github.com/Calyx-Engineering/arc/issues/242), [#286](https://github.com/Calyx-Engineering/arc/issues/286) and [#287](https://github.com/Calyx-Engineering/arc/issues/287), open in Dogfood under no workstream. The parent stays open until the user closes it |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
+| **Skills** | [#90](https://github.com/Calyx-Engineering/arc/issues/90) | 9 | **3 of 9 closed.** Report in [§6.9](#69-skills--boundary-report). Six roll to arc 05 — [#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#282](https://github.com/Calyx-Engineering/arc/issues/282) — cut 2026-09-12 for a 24-hour autonomous push and weekend release. The parent stays open until the user closes it |
 
 ### 6.1 The retrospective and the plan
 
@@ -684,6 +685,56 @@ flowchart LR
 - `issue-write`'s two lingering "closure defers to the arc PR" sentences — pre-existing, untouched
 
 *End of Tracker's second boundary report.*
+
+---
+
+### 6.9 Skills — boundary report
+
+**Workstream:** Skills · **Closed:** 2026-09-13 · **195 words**, diagram excluded
+
+#### 6.9.1 Delivered
+
+1. Skill method chosen: `writing-skills`' checklist reviews, `skill-creator` writes, `quick_validate.py` pre-passes both
+2. 500 body lines, measured on `skills/`, adopted; unrecorded 180-line figure retired and gated
+3. Fourth triage bucket, deviation, added beside judgement/evidence/checkable, so five reviews compare
+4. `tools/verify-skill-length.sh` reports any `SKILL.md` over 500 lines, wired into `verify-all.sh`
+5. README's *Using Arc* section splits typed commands from skills that fire on wording; `verify-skill-registry.sh` catches one declaring neither
+
+#### 6.9.2 Spawned
+
+| | | Routed |
+|---|---|---|
+| [#338](https://github.com/Calyx-Engineering/arc/issues/338) | Five skills' frontmatter fails a conformant parser | This workstream |
+| [#341](https://github.com/Calyx-Engineering/arc/issues/341) | Length gate counts the file, not the adopted body limit | This workstream |
+| [#346](https://github.com/Calyx-Engineering/arc/issues/346) | `tracker-verify` prints a whole PR body as excerpt | Tracker, already closed |
+
+#### 6.9.3 Unexpected
+
+- `plugin eval` is early-access gated; `plugin validate --strict` exits 0 on an 852-line body
+- Five skills' frontmatter fails a conformant YAML parser, loading only by a lenient loader
+- Four skills named by no hook or script at all
+
+#### 6.9.4 Unplanned but needed
+
+| | |
+|---|---|
+| Deviation bucket | Without it, house style re-litigates #155 five times over |
+
+#### 6.9.5 Evidence
+
+| | |
+|---|---|
+| `verify-skill-length.sh` | Reports only. `issue-write` 836, `work-watch` 608, already over |
+| `verify-skill-registry.sh` | 5/5 passed · selftest 12/12 |
+| `verify-all.sh` | Exit 0, 73 gates |
+
+#### 6.9.6 Not done
+
+- Six reviews — [#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#282](https://github.com/Calyx-Engineering/arc/issues/282) — rolled to arc 05, cut 2026-09-12
+- `hooks/skill-guard`, `CLAUDE.md`'s line, product-definition's row — named, built by rolled issues
+- #338, #341, #346 — filed, not fixed
+
+*End of Skills' boundary report.*
 
 ---
 
