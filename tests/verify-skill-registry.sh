@@ -44,30 +44,13 @@ selftest() {
   # %q rather than literal quotes, so a TMPDIR holding a quote cannot break the trap open.
   trap "rm -rf $(printf %q "$tmp")" EXIT
 
-  # case_is <wanted-exit> <name> <text> <text-or-empty> -- <paths to plant>
-  # `shift 4` is what lets the second text be empty; the `--` is there so a call that omits a
-  # slot is caught rather than silently asserting "--" as its wanted text. It is checked,
-  # because an unchecked separator documents an invariant it does not hold.
-  case_is() {
-    local want="$1" name="$2" t1="$3" t2="$4"; shift 4
-    if [ "${1:-}" != "--" ]; then
-      echo "  FAIL  $name — malformed case: expected -- before the paths, got \"${1:-}\""
-      failed=$((failed + 1)); return
-    fi
-    shift
-    local root="$tmp/$name" out rc f t
-    mkdir -p "$root/docs/product-architecture"
-    : > "$root/docs/product-architecture/README.md"
-    for f in "$@"; do
-      mkdir -p "$root/$(dirname "$f")"
-      : > "$root/$f"
-      # A planted shipping skill gets its registry row, so only the check under test can fail.
-      case "$f" in
-        skills/*/SKILL.md)
-          printf '| `%s` | m99 |\n' "$(dirname "$f")" >> "$root/docs/product-architecture/README.md" ;;
-      esac
-    done
-
+  # assert_case <wanted-exit> <name> <root> <text> <text-or-empty>
+  # The tail every case_* builder below shares: run $SELF against a fixture root already built,
+  # check its exit code, then check both text substrings. Fixture construction is deliberately
+  # NOT folded in here — case_is and case_row build different trees, and that divergence is the
+  # isolation the fixtures need, not duplication to remove.
+  assert_case() {
+    local want="$1" name="$2" root="$3" t1="$4" t2="$5" out rc t
     out="$(SKILLREG_ROOT="$root" bash "$SELF" 2>&1)"; rc=$?
     if [ "$rc" != "$want" ]; then
       echo "  FAIL  $name — wanted exit $want, got $rc"
@@ -84,6 +67,32 @@ selftest() {
     done
     echo "  ok    $name"
     passed=$((passed + 1))
+  }
+
+  # case_is <wanted-exit> <name> <text> <text-or-empty> -- <paths to plant>
+  # `shift 4` is what lets the second text be empty; the `--` is there so a call that omits a
+  # slot is caught rather than silently asserting "--" as its wanted text. It is checked,
+  # because an unchecked separator documents an invariant it does not hold.
+  case_is() {
+    local want="$1" name="$2" t1="$3" t2="$4"; shift 4
+    if [ "${1:-}" != "--" ]; then
+      echo "  FAIL  $name — malformed case: expected -- before the paths, got \"${1:-}\""
+      failed=$((failed + 1)); return
+    fi
+    shift
+    local root="$tmp/$name" f
+    mkdir -p "$root/docs/product-architecture"
+    : > "$root/docs/product-architecture/README.md"
+    for f in "$@"; do
+      mkdir -p "$root/$(dirname "$f")"
+      : > "$root/$f"
+      # A planted shipping skill gets its registry row, so only the check under test can fail.
+      case "$f" in
+        skills/*/SKILL.md)
+          printf '| `%s` | m99 |\n' "$(dirname "$f")" >> "$root/docs/product-architecture/README.md" ;;
+      esac
+    done
+    assert_case "$want" "$name" "$root" "$t1" "$t2"
   }
 
   echo "verify-skill-registry selftest"
@@ -116,12 +125,46 @@ selftest() {
 
   # The fixture's own premise, which `skill-shadow` rides: a planted skill WITH its row clears
   # both registry checks, so that case's exit 1 comes from the shadowing check and not from a
-  # missing row. It asserts the premise, not the registry checks themselves — those have no
-  # negative case, which is #142's gap rather than #177's — filed as #227.
+  # missing row. It asserts the premise, not the registry checks themselves — those get their
+  # own negative cases next, via `case_row`.
   case_is 0 "registry-row-present" \
           "PASS  every shipping skill has a row in the artifact table" \
           "PASS  every row carries a mechanism number" \
           -- skills/camp/SKILL.md
+
+  # case_row <want> <name> <t1> <t2> -- [registry-line ...]
+  # #142 wrote the two registry checks with no failing-direction case — #227. `case_is`'s plant
+  # loop always gives a planted skill a mechanism-numbered row, which is what isolates the
+  # shadowing checks it exists for. These two invert that: the row is exactly what's under test,
+  # so they write the registry by hand instead of going through it.
+  case_row() {
+    local want="$1" name="$2" t1="$3" t2="$4"; shift 4
+    if [ "${1:-}" != "--" ]; then
+      echo "  FAIL  $name — malformed case: expected -- before the registry lines, got \"${1:-}\""
+      failed=$((failed + 1)); return
+    fi
+    shift
+    local root="$tmp/$name" line
+    mkdir -p "$root/docs/product-architecture" "$root/skills/$name"
+    : > "$root/skills/$name/SKILL.md"
+    : > "$root/docs/product-architecture/README.md"
+    for line in "$@"; do
+      printf '%s\n' "$line" >> "$root/docs/product-architecture/README.md"
+    done
+    assert_case "$want" "$name" "$root" "$t1" "$t2"
+  }
+
+  # No row at all: the skill exists, the registry does not mention it.
+  case_row 1 "registry-row-missing" \
+           "FAIL  every shipping skill has a row in the artifact table" \
+           "missing: registry-row-missing" \
+           --
+
+  # A row exists but carries no `m##`.
+  case_row 1 "registry-row-no-mech" \
+           "FAIL  every row carries a mechanism number" \
+           "no mechanism: registry-row-no-mech" \
+           -- '| `skills/registry-row-no-mech` | no mechanism here |'
 
   echo
   echo "$passed passed, $failed failed"
