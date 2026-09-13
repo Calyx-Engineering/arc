@@ -38,10 +38,10 @@ Both arms read the same target whole, and neither was permitted to edit.
 |---|---|---|
 | **Findings on one skill** | **17** | **6** |
 | **Cost of applying it** | Two markdown files, read and applied by hand | `quick_validate.py` only. Everything past frontmatter needs a model run or a human |
-| **Reads the body** | **Yes** — word count, redundancy, reference depth, missing worked example, verification-step shape | **No.** *"3.9 KB of frontmatter schema checking that says nothing about the body"* |
+| **Reads the body** | **Yes** — word count, redundancy, reference depth, missing worked example, verification-step shape | **No.** `quick_validate.py` is 3.9 KB of frontmatter schema checking and reads nothing below the `---` |
 | **What it cannot do without a run** | Its own mandated procedure: RED baseline, 5-rep micro-tests, pressure scenarios, Haiku/Sonnet/Opus | §Test Cases, all five steps of §Running and evaluating, §Description Optimization, §Blind comparison |
 | **What it needs a human for** | Nothing, statically | §Capture Intent's four questions, §Interview and Research, the test-prompt sign-off, `feedback.json` — the loop terminates when *"the user says they're happy"* |
-| **Self-described shape** | *"the checklist is a build gate to be walked before deployment, not a lens for judging wording already in place"* | *"the only path it offers for an existing skill is 'go straight to the eval/iterate part of the loop'"* |
+| **What the arm concluded about its shape** | A build gate to be walked before deployment, not a lens for judging wording already in place — the instrument says *"Create a todo for EACH checklist item below"* | The only path it offers for an existing skill is its own *"go straight to the eval/iterate part of the loop"*, which presupposes a rewrite |
 
 **17 is not better than 6.** Several of the seventeen are Arc conventions, not defects — the
 dated provenance line in `record-route` is `*Verify before asserting*` doing its job, and the
@@ -68,6 +68,35 @@ $ claude plugin validate skills --strict   # Validating components in: …/skill
 
 **The command is `claude plugin validate skills --strict`.** The first form is the one a session
 reaches for, and it is the one that checks nothing.
+
+### 2.2 The reviewer's 17 findings, routed
+
+The worked example. Every finding the reviewing arm returned on `record-route`, grouped, with the
+bucket §4 sends it to. **Seven of the seventeen are D** — the largest single class, and the number
+that justifies §4.1 existing.
+
+| Finding class | n | Bucket | Note |
+|---|---|---|---|
+| Description summarises the workflow; description over 500 characters | 2 | **D** | [#155](https://github.com/Calyx-Engineering/arc/issues/155) measured both into existence |
+| Narrative storytelling — a named stub, a dated scope reading, a vocabulary reconciliation | 3 | **D** | `CLAUDE.md`'s *Verify before asserting*. The measurement is the rule's evidence |
+| Name is not verb-first or a gerund | 1 | **D** | Installed under this name and resolved by it |
+| Non-spec frontmatter keys | 1 | **C** | Already filed — [#338](https://github.com/Calyx-Engineering/arc/issues/338) |
+| No `## Overview`, no *When to use* | 1 | **J** | Structure. A judgement about what this skill's reader needs |
+| No *Common mistakes* section, no red-flags list | 1 | **J** | Same |
+| Inconsistent placeholder — `issue-<N>` against `issue-<NN>` | 1 | **C** | One grep. `tests/verify-dev-log-name.sh` is next door |
+| The dev-log naming rule stated three times | 1 | **C** | Redundancy across a file is countable |
+| References climb two levels out of the skill directory | 1 | **C** | Path depth is decidable from the tree |
+| `tools/new-direct-pr.sh` cited with no execution intent | 1 | **J** | Run it or read it — the skill has to say which |
+| Verification step is prose with no command | 1 | **C** | A named command, or nothing to run |
+| No worked example anywhere | 1 | **J** | What a good example is here is a judgement |
+| No evaluations, no baseline, no micro-test | 1 | **E** | The Iron Law, which §1 does not adopt. Routes to the mechanism doc as a known hole |
+| Body is 2,016 words | 1 | **D** | The word budget §3 rejects. The arm reported 2,150, which is the file — the same conflation §3 warns about |
+
+**7 D, 5 C, 4 J, 1 E.** Four findings out of seventeen are judgement that belongs in the skill and
+one is evidence; the other twelve either route out of it or were already decided. That is the shape
+[#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#281](https://github.com/Calyx-Engineering/arc/issues/281)
+should expect — **a static reviewer's largest output class on an Arc skill is house style**, which
+is why §4.1 is read before §1.
 
 ## 3 The length limit
 
@@ -99,13 +128,22 @@ they were written and stays. There is nothing to delete, so the retirement is th
 | **13 skills** | **4,580** | two over |
 
 **Lines, not words.** `writing-skills`' own SKILL.md carries a second budget — *"Other skills:
-<500 words"* — which retires eleven of thirteen and is scope reduction, not compression.
+<500 words"* — which puts **all thirteen** over, the smallest being `relief-valve` at 1,171
+words. That is scope reduction, not compression.
 Anthropic's number is lines; Arc takes Anthropic's number.
 
-**Measured as body, not as file.** `wc -l` on `skills/issue-write/SKILL.md` reads 836; its body
-is 822. The 14-line difference is a description tuned for firing
-([#155](https://github.com/Calyx-Engineering/arc/issues/155)), and a limit that counts it
-charges a skill for being findable.
+**Measured as body, not as file.** `skills/issue-write/SKILL.md` is 836 lines; its body is 822.
+The 14-line difference is a description tuned for firing
+([#155](https://github.com/Calyx-Engineering/arc/issues/155)), and a limit that counts it charges
+a skill for being findable.
+
+**The gate that shipped counts the file** — `tools/verify-skill-length.sh`
+([#276](https://github.com/Calyx-Engineering/arc/issues/276)) reports 836 and 608. It is stricter
+than the rule by the length of the description, and today's verdict is the same on either count,
+so it names no skill wrongly yet. It misreports a skill between 500 body lines and 500 file
+lines. Its header reasons about `awk` against `wc -l` and not about frontmatter, so the
+divergence is unexamined rather than deliberate —
+[#341](https://github.com/Calyx-Engineering/arc/issues/341).
 
 ## 4 The question every review answers
 
@@ -160,7 +198,7 @@ excluded — they name most artifacts and carry no rule.
 | `record-route` | — | — | `verify-dev-log-name.sh` checks its `dev-log-exists` rule without naming it. Is the link missing, or the check? |
 | `arc-intent` | — | — | 4 `checks:` and nothing carrying any of them |
 | `spec-interview` | — | — | 370 lines, no `checks:`, no carrier. Is it all judgement, or has nothing been named? |
-| `plugin-retrospective` | — | — | No `checks:`, no carrier. Its step 1 is `agents/transcript-miner` — **an agent is a carrier the four buckets do not name** |
+| `plugin-retrospective` | — | — | No `checks:`, no carrier. `agents/transcript-miner` names this skill's step 1 and the skill does not name the agent — **an agent is a carrier the four buckets do not name, and this edge is written from one end only** |
 
 **Four skills have no carrier at all** — `record-route`, `arc-intent`, `spec-interview`,
 `plugin-retrospective`. Two of them, `spec-interview` and `plugin-retrospective`, also declare no
@@ -174,12 +212,14 @@ here; built by [#282](https://github.com/Calyx-Engineering/arc/issues/282).
 
 | It reports | Source |
 |---|---|
-| Body line count against **500 lines** | `tools/verify-skill-length.sh` — [#276](https://github.com/Calyx-Engineering/arc/issues/276) |
+| Line count against **500 lines** | `tools/verify-skill-length.sh` — [#276](https://github.com/Calyx-Engineering/arc/issues/276). It counts the file today; the limit is the body, so the hook reports whichever the script reports until [#341](https://github.com/Calyx-Engineering/arc/issues/341) lands |
 | Frontmatter that does not parse, or carries an unexpected key | `quick_validate.py`, per §1 — [#338](https://github.com/Calyx-Engineering/arc/issues/338) |
 | The review tool, by name and command | §1. A rule in prose has no trigger |
 
-**A hook, because the trigger is the write.** The limit was written down and read by nothing, and
-twelve of thirteen skills sat over the old number for weeks. Three artifacts hold it now, and
+**A hook, because the trigger is the write.** Two of the three below hold the decision today; the
+hook is the third and lands with [#282](https://github.com/Calyx-Engineering/arc/issues/282).
+The limit was written down and read by nothing, and
+eleven of thirteen skills sat over the old number for weeks. Three artifacts hold it now, and
 each has a trigger:
 
 | | Fires | Covers |

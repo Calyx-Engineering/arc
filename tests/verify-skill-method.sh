@@ -6,7 +6,7 @@
 #
 # WHY THIS EXISTS. #275 settles four things: which tool reviews a skill, which writes one, that
 # the length limit is 500 lines and not 180, and what fires when a skill changes. All four are
-# decisions, and a decision with no gate is a sentence in a document nobody re-reads. Twelve of
+# decisions, and a decision with no gate is a sentence in a document nobody re-reads. Eleven of
 # thirteen skills sat over the old limit for weeks because the limit was written down and read by
 # nothing — the same failure this file exists to not repeat about the method itself.
 #
@@ -40,7 +40,7 @@ DECISIONS="$(cat <<'EOF'
 review tool	^\| \*\*Reviews a skill\*\*
 write tool	^\| \*\*Writes a skill\*\*
 the 500-line limit	\*\*500 lines\*\*
-180 retired	[Rr]etired
+180 retired	180.*[Rr]etired|[Rr]etired.*180
 the keeper	^## 5 The keeper
 EOF
 )"
@@ -124,6 +124,16 @@ EOF
   assert_case 1 "a decision dropped out of the record" "$r" \
     "FAIL  the decision record" "the keeper"
 
+  # THE WORD ALONE IS NOT THE DECISION. `retired` unanchored passes on any sentence carrying it,
+  # including one retiring something else, so the pattern requires 180 and `retired` on ONE LINE.
+  # That is weaker than it sounds — it does not check that 180 is what is being retired, only that
+  # the sentence holds both. It catches a record that dropped the claim, not one that inverted it.
+  r="$tmp/retired-elsewhere"; build_root "$r"
+  sed 's/^\*\*500 lines\*\* of body\. The 180-line working limit is retired\./**500 lines** of body. The word budget is retired./' \
+    "$r/$DOC" > "$r/d" && mv "$r/d" "$r/$DOC"
+  assert_case 1 "retired, but not about 180" "$r" \
+    "FAIL  the decision record" "180 retired"
+
   # THE CASE THE GATE IS FOR. The record can say 180 is retired while a skill still asserts it.
   r="$tmp/live180"; build_root "$r"
   printf 'Keep this under 180 lines.\n' >> "$r/skills/example/SKILL.md"
@@ -154,7 +164,7 @@ if [ "${1:-}" = "selftest" ]; then
   exit $?
 fi
 
-[ "$#" = "0" ] || { sed -n '2,23p' "$0"; exit 2; }
+[ "$#" = "0" ] || { sed -n '2,24p' "$0"; exit 2; }
 
 cd "${SKILLMETHOD_ROOT:-$(dirname "$0")/..}" || exit 1
 
@@ -196,7 +206,8 @@ PAT='(^|[^0-9])180[ -]?lines?|lines?[^0-9]{0,12}(^|[^0-9])180([^0-9]|$)'
 # cannot survive its own vocabulary gets muted rather than fixed. The record is not unchecked —
 # check 1 above is what asserts what it says about the limit.
 HITS=""
-for target in CLAUDE.md README.md skills templates hooks tools tests docs/product-architecture docs/arc-log docs/arc-work; do
+for target in CLAUDE.md README.md skills agents commands reference templates hooks tools tests \
+              docs/product-architecture docs/suite-architecture docs/arc-log docs/arc-work; do
   [ -e "$target" ] || continue
   while IFS= read -r hit; do
     [ -n "$hit" ] && HITS="${HITS:+$HITS
