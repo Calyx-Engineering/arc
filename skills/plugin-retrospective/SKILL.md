@@ -1,5 +1,6 @@
 ---
 name: plugin-retrospective
+user-invocable: true
 description: Use when returning to a Calyx plugin repo after a stretch of real work elsewhere, to mine that work's transcripts for friction and turn it into concrete plugin improvements. Also use when the user says "let's do a plugin retrospective", "what did that arc teach us about the tooling", or wants to defer plugin iteration until after a work push rather than context-switching mid-task. Covers extraction, clustering, the review interview, and writing findings up as mechanism specs. Not a general project or team retrospective — this one improves the tooling.
 ---
 

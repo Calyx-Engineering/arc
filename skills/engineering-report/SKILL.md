@@ -1,5 +1,6 @@
 ---
 name: engineering-report
+user-invocable: false
 description: Use when the user asks for a report, a README, a write-up or a findings document to be written or changed, in any wording — "write the report", "write this up", "write up the findings", "update the readme", "add it to the report", "document this", "put it in the notes". Also fires when the request describes this work without naming it: recording what was investigated, measured, decided or ruled out, for a reader who was not there. Fires when the ask is wrapped inside other instructions rather than being the whole message — a report asked for alongside a commit, an issue and three further requests is still this skill's turn. Fires again when the user objects to a document already written: "too much in there", "way too long", "lacking all context", "what does this even mean", "this reads like what you did, not what is true", "i cant tell what the answer is". Covers what goes at the top and what a framing preamble costs, where each claim came from, the confidence split, length, and what never belongs in a report.
 camp-reports: [report-written, report-revised]
 checks: [destination, structure, actions-routed-to-tracker]

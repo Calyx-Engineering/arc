@@ -29,5 +29,6 @@
 | `R--arc-wt-260` | `R:/arc-wt/260` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
 | `R--arc-wt-266` | `R:/arc-wt/266` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
 | `R--arc-wt-134` | `R:/arc-wt/134` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
-| `R--arc-wt-262` | `R:/arc-wt/262` | `detached` | - | - | 2026-09-11 to 2026-09-11 | live |
-| `R--arc-wt-287` | `R:/arc-wt/287` | `detached` | - | - | 2026-09-11 to 2026-09-11 | live |
+| `R--arc-wt-262` | `R:/arc-wt/262` | `detached` | - | - | 2026-09-11 to 2026-09-11 | orphaned |
+| `R--arc-wt-287` | `R:/arc-wt/287` | `detached` | - | - | 2026-09-11 to 2026-09-11 | orphaned |
+| `R--arc-wt-283` | `R:/arc-wt/283` | `detached` | - | - | 2026-09-13 to 2026-09-13 | live |

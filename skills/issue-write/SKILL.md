@@ -1,5 +1,6 @@
 ---
 name: issue-write
+user-invocable: false
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
 checks: [arc-intent, title-size, base-branch, milestone, label, issue-type, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
