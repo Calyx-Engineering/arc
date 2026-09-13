@@ -1,0 +1,11 @@
+corpus: roadz-sound-system
+document: docs/report/issue-01-warning-light-dimming/analysis-night-detect.md
+lines: 120-159
+why: >
+  The confidence split's own Confidence section, verbatim — "Verified in primary documents"
+  (a sourced list, no table), "Measured" (prose), and "Not established" (a table: `Unknown /
+  What would settle it`, six rows, none naming a source). #314: `grade_tables` read that last
+  table as an unsourced claim table and scored the whole region NONE, which is backwards — the
+  group exists to hold open questions, not settled claims, and `skills/engineering-report`
+  mandates writing it this way. The region has no claim table in it at all, so the correct
+  verdict is NOTABLE.

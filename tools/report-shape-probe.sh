@@ -228,6 +228,8 @@ elif mode == "garbage":
     print("this is not json")
 elif mode == "schemaless":
     print(json.dumps({"cut": "", "retried": "", "unusable": ""}))
+elif mode == "twothirds":
+    print(json.dumps(wrote("good.md") if c < 2 else wrote("bad.md")))
 else:
     print(json.dumps(wrote(mode + ".md")))
 FAKE
@@ -343,6 +345,16 @@ FAKE
   want "a side that ran exits 0"                       "status 0" "status $ST"
   probe unusable --label s --runs 1 >/dev/null 2>&1; ST=$?
   want "a halted side exits 2"                         "status 2" "status $ST"
+
+  # #315: `0.67` is this repo's shorthand for two-thirds, and `2/3` is `0.6666...` — a bare
+  # `>=` against the raw rate rejected the exact ratio the constant was named for, the same
+  # defect in tools/skill-probe.sh and tools/report-grade.py. Two good runs then one bad run,
+  # a genuine 2/3 on every column with nothing unusable, must read PASS.
+  O="$(probe twothirds --label s --runs 3)"
+  want "a 2/3 rate clears the threshold on the opening"      "opening         PASS  2/3" "$O"
+  want "a 2/3 rate clears the threshold on the table source" "table source    PASS  2/3" "$O"
+  want "a 2/3 rate clears the threshold on the conflict"     "conflict        PASS  2/3" "$O"
+  want "and the side verdict follows"                        "verdict                          PASS" "$O"
 
   echo
   echo "$RUN cases, $PASSED passed, $FAILED failed"
@@ -519,11 +531,14 @@ row() {  # row <label> <hits> <total>
     printf '  %-14s not scored   no run put anything in this column\n' "$1"
     return
   fi
-  V="$(python -c "print('PASS' if $2/$3 >= $THRESHOLD else 'FAIL')")"
-  # THREE DECIMALS, NOT TWO. The comparison is against the raw rate, so 2/3 is 0.6667 and fails
-  # a 0.67 threshold — correctly, and the same way tools/skill-probe.sh fails it. Printed to two
-  # places that reads `FAIL 2/3 0.67`, a verdict contradicting the number beside it, and the
-  # first thing a reader does is doubt the arithmetic instead of the sample size.
+  # #315: `0.67` is this repo's shorthand for two-thirds, and `2/3` is `0.6666...` — a bare
+  # `>=` against the raw rate rejected the exact ratio the constant was named for, the same
+  # defect `tools/skill-probe.sh` and `tools/report-grade.py` had. Rounded to the threshold's
+  # own two decimal places before comparing, so `2/3` reads PASS.
+  V="$(python -c "print('PASS' if round($2/$3, 2) >= round($THRESHOLD, 2) else 'FAIL')")"
+  # THREE DECIMALS, NOT TWO, FOR DISPLAY. The comparison above is rounded to match the
+  # threshold's own precision; the fraction printed beside it keeps a third place so `2/3` and
+  # `4/6` are still visibly the same rate rather than both collapsing to `0.67`.
   R="$(python -c "print('%.3f' % ($2/$3))")"
   printf '  %-14s %s  %d/%d  %s%s\n' "$1" "$V" "$2" "$3" "$R" "$MEASURED"
   [ "$V" = "FAIL" ] && BAD=$((BAD + 1))
