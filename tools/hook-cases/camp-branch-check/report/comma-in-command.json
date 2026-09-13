@@ -1,0 +1,2 @@
+# a commit message carrying a comma ahead of the branch creation — the comma-split reader stopped at it and saw no `git checkout -b`
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git commit -m \"checkpoint, wip\" && git checkout -b _wip"}}

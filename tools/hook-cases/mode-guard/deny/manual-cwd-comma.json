@@ -1,0 +1,2 @@
+# manual mode, in a cwd carrying a comma — the comma-split reader yielded no cwd and read the mode out of the session's own tree instead
+{"tool_name":"Bash","cwd":"tools/hook-cases/mode-guard/fixtures/manual,comma","tool_input":{"command":"git commit -m \"work\"","description":"Commit"}}
