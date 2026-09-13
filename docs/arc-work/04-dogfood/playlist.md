@@ -44,8 +44,14 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **F19 branch-guard outside a repo** | [#272](https://github.com/Calyx-Engineering/arc/issues/272) | `hooks/branch-guard`, its cases | — | **S8**. A different hook file from F9; neither touches `verify-all.sh` |
 | **F12 topic case** | [#259](https://github.com/Calyx-Engineering/arc/issues/259) | `evals/topic-numbering`, `tools/topic-numbering.py` | — | **S10**. After F11 |
 | **F13 report shape** | [#260](https://github.com/Calyx-Engineering/arc/issues/260) | `skills/engineering-report` | probe | **S10** — probe slot |
-| **F14 provenance** | [#266](https://github.com/Calyx-Engineering/arc/issues/266) then [#261](https://github.com/Calyx-Engineering/arc/issues/261) | `skills/record-route`, `evals/`provenance | #261 probe | **S10** for the scope, **S12** for #261 — the set's probe slot |
+| **F14 provenance** | [#266](https://github.com/Calyx-Engineering/arc/issues/266) then [#261](https://github.com/Calyx-Engineering/arc/issues/261) | `skills/record-route`, `evals/`provenance | #261 probe | **S10** for the scope, done. #261 **→ arc 05** (was S12). Cut 2026-09-12 |
 | **F15 twenty words** | [#262](https://github.com/Calyx-Engineering/arc/issues/262) | `skills/chat-response`, `evals/response-length` | probe | **S11** — probe slot. After U8 (#174) has merged, same file |
+| **F20 payload reader** | [#300](https://github.com/Calyx-Engineering/arc/issues/300) | `hooks/TEMPLATE`, `camp-branch-check`, `branch-guard`, `camp-session-start`, `mode-guard`, a case each | — | **S13**, the set's only hook track. **David approved the TEMPLATE edit in chat 2026-09-11.** Routed 2026-09-11 |
+| **F21 branch-guard root form** | [#294](https://github.com/Calyx-Engineering/arc/issues/294) | `hooks/branch-guard`, its cases | — | **→ arc 05** (was S14). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **F22 saturation, live** | [#243](https://github.com/Calyx-Engineering/arc/issues/243) | `tools/plugin-reload.sh` then `saturation-cases.sh --probe`; a verdict in #154's dev-log | probe | **→ arc 05** (was S14). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **F23 canary and fixtures** | [#325](https://github.com/Calyx-Engineering/arc/issues/325) [#327](https://github.com/Calyx-Engineering/arc/issues/327) | two gates under `tests/`, `verify-all.sh`, `tools/verify-hook.sh`, `tools/hook-cases/verify-hook/`, m10 §5 | — | **→ arc 05** (was S14). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **F24 hook wrapper** | [#326](https://github.com/Calyx-Engineering/arc/issues/326) | `hooks/lib`, **every hook**, `hooks/TEMPLATE`, a case each | — | **→ arc 05** (was S15, alone). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **Human** | [#246](https://github.com/Calyx-Engineering/arc/issues/246) | work-watch check 8 at a real bench | — | David. Out of the milestone 2026-09-11 — no bench day in this arc's budget |
 
 **Why not the brief's #162+#183+#210:** #162 is a different hook in a different file. #163 edits `tracker-verify` too and was unscoped when the brief was written.
 
@@ -89,10 +95,16 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | **U6 branch-guard prefix** | [#203](https://github.com/Calyx-Engineering/arc/issues/203) | `hooks/branch-guard`, the operating agreement | — | Fire's F4 and F7 |
 | **U7 milestone rule** | [#204](https://github.com/Calyx-Engineering/arc/issues/204) | `hooks/tracker-verify`, `skills/issue-write`, ten PRs' milestones | — | T2, T4 |
 | **U8 verbosity setting** | [#174](https://github.com/Calyx-Engineering/arc/issues/174) | operating agreement, `skills/chat-response` | probe | Fire's F3 |
-| **Human** | [#134](https://github.com/Calyx-Engineering/arc/issues/134) [#175](https://github.com/Calyx-Engineering/arc/issues/175) [#202](https://github.com/Calyx-Engineering/arc/issues/202) | Decisions (#134, #175); `hooks/TEMPLATE` is never edited autonomously (#202) | — | David at the keyboard, any time. #202 after U6 |
+| **Human** | [#134](https://github.com/Calyx-Engineering/arc/issues/134) [#175](https://github.com/Calyx-Engineering/arc/issues/175) [#202](https://github.com/Calyx-Engineering/arc/issues/202) [#320](https://github.com/Calyx-Engineering/arc/issues/320) | Decisions (#134, #175); `hooks/TEMPLATE` is never edited autonomously (#202); the audit's three `ask` groups ticked, then #320 is a run | — | David at the keyboard, any time. #202 after U6. #320's run after the ticks |
 | **U10 plugin reload** | [#211](https://github.com/Calyx-Engineering/arc/issues/211) | `tools/plugin-reload.sh` | — | Nothing. Not beside a probe track |
 | **U11 one run per issue** | [#214](https://github.com/Calyx-Engineering/arc/issues/214) | `tools/arc-loop.sh` — refuse an `in-progress` issue | — | Nothing |
 | **U9 move to `tests/`** | [#190](https://github.com/Calyx-Engineering/arc/issues/190) | every verifier, every case directory, every citation | — | **Everything. Alone. Last.** `verify-hook.sh`'s move is a proposal to David |
+| **U12 registry selftest** | [#227](https://github.com/Calyx-Engineering/arc/issues/227) | `tests/verify-skill-registry.sh`, its fixtures | — | **S12**. Routed 2026-09-11 — the twelve milestone issues no track named |
+| **U13 case readers** | [#285](https://github.com/Calyx-Engineering/arc/issues/285) | `tools/saturation-cases.py`, `tools/environment-blame.py` | — | **→ arc 05** (was S12). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **U14 grader arithmetic** | [#314](https://github.com/Calyx-Engineering/arc/issues/314) [#315](https://github.com/Calyx-Engineering/arc/issues/315) | `tools/report-grade.py`, `skill-probe.sh`, `report-shape-probe.sh` | — | **S12**. One run — `report-grade.py` is in both. Before Skills' K5, which reads these graders |
+| **U15 probe runner rate limit** | [#297](https://github.com/Calyx-Engineering/arc/issues/297) | `tools/response-length-probe.py`, a selftest in `verify-all.sh` | — | **S12**. Before F22 and K5, which it drives |
+| **U16 the report dispatch** | [#310](https://github.com/Calyx-Engineering/arc/issues/310) | `tools/arc-loop.sh`, a selftest | — | **→ arc 05** (was S13). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **U17 agreement links** | [#258](https://github.com/Calyx-Engineering/arc/issues/258) | `.claude/arc/camp/operating-agreement.md`, `verify-template-links.sh` | — | **S13**. Docs and a gate |
 
 ### 3.5 Skills — [#90](https://github.com/Calyx-Engineering/arc/issues/90)
 
@@ -100,15 +112,15 @@ Added 2026-09-08 at the user's direction. Every skill reviewed with Anthropic's 
 
 | Track | Issues | Edits | Probe | After |
 |---|---|---|---|---|
-| **K1 the method** | [#275](https://github.com/Calyx-Engineering/arc/issues/275) | a scope document | — | Nothing. **S13**, alone — everything below is blocked by it |
-| **K2 length gate** | [#276](https://github.com/Calyx-Engineering/arc/issues/276) | new `tools/verify-skill-length.sh`, `verify-all.sh` | — | Nothing. **S13** |
-| **K3 issue-write** | [#277](https://github.com/Calyx-Engineering/arc/issues/277) | `skills/issue-write`, `hooks/tracker-verify` | — | K1. **S14** |
-| **K4 work-watch** | [#278](https://github.com/Calyx-Engineering/arc/issues/278) | `skills/work-watch`, `skills/relief-valve` | — | K1. **S14** |
-| **K5 the writing skills** | [#279](https://github.com/Calyx-Engineering/arc/issues/279) | `skills/chat-response`, `engineering-report`, `record-route` | probe | K1. **S14** — probe slot, Fire's graders before and after |
-| **K6 the spine** | [#280](https://github.com/Calyx-Engineering/arc/issues/280) | `skills/handoff`, `camp`, `autonomy-set`, `arc-intent` | — | K1. **S15** |
-| **K7 the rest** | [#281](https://github.com/Calyx-Engineering/arc/issues/281) | `skills/spec-interview`, `decompose`, `plugin-retrospective` | — | K1. **S15** |
-| **K8 the rule's home** | [#282](https://github.com/Calyx-Engineering/arc/issues/282) | `CLAUDE.md`, the product definition | — | K1. **S15** |
-| **K9 the menu** | [#283](https://github.com/Calyx-Engineering/arc/issues/283) | `README.md`, every `SKILL.md` frontmatter, `verify-skill-registry.sh` | — | K3–K7 — the README describes the skills as they end up, not as they start. **S15**, last |
+| **K1 the method** | [#275](https://github.com/Calyx-Engineering/arc/issues/275) | a scope document | — | Nothing. **S16**, alone — everything below is blocked by it |
+| **K2 length gate** | [#276](https://github.com/Calyx-Engineering/arc/issues/276) | new `tools/verify-skill-length.sh`, `verify-all.sh` | — | Nothing. **S16** |
+| **K3 issue-write** | [#277](https://github.com/Calyx-Engineering/arc/issues/277) | `skills/issue-write`, `hooks/tracker-verify` | — | **→ arc 05** (was —). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **K4 work-watch** | [#278](https://github.com/Calyx-Engineering/arc/issues/278) | `skills/work-watch`, `skills/relief-valve` | — | **→ arc 05** (was —). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **K5 the writing skills** | [#279](https://github.com/Calyx-Engineering/arc/issues/279) | `skills/chat-response`, `engineering-report`, `record-route` | probe | **→ arc 05** (was —). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **K6 the spine** | [#280](https://github.com/Calyx-Engineering/arc/issues/280) | `skills/handoff`, `camp`, `autonomy-set`, `arc-intent` | — | **→ arc 05** (was —). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **K7 the rest** | [#281](https://github.com/Calyx-Engineering/arc/issues/281) | `skills/spec-interview`, `decompose`, `plugin-retrospective` | — | **→ arc 05** (was —). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **K8 the rule's home** | [#282](https://github.com/Calyx-Engineering/arc/issues/282) | `CLAUDE.md`, the product definition | — | **→ arc 05** (was —). Cut 2026-09-12 — David: *24 hours of autonomous work, release this weekend* |
+| **K9 the menu** | [#283](https://github.com/Calyx-Engineering/arc/issues/283) | `README.md`, every `SKILL.md` frontmatter, `verify-skill-registry.sh` | — | K3–K7 — the README describes the skills as they end up, not as they start. **S18**, last |
 
 **The queue grows.** A review that finds a hook should exist files it under #90; the orchestrator adds a track.
 
@@ -118,7 +130,7 @@ Workstreams are **not** the parallel unit; the track is. Each set mixes workstre
 
 | Set | Tracks | Workstreams | Probe slot |
 |---|---|---|---|
-| **S1** (running) | F1 · F2 · F3 | Fire | F3 |
+| **S1** | F1 · F2 · F3 | Fire | F3 |
 | **S2** | F4 · F5 · F6 · T1 · U1 | Fire · Tracker · Upkeep | F5 |
 | **S3** | F1b (#163) · H1 · T3 · U2 · U4 | Fire · Handoff · Tracker · Upkeep | T3 |
 | **S4** | F7 (the only hook track) · H2 · H3 · T4 | Fire · Handoff · Tracker | H3 |
@@ -129,25 +141,30 @@ Workstreams are **not** the parallel unit; the track is. Each set mixes workstre
 | **S9** | U9 · F10 · H6 · T7 · T8 | Upkeep · Fire · Handoff · Tracker | — |
 | **S10** | F12 · F13 · F14 (#266) | Fire | F13 |
 | **S11** | F15 · T9 · T10 · T11 | Fire · Tracker | F15 |
-| **S12** | F14 (#261) | Fire | F14 |
-| **S13** | K1 · K2 | Skills | — |
-| **S14** | K3 · K4 · K5 | Skills | K5 |
-| **S15** | K6 · K7 · K8 · K9 | Skills | — |
-
+| **S12** (running) | U14 · U15 · U12 · U17 | Upkeep | — |
+| **S13** | F20 (the only hook track; David approved the TEMPLATE edit) | Fire | — then Fire's report |
+| **S14** | K1 · K2 | Skills | — |
+| **S15** | K9 · human→run (#320, after A1–A3) | Skills · Upkeep | — then Upkeep's and Skills' reports, arc close |
 ```mermaid
 flowchart LR
   S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8 --> S9 --> S10 --> S11 --> S12 --> S13 --> S14 --> S15
   S5 -.-> RF["Fire report"]
-  S12 -.-> RF
+  S13 -.-> RF
   S9 -.-> RH["Handoff report"]
   S9 -.-> RT["Tracker report"]
-  S9 -.-> RU["Upkeep report"]
+  S15 -.-> RU["Upkeep report"]
   S15 -.-> RK["Skills report"]
 ```
 
-A workstream's report run fires when its last child closes — Fire after S5 and again after S12 (fifteen issues reopened it 2026-09-08), Handoff and Tracker after S9 (both reported 2026-09-09; Tracker reopened by T9–T11), Upkeep after S9 with the user's four, Skills after S15. The boundary is a review, not a scheduling unit.
+A workstream's report run fires when its last child closes — Fire after S5 and again after S13, Handoff and Tracker after S9 (Tracker again after S11), Upkeep and Skills after S15. The boundary is a review, not a scheduling unit.
 
-**Fifteen sets at ~45 min if the sub-agent passes hold: a working day of wall time, against thirty-plus serial runs.**
+**2026-09-11:** twelve open milestone issues had no parent and no track. Routed here — instruments and gates to Upkeep (U12–U17, #320), hooks and the live saturation run to Fire (F20–F22), #246 out of the milestone. Skills' sets renumbered S13–S15 → S15–S17.
+
+**2026-09-12:** the hook-safety plan — canary session, wrapper with a breaker, verify-hook fixtures — filed as #325 #326 #327 under Fire (F23–F25) at David's direction. It relaxes m10 §5 to `settings.json` alone. Skills renumbered again, S16–S18.
+
+**2026-09-12, the cut:** David — *that's too much. we need to shift scope … 24 hours of autonomous work.* Thirteen issues leave for arc 05 (marked **→ arc 05** above): both remaining probes, the six per-skill reviews, three small fixes, the hook-safety plan. Skills keeps its method, gate and menu. Fifteen sets, ~14 h of orchestration left.
+
+**Measured over 47 runs: 16.5 min per issue of session time, a set of four or five tracks about 1.5 h wall; the weekly usage limit, not the graph, is the ceiling.**
 
 ## 5 The orchestrator's loop
 

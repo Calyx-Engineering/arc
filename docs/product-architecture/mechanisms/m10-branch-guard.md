@@ -141,6 +141,15 @@ process safe:
 
 Changes to these come to the user as a proposal, always.
 
+**Decided 2026-09-12 — the list shrinks to `settings.json` once three things exist.** Each is
+filed under Fire in arc 04: a canary session gate that proves a session survives the edited hooks
+([#325](https://github.com/Calyx-Engineering/arc/issues/325)); a shared wrapper with a timeout and
+a circuit breaker, so a bad hook costs a few calls and not the session
+([#326](https://github.com/Calyx-Engineering/arc/issues/326)); and fixture hooks that validate
+`verify-hook.sh`, with the rule that the validator and its fixtures never change in one commit
+([#327](https://github.com/Calyx-Engineering/arc/issues/327)). Until they merge, the table above
+holds — the template and the validator were each edited once under explicit approval in chat.
+
 ### What this permits
 
 With all five in place, the agent **may** write hook registration — provided it shows the

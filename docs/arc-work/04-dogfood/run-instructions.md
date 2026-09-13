@@ -68,10 +68,18 @@ read that collapses to a small answer.
 **A sub-agent that edits files and reports *done* is the failure this arc exists to fix.** You
 cannot verify work you did not see, and step 4 is not satisfiable on a report.
 
-**Sub-agents run in the foreground.** You are a `claude -p` session: it ends when you end your
-turn, and a background task's notification never arrives. The run for
-[#151](https://github.com/Calyx-Engineering/arc/issues/151) ended after 62 minutes with a draft
-PR, waiting on a suite it had sent to the background.
+**Nothing runs in the background — no sub-agent, no Bash task, no gate, however slow.** You are
+a `claude -p` session: it ends when you end your turn, and a background task's notification never
+arrives. The run for [#151](https://github.com/Calyx-Engineering/arc/issues/151) ended after 62
+minutes with a draft PR, waiting on a suite it had sent to the background; three S12 runs on
+2026-09-12 ended the same way, each with its edits uncommitted, each waiting on `verify-all.sh`.
+Give a slow command a long timeout and wait for it.
+
+**Nobody answers a question.** A run that stops to ask — *run it now, or leave it?* — ends its
+turn and gets no reply; the run for [#314](https://github.com/Calyx-Engineering/arc/issues/314)
+did, with its second issue untouched. Decide, write the assumption into the dev-log, and continue.
+A decision the issue's constraints already settle is not yours to reopen; one they leave open is
+yours to make and state.
 
 ## 4 Where the work goes
 
