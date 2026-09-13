@@ -1,6 +1,6 @@
 # Issue #258 — fix: the local operating agreement's links into m43 do not resolve
 
-**Issue:** [#258](https://github.com/Calyx-Engineering/arc/issues/258)  ·  **PR:** TBD
+**Issue:** [#258](https://github.com/Calyx-Engineering/arc/issues/258)  ·  **PR:** [#333](https://github.com/Calyx-Engineering/arc/pull/333)
 
 ## Problem
 
@@ -28,11 +28,18 @@ the five obligations, and nothing caught the drift.
   (lowercase; keep only letters/digits/spaces/hyphens; spaces → hyphens; hyphens never
   collapsed) so a future heading rename is caught structurally instead of requiring someone to
   update a table of known-good anchors by hand.
-- **Windows `python` prints CRLF.** The gate's `slugify()` shells out to `python` (this repo's
-  convention — see `tools/topic-numbering.sh`, `tools/report-grade.sh` — not `python3`, which on
-  this machine resolves to the Microsoft Store stub). On Windows, `print()` writes `\r\n` even
-  though the script only ever asked for `\n`, so every computed slug carried a trailing `\r` and
-  matched nothing. Fixed by piping `slugify`'s output through `tr -d '\r'`.
+- **Windows `python` prints CRLF.** The gate shells out to `python` (this repo's convention —
+  see `tools/topic-numbering.sh`, `tools/report-grade.sh` — not `python3`, which on this machine
+  resolves to the Microsoft Store stub). On Windows, `print()` writes `\r\n` even though the
+  script only ever asked for `\n`, so every computed slug carried a trailing `\r` and matched
+  nothing. Fixed by piping the python call's output through `tr -d '\r'`.
+- **One `python` process per file, not per heading.** Pass 4 measured the first version
+  re-spawning `python` roughly 500 times on one real run — a fresh process for every heading
+  line in `m43-camp-assistant.md` (~59), times every one of the agreement's nine links into it —
+  and that cost was what made a live `verify-all.sh` run stall for several minutes. Rewrote
+  `headings_of()` to read the whole file and print every slug in one process, and added a
+  per-target cache in `check_file()` so nine links to the same file only read it once. The real
+  run against the live agreement dropped to about 2.5s.
 
 ## Rejected approaches
 

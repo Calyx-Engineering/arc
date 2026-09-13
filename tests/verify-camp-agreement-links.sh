@@ -28,33 +28,35 @@ set -u
 
 SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 
-slugify() {
+headings_of() {  # headings_of <file> — one GitHub slug per line, one python call for the whole file
+  local f="$1"
+  [ -f "$f" ] || return
+  # One process for every heading in the file made this gate re-spawn python roughly 500 times
+  # on m43-camp-assistant.md's ~59 headings across the agreement's nine links into it — #333
+  # pass 4 measured it as the reason a live verify-all.sh run stalled. One process per FILE
+  # instead, and the caller below caches the result per target so a file linked from several
+  # anchors (m43 is, nine times) is still only read once per run.
+  #
   # Windows python opens stdout in text mode and rewrites \n to \r\n — strip it back off so a
   # slug compares equal to an anchor typed with plain \n line endings.
   python -c '
-import sys
-s = sys.argv[1].strip().lower()
-s = "".join(ch for ch in s if ch.isalnum() or ch in " -")
-print(s.replace(" ", "-"))
-' "$1" | tr -d '\r'
-}
-
-headings_of() {  # headings_of <file> — one GitHub slug per line
-  local f="$1"
-  [ -f "$f" ] || return
-  while IFS= read -r line; do
-    case "$line" in
-      '#'*)
-        text="$(printf '%s' "$line" | sed -E 's/^#+[[:space:]]*//')"
-        slugify "$text"
-        ;;
-    esac
-  done < "$f"
+import io, re, sys
+with io.open(sys.argv[1], encoding="utf-8") as fh:
+    for line in fh:
+        if not line.startswith("#"):
+            continue
+        text = re.sub(r"^#+\s*", "", line).strip().lower()
+        s = "".join(ch for ch in text if ch.isalnum() or ch in " -")
+        print(s.replace(" ", "-"))
+' "$f" | tr -d '\r'
 }
 
 check_file() {  # check_file <agreement-md> — prints findings, returns count of bad links
   local file="$1" dir bad=0
   dir="$(dirname "$file")"
+  # Cache headings_of's output per target path — the agreement links into m43 nine times, and
+  # without this every one of those nine re-read and re-sluggified the same file.
+  local -A slug_cache=()
   links="$(
     sed -e '/^```/,/^```/d' "$file" \
     | sed -e 's/`[^`]*`//g' \
@@ -88,7 +90,10 @@ check_file() {  # check_file <agreement-md> — prints findings, returns count o
       bad=$((bad + 1))
       continue
     fi
-    slugs="$(headings_of "$target")"
+    if [ -z "${slug_cache[$target]+set}" ]; then
+      slug_cache[$target]="$(headings_of "$target")"
+    fi
+    slugs="${slug_cache[$target]}"
     case "
 $slugs
 " in
