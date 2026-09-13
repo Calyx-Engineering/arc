@@ -23,11 +23,35 @@
 #
 # IT COSTS MONEY, and the cost grows per turn as the conversation does. RL_PROBE_BUDGET caps
 # each turn. This is why --probe is not in tests/verify-all.sh.
+#
+# A RATE LIMIT IS NOT A MISS, AND #213 LOST TWO BILLED 11-TURN RUNS TO THE DIFFERENCE — every
+# turn came back `CUT`, one at $0.000, nothing warned and nothing retried. #269 fixed the same
+# shape in tools/skill-probe.py; this file is the runner #213 actually lost its money through,
+# named as the follow-on there because the box that issue closed named the other file.
+#
+# THE RETRY UNIT IS THE CASE, NOT THE TURN. A case's turns share one session (--session-id,
+# then --resume), so a turn that comes back cut leaves that session dead — there is nothing a
+# per-turn retry could resume. run_case() stops the moment a turn is cut, before the next one
+# is billed, and with_retry() re-runs the WHOLE case once, fresh session, after a stated
+# back-off. A second cut stops for good; ported from skill-probe.py's unusable()/with_retry()
+# rather than a second copy of the rule.
+#
+# THE DEADLINE IS A WATCHDOG, NOT A CHECK IN THE LOOP. The old in-loop check only advanced when
+# a line ARRIVED, so a CLI blocked on its own rate-limit retry never reached it — the read
+# blocks forever and the whole probe hangs with nothing printed. A threading.Timer that kills
+# the child is the only thing that ends a blocked read; the in-loop check stays for the other
+# shape, a stream that keeps talking past the deadline.
+#
+#   RL_PROBE_BACKOFF=60   seconds to wait before the one case-level retry
+#
+#   python tools/response-length-probe.py selftest    the stop-and-retry rule, no network, no billing
 import io
 import json
 import os
 import subprocess
 import sys
+import tempfile
+import threading
 import time
 import uuid
 
@@ -36,12 +60,9 @@ try:
 except Exception:
     pass
 
-CASE_DIR = sys.argv[1]
-CASE_NAME = sys.argv[2]
-OUT_PATH = sys.argv[3]
-
 BUDGET = os.environ.get("RL_PROBE_BUDGET", "0.60")
 TIMEOUT = int(os.environ.get("RL_PROBE_TIMEOUT", "600"))
+BACKOFF = int(os.environ.get("RL_PROBE_BACKOFF", "60"))
 CWD = os.environ.get("RL_PROBE_CWD") or os.getcwd()
 
 # WHICH COPY OF THE PLUGIN THE PROBE MEASURES — #262.
@@ -100,15 +121,27 @@ def run(prompt, session, first):
     p = subprocess.Popen(cmd, cwd=CWD, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
                          stdin=subprocess.DEVNULL, text=True, encoding="utf-8",
                          errors="replace")
+    # A blocked read never reaches an in-loop clock check — see the header. Only a timer that
+    # can kill the child from outside the read ends it.
+    expired = []
+
+    def watchdog():
+        expired.append(True)
+        try:
+            p.kill()
+        except Exception:
+            pass
+
+    wd = threading.Timer(TIMEOUT, watchdog)
+    wd.daemon = True
+    wd.start()
     # Skill fires are recorded per turn, not because firing is the measurement — #155 settled
     # that it is neither necessary nor sufficient — but because a rule that lives in a skill
     # BODY is only in context on the turns the skill fired. Without this, a fix that moved
     # nothing cannot be told apart from a fix that was never loaded.
-    blocks, fires, cost, cut, started = [], [], None, "", time.time()
+    blocks, fires, cost, cut = [], [], None, ""
     try:
         for line in p.stdout:
-            if time.time() - started > TIMEOUT:
-                break
             line = line.strip()
             if not line.startswith("{"):
                 continue
@@ -139,7 +172,13 @@ def run(prompt, session, first):
                     sk = ((b.get("input") or {}).get("skill") or "").split(":")[-1]
                     if sk and sk not in fires:
                         fires.append(sk)
+        else:
+            # The stream ran out with no `result` line — the CLI died, or the watchdog killed
+            # it. A blocked-then-killed read looks the same here; `expired` below says which.
+            if not cut:
+                cut = "no result line"
     finally:
+        wd.cancel()
         try:
             p.terminate()
             p.wait(timeout=10)
@@ -148,29 +187,206 @@ def run(prompt, session, first):
                 p.kill()
             except Exception:
                 pass
+    if expired:
+        cut = "timeout"
     # Everything the assistant said across the turn, which is what the user reads. The scorer
     # strips tables, code and headings before counting.
     return "\n".join(blocks), cost, fires, cut
 
 
-session = str(uuid.uuid4())
-replies, total = {}, 0.0
-for i, (turn, prompt) in enumerate(turns(CASE_DIR)):
-    text, cost, fires, cut = run(prompt, session, i == 0)
-    replies[str(turn)] = {"text": text, "cut": cut, "fired": fires}
-    if cost:
-        total += cost
-    print("    t%-4d %5d chars   $%-6s  fired: %-16s %s"
-          % (turn, len(text), ("%.3f" % cost) if cost else "?",
-             ", ".join(fires) or "—", ("CUT: " + cut) if cut else ""),
-          flush=True)
+def run_case(turn_list, run_turn=run):
+    """Run every turn of one case in a fresh session, stopping the moment one comes back cut.
 
-existing = {}
-if os.path.exists(OUT_PATH):
+    The retry unit is the case: turns share a session, so a turn that comes back cut leaves
+    that session dead and there is nothing a per-turn retry could resume. Stopping here is what
+    keeps the remaining turns from being billed into the same limit — #213 lost two 11-turn
+    runs because nothing did.
+    """
+    session = str(uuid.uuid4())
+    replies, total, cut = {}, 0.0, ""
+    for turn, prompt in turn_list:
+        text, cost, fires, tcut = run_turn(prompt, session, not replies)
+        replies[str(turn)] = {"text": text, "cut": tcut, "fired": fires}
+        if cost:
+            total += cost
+        print("    t%-4d %5d chars   $%-6s  fired: %-16s %s"
+              % (turn, len(text), ("%.3f" % cost) if cost else "?",
+                 ", ".join(fires) or "—", ("CUT: " + tcut) if tcut else ""),
+              flush=True)
+        if tcut:
+            cut = tcut
+            break
+    return {"session": session, "replies": replies, "total": total, "cut": cut}
+
+
+def _warn(message):
+    print(message, file=sys.stderr, flush=True)
+
+
+def unusable(out):
+    """Why this case's run is not a measurement, or "" if it is one.
+
+    A cut turn stops run_case() before the remaining turns are billed, which leaves the case
+    with an incomplete session rather than a wrong one — it must be retried, not scored as
+    though the missing turns held short replies.
+    """
+    return out.get("cut", "")
+
+
+def with_retry(attempt, backoff, sleep=time.sleep, say=None):
+    """One attempt at a whole case; if it measured nothing, say so, back off, try once more.
+
+    ONE retry, then stop. A probe is billed per attempt and a rate limit does not clear on a
+    schedule this tool can know, so retrying until it works is a way to spend money without a
+    bound. Ported from tools/skill-probe.py's own with_retry() rather than a second copy of the
+    rule — `sleep` and `say` are injected there for the same reason: the back-off has to be
+    assertable without waiting for it.
+    """
+    say = say or _warn
+    out = attempt()
+    out["retried"] = ""
+    out["unusable"] = unusable(out)
+    if not out["unusable"]:
+        return out
+    reason = out["unusable"]
+    say("response-length-probe: this case measured nothing past turn %s (%s). Backing off %ss, "
+        "then ONE retry." % (len(out["replies"]), reason, backoff))
+    sleep(backoff)
+    out = attempt()
+    out["retried"] = reason
+    out["unusable"] = unusable(out)
+    if out["unusable"]:
+        say("response-length-probe: the retry measured nothing either (%s). Stopping — this "
+            "case is not a measurement." % out["unusable"])
+    else:
+        say("response-length-probe: the retry completed; reporting it.")
+    return out
+
+
+def selftest():
+    """The case-level stop-and-retry rule, against the shape #213 actually produced.
+
+    No `claude`, no network, no billing — a canned `run_turn` stands in for the subprocess so
+    the loop-stop and the retry can be asserted without a live session.
+    """
+    def canned(*results):
+        seq = list(results)
+        return lambda prompt, session, first: seq.pop(0)
+
+    def canned_attempts(*outs):
+        seq = list(outs)
+        return lambda: seq.pop(0)
+
+    def trace():
+        ev = []
+        return ev, (lambda n: ev.append(("slept", n))), (lambda m: ev.append(("said", m)))
+
+    ran = passed = failed = 0
+
+    def check(name, got, want):
+        nonlocal ran, passed, failed
+        ran += 1
+        if got == want:
+            passed += 1
+            print("  ok    " + name)
+        else:
+            failed += 1
+            print("  FAIL  " + name)
+            print("        wanted " + repr(want) + ", got " + repr(got))
+
+    print("response-length-probe selftest — the case-level stop-and-retry rule")
+    print("")
+
+    turn_list = [(1, "p1"), (2, "p2"), (3, "p3")]
+
+    rt = canned(("reply one", 0.1, [], ""), ("", 0.0, [], "error_during_execution"))
+    out = run_case(turn_list, run_turn=rt)
+    check("a cut turn stops the loop before the next turn is billed",
+          (sorted(out["replies"].keys()), out["cut"]), (["1", "2"], "error_during_execution"))
+
+    rt = canned(("r1", 0.1, [], ""), ("r2", 0.1, [], ""), ("r3", 0.1, [], ""))
+    out = run_case(turn_list, run_turn=rt)
+    check("a clean case runs every turn", (sorted(out["replies"].keys()), out["cut"]),
+          (["1", "2", "3"], ""))
+
+    check("a cut case is unusable", unusable({"cut": "timeout", "replies": {}}), "timeout")
+    check("a clean case is usable", unusable({"cut": "", "replies": {}}), "")
+
+    good = {"replies": {"1": {}}, "total": 0.1, "cut": ""}
+    bad = {"replies": {"1": {}}, "total": 0.0, "cut": "error_during_execution"}
+
+    ev, sleep, say = trace()
+    out = with_retry(lambda: dict(good), 60, sleep=sleep, say=say)
+    check("a case that measured something is not retried",
+          (out["retried"], out["unusable"], ev), ("", "", []))
+
+    ev, sleep, say = trace()
+    out = with_retry(canned_attempts(dict(bad), dict(good)), 60, sleep=sleep, say=say)
+    check("a cut case is retried once and the retry is what gets reported",
+          (out["cut"], out["unusable"], out["retried"]), ("", "", "error_during_execution"))
+    ev = ev + [("", "")] * 2
+    check("the back-off is stated, with its reason, and only THEN waited out",
+          ([k for k, _ in ev[:2]], ev[1][1],
+           "60" in str(ev[0][1]), "error_during_execution" in str(ev[0][1])),
+          (["said", "slept"], 60, True, True))
+
+    ev, sleep, say = trace()
+    out = with_retry(canned_attempts(dict(bad), dict(bad)), 60, sleep=sleep, say=say)
+    check("a second cut case stops and reports instead of retrying again",
+          (out["unusable"], [k for k, _ in ev]),
+          ("error_during_execution", ["said", "slept", "said"]))
+
+    # main() is the wiring nothing above touches: argv parsing, the JSON read-modify-write, the
+    # summary line. A stubbed case_runner exercises it with no `claude` and no case directory —
+    # a NameError or a wrong key here shipped once already with every other check green.
+    tmp_out = os.path.join(tempfile.gettempdir(),
+                            "rl-probe-selftest-%d.json" % os.getpid())
     try:
-        existing = json.load(io.open(OUT_PATH, encoding="utf-8"))
-    except Exception:
-        existing = {}
-existing[CASE_NAME] = replies
-json.dump(existing, io.open(OUT_PATH, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-print("    session %s   $%.3f total" % (session[:8], total), flush=True)
+        stubbed = lambda: {"session": "abcdef12", "replies":
+                            {"1": {"text": "hi", "cut": "", "fired": []}},
+                            "total": 0.1, "cut": ""}
+        main(["ignored-case-dir", "mycase", tmp_out], case_runner=stubbed)
+        written = json.load(io.open(tmp_out, encoding="utf-8"))
+        check("main() writes the stubbed case's replies to OUT_PATH",
+              written.get("mycase", {}).get("1", {}).get("text"), "hi")
+    finally:
+        try:
+            os.remove(tmp_out)
+        except Exception:
+            pass
+
+    print("")
+    print(str(ran) + " cases, " + str(passed) + " passed, " + str(failed) + " failed")
+    return 0 if failed == 0 else 1
+
+
+def main(argv, case_runner=None):
+    """Run one case end to end: replay its turns, retry once on a cut, write OUT_PATH.
+
+    `case_runner` is injected so selftest() can exercise this wiring — the retry, the JSON
+    read-modify-write, the summary line — without a live `claude` session. It defaults to the
+    real path, one full pass over the case's turns.
+    """
+    case_dir, case_name, out_path = argv[0], argv[1], argv[2]
+    case_runner = case_runner or (lambda: run_case(turns(case_dir)))
+    out = with_retry(case_runner, BACKOFF)
+
+    existing = {}
+    if os.path.exists(out_path):
+        try:
+            existing = json.load(io.open(out_path, encoding="utf-8"))
+        except Exception:
+            existing = {}
+    existing[case_name] = out["replies"]
+    json.dump(existing, io.open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("    session %s   $%.3f total%s"
+          % (out["session"][:8], out["total"],
+             ("   UNUSABLE: " + out["unusable"]) if out["unusable"] else ""),
+          flush=True)
+    return out
+
+
+if len(sys.argv) > 1 and sys.argv[1] == "selftest":
+    raise SystemExit(selftest())
+
+main(sys.argv[1:])
