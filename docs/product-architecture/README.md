@@ -47,7 +47,7 @@ unread on disk.
 
 ## Mechanisms
 
-Thirty-five mechanisms across the six pieces.
+Thirty-seven mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -80,6 +80,8 @@ moves next; this column only reports.
 | m22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | [spec](mechanisms/m22-configuration-management.md) | ⚪ |
 | m40 | Autonomy switch | 🔥 | **The mode is state the user can see, not an instruction to remember.** *Three states — manual, autonomous, and autonomous suspended for a conversation. Entering is always explicit; returning to manual never has to be. The permission sits beside every prohibition it overrides, because the prohibition is read every turn and a cross-reference is read once* | [spec](mechanisms/m40-autonomy-switch.md) | 🔵 |
 | m41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/m41-relief-valve.md) | ⚪ |
+| m48 | Handoff / user-authored-file archive | 🔥 | **A rewrite leaves the prior version on disk.** *Archives the handoff at a session's first tool call, and any other untracked file — including a Bash `>`, `mv`, `rm` or `cp` — the moment it is about to be replaced; a tracked file needs no copy* | [spec](mechanisms/m48-handoff-archive.md) | 🔵 |
+| m49 | Execution mode guard | 🔥 | **The mode is read at the moment of the action, not recalled.** *Denies a gating command — commit, push, PR, merge, or one hidden inside an invoked script — against `HANDOFF.md`'s Execution mode row; absent is read as Manual* | [spec](mechanisms/m49-execution-mode-guard.md) | 🔵 |
 | | **AUTHORING** | | | | |
 | m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
@@ -204,6 +206,8 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | `.claude/arc/camp/operating-agreement.md`'s *branch prefix* clause |
+| `hooks/mode-guard` | hook | m49 | Automatic, on `Bash`, before a gating command such as `git commit`, `git push`, `gh pr create\|merge` | `HANDOFF.md`'s *Execution mode* row |
+| `hooks/handoff-archive` | hook | m48 | Automatic, on `Edit`, `Write`, `NotebookEdit` and `Bash` | — |
 | `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tests/verify-issue-boxes.sh` · `tests/verify-linked-branch.sh` · `tests/verify-tracker-body.sh` |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |

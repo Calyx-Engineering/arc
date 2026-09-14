@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# mode-guard — PreToolUse hook (matcher: Bash).
+# mode-guard — PreToolUse hook (matcher: Bash). Carries m49.
 #
 # The execution mode was a word in a gitignored file that nothing read at the moment it
 # mattered. On 2026-09-07, in manual mode, three PRs were committed, pushed, opened and
@@ -7,7 +7,7 @@
 # sentence and shipped a verifier for it. That verifier checks the rule is STATED once:
 # text, not behaviour. It was green while the behaviour was broken. This hook is the
 # behaviour half — HANDOFF.md's Execution mode row is read before every commit, push, PR
-# and merge, so the mode is read rather than recalled. #189.
+# and merge, so the mode is read rather than recalled. #189, m49.
 #
 # camp-reports: mode-check
 # checks: gating-command, gating-script, mode-row
