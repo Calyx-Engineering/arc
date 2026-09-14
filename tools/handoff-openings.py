@@ -27,7 +27,7 @@ PICKUP = re.compile(
     r"|where (are )?we (are )?at"
     r"|pick(ing)? up (from|where|today)"
     r"|left off"
-    r"|arc-next",
+    r"|handoff-resume",
     re.I,
 )
 

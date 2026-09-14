@@ -106,8 +106,8 @@ Any one signal is enough:
 | A request scoped to something other than the next ordered action | *"give me a 60 word summary"* |
 | Any turn where the user is deciding and you are not executing | Weighing an approach, choosing between options |
 
-**Resuming needs the user to point back at the work** — *"continue"*, *"next issue"*, `/arc-next`,
-or naming the issue. **It does not resume because the conversation stopped.**
+**Resuming needs the user to point back at the work** — *"continue"*, *"next issue"*,
+`/handoff-resume`, or naming the issue. **It does not resume because the conversation stopped.**
 
 ### What is not a conversation
 

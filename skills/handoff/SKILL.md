@@ -1,7 +1,7 @@
 ---
 name: handoff
 user-invocable: true
-description: Use when the user asks for the handoff to be read or written, in any wording — "read HANDOFF.md first", "read HANDOFF.md if it exists", "please read handoff", "ingest handoff", "get up to speed", "get back up to speed", "pick up from where we left off", "where did we leave off", "do these in order", "write the handoff", "give me the prompt for the next chat" — or runs /arc-next. Also fires when the request describes this work without naming it: copying or saving a session transcript to the arc's transcript directory, or being told the handoff was updated elsewhere. Fires when the read is wrapped inside other instructions rather than being the whole message: a read followed by a branch name and three further requests, or a read buried under "run autonomously", is still a handoff turn. Loading this skill does not answer the rest of the turn and does not replace another skill. When the same message also greets Camp or asks where things stand, that is a Camp turn as well — load camp too, on the same turn, rather than choosing between them. Covers the reading order, the staleness checks before acting on a handoff, what it holds, the ordered actions the next session executes, saving the transcript, and what belongs in the committed record instead.
+description: Use when the user asks for the handoff to be read or written, in any wording — "read HANDOFF.md first", "read HANDOFF.md if it exists", "please read handoff", "ingest handoff", "get up to speed", "get back up to speed", "pick up from where we left off", "where did we leave off", "do these in order", "write the handoff", "give me the prompt for the next chat" — or runs /handoff-resume or /handoff-write. Also fires when the request describes this work without naming it: copying or saving a session transcript to the arc's transcript directory, or being told the handoff was updated elsewhere. Fires when the read is wrapped inside other instructions rather than being the whole message: a read followed by a branch name and three further requests, or a read buried under "run autonomously", is still a handoff turn. Loading this skill does not answer the rest of the turn and does not replace another skill. When the same message also greets Camp or asks where things stand, that is a Camp turn as well — load camp too, on the same turn, rather than choosing between them. Covers the reading order, the staleness checks before acting on a handoff, what it holds, the ordered actions the next session executes, saving the transcript, and what belongs in the committed record instead.
 camp-reports: [handoff-written, handoff-read, transcript-saved]
 checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open, mode-row-agrees]
 skips:
@@ -283,26 +283,25 @@ not the current state.
 
 A prompt that restates where we are creates a second copy of the state, and the two drift
 immediately — the next session then has two sources disagreeing and no way to tell which is
-current.
+current. `/handoff-resume` already reads `HANDOFF.md` first and executes *Do these in order*
+on its own, so the branch and the next step do not need restating either — they are rows in
+the file the command is about to open.
 
-Three lines, and nothing that is already in the handoff:
+The prompt is the command alone:
 
 ```text
-Read HANDOFF.md first, then do the steps in "Do these in order".
-Branch is arc/03-camp-issue-61-handoff-prompt.
-Next is #61 — the handoff's ordered actions and transcript save.
+/handoff-resume
 ```
 
 | The prompt carries | The prompt never carries |
 |---|---|
-| *Read `HANDOFF.md` first* | The tree, the status table, the open threads |
-| The branch | Load-bearing decisions |
-| The next step, by issue number | A summary of what was just finished |
-| Anything **not** in the handoff — a standing approval, an instruction for how to work | Anything the handoff already says |
+| `/handoff-resume` | The tree, the status table, the open threads |
+| | The branch, or the next step — rows in the handoff, not the prompt |
+| Anything **not** in the handoff — a standing approval, an instruction for how to work, appended on its own line | A summary of what was just finished |
 
 **The last row is the only reason a prompt is more than one line.** An approval given in
 chat, or an instruction about how the next session should run, has no home in the handoff —
-so it goes in the prompt. Everything else has a home, and belongs there.
+so it goes in the prompt, after the command. Everything else has a home, and belongs there.
 
 **Give the prompt as a copyable block**, not as prose describing what to paste.
 

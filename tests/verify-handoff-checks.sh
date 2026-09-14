@@ -4,25 +4,27 @@
 #   tests/verify-handoff-checks.sh
 #   tests/verify-handoff-checks.sh selftest
 #
-# WHY THIS EXISTS. m15 has two entry points into the same mechanism. `/arc-next` is a typed
-# shortcut; `skills/handoff` is what fires when a session says "read the handoff" in any of the
-# twenty wordings its description lists. The seven staleness checks lived only in the command, so
-# an opening that reached the skill got the read path with no check against the tree — 76e54966 is
-# that session — and an opening that reached the command got the checks without the skill's write
-# path and transcript rules. #208 moved them into the skill. #268 added the eighth — the mode
-# row read against the arc-log's stated mode — which lives here for the same reason the seven do.
+# WHY THIS EXISTS. m15 has two entry points into the same mechanism, one per direction:
+# `/handoff-resume` and `/handoff-write` are typed shortcuts; `skills/handoff` is what fires when
+# a session says "read the handoff" or "write the handoff" in any of the wordings its description
+# lists. The seven staleness checks lived only in the read-path command, so an opening that
+# reached the skill got the read path with no check against the tree — 76e54966 is that session —
+# and an opening that reached the command got the checks without the skill's write path and
+# transcript rules. #208 moved them into the skill. #268 added the eighth — the mode row read
+# against the arc-log's stated mode — which lives here for the same reason the seven do. #349
+# split the one command into two, one per direction; the rule below is unchanged by the split.
 #
-# THE RULE THIS ENCODES. A cold start that loads `skills/handoff` and never touches `/arc-next`
-# runs the staleness checks. That is a property of where the content lives, so it is checkable as
-# text, and the split cannot silently re-open.
+# THE RULE THIS ENCODES. A cold start that loads `skills/handoff` and never touches
+# `/handoff-resume` runs the staleness checks. That is a property of where the content lives, so
+# it is checkable as text, and the split cannot silently re-open.
 #
 # THE PROBES TAKE A SLICE, NOT THE FILE. Presence anywhere would pass for a block that had drifted
 # below the write path, and the rule is that the handoff is checked BEFORE it is acted on. So the
 # read-path range is located first and every probe runs inside it.
 #
-# BOTH COMMAND FILES, IF BOTH EXIST. A `.claude/commands/arc-next.md` copy would shadow the
-# plugin's and be the one that fires here, so checking only the plugin file would pass while
-# the copy that actually runs was stale. #177 deleted that copy and made
+# BOTH COMMAND FILES, IF BOTH EXIST — for each of the two commands. A `.claude/commands/` copy of
+# either would shadow the plugin's and be the one that fires here, so checking only the plugin
+# files would pass while the copy that actually runs was stale. #177 deleted that copy and made
 # verify-skill-registry.sh fail on a shadowing command rather than report it, so the shadow
 # probes below are a guard against it coming back, not a check on a file that is there.
 #
@@ -41,8 +43,8 @@ SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 cd "${HANDOFFCHK_ROOT:-$(dirname "$0")/..}" || exit 1
 
 SKILL=skills/handoff/SKILL.md
-CMD=commands/arc-next.md
-SHADOW=.claude/commands/arc-next.md
+CMDS="commands/handoff-resume.md commands/handoff-write.md"
+SHADOWS=".claude/commands/handoff-resume.md .claude/commands/handoff-write.md"
 
 PASSED=0
 FAILED=0
@@ -63,7 +65,7 @@ selftest() {
   trap 'rm -rf "$T"' EXIT
   ROOT="$T/root"
   mkdir -p "$ROOT/skills/handoff" "$ROOT/commands"
-  cp "$CMD" "$ROOT/commands/arc-next.md"
+  for c in $CMDS; do cp "$c" "$ROOT/$c"; done
 
   case_is() {  # <expected-exit> <label> <filter…>
     local want="$1" label="$2"; shift 2
@@ -101,7 +103,7 @@ fi
 echo "verify-handoff-checks — the staleness checks live in the skill"
 echo
 
-for f in "$SKILL" "$CMD"; do
+for f in "$SKILL" $CMDS; do
   [ -f "$f" ] || { fail "$f exists" "no such file"; echo; echo "$PASSED passed, $FAILED failed"; exit 1; }
 done
 
@@ -201,7 +203,7 @@ fi
 # are scanned, not only the checks: a literal that moves from one to the other would otherwise fall
 # out of this scan and let a command file carry it again.
 dupe=""
-for f in "$CMD" "$SHADOW"; do
+for f in $CMDS $SHADOWS; do
   [ -f "$f" ] || continue
   while IFS='|' read -r name probe; do
     [ -n "$name" ] || continue
@@ -223,7 +225,7 @@ fi
 
 # ---- and each still delegates to the skill ---------------------------------------------------
 nodelegate=""
-for f in "$CMD" "$SHADOW"; do
+for f in $CMDS $SHADOWS; do
   [ -f "$f" ] || continue
   grep -qE '\bhandoff\b' "$f" || nodelegate="$nodelegate $f"
 done
