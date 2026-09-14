@@ -192,7 +192,7 @@ Each workstream's boundary report lands here when it closes — one per workstre
 | **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 37 | **31 of 37 closed.** Reports in [§6.3](#63-fire--boundary-report) — the original thirteen — and [§6.7](#67-fire-second-closing--boundary-report) — fifteen attached after the first report. Six roll to arc 05 — [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294), [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327) — cut 2026-09-12 for a weekend release. The parent stays open until the user closes it |
 | **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 10 | **10 of 10 closed.** Reports in [§6.4](#64-handoff--boundary-report) — the original six — and [§6.5](#65-handoff-reopened--boundary-report) — [#252](https://github.com/Calyx-Engineering/arc/issues/252), [#253](https://github.com/Calyx-Engineering/arc/issues/253), [#267](https://github.com/Calyx-Engineering/arc/issues/267) and [#268](https://github.com/Calyx-Engineering/arc/issues/268), attached after the first report. The parent stays open until the user closes it. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 12 | **12 of 12 closed.** Report in [§6.6](#66-tracker--boundary-report). Three children — [#270](https://github.com/Calyx-Engineering/arc/issues/270), [#271](https://github.com/Calyx-Engineering/arc/issues/271), [#274](https://github.com/Calyx-Engineering/arc/issues/274) — were filed by the parent mid-run. Spawned [#226](https://github.com/Calyx-Engineering/arc/issues/226), [#234](https://github.com/Calyx-Engineering/arc/issues/234), [#242](https://github.com/Calyx-Engineering/arc/issues/242), [#286](https://github.com/Calyx-Engineering/arc/issues/286) and [#287](https://github.com/Calyx-Engineering/arc/issues/287), open in Dogfood under no workstream. The parent stays open until the user closes it |
-| **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
+| **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 24 | **22 of 24 closed.** Report in [§6.10](#610-upkeep--boundary-report). [#175](https://github.com/Calyx-Engineering/arc/issues/175) and [#320](https://github.com/Calyx-Engineering/arc/issues/320) are the user's; [#285](https://github.com/Calyx-Engineering/arc/issues/285) and [#310](https://github.com/Calyx-Engineering/arc/issues/310) rolled to arc 05 and detached. The parent closes at the user's review |
 | **Skills** | [#90](https://github.com/Calyx-Engineering/arc/issues/90) | 9 | **3 of 9 closed.** Report in [§6.9](#69-skills--boundary-report). Six roll to arc 05 — [#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#282](https://github.com/Calyx-Engineering/arc/issues/282) — cut 2026-09-12 for a 24-hour autonomous push and weekend release. The parent stays open until the user closes it |
 
 ### 6.1 The retrospective and the plan
@@ -735,6 +735,92 @@ flowchart LR
 - #338, #341, #346 — filed, not fixed
 
 *End of Skills' boundary report.*
+
+---
+
+### 6.10 Upkeep — boundary report
+
+**Workstream:** Upkeep · **Closed:** 2026-09-13 · diagram excluded
+
+**Goal:** Small wrongnesses that nothing fails on: stale tables, dead local copies, unverified claims. Each is cheap alone and invisible in aggregate. Done when `tools/verify-all.sh` fails on the drift it currently tolerates, and the privacy review that gates making Arc public is complete.
+
+| | Before — `v0.1.0`, 2026-09-05 | After — 2026-09-13 |
+|---|---|---|
+| Gates — `tests/verify-all.sh` | 11 | 73 |
+| Public-exposure hits with a disposition — `tools/audit-public.sh`, `public-audit.md` | 0 of 1,718 | 578 rows, each dispositioned; three groups for the user |
+| `hooks/mode-guard` case files — `tools/hook-cases/mode-guard/` | 0 | 36 |
+| Two runs on one issue — `tools/arc-claim.sh` | possible | refused |
+| Issue-closing PRs in the milestone | 35 | 0 |
+
+#### 6.10.1 Delivered
+
+1. `verify-all.sh` fails on drift: the mechanism table against its specs, the report budget, the mode row's round trip, registry negative cases, agreement anchors, the audit's four views ([#143](https://github.com/Calyx-Engineering/arc/issues/143), [#185](https://github.com/Calyx-Engineering/arc/issues/185), [#198](https://github.com/Calyx-Engineering/arc/issues/198), [#227](https://github.com/Calyx-Engineering/arc/issues/227), [#258](https://github.com/Calyx-Engineering/arc/issues/258), [#134](https://github.com/Calyx-Engineering/arc/issues/134))
+2. The public audit: `tools/audit-public.sh` sweeps nine exposure classes; `docs/arc-work/04-dogfood/public-audit.md` carries 578 rows with a disposition each ([#134](https://github.com/Calyx-Engineering/arc/issues/134))
+3. `hooks/mode-guard` reads a commit from inside a script; the kill switch is a per-hook, expiring command ([#201](https://github.com/Calyx-Engineering/arc/issues/201), [#202](https://github.com/Calyx-Engineering/arc/issues/202))
+4. `branch-guard`'s coordination prefix comes from the agreement; a linked branch is read back ([#203](https://github.com/Calyx-Engineering/arc/issues/203), [#206](https://github.com/Calyx-Engineering/arc/issues/206))
+5. A milestone item is one unit — 35 issue-closing PRs stripped; two runs cannot take one issue ([#204](https://github.com/Calyx-Engineering/arc/issues/204), [#214](https://github.com/Calyx-Engineering/arc/issues/214))
+6. One command starts a workstream; the agreement tunes verbosity; local command copies deleted; verifiers under `tests/` ([#194](https://github.com/Calyx-Engineering/arc/issues/194), [#174](https://github.com/Calyx-Engineering/arc/issues/174), [#177](https://github.com/Calyx-Engineering/arc/issues/177), [#190](https://github.com/Calyx-Engineering/arc/issues/190))
+7. `plugin-reload.sh` keeps uncommitted edits; the arc-work path takes a nested slug; the dev-log template names itself ([#211](https://github.com/Calyx-Engineering/arc/issues/211), [#167](https://github.com/Calyx-Engineering/arc/issues/167), [#168](https://github.com/Calyx-Engineering/arc/issues/168))
+8. The probe runner retries on a rate limit; two grader defects fixed ([#297](https://github.com/Calyx-Engineering/arc/issues/297), [#314](https://github.com/Calyx-Engineering/arc/issues/314), [#315](https://github.com/Calyx-Engineering/arc/issues/315))
+
+#### 6.10.2 Spawned
+
+| | | Routed |
+|---|---|---|
+| [#227](https://github.com/Calyx-Engineering/arc/issues/227) | Registry checks with no negative case | Upkeep — closed |
+| [#195](https://github.com/Calyx-Engineering/arc/issues/195) | The execution process — folded into [#194](https://github.com/Calyx-Engineering/arc/issues/194) | Upkeep — closed |
+| [#196](https://github.com/Calyx-Engineering/arc/issues/196) | The arc's tracker object | Arc 04 — open until arc close |
+| [#285](https://github.com/Calyx-Engineering/arc/issues/285) · [#310](https://github.com/Calyx-Engineering/arc/issues/310) | The last two case readers; the loop's report dispatch | Arc 05 |
+| [#175](https://github.com/Calyx-Engineering/arc/issues/175) · [#320](https://github.com/Calyx-Engineering/arc/issues/320) | The cold-start reading path; the audit's dispositions applied | Upkeep — open, the user's |
+
+#### 6.10.3 Unexpected
+
+- `createLinkedBranch` works; the reported bug did not exist, the missing read-back did ([#206](https://github.com/Calyx-Engineering/arc/issues/206))
+- A `NOTE` in a gate's output is a finding with no consumer ([#177](https://github.com/Calyx-Engineering/arc/issues/177))
+- Every defect [#204](https://github.com/Calyx-Engineering/arc/issues/204) found sat in live `gh pr view` field extraction that no fixture reaches
+- The live read found what 40 green fixture cases could not: the newest claim comment dropped ([#214](https://github.com/Calyx-Engineering/arc/issues/214))
+- The loop's report dispatch exits 1 at its mode read — MSYS `grep -i` with `LANG` unset ([#310](https://github.com/Calyx-Engineering/arc/issues/310))
+
+#### 6.10.4 Unplanned but needed
+
+| | |
+|---|---|
+| `tools/plugin-reload.sh` | `--anything` ran the uninstall cycle as a plugin name |
+| `tests/verify-camp-agreement-links.sh` | Anchors resolved by GitHub's slug rule |
+| `set_mode` as a function | The read-back returns a message, not an exit |
+
+#### 6.10.5 Evidence
+
+| | |
+|---|---|
+| `verify-all.sh` | 73 gates, exit 0 |
+| `audit-public.sh` | 1,718 hits; `client-hw` 136 |
+| `verify-set-mode.sh` | 21 cases |
+| `arc-claim.sh` live | A second dispatcher refused on [#214](https://github.com/Calyx-Engineering/arc/issues/214) |
+| `verify-hook.sh mode-guard` | 36 case files, exit 0 |
+
+#### 6.10.6 Not done
+
+- [#175](https://github.com/Calyx-Engineering/arc/issues/175) and [#320](https://github.com/Calyx-Engineering/arc/issues/320) — the user's; whether they roll is his call
+- [#285](https://github.com/Calyx-Engineering/arc/issues/285), [#310](https://github.com/Calyx-Engineering/arc/issues/310) — rolled to arc 05 and detached
+- `hooks/mode-guard` missing from the definition's artifact table — recorded on [#143](https://github.com/Calyx-Engineering/arc/issues/143), belongs to [#124](https://github.com/Calyx-Engineering/arc/issues/124)
+- `tools/arc-default-branch.sh` and `verify-tracker-body.sh live-bind` write outward with no declaration — recorded on [#201](https://github.com/Calyx-Engineering/arc/issues/201), no issue
+
+#### 6.10.7 What it changed
+
+```mermaid
+flowchart LR
+    A["#143 #185 #198 #227 #258<br/>six new gates"] --> G["verify-all.sh<br/>73 gates"]
+    B["#134 audit-public.sh<br/>578 rows dispositioned"] --> G
+    C["#201 #202 mode-guard<br/>scripts, kill switch"] --> H["hooks read the mode,<br/>fail open, mute by command"]
+    D["#203 #206 branch-guard<br/>prefix, link read-back"] --> H
+    E["#204 #214<br/>one unit, one run"] --> I["milestone and loop<br/>count once"]
+    F["#175 #320"]:::blocked -.-> J["the user"]:::blocked
+    K["#285 #310"]:::blocked -.-> L["arc 05"]:::blocked
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
+```
+
+*End of Upkeep's boundary report.*
 
 ---
 
