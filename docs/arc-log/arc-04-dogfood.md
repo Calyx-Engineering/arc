@@ -190,7 +190,7 @@ Each workstream's boundary report lands here when it closes — one per workstre
 |---|---|---|---|
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
 | **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 37 | **31 of 37 closed.** Reports in [§6.3](#63-fire--boundary-report) — the original thirteen — and [§6.7](#67-fire-second-closing--boundary-report) — fifteen attached after the first report. Six roll to arc 05 — [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294), [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327) — cut 2026-09-12 for a weekend release. The parent stays open until the user closes it |
-| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 10 | **10 of 10 closed.** Report in [§6.4](#64-handoff--boundary-report). |
+| **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 13 | **13 of 13 closed.** Report in [§6.4](#64-handoff--boundary-report). [#352](https://github.com/Calyx-Engineering/arc/issues/352) and [#354](https://github.com/Calyx-Engineering/arc/issues/354) rolled to arc 05 and detached. The parent closes at the user's review |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 12 | **12 of 12 closed.** Report in [§6.6](#66-tracker--boundary-report). Three children — [#270](https://github.com/Calyx-Engineering/arc/issues/270), [#271](https://github.com/Calyx-Engineering/arc/issues/271), [#274](https://github.com/Calyx-Engineering/arc/issues/274) — were filed by the parent mid-run. Spawned [#226](https://github.com/Calyx-Engineering/arc/issues/226), [#234](https://github.com/Calyx-Engineering/arc/issues/234), [#242](https://github.com/Calyx-Engineering/arc/issues/242), [#286](https://github.com/Calyx-Engineering/arc/issues/286) and [#287](https://github.com/Calyx-Engineering/arc/issues/287), open in Dogfood under no workstream. The parent stays open until the user closes it |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
 | **Skills** | [#90](https://github.com/Calyx-Engineering/arc/issues/90) | 9 | **3 of 9 closed.** Report in [§6.9](#69-skills--boundary-report). Six roll to arc 05 — [#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#282](https://github.com/Calyx-Engineering/arc/issues/282) — cut 2026-09-12 for a 24-hour autonomous push and weekend release. The parent stays open until the user closes it |
@@ -358,7 +358,7 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 
 ### 6.4 Handoff — boundary report
 
-**Workstream:** Handoff · **Closed:** 2026-09-09 · diagram excluded
+**Workstream:** Handoff · **Closed:** 2026-09-13 · diagram excluded
 
 **Goal:** When carrying active work from one chat to another - Handoff helps the new session take the right first action, without user correction, and carries critical reasoning forward.
 
@@ -380,6 +380,7 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 6. `handoff-archive` copies what git cannot restore; the title is re-stamped every write ([#152](https://github.com/Calyx-Engineering/arc/issues/152), [#153](https://github.com/Calyx-Engineering/arc/issues/153))
 7. `work-watch` check 7: self-saturation, with a 52-turn eval ([#154](https://github.com/Calyx-Engineering/arc/issues/154))
 8. `session-index` commits transcript locations for the miner ([#16](https://github.com/Calyx-Engineering/arc/issues/16))
+9. `/handoff-write` and `/handoff-resume` replace `/arc-next`; a shell overwrite is archived; m48 and m49 ([#349](https://github.com/Calyx-Engineering/arc/issues/349), [#351](https://github.com/Calyx-Engineering/arc/issues/351), [#353](https://github.com/Calyx-Engineering/arc/issues/353))
 
 #### 6.4.2 Spawned
 
@@ -388,9 +389,9 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 | [#243](https://github.com/Calyx-Engineering/arc/issues/243) | Saturation probe against the installed plugin | Fire, then arc 05 |
 | [#308](https://github.com/Calyx-Engineering/arc/issues/308) | `tracker-verify` ran its own comment as code | Fire — closed, duplicate of [#305](https://github.com/Calyx-Engineering/arc/issues/305) |
 | [#349](https://github.com/Calyx-Engineering/arc/issues/349) | `/handoff-write` · `/handoff-resume` replace `/arc-next` | Handoff — closed, PR [#350](https://github.com/Calyx-Engineering/arc/pull/350) |
-| [#351](https://github.com/Calyx-Engineering/arc/issues/351) | A shell overwrite of an untracked file goes unarchived | Handoff — running |
+| [#351](https://github.com/Calyx-Engineering/arc/issues/351) | A shell overwrite of an untracked file goes unarchived | Handoff — closed, PR [#361](https://github.com/Calyx-Engineering/arc/pull/361) |
 | [#352](https://github.com/Calyx-Engineering/arc/issues/352) | A `SessionStart` form of `handoff-archive` | Arc 05, after Guard lands hook safety |
-| [#353](https://github.com/Calyx-Engineering/arc/issues/353) | `handoff-archive` and `mode-guard` have no mechanism row | Handoff — running |
+| [#353](https://github.com/Calyx-Engineering/arc/issues/353) | `handoff-archive` and `mode-guard` have no mechanism row | Handoff — closed, PR [#361](https://github.com/Calyx-Engineering/arc/pull/361) |
 | [#354](https://github.com/Calyx-Engineering/arc/issues/354) | Backfill `session-index` for the 17 orphaned transcript directories | Arc 05 |
 
 #### 6.4.3 Unexpected
@@ -448,6 +449,8 @@ flowchart LR
 ```
 
 *End of Handoff's boundary report.*
+
+---
 
 ---
 
