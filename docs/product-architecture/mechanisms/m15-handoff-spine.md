@@ -158,7 +158,7 @@ Not continuously — TimeScope already learned that lesson for dev-logs
 (*"Continuous per-turn dev-log churn is narration by another name"*). Write at
 checkpoints: issue close, branch change, session end, and before any handoff.
 
-### The entry point — `/arc-next`
+### The entry points — `/handoff-resume` and `/handoff-write`
 
 A document-as-spine still needs something to open it. Left to a pasted prompt, the read
 path is only as reliable as what the user types while tired at the end of a long stretch.
@@ -171,8 +171,10 @@ then execute its ordered actions*. So it is a command rather than a message.
 
 | | |
 |---|---|
-| **`commands/arc-next.md`** | The typed opening. It invokes `skills/handoff`, which reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
-| **The loop is one action** | New session, `/arc-next`. Nothing to copy, nothing to keep straight |
+| **`commands/handoff-resume.md`** | The typed opening into the read path. It invokes `skills/handoff`, which reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
+| **`commands/handoff-write.md`** | The typed opening into the write path — save the transcript, write or update `HANDOFF.md`, print the prompt for the next chat |
+| **Both share the skill's stem** | Typing `/hand` shows both, rather than a name that has to be remembered whole |
+| **The loop is one action** | New session, `/handoff-resume`. Nothing to copy, nothing to keep straight |
 | **Two stated failure modes** | No handoff — stop and say so, because guessing the arc's state is the failure this mechanism exists to prevent. No ordered actions — report what the handoff does carry and ask, rather than filling the gap by inference |
 
 **A pasted prompt remains valid** and is still the way to carry something that has no home in
@@ -283,7 +285,8 @@ than duplicate its ordering — duplicated order drifts.
 ## Related
 
 - [`handoff`](../../../skills/handoff/SKILL.md) — **the skill that implements this.** The read path, the write, the ordered actions, and the transcript save
-- [`commands/arc-next.md`](../../../commands/arc-next.md) — the typed entry point. It holds no rule of its own; the skill carries the staleness checks that run before a handoff is acted on
+- [`commands/handoff-resume.md`](../../../commands/handoff-resume.md) — the typed read-path entry point. It holds no rule of its own; the skill carries the staleness checks that run before a handoff is acted on
+- [`commands/handoff-write.md`](../../../commands/handoff-write.md) — the typed write-path entry point. Same rule: no logic of its own, the skill carries it
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 — **the in-session case of this argument.** State outside the context does not degrade with context length; this mechanism applies that between sessions, that check applies it within one
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 7 — **what decides that a handoff is due.** This mechanism says what a handoff holds and how it is read; that check watches for the session having degraded far enough to need one, while there is still budget to write it well. [#154](https://github.com/Calyx-Engineering/arc/issues/154)

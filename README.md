@@ -118,7 +118,8 @@ The `/` menu lists more than what you type. Three commands are meant to be typed
 
 | Command | What it does |
 |---|---|
-| `/arc-next` | Resumes the arc from the handoff — reads it, then runs its ordered actions |
+| `/handoff-resume` | Resumes the arc from the handoff — reads it, then runs its ordered actions |
+| `/handoff-write` | Saves the transcript, writes or updates the handoff, and prints the prompt for the next chat |
 | `/arc-run` | Runs the next set of the arc's playlist — names its tracks, waits for a yes, then dispatches them |
 | `/camp` | Asks Camp where the arc stands, what was decided, or what comes next |
 

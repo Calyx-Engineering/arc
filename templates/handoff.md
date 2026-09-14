@@ -142,13 +142,12 @@ Nothing compares it against that directory; the read path's staleness check uses
 
 ## The prompt for the next chat
 
-**This file is the payload; the prompt is a pointer.** Three lines, carrying nothing that is
-already above.
+**This file is the payload; the prompt is a pointer.** `/handoff-resume` already reads this
+file first and executes *Do these in order* on its own, so the prompt carries nothing that
+is already above.
 
 ```text
-Read HANDOFF.md first, then do the steps in "Do these in order".
-Branch is &lt;branch&gt;.
-Next is #&lt;N&gt; — &lt;the next step, named&gt;.
+/handoff-resume
 ```
 
 Add a line only for something with no home in this file — a standing approval, or an

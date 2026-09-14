@@ -110,20 +110,20 @@ selftest() {
   echo
 
   # The defect #177 closed: a copy of a shipping command loads alongside the plugin's, and
-  # /arc-next resolves to two identical candidates. The second text is what makes this a check
-  # on the command half — a failure anywhere else would not name the file.
+  # /handoff-resume resolves to two identical candidates. The second text is what makes this a
+  # check on the command half — a failure anywhere else would not name the file.
   case_is 1 "command-shadow" \
           "FAIL  no .claude/commands/ copy shadows a shipping command" \
-          "shadowing: arc-next.md" \
-          -- commands/arc-next.md .claude/commands/arc-next.md
+          "shadowing: handoff-resume.md" \
+          -- commands/handoff-resume.md .claude/commands/handoff-resume.md
   case_is 0 "command-clean" \
           "PASS  no .claude/commands/ copy shadows a shipping command" "" \
-          -- commands/arc-next.md
+          -- commands/handoff-resume.md
 
   # A repo-local command that ships nowhere is allowed, and must not be read as shadowing.
   case_is 0 "command-local-only" \
           "PASS  no .claude/commands/ copy shadows a shipping command" "" \
-          -- commands/arc-next.md .claude/commands/scratch.md
+          -- commands/handoff-resume.md .claude/commands/scratch.md
 
   # The skills half, unchanged by #177 and still the thing #142 deleted.
   case_is 1 "skill-shadow" \
@@ -288,8 +288,8 @@ fi
 
 # ---- a repo-local command is allowed; one that shadows a shipping command is not -------
 # Arc is installed here, so a copy of a shipping command loads alongside the plugin's and
-# /arc-next resolves to two identical candidates. #142 deleted the thirteen skill copies and
-# left these, its scope having named skills; #177 deleted them and made the check block.
+# /handoff-resume resolves to two identical candidates. #142 deleted the thirteen skill copies
+# and left these, its scope having named skills; #177 deleted them and made the check block.
 #
 # The test is `commands/$c` existing, not the files matching. Two copies that have drifted
 # apart are worse than two that agree, not better.

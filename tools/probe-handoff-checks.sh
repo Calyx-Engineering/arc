@@ -250,17 +250,19 @@ JSON
     ok "$name"
   }
 
-  # A fixture plugin whose skill and command are the real ones: the checks are present.
+  # A fixture plugin whose skill and commands are the real ones: the checks are present.
   REAL="$(cd "$HERE/.." && pwd)"
   mkdir -p "$tmp/good/skills/handoff" "$tmp/good/commands"
-  cp "$REAL/skills/handoff/SKILL.md" "$tmp/good/skills/handoff/SKILL.md" 2>/dev/null
-  cp "$REAL/commands/arc-next.md"    "$tmp/good/commands/arc-next.md"    2>/dev/null
+  cp "$REAL/skills/handoff/SKILL.md"       "$tmp/good/skills/handoff/SKILL.md"       2>/dev/null
+  cp "$REAL/commands/handoff-resume.md"    "$tmp/good/commands/handoff-resume.md"    2>/dev/null
+  cp "$REAL/commands/handoff-write.md"     "$tmp/good/commands/handoff-write.md"     2>/dev/null
 
   # The same, with one check cut out of the read path. This is the drift #208 exists to catch,
   # and it is the case that makes a PASS above mean anything.
   mkdir -p "$tmp/bad/skills/handoff" "$tmp/bad/commands"
   grep -v -- '-newer HANDOFF.md' "$REAL/skills/handoff/SKILL.md" > "$tmp/bad/skills/handoff/SKILL.md" 2>/dev/null
-  cp "$REAL/commands/arc-next.md" "$tmp/bad/commands/arc-next.md" 2>/dev/null
+  cp "$REAL/commands/handoff-resume.md" "$tmp/bad/commands/handoff-resume.md" 2>/dev/null
+  cp "$REAL/commands/handoff-write.md"  "$tmp/bad/commands/handoff-write.md"  2>/dev/null
 
   # THE DENY CASE IS THE ONE THAT CAN PASS FOR THE WRONG REASON. If the sources ever move, both
   # copies fail silently — there is no `set -e` here — and the bad fixture becomes an EMPTY
