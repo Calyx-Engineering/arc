@@ -1,0 +1,2 @@
+# a Bash redirect onto a path this fixture has no tracked file at, so the parsed target finds nothing to archive — the real tracked-vs-untracked proof is tests/verify-handoff-archive.sh selftest case 10i, which has a real git-tracked file to point at
+{"session_id":"verify-archive-bash-tracked","cwd":"__FIXTURE_ISSUE__","tool_name":"Bash","tool_input":{"command":"echo x > src/a.c"}}
