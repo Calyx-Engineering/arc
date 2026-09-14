@@ -418,7 +418,7 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 
 | | |
 | --- | --- |
-| `verify-all.sh` | 20 → 58 gates, exit 0 at every merge |
+| `verify-all.sh` | 58 gates, exit 0 at every merge |
 | Firing | `handoff` 24/24 · `camp` 12/12 |
 | Live opening | First action correct · reason stated, against 5/8 · 4/8. n = 1 |
 | `verify-handoff-rationale.sh` | 5 failed before, green after |
@@ -653,7 +653,7 @@ flowchart LR
 #### 6.9.1 Delivered
 
 1. Skill method chosen: `writing-skills`' checklist reviews, `skill-creator` writes, `quick_validate.py` pre-passes both
-2. 500 body lines, measured on `skills/`, adopted; unrecorded 180-line figure retired and gated
+2. 500 body lines, measured on `skills/`, adopted; the unrecorded earlier figure retired and gated
 3. Fourth triage bucket, deviation, added beside judgement/evidence/checkable, so five reviews compare
 4. `tools/verify-skill-length.sh` reports any `SKILL.md` over 500 lines, wired into `verify-all.sh`
 5. README's *Using Arc* section splits typed commands from skills that fire on wording; `verify-skill-registry.sh` catches one declaring neither
