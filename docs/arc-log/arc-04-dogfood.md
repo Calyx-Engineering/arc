@@ -194,7 +194,7 @@ Each workstream's boundary report lands here when it closes — one per workstre
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
-| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 37 | **31 of 37 closed.** Reports in [§6.3](#63-fire--boundary-report) — the original thirteen — and [§6.7](#67-fire-second-closing--boundary-report) — fifteen attached after the first report. Six roll to arc 05 — [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294), [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327) — cut 2026-09-12 for a weekend release. The parent stays open until the user closes it |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 31 | **31 of 31 closed.** Report in [§6.3](#63-fire--boundary-report). Six rolled to arc 05 and detached — [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294), [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327). The parent closes at the user's review |
 | **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 10 | **10 of 10 closed.** Reports in [§6.4](#64-handoff--boundary-report) — the original six — and [§6.5](#65-handoff-reopened--boundary-report) — [#252](https://github.com/Calyx-Engineering/arc/issues/252), [#253](https://github.com/Calyx-Engineering/arc/issues/253), [#267](https://github.com/Calyx-Engineering/arc/issues/267) and [#268](https://github.com/Calyx-Engineering/arc/issues/268), attached after the first report. The parent stays open until the user closes it. [#243](https://github.com/Calyx-Engineering/arc/issues/243), spawned by [#154](https://github.com/Calyx-Engineering/arc/issues/154), is open and not a sub-issue |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 12 | **12 of 12 closed.** Report in [§6.6](#66-tracker--boundary-report). Three children — [#270](https://github.com/Calyx-Engineering/arc/issues/270), [#271](https://github.com/Calyx-Engineering/arc/issues/271), [#274](https://github.com/Calyx-Engineering/arc/issues/274) — were filed by the parent mid-run. Spawned [#226](https://github.com/Calyx-Engineering/arc/issues/226), [#234](https://github.com/Calyx-Engineering/arc/issues/234), [#242](https://github.com/Calyx-Engineering/arc/issues/242), [#286](https://github.com/Calyx-Engineering/arc/issues/286) and [#287](https://github.com/Calyx-Engineering/arc/issues/287), open in Dogfood under no workstream. The parent stays open until the user closes it |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
@@ -287,80 +287,87 @@ flowchart LR
 
 ### 6.3 Fire — boundary report
 
-**Workstream:** Fire · **Closed:** 2026-09-08 · **200 words**, diagram excluded
+**Workstream:** Fire · **Closed:** 2026-09-12 · diagram excluded
 
-**Why it exists:** the rules were already written and were not being read. 21 of 47 post-install corrections were a rule that existed in a skill or hook and did not fire. Fire's job was to make firing measurable, then make it happen — an eval per shipping skill, a case directory per hook.
+**Goal:** Correct rules exist in skills and hooks and are not read when they are needed — 21 of 47 post-install corrections were a rule that existed and did not fire. Fire makes firing measurable, then makes it happen: an eval per shipping skill, a case directory per hook.
+
+| | Before — `v0.1.0`, 2026-09-05 | After — 2026-09-12 |
+|---|---|---|
+| Openings that load `handoff` and `camp` — `evals/skill-firing` | 0 of 12 | 10 of 12 |
+| 20-word budget held — `tools/response-length-probe.py` | 37 of 109 turns | 78 of 102 turns |
+| Hook case files — `tools/hook-cases/` | 49, over 4 hooks | 240, over 7 hooks |
+| Hooks that leave a record — `.claude/arc/log.md` | none | all seven |
+| Gates — `tests/verify-all.sh` | 11 | 69 |
 
 #### 6.3.1 Delivered
 
-1. Openings load `handoff` and `camp`: 0/12 to 0.83
-2. Four graders: length, numbering, report shape, environment blame
-3. 60-word budgets hold; 20-word do not
-4. Three hooks stop misreporting; `branch-guard` gains two checks
-5. Every hook logs its firing
+1. Openings load `handoff` and `camp` ([#156](https://github.com/Calyx-Engineering/arc/issues/156), [#157](https://github.com/Calyx-Engineering/arc/issues/157), [#208](https://github.com/Calyx-Engineering/arc/issues/208), [#252](https://github.com/Calyx-Engineering/arc/issues/252))
+2. Four graders with measured baselines: length, topic numbering, report shape, environment blame ([#158](https://github.com/Calyx-Engineering/arc/issues/158), [#160](https://github.com/Calyx-Engineering/arc/issues/160), [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#165](https://github.com/Calyx-Engineering/arc/issues/165))
+3. `chat-response` holds a 60-word budget, and a 20-word one under a count-and-cut rule ([#213](https://github.com/Calyx-Engineering/arc/issues/213), [#262](https://github.com/Calyx-Engineering/arc/issues/262))
+4. Hooks read the repo, the arc and the close; every hook leaves a record ([#162](https://github.com/Calyx-Engineering/arc/issues/162), [#183](https://github.com/Calyx-Engineering/arc/issues/183), [#210](https://github.com/Calyx-Engineering/arc/issues/210), [#163](https://github.com/Calyx-Engineering/arc/issues/163), [#161](https://github.com/Calyx-Engineering/arc/issues/161), [#166](https://github.com/Calyx-Engineering/arc/issues/166), [#272](https://github.com/Calyx-Engineering/arc/issues/272))
+5. `tracker-verify` reads a whole command, and `hooks/TEMPLATE` and four hooks share its comma-safe reader ([#230](https://github.com/Calyx-Engineering/arc/issues/230), [#231](https://github.com/Calyx-Engineering/arc/issues/231), [#300](https://github.com/Calyx-Engineering/arc/issues/300))
+6. The activation log compresses, rotates at the arc boundary, and is untracked ([#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239), [#273](https://github.com/Calyx-Engineering/arc/issues/273))
+7. One case reader for the four graders; the provenance vocabulary pinned; a soak row for every Fire merge ([#265](https://github.com/Calyx-Engineering/arc/issues/265), [#266](https://github.com/Calyx-Engineering/arc/issues/266), [#263](https://github.com/Calyx-Engineering/arc/issues/263))
 
 #### 6.3.2 Spawned
 
 | | | Routed |
 |---|---|---|
-| [#208](https://github.com/Calyx-Engineering/arc/issues/208) · [#210](https://github.com/Calyx-Engineering/arc/issues/210) · [#213](https://github.com/Calyx-Engineering/arc/issues/213) | Closed | Fire |
-| [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) | Hook extraction; log volume, rotation | Fire — open; attached as sub-issues 2026-09-08, tracks F9 (S7) and F10 (S8) |
-| [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#246](https://github.com/Calyx-Engineering/arc/issues/246) | Reload reverts edits; check 8 live | Dogfood — open |
-| Unfiled | Eleven *needs an issue* findings | Nowhere |
+| [#208](https://github.com/Calyx-Engineering/arc/issues/208) · [#210](https://github.com/Calyx-Engineering/arc/issues/210) · [#213](https://github.com/Calyx-Engineering/arc/issues/213) · [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) · [#259](https://github.com/Calyx-Engineering/arc/issues/259)–[#266](https://github.com/Calyx-Engineering/arc/issues/266) · [#269](https://github.com/Calyx-Engineering/arc/issues/269) · [#272](https://github.com/Calyx-Engineering/arc/issues/272) · [#273](https://github.com/Calyx-Engineering/arc/issues/273) · [#300](https://github.com/Calyx-Engineering/arc/issues/300) | Openings, hook readers, log volume, thresholds, provenance | Fire — closed |
+| [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#297](https://github.com/Calyx-Engineering/arc/issues/297) · [#314](https://github.com/Calyx-Engineering/arc/issues/314) · [#315](https://github.com/Calyx-Engineering/arc/issues/315) | Reload guard; rate-limit retry; two grader defects | Upkeep — closed |
+| [#246](https://github.com/Calyx-Engineering/arc/issues/246) | `work-watch` check 8 on a live instrument | Out of the milestone — needs a bench day |
+| [#243](https://github.com/Calyx-Engineering/arc/issues/243) · [#261](https://github.com/Calyx-Engineering/arc/issues/261) · [#294](https://github.com/Calyx-Engineering/arc/issues/294) | Saturation probe; provenance at threshold; `branch-guard`'s root form | Arc 05 |
+| [#325](https://github.com/Calyx-Engineering/arc/issues/325) · [#326](https://github.com/Calyx-Engineering/arc/issues/326) · [#327](https://github.com/Calyx-Engineering/arc/issues/327) | Hook safety: a canary session, a wrapper, fixture hooks | Arc 05 |
+| [#355](https://github.com/Calyx-Engineering/arc/issues/355) · [#356](https://github.com/Calyx-Engineering/arc/issues/356) | `--body-file` unread by `tracker-verify`; the gain-sweep conflict case | Arc 05 |
 
 #### 6.3.3 Unexpected
 
-- Firing and adherence move independently ([#155](https://github.com/Calyx-Engineering/arc/issues/155)), except at 20 words ([#213](https://github.com/Calyx-Engineering/arc/issues/213)). Unresolved
-- `createLinkedBranch` succeeds; `linkedBranches` reads 0, four times
-- `verify-hook.sh` left `HOOKS_OFF` on once; every hook inert
-- [#166](https://github.com/Calyx-Engineering/arc/issues/166) first claimed live firing off fixtures
+- Firing and adherence move independently ([#155](https://github.com/Calyx-Engineering/arc/issues/155)), except at 20 words ([#213](https://github.com/Calyx-Engineering/arc/issues/213)). No issue: nothing measures the pair
+- `0.67` rejects two out of three — `2/3`, `4/6`, `6/9` all print FAIL ([#315](https://github.com/Calyx-Engineering/arc/issues/315))
+- The report-shape grader fails the skill's own mandated table ([#314](https://github.com/Calyx-Engineering/arc/issues/314))
+- A frozen grader cannot score a skill change: emptying `SKILL.md` scores the same ([#260](https://github.com/Calyx-Engineering/arc/issues/260))
 
 #### 6.3.4 Unplanned but needed
 
 | | |
 |---|---|
-| Five instruments | None existed |
-| `skill-firing.py` | Miscounted turns |
-| Log write cost | 1.4 s per call, now 91 ms |
+| Five instruments | `skill-cases.sh`, `response-length-probe.py`, `topic-numbering.py`, `report-grade.py`, `skill-probe.py` — none existed |
+| `hooks/TEMPLATE` | The activation-log boilerplate and a comma-safe `field()`, so the next hook inherits both |
+| `.gitignore` | A third entry; the log stops dirtying trees |
 
 #### 6.3.5 Evidence
 
 | | |
 |---|---|
-| `verify-all.sh` | 11 → 38 gates, exit 0 every merge |
-| Live here | Exit 1 — local `grep -q` aborts; one gate reads an ignored file |
-| Baselines | Opening 1/3 · provenance 1/4 · topics 0/3 · environment `BLAMED` |
-| Activation log | 455 live entries today — first soak |
+| `verify-all.sh` | 69 gates, exit 0 |
+| `verify-hook.sh tracker-verify` | 136 passed, 0 failed |
+| Activation log | 58,466 lines rotated to `docs/arc-log/events/` |
+| `chat-response` probe | 79 runs, $145, `p=0.0021` between arms |
+| Grader baselines | Report shape 1/3 · provenance 1/4 · topics 0/3 · environment `BLAMED` |
 
 #### 6.3.6 Not done
 
-- *Done when* unmet: [#156](https://github.com/Calyx-Engineering/arc/issues/156), [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#213](https://github.com/Calyx-Engineering/arc/issues/213), [#165](https://github.com/Calyx-Engineering/arc/issues/165)
-- Boxes unticked: [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#210](https://github.com/Calyx-Engineering/arc/issues/210), [#166](https://github.com/Calyx-Engineering/arc/issues/166)
-- [#160](https://github.com/Calyx-Engineering/arc/issues/160)'s case cannot discriminate
-- Everything merged unsoaked
-- `TEMPLATE` edit proposed only — **applied 2026-09-08** on the user's approval. `verify-hook.sh`'s declaration check was already in the file since 2026-08-19; the proposal was moot
+- Report shape, provenance and topic numbering sit below threshold. Provenance is [#261](https://github.com/Calyx-Engineering/arc/issues/261), arc 05; the other two have no issue — their cases are frozen excerpts, and the probe that could score them is [#243](https://github.com/Calyx-Engineering/arc/issues/243), arc 05
+- `work-watch` check 8 on a live instrument — [#246](https://github.com/Calyx-Engineering/arc/issues/246), out of the milestone
+- Six children rolled to arc 05 and detached: hook safety [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327); [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294)
 
 #### 6.3.7 What it changed
 
 ```mermaid
 flowchart LR
-    A["#155 three shapes<br/>wrapped 2/7"] --> B["#156 #157 #208<br/>openings load<br/>handoff + camp"]
-    A --> C["#158 #213 length<br/>#160 numbering<br/>#159 #164 report shape<br/>#165 environment"]
-    C --> D["four graders,<br/>baselines measured,<br/>none passing yet"]
-    E["#162 #183 #210 #163<br/>hooks read the repo,<br/>the arc, the close"] --> F["#166 every hook<br/>leaves a record"]
-    G["#161 branch-guard<br/>worktree + base"] --> F
-    H["#181 plugin eval"]:::blocked -.->|"gated"| B
+    A["#156 #157 #208 #252<br/>openings load<br/>handoff + camp, 10/12"]
+    B["#158 #160 #159 #164 #165<br/>four graders,<br/>baselines measured"] --> C["#213 #262<br/>20-word budget<br/>78/102"]
+    D["#162 #183 #210 #163 #161 #272<br/>hooks read the repo,<br/>the arc, the close"] --> E["#166 #238 #239 #273<br/>every hook leaves<br/>a record, untracked"]
+    F["#230 #231 #300<br/>one comma-safe reader<br/>in TEMPLATE + four hooks"] --> E
+    G["#243 #261 #294<br/>#325 #326 #327"]:::blocked -.-> H["arc 05"]:::blocked
     classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
 ```
 
 *End of Fire's boundary report.*
 
-**§6.3.6's *Everything merged unsoaked* overstated it on the day** — §6.3.5 records the activation log's
-first soak in the same report. Every Fire merge now carries a row in §10, written by
-[#263](https://github.com/Calyx-Engineering/arc/issues/263); several record defects the exercise found.
-
 ---
 
+---
 
 ### 6.4 Handoff — boundary report
 
@@ -577,73 +584,6 @@ flowchart LR
 ```
 
 *End of Tracker's boundary report.*
-
----
-
-### 6.7 Fire, second closing — boundary report
-
-**Workstream:** Fire · **Closed:** 2026-09-12 · **200 words**, diagram excluded
-
-Six roll to arc 05 — #243, #261, #294, #325, #326, #327 — cut 2026-09-12 for a weekend release.
-
-#### 6.7.1 Delivered
-
-1. `tracker-verify`'s reader stops truncating at commas; a chained `gh` command runs both arms
-2. `TEMPLATE` and four hooks share one comma-safe reader
-3. Activation log 43% smaller, rotates at the boundary, stops dirtying trees
-4. `branch-guard`'s no-repository exemption fixed
-5. `chat-response`'s 20-word budget: 0.34 to 0.76 under a post-write cut
-6. Shared case reader; `verify-hook.sh` fixed; provenance pinned
-
-#### 6.7.2 Spawned
-
-| | | Routed |
-|---|---|---|
-| #297 #314 #315 | Rate-limit retry, grader bugs | Upkeep — closed |
-| #266's three findings | Unfiled | Fire |
-| #264's stale doc | Says unapplied | This arc |
-
-#### 6.7.3 Unexpected
-
-- `0.67` rejects two-out-of-three — `2/3`, `4/6`, `6/9` all print FAIL, routed as #315
-- The report-shape grader fails the skill's own mandated table
-- #300's second defect: an unparsed fragment was handed back as the value, passing every `[ -z ]` guard
-
-#### 6.7.4 Unplanned but needed
-
-| | |
-|---|---|
-| `hooks/TEMPLATE`'s `field()` | Rewritten so the next hook inherits the fix |
-| `.gitignore` | A third entry; log stops dirtying trees |
-| `tools/response-length-rank.py` | Ranks replies a terminal call had tied |
-
-#### 6.7.5 Evidence
-
-| | |
-|---|---|
-| `verify-all.sh` | 58 → 69 gates, exit 0 |
-| Activation log | 4.6M bytes, 43% smaller; 58,466 lines rotated |
-| `chat-response` probe | 79 runs, $145 — Fire's largest |
-
-#### 6.7.6 Not done
-
-- #259, #260 still short of threshold; #260's wiring unticked
-- Six children roll to arc 05 rather than close here
-
-#### 6.7.7 What it changed
-
-```mermaid
-flowchart LR
-    A["#230 tracker-verify's<br/>reader fixed"] --> B["#300 TEMPLATE +<br/>four hooks inherit it"]
-    C["#238 volume −43%<br/>#239 rotation<br/>#273 gitignored"] --> D["log stops dirtying<br/>every tree"]
-    E["#272 branch-guard<br/>no-repo exemption"]
-    F["#262 chat-response<br/>0.34 → 0.76"]
-    G["#265 shared reader<br/>#264 verify-hook fixed<br/>#266 provenance pinned"]
-    H["#243 #261 #294<br/>#325 #326 #327"]:::blocked -.->|"cut 2026-09-12"| I["arc 05"]
-    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
-```
-
-*End of Fire's second boundary report.*
 
 ---
 
