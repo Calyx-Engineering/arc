@@ -328,6 +328,139 @@ Load-bearing: the 3.3 V rail cannot source 500 mA.'
         "exit $rc, output: $out"
   fi
 
+  # ---- 10e · a Bash `>` redirect over a non-handoff untracked file is archived ------------
+  # #351: distinct from 10b, which proves the SNAPSHOT (moment 1, unconditional) reaches the
+  # handoff over Bash. This proves moment 2 — the per-file archive — reaches a Bash TARGET too,
+  # for a file that is not the handoff.
+  repo=$(make_repo bashredirect)
+  printf 'the note before it was overwritten\n' > "$repo/notes.md"
+  printf '{"session_id":"sb4","cwd":"%s","tool_name":"Bash","tool_input":{"command":"cat > notes.md"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "notes.md" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "the note before it was overwritten" ]; then
+    ok "a Bash \`>\` redirect over an untracked file is archived before the overwrite"
+  else
+    bad "a Bash \`>\` redirect over an untracked file is archived before the overwrite" \
+        "found: $copy"
+  fi
+
+  # ---- 10f · a Bash \`mv\` over an untracked file archives the destination's prior content --
+  # The source (\`draft.md\`) is consumed, not overwritten — nothing was replaced there, so it
+  # needs no copy. Only the destination lost content.
+  repo=$(make_repo bashmv)
+  printf 'draft content\n' > "$repo/draft.md"
+  printf 'the note before mv replaced it\n' > "$repo/notes.md"
+  printf '{"session_id":"sb5","cwd":"%s","tool_name":"Bash","tool_input":{"command":"mv draft.md notes.md"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "notes.md" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "the note before mv replaced it" ]; then
+    ok "a Bash \`mv\` over an untracked file archives the destination's prior content"
+  else
+    bad "a Bash \`mv\` over an untracked file archives the destination's prior content" \
+        "found: $copy"
+  fi
+
+  # ---- 10g · a Bash \`rm\` of an untracked file is archived before it is destroyed ---------
+  repo=$(make_repo bashrm)
+  printf 'about to be removed\n' > "$repo/notes.md"
+  printf '{"session_id":"sb6","cwd":"%s","tool_name":"Bash","tool_input":{"command":"rm -f notes.md"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "notes.md" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "about to be removed" ]; then
+    ok "a Bash \`rm\` of an untracked file is archived before it is destroyed"
+  else
+    bad "a Bash \`rm\` of an untracked file is archived before it is destroyed" \
+        "found: $copy"
+  fi
+
+  # ---- 10h · a Bash \`cp\` over an untracked file archives the destination's prior content -
+  repo=$(make_repo bashcp)
+  printf 'source content\n' > "$repo/draft.md"
+  printf 'the note before cp replaced it\n' > "$repo/notes.md"
+  printf '{"session_id":"sb7","cwd":"%s","tool_name":"Bash","tool_input":{"command":"cp -p draft.md notes.md"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "notes.md" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "the note before cp replaced it" ]; then
+    ok "a Bash \`cp\` over an untracked file archives the destination's prior content"
+  else
+    bad "a Bash \`cp\` over an untracked file archives the destination's prior content" \
+        "found: $copy"
+  fi
+
+  # ---- 10i · a Bash redirect onto a TRACKED file needs no copy — git is already the copy ---
+  repo=$(make_repo bashtracked)
+  printf 'tracked before\n' > "$repo/src/a.c"
+  git -C "$repo" add src/a.c 2>/dev/null
+  git -C "$repo" -c user.email=v@x -c user.name=v commit -q -m "track a.c" 2>/dev/null
+  printf '{"session_id":"sb8","cwd":"%s","tool_name":"Bash","tool_input":{"command":"echo x > src/a.c"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  if [ -z "$(archived_copies "$repo" "src/a.c")" ]; then
+    ok "a Bash redirect onto a tracked file needs no copy"
+  else
+    bad "a Bash redirect onto a tracked file needs no copy" \
+        "duplicating what git already holds makes the store noise"
+  fi
+
+  # ---- 10j · a Bash \`>>\` append is not an overwrite, and takes no copy -------------------
+  repo=$(make_repo bashappend)
+  printf 'kept\n' > "$repo/notes.md"
+  printf '{"session_id":"sb9","cwd":"%s","tool_name":"Bash","tool_input":{"command":"echo more >> notes.md"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  if [ -z "$(archived_copies "$repo" "notes.md")" ]; then
+    ok "a Bash \`>>\` append is not parsed as an overwrite"
+  else
+    bad "a Bash \`>>\` append is not parsed as an overwrite" \
+        "append preserves the prior content, so nothing was lost to archive"
+  fi
+
+  # ---- 10k · a quoted argument before the destructive token does not truncate `field command`
+  # `field()`'s value walk used to stop at the FIRST `"`, escaped or not — `echo "some text" >
+  # notes.md` truncated `command` at the quote inside the echoed text, so `bash_overwrite_target`
+  # never saw the `>` at all and the file was destroyed with no copy taken. Review pass 2 on #351
+  # found this live: the case matters because a quoted argument ahead of the redirect is an
+  # ordinary shape, not an edge case.
+  repo=$(make_repo bashquotedarg)
+  printf 'the note before the quoted-argument overwrite\n' > "$repo/notes.md"
+  printf '{"session_id":"sb10","cwd":"%s","tool_name":"Bash","tool_input":{"command":"echo \\"some text\\" > notes.md"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "notes.md" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "the note before the quoted-argument overwrite" ]; then
+    ok "a quoted argument ahead of the redirect does not truncate the parsed command"
+  else
+    bad "a quoted argument ahead of the redirect does not truncate the parsed command" \
+        "found: $copy"
+  fi
+
+  # ---- 10l · \`--\` end-of-options: the word after it is literal, not a flag ----------------
+  # \`mv -- foo -bar\` is the standard idiom for a destination whose name starts with a dash.
+  # Scanning backward for "the last non-flag word" without honouring \`--\` picked \`foo\` — the
+  # SOURCE — leaving the destination's real prior content unarchived. Review pass 2 on #351.
+  repo=$(make_repo bashdashdash)
+  printf 'src content\n' > "$repo/foo"
+  printf 'dest content that would be lost\n' > "$repo/-bar"
+  printf '{"session_id":"sb11","cwd":"%s","tool_name":"Bash","tool_input":{"command":"mv -- foo -bar"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "-bar" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "dest content that would be lost" ]; then
+    ok "\`mv -- foo -bar\` archives the dash-named destination, not the source"
+  else
+    bad "\`mv -- foo -bar\` archives the dash-named destination, not the source" \
+        "found: $copy"
+  fi
+
+  # ---- 10m · \`rm -- -file\` finds the dash-named target, not nothing ----------------------
+  repo=$(make_repo bashrmdashdash)
+  printf 'confidential\n' > "$repo/-confidential.txt"
+  printf '{"session_id":"sb12","cwd":"%s","tool_name":"Bash","tool_input":{"command":"rm -- -confidential.txt"}}' \
+    "$repo" | HOME="$RUN_HOME" bash "$HOOK" >/dev/null 2>&1
+  copy=$(archived_copies "$repo" "-confidential.txt" | head -n1)
+  if [ -n "$copy" ] && [ "$(cat "$copy")" = "confidential" ]; then
+    ok "\`rm -- -file\` archives the dash-named file rather than finding nothing"
+  else
+    bad "\`rm -- -file\` archives the dash-named file rather than finding nothing" \
+        "found: $copy"
+  fi
+
   # ---- 10d · the fast-path marker is written even with no handoff to copy -----------------
   # The marker used to be written only inside archive_file, past its own early returns, so it
   # existed only where there HAD been an untracked handoff. Every repo without one — every

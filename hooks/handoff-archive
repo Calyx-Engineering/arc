@@ -7,7 +7,7 @@
 #
 # camp-reports: handoff-archived
 # checks: handoff-snapshot, user-authored-file-archived
-# skips: handoff-snapshot (the payload names no session or no tool, there is no repository, or the root could not be read), user-authored-file-archived (the call names no file — every Bash call, by design — the path lands outside the repository, it is the handoff itself, or the snapshot was already taken this session)
+# skips: handoff-snapshot (the payload names no session or no tool, there is no repository, or the root could not be read), user-authored-file-archived (the call names no file — a Bash call whose command matches none of the parsed overwrite forms, by design — the path lands outside the repository, it is the handoff itself, or the snapshot was already taken this session)
 #
 # WHAT GETS ARCHIVED: whatever git cannot restore. A tracked file needs no copy — git IS the
 # copy, and archiving it would be duplicating the thing that already works. An untracked or
@@ -27,12 +27,16 @@
 #
 # WHY IT IS ALSO ON THE Bash MATCHER. `cat > HANDOFF.md`, `mv`, `sed -i` and `rm` destroy a file
 # without ever going through Edit or Write. Registered only on the edit tools, this hook would
-# have missed every one of them — the handoff would be gone and no copy taken. Bash therefore
-# gets moment 1, the snapshot, which is what makes the cold-start property true whatever tool the
-# session reaches for. It does NOT get moment 2: a shell command is not parsed for the files it
-# will overwrite, because those forms compose and a wrong guess copies the wrong thing while
-# reporting success. Still uncovered, and named rather than implied away: a Bash command that
-# overwrites an untracked file which is not the handoff.
+# have missed every one of them — the handoff would be gone and no copy taken. Bash gets moment
+# 1, the snapshot, unconditionally, which is what makes the cold-start property true whatever
+# tool the session reaches for.
+#
+# MOMENT 2 ON Bash IS A WORD SPLIT OF THE COMMAND, NOT A SHELL PARSE — #351. `bash_overwrite_target`
+# recognises four plain, single-command forms: a bare `>` redirect, `mv`, `rm`, `cp`. Anything
+# that composes them — a pipeline, `&&`, a subshell, `sed -i`, a glued operator (`cat>file`), a
+# quoted path with a space in it — is not parsed, because a wrong guess would copy the wrong
+# file while reporting success. Named rather than implied away: those forms still destroy an
+# untracked file with no copy kept.
 #
 # AND IT IS SILENT ON Bash — see `report()`. Speaking there would auto-approve the command.
 #
@@ -117,9 +121,16 @@ INPUT="$(cat 2>/dev/null)"
 # `grep -n file_path hooks/handoff-archive`, run as a command, matched inside the command string
 # and returned the command as a path.
 #
-# It is a naive reader, as the `sed` it replaces was: it finds `"<key>"`, expects a string value,
-# and stops at the next quote. A value containing an escaped quote would truncate. Tool payload
-# paths and ids do not, and the alternative is a `jq` dependency for a hook on this matcher.
+# It finds `"<key>"`, expects a string value, and walks it to the closing quote. Tool payload
+# paths and ids rarely carry one, but #351 reads `command` through this same function, and a
+# quoted shell argument — `echo "note" > file`, `mv "a" b` — carries an ESCAPED `"` routinely.
+# An earlier version stopped at the first `"`, escaped or not (`"${rest%%\"*}"`), which truncated
+# `command` at that quote and silently dropped everything after it — the archive never ran.
+# Character-scanned rather than another one-shot expansion, because unescaping `\"` and `\\` needs
+# to look at what precedes each quote, not just find one. Still not a full JSON string: `\n`,
+# `\t` and other escapes pass through with their backslash, which is fine for a path or a shell
+# word and is not what this hook parses those for. The alternative remains a `jq` dependency for
+# a hook on this matcher.
 field() {  # field <key> — prints the string value of "<key>", or nothing
   local rest="${INPUT#*\"$1\"}"
   [ "$rest" = "$INPUT" ] && return 1          # key absent
@@ -127,7 +138,24 @@ field() {  # field <key> — prints the string value of "<key>", or nothing
   while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
   case "$rest" in '"'*) ;; *) return 1 ;; esac  # not a string value
   rest="${rest#\"}"
-  printf '%s' "${rest%%\"*}"
+  local out="" c nc i=0 len=${#rest}
+  while [ "$i" -lt "$len" ]; do
+    c="${rest:$i:1}"
+    if [ "$c" = '\' ]; then
+      nc="${rest:$((i + 1)):1}"
+      case "$nc" in
+        '"') out="$out\"" ;;
+        '\') out="$out\\" ;;
+        *)   out="$out\\$nc" ;;
+      esac
+      i=$((i + 2))
+      continue
+    fi
+    [ "$c" = '"' ] && break
+    out="$out$c"
+    i=$((i + 1))
+  done
+  printf '%s' "$out"
 }
 
 json_string() {
@@ -166,6 +194,85 @@ unescape_path() {
   esac
 }
 
+# strip_quotes <word> — a naive split leaves surrounding quotes on; drop one matched pair.
+strip_quotes() {
+  local w="$1"
+  case "$w" in
+    \"*\") w="${w#\"}"; w="${w%\"}" ;;
+    \'*\') w="${w#\'}"; w="${w%\'}" ;;
+  esac
+  printf '%s' "$w"
+}
+
+# bash_overwrite_target <command> — prints the one path a plain `>`, `mv`, `rm` or `cp` would
+# overwrite or destroy, or nothing. #351: these forms name no target the edit-tool matchers can
+# see, so a Bash redirect over an untracked file destroyed it with no copy kept.
+#
+# A WORD SPLIT, NOT A SHELL PARSE. `read -ra` on the raw command text, same trade the rest of
+# this hook makes: cheap, and wrong on a quoted path with a space in it or an operator glued to
+# its word (`cat>file`, `mv a.txt||true`). Both are named gaps, not handled — getting them right
+# needs a real parser, which this hot path cannot afford. A command this misreads either finds
+# nothing (silent, same as today) or names the wrong path (archives something harmless) —
+# never a deny, so the fail-open contract holds either way.
+#
+# `>>` (append) and `2>`/`&>` (a stream, not a file this hook can recover as text) are excluded
+# on purpose — they are not the destructive overwrite #351 is about.
+bash_overwrite_target() {
+  local cmd="$1" words=() i n target="" ddidx=-1
+
+  read -ra words <<<"$cmd" 2>/dev/null
+  n=${#words[@]}
+  [ "$n" -eq 0 ] && return 0
+
+  for ((i = 0; i < n - 1; i++)); do
+    case "${words[$i]}" in
+      '>'|'1>') target="${words[$((i + 1))]}" ;;
+    esac
+  done
+  if [ -n "$target" ]; then
+    strip_quotes "$target"
+    return 0
+  fi
+
+  # The last bare `--`, if any. A word after it is a literal argument regardless of a leading
+  # dash — `rm -- -confidential.txt`, `mv -- foo -bar` are the standard idiom for a dash-named
+  # file, and treating `-bar` as a flag there names the wrong file: the source, not the
+  # destination whose content is actually lost.
+  for ((i = 1; i < n; i++)); do
+    [ "${words[$i]}" = "--" ] && ddidx=$i
+  done
+
+  case "${words[0]}" in
+    mv|cp)
+      # The last non-flag word is the destination — the one form that gets overwritten.
+      for ((i = n - 1; i >= 1; i--)); do
+        [ "$i" -eq "$ddidx" ] && continue
+        if [ "$ddidx" -ge 1 ] && [ "$i" -gt "$ddidx" ]; then
+          strip_quotes "${words[$i]}"
+          return 0
+        fi
+        case "${words[$i]}" in -*) continue ;; esac
+        strip_quotes "${words[$i]}"
+        return 0
+      done
+      ;;
+    rm)
+      # The first non-flag word — one target per call, same as the other three forms.
+      for ((i = 1; i < n; i++)); do
+        [ "$i" -eq "$ddidx" ] && continue
+        if [ "$ddidx" -ge 1 ] && [ "$i" -gt "$ddidx" ]; then
+          strip_quotes "${words[$i]}"
+          return 0
+        fi
+        case "${words[$i]}" in -*) continue ;; esac
+        strip_quotes "${words[$i]}"
+        return 0
+      done
+      ;;
+  esac
+  return 0
+}
+
 # ---- hook body ------------------------------------------------------------------
 
 CWD="$(unescape_path "$(field cwd)")"
@@ -181,13 +288,18 @@ arc_log_event handoff-archived "tool=$TOOL"
 
 # The file this call is about to replace, where the call names one.
 #
-# NOT READ FOR A Bash CALL, and that is a correctness fix rather than an optimisation. `field` is
-# an unanchored grep over the whole payload, and a Bash payload carries the command text — so
-# `grep -n file_path hooks/handoff-archive`, run as a command, made `field file_path` match inside
-# the command string and return it as a path. Harmless in outcome, since no such file exists, but
-# it defeated the fast path below and ran moment 2 on nonsense. Bash never names a target here.
+# `field file_path` IS NOT READ FOR A Bash CALL, and that is a correctness fix rather than an
+# optimisation. `field` is an unanchored grep over the whole payload, and a Bash payload carries
+# the command text — so `grep -n file_path hooks/handoff-archive`, run as a command, made
+# `field file_path` match inside the command string and return it as a path. Harmless in outcome,
+# since no such file exists, but it defeated the fast path below and ran moment 2 on nonsense.
+#
+# A Bash call names a target through `bash_overwrite_target` instead — #351 — reading the
+# `command` field itself rather than guessing at `file_path`.
 TARGET=""
-if [ "$TOOL" != "Bash" ]; then
+if [ "$TOOL" = "Bash" ]; then
+  TARGET="$(unescape_path "$(bash_overwrite_target "$(field command)")")"
+else
   TARGET="$(unescape_path "$(field file_path)")"
   [ -n "$TARGET" ] || TARGET="$(unescape_path "$(field notebook_path)")"
 fi
@@ -278,11 +390,10 @@ fi
 : > "$GITDIR/arc-archive-$SESSION-handoff" 2>/dev/null
 
 # ---- 2 · and the file this call is about to replace, if git cannot restore it -----
-# Only for a call that NAMES a file. A Bash command is not parsed for the files it will
-# overwrite: `>`, `mv`, `sed -i`, `tee` and a here-doc are all overwrites, they compose, and a
-# wrong guess either copies nothing or copies the wrong thing while reporting success. So Bash
-# gets the snapshot above and nothing else, and what stays uncovered is named in the dev-log
-# rather than implied to be handled.
+# Only for a call that NAMES a file. An edit tool always does; a Bash call does only when
+# `bash_overwrite_target` recognised one of its four plain forms — #351. A compound command
+# (`sed -i`, `tee`, a here-doc, a pipeline) still names none, and what stays uncovered is
+# named in the dev-log rather than implied to be handled.
 if [ -z "$TARGET" ]; then
   arc_log_skip user-authored-file-archived "the call names no file"
 fi
