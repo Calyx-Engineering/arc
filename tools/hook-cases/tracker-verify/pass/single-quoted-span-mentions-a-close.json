@@ -1,0 +1,2 @@
+# a single-quoted argument mentioning a close, chained to a real close whose link is intact — the strip runs for both quote characters, or the quoted #42 becomes the invocation
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"1","tool_input":{"command":"echo 'gh issue close 42' && gh issue close 163"}}

@@ -14,7 +14,7 @@
 |---|---|
 | Two issues edit one file | Same track, or different sets. Never two tracks in one set |
 | `Blocked by #NN` | A later set than the blocker's |
-| **The installed plugin is one machine-wide cache** — `plugin-reload.sh` then `skill-probe.sh` / `response-length.sh --probe` | At most **one probe track per set**. Two runs reloading the cache measure each other's edits |
+| **The installed plugin is one machine-wide cache** — `plugin-reload.sh` then `skill-probe.sh` / `response-length.sh --probe` | At most **one probe track per set**. Two runs reloading the cache measure each other's edits. Since #211 the reload also refuses on a dirty tree, naming what it would install — commit first, or `--force` |
 | [#190](https://github.com/Calyx-Engineering/arc/issues/190) moves every verifier and case directory into `tests/` | Runs alone, last, nothing else in flight — its own constraint |
 | One merge target, `arc/04-dogfood` | Orchestrator merges, one PR at a time, each rebased on the arc tip first |
 | **Cap: 5 tracks per set** | Wall time is the constraint the user named. The ceiling is the usage window, not the graph — a limit-hit run is resumed by `arc-loop.sh`, not lost |
@@ -71,8 +71,8 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | Track | Issues | Edits | Probe | After |
 |---|---|---|---|---|
 | **T1 read-back step** | [#140](https://github.com/Calyx-Engineering/arc/issues/140) | `docs/product-architecture/close-sequence.md` | — | Nothing. Before T2 — #199 narrows #140's constraint |
-| **T2 tracker-verify II** | [#199](https://github.com/Calyx-Engineering/arc/issues/199) [#83](https://github.com/Calyx-Engineering/arc/issues/83) | `hooks/tracker-verify`, new `tools/verify-issue-boxes.sh`, `verify-all.sh` | — | Fire's F1 and T1 |
-| **T3 issue-write rules** | [#87](https://github.com/Calyx-Engineering/arc/issues/87) [#135](https://github.com/Calyx-Engineering/arc/issues/135) [#193](https://github.com/Calyx-Engineering/arc/issues/193) | `skills/issue-write`, `verify-tracker-body.sh`, `tools/tracker-cases/` | probe (#135's m13 case) | Nothing |
+| **T2 tracker-verify II** | [#199](https://github.com/Calyx-Engineering/arc/issues/199) [#83](https://github.com/Calyx-Engineering/arc/issues/83) | `hooks/tracker-verify`, new `tests/verify-issue-boxes.sh`, `verify-all.sh` | — | Fire's F1 and T1 |
+| **T3 issue-write rules** | [#87](https://github.com/Calyx-Engineering/arc/issues/87) [#135](https://github.com/Calyx-Engineering/arc/issues/135) [#193](https://github.com/Calyx-Engineering/arc/issues/193) | `skills/issue-write`, `verify-tracker-body.sh`, `tests/tracker-cases/` | probe (#135's m13 case) | Nothing |
 | **T4 issue shape** | [#84](https://github.com/Calyx-Engineering/arc/issues/84) [#85](https://github.com/Calyx-Engineering/arc/issues/85) | `skills/issue-write`, new `templates/issue.md`, GitHub labels | — | T3 (same skill) |
 | **T5 manual linking** | [#136](https://github.com/Calyx-Engineering/arc/issues/136) | `m12`, `skills/issue-write`, `hooks/tracker-verify` | — | T2, T4. **Low priority — the issue says it may leave the arc** |
 | **T6 findings to the dev-log** | [#270](https://github.com/Calyx-Engineering/arc/issues/270) | `run-instructions.md`, `hooks/tracker-verify` | — | Nothing. **S7** — every later run follows the rule it sets. F9 edits the same hook, so F9 waits for S8 |
@@ -88,7 +88,7 @@ Merged: [#155](https://github.com/Calyx-Engineering/arc/issues/155) · [#156](ht
 | Track | Issues | Edits | Probe | After |
 |---|---|---|---|---|
 | **U1 branch link read-back** | [#206](https://github.com/Calyx-Engineering/arc/issues/206) | `run-instructions.md` §4, `m12`, `new-direct-pr.sh` | — | Nothing. **Early** — every run's branch↔issue link depends on it |
-| **U2 verifiers I** | [#143](https://github.com/Calyx-Engineering/arc/issues/143) [#167](https://github.com/Calyx-Engineering/arc/issues/167) [#168](https://github.com/Calyx-Engineering/arc/issues/168) | three new `tools/verify-*.sh`, `verify-all.sh`, `templates/dev-log.md` | — | Not beside another `verify-all.sh` track |
+| **U2 verifiers I** | [#143](https://github.com/Calyx-Engineering/arc/issues/143) [#167](https://github.com/Calyx-Engineering/arc/issues/167) [#168](https://github.com/Calyx-Engineering/arc/issues/168) | three new `tests/verify-*.sh`, `verify-all.sh`, `templates/dev-log.md` | — | Not beside another `verify-all.sh` track |
 | **U3 verifiers II** | [#185](https://github.com/Calyx-Engineering/arc/issues/185) [#198](https://github.com/Calyx-Engineering/arc/issues/198) | `verify-report-budget.sh`, `set-mode.py` selftest, `verify-all.sh`, a `mode-guard` case | — | U2 |
 | **U4 shadow commands** | [#177](https://github.com/Calyx-Engineering/arc/issues/177) | `.claude/commands/`, `verify-skill-registry.sh` | — | Nothing |
 | **U5 mode-guard scripts** | [#201](https://github.com/Calyx-Engineering/arc/issues/201) | `hooks/mode-guard`, its cases | — | Fire's F7 |

@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook named `session-start`, registered as `PreToolUse`. Name lies about when it fires.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from a `PostToolUse` hook, where exit 2 only prints. On `PreToolUse` it denies.\n\nAlready fixed: `report()` now returns `allow`, exit 0 (line 60–63). Only rename remains, issue [#126](https://github.com/Calyx-Engineering/arc/issues/126).\n\nDirect PR: yes. Restate label and permission fixes; that context is gone.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. No shell tool this session, and the label and permission fixes are undefined here.\n\nRestate both fixes; I'll edit the files, you run `tools/new-direct-pr.sh`.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot set autonomous myself. Flip `HANDOFF.md`'s Execution mode row, then I proceed.\n\nTwo blockers stand: no shell in this session, and label/permission fixes still unstated.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Kill switch: drop the timer and per-hook scope. One marker file under `.git`, all hooks, until deleted.\n\nBranch guard: parse PR number and read the prefix from the agreement. Agreed, both go in the PR.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot fix here: this session has no edit, write or shell tools. Rerun in a session that has them.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, for hooks. My blocker is different: this session has no edit or shell tools.\n\nRun `bash hooks/hooks-off.sh branch-guard 30`, then reopen a session with tools.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. The script writes it: `.git/arc-hooks-off` in the repo root.\n\n```\nbash hooks/hooks-off.sh branch-guard 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Hooks read `.git/arc-hooks-off`, not `HOOKS_OFF.txt`. Run:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. Hooks read `.git/arc-hooks-off`, not `HOOKS_OFF.txt`. Run the script instead.\n\nAgreed. Better: a root `HOOKS_OFF` file, no script, no expiry.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write here, no edit tool. Add to cleanup: replace kill switch with one-hook, one-repo file.\n\n`HOOKS_OFF.txt` did nothing. Script writes `.git/arc-hooks-off`. Run:\n\n```\nbash hooks/hooks-off.sh branch-guard 30\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

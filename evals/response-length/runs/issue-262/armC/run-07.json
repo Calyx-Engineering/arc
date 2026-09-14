@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook header says it only speaks. Somewhere it denies instead. Unverified which branch.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from PostToolUse hook, where exit 2 only prints stderr. PreToolUse exit 2 denies. Already fixed; (2) needs nothing.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Which label and permission fixes?** Context lost. Also mode is manual: PR needs HANDOFF row set autonomous.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Can't set autonomous myself; flip HANDOFF.md's Execution mode row. Lost context: which label and permission fix?",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both: pr-number and agreement prefix. Kill switch: keep script, drop chat-announce ritual.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "No Edit tool this session, so nothing writable. Already fixed: exit 2, branch guard. Kill-switch row and label/permission fixes wait.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, that is its purpose. But no hook blocked me: this session has no Edit tool at all. Harness, not hook.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. Run this; it writes `.git/arc-hooks-off` itself:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong path. Run instead:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `.git/arc-hooks-off` for you.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. Switch reads `.git/arc-hooks-off`, epoch expiry plus name. Run:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nAgreed, awkward design.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Repo-scoped only, not everywhere. Cannot write files this session, no Edit tool. Next session: add kill-switch redesign row.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

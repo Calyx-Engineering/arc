@@ -1,5 +1,6 @@
 ---
 name: arc-intent
+user-invocable: false
 description: Use when work is proposed and the question is whether it belongs in this arc — an issue about to be spawned, a PR about to open, an issue closing, the relief valve firing on depth, or the user asking directly. Classifies the work Agreed, Derived or Escalate against the arc-log's stated intent, and asks rather than blocks. Not for whether work is correct or well built; only whether it is the work this arc agreed to do.
 camp-reports: [intent-checked, drift-escalated, override-recorded]
 checks: [arc-log-read, intent-located, classification, override-row-written]

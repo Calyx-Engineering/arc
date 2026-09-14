@@ -106,22 +106,22 @@ in the arc, which is how a check gets turned off.
 `hooks/tracker-verify` already fires on `gh pr create|edit|merge` and `gh issue create|edit|close`
 and owns this moment, so it gained the command and shells out to the tool rather than counting
 boxes itself. Two copies of a rule is one copy that goes stale, and the question has to stay
-answerable by hand — `bash tools/verify-issue-boxes.sh <NN>`.
+answerable by hand — `bash tests/verify-issue-boxes.sh <NN>`.
 
 ## What was built
 
 | | |
 |---|---|
-| `tools/verify-issue-boxes.sh` | The count. Three forms — an issue, `--pr <NN>` for the hook, and `selftest` |
+| `tests/verify-issue-boxes.sh` | The count. Three forms — an issue, `--pr <NN>` for the hook, and `selftest` |
 | `hooks/tracker-verify` | Fires on `gh pr ready`; new check `issue-boxes`, new event `pr-ready` |
 | `tools/hook-cases/tracker-verify/` | Four new cases — clean, unreadable, no linked issue, undispositioned — plus a truncated payload |
-| `tools/verify-all.sh` | The gate runs the selftest, and `--list` says what the live read still needs |
+| `tests/verify-all.sh` | The gate runs the selftest, and `--list` says what the live read still needs |
 | `close-sequence.md`, `skills/issue-write` | Step 1 gains an exit code once its PR exists, and the two places that restated #140's constraint say which half is judgement. `issue-write` also states the quoting rule an author has to follow |
 | `docs/product-architecture/README.md` | The artifact index's `tracker-verify` row named three firing moments where the hook has six. Not a restatement of #140's constraint — an index that had gone stale |
 
 **Exit 2 is never 1.** A read that could not be made and a box nobody accounted for are different
 answers, and only one is a defect — the same distinction
-[`tools/verify-linked-branch.sh`](../../tools/verify-linked-branch.sh) draws, for the same reason
+[`tests/verify-linked-branch.sh`](../../tests/verify-linked-branch.sh) draws, for the same reason
 [#155](https://github.com/Calyx-Engineering/arc/issues/155) exists.
 
 ## The fixture backend
@@ -140,16 +140,16 @@ an author to write a reason they already wrote.
 ## Evidence
 
 ```text
-$ bash tools/verify-issue-boxes.sh selftest
+$ bash tests/verify-issue-boxes.sh selftest
 27 cases, 27 passed, 0 failed
 
 $ bash tools/verify-hook.sh hooks/tracker-verify
 60 passed, 0 failed
 
-$ bash tools/verify-activation-log.sh hooks/tracker-verify
+$ bash tests/verify-activation-log.sh hooks/tracker-verify
 191 passed, 0 failed
 
-$ bash tools/verify-all.sh
+$ bash tests/verify-all.sh
 38 gates, all clean
 ```
 
@@ -158,18 +158,18 @@ boxes were ticked; everything below it is the finished code. Neither #199 nor #1
 fenced block, so the fence repair does not sit between the two #199 runs.
 
 ```text
-$ bash tools/verify-issue-boxes.sh 199        # first build, boxes still open
+$ bash tests/verify-issue-boxes.sh 199        # first build, boxes still open
 FAIL  #199 — 7 of 7 boxes unticked, 7 of them undispositioned:
-        - unticked, and no closing PR names it: "`tools/verify-issue-boxes.sh <issue>` reports every `- [ ]` remaining in the issue body"
+        - unticked, and no closing PR names it: "`tests/verify-issue-boxes.sh <issue>` reports every `- [ ]` remaining in the issue body"
         …six more
 
-$ bash tools/verify-issue-boxes.sh 199
+$ bash tests/verify-issue-boxes.sh 199
 PASS  #199 — 7 boxes, all ticked
 
-$ bash tools/verify-issue-boxes.sh 140
+$ bash tests/verify-issue-boxes.sh 140
 PASS  #140 — 9 boxes, all ticked
 
-$ bash tools/verify-issue-boxes.sh 194
+$ bash tests/verify-issue-boxes.sh 194
 PASS  #194 — 13 boxes, all ticked
 ```
 

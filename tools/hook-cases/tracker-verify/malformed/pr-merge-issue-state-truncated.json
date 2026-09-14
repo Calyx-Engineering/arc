@@ -1,0 +1,2 @@
+# a merge payload cut off inside the issue-state fixture — no value parses out of any key, so the hook must stay silent rather than make a live read
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","tool_input":{"command":"gh pr merge 200 --squash"},"arc_test_issue_state":"OP

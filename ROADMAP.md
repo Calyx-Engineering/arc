@@ -187,7 +187,7 @@ undesigned — a `partial` spec names its own holes.
 | m15 — Handoff | Pass 1, item 6 | Whether issue-level K2 extends the dev-log or sits beside it |
 | m30 — Transcript mining | Pass 2 | The knowledge filter. The friction filter is validated against a real run |
 | m29 — Agent wiki | Later | Fork, depend, or reimplement — a published plugin already exists |
-| m40 — Autonomy switch | **Arc 03** | Specified and built — [m40](docs/product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set`, `tools/verify-autonomy.sh` |
+| m40 — Autonomy switch | **Arc 03** | Specified and built — [m40](docs/product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set`, `tests/verify-autonomy.sh` |
 | m39 — Mechanism numbering | Pass 2 | **No spec.** Covered by [issue #5](https://github.com/Calyx-Engineering/arc/issues/5) |
 | m22 · m24 | Deferred | Both need the interview above |
 | Guided flow steps 5–8 | Nothing yet | CAD review, manufacturing package, quoting, PR-as-record have no mechanisms at all. Design review is described in [m28](docs/product-architecture/mechanisms/m28-human-gate.md) but unowned |

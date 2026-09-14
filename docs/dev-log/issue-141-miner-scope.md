@@ -30,7 +30,7 @@ A directory is **IN** when, case-insensitively, its slug equals a briefed slug o
 
 ## Verification
 
-`tools/miner-scope.sh selftest` — 9 cases against a throwaway fixture tree, the same precedent as `verify-tracker-body.sh selftest`. It covers the worktree-with-different-case case, the #141 sibling, an unrelated repository, two briefed slugs, and all three exit codes. Wired into `tools/verify-all.sh`.
+`tools/miner-scope.sh selftest` — 9 cases against a throwaway fixture tree, the same precedent as `verify-tracker-body.sh selftest`. It covers the worktree-with-different-case case, the #141 sibling, an unrelated repository, two briefed slugs, and all three exit codes. Wired into `tests/verify-all.sh`.
 
 ## Retrospective
 

@@ -1,0 +1,2 @@
+# an issue created with `--repo` between the subcommand and the verb, its body carrying scaffolding — the flag's value sits where the verb belongs. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] set the current limit to TBD mA\n","tool_input":{"command":"gh issue --repo Calyx-Engineering/arc create --title x --body-file body.md"}}

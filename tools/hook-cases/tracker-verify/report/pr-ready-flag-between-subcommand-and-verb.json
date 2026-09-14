@@ -1,0 +1,2 @@
+# a draft marked ready with `-R` between the subcommand and the verb — the boxes must still be counted. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_boxes_rc":"1","arc_test_boxes_out":"FAIL  #199 — 2 of 7 boxes unticked, 2 of them undispositioned","tool_input":{"command":"gh pr -R Calyx-Engineering/arc ready 250"}}

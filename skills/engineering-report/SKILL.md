@@ -1,5 +1,6 @@
 ---
 name: engineering-report
+user-invocable: false
 description: Use when the user asks for a report, a README, a write-up or a findings document to be written or changed, in any wording — "write the report", "write this up", "write up the findings", "update the readme", "add it to the report", "document this", "put it in the notes". Also fires when the request describes this work without naming it: recording what was investigated, measured, decided or ruled out, for a reader who was not there. Fires when the ask is wrapped inside other instructions rather than being the whole message — a report asked for alongside a commit, an issue and three further requests is still this skill's turn. Fires again when the user objects to a document already written: "too much in there", "way too long", "lacking all context", "what does this even mean", "this reads like what you did, not what is true", "i cant tell what the answer is". Covers what goes at the top and what a framing preamble costs, where each claim came from, the confidence split, length, and what never belongs in a report.
 camp-reports: [report-written, report-revised]
 checks: [destination, structure, actions-routed-to-tracker]
@@ -122,23 +123,42 @@ inference from a dead instrument.
 | | Is | And |
 |---|---|---|
 | `measured` | A bench result | Name the rig and its limits |
+| `instrument` | A number an instrument displayed | **Not a measurement.** Nothing yet says it was measuring what the claim names |
+| `schematic` | This board's own sheets | |
 | `datasheet` | The part's own document | Cite the page |
 | `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
-| `schematic` | This board's own sheets | |
+| `firmware` | Shipped source | What the code *does*, not what the hardware requires |
+| `drawing` | A reviewed diagram | As strong as the review behind it |
+| `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
+| `thread` | An issue thread | A decision was reached; no artifact records it yet |
 | `photograph` | A picture of a circuit not in hand | **Treat as a hypothesis, never as a specification** |
 | `conversation` | Said, not written down | Not a decision until it is |
 | `inferred` | Extrapolated, assumed, calculated from something else | The weakest, and the easiest to mistake for a measurement |
 
 **The order is the point.** Without it, *record the source* is a label with no consequence. A
-project may add a term where it genuinely has one — a shipped firmware source, a reviewed
-drawing, a merged report — but it places the new term **in the order**, or it has added a word
-and not a rule.
+project may add a term where it genuinely has one, but it places the new term **in the order**,
+or it has added a word and not a rule.
+
+**`instrument` is the one most often written as `measured`.** On 2026-08-28 a scope reported
+2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading cannot separate a tone from a
+tone plus a 433 kHz class-D carrier — and an estimate drawn from that reading was taken over a
+bench measurement the user had verified. Under one word for both, a report of that afternoon
+names one source and shows no disagreement at all. A reading becomes `measured` when the rig and
+its limits are **written down beside it**, not when it has been thought about.
+
+**These twelve are two vocabularies reconciled** —
+[#266](https://github.com/Calyx-Engineering/arc/issues/266). `firmware`, `drawing`, `report` and
+`thread` are adopted from the ledger the user had been keeping by hand, `photo` maps to
+`photograph`, and `schematic` rises above `datasheet` and `vendor` both — a claim about *this
+board* is settled by this board's own sheets. [record-route](../record-route/SKILL.md#these-twelve-are-the-fields-and-the-specs-reconciled)
+holds the mapping.
 
 ### The three rules
 
 | | |
 |---|---|
 | **Every claim table carries a `Provenance` column** | Or each row names its source inline. A table of numbers with no basis is a table a reader has to take on trust, and *the trust is what fails* |
+| **So does the second table** | The margin table, the comparison, the summary of the rows above. A derived number is still a claim, and a reader who quotes that row cannot see the rows it came from. Give it the column, or say in the row which measurement it is derived from. **This is the rule that gets dropped**, and it is dropped while the main table is perfect: measured over [#260](https://github.com/Calyx-Engineering/arc/issues/260)'s probe runs, the claim table carried provenance every time and a second table in the same report carried it once in three |
 | **A strong claim is never overridden by a weak one silently** | If an inference wins over a measurement, the document says so, in the same sentence as the claim it is overriding, with why. The rule is not *cite the stronger source* — it is **say so when the weaker one wins** |
 | **A weak row is interrogated before anything is built on it** | `photograph`, `conversation` and `inferred` are hypotheses. They belong in *Not established* with what would settle them |
 
@@ -157,10 +177,12 @@ that side.
 ### How it is scored
 
 [`tools/report-grade.sh`](../../tools/report-grade.sh) returns `ROWS`, `NONE` or `TABLE` per
-claim table, and `RESOLVED` or `SILENT` where two sources disagree. It matches how provenance
+claim table, and `RESOLVED` or `SILENT` where two sources disagree. **The worst table in the
+document is the verdict** — a perfect claim table beside an unsourced margin table reads `NONE`,
+which is the rule above being enforced and not a scoring artefact. It matches how provenance
 is actually written — *"from the product label"*, *"the scope reported"*, *"most likely
-explanation"* — not only the seven words, so a report is scored on the defect and not on
-adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+explanation"* — not only the vocabulary words themselves, so a report is scored on the defect
+and not on adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
 
 ---
 
@@ -380,8 +402,10 @@ printed pack or a stitched PDF.
 - **The opening grades clean** — `bash tools/report-grade.sh --file <report>/README.md`, exit 0.
   **That is the opening only**: read every `LOOK` line as well, and read the first section's body
   yourself for development narrative, which no check covers
-- **Every claim table carries a source**, per row. Where two sources disagree, the document says
-  which won — [Where each claim came from](#where-each-claim-came-from)
+- **Every table of claims carries a source**, per row — **count the tables, not the table.** The
+  derived one, the margin table and the summary are claims too, and they are where the rule gets
+  dropped. Where two sources disagree, the document says which won —
+  [Where each claim came from](#where-each-claim-came-from)
 - All internal links resolve
 - Filenames carry a class prefix and no numbers; README lists companions in reading order
 

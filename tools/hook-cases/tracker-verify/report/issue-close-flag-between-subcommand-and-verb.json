@@ -1,0 +1,2 @@
+# a close with `-R` between the SUBCOMMAND and the verb, unlinked — the flag's value sits where the verb belongs, so a "first token that is not a flag" rule reads `Calyx-Engineering/arc` as the verb and drops the invocation exactly as the substring match did. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue -R Calyx-Engineering/arc close 163"}}

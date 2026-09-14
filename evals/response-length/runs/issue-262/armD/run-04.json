@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook `camp-session-start` documents warn-only, but its exit code would deny if copied to PreToolUse.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer does. Both copies now emit `allow` and exit 0. (2) is fixed; direct PR needs only label and permission.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Decision needed.**\n\nContext lost. Which label and which permission? One line each, then I start.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "I cannot set autonomous mode; that row in `HANDOFF.md` is yours. Also lost context: which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Drop it. Hooks fail open already; make branch-guard warn, never deny, on naming. Denial only for mode-guard.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot edit here: this session has no Edit, Write or Bash tools. Findings:\n\n| Item | State |\n|---|---|\n| PR-number branches | `hooks/branch-guard:125` already handles `-pr[0-9]*` |\n| Non-`arc/` prefix | guard reads agreement; `tools/new-direct-pr.sh:64-73` hardcodes `arc/` |\n| Kill switch | keep `lib/hooks-off` line; drop CLAUDE.md announce-and-paste ritual |\n\nLabel and permission fixes: context lost, need restating.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes hooks. Here the tools themselves are absent from the session, not denied by a hook.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`hooks/lib/branch-prefix`, beside `hooks-off` and `activation-log`. Both `branch-guard` and `tools/new-direct-pr.sh` source it.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing, as recorded on 2026-09-07. Run instead:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Simpler: hooks exit 0 when any `HOOKS_OFF*` file sits at repo root. Drop file, hooks off; delete, hooks on.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "No edit tools this session, and no file named cleanup found. Paste into the arc-log's Spawned section:\n\n```markdown\n- Kill switch redesign: `hooks-off.sh` is per-hook, expiring, repo-scoped, and unusable when the session itself is broken. Replace with one obvious, discoverable off switch that scopes to a repo, not everywhere. Retire the HOOKS_OFF-file trap (#202).\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "My model, unverified against the plugin:\n\n| Piece | Mechanism |\n|---|---|\n| Prompt file | One fixed prompt, re-fed every iteration |\n| Driver | Stop hook blocks session end, re-injects same prompt |\n| Memory | Only files and git carry state between iterations |\n| Exit | Completion string in output, or max-iterations count |\n\nWhere does that diverge from yours?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Left on issue [#262](https://github.com/Calyx-Engineering/arc/issues/262):\n\n| Item | State |\n|---|---|\n| Four files edited, uncommitted | Ready; you commit |\n| PR | Not opened |\n| Two spawned issues (stale self-measurement; run spread) | Not filed |\n\nThe ralph-loop plan discussion is gone from my context. Escape: write the handoff now, resume fresh. Say go.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Checking transcript-directory convention, then reporting. Neither step can run from here: this session has no shell tool loaded, so I cannot commit or copy the transcript file.\n\nBlocked. No Bash tool in this session, so I cannot run `git commit` or copy the transcript.\n\nRun these yourself:\n\n```powershell\ngit add -A\ngit commit -m \"feat: chat-response counts and cuts; rank many probe runs (#262)\"\nGet-ChildItem \"$HOME\\.claude\\projects\\R--arc-wt-262\\*.jsonl\" | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Copy-Item -Destination \"<transcript-dir>\\2026-09-12-arc04-issue-262-context-bloat.jsonl\"\n```\n\nTranscript directory is not named in this repo's handoff. Then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Blocked on your step 1. No Bash tool in this session, so I cannot run `git commit` or copy the transcript file. Only Read/Write/Grep/Glob available.\n\n| Step | State |\n|---|---|\n| 1. Commit four edited files | Blocked, no shell. You run it |\n| 2. Save transcript | Blocked, same. Transcript directory not named anywhere in tree |\n| 3. Compact | Yours |\n\nSuggested:\n\n```powershell\ngit add -A; git commit -m \"feat: chat-response count-and-cut rule, ranked over 29 runs (#262)\"\n```",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. That discussion was summarised out of my context. What survives: your quoted exchange only. My current model of a ralph loop: fixed prompt re-fed to a fresh agent each iteration, one issue per pass, state carried by files and git, not by context. No execution plan for it exists in my head now.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Nothing in the tree says so. \"Ralph\" appears nowhere in docs or mechanisms. Arc-log section 3 (execution plan, and 3.1 least-certain) is written for a human-read log, not a loop prompt.\n\nMy view: yes, it should. A loop agent starts with zero context, so the issue plus a distilled section 3, section 4 (load-bearing decisions) and the operating agreement is exactly what it needs. Undesigned today.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Already built. The instruction file exists and the driver with it.\n\n| Piece | Where |\n|---|---|\n| Instruction file a run reads before its issue | `docs/arc-work/04-dogfood/run-instructions.md`, seven sections |\n| Driver: picks next sub-issue, starts fresh `claude -p`, repeats | `tools/arc-loop.sh` |\n| Design, including §3.1 | arc-log `docs/arc-log/arc-04-dogfood.md` §3 |\n\nNothing to start. Tell me what it lacks.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No document here has a §12 about the loop. The instruction file already exists and is built:\n\n| | |\n|---|---|\n| Instruction file | `docs/arc-work/04-dogfood/run-instructions.md`, 7 sections |\n| Driver | `tools/arc-loop.sh`, fresh `claude -p` per issue |\n| Spec | arc-log §3.1 and §3.2 |\n\nClosest §12 is issue-plan's *Filing*, which points at §3.1. Which document did you mean?",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Nothing to build. The instruction file and driver already exist. What remains needs a shell, which this session lacks:\n\n```powershell\ngit add -A; git commit -m \"feat: chat-response count-and-cut rule, ranked over 29 runs (#262)\"\nbash tools/arc-loop.sh <parent-issue>\n```\n\nRun the commit, compact, then start the loop from a fresh session.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "Loop's two halves, from the diagram in the plan's §4:\n\n| Phrase | Means | Issue | State |\n|---|---|---|---|\n| Land it | A workstream can merge its own PRs without a per-merge ask | [#138](https://github.com/Calyx-Engineering/arc/issues/138) | Closed |\n| Measure it | A change yields a skill-firing score, not an opinion | [#149](https://github.com/Calyx-Engineering/arc/issues/149) | Closed |\n\n§11.1 is the manual session that built the first. Both done.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11 is the plan's pre-run question list, written 2026-09-05 before anything executed. Stale now.\n\n| | |\n|---|---|\n| §11.1 | Said #138 needed you. **#138 is closed**, Loop reports 5 of 5 done |\n| \"land it · measure it\" | Loop's purpose: land = merge route, measure = eval suite |\n| §11.2, §11.3 | Numbers and stop-points settled before execution |\n\nNothing in §11 needs you today.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

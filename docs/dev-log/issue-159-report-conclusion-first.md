@@ -22,7 +22,7 @@ the remedy.
 | `evals/report-shape/` | Three cases, each an excerpt copied verbatim from a real report in the ROADZ corpus, with the document and line range it came from. #164 added three more to the same suite |
 | `evals/README.md` | A fourth suite, and why it is keyed by document rather than by session and turn |
 | `skills/engineering-report/SKILL.md` | A new **The opening — conclusion first** section; the `description:` trigger clause rebuilt against #155 §1; a *No framing preamble* row in *Point of view*; a grader line in *Before finishing* |
-| `tools/verify-all.sh` | The new selftest is a gate. 19 after merging the arc branch, all clean |
+| `tests/verify-all.sh` | The new selftest is a gate. 19 after merging the arc branch, all clean |
 
 ## The result
 
@@ -130,3 +130,14 @@ score would undo that finding.
 `tools/skill-probe.sh` can re-run a turn against the installed plugin; a document cannot be
 re-written on demand. So this suite measures history and will keep measuring history until a report is written
 *with* the skill loaded and scored with `--file`. That is the soak, and it is the next report.
+
+## Findings
+
+Moved verbatim from #159's body under [#271](https://github.com/Calyx-Engineering/arc/issues/271).
+
+| Finding | Where it routes |
+|---|---|
+| **Case-reading is duplicated four ways** — `read_case` exists in `report-grade.py`, `topic-numbering.py`, `response-length.py` and `skill-cases.py` — and fence-tracking twice more inside `report-grade.py` alone | Needs an issue. Not actioned here — a shared module is a change to three working instruments and does not belong in a run adding a fourth |
+| **`report-grade.sh` has no probe mode**, so it measures history only. `tools/response-length.sh --probe` and `tools/skill-probe.sh` can re-run a turn against the installed plugin; a document cannot be re-written on demand | Recorded. The remedy is the next report written with the skill loaded, scored with `--file` |
+| **The corpus default is one machine's absolute path.** Elsewhere every case scores from its excerpt with the verbatim claim unchecked; `--strict` turns that into a failure and is now documented as the flag to use where the claim has to mean something | Documented in the tool header |
+| **Commit attribution across the two pass-1 commits is wrong** — `6193a3c` carries seven changes and describes four; `7583fb3` describes code it does not carry. Every fix is in the tree; the split is not what the messages say | Recorded in the dev-log rather than rewritten. Pushed history |

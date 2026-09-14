@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook comment says it only reports, never denies. Code exits 2, which PreToolUse reads as deny.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Pattern copied from a PostToolUse hook, where exit 2 only prints. Already fixed here, at `hooks/camp-session-start:60`. Item 2 needs no PR.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Searching for what \"label fix\" and \"permission fix\" are. Nothing in this worktree names them.\n\nBlocked. This session holds no record of the label fix or the permission fix. Which files, or which issue?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot switch to autonomous myself. Set the `HANDOFF.md` Execution mode row. Also, which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both, `hooks/branch-guard:105` and `:125`. Kill switch: replace per-hook mutes with one `hooks-off.sh all`.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Branch guard already handles both: `hooks/branch-guard:105` reads prefix, `:125` matches `pr<N>`. Nothing to fix. Kill switch: add `hooks-off.sh all 30`.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes. Per-hook only today, so muting all seven takes seven commands. `all` collapses that to one.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. `bash hooks/hooks-off.sh <hook> 30` writes `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Nothing reads that file. Run instead:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. A file with no feedback fails silently. The command replaced it and prints status.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot file issues here: no shell or write tool in this session. Paste this into the Upkeep parent, issue #148:\n\n```text\nscope: replace the per-hook kill switch (hooks-off.sh) with one command that mutes every hook in one repository, expiring\n```\n\nNote: today's switch is already per-hook and per-repo. Only the old file was global.",
+   "cut": "",
+   "fired": [
+    "issue-write"
+   ]
+  }
+ }
+}

@@ -116,7 +116,7 @@ row. It was then checked by reverting the fix and confirming the case fails.
 - **The unreadable-index guard has no executed coverage on this machine.** Case 16b drives it with
   `chmod 000`, which does nothing on Windows; the case reports `SKIP` rather than a green it has
   not earned.
-- **No hook fires in a live session here.** `tools/verify-all.sh --list` already says so. The
+- **No hook fires in a live session here.** `tests/verify-all.sh --list` already says so. The
   installed plugin copy is stale until `tools/plugin-reload.sh` runs, and that reload would swap
   the plugin under the other five worktrees running concurrently, so it was not run. The soak below
   is the hook executed as a program against this repository.
@@ -156,7 +156,7 @@ session's first tool call and flipped to `orphaned` by a later firing from elsew
 worktree is gone. `agents/transcript-miner` §1 now opens with the index and carries four routing
 rules over its rows, requires quotes from an indexed directory to be located by issue and branch
 rather than by slug, and must say in its `Scope` row how many rows resolved or that it fell back to
-globbing. `tools/verify-session-index.sh` is the gate — 28 cases against real repositories, plus
+globbing. `tests/verify-session-index.sh` is the gate — 28 cases against real repositories, plus
 twelve live checks including that the index is *tracked* and that the hook's column names match the
 template's character for character.
 

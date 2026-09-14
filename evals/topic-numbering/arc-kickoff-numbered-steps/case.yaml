@@ -1,0 +1,32 @@
+min_topics: 2
+source:
+  session: 0c28d2ed
+  first_turn: 1
+  last_turn: 3
+why: >
+  The first three turns of the session `camp-thoughts-multi-topic` takes its turns 130 to 132
+  from. The user's opening turn numbers five steps and closes with "Please clearly number or
+  identify your responses to me." The reply numbered them — `## 2. What repo trying to do`,
+  `## 3. What to change`, `## 4. Documentation refinement`, `## 5. Next` — and the numbers are
+  the user's own step numbers, not topic labels. The user asked for numbering, got numbering,
+  and still cannot answer by number: in this repository `2`, `3`, `4` and `5` are also issue
+  numbers, mechanism numbers and pass numbers. Turn 2 repeats the shape on four sections, and
+  turn 3 drops numbering altogether for three descriptive headings. 0 of 3.
+  It exists because `camp-thoughts-multi-topic` has no headroom and this case does. That case
+  keys to turn 130 of a 391-turn session, so `--probe` replays a long-context decay from cold
+  and measures a cold model's default instead — 1.00 before the #160 fix and 1.00 after it,
+  recorded in that issue's dev-log. This case keys to turn 1. Replayed cold, turn 1 is turn 1,
+  so the probe reproduces the condition the defect was recorded under rather than an
+  approximation of it.
+  What it puts pressure on is the sentence #160 added: "Never a bare number."
+  MEASURED, AND THE PRESSURE FALLS ON BOTH SIDES. Two matched probe pairs, control = the current
+  skill with #160's additions removed: before 0/0 n/a then 0/1 0.00, after 1/2 0.50 then 0/1
+  0.00. The case fails, loudly, and it fails on the current skill too — three of the four runs
+  answered turn 1 with bare numbers, including both runs that had "Never a bare number" in front
+  of them. So it discriminates the defect and does not yet separate the two skills. The runs,
+  the cause and what is not concluded from them are in
+  `docs/dev-log/issue-259-numbering-headroom.md`.
+  Two things a probe of this case costs, recorded so they are not rediscovered: turn 2 asks for
+  every document in the repository and was CUT by the per-turn cap in 4 of 4 runs after spending
+  roughly half the run's budget, and the probe runs in this repository, so it can read the
+  arc-log, the run instructions and the issue — the documents that state the rule under test.

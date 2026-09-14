@@ -6,8 +6,8 @@ its own scorer:
 | Suite | Question | Scored by |
 |---|---|---|
 | **`skill-firing/`** | Did the skill fire? — [#155](https://github.com/Calyx-Engineering/arc/issues/155) | `tools/skill-cases.sh`, `tools/skill-probe.sh` |
-| **`response-length/`** | Was the reply within the budget the user stated? — [#158](https://github.com/Calyx-Engineering/arc/issues/158) | `tools/response-length.sh` |
-| **`topic-numbering/`** | Could the user answer this multi-topic reply by number? — [#160](https://github.com/Calyx-Engineering/arc/issues/160) | `tools/topic-numbering.sh` |
+| **`response-length/`** | Was the reply within its budget — the one the user stated, or the one the repository's operating agreement holds? — [#158](https://github.com/Calyx-Engineering/arc/issues/158), [#174](https://github.com/Calyx-Engineering/arc/issues/174) | `tools/response-length.sh` |
+| **`topic-numbering/`** | Could the user answer this multi-topic reply by number? — [#160](https://github.com/Calyx-Engineering/arc/issues/160), [#259](https://github.com/Calyx-Engineering/arc/issues/259) | `tools/topic-numbering.sh` |
 | **`report-shape/`** | Does the report open with the conclusion, and does every claim say where it came from? — [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#164](https://github.com/Calyx-Engineering/arc/issues/164) | `tools/report-grade.sh` |
 | **`saturation/`** | Did the session propose handing off before the user said the context was full? — [#154](https://github.com/Calyx-Engineering/arc/issues/154) | `tools/saturation-cases.sh` |
 | **`environment-blame/`** | Was one alternative tested on the session's own command path before the user's bench was named as the cause? — [#165](https://github.com/Calyx-Engineering/arc/issues/165) | `tools/environment-blame.sh` |
@@ -44,7 +44,7 @@ because the first one cannot answer their question.
 which turn a keyword landed on are arithmetic, so none waits on
 [#181](https://github.com/Calyx-Engineering/arc/issues/181). Each carries a `selftest` on
 fixtures, and it is the selftest — not the real cases — that is wired into
-`tools/verify-all.sh`, because the corpus is on one machine.
+`tests/verify-all.sh`, because the corpus is on one machine.
 
 **`saturation/` and `environment-blame/` carry the weakest arithmetic, and both say so.**
 Whether a reply proposed handing off, and whether it tested an alternative before naming the
@@ -71,8 +71,16 @@ Everything below is `skill-firing/`'s. `response-length/`, `topic-numbering/`, `
 | **Reports** | `bash tools/report-grade.sh` — scores every `report-shape/` case, and checks each excerpt against its source document when the corpus is present. `--file <path>` grades one document and exits on its verdict |
 | **Saturation** | `bash tools/saturation-cases.sh` — replays the case's session and reports which turn a handoff was proposed on, if any. `--probe` replays the turns live instead; it is 52 turns of billing, and it needs `tools/plugin-reload.sh` first, which rewrites the installed plugin every other session on the machine is using |
 | **Environment blame** | `bash tools/environment-blame.sh` — replays the case's session and reports the first turn that handed the failure to the bench, with the sentence that did it and whatever was tested first. No `--probe`; see above |
-| **To score a change** | `bash tools/skill-probe.sh` — re-runs each `prompt.md` against the **installed** plugin and records what fired. `--openings` restricts it to `source.opening: true`, `--runs N` repeats. Run `tools/plugin-reload.sh` first or it measures the version before your edit. **It bills per run**, which is why it is not in `tools/verify-all.sh` |
+| **To score a change** | `bash tools/skill-probe.sh` — re-runs each `prompt.md` against the **installed** plugin and records what fired. `--openings` restricts it to `source.opening: true`, `--runs N` repeats. Run `tools/plugin-reload.sh` first or it measures the version before your edit. **It bills per run**, which is why it is not in `tests/verify-all.sh` |
+| **To ask whether the change moved anything** | `bash tools/topic-numbering.sh --compare BEFORE.json AFTER.json` — scores two runs `TN_PROBE_OUT` kept, side by side, and prints `separates` **per case** — `YES`, `NO` when the case had headroom and did not cross, or `n/a` with the reason when it had none — adding `--case NAME` to ask about one. Bills nothing, and needs no corpus: the scores come from the two JSONs, so a kept pair re-scores anywhere. **A rate is not evidence until its control is beside it** — `camp-thoughts-multi-topic` scores 1.00 under `--probe` with [#160](https://github.com/Calyx-Engineering/arc/issues/160)'s rule and 1.00 without it, so its pass says nothing about the rule, and pooling its passes with another case's would let it lend them away |
 | **When `plugin eval` opens** | `claude plugin eval --eval-dir evals` — re-runs each `prompt.md` against the live plugin |
+
+**`tools/plugin-reload.sh` refuses on a dirty tree.** It installs from the working tree rather
+than from `HEAD`, so it exits 1 and names every uncommitted file the installed plugin would
+read. Only `docs/`, `evals/`, `.claude/`, `.vscode/`, the git and lint dotfiles and the loose
+`README.md`, `ROADMAP.md` and `CLAUDE.md` are exempt — `tools/` is not, because
+`hooks/tracker-verify` runs three of its scripts from the installed copy. Commit what it names,
+or `tools/plugin-reload.sh --force` to install it as it stands. #211.
 
 **`tools/skill-cases.sh` cannot see a description change.** It replays transcripts recorded
 before the edit, so the same rows come back before and after. That is what `tools/skill-probe.sh`

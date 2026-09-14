@@ -1,0 +1,2 @@
+# a close after a chain operator written with no spaces around it, unlinked — the operator is tokenised as a marker of its own rather than cut at, or the invocation after it is lost with the one before. REGRESSION COVER: the substring dispatch this replaces caught it too. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"echo hi&&gh issue close 163"}}

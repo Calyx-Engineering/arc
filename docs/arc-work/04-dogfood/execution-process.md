@@ -14,11 +14,11 @@ flowchart TB
     U["the user types<br/>/arc-run"] --> C{"which workstream"}
     C -->|"arc parent #196's<br/>ordered children"| W["the next open<br/>workstream"]
     W --> M["arc-loop.sh sets<br/>HANDOFF.md to Autonomous,<br/>bounded to that workstream"]
-    M --> L["for each open child,<br/>in sub-issue order,<br/>whose blockers are closed"]
+    M --> L["for each open Agent-typed child,<br/>in sub-issue order,<br/>whose blockers are closed"]
     L --> R["a fresh claude -p<br/>reads run-instructions §1–5<br/>and one issue body"]
     R --> P["work, four review passes,<br/>dev-log, PR, merge"]
     P --> L
-    L -->|"no open children left"| B["a report run<br/>reads §6 and the<br/>workstream's record"]
+    L -->|"no open children left,<br/>of any type"| B["a report run<br/>reads §6 and the<br/>workstream's record"]
     B --> X["mode back to Manual,<br/>parent left OPEN,<br/>stop"]
 ```
 
@@ -72,8 +72,12 @@ learned the hard way, on 2026-09-07:
 | **Drop the mode to Manual** | The named boundary is reached, so the grant is spent. Running past it is how three PRs merged unasked |
 | **Leave the parent open** | All children closed is mechanical completion. Closing it removes the surface the report is reviewed on |
 
-The report is seven `####` sections inside 200 words: delivered, spawned with routing,
-**unexpected**, unplanned but needed, evidence, not done, and the diagram.
+The report is seven `####` sections: delivered, spawned with routing, **unexpected**, unplanned
+but needed, evidence, not done, and the diagram. **The prose of the first six is what the 200
+covers** — the diagram is optional and outside it, and so are the headings and the frame lines.
+**The count is `tests/verify-report-budget.sh`'s, which `verify-all.sh` runs, and that script's
+header is where the rule is exact** — the budget was written in three documents, this one
+included, and read by none.
 
 ## 6 What this replaced
 

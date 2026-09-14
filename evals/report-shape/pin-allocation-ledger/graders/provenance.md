@@ -14,16 +14,60 @@ beside them.
 | | Is | And |
 |---|---|---|
 | `measured` | A bench result | The rig and its limits belong with it |
+| `instrument` | A number an instrument displayed | **Not a measurement.** Nothing says it was measuring what the claim names |
+| `schematic` | This board's own sheets | |
 | `datasheet` | The part's own document | Cite the page |
 | `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
-| `schematic` | This board's own sheets | |
+| `firmware` | Shipped source | What the code *does*, not what the hardware requires |
+| `drawing` | A reviewed diagram | As strong as the review behind it |
+| `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
+| `thread` | An issue thread | A decision was reached; no artifact records it yet |
 | `photograph` | A picture of a circuit not in hand | **Treat as a hypothesis** |
 | `conversation` | Said, not written | Not a decision until it is |
 | `inferred` | Extrapolated, assumed, calculated from something else | The weakest, and the easiest to mistake for a measurement |
 
 **The order is the point.** Without it, "record the source" is a label with no consequence.
 
-**The grader matches aliases, not only these seven words.** A report written before the
+**Twelve, not seven, and the extra five are why this case is the exemplar.**
+[#266](https://github.com/Calyx-Engineering/arc/issues/266) reconciled the vocabulary #164
+specified with the one this very document had been carrying — `firmware`, `drawing`, `report`
+and `thread` are adopted from it, `photo` maps to `photograph`, and `schematic` rises above
+`datasheet` and `vendor` both — a claim about *this board* is settled by this board's own
+sheets, and it is the only term that moves. Every one of the adopted four appears in the ledger
+below.
+
+**`instrument` is the new term, and it is the one the seven could not express.** `measured`
+covered a bench result and a number an instrument displayed with equal weight. On 2026-08-28 a
+scope reported 2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading cannot separate a
+tone from a tone plus a 433 kHz class-D carrier — and an estimate from that reading was taken
+over a bench measurement the user had verified. Under one word for both, that region held ONE
+source and graded `ONESIDED`: unscored, and invisible. `pr-68-gain-sweep-tool.md` is the only
+place it is written down, and it could not become a case here for exactly that reason. It is the
+`instrumentreading` fixture in the selftest.
+
+**All four adopted terms are ordinary English before they are labels.** An amplifier is
+*drawing power*; every document this instrument reads is a *report*; a screw has a *thread*; a
+duty cycle is *fixed in firmware*. Matched bare they would put a second source in play wherever
+the word falls — and because the conflict column counts co-occurrence, a false match does not
+mis-label a row, it manufactures a conflict and lands `RESOLVED` in the numerator.
+
+**`drawing`, `report` and `thread` are matched only followed by what they cite.** `firmware`
+cannot take that shape — the ledger writes it bare in its column — and it cannot take a
+cell-shaped one either, because the row scan searches the cells joined by spaces, with the pipes
+already gone. It is guarded by what makes the false shape false instead: *"fixed in firmware"*
+and *"disable CLKOUT in firmware"* are statements about behaviour, and a Provenance cell never
+reads *"in firmware"*.
+
+The same reasoning took `the scope`, `the meter` and `the instrument` out of `instrument`:
+*"the scope of this document"* is not an oscilloscope, *"300 meters of cable"* is not a
+multimeter, and *"an instrument matching only the vocabulary"* is this file talking about
+itself. An instrument is reached through what it did — read, reported, captured, showed.
+
+**Each guard has a fixture that goes red without it**, which four of them did not until review
+pass 2 checked: `drawingpower`, `reportprose`, `scopeprose`, `threadpitch`, `firmwareinprose`,
+`instrumentnoun`, `metresprose`.
+
+**The grader matches aliases, not only these twelve words.** A report written before the
 vocabulary existed still records provenance in its own words — *"from the product label"*,
 *"the scope reported"*, *"most likely explanation"*. An instrument matching only the vocabulary
 would score every one of those as unsourced, and the baseline would measure adoption of a word
@@ -36,7 +80,25 @@ list rather than the defect.
 | `ROWS` | A provenance column, **or** the terms carried in **every** row. The only pass |
 | `NONE` | Nothing says where the numbers came from. A fail |
 | `TABLE` | One source stated once in the lead-in, for a uniform-source table. **Not scored** |
-| `NOTABLE` | No table in the region. Not scored |
+| `OPEN` | Under the confidence split's `Not established` heading. **Not scored** — [#314](https://github.com/Calyx-Engineering/arc/issues/314) |
+| `NOTABLE` | No table in the region, or every table in it is `OPEN`. Not scored |
+
+**`OPEN` is decided by the heading above the table, never by its column names.**
+`skills/engineering-report` fixes the confidence split's third group's name —
+`Not established` — and mandates writing it as a table of open questions, each with what would
+settle it. It does not fix the columns, and real reports use several: `Item`, `Unknown`,
+`Open point`, `Open item`. Reading any of those as a claim table's header — the earlier
+approach — is a losing game against every column name an author might reach for. The heading is
+the one thing the skill holds fixed, so that is what is matched. A table anywhere under a
+`### Not established` heading (any level, carried until the next heading) is `OPEN`; the claim
+table beside it, however it is worded, still reads on its own merits.
+
+**Why the grader moved and not the skill.** The alternative was a `Provenance`-shaped column on
+the open-questions table itself — rejected, because an item in *Not established* is by
+definition not yet settled, and inventing a source for why it is unsettled reshapes a structure
+the skill mandates for a different reason in order to move a score. [#260](https://github.com/Calyx-Engineering/arc/issues/260)'s
+probe measured the shape before this fix: three of nine after-runs read `NONE` with a fully
+sourced claim table beside an open-questions table carrying none.
 
 **`ROWS` accepts both shapes, and the inline shape needs every row.** A ledger that names its
 sources inline is sourced; demanding the column shape would fail it for formatting rather than
@@ -79,7 +141,10 @@ this as a pass, in favour of `measured`:
 > 24.7x, and we are taking the estimate as correct.
 
 That is the 2026-08-28 incident #164 was written about. **An instrument has to be able to fail
-the thing it was built for.** It now scores `WEAKWINS`, asserting `inferred`.
+the thing it was built for.** It now scores `WEAKWINS`, asserting `instrument` — #266 split
+that term out of `measured`, and what beat the bench here was a number the instrument
+displayed. Naming `inferred` alone, as this read before #266, hid the instrument behind the
+estimate drawn from it.
 
 **`WEAKWINS` is reported, not failed.** #164's rule is *not overridden without saying so
 explicitly*, so a weak source that wins out loud has obeyed the rule. Whether the reason was good

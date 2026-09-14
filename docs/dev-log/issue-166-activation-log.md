@@ -28,7 +28,7 @@ caught before "every hook" quietly became false.
 | **A declared check nobody marked is `not reached`** | This is what makes a partially-run hook honest. `tracker-verify` declares thirteen checks and runs two on a typical firing — without the default, the entry would look like a hook that only has two |
 | **Each hook marks its checks at the point they run** | `arc_log_pass` / `arc_log_fail` / `arc_log_skip`, at the branch that decided. A check marked from the top of the hook is a claim about code that had not run yet |
 | **`scan_title`'s five findings are matched back to the five checks that produced them** | `verify-tracker-body.sh title-findings` returns prose. Marking all five failed because one fired would put four checks on the record as having found something they did not |
-| **A second verifier, not a block in `verify-hook.sh`** | That script is on CLAUDE.md's never-edited-autonomously list. It also asks a different question — did the hook reach the right verdict — where this asks whether it left a record. `tools/verify-activation-log.sh` reuses the same case directories and is wired into `verify-all.sh` |
+| **A second verifier, not a block in `verify-hook.sh`** | That script is on CLAUDE.md's never-edited-autonomously list. It also asks a different question — did the hook reach the right verdict — where this asks whether it left a record. `tests/verify-activation-log.sh` reuses the same case directories and is wired into `verify-all.sh` |
 | **The fixture builder is duplicated between the two verifiers** | Deliberate, and commented as such. The excluded script cannot be edited to export it, and two runners substituting the same payload differently would be a worse problem than the duplication |
 | **`ARC_EVENT_LOG` overrides the path** | The harness needs to read what a firing wrote. Nothing else sets it, and the default stays the single plugin-level file m44 names |
 | **The gate asserts verbosity independence structurally** | Not by reading the library's intent but by grepping its code for `operating-agreement`, `verbosity`, `loud`, `quiet`. m44's whole claim is that turning the volume down costs display and never data; that is a property of the code, so it is checked as one |
@@ -49,9 +49,9 @@ caught before "every hook" quietly became false.
 
 | | |
 |---|---|
-| `bash tools/verify-all.sh` | **37 gates, all clean**, exit 0 — which runs `verify-hook.sh` against all six hooks, unchanged from before this work |
-| `bash tools/verify-activation-log.sh` | **392 passed, 0 failed** — every case in all six case directories, plus the library checks |
-| `bash tools/verify-activation-log.sh selftest` | **7 passed, 0 failed**. A control that logs one correct entry and reads as a pass, and six fake hooks with known defects — logs nothing, logs twice, echoes its entry to stdout, no `checked`/`outcome` line, logs through the kill switch, speaks up when the log is unwritable — each read as a failure. A checker that cannot fail is a checker nobody should read a pass from |
+| `bash tests/verify-all.sh` | **37 gates, all clean**, exit 0 — which runs `verify-hook.sh` against all six hooks, unchanged from before this work |
+| `bash tests/verify-activation-log.sh` | **392 passed, 0 failed** — every case in all six case directories, plus the library checks |
+| `bash tests/verify-activation-log.sh selftest` | **7 passed, 0 failed**. A control that logs one correct entry and reads as a pass, and six fake hooks with known defects — logs nothing, logs twice, echoes its entry to stdout, no `checked`/`outcome` line, logs through the kill switch, speaks up when the log is unwritable — each read as a failure. A checker that cannot fail is a checker nobody should read a pass from |
 | A hook invoked as Claude Code invokes one | `CLAUDE_PROJECT_DIR` set, a real payload on stdin: one entry, in `templates/event-log.md`'s format |
 | Cost per firing | +24ms `mode-guard`, +18ms `tracker-verify`, +24ms `camp-branch-check`, +25ms `handoff-archive`, each against the same hook with the `arc_log_*` calls stubbed out, 20 runs each. ~+91ms per Bash tool call, since four of the six are on that matcher |
 

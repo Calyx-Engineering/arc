@@ -25,19 +25,44 @@ stale.
 - [ ] **Character** — *"Camp here. Got #33 out the door, and the links actually took."*
 - [ ] Other:
 
-### Report verbosity — completed actions · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation)
+### Report verbosity — completed actions · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation)
 
 - [ ] **loud** — the machinery: what was checked, what passed, what was declared but skipped
 - [x] **normal** — the outcome only
 - [ ] **quiet** — silence unless something is wrong
 
-### Nudge verbosity — problems caught as they happen · [m43 §3.4](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#34-obligation-3-catching-problems-at-the-moment-they-happen)
+### Nudge verbosity — problems caught as they happen · [m43 §3.4](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#34-the-nudge--catching-problems-at-the-moment-they-happen)
 
 - [x] **loud** — the machinery
 - [ ] **normal** — the outcome only
 - [ ] **quiet** — silence unless something is wrong
 
 **Verbosity governs display, never what reaches `.claude/arc/log.md`.**
+
+### Response verbosity — the session's own replies · [`chat-response`](../../../skills/chat-response/SKILL.md)
+
+**Not Camp's.** The two settings above govern what Camp says about an action. This one governs
+how long every reply in the session is.
+
+- [ ] **brief** — the answer and nothing after it. **40 words** of prose
+- [x] **normal** — `chat-response`'s own table: ~150 words for a finding, ~200 for a proposal
+- [ ] **full** — the reasoning before the conclusion, at whatever length that takes
+- [ ] Other:
+
+**David reads slowly and deliberately, and length costs him more than it costs most readers.**
+That is the fact this setting carries. It sits here rather than in `CLAUDE.md` because here it
+is a named value an instrument reads, in the file every repository keeps in the same place —
+so it can be copied into the next one and be in force, rather than re-explained as prose.
+
+**`normal` changes nothing.** It is the table `chat-response` already applies, so a repository
+that never touches this clause behaves exactly as it did before the clause existed.
+
+**Prose only** — tables, code blocks and headings are not budgeted, and an issue, a PR, a spec
+or a report is not a reply. `tools/response-length.sh` counts it the same way.
+
+**A number typed into `Other:` is the budget** — `Other: 25 words`. **A number David states in
+conversation outranks it**, for the rest of that conversation: this is the standing default,
+not a ceiling on what can be asked for.
 
 ### Friction log — Arc's own rough edges · [`record-route`](../../../skills/record-route/SKILL.md)
 
@@ -56,11 +81,11 @@ there; add one and it starts.
 
 | Trigger | Kind | What Camp says |
 |---|---|---|
-| An issue is spawned mid-arc | Intent check · [m43 §3.1](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#31-obligation-0-holding-the-arcs-intent) | Whether it serves the arc's stated intent, and if not, worth doing or worth deferring |
-| A PR is opened | Report · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation) | That it opened, and whether milestone and closing keywords are set |
-| An issue is closed | Report · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation) | That it closed, and what the execution order says is next |
-| A branch is created | Report · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-obligation-4-an-audit-trail-in-conversation) | The branch, and the issue it belongs to |
-| A depth threshold is crossed | Nudge · [m43 §3.6](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#36-the-relief-valve-a-skill-now-an-agent-later) | That the discussion has gone deeper than the decision warrants, and offers the way out |
+| An issue is spawned mid-arc | Intent check · [m43 §3.1](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#31-the-intent-check--holding-the-arcs-intent) | Whether it serves the arc's stated intent, and if not, worth doing or worth deferring |
+| A PR is opened | Report · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation) | That it opened, and whether milestone and closing keywords are set |
+| An issue is closed | Report · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation) | That it closed, and what the execution order says is next |
+| A branch is created | Report · [m43 §3.5](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#35-the-report--an-audit-trail-in-conversation) | The branch, and the issue it belongs to |
+| A depth threshold is crossed | Nudge · [m43 §3.6](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#36-the-relief-valve--a-skill-now-an-agent-later) | That the discussion has gone deeper than the decision warrants, and offers the way out |
 
 ### Suppression
 
@@ -74,13 +99,48 @@ there; add one and it starts.
 
 **Check one per setting.**
 
-### Issue granularity — how Camp decomposes · [m43 §3.3](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#33-obligation-2-decomposition)
+### Issue granularity — how Camp decomposes · [m43 §3.3](../../../docs/product-architecture/mechanisms/m43-camp-assistant.md#33-decomposition)
 
 **This is the rule Camp applies when it breaks an idea or a base issue into issues.**
 
-- [x] **Many small issues over few large ones.** An issue with a fourteen-point checklist is two or more issues
-- [ ] **Fewer, larger issues.** Multiple sections, twenty to forty checklist items, one issue per area of work
+- [x] **Many small issues over few large ones.** One artifact or one decision each
+- [ ] **Fewer, larger issues.** Multiple sections, one issue per area of work
 - [ ] Other:
+
+**The direction, not the number.** How long a checklist may get is the ceiling below, and
+raising that ceiling is how the second option is made to mean what it says.
+
+### Work size — where *many small issues* stops being an opinion · [`decompose`](../../../skills/decompose/SKILL.md)
+
+**Checklist ceiling:** `7`
+
+**One value, not a choice.** A proposed issue whose `Required` checklist is longer than this is
+split before it is filed. The setting above says which direction to lean; this says where the
+lean becomes a decision, which is the half `decompose` could not supply for itself.
+
+**Seven is measured, not chosen** — the 90th percentile of the `Required` checklists in the
+Dogfood milestone, 67 of whose issues carry one, median 4. The five above it are
+[#135](https://github.com/Calyx-Engineering/arc/issues/135) ·
+[#189](https://github.com/Calyx-Engineering/arc/issues/189) ·
+[#140](https://github.com/Calyx-Engineering/arc/issues/140) ·
+[#85](https://github.com/Calyx-Engineering/arc/issues/85) ·
+[#132](https://github.com/Calyx-Engineering/arc/issues/132). Re-measure it whenever it looks
+wrong — it counts the `Required` section only, which is what the ceiling governs:
+
+```bash
+gh issue list --milestone Dogfood --state all --limit 200 --json body |
+python -c '
+import json, re, statistics, sys
+n = sorted(c for c in (
+    len(re.findall(r"(?m)^\s*[-*]\s*\[", m.group(1)))
+    for i in json.load(sys.stdin)
+    for m in [re.search(r"(?mi)^#+\s*Required\s*$(.*?)(?=^#+\s|\Z)", i["body"] or "", re.S)] if m
+) if c)
+print("n=%d median=%s p90=%s" % (len(n), statistics.median(n), n[round(0.9 * (len(n) - 1))]))
+'
+```
+
+**Unset means `7`**, and so does an unreadable value.
 
 ### Issue bodies
 
@@ -154,6 +214,10 @@ State what the reader gets when it merges, comprehensible with no prior context.
 **Check one.**
 
 ### Chat length
+
+**The order, not the length.** How long a reply may be is section 1's **Response verbosity**;
+this is whether the answer or the reasoning comes first. Two clauses stating a number would be
+two numbers to keep in step.
 
 - [x] **Short.** Lead with the answer; David pulls for detail. Governed by `skills/chat-response`
 - [ ] **Full.** Reasoning stated up front, before the conclusion

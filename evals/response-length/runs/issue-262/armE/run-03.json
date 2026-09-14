@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "`camp-session-start` exited 2 on PreToolUse, which denies the first edit. Docs called it a warning. Fixed at `hooks/camp-session-start:60`.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer does. Pattern copied from a PostToolUse hook, where exit 2 only prints. On PreToolUse it denies.\n\n| Item | State |\n|---|---|\n| Exit 2 | Fixed at `hooks/camp-session-start:63`, exits 0 with allow |\n| Label + permission fix | Yes, one direct PR |",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Exit 2 fixed already, `hooks/camp-session-start:63`. No Bash or gh this session, so no PR. Name the label and permission files.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot set autonomous; only you may, via HANDOFF.md *Execution mode* row. No Bash here either.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both, in tree. Kill switch: drop it. Hooks allow-with-reason instead.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Nothing left to fix in tree. Branch guard already reads prefix and `prNNN`. Exit 2 gone.\n\nKill switch: drop it. Hooks warn, never deny.\n\nNo shell here, so you commit.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, exactly its case. But warn-only hooks never need muting. Fix the cause, retire the switch.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Run from any terminal in the repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Nothing reads that file. Delete it and run:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. A hand-placed file never works. Run this instead:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\n```\n\nDelete `HOOKS_OFF.txt`.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Already replaced, issue [#202](https://github.com/Calyx-Engineering/arc/issues/202). Per hook, this repo, expires:\n\n```bash\nbash hooks/hooks-off.sh branch-guard 30\n```\n\nThat `.txt` did nothing.",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, as I understand it:\n\n- `/ralph-loop` writes state file (`.claude/ralph-loop.local.md`: prompt, iteration, max, completion promise).\n- Stop hook fires each time I try to end turn. Reads state. If promise text absent from my last output and iterations remain, blocks stop, re-feeds same prompt.\n- Same session. Context accumulates, never resets.\n- Ends on promise match, max, or `/cancel-ralph`.\n\nWhere is disconnect?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Context saturated, agreed. Hand off now.\n\nLeft for #262:\n\n| Step | State |\n|---|---|\n| Two uncommitted files: `skills/chat-response/SKILL.md`, `tools/response-length-rank.py` | Commit |\n| Push, PR, merge (mode autonomous) | Not done |\n| Spawn two issues from dev-log Findings: stale self-measurement, 0.40–1.00 spread | Not filed |\n\nThis session has no shell tool. Fresh session must do all three.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Cannot do either. This session has no Bash, Write or Edit tool. Only Read, Grep, Glob, Skill are loaded. Git commit and transcript save need Bash.\n\nRun yourself:\n\n```powershell\ngit add skills/chat-response/SKILL.md tools/response-length-rank.py\ngit commit -m \"fix: pass 4 — chat-response wording and ranker\"\n```\n\nThen `/compact`.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Where things stand:\n\n| | |\n|---|---|\n| Branch | `arc/04-dogfood-issue-262-twenty-word-threshold`, three review-pass commits in |\n| Uncommitted | `skills/chat-response/SKILL.md`, `tools/response-length-rank.py` |\n| Your commit + transcript request | **Not done.** This session has no Bash, Edit or Write tool. Searched; none available |\n\nMy last three replies were empty. That was a failure, not a choice. Commit needs you or a session with a shell.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. That conversation is gone from my context. Only your quotes from it remain.\n\nAlso: this session has no Bash, Edit or Write tool. I cannot commit, save a transcript, or edit files. Read-only.\n\nWhat I hold: branch `arc/04-dogfood-issue-262-twenty-word-threshold`, two files modified, three review-pass commits done. Rest is lost.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Yes, and it already exists. `run-instructions.md` is that file. Each loop iteration is a cold `claude -p` that reads it plus one issue body, nothing else. Arc-log §3.1 only says how the driver (`tools/arc-loop.sh`) picks the next issue. It is not an input to the run.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Already built. `docs/arc-work/04-dogfood/run-instructions.md` is that file: every `claude -p` iteration reads it plus one issue body. Arc-log §3.1 points at it; `tools/arc-loop.sh` line 86 loads it.\n\nBlocker: this session has no Write, Edit or Bash tools. Cannot edit files or commit. Need a fresh session for changes.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "Yes. Already built, not section 12.\n\n| Piece | Role |\n|---|---|\n| `docs/arc-work/04-dogfood/run-instructions.md` | The instruction file. `tools/arc-loop.sh` feeds it plus one issue body to each cold `claude -p` run |\n| arc-log §3.1 | Driver picks next issue from sub-issue queue |\n| issue-plan §12 | Filing rules that build that queue |\n\nBlocker: this session has no Bash, Edit or Write tool. Cannot commit or save transcript here.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Cannot do it. This session has no Bash, Edit or Write tool, so no commit, no transcript save, no file build. My last six replies went out empty, which is the malfunction you saw.\n\nWhat exists already:\n\n| | |\n|---|---|\n| Loop instruction file | `docs/arc-work/04-dogfood/run-instructions.md`, read by `tools/arc-loop.sh` each iteration with the issue body |\n| Uncommitted | `skills/chat-response/SKILL.md`, `tools/response-length-rank.py` |\n\nRestart the session, then commit.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "Checking issue-plan for #138. My earlier \"15min / land it and measure it\" line is not in my context any more, so this is from the plan itself.\n\n§11.1 is [#138](https://github.com/Calyx-Engineering/arc/issues/138), the merge route. Plan row 86 says:\n\n| | |\n|---|---|\n| Land it | Build the route so a merge runs from a standing grant, not a per-merge ask. Route lives in `CLAUDE.md` and `skills/autonomy-set` |\n| Measure it | Done when a merge runs from that grant twice in one session |\n\nManual, you guide it.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "It says one thing three ways. Today every merge needs you to type \"merge it\". #138 builds the alternative: an Autonomous row in `HANDOFF.md` that lets a run merge without asking, checked by `hooks/mode-guard`. Proof: two merges in one session, no per-merge ask.\n\n\"Diagnosis inside the issue\" means work it out while doing #138, not plan first.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

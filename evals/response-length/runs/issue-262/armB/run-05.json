@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Problem 2: a PreToolUse hook exits 2 to \"warn\"; exit 2 denies. First Edit gets blocked.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't anymore. Both copies send `allow`, exit 0. Problem 2 already fixed; nothing to PR.\n\nLabel and permission fixes: earlier context lost. Restate them in one line each.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Can't. Two blockers:\n\n| | |\n|---|---|\n| Label fix, permission fix | not in this context, not in sessions.md or HANDOFF.md |\n| No Bash tool this session | can't branch, commit, or open PR |\n\nSay what each fix is; I'll edit files, you commit.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Still blocked. Autonomy needs you to set `HANDOFF.md`'s *Execution mode* row; I can't. And this session has no Bash tool, and the two fixes are still undefined. State them; I'll edit files here.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch-guard already does both: `*-pr[0-9]*` counts as work; prefix read from the agreement, `arc/` only as fallback.\n\nKill switch: keep `hooks-off.sh`, drop the chat-announcement rule. Mechanism stays; ritual goes.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Can't edit: this session has no Edit, Write or Bash tools. Only reads.\n\nWhat \"fix everything\" amounts to, for the next session:\n\n| Item | Action |\n|---|---|\n| camp-session-start exit 2 | none, already fixed |\n| branch-guard PR number, prefix | none, already built |\n| kill switch ritual | delete the \"Say the kill switch in chat\" row from `CLAUDE.md` *Safe hook editing* |\n\nOne-line CLAUDE.md edit. Open a fresh session with tools and paste this table.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Nothing is denying me; Edit, Write and Bash aren't in this session's tool list at all. Kill switch mutes a hook; it can't add a tool. Session config on your side. Restart with tools.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "`r:\\arc\\HANDOFF.md`, under *Do these in order*, line 34. Paste the table there as one step. Next session runs `/arc-next` and picks it up.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Two reasons:\n\n| | |\n|---|---|\n| Wrong file | `HOOKS_OFF.txt` does nothing; the lib says so at `hooks/lib/hooks-off:14`. Real switch is `bash hooks/hooks-off.sh <hook> 30`, state in `.git/arc-hooks-off` |\n| Wrong problem | Tools still absent. No hook is blocking; the session has no Edit, Write, Bash |\n\nRestart the session.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Per-hook, expiring, script-only. Too clever for a switch you reach for in a panic.\n\nReplace with one line every hook already has room for: `[ -f \"$TOP/HOOKS_OFF\" ] && exit 0`. Touch a file, hooks stop. Delete it, they resume. No script, no expiry. Next session with tools can do it.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't file it (no tools). Paste this:\n\n```text\nTitle: hooks-off: replace the script with a root file a human can create by hand\n\nKill switch is unusable at the moment it is needed: a script, a hook name, a terminal.\nObserved twice (2026-09-07, 2026-09-11): human dropped `HOOKS_OFF.txt` at repo root; no effect.\n\nRequired\n- [ ] Any file matching `HOOKS_OFF*` at the repo root mutes hooks in that repo only\n- [ ] Expires by file age (30 min default); stale file is ignored, never silently permanent\n- [ ] Optional body lists hook names; empty body = all hooks in this repo\n- [ ] Delete `hooks/hooks-off.sh`, `hooks/lib/hooks-off` state in `.git/`\n- [ ] Drop the \"say the kill switch in chat\" row from CLAUDE.md\n\nConstraints\n- Per repo, never `$HOME`\n- Fail open stays\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

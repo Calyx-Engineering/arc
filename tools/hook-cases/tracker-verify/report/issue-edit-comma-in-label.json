@@ -1,0 +1,2 @@
+# an issue edited with a comma inside a quoted flag and the number after it — the comma must not change what this arm does. REGRESSION COVER, not a demonstration, for `issue-create-comma-in-title`'s reason: offline the issue arm reads the body fixture and never the number the comma took with it. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] set the current limit to TBD mA\n","tool_input":{"command":"gh issue edit --add-label \"in-progress, needs-review\" 230"}}

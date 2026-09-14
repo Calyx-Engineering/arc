@@ -125,7 +125,7 @@ problem, and is spawned rather than fixed here.
 
 | | |
 |---|---|
-| `bash tools/verify-all.sh` | 12 gates, exit 0 |
+| `bash tests/verify-all.sh` | 12 gates, exit 0 |
 | `bash tools/skill-cases.sh` | 18 cases, exit 0. `handoff 0/9`, `wrapped 2/10` — the frozen-transcript baseline, which by construction cannot see a description change |
 | `bash tools/skill-probe.sh` | The before/after that can. Same four camp+handoff openings, 3 runs each, plugin reloaded between |
 

@@ -31,7 +31,7 @@ So a firing rate is a query over real openings — which is what this issue aske
 
 ## Verification
 
-`tools/skill-firing.sh selftest` — 7 cases against a throwaway fixture tree. Covers the `--since` boundary, an unbriefed directory, a fire inside the opening, a fire outside it, the tool-result exclusion, a never-fired skill, and the never-fired list. Wired into `tools/verify-all.sh`; 10 gates, all clean.
+`tools/skill-firing.sh selftest` — 7 cases against a throwaway fixture tree. Covers the `--since` boundary, an unbriefed directory, a fire inside the opening, a fire outside it, the tool-result exclusion, a never-fired skill, and the never-fired list. Wired into `tests/verify-all.sh`; 10 gates, all clean.
 
 ## The baseline
 

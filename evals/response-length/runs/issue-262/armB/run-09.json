@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook comment says \"warning\", exit code 2 denies. First Edit each session blocked.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from a PostToolUse hook, where exit 2 only prints. Already fixed on main; (2) needs nothing.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. This session has no Bash, Edit or Write tools, so no PR or file edits possible. Also lost earlier context: which label fix, which permission fix.\n\nHook question answered: exit 2 already replaced by `permissionDecision: allow` in both checkouts. Nothing left for (2).\n\nRun the direct PR from a session with edit tools, stating both fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot. Two blockers:\n\n| | |\n|---|---|\n| No Edit/Write/Bash tools this session | Nothing can be changed or pushed |\n| Autonomous mode | Only you set that row in `HANDOFF.md`; I may set manual, never autonomous |\n\nStart a session with edit tools, flip the row, then run it there.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Drop the kill switch. Fail-open plus one-hook-per-commit `git revert` already covers survivability.\n\nBranch guard gaps noted, unfiled: `prNNN` form, prefix from agreement not hardcoded `arc/`.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still blocked. This session has no Edit, Write or Bash. Only a Monitor shell exists, and driving edits and pushes through it would bypass the session's tool restrictions, so I won't.\n\nOpen a normal session, paste this list, and it can run the direct PR:\n\n| Fix | Where |\n|---|---|\n| Branch guard accepts `prNNN` branches | `hooks/mode-guard` or branch-guard hook |\n| Branch prefix read from operating agreement, not hardcoded `arc/` | same hook |\n| Kill switch removed; fail-open plus one-hook-per-commit stays | `hooks/hooks-off.sh`, CLAUDE.md, m10 |\n| Label fix, permission fix | as discussed earlier this session |",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Nothing is denying calls. The tools themselves are absent from this session. That is harness config, not a hook, so the kill switch cannot restore them.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Assuming the fix list for the next session: `R:\\arc-wt\\262\\HANDOFF.md`, under its ordered actions. Next session reads it via `/arc-next`.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing, by design. The switch is a command, not a file:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nDelete `HOOKS_OFF.txt`. And it will not help here: this session lacks the tools, not permission.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Its own header records the file form failing on this exact machine, then replaced it with something harder to reach. Drop it, as suggested. Fail-open plus one-hook-per-commit revert is enough.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write files this session. Paste this into the cleanup issue:\n\n```text\n- [ ] Replace hooks-off: `all` mutes every hook (repo-wide, 30 min). Want per-hook, or none — fail-open + revert covers it.\n```\n\nNote: scope is this repo only, not machine-wide. Still dumb.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

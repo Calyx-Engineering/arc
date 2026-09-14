@@ -77,7 +77,7 @@ silently.
 
 ```
 bash tools/handoff-openings.sh selftest        33 passed, 0 failed
-bash tools/verify-all.sh                       20 gates, all clean   (exit 0)
+bash tests/verify-all.sh                       20 gates, all clean   (exit 0)
 ```
 
 **The selftest was mutation-tested.** Nine rules were deleted one at a time from

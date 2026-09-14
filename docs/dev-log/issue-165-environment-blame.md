@@ -89,7 +89,7 @@ live instrument session, after `tools/plugin-reload.sh`, with the reply that nam
 recorded verbatim. It is filed so the claim has somewhere to be settled rather than being closed
 with this PR.
 
-**The issue's *Done when* is half-satisfiable by construction.** `tools/verify-all.sh` exits 0.
+**The issue's *Done when* is half-satisfiable by construction.** `tests/verify-all.sh` exits 0.
 *"The eval case passes at or above threshold"* cannot be met by replay and no threshold is
 defined for this suite or for `saturation/`, its precedent — a baseline that passed would mean the
 recorded defect had never happened. #246 is where a passing measurement can come from.
@@ -134,7 +134,7 @@ recorded defect had never happened. #246 is where a passing measurement can come
 |---|---|
 | `bash tools/environment-blame.sh selftest` | 25 passed, 0 failed — held, held-from-an-earlier-turn, blamed, a different-symptom fix, no symptom token, unfired, the wrong skill, silent, a blame before the window, a blame on the callout turn, a reply naming its own fault, the possessive determiner, drift, `--strict`, and every hand-over alternative against fourteen phrases |
 | `bash tools/environment-blame.sh` | `1 of 1 case(s) scored: 0 held, 0 unfired, 1 blamed, 0 silent` — the baseline, and the defect. **Only on the machine holding the corpus**; elsewhere it prints `transcript 9cefd799 not on this machine — skipped` and exits 0, which is why the selftest is the part wired into the gate |
-| `bash tools/verify-all.sh` | 38 gates, all clean, exit 0 |
+| `bash tests/verify-all.sh` | 38 gates, all clean, exit 0 |
 
 **The scan's first finding was about itself.** Before the `OWNS_IT` veto and the *"yours"* /
 *"your"* distinction, the scorer's first verdict on the real case pointed at *"Two things the Bode
@@ -142,7 +142,7 @@ tool does that I failed to carry over — both are why your scope looks wrong"* 
 blames nobody but the session. An instrument that scored that as the defect would have reported
 the fix as the failure. Both rules are locked in as fixtures.
 
-**One thing the gate does not do.** `verify-all.sh`'s anti-skip guard globs `tools/verify-*.sh`,
+**One thing the gate does not do.** `verify-all.sh`'s anti-skip guard globs `tests/verify-*.sh`,
 so adding `environment-blame` to its `KNOWN` list is inert — delete its `run_gate` line and
 nothing fails. **Eight other `KNOWN` entries are uncovered the same way** — `miner-scope`,
 `skill-firing`, `handoff-openings`, `skill-cases`, `response-length`, `topic-numbering`,

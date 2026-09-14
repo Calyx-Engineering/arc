@@ -66,7 +66,7 @@ does not restate the skill's judgement, and the skill no longer carries the shap
 
 ## Retrospective
 
-Four artifacts: the two templates, a `MAP` row each in `tools/verify-template-links.sh` with a
+Four artifacts: the two templates, a `MAP` row each in `tests/verify-template-links.sh` with a
 matching row in `templates/README.md`, and four cross-references in `skills/issue-write` — at
 *What a good issue contains*, *Placement*, *Verify* and *Related — one table, four kinds*, which
 are the four places #85 named as scattered.

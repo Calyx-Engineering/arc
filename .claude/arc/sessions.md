@@ -9,4 +9,27 @@
 | Transcript | Worktree | Branch | Issue | Arc | Dates | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `R--arc-wt-16` | `R:/arc-wt/16` | `arc/04-dogfood-issue-16-session-index` | #16 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | orphaned |
-| `r--arc` | `r:/arc` | `arc/04-dogfood-issue-145-fire-review` | #145 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | live |
+| `R--arc-wt-214` | `R:/arc-wt/214` | `arc/04-dogfood-issue-214-claim` | #214 | `arc/04-dogfood` | 2026-09-08 to 2026-09-09 | orphaned |
+| `R--arc-wt-204` | `R:/arc-wt/204` | `detached` | - | - | 2026-09-08 to 2026-09-08 | orphaned |
+| `R--arc-wt-174` | `R:/arc-wt/174` | `arc/04-dogfood-issue-174-response-verbosity` | #174 | `arc/04-dogfood` | 2026-09-08 to 2026-09-08 | orphaned |
+| `R--arc-wt-136` | `R:/arc-wt/136` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-252` | `R:/arc-wt/252` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-265` | `R:/arc-wt/265` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-253` | `R:/arc-wt/253` | `arc/04-dogfood-issue-253-cold-start-score` | #253 | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-230` | `R:/arc-wt/230` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-272` | `R:/arc-wt/272` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-269` | `R:/arc-wt/269` | `arc/04-dogfood-issue-269-probe-rate-limit` | #269 | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-264` | `R:/arc-wt/264` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-263` | `R:/arc-wt/263` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-190` | `R:/arc-wt/190` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-267` | `R:/arc-wt/267` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-271` | `R:/arc-wt/271` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-274` | `R:/arc-wt/274` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-report` | `R:/arc-wt/report` | `arc/04-dogfood` | - | `arc/04-dogfood` | 2026-09-09 to 2026-09-09 | live |
+| `R--arc-wt-260` | `R:/arc-wt/260` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-266` | `R:/arc-wt/266` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-134` | `R:/arc-wt/134` | `detached` | - | - | 2026-09-09 to 2026-09-09 | orphaned |
+| `R--arc-wt-262` | `R:/arc-wt/262` | `detached` | - | - | 2026-09-11 to 2026-09-11 | orphaned |
+| `R--arc-wt-287` | `R:/arc-wt/287` | `detached` | - | - | 2026-09-11 to 2026-09-11 | orphaned |
+| `R--arc-wt-283` | `R:/arc-wt/283` | `detached` | - | - | 2026-09-13 to 2026-09-13 | orphaned |
+| `R--arc-wt-349` | `R:/arc-wt/349` | `detached` | - | - | 2026-09-13 to 2026-09-13 | live |

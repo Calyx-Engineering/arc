@@ -5,7 +5,7 @@
 
 **Status:** built — `hooks/mode-guard` reads `HANDOFF.md`'s *Execution mode* row before every
 commit, push, PR and merge, `skills/autonomy-set` carries the three states, and
-`tools/verify-autonomy.sh` gates §9's single-statement rule.
+`tests/verify-autonomy.sh` gates §9's single-statement rule.
 
 **Spawned from:** three to five attempts to declare auto mode in prose, none of which changed
 behaviour. `docs/arc-work/03-camp/friction-log.md` entries 1, 2 and 4 are the observations.
@@ -84,7 +84,7 @@ stateDiagram-v2
     [*] --> Manual
     Manual --> Autonomous: <b>explicit only</b><br/>"switch to autonomous"<br/>or the handoff's mode row
     Autonomous --> Suspended: <i>inferred</i><br/>a question, a correction,<br/>anything not the next action
-    Suspended --> Autonomous: the user points back<br/>at the work — "continue",<br/>"next issue", /arc-next
+    Suspended --> Autonomous: the user points back<br/>at the work — "continue",<br/>"next issue", /handoff-resume
     Suspended --> Manual: <b>explicit</b><br/>"switch back to manual"
     Autonomous --> Manual: <b>explicit</b>, a failed<br/>self-test, or the<br/>named boundary
     note right of Suspended
@@ -108,7 +108,7 @@ and it needs no setting — which is why the mode row carries two values and not
 | **The user can see it** | A mode the user cannot observe is a wrong belief that surfaces only after an unwanted push |
 | **It survives the window** | The same argument that makes the handoff a document rather than a chat — [m15](m15-handoff-spine.md) |
 | **A mid-session change rewrites it immediately** | Not at the next break. The row *is* the state, so it is wrong the moment it lags |
-| **A fresh session reads it before acting** | The cold-start read path already does — `skills/handoff`, whether it was opened by `/arc-next` or by wording. Absent or unreadable means manual |
+| **A fresh session reads it before acting** | The cold-start read path already does — `skills/handoff`, whether it was opened by `/handoff-resume` or by wording. Absent or unreadable means manual |
 
 **A dedicated `mode` file was rejected.** Two files holding one fact disagree — the condition
 [#105](https://github.com/Calyx-Engineering/arc/issues/105) exists to fix, created on purpose.
@@ -199,8 +199,9 @@ action.** The signals, any one of which is enough:
 | A request scoped to something other than the next ordered action | *"give me a 60 word summary"* |
 | Any turn where the user is deciding rather than the agent executing | Discussing an approach, weighing options |
 
-**Resuming needs the user to point back at the work.** *"continue"*, *"next issue"*, `/arc-next`,
-or naming the issue. **It does not resume because the conversation happened to stop.**
+**Resuming needs the user to point back at the work.** *"continue"*, *"next issue"*,
+`/handoff-resume`, or naming the issue. **It does not resume because the conversation happened to
+stop.**
 
 > **When suspended, answer. Do not commit, push, or merge as a side effect of answering.**
 
@@ -338,7 +339,7 @@ everything else to the skill.
 | **Everything else points** | `work-watch` says whether you commit is the mode's call, not its own |
 | **The state carrier is not a restatement** | `templates/handoff.md` defines what *suspended* means. That is the semantics of the state, not a standing prohibition |
 
-`tools/verify-autonomy.sh` enforces it as a census: the prohibition appears only in
+`tests/verify-autonomy.sh` enforces it as a census: the prohibition appears only in
 `autonomy-set`, and `CLAUDE.md` states the mode exactly once with its override. **Scope is what
 a session loads every turn** — `CLAUDE.md`, skills, templates, hooks, agents, commands. `docs/`
 is opened deliberately rather than loaded, so m14 §3 and `close-sequence.md` steps 9 and 10 keep
@@ -358,7 +359,7 @@ the older shape.
 | *"switch to autonomous"* enters auto; *"switch back to manual"* leaves it | §4, and [`skills/autonomy-set`](../../../skills/autonomy-set/SKILL.md) |
 | It **returns to manual on its own when conversation starts** | §4's suspension, on signals that need no setting |
 
-**What can be tested mechanically, and what cannot.** `tools/verify-autonomy.sh` tests the half
+**What can be tested mechanically, and what cannot.** `tests/verify-autonomy.sh` tests the half
 that is decidable from text — that the prohibition is stated only by `autonomy-set`, that
 `CLAUDE.md` states the mode once with its override, and that the mode vocabulary has not
 drifted. Behaviour is a separate instrument: Arc is now installed in this repository and

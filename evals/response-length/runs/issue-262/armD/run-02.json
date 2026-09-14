@@ -1,0 +1,122 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Docs say camp-session-start warns. Its exit 2 actually denies. Fix exit code.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer does. Pattern copied from a PostToolUse hook, where exit 2 only prints. Already fixed on main: explicit allow, exit 0.\n\nDirect PR needs only label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Decision needed.**\n\nContext lost. Name the label fix and permission fix. (2) already exits 0 in both copies.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Camp here —** autonomous, to PR open; merge waits for you.\n\nBlocked: name the label fix and permission fix. Earlier context is gone.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Drop it. Replace with one marker file, no timer, no per-hook name:\n\n```\ntouch .git/arc-hooks-off\n```\n\nSkeleton checks it; every hook fails open.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Nothing to fix: all three already landed in both trees. No Bash tool here, so no PR.\n\n| Item | State |\n|---|---|\n| camp-session-start exit 2 | Fixed: `report()` returns allow, `exit 0` (line 63) |\n| branch-guard PR number | Handled: `*-pr[0-9]*` is a work branch (line 125) |\n| branch-guard prefix | Read from agreement's **Branch prefix** clause (line 98) |\n| Label fix, permission fix | Unknown to me. Name them |\n| Kill switch | Recommend delete it. Hooks fail open, `git revert` is the switch |",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes. But nothing needs fixing: both hooks already correct on main. This session has no shell tool; cannot commit.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "The operating agreement, at the repo root:\n\n```text\n.claude/arc/camp/operating-agreement.md\n```\n\nIts `**Branch prefix**` line sets the prefix.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing. Run in a terminal:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No, file did nothing. Run `bash hooks/hooks-off.sh all 30`. Suggest: also honour root `HOOKS_OFF.txt`, 30 minutes from its mtime.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot edit here: this session has no Edit or Bash tool. Paste this row into `issue-plan.md` section 9 Upkeep:\n\n```markdown\n| Upkeep-6 | (file) kill switch is unfindable under pressure | `HOOKS_OFF.txt` at repo root does nothing; the only path is `bash hooks/hooks-off.sh all 30` from a terminal. Add a file-based, per-repo, expiring switch a human can create by hand, and say where in every denial message | The switch works from Explorer; every deny names it |\n```\n\nNote: current switch is per-hook, repo-scoped, expiring, not global.",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop = Stop hook, same session, no new context.\n\n1. `/ralph-loop` writes state file: prompt, max iterations, completion promise string.\n2. Each time I try to end turn, Stop hook reads that file.\n3. Under max and promise absent from my last output: hook blocks stop, re-feeds same prompt. I resume, current files.\n4. Ends on promise string, max, or `/cancel-ralph`.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Remaining for issue [#262](https://github.com/Calyx-Engineering/arc/issues/262):\n\n| Step | State |\n|---|---|\n| Four files edited, uncommitted (dev-log, runs README, `SKILL.md`, ranker) | done, in tree |\n| `tests/verify-all.sh` | not run |\n| Commit, push, PR, merge | not done |\n\nThis session has no Bash/Edit tools and $0.43 budget left. Cannot finish here. Fresh session on branch `arc/04-dogfood-issue-262-twenty-word-threshold` runs those three.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Cannot commit: this session has no Bash tool, and the commit via Monitor was denied twice. No Write tool either, so transcript save is not possible from here.\n\nRun this yourself:\n\n```\ngit commit -a -m \"docs: #262 dev-log accounts for the fixture case, n=9 on arm B and the cost breakdown\"\n```\n\nDiff is four files, all review fixes. Ready for compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Commit blocked, transcript unsaved.\n\n| | State |\n|---|---|\n| Uncommitted | 4 files: dev-log, runs README, `SKILL.md`, ranker. Review fixes: fixture case accounting, arm B n=9, firing split, cost breakdown |\n| Commit | Denied twice. Session has no Bash tool; `git commit` needs your approval |\n| Transcript | Cannot save. No Write tool here |\n| Then | You compact |",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. That discussion is not in my context. Only your quoted summary survives: one agent per issue, fresh context each, to stop growth. That matches my understanding of a ralph loop: script re-invokes `claude` per issue, each run reads issue body and repo, commits, exits. Nothing carries over but files.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already done. `run-instructions.md` is that file.\n\n| | |\n|---|---|\n| Run reads | issue body, `run-instructions.md`, `CLAUDE.md`. Nothing else |\n| arc-log §3.1 | Driver's rule, not run's. `tools/arc-loop.sh` picks issue, passes it in prompt |\n| Arc-log | Never read by a run. Report run writes it |",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Already exists: `docs/arc-work/04-dogfood/run-instructions.md`. Every `claude -p` iteration of `tools/arc-loop.sh` reads it plus one issue body. Arc-log §3.1 stays the driver's rule for picking the next issue; the file links it, does not copy it.\n\nCannot edit it here anyway: this session has no Write or Edit tool. Commit still needs your approval.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "Instruction file already exists. Nothing to build.\n\n| | |\n|---|---|\n| File | `docs/arc-work/04-dogfood/run-instructions.md`, 7 sections, read by `tools/arc-loop.sh` per cold `claude -p` run with one issue body |\n| arc-log §3.1 | Says that. Driver picks issue; run reads instructions plus issue |\n| §12.0 | Not found in the arc-04 log; it ends at §10 Soak. Which document? |",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Nothing to do: my last three replies were empty, so no proposal exists to approve.\n\nWhat I found:\n\n| | |\n|---|---|\n| Instruction file | Already exists: `docs/arc-work/04-dogfood/run-instructions.md`. `tools/arc-loop.sh` feeds it plus one issue body to each cold `claude -p` run, per arc-log §3.1 |\n| §12 | Arc-04 log stops at §10. No §12 anywhere in it |\n\nAlso: this session has no Write or Edit tool. Compact first.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it\" = merge the change to the branch. \"Measure it\" = run `tools/response-length.sh --probe` against it afterwards, so the score is of the shipped version, not a draft.\n\nCaveat: the 11.1 text is not in my context now, and nothing in the tree carries it. Paste the line if that reading is wrong.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "11.1 is not in my context. I cannot see what was written past line one.\n\nIssue [#138](https://github.com/Calyx-Engineering/arc/issues/138) is one thing: an approved merge cannot run. Reduce the mode rule to a single statement so a permitted merge executes.\n\nPaste 11.1, and I will cut everything not serving that.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

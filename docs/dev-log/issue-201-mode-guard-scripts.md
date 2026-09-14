@@ -15,7 +15,7 @@ manual mode the guard never fired. Found running PR #200.
 | **What this issue is really for** | The guard reads an *action*, not a spelling of one. A commit that happens one level down is still a commit |
 | **North star** | `bash tools/new-direct-pr.sh …` and `bash tools/arc-loop.sh 145` are denied in manual mode, and every way of reading those files is not |
 | **What makes it durable** | The knowledge lives in the script, not in the hook. A script says what it does; the hook has no list to fall out of date |
-| **Out of scope** | Declaring `tools/arc-default-branch.sh` and `tools/verify-tracker-body.sh`, which also write outward under some subcommands — #201 named two scripts, and both of those need read-only exemptions worked out against `verify-all.sh`, which runs one of them. Recorded in **Spawned**. Also out: a repo-wide sweep for undeclared writers, for the same reason |
+| **Out of scope** | Declaring `tools/arc-default-branch.sh` and `tests/verify-tracker-body.sh`, which also write outward under some subcommands — #201 named two scripts, and both of those need read-only exemptions worked out against `verify-all.sh`, which runs one of them. Recorded in **Spawned**. Also out: a repo-wide sweep for undeclared writers, for the same reason |
 
 ## Decisions & trade-offs
 
@@ -52,14 +52,14 @@ call, ~58% on top of the hook. It is read when a script path or a mode row actua
 
 | | |
 |---|---|
-| **Scan a script's text for `git commit`** | `tools/verify-activation-log.sh:185` carries that string inside a test payload. A content match would deny a read-only verifier — the exact thing the constraint forbids |
+| **Scan a script's text for `git commit`** | `tests/verify-activation-log.sh:185` carries that string inside a test payload. A content match would deny a read-only verifier — the exact thing the constraint forbids |
 | **A list of gated scripts in the hook** | Puts the knowledge in the file furthest from the change. A script that starts committing does not edit the hook |
 | **Regex over the payload for invocation forms** | Two passes of review killed it. It denied `sed -n '1,50p' tools/arc-loop.sh` because a closing quote looked like a command boundary, and it allowed a real dispatch whose *description* mentioned `--dry-run`. Parsing the command field into segments is both narrower and simpler to explain |
 
 ## Spawned
 
 - **Issues:** none filed. Recorded on #201 — `tools/arc-default-branch.sh` (`gh api -X PATCH
-  repos/… default_branch`) and `tools/verify-tracker-body.sh` (`gh pr edit --body-file` against a
+  repos/… default_branch`) and `tests/verify-tracker-body.sh` (`gh pr edit --body-file` against a
   live PR) write outward and carry no declaration, and there is no sweep that would find the next
   one.
 

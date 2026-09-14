@@ -68,7 +68,7 @@ The convention read exposed defects in the surrounding code that had to be fixed
 
 ```text
 bash tools/verify-hook.sh hooks/camp-branch-check   → 28 passed, 0 failed   exit 0
-bash tools/verify-all.sh                            → 13 gates, all clean   exit 0
+bash tests/verify-all.sh                            → 13 gates, all clean   exit 0
 ```
 
 **Run them one at a time** — see the last row of *Not done*.

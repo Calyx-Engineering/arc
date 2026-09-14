@@ -1,0 +1,2 @@
+# a body edited with a `Spawned` heading — there is no Spawned section, spawned work is a row in `Related`. #270
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] one thing\n\n## Spawned\n\n- the hook fires twice on a chained command\n","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

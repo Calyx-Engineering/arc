@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Finding 2 was wrong. The hook already returns allow, not deny. Drop it.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from `camp-branch-check`, PostToolUse, where exit 2 only prints. Already fixed here, `hooks/camp-session-start:60`. PR: label plus permission.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "No Bash, Edit or Write tool this session. Cannot edit or open PR. Restart session with tools.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Still no Bash, Edit or Write tools here. Cannot act. New session needed; set HANDOFF.md execution mode there.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Drop per-hook timers. Only deny hooks (mode-guard, branch-guard) need a switch: one repo file, no expiry.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still no Bash, Edit or Write tools. Cannot fix anything. Open a fresh session; this one is read-only.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. No hook denied anything. Session simply lacks Bash, Edit, Write tools. Kill switch cannot add them.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Not a file. Command, from repo root:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nWill not restore this session's missing tools though.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing. Command is `bash hooks/hooks-off.sh all 30`. Tools still missing regardless.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Fix: honour that file too. Any of three places works, no timer. Next session.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot file it: no tools. Also: command mutes this repository only. Paste this:\n\n```text\nTitle: Kill switch: one file, any location, no timer, per repository\n\nDefect: hooks-off.sh needs bash, expires, ignores HOOKS_OFF.txt at repo root.\nWork:\n- [ ] hooks read a marker file at repo root or ~/.claude; either works\n- [ ] no expiry; `status` reports it\n- [ ] branch-guard: accept PR-number branches; prefix comes from agreement, not \"arc/\"\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

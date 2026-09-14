@@ -1,0 +1,2 @@
+# a writable docs path carrying a comma, on main — `docs/` stays writable on trunk, so the comma must not cost the path its classification
+{"tool_name":"Write","cwd":"__FIXTURE_MAIN__","tool_input":{"file_path":"docs/notes,draft.md"}}

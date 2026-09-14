@@ -10,7 +10,7 @@
 
 | | |
 |---|---|
-| **Milestone** | `gh pr create --milestone "<name>"` |
+| **Milestone** | Only on a direct PR: `gh pr create --milestone "<name>"`. A PR closing an issue takes none — the issue is the unit of work |
 | **Base** | `--base arc/<nn>-<slug>`, the arc branch |
 | **Draft** | `--draft`, before the work |
 | **Label** | None. The `arc-<nn>:` title prefix is what groups arc PRs |
@@ -21,7 +21,7 @@
 |---|---|
 | **No `Required` checklist, no `Constraints`** | The issue holds both |
 | **Sections the issue has none of** | `What changed`, `Review passes`, `Evidence` |
-| **`Closes #<NN>` is the last line** | After the `Related` table |
+| **`Closes #<NN>` is the last line** | After the `Related` table. A PR closing several issues ends with one `Closes` line per issue, nothing between them |
 
 ---
 
@@ -44,7 +44,7 @@ says so.&gt;
 
 | | |
 |---|---|
-| `bash tools/verify-all.sh` | &lt;N gates, all clean — exit 0&gt; |
+| `bash tests/verify-all.sh` | &lt;N gates, all clean — exit 0&gt; |
 
 ## Related
 

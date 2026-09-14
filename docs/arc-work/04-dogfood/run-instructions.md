@@ -37,14 +37,14 @@ repeated pass asking the same one finds nothing.
 
 | | |
 |---|---|
-| 1 | **Read the issue, then label it `in-progress`.** `gh issue edit <NN> --add-label in-progress`. **Then cut the branch and read the link back** — `createLinkedBranch`, then `bash tools/verify-linked-branch.sh <NN> <branch>`, §4. It is the only moment that reading is decisive; by step 8 a PR exists and the answer has moved. Then **write the test or eval case** — it is the spec, and writing it after the fix is grading your own homework |
+| 1 | **Read the issue, then label it `in-progress`.** `gh issue edit <NN> --add-label in-progress`. **Then cut the branch and read the link back** — `createLinkedBranch`, then `bash tests/verify-linked-branch.sh <NN> <branch>`, §4. It is the only moment that reading is decisive; by step 8 a PR exists and the answer has moved. Then **write the test or eval case** — it is the spec, and writing it after the fix is grading your own homework |
 | 2 | **Implement, ticking each box as it is satisfied.** Not at the end — the tracker is where someone watching an unattended run learns where it got to, and a box ticked in a batch at step 6 tells them nothing while it matters. **Read the body back after each write:** [#87](https://github.com/Calyx-Engineering/arc/issues/87) is open, a failed edit silently restores the original, and one write per box is one exposure per box |
-| 3 | **Run the gate. The exit code, not a claim.** `bash tools/verify-all.sh` always, plus whatever the issue's *Done when* names — `bash tools/verify-hook.sh`, `bash tools/skill-firing.sh`, a `gh` read-back |
+| 3 | **Run the gate. The exit code, not a claim.** `bash tests/verify-all.sh` always, plus whatever the issue's *Done when* names — `bash tools/verify-hook.sh`, `bash tools/skill-firing.sh`, a `gh` read-back |
 | 4 | **Pass 1 — is every requirement met?** Read every changed file end to end against the issue. **Whole files, never the diff** — the defect is in the section the diff does not show |
 | 5 | **Pass 2 — what did pass 1 introduce?** Its own edits are unreviewed |
 | 6 | **Pass 3 — audit the checklist, box by box, against what is actually in the tree.** Step 2 ticked the boxes; this pass asks whether each tick has evidence behind it, and unticks any that does not. Every box ends ticked with its evidence, or named as not done with the reason. **A tick is a claim about the tree, not a record of intent** — a checklist ticked from memory leaves the tracker describing work that did not happen, and a silently unticked box is how [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of five requirements |
 | 7 | **Dev-log, commit, open the PR as a draft** |
-| 8 | **Pass 4 — read it as a reviewer who was not here.** The diff, the title, the body, the closing keyword, the base branch, the milestone, the branch↔issue and PR↔issue links — `bash tools/verify-linked-branch.sh <NN> <branch>`, which by now answers from the PR, so it confirms the closure binding and not the branch link, §4. This class of defect is invisible until the unit is a PR |
+| 8 | **Pass 4 — read it as a reviewer who was not here.** The diff, the title, the body, the closing keyword, the base branch, the milestone, the branch↔issue and PR↔issue links — `bash tests/verify-linked-branch.sh <NN> <branch>`, which by now answers from the PR, so it confirms the closure binding and not the branch link, §4. This class of defect is invisible until the unit is a PR |
 | 9 | **Fix what pass 4 found, then mark it ready** |
 
 **Passes 1 to 3 are the ones a run skips under time pressure. They are the reason this file
@@ -73,7 +73,10 @@ a `claude -p` session: it ends when you end your turn, and a background task's n
 arrives. The run for [#151](https://github.com/Calyx-Engineering/arc/issues/151) ended after 62
 minutes with a draft PR, waiting on a suite it had sent to the background; three S12 runs on
 2026-09-12 ended the same way, each with its edits uncommitted, each waiting on `verify-all.sh`.
-Give a slow command a long timeout and wait for it.
+Give a slow command a long timeout and wait for it. `verify-all.sh` is 68 gates and takes ten to
+twenty-five minutes when several runs share the machine — call it as
+`LANG=en_US.UTF-8 bash tests/verify-all.sh` with the tool's maximum timeout, and if it times out,
+call it again the same way; every S12 run that backgrounded it instead ended before the result.
 
 **Nobody answers a question.** A run that stops to ask — *run it now, or leave it?* — ends its
 turn and gets no reply; the run for [#314](https://github.com/Calyx-Engineering/arc/issues/314)
@@ -88,7 +91,7 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. What this arc pins down:
 | | |
 |---|---|
 | **Branch** | `arc/04-dogfood-issue-<NN>-<hint>`, cut from `arc/04-dogfood`. From `createLinkedBranch`, never `git checkout -b` — otherwise no branch↔issue link forms, and the mutation cannot link a branch that already exists |
-| **Then read the link back** | `bash tools/verify-linked-branch.sh <NN> <branch>`, straight after the mutation and **before the PR exists — that is the only moment the answer is decisive.** The mutation's own return value is not evidence; it reports what it was asked to do, not what the tracker holds. Once the PR is open the link has moved into its `closingIssuesReferences`, where a `Closes #NN` keyword produces the same reading a real branch link does. [#206](https://github.com/Calyx-Engineering/arc/issues/206) |
+| **Then read the link back** | `bash tests/verify-linked-branch.sh <NN> <branch>`, straight after the mutation and **before the PR exists — that is the only moment the answer is decisive.** The mutation's own return value is not evidence; it reports what it was asked to do, not what the tracker holds. Once the PR is open the link has moved into its `closingIssuesReferences`, where a `Closes #NN` keyword produces the same reading a real branch link does. [#206](https://github.com/Calyx-Engineering/arc/issues/206) |
 | **Worktree** | `tools/arc-loop.sh` put you in a worktree of your own — the prompt names it, `git worktree list` confirms it. Check your branch out **there**. Never `cd` to the main tree: another run, or the orchestrator, is working in it |
 | **Dev-log** | `docs/dev-log/issue-<NN>-<slug>.md` |
 | **A run commits** | A loop cannot ask, so the driver dispatches into autonomous mode and `HANDOFF.md`'s row says so. **If it does not, `hooks/mode-guard` denies the commit** — that is correct, and the fix is the mode row, never a workaround |
@@ -100,7 +103,29 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. What this arc pins down:
 |---|---|
 | **Done** | Every box in `Required` resolved — ticked with evidence, or named as not done with the reason. Pass 4 done, PR marked ready, and merged if the mode allows it. **Then `gh issue edit <NN> --remove-label in-progress`** |
 | **Blocked** | The issue cannot be done as written. **Say why and stop.** Do not redesign the issue, and do not do an adjacent issue instead. **Remove the label here too** — a run that stops still stops, and a label left behind says work is underway when nothing is |
-| **Scope grew** | Record it in the issue's `Spawned` table and finish what you were given. A discovery is not permission to widen the unit |
+| **Scope grew** | **A finding goes in the dev-log** — a wrong premise, a defect spotted in passing, an approach ruled out. **A filed issue goes in a `Related` row**, and only a filed issue does. Then finish what you were given: a discovery is not permission to widen the unit |
+
+**An issue body has no `Spawned` heading, and one row shape is the only shape.** `Spawned` is a
+row in the issue's `Related` table — three columns, the kind, the link, one clause — and
+`Related` is the body's last section. Add the row to **the issue that caused the work**, which is
+usually yours.
+
+```markdown
+| | Link | What it is |
+| :--- | :--- | :--- |
+| **Spawned** | [#NN](https://github.com/Calyx-Engineering/arc/issues/NN) | <one clause> |
+```
+
+**The edge is written from both ends.** The new issue's own body carries the same table with a
+`Spawned by` row naming yours. An issue filed without one cannot be reconstructed later, so
+`hooks/tracker-verify` reports a `gh issue create` whose body has none. It asks only when the
+branch you are on names an issue or a PR, which on §4's branch it always does.
+
+**A finding is not a unit of work, so it has no row.** Only an issue you actually filed, or a PR
+opened with no issue behind it, is a unit — [`skills/issue-write`](../../../skills/issue-write/SKILL.md),
+*`Spawned` holds units of work. Nothing else*. Everything else this run learned goes in the
+dev-log it writes at §2 step 7. `hooks/tracker-verify` reports a `Spawned` heading on
+`gh issue create` and `gh issue edit`.
 
 ## 6 A report run — the workstream boundary
 
@@ -120,7 +145,7 @@ it a review rather than an announcement.
 | 3 | Write the report into the arc-log's status section, as `#### <n>.<m>.1` onward |
 | 4 | Post the same report as a comment on the **workstream parent issue** — that is where it gets read |
 | 5 | **Check `HANDOFF.md`'s Execution mode row says Manual.** The named boundary is reached, so the grant is spent. `tools/arc-loop.sh` sets it on every exit path — if you were dispatched by it, confirm rather than write. If you were not, set it yourself: dropping to manual is yours to do, raising it never is |
-| 6 | **Leave the parent issue open.** All children closed is mechanical completion, not review. Closing it removes the surface the report is read on and buries the report in a closed issue |
+| 6 | **Leave the parent issue open. A workstream parent closes when the user says so, not when its children do.** All children closed is mechanical completion, not review. Closing it removes the surface the report is read on and buries the report in a closed issue — [#144](https://github.com/Calyx-Engineering/arc/issues/144) was closed the moment its children closed, and had to be reopened |
 | 7 | Stop. The next workstream is a separate invocation and a separate grant |
 
 **Step 5 before step 7, not after.** A run that finishes the work and then keeps going has not
@@ -151,6 +176,15 @@ items.
 **Section 7 is optional and does not count against the 200.** Where there is no diagram, the
 report has six sections. Where there is one, it gets a heading — loose after section 6 it reads
 as a picture of what was not done.
+
+**The budget is checked — `bash tests/verify-report-budget.sh`, and `verify-all.sh` runs it.**
+Loop's first report was 302 words and the user caught it, because the budget was stated in three
+documents — this one, the arc-log and `execution-process.md` — and read by nothing. What counts
+as a word is in that script's header and is worth knowing before writing: section 7 and every
+fenced block, the section headings, the `**Workstream:**` line and the `*End of ...*` line are all
+outside the count, as are table pipes, delimiter rows, list markers and the URL half of a link.
+It reports and never truncates, and it does not check a report's self-declared count — that number
+is a hand count, and only the one the script prints binds.
 
 **Number the heading and frame the block.** The arc-log numbers every heading, `## 6`, `### 6.1`;
 a report landing there as an unnumbered `###` breaks the document's own convention and cannot be

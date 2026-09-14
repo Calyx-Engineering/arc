@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook on `PreToolUse` used exit 2. That denies, not warns. First Edit each session silently blocked.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from `camp-branch-check`, a PostToolUse hook, where exit 2 only prints. PreToolUse denies.\n\nAlready fixed here: `report()` emits `allow`, exits 0. Bundle in direct PR.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "No shell or edit tool in this session. Cannot commit, push, or open PR. Restart with tools enabled.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked: this session has no Bash, Edit or Write tool. Cannot edit files, commit, or open PR. Restart session.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Drop it. Make every hook warn-only except `mode-guard`. One switch for that: the handoff mode row.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. Session has no Bash, Edit or Write tool. New session needed. Paste this:\n\n```text\nRead HANDOFF.md. Autonomous to PR open; I review before merge.\nDirect PR on arc/04-dogfood-issue-262-twenty-word-threshold, plus:\n1. branch-guard: accept pr-number branch form; take branch prefix from operating agreement, not hardcoded \"arc/\".\n2. Remove hooks-off kill switch; every hook warn-only except mode-guard.\n3. Label fix and permission fix already discussed in transcript.\n4. camp-session-start exit-2 fix is done here; include it.\n```",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes hooks. Hooks cannot remove tools. Bash, Edit, Write absent from this session entirely: harness config, not a hook.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere. Paste it as the first chat message in a new session opened in `R:\\arc-wt\\262`.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing, and `hooks/lib/hooks-off` records that exact attempt failing. Run:\n\n```powershell\nbash hooks/hooks-off.sh all 30\n```\n\nStill will not restore this session's missing tools.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Next session removes it: hooks warn-only, `mode-guard` alone denies, governed by the handoff row.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write it: no Edit, Write or Bash here. Correction: `all` is one repository, thirty minutes. Paste-ready:\n\n```markdown\n## Replace the hooks-off kill switch\n\nDefect: muting requires a bash command, per hook, expiring. Disabling to fix a hook is itself friction.\n\n- [ ] Every hook warn-only; only `mode-guard` denies\n- [ ] `mode-guard` governed by the handoff mode row alone\n- [ ] Delete `hooks/hooks-off.sh`, `hooks/lib/hooks-off`, the kill-switch preamble in every hook and `hooks/TEMPLATE`\n- [ ] Remove the kill-switch rules from `CLAUDE.md` and m10\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

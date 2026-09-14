@@ -1,0 +1,2 @@
+# two PR writes in one command, each naming a different PR — both arms must run and each must report about its OWN number. The old dispatch ran the PR arm once, for whichever number its single regex matched first. #231
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"main","arc_test_milestone":"Dogfood","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closes #10\n","arc_test_linked":"1","tool_input":{"command":"gh pr edit 200 --add-label needs-review && gh pr edit 201 --add-label needs-review"}}

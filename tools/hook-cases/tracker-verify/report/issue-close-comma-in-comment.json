@@ -1,0 +1,2 @@
+# a close whose `--comment` carries a comma, unlinked — `CMD` was cut out of the payload on commas, so everything after the first one was lost, the number went with it, and the check never ran. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close --comment \"done, merged\" 163"}}

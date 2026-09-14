@@ -61,16 +61,16 @@
 # named the same way. Nothing structural separates them. Same reasoning as BOLDONLY in
 # tools/topic-numbering.py: crediting the ambiguous middle would score the defect as a pass.
 #
-# PROVENANCE IS STRENGTH-ORDERED, AND THE ORDER IS THE POINT. #164: measured > datasheet >
-# vendor > schematic > photograph > conversation > inferred. Without an order, "record the
-# source" is a label with no consequence — a demand list carried three kill-path signals read off
+# PROVENANCE IS STRENGTH-ORDERED, AND THE ORDER IS THE POINT. #164 specified seven terms and
+# #266 reconciled them with the eight in use in the field, giving the twelve at PROVENANCE
+# below. Without an order, "record the source" is a label with no consequence — a demand list carried three kill-path signals read off
 # a photograph of a board the project does not hold, treated as specified for weeks, and nothing
 # in the document said the claim was weaker than the ones beside it.
 #
 # THE ALIASES ARE NOT DECORATION. A report written before the vocabulary existed still records
 # provenance, in its own words: "from the product label", "the scope reported", "most likely
-# explanation". An instrument matching only the seven vocabulary words would score every one of
-# those as unsourced, and the baseline would measure adoption of a word list rather than the
+# explanation". An instrument matching only the vocabulary words themselves would score every
+# one of those as unsourced, and the baseline would measure adoption of a word list rather than the
 # defect.
 #
 # THE EXCERPT IS THE CASE, AND THE CORPUS IS CHECKED AGAINST IT. Each case carries excerpt.md,
@@ -83,12 +83,16 @@ import os
 import re
 import sys
 
+# The case scan and the fence rule, shared with the other three graders — #265. This file held
+# three copies of the fence rule on its own; they are all `case_reader.Fence` now. `tools/` is
+# sys.path[0] because report-grade.sh runs this file by path.
+import case_reader
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 
-FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*$")
 RULE = re.compile(r"^(-{3,}|\*{3,}|_{3,})$")
 # A "**Label:**" line. This is the status header's shape, and the skill requires one.
@@ -165,17 +169,11 @@ def opening(text):
     blocks are skipped so a heading inside a code sample is not mistaken for the section.
     """
     lines, header = strip_front_matter((text or "").splitlines())
-    prose, first, seen, fence = [], None, 0, ""
+    prose, first, seen, fence = [], None, 0, case_reader.Fence()
     for line in lines:
-        f = FENCE.match(line)
-        if f:
-            run = f.group(1)
-            if not fence:
-                fence = run
-            elif run[0] == fence[0] and len(run) >= len(fence):
-                fence = ""
+        if fence.delimiter(line):
             continue
-        if fence:
+        if fence.open:
             if first is None:
                 prose.append(line)
             continue
@@ -271,22 +269,94 @@ def grade_opening(text):
 # not hold, treated as specified for weeks. The vocabulary is strength-ordered, strongest first,
 # and the order is the whole point — without it "record the source" is a label with no
 # consequence.
-PROVENANCE = ("measured", "datasheet", "vendor", "schematic", "photograph", "conversation",
-              "inferred")
+#
+# #266 RECONCILED IT WITH THE ONE IN USE. Two vocabularies were live: the seven terms #164
+# specified, and the eight rp2040-pin-allocation.md had been carrying since the user repaired
+# this defect by hand — schematic, datasheet, firmware, drawing, report, thread, photo,
+# conversation. Two vocabularies is the defect wearing a label. The ladder below is the
+# topological merge of both orders: every pair keeps the relative order at least one of them
+# gave it, except for ONE TERM THAT MOVES. `schematic` rises above both `datasheet` and
+# `vendor`, which is the field's ordering, because a claim about this board is settled by this
+# board's own sheets and neither the part's document nor the seller's label is about this board
+# at all.
+#
+# `instrument` IS THE NEW TERM, AND IT IS THE POINT OF #266. `measured` covered a bench result
+# and a number an instrument displayed with equal weight. Those are not the same claim: on
+# 2026-08-28 a scope reported 2.473 Vpp where the tone was 1.456 Vpp, because a peak-to-peak
+# reading cannot separate a tone from a tone plus a 433 kHz class-D carrier, and an estimate
+# from that reading was taken over a bench measurement the user had verified. Under one word
+# for both, that region had ONE source in play and graded ONESIDED — unscored, invisible. The
+# split is what makes it a conflict the column can see.
+#
+# `instrument` SITS DIRECTLY BELOW `measured` and above everything else: it is an observation
+# of the unit in hand, one notch weaker only because nothing has established that the
+# instrument was measuring what the claim names. It becomes `measured` when the rig and its
+# limits are written down beside it, and that promotion path is why it sits where it does.
+PROVENANCE = ("measured", "instrument", "schematic", "datasheet", "vendor", "firmware",
+              "drawing", "report", "thread", "photograph", "conversation", "inferred")
 
 # How each term appears in prose that is not using the vocabulary word. A report written before
 # the vocabulary existed still records provenance — "from the product label", "the scope
-# reported", "most likely explanation" — and an instrument that only matched the seven words
-# would score every one of those as unsourced.
+# reported", "most likely explanation" — and an instrument that only matched the vocabulary
+# words themselves would score every one of those as unsourced.
+#
+# ALL FOUR ADOPTED TERMS ARE ORDINARY ENGLISH FIRST. An amplifier is "drawing power"; every
+# document this instrument reads is a "report"; a screw has a "thread"; a duty cycle is "fixed
+# in firmware". Matched bare they put a second source in play wherever the word falls, and the
+# conflict column counts co-occurrence — so a false match does not merely mis-label a row, it
+# manufactures a conflict and lands RESOLVED in the numerator. Three of them are matched only
+# in the shape a provenance cell takes: the word followed by the thing it cites.
+#
+# `firmware` IS THE FOURTH AND IT TAKES THE OTHER SHAPE, because it is the one the ledger writes
+# bare in its Provenance column — `| 20 | **available** | firmware | RTC_CLK | … |`. A
+# cell-shaped lookahead cannot see that: grade_tables searches " ".join(cells) AFTER split("|"),
+# so there is no pipe left to look ahead to and `$` would mean the end of the ROW. It is guarded
+# by what makes the false shape false instead — the preposition. "fixed in firmware" and
+# "disable CLKOUT in firmware" are statements about behaviour; a Provenance cell never reads
+# "in firmware".
+CITED = r"(?= *(?:[-\u2014\u2013:#\[(]|PR\b|p\.|no\.))"
+
 ALIASES = {
-    "measured":     r"measured|measurement|measures|bench|meter|scope (?:capture|read)|"
-                    r"on the bench|instrument read",
+    # `meter`, `scope read` and `instrument read` were here and are now `instrument`'s. A meter
+    # displays; a bench measures. Keeping the readout words under `measured` is exactly the
+    # collapse #266 exists to undo.
+    # `measurements?` and not `measurement`: the trailing \b of the \b(?:...)\b wrapper made
+    # the PLURAL unreachable, though the singular matched. `the rig` was here and is gone —
+    # "name the rig and its limits" is method prose, not a bench result.
+    "measured":     r"measured|measurements?|measures|bench|on the bench|"
+                    r"characteri[sz]ed on",
+    # The unvalidated reading. NO BARE `scope` AND NO BARE `meter`, in any determiner: "the
+    # scope of this document" is not an instrument and "300 meters of cable" is not a meter.
+    # Both are sentences this corpus writes. The scope and the meter are reached only through
+    # what they did — read, reported, captured, showed.
+    "instrument":   r"instrument read\w*|instrument report\w*|instrument show\w*|"
+                    r"from the instruments?|on the instruments?|instruments?" + CITED +
+                    r"|oscilloscopes?|scope read\w*|scope report\w*|scope captures?|"
+                    r"scope traces?|scope showed|meter read\w*|on the meter|multimeters?|"
+                    r"analy[sz]ers?|readouts?|"
+                    r"read off the (?:scope|meter|display|instrument|analy[sz]er)",
+    "schematic":    r"schematics?|netlist|the sheets?|board files?",
     "datasheet":    r"datasheets?|data sheets?",
     "vendor":       r"vendor|manufacturer|supplier|product label|the label|labell?ed|listing|"
                     r"product page|silkscreen|marketing",
-    "schematic":    r"schematics?|netlist|the sheets?|board files?",
+    # Adopted from the field. Shipped source: what the code does, not what the hardware needs.
+    # `(?<!in )` is the whole guard — see the CITED block above. Fixed-width lookbehind, so it
+    # is legal here, and it sits inside the wrapper's leading \b without disturbing it.
+    "firmware":     r"(?<!in )firmware|shipped source",
+    "drawing":      r"drawings?" + CITED + r"|reviewed drawings?|reviewed diagrams?|"
+                    r"mechanical drawings?",
+    "report":       r"reports?" + CITED + r"|merged reports?|reports? PR|docs/report",
+    # `the thread`, `a thread` and `in the thread` were here — moved up from `conversation` —
+    # and are gone. A screw has a thread, and this is an electrical-engineering corpus: "the
+    # thread engagement is 4 mm" put a source in play and, beside any other, manufactured a
+    # conflict. A thread is provenance when it is cited, which is how the ledger writes it.
+    "thread":       r"threads?" + CITED + r"|issue threads?",
     "photograph":   r"photographs?|photos?|pictures?|an image of",
-    "conversation": r"conversation|in chat|said in chat|verbally|a thread|the thread",
+    # `a thread` and `the thread` left here for `thread` and were then dropped from both — see
+    # `thread` above. The field ranks a citable thread above a photograph and `conversation` at
+    # the bottom, and the two are not the same claim: a thread is written down and can be read
+    # back, a conversation is neither.
+    "conversation": r"conversation|in chat|said in chat|verbally",
     # `extrapolat\w*` and not `extrapolat`: the alternation is wrapped in \b(?:...)\b, so a
     # branch ending mid-word can never match — "extrapolated" has no word boundary after
     # "extrapolat". It was the headline word of `inferred`'s own definition in both skills, and
@@ -294,7 +364,11 @@ ALIASES = {
     "inferred":     r"inferred|inference|assumed|assumption|extrapolat\w*|estimated|implied|"
                     r"most likely|likely explanation|presumably|calculated from",
 }
-ALIAS_RE = {k: re.compile(r"\b(?:%s|%s)\b" % (k, v), re.I) for k, v in ALIASES.items()}
+# THE TERM IS NO LONGER PREPENDED FOR FREE. This was `\b(?:%s|%s)\b % (k, v)`, which matched
+# every term's own bare word whether or not that word is safe to match — and `drawing`,
+# `report` and `thread` are not. Each pattern is now complete, and a term that wants its bare
+# word says so.
+ALIAS_RE = {k: re.compile(r"\b(?:%s)\b" % v, re.I) for k, v in ALIASES.items()}
 
 # A header cell that names where a row's claim came from.
 SOURCE_HEADER = re.compile(r"^\**\s*(source|sources|provenance|basis|evidence|origin|from|"
@@ -325,31 +399,56 @@ CONTRAST = re.compile(
 # not a contrast marker, and both put a false RESOLVED in the numerator.
 
 
+# The confidence split's third group, mandatory and fixed-named by skills/engineering-report —
+# "Verified / Measured / Not established". A table that falls under this heading asks what would
+# settle an open question; it does not assert a value, so it is not the claim table #164 names.
+# Matched on the HEADING, never the table's own header cells: real reports write this group's
+# table under many column names — "Item", "Unknown", "Open point", "Open item" — and #314 was
+# filed because three of those variants still tripped grade_tables into scoring them anyway. The
+# heading is the one thing the skill fixes the name of. Matched against the heading TEXT (the
+# `#` marks and their following space are already stripped by the time it is stored), so the
+# pattern names no `#` of its own — "### Not established" and "#### 4. Not established" both
+# store as text ending in "Not established" and both match.
+NOT_ESTABLISHED_HEADING = re.compile(r"\bnot established\b", re.I)
+
+
 def tables(text):
-    """[(lead-in text, header cells, body rows)] for each pipe table outside a fenced block.
+    """[(lead-in text, header cells, body rows, section heading)] for each pipe table outside a
+    fenced block.
 
     The lead-in is the non-blank block immediately above the table. That is where a report puts
     one source for the whole table, and it is the difference between the TABLE verdict and NONE.
+
+    The section heading is the nearest markdown heading line at or above the table, of any level
+    — "### Not established" for a table sitting directly under it, carried forward past blank
+    lines and prose until the next heading changes it. It is what lets grade_tables tell the
+    confidence split's open-questions table from a claim table without guessing at column names.
     """
-    out, fence = [], ""
+    out, fence = [], case_reader.Fence()
     lines = (text or "").splitlines()
+    heading = ""
     i = 0
     while i < len(lines):
         line = lines[i]
-        f = FENCE.match(line)
-        if f:
-            run = f.group(1)
-            if not fence:
-                fence = run
-            elif run[0] == fence[0] and len(run) >= len(fence):
-                fence = ""
+        if fence.delimiter(line):
             i += 1
             continue
-        if fence or "|" not in line:
+        if fence.open:
             i += 1
             continue
-        # A table is a header row, a delimiter row of dashes, then body rows.
-        if i + 1 >= len(lines) or not re.match(r"^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$", lines[i + 1]):
+        # A table is a header row, a delimiter row of dashes, then body rows. Decided BEFORE
+        # the heading check below, never after: a header cell that is itself a bare `#` (a
+        # row-number column, `| # | What would settle it |`) is valid GFM and would otherwise
+        # be read as an ATX heading, silently overwriting the tracked section heading with the
+        # row's own text — and since a heading is carried forward until the next one, that
+        # misreads every later table in the section too.
+        is_header_row = ("|" in line and i + 1 < len(lines) and
+                          re.match(r"^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$", lines[i + 1]))
+        if not is_header_row:
+            m = HEADING.match(line)
+            if m:
+                heading = m.group(2).strip()
+        if "|" not in line or not is_header_row:
             i += 1
             continue
         # The lead-in is the nearest non-blank block above the table. A blank line between the
@@ -367,7 +466,7 @@ def tables(text):
         while k < len(lines) and "|" in lines[k] and lines[k].strip():
             body.append([c.strip() for c in lines[k].strip().strip("|").split("|")])
             k += 1
-        out.append(("\n".join(lead), header, body))
+        out.append(("\n".join(lead), header, body, heading))
         i = k
     return out
 
@@ -381,14 +480,19 @@ def grade_tables(text):
            license dropping the column; scoring it as a fail would report a correctly sourced
            table as unsourced. Same reasoning as BOLDONLY in tools/topic-numbering.py.
     NONE   nothing says where the numbers came from. The fail.
-    NOTABLE no table in the region. Not scored.
+    OPEN   under the confidence split's "Not established" heading. Not scored — #314: the
+           mandated group asks what would settle an open question, and a row can carry that
+           without naming where the OPEN ITEM came from, because it has not been settled yet.
+    NOTABLE no table in the region, or every table in it is OPEN. Not scored.
     """
     ts = tables(text)
-    if not ts:
+    claims = [(lead, header, body) for lead, header, body, heading in ts
+              if not NOT_ESTABLISHED_HEADING.search(heading)]
+    if not claims:
         return "NOTABLE", ""
     worst, detail = None, ""
     order = {"NONE": 0, "TABLE": 1, "ROWS": 2}
-    for lead, header, body in ts:
+    for lead, header, body in claims:
         if any(SOURCE_HEADER.match(c) for c in header):
             v = "ROWS"
             d = "column: %s" % next(c for c in header if SOURCE_HEADER.match(c))
@@ -422,19 +526,15 @@ def conflict_prose(text):
     whole conflicts, silently, into ONESIDED.
 
     AND A FENCE IS TRACKED, because this is the third reader in the file and the other two track
-    it. A fenced sample mentioning two sources is sample text, not two claims.
+    it. A fenced sample mentioning two sources is sample text, not two claims. All three now
+    track it through tools/case_reader.py's `Fence` — #265, which is what "the third reader in
+    the file" was pointing at.
     """
-    out, fence = [], ""
+    out, fence = [], case_reader.Fence()
     for line in (text or "").splitlines():
-        f = FENCE.match(line)
-        if f:
-            run = f.group(1)
-            if not fence:
-                fence = run
-            elif run[0] == fence[0] and len(run) >= len(fence):
-                fence = ""
+        if fence.delimiter(line):
             continue
-        if fence or TABLE_ROW.match(line):
+        if fence.open or TABLE_ROW.match(line):
             continue
         out.append(line)
     return "\n".join(out)
@@ -468,7 +568,8 @@ def grade_conflict(text):
     before it is being SET ASIDE; provenance named after it is being ASSERTED. That is the shape
     of the construction in English — "the label says X, BUT the measurement says Y" — and it
     reads both real cases correctly: the PoE anomaly asserts `measured` over a vendor label, and
-    the probe above asserts `inferred` over `measured`.
+    the probe above asserts `instrument` over `measured` — #266 split that term out of
+    `measured`, and what beat the bench there was a number the instrument displayed.
 
     ITS LIMITS, RECORDED, BECAUSE THEY DECIDE WHICH VERDICTS ARE SCORED. This column is coarse.
     It detects two provenance strengths co-occurring in one region plus a stated disagreement;
@@ -512,8 +613,12 @@ def grade_conflict(text):
 
 
 def read_case(path):
-    """corpus, document, lines. Purpose-built, not a YAML parser — the same trade as
-    tools/topic-numbering.py, and the format is fixed by evals/report-shape.
+    """corpus, document, lines.
+
+    The scan is tools/case_reader.py's — one reader for the four graders, #265 — and the same
+    trade it always made: purpose-built, not a YAML parser, because the format is fixed by
+    evals/report-shape. What is left here is which fields this suite wants: three flat ones,
+    read whole rather than by first token, because `lines: 12 - 40` has spaces in it.
 
     A CASE DECLARES A DOCUMENT AND A REGION, AND NOTHING ELSE. There is deliberately no field
     for an expected verdict, an expected direction, or which columns to score. An earlier
@@ -523,13 +628,9 @@ def read_case(path):
     graded. That is the tick-without-evidence shape evals/README.md says this arc exists to fix,
     and it was in the same commit that wrote the rule down."""
     out = {"corpus": "", "document": "", "lines": ""}
-    for raw in io.open(path, encoding="utf-8"):
-        line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#") or line[:1].isspace():
-            continue
-        k, _, v = line.partition(":")
-        if k.strip() in out:
-            out[k.strip()] = v.strip()
+    for section, key, value in case_reader.fields(path):
+        if not section and key in out:
+            out[key] = value
     return out["corpus"], out["document"], out["lines"]
 
 
@@ -723,8 +824,16 @@ def main():
     # Every column that has anything in its denominator has to clear the threshold. A suite
     # that passed on the average of three questions would let a fixed opening hide an unsourced
     # table, which is the two halves of this suite reporting each other's work as their own.
+    #
+    # ROUNDED TO THE THRESHOLD'S OWN PRECISION, NOT COMPARED RAW. #315: `0.67` is this repo's
+    # shorthand for two-thirds, printed to two places, and `2/3` is `0.6666...` — below it by
+    # more than floating-point noise, so a bare `>=` rejected the exact ratio the constant was
+    # named for. Rounding both sides to the threshold's own two decimal places is the tolerance
+    # that follows from what `0.67` already claims to mean: `round(2/3, 2) == round(0.67, 2)`.
+    # The same fix is applied in the same commit to `tools/skill-probe.sh` and
+    # `tools/report-shape-probe.sh`, which make this comparison too.
     cols = [(denom, rate), (tdenom, trate), (cdenom, crate)]
-    ok = any(d for d, _ in cols) and all(r >= threshold for d, r in cols if d)
+    ok = any(d for d, _ in cols) and all(round(r, 2) >= round(threshold, 2) for d, r in cols if d)
     print("%-32s %s" % ("verdict", "PASS" if ok else "FAIL"))
     print()
     print("A rate here is a property of the DOCUMENTS, not of a skill. Whether")

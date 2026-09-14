@@ -1,8 +1,9 @@
 ---
 name: issue-write
+user-invocable: false
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [arc-intent, title-size, base-branch, milestone, label, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
+checks: [arc-intent, title-size, base-branch, milestone, label, issue-type, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
@@ -10,6 +11,7 @@ skips:
   - read-back-dispositions (the write is an issue, not a PR)
   - title-size (editing a body, not a title)
   - label (the prefix licenses none — `scope:`, `chore:`, `refactor:`, `test:`)
+  - issue-type (the write is a PR, or an edit to an issue body rather than its fields)
 ---
 
 # Writing issues and pull requests
@@ -54,7 +56,7 @@ is the only place it is recorded at all — and silence there is indistinguishab
 nobody ran.
 
 **One thing in the body is gated, and it is not the prose.** An unticked box named here as not
-done, or as moved to the issue that owns it, is read back by `tools/verify-issue-boxes.sh` —
+done, or as moved to the issue that owns it, is read back by `tests/verify-issue-boxes.sh` —
 which [`hooks/tracker-verify`](../../hooks/tracker-verify) runs on `gh pr ready`.
 
 **Copy the box's first eight words, unbroken and in order, then say what happened.** The quote
@@ -137,7 +139,7 @@ mechanical completion; the boundary is a review, and closing removes the surface
 
 **`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
 inherits a capability-sized title, which is the first failure above. **`spec:` is retired**:
-one word per meaning, or the type sorts nothing. `tools/verify-labels.sh` reports an unmapped
+one word per meaning, or the type sorts nothing. `tests/verify-labels.sh` reports an unmapped
 prefix, so the retirement is enforced rather than remembered.
 
 ### Labels — the prefix decides, and only the prefix
@@ -170,11 +172,41 @@ Three labels say what a title cannot, and ride alongside the type label:
 one more thing to get wrong, and nothing the milestone view does not already show.
 
 ```sh
-tools/verify-labels.sh             every open issue, prefix against label
-tools/verify-labels.sh labels      the label set itself
+tests/verify-labels.sh             every open issue: prefix against label, and the issue type
+tests/verify-labels.sh labels      the label set itself
 ```
 
 **The table above and the script's `MAP` are the same fact.** A new prefix needs both.
+
+### The issue type says who does the work
+
+**The prefix says what kind of work it is. The type says who does it.** They are different
+questions and they do not overlap — an issue holds exactly one type, so it is the field that
+can carry *who* without competing with the kind already in the prefix and its label.
+
+| Type | |
+|---|---|
+| `Agent` | **The loop's.** Sized for one unattended run. `tools/arc-loop.sh` dispatches these and nothing else |
+| Any other type | **A human's.** Needs judgement, hardware, an account nobody has delegated, or a call that is not the session's to make |
+| No type | **A defect.** The issue answers neither question. `tests/verify-labels.sh` reports it |
+
+**Which non-`Agent` type is a human's call, and no check has an opinion.** The rule is *who*,
+not *which*: `Task`, `Bug` and `Feature` all say the same thing here. A check that preferred one
+would invent a rule the tracker's own type set does not carry, and would report every type the
+org adds as a defect on the day it is created.
+
+**Set it at creation.** It is one of the fields that never appears in the body, so it is
+invisible once missed:
+
+```sh
+gh issue create --type Agent --milestone "<name>" --label <label> --title "…" --body-file body.md
+gh issue edit <N> --type Task                      # backfilling, or handing one back to a human
+gh issue view <N> --json issueType                 # the read-back
+```
+
+**Types are an organisation-level set, not a repository one.** `gh issue create --type` fails on
+a name the org has not defined, so a new type is a decision made once for every repository under
+the org — never worked around by inventing a label.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
@@ -222,7 +254,7 @@ where `Related` sits — is the furthest from the section list.
 **Spawned work lives in `Related`'s rows, and `Related` is the body's last section — so the
 spawn edges are in the last section, at the top of its table.** Not "at the end" as a habit —
 last in a stated order, which is what makes a heading appearing after that section a reportable
-defect rather than a matter of taste. `tools/verify-tracker-body.sh body`
+defect rather than a matter of taste. `tests/verify-tracker-body.sh body`
 reports a heading that follows the `Related` section — or a `Spawned` section, in a body written
 before this shape. *Related — one table, four kinds* below gives the table's shape.
 
@@ -325,6 +357,36 @@ When a PR closes exactly one issue, cite it in the title: `<type>: <name> (#42)`
 closes several, omit the number from the title and list them in the body. The title number
 is cosmetic — the body still needs its own line.
 
+### Commit messages close the same way, and just as silently
+
+**A closing keyword binds from a commit message exactly as it does from a PR body** — the same
+keyword set, followed by `#<N>`, and the same placement rule: **a bare line, never a clause
+inside a sentence.** GitHub does not care which write puts the words next to each other. Commit
+`81b5a41` ([PR #301](https://github.com/Calyx-Engineering/arc/pull/301)) put the word *resolve*
+and #300's number in one prose clause of its body; the commit reached the default branch — during
+an arc that is the arc branch itself,
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md)'s flip — and GitHub
+closed #300 with all four of its boxes still unticked.
+
+Put a closing keyword in a commit message only on its own bare line, at the end of the message,
+exactly as *Placement* above requires for a PR body:
+
+```text
+Closes #42
+```
+
+Never inside a sentence describing the change — *"this is expected to resolve #42"* closes #42
+exactly as reliably as `Closes #42` does, with none of the review a PR body gets before it is
+written and merged.
+
+**The post-merge read-back names what the merge closed.** `gh pr view --json
+closingIssuesReferences` and the issue's own state are what confirm it — never a memory of which
+line was meant to close something. A commit's prose can close an issue nobody intended to touch,
+and the read-back is what catches that before a checklist ticked from memory is trusted.
+
+`hooks/tracker-verify` reports a `git commit` whose message carries a closing keyword and a
+number anywhere but a bare line.
+
 ### PR titles inside an arc take the arc's prefix
 
 An issue PR inside an arc is titled:
@@ -346,7 +408,12 @@ needed.
 
 **A closing keyword binds only when the PR targets the repository's default branch.**
 Isolated 2026-08-17: two PRs, identical keyword form, one into `main` bound five issues and
-one into an arc branch bound none.
+one into an arc branch bound none. Isolated again 2026-09-11 on a base that had **never** been
+the default: [#323](https://github.com/Calyx-Engineering/arc/pull/323) into `probe/287-base`
+bound nothing before the merge, after it, or after an unchanged body re-save, and the merge left
+its issue open — [`tests/tracker-cases/binding/never-default-base-keyword.md`](../../tests/tracker-cases/binding/never-default-base-keyword.md).
+That run is what settled [#287](https://github.com/Calyx-Engineering/arc/issues/287): m12 once
+read the same rule as a parse-time quirk that a re-save could get around, and it cannot.
 
 This is not a corner case in a nested-branch workflow — it is *every* issue PR.
 
@@ -355,18 +422,70 @@ This is not a corner case in a nested-branch workflow — it is *every* issue PR
 | The default branch | **A defect.** The link should have formed |
 | An arc or integration branch | **Expected.** The link cannot form; it defers to the arc PR |
 
-**The fix is [m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md):
-point the default branch at the arc for its lifetime.** Where that is in force, keywords bind
-normally and the rest of this section does not apply. Where it is not — more than one
-collaborator, protected trunk — the following holds.
+**There are two routes, and the repository chooses one.**
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) points the default
+branch at the arc for its lifetime, and where that is in force keywords bind normally and the
+rest of this section does not apply. Where it is not — more than one collaborator, a protected
+trunk, no admin rights, or simply nobody flipped it — the manual route below is what runs.
+[m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md) §5 holds the comparison.
+**Neither is a fallback for the other**; do not propose switching a repository's default branch
+because a keyword did not bind.
 
 Two consequences:
 
-- On an issue PR into an arc branch, write the `Closes #NN` line anyway and say in the PR
-  that closure defers to the arc PR. The line documents intent even where it cannot bind.
-- **The arc PR into the default branch needs a `Closes` line for every issue the arc
-  consumed.** That is the one PR where an empty array is a real bug, and the only place the
-  issues actually close.
+- On an issue PR into an arc branch, write the `Closes #NN` line anyway — see *What the keyword
+  is still for* below — and then **run the manual route.** The issue closes at its own PR's
+  merge, by hand, not at the arc's close
+- **The arc PR into the default branch still needs a `Closes` line for every issue the arc
+  consumed.** That is the one PR where an empty array is a real bug. It is the backstop for
+  issues nobody closed, not the plan
+
+**"Closure defers to the arc PR" is the degraded state, not a practice**, and the earlier wording
+here read as though it were one. Leaving an issue open from its own merge until the arc's is what
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) lists as the *cost*
+of an unflipped repository — *"issues stay open after their work merges"* — and both mechanisms
+exist to remove it. Say it in the PR body so a reader is not left thinking the link failed; do
+not let it stand in for closing the issue.
+
+### The manual route — when a work PR merges into a non-default base
+
+**Do all three, in this order, immediately after the merge.** Not at the arc's close: the click
+is the one nobody remembers, and an issue left open reads as work not done.
+
+| | |
+|---|---|
+| 1 | **Merge the PR.** Nothing binds and nothing closes. `gh pr merge` reports success either way |
+| 2 | **Attach the link by hand.** The merged PR → the **Development** panel on its right-hand side → the issue. **No API does this.** No mutation creates or removes a hand-attached link, and `POST /repos/{o}/{r}/issues/{n}/links` does not exist — it 404s with full `repo` scope. This step needs a human, and saying so is part of the step |
+| 3 | **`gh issue close <NN>`.** Closing an issue is not an admin operation and needs no special right. Do it after step 2, not before — a closed issue with no link is what `hooks/tracker-verify`'s `close-link` check reports |
+
+**Do not skip step 2 because step 3 closes the issue anyway.** The link is what makes the work
+findable from the issue: without it the Development panel stays empty, and an issue that looks
+orphaned is indistinguishable from one that was forgotten.
+
+**Two things watch for the step nobody did.** Neither can do it for you.
+
+| | |
+|---|---|
+| `hooks/tracker-verify`'s `merge-close` | Fires on `gh pr merge` of a PR whose base is neither the default branch nor the trunk — that is, one where no keyword can bind — and reports when the issue its head branch names is still open |
+| `tools/arc-link-sweep.sh <milestone>` | The arc-checkpoint sweep — every issue in the milestone that is linked to nothing at all. m12 §4 |
+
+### What the keyword is still for
+
+**On a PR whose base is not the default branch, `Closes #NN` is recorded intent, not a working
+link.** It binds nothing, the merge closes nothing, and `closingIssuesReferences` comes back
+empty. Write it anyway, on its own last line — *Placement* above is unchanged by the base branch.
+
+| | |
+|---|---|
+| **What it does** | States which issue this PR was for, in one machine-readable line, in the record that outlives the branch |
+| **Who reads it** | The arc PR that later collects this work · `tests/verify-issue-boxes.sh`, which reads the bodies of the PRs that close an issue · a reviewer asking what a merged PR was for |
+| **What it does not do** | Close the issue, form a link, or populate the Development panel |
+
+**Say so in the PR body as well as writing the line**, so a reader is not left concluding the
+link failed: *"A keyword cannot bind on a base of `arc/NN-slug`, so #NN is linked and closed by
+hand at the merge."* Name the route, not a deferral — the issue closes here.
+Leaving the keyword out to avoid implying a link that does not exist is the wrong trade: it
+removes the only statement of what the PR was for and leaves the issue looking orphaned anyway.
 
 **Re-saving the body forces a re-parse, and the parse is not tied to the merge.** It cannot
 create a link the base branch forbids — that much still holds, and a failed re-save on an
@@ -408,15 +527,20 @@ the UI, which needs a human and cannot run unattended. This can.
 
 **A PR whose base was never the default branch.** The keyword cannot bind at all, so there is
 nothing for a re-save to re-parse — the base-branch rule above is not a timing problem and no
-edit gets around it. The fix is
-[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md), applied before
-the PR merges, and [#136](https://github.com/Calyx-Engineering/arc/issues/136) is where linking
-and closing without the flip is tracked. After the merge, on an unflipped base, the issue is
-closed by hand and the link is made by hand.
+edit gets around it. Measured, not inferred: #323's unchanged re-save after the merge read
+`[]` on every poll — [`never-default-base-keyword.md`](../../tests/tracker-cases/binding/never-default-base-keyword.md). **The fix is *The manual route* above** — the click and the close, which
+work on any base and need no admin right. It is the same route whether the keyword was missed
+or could never have bound.
+
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) removes the
+question for a whole arc, but only if the flip is already in place before that arc's first PR is
+opened — it does not re-parse existing PRs. **So it is never the answer to a PR that has already
+merged, and never something to propose because one keyword did not bind.** Whether a repository
+runs with the flip is a decision made once, at arc start, by the user.
 
 **The claim is a test, not a memory.**
-[`tools/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tools/tracker-cases/binding/merged-pr-keyword-bind.md)
-carries it, and `tools/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
+[`tests/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tests/tracker-cases/binding/merged-pr-keyword-bind.md)
+carries it, and `tests/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
 live API and restores what it changed. `verify-all.sh` does not run it — it writes to the
 tracker — and `selftest` names it as not covered rather than passing over it.
 
@@ -434,15 +558,30 @@ edits, and the asymmetry is the whole finding:
 | Visibility | The diff is in front of the user | Lives on a website nobody re-opens |
 | Detection | Immediate | Only when someone happens to look |
 
-**Set the milestone at creation.** `gh pr create --milestone "<name>"`. A PR without one
-drops out of the milestone view, which is the only place a human sees the arc as one unit.
-This is unrelated to the base-branch problem and purely an omission — every PR in this
-repo's first two arcs was missing it.
+**A milestone item is one unit of work, so a PR that closes an issue takes no milestone.**
+The issue is the unit and already carries it; giving the PR one counts the same work twice and
+ticks twice when it lands. A direct PR has no issue behind it, so it is the unit — set its
+milestone at creation, `gh pr create --milestone "<name>"`, or it drops out of the milestone
+view, which is the only place a human sees the arc as one unit.
 
-**The fields set at creation rather than written into the body — milestone, base, label — are
-listed at the top of [`templates/issue.md`](../../templates/issue.md) and
-[`templates/pr.md`](../../templates/pr.md).** Each is invisible once missed, which is why they
-are named where the body is assembled and not only here.
+| PR | Milestone |
+|---|---|
+| Carries a closing keyword | None |
+| No closing keyword — a direct PR | Required |
+
+**The keyword decides it, not whether the link bound.** On a base other than the default
+nothing binds and closure defers to the arc PR — but the issue exists and carries the
+milestone either way.
+
+**Side effect worth having: a PR in the milestone is, by definition, a direct PR.** The view
+had no other way to tell the two apart. `hooks/tracker-verify`'s `milestone` check reports
+both directions. #204.
+
+**The fields set at creation rather than written into the body are listed at the top of
+[`templates/issue.md`](../../templates/issue.md) and
+[`templates/pr.md`](../../templates/pr.md)** — milestone, label, type and base for an issue;
+milestone, label, base and draft for a PR, which carries no issue type. Each is invisible once
+missed, which is why they are named where the body is assembled and not only here.
 
 After **every** create or edit:
 
@@ -464,17 +603,17 @@ Three of the seven evaluation cases are mechanically catchable. Before and after
 | A number that was meant to change and did not | Diff the old body against the new |
 | A date inconsistent with reality | Compare against the current date |
 | A referenced commit or issue that does not exist | Check it resolves |
-| A closing keyword anywhere but the last line | `tools/verify-tracker-body.sh body <file>` |
-| A title that promises what merging will not deliver | `tools/verify-tracker-body.sh title "<title>" [file]` |
+| A closing keyword anywhere but the closing block — the final lines, one keyword each | `tests/verify-tracker-body.sh body <file>` |
+| A title that promises what merging will not deliver | `tests/verify-tracker-body.sh title "<title>" [file]` |
 
 The first four patterns are *scaffolding survived*. The last two are the opposite shape —
 text that is complete and correct-looking and promises something it should not. Each needs
 its own check, because reading for the first four does not surface either.
 
 ```sh
-tools/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
-tools/verify-tracker-body.sh body body.md      # before the write
-tools/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
+tests/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
+tests/verify-tracker-body.sh body body.md      # before the write
+tests/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
 ```
 
 All three report and none blocks. `binding` is the only one that has to run after the write
@@ -517,9 +656,10 @@ keyword entirely:
 - ✓ "This does not complete the capability — the deliverable in #42 is …"
 
 **This trap shipped a defect while this section was loaded and read.** Prose does not stop
-it, so the rule is placement rather than phrasing: one keyword, on the last line, checked by
-`tools/verify-tracker-body.sh body` before the write. Escaping the keyword is a workaround
-for writing *about* the trap in a document, not a fix.
+it, so the rule is placement rather than phrasing: keywords only in the closing block — the
+final lines, one keyword per line and nothing else on them; one line for one issue, one line
+per issue for several — checked by `tests/verify-tracker-body.sh body` before the write.
+Escaping the keyword is a workaround for writing *about* the trap in a document, not a fix.
 
 ### Hand-attached links are separate from body keywords
 

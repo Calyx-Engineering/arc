@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Re-read hook: it allows, exit 0. My finding was wrong. No problem there.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't. Comment describes old bug, fixed. (2) closed.\n\nLost earlier list. Restate label fix and permission fix, one line each.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Cannot do it here: no Bash, Edit or Write tool this session, and earlier context (label fix, permission fix) is gone. Say which two files change and I will read them; edits need a session with write tools.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Two blockers. I cannot set autonomous, only you can (HANDOFF.md *Execution mode* row). And this session has no Bash, Edit or Write tools, so no edits or PR possible. Reopen a session with tools, set the row, and restate the label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Every deny should print its own mute command. Nothing to remember, one paste. Keep the switch, fix the prompt.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no Edit, Write or Bash tools, so no file can change. Start a fresh session with tools and say: fix branch guard PR number, agreement-driven prefix, deny prints mute command.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny actions; here the Edit, Write and Bash tools are absent entirely. That is session tooling, not a hook. Kill switch cannot restore them.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file to place. Run from the repo root:\n\n```powershell\nbash hooks/hooks-off.sh all 60\n```\n\nIt writes the state into `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing. No `arc-hooks-off` state file exists in either git directory. Run the command in a terminal:\n\n```powershell\ncd R:\\arc-wt\\262\nbash hooks/hooks-off.sh all 60\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Switch requires a terminal and bash on Windows. Better: any file named `HOOKS_OFF*` at repo root mutes everything. Zero recall, works from Explorer.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write it this session, no tools. Paste this into the cleanup issue:\n\n```text\n- [ ] Kill switch: a file at the repo root (`HOOKS_OFF`, any extension) mutes every hook in that repo only. Every deny message prints that path. No command, no bash, no timer.\n```\n\nCorrection: current switch is repo-scoped too, not global. Pain is the command, not the scope.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

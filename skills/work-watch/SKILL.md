@@ -1,5 +1,6 @@
 ---
 name: work-watch
+user-invocable: false
 description: Use continuously while work is in progress — one sweep that watches for eight things and proposes, never acts. Whether the work has reached a point worth committing, whether a design decision just created a test obligation that will be forgotten, whether questioning has gone deeper than the decision warrants, whether an edit reported as done is contradicted somewhere else in the file, whether a settled decision has been written down before the next topic opens, whether Arc itself just cost the work something, whether this session has degraded far enough that the work should hand off, and whether a failure is about to be blamed on the user's environment with nothing tested on your own side. Run it at natural pauses, not every turn.
 camp-reports: [commit-point-proposed, test-obligation-caught, depth-flagged, stale-claim-caught, decision-unwritten, friction-caught, saturation-flagged, blame-gated]
 checks: [commit-point, test-obligation, depth, edit-completeness, working-surface, friction, saturation, environment-blame]

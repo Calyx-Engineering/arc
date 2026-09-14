@@ -13,6 +13,13 @@
 #   probe    Re-run the case's turns as one live conversation, so a change to the skill can
 #            be seen. Billed. tools/response-length.sh owns the invocation.
 #
+# AND ONE CASE SHAPE THAT IS NEITHER. A budget can come from the repository's operating
+# agreement instead of from a user turn — section 1, `Response verbosity`, the checked box is
+# the value, the same mechanism skills/camp reads Report and Nudge verbosity through. No
+# recorded session was ever governed by that clause, because the clause postdates the corpus,
+# so such a case carries `source.kind: fixture` and stores its replies in replies/<n>.md. It
+# is portable: no transcript, no corpus, scorable on any machine. #174.
+#
 # WHY A THIN FLOOR. A reply that declines, or says it has no context, is short — and a scorer
 # that counted short as held would report the fix working every time the model failed to
 # answer. Replies below the floor are counted in neither column and printed as their own
@@ -33,12 +40,15 @@ import os
 import re
 import sys
 
+# The case scan and the fence rule, shared with the other three graders — #265. `tools/` is
+# sys.path[0] because response-length.sh runs this file by path.
+import case_reader
+
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 
-FENCE = re.compile(r"^\s*(```|~~~)")
 HEADING = re.compile(r"^\s{0,3}#{1,6}\s")
 TABLE_ROW = re.compile(r"^\s*\|")
 
@@ -49,13 +59,19 @@ def prose_words(text):
     skills/chat-response: "Prose means body text. Tables, code blocks, and headings are not
     budgeted — they are the form the answer should take." The budget is stated against that
     rule, so the count has to honour it or the two disagree about what 60 words means.
+
+    THE FENCE RULE IS tools/case_reader.py's, NOT A TOGGLE. This counted with
+    `in_fence = not in_fence` until #265, which cannot see that a fence closes only on a run of
+    the same character at least as long as the opener: a ~~~ line inside a ``` block flipped it,
+    and everything after was counted on the wrong side. The suite scores identically either way
+    — no case in evals/response-length nests a fence — so the change is a defect removed before
+    it fired, not a score corrected.
     """
-    n, in_fence = 0, False
+    n, fence = 0, case_reader.Fence()
     for line in (text or "").splitlines():
-        if FENCE.match(line):
-            in_fence = not in_fence
+        if fence.delimiter(line):
             continue
-        if in_fence or HEADING.match(line) or TABLE_ROW.match(line):
+        if fence.open or HEADING.match(line) or TABLE_ROW.match(line):
             continue
         n += len(line.split())
     return n
@@ -90,40 +106,159 @@ def turn_text(o):
 
 
 def read_case(path):
-    """The fields a response-length case.yaml carries. Purpose-built, not a YAML parser —
-    same trade as tools/skill-cases.py, and the format is fixed by evals/response-length."""
-    budget, unit, session, first, last, set_on = 0, "words", "", 0, 0, 0
-    section = None
-    for raw in io.open(path, encoding="utf-8"):
-        line = raw.rstrip("\n")
-        if not line.strip() or line.lstrip().startswith("#"):
+    """The fields a response-length case.yaml carries.
+
+    The scan is tools/case_reader.py's — one reader for the four graders, #265 — and the same
+    trade it always made: purpose-built, not a YAML parser, because the format is fixed by
+    evals/response-length. What is left here is which fields this suite wants.
+
+    TWO SHAPES OF CASE, and the difference is where the budget came from.
+
+      a stated budget   `budget: 20` and `source.session` — a user said a number in a real
+                        conversation, and the case replays that transcript.
+      an agreement one  `agreement: <file>` and `source.kind: fixture` — nothing was said in
+                        conversation at all; the number is a clause in the repository's
+                        operating agreement, and the replies are stored beside the case.
+
+    The second shape needs no `source.session` because there is nothing to replay: the clause
+    postdates the corpus, so no recorded session was ever governed by one.
+    """
+    c = {"budget": 0, "unit": "words", "session": "", "first": 0, "last": 0,
+         "set_on": 0, "agreement": "", "kind": ""}
+    for section, key, value in case_reader.fields(path):
+        if not section:
+            if key == "budget":
+                c["budget"] = case_reader.leading_int(value, c["budget"])
+            elif key in ("unit", "agreement"):
+                c[key] = case_reader.token(value) or c[key]
             continue
-        if not line[:1].isspace():
-            section = line.split(":", 1)[0].strip()
-            m = re.match(r"budget:\s*(\d+)", line)
-            if m:
-                budget = int(m.group(1))
-            m = re.match(r"unit:\s*(\S+)", line)
-            if m:
-                unit = m.group(1)
-            continue
-        s = line.strip()
         if section != "source":
             continue
-        for key, setter in (("session", "session"), ("first_turn", "first"),
-                            ("last_turn", "last"), ("set_on", "set_on")):
-            m = re.match(key + r":\s*(\S+)", s)
-            if m:
-                v = m.group(1)
-                if setter == "session":
-                    session = v
-                elif setter == "first":
-                    first = int(v)
-                elif setter == "last":
-                    last = int(v)
-                else:
-                    set_on = int(v)
-    return budget, unit, session, first, last, (set_on or first)
+        t = case_reader.token(value)
+        if not t:
+            continue
+        # `first_turn`, `last_turn` and `set_on` go through `int()` rather than `leading_int`,
+        # because they always did: a turn number with trailing text is a broken case and the
+        # crash is how it says so.
+        if key in ("session", "kind"):
+            c[key] = t
+        elif key == "first_turn":
+            c["first"] = int(t)
+        elif key == "last_turn":
+            c["last"] = int(t)
+        elif key == "set_on":
+            c["set_on"] = int(t)
+    c["set_on"] = c["set_on"] or c["first"]
+    return c
+
+
+# ---- the agreement clause -----------------------------------------------------------
+# Section 1 of the operating agreement, `Response verbosity`, checked box is the value —
+# the same mechanism skills/camp reads Report and Nudge verbosity through.
+#
+# THE NUMBER COMES OUT OF THE CLAUSE, NOT OUT OF THIS FILE. The whole point of the setting is
+# that the user owns it, so a repository that edits `brief` down to 25 words is scored at 25.
+# LEVEL_DEFAULT is what a level means when its line states no budget of its own, which is the
+# only case where the scorer gets to decide.
+#
+# WHICH LEVEL IS A BUDGET IS THE LEVEL'S PROPERTY, NOT ITS LINE'S. Only `brief` and a number
+# typed into `Other:` state one. `normal` is skills/chat-response's table — four figures for
+# four kinds of reply, not one number — and `full` is uncapped; neither is a budget this
+# instrument can score, so both return 0 whatever their line says and the case is reported as
+# not scorable. `normal` is the SHIPPED state of the clause, so that is the path a repository
+# which never edits its agreement takes, and it has to behave as it did before the clause
+# existed.
+#
+# THE DISTINCTION MATTERS BECAUSE `normal`'S OWN LINE CARRIES NUMBERS. It reads "~150 words for
+# a finding, ~200 for a proposal" — prose describing the table. The first version of this
+# function scanned every checked line for a number, read 150 out of that sentence, and handed
+# every shipped repository a flat 150-word budget nobody chose.
+#
+# THE SECOND VERSION REQUIRED THE NUMBER TO BE BOLD, and that was the same defect mirrored: a
+# user editing `brief` to "25 words of prose" without the asterisks got 40 and no warning. So
+# the level decides whether to look at all, and on a level that IS a budget any figure counts.
+# LEVEL_DEFAULT is only what `brief` means when its line names no figure whatsoever.
+LEVEL_DEFAULT = {"brief": 40}
+NO_BUDGET_LEVELS = ("normal", "full")
+
+CLAUSE_HEADING = re.compile(r"^\s{0,3}(#{2,6})\s*Response verbosity\b", re.I)
+ANY_HEADING = re.compile(r"^\s{0,3}(#{1,6})\s")
+CHECKED = re.compile(r"^\s*[-*]\s*\[[xX]\]\s*(.*)$")
+WORD_BUDGET = re.compile(r"(\d+)\s*\**\s*words?\b", re.I)
+
+
+def read_agreement_budget(path):
+    """(level, budget) from an operating agreement, or (level-or-None, 0) when it sets none.
+
+    A budget of 0 means the clause states no scorable number. The level says which flavour of
+    that it is, and the caller reports it: `normal` and `full` are deliberate, an unrecognised
+    level is a typo, `nothing checked` is a clause left blank, and None is no clause at all.
+    An agreement that did not state a budget must never acquire one here.
+    """
+    lines = io.open(path, encoding="utf-8", errors="replace").read().splitlines()
+    depth, block = 0, []
+    for line in lines:
+        if depth:
+            m = ANY_HEADING.match(line)
+            if m and len(m.group(1)) <= depth:
+                break
+            block.append(line)
+            continue
+        m = CLAUSE_HEADING.match(line)
+        if m:
+            depth = len(m.group(1))
+    if not depth:
+        return None, 0
+
+    checked = []
+    for line in block:
+        m = CHECKED.match(line)
+        if m:
+            checked.append(m.group(1))
+    if not checked:
+        return "nothing checked", 0
+    # "Check one per setting" is the section's own instruction. Two checked boxes is not a
+    # value this can resolve — taking the first would make the answer depend on the order the
+    # levels happen to be listed in, which is not a decision the user made.
+    if len(checked) > 1:
+        return "%d boxes checked" % len(checked), 0
+
+    rest = checked[0]
+    label = re.match(r"\*\*(.+?)\*\*", rest)
+    level = (label.group(1) if label else rest.split(":")[0]).strip().lower()
+    if level in NO_BUDGET_LEVELS:
+        return level, 0
+    if level == "other":
+        n = WORD_BUDGET.search(rest.split(":", 1)[-1]) or re.search(r"(\d+)", rest.split(":", 1)[-1])
+        return level, int(n.group(1)) if n else 0
+    if level not in LEVEL_DEFAULT:
+        return level, 0
+    n = WORD_BUDGET.search(rest)
+    return level, int(n.group(1)) if n else LEVEL_DEFAULT[level]
+
+
+def fixture_rows(d, first, last):
+    """(turn, prompt, prose words, prose words) from replies/<n>.md.
+
+    Same tuple shape replay() returns, so the scoring below does not branch. The final-block
+    count equals the total because a stored reply is one block — there is no tool narration to
+    split it, which is itself a difference from a replayed turn and is why the two are labelled
+    apart in the report.
+    """
+    rdir = os.path.join(d, "replies")
+    if not os.path.isdir(rdir):
+        return []
+    out = []
+    for f in sorted(os.listdir(rdir)):
+        m = re.match(r"(\d+)\.md$", f)
+        if not m:
+            continue
+        t = int(m.group(1))
+        if not (first <= t <= last):
+            continue
+        n = prose_words(io.open(os.path.join(rdir, f), encoding="utf-8").read())
+        out.append((t, "", n, n))
+    return sorted(out)
 
 
 def case_turns(d):
@@ -213,7 +348,13 @@ def verdicts(rows, budget, floor):
     return out, breach
 
 
-def report(name, budget, floor, scored, breach, set_on, extra=None):
+def report(name, budget, floor, scored, breach, set_on, extra=None, standing=0):
+    """`standing` is the first turn of a case whose budget came from the agreement.
+
+    A stated budget has a turn it was stated on, and "held N turns" counts from there. A
+    standing one was in force before the conversation opened, so it counts from the first
+    reply — and no turn is marked as the one that stated it, because none did.
+    """
     under = sum(1 for _, _, v in scored if v == "UNDER")
     over = sum(1 for _, _, v in scored if v == "OVER")
     thin = sum(1 for _, _, v in scored if v in ("THIN", "CUT"))
@@ -221,7 +362,7 @@ def report(name, budget, floor, scored, breach, set_on, extra=None):
     print(name)
     for turn, words, v in scored:
         note = ""
-        if turn == set_on:
+        if turn == set_on and not standing:
             note = "  <- budget stated here"
         elif turn == breach:
             note = "  <- first breach"
@@ -231,9 +372,10 @@ def report(name, budget, floor, scored, breach, set_on, extra=None):
             print("  " + line)
     denom = under + over
     rate = ("%d/%d  %.2f" % (under, denom, under / denom)) if denom else "0/0  n/a"
-    held = (breach - set_on) if breach is not None else len(scored)
+    origin = standing or set_on
+    held = (breach - origin) if breach is not None else len(scored)
     print("  held %s, first breach %s, thin %d (of which cut short by the runner: %d)" % (
-        "%d turns after it was stated" % held,
+        "%d turns %s" % (held, "after it came into force" if standing else "after it was stated"),
         ("t%d" % breach) if breach is not None else "none",
         thin, cut))
     print("  within budget (%d %s): %s   thin floor %d words" % (budget, "words", rate, floor))
@@ -267,15 +409,71 @@ def main():
     for cp in cases:
         d = os.path.dirname(cp)
         name = os.path.relpath(d, evaldir).replace(os.sep, "/")
-        budget, unit, session, first, last, set_on = read_case(cp)
+        case = read_case(cp)
+        budget, session, first, last, set_on = (
+            case["budget"], case["session"], case["first"], case["last"], case["set_on"])
+        fixture = case["kind"] == "fixture"
         stored = case_turns(d)
-        if not budget or not session or not first:
+
+        # An agreement case names no number of its own: the clause is the number, and reading
+        # it here rather than copying it into case.yaml is the whole claim under test.
+        level = ""
+        if case["agreement"]:
+            ap = os.path.join(d, case["agreement"])
+            if not os.path.isfile(ap):
+                missing.append("%s  (agreement %s is not beside the case)" % (name, case["agreement"]))
+                continue
+            level, budget = read_agreement_budget(ap)
+            if not budget:
+                missing.append("%s  (%s sets no scorable response verbosity — %s)"
+                               % (name, case["agreement"], level or "no clause found"))
+                continue
+
+        if case["unit"] != "words":
+            missing.append("%s  (unit %r is not scored; only words is)" % (name, case["unit"]))
+            continue
+        if not budget or not first or (not session and not fixture):
             missing.append("%s  (case.yaml names no budget, source.session or source.first_turn)" % name)
             continue
-        if unit != "words":
-            missing.append("%s  (unit %r is not scored; only words is)" % (name, unit))
-            continue
         floor = thin_floor(budget, configured_floor)
+
+        if fixture:
+            # No transcript to drift from — the replies ARE the case rather than a copy of
+            # one. What can still go wrong is the two halves parting company: a reply added
+            # with no turn asking for it, or a turn whose reply was deleted. Unchecked, the
+            # first silently widens the case and the second silently narrows it, which is the
+            # same failure the transcript drift check below exists to catch.
+            rows = fixture_rows(d, first, last)
+            # THE PAIRING CHECK RUNS BEFORE THE BAIL-OUT BELOW. Deleting one reply narrows the
+            # case; deleting all of them narrows it to nothing, and that is the version worth
+            # catching most. Reported after the bail-out it would be invisible in exactly that
+            # case, which reads as "not scored" and exits 0.
+            answered = {t for t, _, _, _ in rows}
+            # Both sides bounded by first..last, the same window fixture_rows applies. A turn
+            # kept outside the scored range is context, not a gap.
+            asked = {t for t in stored if first <= t <= last}
+            if not os.path.isdir(os.path.join(d, "turns")):
+                # One line naming the directory, not one per reply blaming a turn that was
+                # never supposed to exist individually.
+                drift.append("%s  (fixture case has no turns/ directory)" % name)
+            else:
+                for t in sorted(asked | answered):
+                    if t not in asked:
+                        drift.append("%s t%d  (replies/%d.md with no turns/%d.md)" % (name, t, t, t))
+                    elif t not in answered:
+                        drift.append("%s t%d  (turns/%d.md with no replies/%d.md)" % (name, t, t, t))
+            if not rows:
+                missing.append("%s  (no replies/<n>.md in range t%d-t%d)" % (name, first, last))
+                continue
+            pairs = [(t, total) for t, _, total, _ in rows]
+            scored, breach = verdicts(pairs, budget, floor)
+            extra = ["budget from %s: %s, %d words" % (case["agreement"], level, budget)]
+            u, o, th = report("%s  [fixture]" % name, budget, floor, scored, breach, set_on,
+                              extra, standing=first)
+            tot_under += u
+            tot_over += o
+            tot_thin += th
+            continue
 
         root = os.environ.get("RL_ROOT_DIR", "")
         hits = []
@@ -354,4 +552,10 @@ def main():
     raise SystemExit(1 if (drift or (missing and strict)) else 0)
 
 
-main()
+# IMPORTED BY tools/response-length-rank.py, WHICH IS WHY main() IS GUARDED. #262 needed a
+# second consumer of this file's scoring — prose_words, thin_floor, verdicts and read_case —
+# to rank two candidate wordings over many runs. The alternative was a second copy of the
+# counter, the floor and the CUT rule, and the moment they disagree the ranking and the suite
+# score are measuring different things while both call themselves "within budget".
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,6 @@
 ---
 name: autonomy-set
+user-invocable: false
 description: Use when the mode the session is working in is in question — the user says switch to autonomous or back to manual, a handoff or arc-log states a mode, a wave boundary is reached, or an exchange turns from executing work into a conversation. Holds the three states, what each permits, how auto is entered and left, the announcement, and the self-test that ends auto when the session degrades. Not for whether work belongs in the arc; that is arc-intent's.
 camp-reports: [mode-entered, mode-left, mode-resumed, self-test-failed]
 checks: [mode-located, entry-was-explicit, boundary-named, announced]
@@ -105,8 +106,8 @@ Any one signal is enough:
 | A request scoped to something other than the next ordered action | *"give me a 60 word summary"* |
 | Any turn where the user is deciding and you are not executing | Weighing an approach, choosing between options |
 
-**Resuming needs the user to point back at the work** — *"continue"*, *"next issue"*, `/arc-next`,
-or naming the issue. **It does not resume because the conversation stopped.**
+**Resuming needs the user to point back at the work** — *"continue"*, *"next issue"*,
+`/handoff-resume`, or naming the issue. **It does not resume because the conversation stopped.**
 
 ### What is not a conversation
 
@@ -211,7 +212,7 @@ all.
 | `templates/handoff.md` | Carries the *state* and defines what suspended means. That is the semantics of the state, not a rule |
 | The repository's `CLAUDE.md` | One sentence: the mode, its override, and a pointer here |
 
-`tools/verify-autonomy.sh` enforces it as a census — the prohibition appears only in this file,
+`tests/verify-autonomy.sh` enforces it as a census — the prohibition appears only in this file,
 and `CLAUDE.md` states the mode exactly once with its override.
 
 **This reverses a deliberate decision.** Until 2026-09-06 the permission was duplicated beside

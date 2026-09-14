@@ -21,7 +21,7 @@
 # it is not length-specific. A second copy would be a second place for the allow/deny lists to
 # drift.
 #
-# THE PROBE IS NOT A GATE. It bills per turn and the case is 52 turns long, so tools/verify-all.sh
+# THE PROBE IS NOT A GATE. It bills per turn and the case is 52 turns long, so tests/verify-all.sh
 # runs the selftest — fixtures, free, portable — exactly as it does for every other eval suite.
 #
 # THE CORPUS IS LOCAL. Transcripts live under ~/.claude/projects on one machine, so a case whose

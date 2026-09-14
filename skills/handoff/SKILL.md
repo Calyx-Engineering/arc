@@ -1,10 +1,15 @@
 ---
 name: handoff
-description: Use when the user asks for the handoff to be read or written, in any wording — "read HANDOFF.md first", "read HANDOFF.md if it exists", "please read handoff", "ingest handoff", "get up to speed", "get back up to speed", "pick up from where we left off", "where did we leave off", "do these in order", "write the handoff", "give me the prompt for the next chat" — or runs /arc-next. Also fires when the request describes this work without naming it: copying or saving a session transcript to the arc's transcript directory, or being told the handoff was updated elsewhere. Fires when the read is wrapped inside other instructions rather than being the whole message: a read followed by a branch name and three further requests, or a read buried under "run autonomously", is still a handoff turn. Loading this skill does not answer the rest of the turn and does not replace another skill. When the same message also greets Camp or asks where things stand, that is a Camp turn as well — load camp too, on the same turn, rather than choosing between them. Covers the reading order, the staleness checks before acting on a handoff, what it holds, the ordered actions the next session executes, saving the transcript, and what belongs in the committed record instead.
+user-invocable: true
+description: Use when the user asks for the handoff to be read or written, in any wording — "read HANDOFF.md first", "read HANDOFF.md if it exists", "please read handoff", "ingest handoff", "get up to speed", "get back up to speed", "pick up from where we left off", "where did we leave off", "do these in order", "write the handoff", "give me the prompt for the next chat" — or runs /handoff-resume or /handoff-write. Also fires when the request describes this work without naming it: copying or saving a session transcript to the arc's transcript directory, or being told the handoff was updated elsewhere. Fires when the read is wrapped inside other instructions rather than being the whole message: a read followed by a branch name and three further requests, or a read buried under "run autonomously", is still a handoff turn. Loading this skill does not answer the rest of the turn and does not replace another skill. When the same message also greets Camp or asks where things stand, that is a Camp turn as well — load camp too, on the same turn, rather than choosing between them. Covers the reading order, the staleness checks before acting on a handoff, what it holds, the ordered actions the next session executes, saving the transcript, and what belongs in the committed record instead.
 camp-reports: [handoff-written, handoff-read, transcript-saved]
-checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open]
+checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open, mode-row-agrees]
 skips:
-  - graduated-to-record (nothing in the handoff outlives the arc)
+  - handoff-exists (the write path — the handoff is being written, and its absence is what the write fixes)
+  - transcript-saved (the read path — no handoff is being written, and the save is the write's first step)
+  - open-threads-carried (the read path — no handoff is being written)
+  - graduated-to-record (the read path — no handoff is being written; and on a write, when nothing in the handoff outlives the arc)
+  - stale-rows-removed (the read path — no handoff is being written)
   - handoff-age (the write path — no handoff is being acted on)
   - transcripts-newer (the write path — no handoff is being acted on)
   - branch-matches (the write path — no handoff is being acted on)
@@ -12,6 +17,7 @@ skips:
   - commits-accounted (the write path — no handoff is being acted on)
   - open-prs-accounted (the write path — no handoff is being acted on)
   - first-action-issue-open (the write path — no handoff is being acted on)
+  - mode-row-agrees (the write path — no handoff is being acted on)
 ---
 
 # The handoff
@@ -68,7 +74,8 @@ done afterwards — including in another window, or by the user between sessions
 from it. Acting on a stale handoff is worse than having none, because it is specific and
 wrong.
 
-Run these before executing anything. They cost one command each.
+Run these before executing anything. They cost one command each — the last costs one command and
+a comparison against the arc-log, which the reading order has already opened.
 
 | Check | Stale when |
 |---|---|
@@ -79,6 +86,7 @@ Run these before executing anything. They cost one command each.
 | `git log --oneline -5` | The last commit is not one the handoff accounts for |
 | `gh pr list --state open` | An open PR the handoff calls merged, or says nothing about |
 | The issue in *Do these in order* row 1 | `gh issue view <NN> --json state` returns `CLOSED` |
+| **The *Execution mode* row, against the arc-log** | The row is absent, unreadable, or names a mode the arc-log's *How this arc is executed* does not grant |
 
 **Compare modification times, never the handoff's *Transcripts* table.** That table is
 curated — it names the few transcripts worth reading, not every file on disk — so measuring a
@@ -90,8 +98,27 @@ The saved transcript never trips this. The order at a break is fixed — save th
 then write the handoff — so the newest file is always older than `HANDOFF.md` by construction.
 
 **What it cannot see: a session that ran and saved no transcript.** Nothing on disk records
-it. The other six checks are what catch that one — a commit, a branch, or a PR the handoff
+it. The checks against the tree are what catch that one — a commit, a branch, or a PR the handoff
 does not account for.
+
+**The mode row is read with the command the hook reads it with** — the first table row whose
+first cell names the mode, `grep -m1 -iE` over `HANDOFF.md`, then the second cell with emphasis,
+backticks and **every space** removed, lowercased. [`hooks/mode-guard`](../../hooks/mode-guard)
+reads exactly that before every commit, push, PR and merge, so a check that located the row any
+other way could pass while the hook denies on the same file. **A cell that is not exactly
+`manual` or `autonomous` after that is unreadable, and the hook denies on it** — *Autonomous to
+wave 6*, or the template's own *Manual · Autonomous* left unedited, is not a mode. Read it here,
+where it costs a sentence, rather than at a denied commit. The arc-log side costs nothing extra:
+*How this arc is executed* is already row 3 of the reading order above.
+
+**Neither side is authority over the other's subject.** The arc-log is the plan and the handoff
+is this session, so a row that disagrees with it means the handoff is stale — the rule
+[`autonomy-set`](../autonomy-set/SKILL.md) states and
+[m40 §3](../../docs/product-architecture/mechanisms/m40-autonomy-switch.md) specifies. Quote both
+readings and stop, and **until it is settled the mode is manual** — absent or unreadable means
+manual, m40 §3. **The hook cannot settle this one**: it reads `HANDOFF.md` and never the arc-log,
+so a row saying autonomous is allowed by it whether the plan granted it or not. That gap is the
+reason this check is in the read path rather than left to the guard.
 
 **If any check disagrees, stop and report the specific contradiction** — what the handoff
 says, what the repository says. Do not reconcile it silently and do not proceed on a guess.
@@ -256,26 +283,25 @@ not the current state.
 
 A prompt that restates where we are creates a second copy of the state, and the two drift
 immediately — the next session then has two sources disagreeing and no way to tell which is
-current.
+current. `/handoff-resume` already reads `HANDOFF.md` first and executes *Do these in order*
+on its own, so the branch and the next step do not need restating either — they are rows in
+the file the command is about to open.
 
-Three lines, and nothing that is already in the handoff:
+The prompt is the command alone:
 
 ```text
-Read HANDOFF.md first, then do the steps in "Do these in order".
-Branch is arc/03-camp-issue-61-handoff-prompt.
-Next is #61 — the handoff's ordered actions and transcript save.
+/handoff-resume
 ```
 
 | The prompt carries | The prompt never carries |
 |---|---|
-| *Read `HANDOFF.md` first* | The tree, the status table, the open threads |
-| The branch | Load-bearing decisions |
-| The next step, by issue number | A summary of what was just finished |
-| Anything **not** in the handoff — a standing approval, an instruction for how to work | Anything the handoff already says |
+| `/handoff-resume` | The tree, the status table, the open threads |
+| | The branch, or the next step — rows in the handoff, not the prompt |
+| Anything **not** in the handoff — a standing approval, an instruction for how to work, appended on its own line | A summary of what was just finished |
 
 **The last row is the only reason a prompt is more than one line.** An approval given in
 chat, or an instruction about how the next session should run, has no home in the handoff —
-so it goes in the prompt. Everything else has a home, and belongs there.
+so it goes in the prompt, after the command. Everything else has a home, and belongs there.
 
 **Give the prompt as a copyable block**, not as prose describing what to paste.
 
@@ -320,10 +346,14 @@ The same rule covers any file git cannot restore: tracked files need no copy, gi
 The store is gitignored too. It is **recovery, not record** — nothing reads it as history,
 nothing prunes it, and getting a file back is a plain `cp` from the timestamped directory.
 
-**Add `/HANDOFF.md` *and* `.arc-work/` to `.gitignore` when starting an arc in a new repo.**
-It is the one setup step this skill needs, and it is **two entries, not one**: `.arc-work/archive/`
-is where the copies above land, so a repo that ignores only the handoff commits a copy of every
-handoff the arc ever had straight into the record — the exact opposite of what the store is for.
+**Add `/HANDOFF.md`, `.arc-work/` *and* `/.claude/arc/log.md` to `.gitignore` when starting an
+arc in a new repo.** It is the one setup step this skill needs, and it is **three entries, not
+one**. `.arc-work/archive/` is where the copies above land, so a repo that ignores only the
+handoff commits a copy of every handoff the arc ever had straight into the record — the exact
+opposite of what the store is for. `/.claude/arc/log.md` is the event log every hook firing
+appends to: tracked, it leaves the tree dirty at every moment and one `git add -u` sweeps
+thousands of machine-written lines into a review diff. Its record is committed by rotation at
+arc close instead, into `docs/arc-log/events/` — #273.
 
 Anchor the handoff entry at the root. A bare `HANDOFF.md` also matches `templates/handoff.md`,
 which is a shipped artifact and must be committed.
@@ -371,3 +401,18 @@ these in order* fails in exactly the way those sections exist to prevent.
 document that says when the state it describes was true, and the next session reads it to
 decide whether to trust the rest. A date alone cannot distinguish a handoff written an hour
 ago from one written before a full day's work in another window.
+
+---
+
+## Which path each check runs on
+
+**Two paths, one `checks:` declaration.** A check that runs on only one of them has to say
+which, or both reports are wrong at once — a `handoff-read` claiming the transcript was saved,
+and a `handoff-written` claiming the tree was checked against the handoff. So every name in
+`checks:` does one of two things and never both: it carries a `skips:` entry whose condition
+**opens** with *the read path* or *the write path* — the one it does not run on — or it is named
+on the both-path line below.
+
+**Both-path checks:** `ordered-actions-present` — the ordered actions are read before they are
+executed and required when the handoff is written, so it skips on neither. The set is the names
+on that line.

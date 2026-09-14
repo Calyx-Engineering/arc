@@ -132,14 +132,6 @@ selftest.
 `mode-guard` read `HANDOFF.md` before the commit and allowed it. The worktree's row says
 **Autonomous** until #159 and #164 merge.
 
-## Spawned
-
-| Finding | Where it routes |
-| --- | --- |
-| **The vocabulary has no term for an instrument reading that is not a measurement.** `measured` collapses *a number the bench produced* and *a number a fooled instrument produced* — and that distinction is the whole of the 2026-08-28 incident. `pr-68-gain-sweep-tool.md` records it (*"the scope reported 2.473 Vpp where the tone was 1.456 Vpp"*); the candidate region grades `ONESIDED` because both readings are `measured` to the matcher. The whole file grades `SILENT`, on an unrelated pairing further down | Needs an issue. It is why that document could not become the box-5 case |
-| **The two vocabularies do not reconcile** — see *Unexpected* | Needs an issue |
-| **Four scorers duplicate fence-tracking and case-reading** — also raised on #159 | Needs an issue |
-
 ## Retrospective
 
 **The instrument can see whether a source is named. It cannot see whether the source is true.**
@@ -154,5 +146,27 @@ not the user's. The 2026-08-28 instance is the right shape. It was argued out in
 the one place it is written down is `pr-68-gain-sweep-tool.md`, which was cut as a candidate
 case and dropped because the vocabulary cannot tell the fooled instrument's number from the
 bench's — both read as `measured`, so the region grades `ONESIDED`. It is a selftest fixture
-instead. Recorded in *Spawned*, and the box says so rather than a case being invented to close
+instead. Recorded in *Findings* below, and the box says so rather than a case being invented to close
 it.
+
+## Findings
+
+Moved verbatim from #164's body under [#271](https://github.com/Calyx-Engineering/arc/issues/271).
+
+| Finding | Where it routes |
+|---|---|
+| **The vocabulary has no term for an instrument reading that is not a measurement.** `measured` collapses *a number the bench produced* and *a number a fooled instrument produced* — and that distinction is the whole of the 2026-08-28 incident | Needs an issue. It is why the unticked box above could not be closed |
+| **The vocabulary in the field does not match the one specified.** `rp2040-pin-allocation.md` — the user's own repair of this defect — uses `schematic · datasheet · firmware · drawing · report · thread · photo · conversation`. Four of those have no home in the issue's list (`firmware`, `drawing`, `report`, `thread`) and three of the issue's are absent from his (`measured`, `vendor`, `inferred`) | Needs an issue. The skills ship the issue's list and the rule for extending it; reconciling the two is a decision, not an edit |
+| **The conflict column cannot tell whether two sources are about the same thing.** Incidental co-occurrence plus an ordinary *but* is reported as a conflict, and `RESOLVED` is the scored bucket. Held down by scoping to the case's excerpt, not removed | Recorded in the grader |
+| **A sourced table with a totals row scores `NONE`**, because the inline path requires every row | Recorded in the grader |
+| **The grader cannot check that a source named is the true one** | Recorded in the grader. Not solvable by this instrument |
+
+The three below were recorded here as the work happened, and lifted out of this dev-log's own
+`## Spawned` section under #271. The first two are the same findings the body carried, in more
+detail; the third is not in the body at all.
+
+| Finding | Where it routes |
+| --- | --- |
+| **The vocabulary has no term for an instrument reading that is not a measurement.** `measured` collapses *a number the bench produced* and *a number a fooled instrument produced* — and that distinction is the whole of the 2026-08-28 incident. `pr-68-gain-sweep-tool.md` records it (*"the scope reported 2.473 Vpp where the tone was 1.456 Vpp"*); the candidate region grades `ONESIDED` because both readings are `measured` to the matcher. The whole file grades `SILENT`, on an unrelated pairing further down | Needs an issue. It is why that document could not become the box-5 case |
+| **The two vocabularies do not reconcile** — see *Unexpected* | Needs an issue |
+| **Four scorers duplicate fence-tracking and case-reading** — also raised on #159 | Needs an issue |

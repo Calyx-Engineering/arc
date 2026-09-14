@@ -158,7 +158,7 @@ Not continuously — TimeScope already learned that lesson for dev-logs
 (*"Continuous per-turn dev-log churn is narration by another name"*). Write at
 checkpoints: issue close, branch change, session end, and before any handoff.
 
-### The entry point — `/arc-next`
+### The entry points — `/handoff-resume` and `/handoff-write`
 
 A document-as-spine still needs something to open it. Left to a pasted prompt, the read
 path is only as reliable as what the user types while tired at the end of a long stretch.
@@ -171,8 +171,10 @@ then execute its ordered actions*. So it is a command rather than a message.
 
 | | |
 |---|---|
-| **`commands/arc-next.md`** | The typed opening. It invokes `skills/handoff`, which reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
-| **The loop is one action** | New session, `/arc-next`. Nothing to copy, nothing to keep straight |
+| **`commands/handoff-resume.md`** | The typed opening into the read path. It invokes `skills/handoff`, which reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
+| **`commands/handoff-write.md`** | The typed opening into the write path — save the transcript, write or update `HANDOFF.md`, print the prompt for the next chat |
+| **Both share the skill's stem** | Typing `/hand` shows both, rather than a name that has to be remembered whole |
+| **The loop is one action** | New session, `/handoff-resume`. Nothing to copy, nothing to keep straight |
 | **Two stated failure modes** | No handoff — stop and say so, because guessing the arc's state is the failure this mechanism exists to prevent. No ordered actions — report what the handoff does carry and ask, rather than filling the gap by inference |
 
 **A pasted prompt remains valid** and is still the way to carry something that has no home in
@@ -190,15 +192,22 @@ another window, or by the user between sessions — is absent from it, and actin
 handoff is worse than having none, because it is specific and wrong.
 
 So the read path checks it before executing anything, against the branch, the tree, the
-commit log, open PRs, the age of the handoff, the state of its first ordered action, and
-whether a session ran after it was written. **A disagreement stops the run and is reported**
-— never reconciled silently, and never guessed past. `skills/handoff` carries the current
+commit log, open PRs, the age of the handoff, the state of its first ordered action, whether a
+session ran after it was written, and the *Execution mode* row against the mode the arc-log
+states — #268. **A disagreement stops the run and is reported** — never reconciled silently,
+and never guessed past. `skills/handoff` carries the current
 list, because the command is one opening and the skill's own wordings are the other; a check
 that lived only in the command was one a skill-only cold start never ran — #208.
 
+**The mode row meets the first constraint below on one half only.** Absence is one command with
+one answer; a disagreement is a comparison against a document the reading order has already
+opened. It is carried because two artifacts — `skills/autonomy-set` and
+[m40 §3](m40-autonomy-switch.md) — stated the read path caught it while nothing did, and because
+an unsettled mode is manual, which halts nothing that was not already halted.
+
 | A check must | Because |
 |---|---|
-| **Cost one command, with one mechanical answer** | A check performed by judgement is one that gets performed differently each time, and the response here is to halt a run |
+| **Cost one command, with one mechanical answer** | A check performed by judgement is one that gets performed differently each time, and the response here is to halt a run. **One admitted exception**, above: the mode row's absence is mechanical and its disagreement with the arc-log is a comparison. It is carried because the alternative was two artifacts stating a check that did not exist — and it halts nothing on its own, since an unsettled mode is manual, which is already the default |
 | **Compare two things that are both maintained the same way** | Measuring a **curated** artifact against a **complete** one reports a disagreement that is not there. Observed: the transcript check compared the handoff's curated *Transcripts* table against the whole directory — twelve files, four listed — and so tripped on every cold start once the arc had run more sessions than the table named. It compares modification times instead |
 | **Say what it cannot see** | The transcript check cannot see a session that saved no transcript. Naming the blind spot is what stops the next reader re-deriving it, and what shows which other check covers it |
 
@@ -276,7 +285,8 @@ than duplicate its ordering — duplicated order drifts.
 ## Related
 
 - [`handoff`](../../../skills/handoff/SKILL.md) — **the skill that implements this.** The read path, the write, the ordered actions, and the transcript save
-- [`commands/arc-next.md`](../../../commands/arc-next.md) — the typed entry point. It holds no rule of its own; the skill carries the staleness checks that run before a handoff is acted on
+- [`commands/handoff-resume.md`](../../../commands/handoff-resume.md) — the typed read-path entry point. It holds no rule of its own; the skill carries the staleness checks that run before a handoff is acted on
+- [`commands/handoff-write.md`](../../../commands/handoff-write.md) — the typed write-path entry point. Same rule: no logic of its own, the skill carries it
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 — **the in-session case of this argument.** State outside the context does not degrade with context length; this mechanism applies that between sessions, that check applies it within one
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 7 — **what decides that a handoff is due.** This mechanism says what a handoff holds and how it is read; that check watches for the session having degraded far enough to need one, while there is still budget to write it well. [#154](https://github.com/Calyx-Engineering/arc/issues/154)

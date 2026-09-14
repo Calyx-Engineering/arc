@@ -71,7 +71,7 @@ so a standing finding does not turn the whole runner red.
 
 ## Retrospective
 
-The gate is the deliverable, not the sweep. `tools/verify-labels.sh` carries the mapping as
+The gate is the deliverable, not the sweep. `tests/verify-labels.sh` carries the mapping as
 `MAP`, sweeps every open issue, and checks the label set itself; `skills/issue-write` carries
 the same table in prose and says outright that the two are one fact.
 

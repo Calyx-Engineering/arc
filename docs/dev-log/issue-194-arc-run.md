@@ -47,7 +47,7 @@ Now `tools/set-mode.py`, a real file rather than a heredoc, **with a read-back**
 
 ## Verification
 
-`bash tools/verify-all.sh` — 11 gates, all clean. `arc-loop.sh --dry-run` selects [#155](https://github.com/Calyx-Engineering/arc/issues/155) for Fire and leaves the mode row untouched.
+`bash tests/verify-all.sh` — 11 gates, all clean. `arc-loop.sh --dry-run` selects [#155](https://github.com/Calyx-Engineering/arc/issues/155) for Fire and leaves the mode row untouched.
 
 **End to end, for the first time**, against the real `HANDOFF.md`:
 
@@ -65,6 +65,6 @@ The arc derivation was tested on five branch shapes — the arc branch, an issue
 
 **The driver has still never dispatched a real run**, and `/arc-run` has never been invoked — it is a command file in the working tree, not yet in the installed plugin. A fresh chat sees it only after this merges, `tools/plugin-reload.sh` runs, and the session restarts. **The first run should pass `--max 1`.**
 
-**`set-mode.py` has no selftest.** Its read-back is the protection, and it is the thing that just failed silently. A case directory belongs in `tools/verify-all.sh` and is not here.
+**`set-mode.py` has no selftest.** Its read-back is the protection, and it is the thing that just failed silently. A case directory belongs in `tests/verify-all.sh` and is not here.
 
 [`execution-process.md`](../arc-work/04-dogfood/execution-process.md) §7 is the full list, and the arc-log's close checklist now says the process graduates on that section being shorter — not on the document existing.

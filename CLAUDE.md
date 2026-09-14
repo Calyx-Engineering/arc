@@ -23,9 +23,11 @@ and denies in manual. **You may set that row to manual and never to autonomous**
 
 These matter more than any finding in the documents.
 
+**How long a reply may be is not here.** It is [the operating agreement](.claude/arc/camp/operating-agreement.md)'s
+section 1, *Response verbosity*, so that it travels to every repository Arc is installed in.
+
 | | |
 |---|---|
-| **He reads slowly and deliberately** | Length costs him more than it costs most readers |
 | **Edit in place, never rewrite a file** | The diff is his review surface. A rewrite loses his in-progress comments |
 | **Wording fixes go in immediately** | Structural changes are discussed first. Never stop to ask about word choice |
 | **Verify before asserting** | Several documented beliefs have been disproved by direct test |
@@ -129,7 +131,7 @@ tested.
 
 | | |
 |---|---|
-| **Say the kill switch in chat before proposing any hook change** | Every hook opens with `[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0`. A README line is a rule with no trigger |
+| **Say the kill switch in chat before proposing any hook change** | `bash hooks/hooks-off.sh <hook> 30` — per hook, this repository only, expiring. A README line is a rule with no trigger |
 | **Paste real `tools/verify-hook.sh` output before asking for approval** | Pass case, deny case, malformed case |
 | **One hook per commit** | Verify output in the commit body, so `git revert` is surgical |
 | **Never edited autonomously** | `settings.json` outside the plugin's hooks block, the verify script, the hook template, any `SessionStart` hook |
@@ -137,7 +139,7 @@ tested.
 Hooks **fail open** — on unexpected failure, exit 0; deny only the specific condition. Write from
 the skeleton so the kill switch cannot be omitted.
 
-**`tools/verify-all.sh` runs every gate this repo has.** `--list` prints what it cannot cover:
+**`tests/verify-all.sh` runs every gate this repo has.** `--list` prints what it cannot cover:
 no hook fires in a live session here and no skill is invoked, so a green run is not a claim
 about either.
 

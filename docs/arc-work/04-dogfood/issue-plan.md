@@ -84,7 +84,7 @@ flowchart LR
 | # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
 | Loop-1 | [#138](https://github.com/Calyx-Engineering/arc/issues/138) an approved merge cannot run | **You guide this.** You solved it in ROADZ and it left no artifact | The route in `CLAUDE.md` and `skills/autonomy-set` | A merge runs from a standing grant, twice, in one session |
-| Loop-2 | [#149](https://github.com/Calyx-Engineering/arc/issues/149) an eval suite that tests whether a skill fires | No `evals/` exists. Establish a baseline firing rate per skill | `evals/`, the manifest key, `--threshold` in `tools/verify-all.sh` | The suite reports a per-skill score and fails below threshold |
+| Loop-2 | [#149](https://github.com/Calyx-Engineering/arc/issues/149) an eval suite that tests whether a skill fires | No `evals/` exists. Establish a baseline firing rate per skill | `evals/`, the manifest key, `--threshold` in `tests/verify-all.sh` | The suite reports a per-skill score and fails below threshold |
 | Loop-3 | [#141](https://github.com/Calyx-Engineering/arc/issues/141) the miner scans repositories it was not given | Scope follows a shared prefix, not the briefed set | Anchor to briefed slugs; report what was skipped | A briefed pair is read exactly, skipped directories named |
 
 **Done when:** a merge lands without a per-merge ask, and `verify-all.sh` includes a
@@ -234,7 +234,7 @@ flowchart LR
 
 | # | Issue | Fix | Done when |
 |---|---|---|---|
-| Upkeep-1 | [#143](https://github.com/Calyx-Engineering/arc/issues/143) verify the mechanism table against its specs | `tools/verify-mechanisms.sh` | Fixture cases, in `verify-hook.sh`'s shape |
+| Upkeep-1 | [#143](https://github.com/Calyx-Engineering/arc/issues/143) verify the mechanism table against its specs | `tests/verify-mechanisms.sh` | Fixture cases, in `verify-hook.sh`'s shape |
 | Upkeep-2 | [#142](https://github.com/Calyx-Engineering/arc/issues/142) delete the local skill copies | Unblocked — [#132](https://github.com/Calyx-Engineering/arc/issues/132) is closed | `verify-all.sh` still clean; the artifact-table gate survives |
 | Upkeep-3 | [#167](https://github.com/Calyx-Engineering/arc/issues/167) the arc-work path assumes a flat slug | A rule, not a per-repo guess | A module-shaped slug resolves |
 | Upkeep-4 | [#168](https://github.com/Calyx-Engineering/arc/issues/168) the dev-log template calls itself a decision log | Collides with `ddr/` | Wording checked |

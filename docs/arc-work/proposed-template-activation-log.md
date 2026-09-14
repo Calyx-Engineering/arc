@@ -19,7 +19,7 @@ mistake in every hook written after it — which is the same reasoning that excl
 that checks hooks. The five registered hooks were changed and verified one at a time; the
 template cannot be verified that way, because nothing runs it.
 
-`tools/verify-activation-log.sh` asserts that every hook in `hooks/` other than `TEMPLATE`
+`tests/verify-activation-log.sh` asserts that every hook in `hooks/` other than `TEMPLATE`
 sources the library, so a new hook copied from the template and registered fails the gate
 rather than logging nothing in silence. `TEMPLATE` is excluded because nothing runs it — which
 is exactly why the boilerplate has to be in it. That is the
@@ -55,6 +55,12 @@ And one line in the header block, above the `camp-reports:` declaration it depen
 # named there and never marked is written to the entry as `not reached`.
 ```
 
+**Except on a firing that reaches nothing.** Where no declared check ran and the outcome is
+`ok`, the entry carries no `skipped:` line at all — neither the unreached names nor any
+`arc_log_skip` reason, both of which restate the `outcome:` line there.
+[#238](https://github.com/Calyx-Engineering/arc/issues/238); the rule is
+[`templates/event-log.md`](../../templates/event-log.md)'s.
+
 ---
 
 ## What a hook then calls
@@ -76,7 +82,7 @@ header comment.
 
 | Case | Expected |
 |---|---|
-| A hook copied from the changed template, with a case directory | `bash tools/verify-activation-log.sh <hook>` passes without the author writing a log line |
+| A hook copied from the changed template, with a case directory | `bash tests/verify-activation-log.sh <hook>` passes without the author writing a log line |
 | The same hook with the sourcing line deleted | The gate fails, naming the hook |
 | `bash tools/verify-hook.sh` on any existing hook | Unchanged — the template is not executed by it |
 

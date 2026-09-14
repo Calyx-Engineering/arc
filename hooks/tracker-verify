@@ -12,17 +12,22 @@
 # agreed" is skills/issue-write's job; this catches the mechanical half.
 #
 # camp-reports: issue-write, issue-close, pr-write, pr-merge, pr-ready
-# checks: placeholder-scan, date-sanity, milestone, arc-prefix, closing-keyword, arc-merge-keyword, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base
-# skips: every check (the payload names a fixture key whose value could not be parsed), placeholder-scan (the body could not be read), date-sanity (same), milestone (not a PR), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), close-link (not a `gh issue close`, the command names no issue number, `tools/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tools/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tools/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tools/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read)
+# checks: placeholder-scan, date-sanity, spawned-heading, milestone, arc-prefix, closing-keyword, arc-merge-keyword, merge-close, close-link, issue-boxes, spawn-parent, issue-title-length, issue-title-list, issue-title-clause, issue-title-scope, issue-scope-type, pr-base, commit-keyword
+# skips: every check (the payload names a fixture key whose value could not be parsed), every check of one write arm (`gh` is not on PATH; the command names no issue number; the command names no PR and none could be resolved from its output or the current branch; the merge's output names no merged PR; the PR, or the issue's body, could not be read), placeholder-scan (the body could not be read), date-sanity (same), spawned-heading (not a `gh issue create` or `gh issue edit`, or the body could not be read), milestone (not a PR, or the PR's milestone field could not be read), arc-prefix (the base is not an arc branch, or its name carries no number), closing-keyword (not a PR, or the body carries no closing keyword), arc-merge-keyword (not a `gh pr merge`, or the base is not the trunk), merge-close (not a `gh pr merge`, the base or the default branch could not be read, the base IS the default branch, the base IS the trunk, the head branch names no issue, the issue state was not supplied, `gh` is not on PATH, or the issue's state could not be read), close-link (not a `gh issue close`, the command names no issue number, `tests/verify-linked-branch.sh` is missing, `gh` is not on PATH, or the link read could not be made), issue-boxes (not a `gh pr ready`, `tests/verify-issue-boxes.sh` is missing, `gh` is not on PATH, the command names no PR and none could be read, or the box read could not be made), spawn-parent (not a `gh issue create` or a `gh pr create`, an issue create whose branch names no issue or PR, or a PR that closes an issue), issue-title-length (not an issue, or tests/verify-tracker-body.sh is missing or failed), issue-title-list (same), issue-title-clause (same), issue-title-scope (same), issue-scope-type (no body to read, or tests/verify-tracker-body.sh is missing), pr-base (HEAD is not an arc issue branch, or the base or the arc branch could not be read), commit-keyword (not a `git commit`, or the command names no `-m`/`--message`)
 #
-# Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, and `gh pr ready`.
+# Fires on `gh issue create|edit|close`, `gh pr create|edit`, `gh pr merge`, `gh pr ready`, and
+# `git commit`. The subcommand and the verb are read as WORDS, so a flag between `gh` and the
+# subcommand — `gh -R owner/repo issue close 163` — is an ordinary invocation rather than an
+# invisible one.
 
 # ---- kill switch ----------------------------------------------------------------
-# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+# `bash hooks/hooks-off.sh tracker-verify 30` from any terminal in this repository mutes this one
+# hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 
 # ---- the activation log ---------------------------------------------------------
-# Sourced before anything can exit. This hook has fourteen exit paths and fifteen declared
+# Sourced before anything can exit. This hook has six top-level exit paths and seventeen declared
 # checks, most of which do not run on any one invocation — so a declared check the run never
 # marked is written to the entry's `skipped:` line as `not reached`, rather than being
 # absent from the record. m44.
@@ -35,17 +40,32 @@ set +e
 
 INPUT="$(cat 2>/dev/null)"
 
-field() {
-  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
-}
+# The three whitespace escapes `json_string` resolves. `printf -v` is a builtin, so the
+# resolver below forks nothing — and a raw tab or carriage return sitting in this file would
+# not survive an editor or a line-ending normalisation.
+printf -v _ARC_NL  '\n'
+printf -v _ARC_TAB '\t'
+printf -v _ARC_CR  '\r'
 
-# Fixture values, and never `field` for them, for two reasons. `field` splits on commas, so a
-# title or a body carrying one is truncated at it — and when its `sed` cannot parse a line it
-# prints that line unchanged, so a payload cut off mid-value hands back the key and its quotes
-# as if they were the value, which then lands verbatim in a finding. Yielding nothing is the
-# honest answer, and the one the malformed guard below can act on.
+
+# Fixture values, and never a `tr ',' '\n' | grep | sed` read for them — which is what the
+# `field` helper here used to be, for two reasons. It split the payload on commas, so a title
+# or a body carrying one was truncated at it; and when its `sed` could not parse a line it
+# printed that line unchanged, so a payload cut off mid-value handed back the key and its
+# quotes as if they were the value, which then landed verbatim in a finding. Yielding nothing
+# is the honest answer, and the one the malformed guard below can act on.
 #
-# Parameter expansion, no subprocess. There are six of these, and a `printf | sed` each would
+# `json_string` below reads the `command` and the `cwd` the same way, for the same reason, and
+# `field` is gone: it was the last comma-split read in the file. #230.
+#
+# THE TWO READERS ARE NOT THE SAME, DELIBERATELY. `json_string` resolves the escapes `\"`, `\\`,
+# `\n`, `\t` and `\r`; this one resolves nothing and stops at the first `"`, escaped or not. A
+# fixture value is a CASE payload, and `scan_spawned_heading` depends on the two-character `\n`
+# surviving — see the
+# comment there. Teaching this one to resolve escapes would rewrite a live body's `	` and move
+# a fence marker, which is a change to what the scanners see rather than to how they are fed.
+#
+# Parameter expansion, no subprocess. There are ten of these, and a `printf | sed` each would
 # cost two processes on every Bash tool call in the session — more than the two the whole hook
 # spent on fixtures before this work.
 fixture() {
@@ -68,44 +88,529 @@ report() {
 
 # ---- hook body ------------------------------------------------------------------
 
-CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/"$//')"
+# A JSON string value, by key. Two callers: the `command` this hook dispatches on, and the
+# `cwd` it reads that command in.
+#
+# NOT `tr ',' '\n' | grep | sed`, which is what this was. That split the payload on commas and
+# kept the first fragment carrying `"command"`, so an ordinary invocation with a comma in it —
+# `gh issue close --comment "done, merged" 163` — arrived here truncated at the comma. Every
+# check below then ran against half a command, or, where the half no longer named the
+# subcommand, against nothing at all, silently. #230.
+#
+# A JSON string ends at the first quote that is NOT escaped, so the scan counts the
+# backslashes in front of each quote rather than stopping at the first one. `\"` and `\\` are
+# then resolved, because the resolved form is what ran and what the arms below match on.
+#
+# NO CLOSING QUOTE MEANS THE PAYLOAD WAS CUT OFF MID-VALUE. Yield nothing, never the rest —
+# `fixture()`'s rule above, for `fixture()`'s reason. Half a command is the shape this hook
+# exists to catch, not a command to run checks against.
+#
+# Parameter expansion, no subprocess. The old form cost four processes on every Bash tool call
+# in the session.
+json_string() {
+  local rest raw out chunk bs key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+
+  raw=""
+  while :; do
+    case "$rest" in *'"'*) ;; *) return 0 ;; esac
+    chunk="${rest%%\"*}"
+    rest="${rest#"$chunk"\"}"
+    # The backslash run immediately before the quote. An odd count escapes it.
+    bs="${chunk##*[!\\]}"
+    if [ $(( ${#bs} % 2 )) -eq 0 ]; then raw="$raw$chunk"; break; fi
+    raw="$raw$chunk\""
+  done
+
+  out=""
+  while [ -n "$raw" ]; do
+    case "$raw" in *'\'*) ;; *) out="$out$raw"; break ;; esac
+    chunk="${raw%%\\*}"
+    out="$out$chunk"
+    raw="${raw#"$chunk"\\}"
+    case "$raw" in
+      '"'*) out="$out\"";     raw="${raw#?}" ;;
+      '\'*) out="$out\\";     raw="${raw#?}" ;;
+      # A LINE BREAK IS WHITESPACE AND MUST ARRIVE AS WHITESPACE. `read_invocation` splits the
+      # command into words, so a `\n` left as the two characters `\` and `n` glues the token
+      # before a line break to the first word after it — `cd /repo\ngh issue close 163` yields
+      # the token `/repo\ngh`, which is not `gh`, and the whole invocation is dropped. Every
+      # multi-line command, and every heredoc-carrying `gh issue create`, is that shape.
+      n*)   out="$out$_ARC_NL";  raw="${raw#?}" ;;
+      t*)   out="$out$_ARC_TAB"; raw="${raw#?}" ;;
+      r*)   out="$out$_ARC_CR";  raw="${raw#?}" ;;
+      # Not an escape this hook resolves — a shell escape, a `\u`. Left as it is.
+      *)    out="$out\\" ;;
+    esac
+  done
+  printf '%s' "$out"
+  return 0
+}
+
+CMD="$(json_string command)"
 if [ -z "$CMD" ]; then
   arc_log_outcome ok "the payload names no command"
   exit 0
 fi
 
-# Only tracker writes. A read is not a write, and `gh pr view` is what this hook itself uses.
+# ---- which invocation this is ----------------------------------------------------
+# WORDS, NEVER A SUBSTRING. The dispatch matched the literal string `gh issue close`, so an
+# ordinary invocation carrying an inherited flag between `gh` and the subcommand —
+# `gh -R owner/repo issue close 163`, which is how a merge is run from another worktree —
+# matched no arm and reached no check. Silently, on every arm. #230.
+#
+# QUOTED SPANS GO FIRST, so a `--body` or a commit message that mentions an invocation cannot
+# name an arm: `git commit -m "ran gh issue close 42"` is not a close. That strip used to live
+# in `check_close` and `check_pr_ready`, one copy each.
+#
+# THE VERB IS A KNOWN WORD, not "the first token that is not a flag". A flag between the
+# SUBCOMMAND and the verb — `gh issue -R owner/repo close 163`, equally ordinary and equally
+# valid — puts the flag's VALUE where the verb should be, so a first-non-flag rule reads
+# `owner/repo` as the verb and drops the invocation exactly as the substring match did. Two
+# positions, one defect; fixing one and leaving the other is how #17 shipped.
+#
+# THE FIRST INVOCATION THAT IS AN ARM, not the first `gh`. A read chained ahead of a write —
+# `gh pr view 200 && gh issue close 163` — must not turn the write's checks off.
+#
+#   $1  the command   $2  optional: the arm to look for, or `write` for any of the three that
+#                     carry a body. Absent, the first arm of any kind wins. A chained command
+#                     names more than one, and the close and the ready are asked for by name
+#                     so that a chain reaches both of them. Running EVERY arm of a chain, with
+#                     a number resolved per arm, is #231.
+#
+# `GH_ARGS` is this invocation's arguments — after the verb, quoted spans already gone, cut at
+# the next chain operator. It is the one place a number is looked for, so the arms that need
+# one cannot disagree about where it is, and cannot read a later command's number.
+GH_SUB=""
+GH_VERB=""
+GH_ARGS=""
+ARM=""
+
+# Removes every span of `$1` and its partner from the caller's `stripped`, in place. Bash scopes
+# dynamically, so this writes the variable `read_invocation` declared `local`.
+#
+# A span may contain NEWLINES, which is the whole reason this is not a `sed`. An unbalanced
+# quote drops everything after it: with no closing quote the rest of the command is inside the
+# string, and reading an arm out of it is exactly the mistake this strip exists to prevent.
+strip_quoted() {
+  local q="$1" head out=""
+  while :; do
+    case "$stripped" in *"$q"*) ;; *) break ;; esac
+    head="${stripped%%"$q"*}"
+    stripped="${stripped#*"$q"}"
+    out="$out$head"
+    case "$stripped" in
+      *"$q"*) stripped="${stripped#*"$q"}" ;;
+      *) stripped=""; break ;;
+    esac
+  done
+  stripped="$out$stripped"
+  return 0
+}
+
+read_invocation() {
+  local stripped tok saw_gh=0 sub="" verb="" collect=0 want="${2:-}" skip="${3:-0}" seen=0
+  GH_SUB=""; GH_VERB=""; GH_ARGS=""; ARM=""
+
+  # Quoted spans out, then every shell chain character becomes ONE TOKEN of its own. A marker
+  # rather than a cut, because an operator is routinely glued to what it separates —
+  # `gh pr merge 200&&gh issue close 163` — and a cut there loses the invocation after it while
+  # a marker only ends the one before it. `&&` yielding two markers costs nothing: both end the
+  # invocation before them.
+  #
+  # PARAMETER EXPANSION, AND THE QUOTE STRIP HAS TO SPAN LINES. This was one `sed`, and `sed`
+  # is line-based: once `json_string` started resolving `\n` into a real newline, a quoted span
+  # containing one stopped being stripped, so a multi-line `--body` or commit message named an
+  # arm and sent the hook to the network about a number inside it —
+  # `git commit -m "fix: x<newline><newline>Verified:<newline>gh issue close 42"` reported a
+  # missing link on issue #42. That is the shape the comment below calls out as the reason the
+  # strip exists at all, and it is the shape a heredoc-carrying write always has.
+  #
+  # A fork here is also paid four times per firing, once per call.
+  stripped="$1"
+  strip_quoted '"'
+  strip_quoted "'"
+  stripped="${stripped//;/ __ARC_CHAIN__ }"
+  stripped="${stripped//&/ __ARC_CHAIN__ }"
+  stripped="${stripped//|/ __ARC_CHAIN__ }"
+
+  # `set -f` because the split is deliberate and the glob is not: a `*` in a flag value would
+  # otherwise expand against whatever directory the session happens to be in.
+  set -f
+  for tok in $stripped; do
+    # ---- this invocation's arguments, once the verb has been found -------------------
+    # ACCUMULATED FROM THE TOKENS, never cut out of the string. A `${stripped#*$GH_SUB
+    # $GH_VERB}` cannot match when a flag sits between the two — `gh issue -R o/r close 163` —
+    # and a `#` that matches nothing hands back the WHOLE command, so the arm then reads a
+    # number belonging to something else entirely and goes to the network about it.
+    if [ "$collect" = 1 ]; then
+      case "$tok" in
+        __ARC_CHAIN__|gh|*/gh|gh.exe|*/gh.exe) break ;;
+      esac
+      GH_ARGS="$GH_ARGS $tok"
+      continue
+    fi
+
+    # ---- looking for the invocation --------------------------------------------------
+    case "$tok" in
+      gh|*/gh|gh.exe|*/gh.exe) saw_gh=1; sub=""; continue ;;
+      # A chain operator ends whatever was being looked at, verb or no verb. Without it
+      # `gh pr diff 200 && echo merge` reads `merge` as the diff's verb.
+      __ARC_CHAIN__) saw_gh=0; sub=""; continue ;;
+    esac
+    [ "$saw_gh" = 1 ] || continue
+    if [ -z "$sub" ]; then
+      case "$tok" in issue|pr) sub="$tok" ;; esac
+      continue
+    fi
+    # `gh issue` and `gh pr`'s verbs, the reads included. Anything else — a flag, a flag's
+    # value, a path — is not the verb, and the scan keeps looking inside this same invocation:
+    # a valued flag between the subcommand and the verb puts its value where the verb belongs.
+    case "$tok" in
+      create|edit|close|reopen|merge|ready|view|list|comment|delete|develop|lock|unlock|pin|unpin|transfer|status|checkout|diff|review|checks|update-branch) verb="$tok" ;;
+      *) continue ;;
+    esac
+    case "$sub $verb" in
+      "issue create"|"issue edit") ARM=issue-write ;;
+      "issue close")               ARM=issue-close ;;
+      "pr create"|"pr edit")       ARM=pr-write ;;
+      "pr merge")                  ARM=pr-merge ;;
+      # `gh pr ready` is the moment a draft stops being allowed to be incomplete, and the only
+      # moment the checklist question has a defined answer. At `gh pr create` a draft is
+      # expected to have open boxes, so asking there would fire on every correctly-opened PR.
+      "pr ready")                  ARM=pr-ready ;;
+      *)                           ARM="" ;;
+    esac
+    if [ -n "$ARM" ] && [ -n "$want" ]; then
+      case "$want" in
+        write) case "$ARM" in issue-write|pr-write|pr-merge) ;; *) ARM="" ;; esac ;;
+        *)     [ "$ARM" = "$want" ] || ARM="" ;;
+      esac
+    fi
+    # A read — `gh pr view` is what this hook itself uses — a subcommand with no arm, or an arm
+    # that is not the one asked for. Keep looking: this invocation may yet name a verb, and a
+    # later one may be the wanted arm.
+    [ -n "$ARM" ] || continue
+    # AND NOT ONE ALREADY HANDLED. `$3` is how many matching invocations to walk past, which
+    # is what lets the caller loop over every arm a chained command names rather than the
+    # first — `gh pr merge 201 && gh issue close 163` names two, and both are owed their
+    # checks. #231.
+    if [ "$seen" -lt "$skip" ]; then
+      seen=$((seen + 1)); ARM=""; saw_gh=0; sub=""; continue
+    fi
+    GH_SUB="$sub"
+    GH_VERB="$verb"
+    collect=1
+  done
+  set +f
+
+  GH_ARGS="${GH_ARGS# }"
+  return 0
+}
+
+# ---- a commit closing an issue by prose -------------------------------------------
+# GitHub parses a closing keyword out of a commit message under the same rule it uses for a PR
+# body, and a commit reaching the default branch closes exactly what a merged PR would — during
+# an arc that is the arc branch itself, m42's flip. Nothing here read a commit message at all
+# until #300: commit 81b5a41 (PR #301) put the word *resolve* and #300's number in one prose
+# clause, and GitHub closed it with all four boxes unticked.
+#
+# STRUCTURAL FIRST, TEXT SECOND. `commit_has_dash_m` answers "is there really a `git commit`
+# invocation carrying `-m` or `--message` here" off a quote-stripped copy of the command — the
+# same copy `read_invocation` builds, and for the same reason: a `-m` sitting inside a quoted
+# span elsewhere in the command must not count. `commit_message_text` then reads the value out
+# of the ORIGINAL command, which still has its quotes, and is the one place in this file that
+# wants what the quote-stripped copy throws away.
+#
+# `stripped` is read and written by `strip_quoted` through the caller's variable, the same
+# dynamic-scope trick `read_invocation` relies on above — this is not a coincidence, it is the
+# same shape for the same reason.
+commit_has_dash_m() {
+  local stripped tok saw_git=0 saw_commit=0 found=0
+  stripped="$1"
+  strip_quoted '"'
+  strip_quoted "'"
+  stripped="${stripped//;/ __ARC_CHAIN__ }"
+  stripped="${stripped//&/ __ARC_CHAIN__ }"
+  stripped="${stripped//|/ __ARC_CHAIN__ }"
+  set -f
+  for tok in $stripped; do
+    case "$tok" in
+      __ARC_CHAIN__) saw_git=0; saw_commit=0; continue ;;
+      git|*/git|git.exe|*/git.exe) saw_git=1; saw_commit=0; continue ;;
+    esac
+    [ "$saw_git" = 1 ] || continue
+    if [ "$saw_commit" = 0 ]; then
+      case "$tok" in commit) saw_commit=1 ;; esac
+      continue
+    fi
+    case "$tok" in -m|--message|--message=*) found=1 ;; esac
+  done
+  set +f
+  [ "$found" = 1 ]
+}
+
+# The message VALUE(s), read out of the ORIGINAL command. Quotes are read the way
+# `strip_quoted` reads them everywhere else in this file: the first occurrence of the matching
+# quote character ends the span, with no escape handling — this file's quote handling has never
+# gone further than that, and a message escaping its own quote character is not the shape #300
+# was. `-F <file>` never puts the text on the command line, so there is nothing here to read
+# for it — out of scope.
+#
+# EVERY `-m`/`--message` IN THE COMMAND, not just the first — `git commit` joins several `-m`
+# paragraphs with a blank line between them, and a keyword sharing a sentence with a number
+# could sit in any of them.
+commit_message_text() {
+  local rest="$1" msg="" q val
+  while :; do
+    case "$rest" in
+      *' -m '*)        rest="${rest#*' -m '}" ;;
+      *' --message '*) rest="${rest#*' --message '}" ;;
+      *' --message='*) rest="${rest#*' --message='}" ;;
+      *) break ;;
+    esac
+    case "$rest" in
+      '"'*) q='"'; rest="${rest#?}" ;;
+      "'"*) q="'"; rest="${rest#?}" ;;
+      # A bare (unquoted) value — keep scanning past it for a later `-m` that IS quoted,
+      # rather than stopping here having read nothing.
+      *) continue ;;
+    esac
+    case "$rest" in
+      *"$q"*) val="${rest%%"$q"*}"; rest="${rest#*"$q"}" ;;
+      *) val=""; rest="" ;;
+    esac
+    msg="$msg
+$val"
+  done
+  printf '%s' "$msg"
+}
+
+# The Nth URL of one kind out of the payload — how a create learns its number, since `gh` prints
+# the URL rather than taking one.
+#
+# OF THE RIGHT KIND, AND THE RIGHT ONE OF THAT KIND. A single `(issues|pull)` grep taking the
+# first match sends an issue's number to `gh pr view` when a create of each is chained, and gives
+# two chained creates of the same kind the same number — the first one's, so the second is never
+# checked and the first's findings print twice. #231.
+#
+#   $1  `issues` or `pull`   $2  how many of that kind this firing has already consumed
+payload_url_number() {
+  printf '%s' "$INPUT" |
+    grep -oE "https://github\.com/[^/]+/[^/]+/$1/[0-9]+" |
+    sed -n "$(( $2 + 1 ))p" |
+    grep -oE '[0-9]+$'
+  return 0
+}
+
+# The number the invocation names, read out of `GH_ARGS`. One reader for all four arms that
+# need one — `check_close`, `check_pr_ready` and the issue and PR arms each had their own, and
+# the two that were never fixed read the number off a different invocation than the arm they
+# belonged to. #231.
+#
+# `gh issue close` takes `{<number> | <url>}`, and `--repo` is an inherited flag that may sit
+# before it — `gh issue close -R owner/repo 163` is ordinary. So the number is looked for as an
+# argument ANYWHERE after the verb, never immediately after it: anchoring on `close +[0-9]`
+# reads the `-R` and URL forms as "no number" and skips the check in silence, which is the
+# shape this hook exists to catch.
+#
+# The bare token is tried before the URL. A URL is one whitespace token beginning with a
+# letter, so it can never satisfy the token pattern — while a URL in a flag value that survived
+# the quote strip would beat the real argument if the URL grep ran first.
+#
+# Trailing punctuation is allowed on the token. `GH_ARGS` no longer carries the payload's own
+# trailing `"}}` — `json_string` terminates the value at its closing quote — but a `)` or a
+# `,` after the last argument still can. Trailing `-` and word characters are NOT allowed, so
+# a date or a branch name carrying digits is not mistaken for a number.
+#
+#   $1  `issues` or `pull` — which URL form counts here
+invocation_number() {
+  local n
+  n="$(printf '%s' "$GH_ARGS" | tr '[:space:]' '\n' | grep -m1 -E '^#?[0-9]+[^0-9A-Za-z_-]*$' | grep -oE '[0-9]+' | head -1)"
+  [ -n "$n" ] || n="$(printf '%s' "$GH_ARGS" | grep -oE "https://github\.com/[^/]+/[^/]+/$1/[0-9]+" | head -1 | grep -oE '[0-9]+$')"
+  printf '%s' "$n"
+  return 0
+}
+
+# The PR `gh pr merge` said it merged, read out of the payload — `✓ Squashed and merged pull
+# request owner/repo#200 (title)`, or `… pull request #200 …` from an older `gh`. The number is
+# looked for here BEFORE the current branch's PR is asked for, because `--delete-branch` is the
+# usual companion of a numberless merge and it leaves the checkout on the base: the current
+# branch's PR is then the arc PR, or nothing, and a check run against the arc PR would report
+# a missing closing keyword on a PR nobody touched. #286
+#
+# THE OUTPUT, NEVER THE WHOLE PAYLOAD. The command string sits ahead of `tool_response` in it,
+# so a grep over `INPUT` let `--subject "revert pull request #300"` name the PR — a quoted
+# span winning, which is the constraint the quote strip in `read_invocation` exists for.
+#
+# `merged pull request`, NOT `pull request`. A failed merge names the PR too — `X Pull request
+# owner/repo#200 is not mergeable` — and so does `--auto`'s `Pull request #200 will be
+# automatically merged`. Only a merge that happened says `merged pull request`, in the three
+# forms `Merged`, `Squashed and merged`, `Rebased and merged`; case-insensitive for the first.
+payload_merged_number() {
+  local rest
+  case "$INPUT" in *'"tool_response"'*) rest="${INPUT#*\"tool_response\"}" ;; *) return 0 ;; esac
+  printf '%s' "$rest" | grep -oiE 'merged pull request [^ "]*#[0-9]+' | head -1 | grep -oE '[0-9]+$'
+  return 0
+}
+
+# The current branch's PR, the way `gh` itself resolves a `gh pr merge`, `gh pr edit` or
+# `gh pr ready` that names none. That form is ordinary — a run merging its own PR from its own
+# worktree has no reason to type the number — and declining to read it turned every PR check
+# off in silence for exactly the way the hook is actually invoked. A fixture case supplies the
+# answer directly; a live read is bounded, for `check_close`'s reason. Prints nothing when no
+# PR can be resolved, and the caller skips. #286
+current_pr_number() {
+  local runner=""
+  if [ -n "$FIXTURE_PR_BASE" ]; then printf '%s' "$FIXTURE_PR_NUMBER"; return 0; fi
+  command -v gh >/dev/null 2>&1 || return 0
+  timeout --version 2>/dev/null | grep -qi coreutils && runner="timeout 20"
+  (cd "$CWD" 2>/dev/null && $runner gh pr view --json number -q .number 2>/dev/null) | grep -oE '^[0-9]+$'
+  return 0
+}
+
+# A `git commit` naming `-m`/`--message`, checked structurally before anything is read out of
+# it — the `*commit*` guard is cheap and skips the scan for the overwhelming majority of Bash
+# calls that mention it nowhere.
+#
+# THE SCAN STARTS AT THE LITERAL `git commit`, NEVER AT THE START OF THE COMMAND.
+# `commit_message_text` cannot tell one command's `-m` from another's — it only recognises the
+# flag, not who it belongs to — so `sometool -m "closes #42 in prose" && git commit -m "fix:
+# real change"` would otherwise hand `sometool`'s quoted argument to the scanner as if it were
+# the commit message. Cutting the string at the FIRST `git commit` before it is ever read
+# removes everything that could be misread as one.
+COMMIT_MSG=""
 case "$CMD" in
-  *"gh pr merge"*)                        arc_log_event pr-merge ;;
-  # `gh pr ready` is the moment a draft stops being allowed to be incomplete, and the only
-  # moment the checklist question has a defined answer. At `gh pr create` a draft is expected
-  # to have open boxes, so asking there would fire on every correctly-opened PR.
-  *"gh pr ready"*)                        arc_log_event pr-ready ;;
-  *"gh pr create"*|*"gh pr edit"*)        arc_log_event pr-write ;;
-  *"gh issue close"*)                     arc_log_event issue-close ;;
-  *"gh issue create"*|*"gh issue edit"*)  arc_log_event issue-write ;;
-  *)
-    arc_log_outcome ok "not a tracker write"
-    exit 0
+  *commit*)
+    if commit_has_dash_m "$CMD"; then
+      case "$CMD" in
+        *git\ commit*) COMMIT_MSG="$(commit_message_text "${CMD#*git commit}")" ;;
+      esac
+    fi
     ;;
 esac
 
-CWD="$(field cwd)"
+# EVERY ARM THE COMMAND NAMES. An entry holds one event, so the first names it and the rest go
+# in the subject: a chained firing recorded as one arm reads as having done less than it did,
+# and the old dispatch recorded whichever arm its `case` happened to list first. #231.
+ARMS=""
+ARM_N=0
+while :; do
+  read_invocation "$CMD" "" "$ARM_N"
+  [ -n "$ARM" ] || break
+  ARMS="$ARMS${ARMS:+ · }$ARM"
+  ARM_N=$((ARM_N + 1))
+done
+case "$ARMS" in
+  "")
+    if [ -z "$COMMIT_MSG" ]; then
+      arc_log_outcome ok "not a tracker write"
+      exit 0
+    fi
+    # A commit is not a `gh` arm — it carries no body-read, no number, none of the machinery
+    # below — so it gets its own event name rather than falling through as an unnamed write.
+    arc_log_event commit-write
+    ;;
+  *" · "*) arc_log_event "${ARMS%% ·*}" "chained: $ARMS" ;;
+  *)       arc_log_event "$ARMS" ;;
+esac
+
+CWD="$(json_string cwd)"
 [ -d "$CWD" ] || CWD="$PWD"
 
 FINDINGS=""
-add() { FINDINGS="$FINDINGS
-  - $1"; }
+
+# ONE FINDING PER CLAIM, however many arms produced it. A chain naming the same object twice —
+# `gh pr edit 200 --add-label a && gh pr merge 200` — runs the shared checks in both arms and
+# printed each finding verbatim twice. A finding carries its object's number, so identical text
+# is the identical claim. #231.
+# The match is anchored at BOTH ends — the stored finding must run to the start of the next one
+# or to the end of the string — so a finding whose text is a proper prefix of one already added
+# is still added.
+add() {
+  case "$FINDINGS" in
+    *"
+  - $1
+  - "*) return 0 ;;
+    *"
+  - $1") return 0 ;;
+  esac
+  FINDINGS="$FINDINGS
+  - $1"
+}
+
+# A BARE LINE IS THE ONLY FORM ALLOWED TO CLOSE — skills/issue-write's rule for a PR body,
+# read here out of a commit message instead. Lines that ARE a bare closing line are removed
+# first; whatever the keyword pattern still finds afterward is a keyword sharing a sentence
+# with its number, which is prose and is the defect #300 shipped.
+#
+# THE KEYWORD SET IS GITHUB'S, matching `closing-keyword` above exactly: close(s/d), fix(es/ed),
+# resolve(s/d), each followed by `#<N>`. Case-insensitive, because GitHub's own parser is.
+#
+# `\<` ANCHORS THE LEFT EDGE. With none, `fix(e[sd])?` matches the substring `fixed` inside
+# `disclosed` and `fix` inside `prefix` — "the prefix #42 handling helper" is not a closing
+# keyword, and reporting it would be a false positive on ordinary prose. The right edge needs
+# nothing extra: the pattern already ends at the run of digits, and a word character never
+# follows those.
+check_commit_keyword() {
+  local msg="$1" scrubbed hit
+  scrubbed="$(printf '%s\n' "$msg" | grep -viE '^[[:space:]]*\<(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+#[0-9]+[[:space:]]*$')"
+  hit="$(printf '%s\n' "$scrubbed" | grep -inE '\<(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+#[0-9]+' | head -3)"
+  if [ -n "$hit" ]; then
+    arc_log_fail commit-keyword
+    add "the commit message carries a closing keyword and an issue number outside a bare line: $(printf '%s' "$hit" | tr '\n' ';'). GitHub closes the issue the same way a merged PR does once the commit reaches the default branch — during an arc that is the arc branch itself, m42's flip. Put the keyword on its own line, \`Closes #NN\`, or reword the sentence so it does not read as one."
+  else
+    arc_log_pass commit-keyword
+  fi
+  return 0
+}
+
+[ -n "$COMMIT_MSG" ] && check_commit_keyword "$COMMIT_MSG"
+
+# The object a check was about, appended to any check name that carries no value of its own.
+# A chained command runs the same check once per arm, and two bare `placeholder-scan` marks in
+# one entry cannot say which arm failed — worse, `arc-merge-keyword` landed in `checked:` as a
+# pass and in `skipped:` as "not a `gh pr merge`" in the SAME entry, which is a record
+# contradicting itself. Empty outside a per-object check, so a single-arm firing reads exactly
+# as it always did. `_arc_log_mark` strips at the first `=`, so the declared-check bookkeeping
+# is unaffected. A check that already carries a value takes the object INSIDE it —
+# `milestone=pr-200:Dogfood`, not `milestone=pr-200=Dogfood`. #231.
+LOG_OBJ=""
+
+# How many creates of each kind this firing has resolved a URL for. See the create arm below.
+CREATE_N_ISSUE=0
+CREATE_N_PR=0
+
+# Every check an arm would have run, marked skipped with one reason, when the arm cannot find
+# its object. Before this, an arm with no number `return`ed and the entry read `not reached`
+# on every line — which is what the record says when the hook simply did not get that far,
+# and here it got there and decided. The reason is also kept for the entry's outcome line,
+# because a firing that reaches no check writes no `skipped:` line at all (see `volume` in
+# `lib/activation-log`), and that line is the only other place the why could go. #286
+SKIP_WHY=""
+skip_arm() {
+  local c list
+  case "$GH_SUB" in
+    issue) list="placeholder-scan date-sanity spawned-heading spawn-parent issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type" ;;
+    *)     list="placeholder-scan date-sanity milestone arc-prefix closing-keyword arc-merge-keyword merge-close spawn-parent pr-base" ;;
+  esac
+  for c in $list; do arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "$1"; done
+  SKIP_WHY="$SKIP_WHY${SKIP_WHY:+ · }$GH_SUB $GH_VERB: $1"
+  return 0
+}
 
 # Scaffolding that survived into a body. Each of these was a real case.
 scan_placeholders() {
   local body="$1" what="$2" hit
   hit="$(printf '%s' "$body" | grep -nE '\bTBD\b|\bXXX\b|\bTODO\b|placeholder|<value>|<link>|<N>|YYYY-MM-DD' | head -3)"
   if [ -n "$hit" ]; then
-    arc_log_fail placeholder-scan
+    arc_log_fail "placeholder-scan${LOG_OBJ:+=$LOG_OBJ}"
     add "$what still contains template scaffolding: $(printf '%s' "$hit" | tr '\n' ';')"
   else
-    arc_log_pass placeholder-scan
+    arc_log_pass "placeholder-scan${LOG_OBJ:+=$LOG_OBJ}"
   fi
 }
 
@@ -119,18 +624,76 @@ scan_dates() {
       add "$what carries a date that does not make sense: $year"
     fi
   done
-  [ "$bad" = 1 ] && arc_log_fail date-sanity
-  [ "$bad" = 1 ] || arc_log_pass date-sanity
+  [ "$bad" = 1 ] && arc_log_fail "date-sanity${LOG_OBJ:+=$LOG_OBJ}"
+  [ "$bad" = 1 ] || arc_log_pass "date-sanity${LOG_OBJ:+=$LOG_OBJ}"
 }
 
-# The title rules live in `tools/verify-tracker-body.sh`, not here. A title is decidable
+# A `Spawned` section heading, which is not a shape this repo has.
+#
+# `skills/issue-write` — a body has ONE `Related` section, it is a table, and spawned work is a
+# row in it. Nine of arc 04's Fire children were written with a `Spawned` heading anyway and
+# eight of those held findings rather than units of work, because `run-instructions.md` §5 told
+# a run to record a discovery "in the issue's Spawned table". #270 fixes that sentence; this
+# catches the next writer who learned the old shape somewhere else.
+#
+# THE HEADING, NEVER THE ROWS. `| **Spawned** | [#NN](…) | … |` is the correct shape and stays
+# silent. Whether a given row is a unit of work is the author's judgement and is not decidable
+# from text; whether a section exists is. Same division `tests/verify-tracker-body.sh`'s
+# placement check draws.
+#
+# THE TITLE MUST BE THE WHOLE HEADING, also that check's rule: `## Spawned versus related` is
+# prose about the section, not the section, and a substring match reports it. Bold and
+# backticks are stripped; nothing else is allowed after the word. Matched case-insensitively
+# for the same reason that one is — `## SPAWNED` is the same section — so the two tools cannot
+# disagree about whether a legacy body has one.
+#
+# Headings inside a fenced block are not headings — a body quoting the old shape in order to
+# say it is wrong would otherwise be reported for quoting it.
+#
+# CARRIAGE RETURNS ARE STRIPPED BEFORE THE MATCH, because the pattern is anchored at `$` and a
+# live body read out of `gh issue view --json body` is CRLF. Some awks strip the CR and some do
+# not — Git Bash's gawk does, which is exactly why this would have passed every case here and
+# gone silent on a Linux runner. `tests/verify-tracker-body.sh`'s placement check carries the
+# same `tr -d '\r'` for the same reason. No fixture can cover it: a JSON case body cannot hold
+# a raw CR.
+#
+# A FIXTURE BODY CARRIES LITERAL `\n` AND A LIVE ONE CARRIES REAL NEWLINES. `fixture()` reads
+# the payload with parameter expansion and nothing unescapes it; every other scanner here is a
+# line-agnostic grep, so none of them ever noticed. This one is anchored, so a body with no
+# real newline in it is split on the escape first. Guarded on the absence of a real newline
+# rather than run unconditionally: a live body may legitimately contain a literal `\n` inside
+# a fence, and rewriting that would move the fence markers.
+scan_spawned_heading() {
+  local body="$1" what="$2" hit
+  case "$body" in
+    *'
+'*) ;;
+    *) body="$(printf '%s' "$body" | awk '{ gsub(/\\n/, "\n"); print }')" ;;
+  esac
+
+  hit="$(printf '%s\n' "$body" | tr -d '\r' | awk '
+    /^(```|~~~)/ { f = !f; next }
+    f { next }
+    tolower($0) ~ /^#+[[:blank:]]+[*`]*spawned[*`]*:?[[:blank:]]*$/ { print NR": "$0 }
+  ' | head -3)"
+
+  if [ -n "$hit" ]; then
+    arc_log_fail "spawned-heading${LOG_OBJ:+=$LOG_OBJ}"
+    add "$what carries a \`Spawned\` heading: $(printf '%s' "$hit" | tr '\n' ';') There is no \`Spawned\` section. A unit of work is a row in the \`Related\` table — \`| **Spawned** | [#NN](…) | <one clause> |\`, three columns — and a finding that is not a unit of work goes in the dev-log, not the tracker. skills/issue-write, *Related — one table, four kinds*."
+  else
+    arc_log_pass "spawned-heading${LOG_OBJ:+=$LOG_OBJ}"
+  fi
+  return 0
+}
+
+# The title rules live in `tests/verify-tracker-body.sh`, not here. A title is decidable
 # from text alone, so the same rules have to run BEFORE the write as well — and two copies
 # of a threshold is one copy that goes stale. Run as a subprocess, never sourced: that file
 # sets `-u`, and a guardrail that has to fail open cannot inherit it.
 #
 # Absent, the title checks simply do not run. Fail open is the rule; a missing helper is
 # not a reason to break every Bash call.
-TITLE_LIB="$(dirname "$0")/../tools/verify-tracker-body.sh"
+TITLE_LIB="$(dirname "$0")/../tests/verify-tracker-body.sh"
 
 # THE FIVE TITLE CHECKS COME BACK AS PROSE, so each finding is matched to the check that
 # produced it before the entry is written. Marking all five failed because one fired would
@@ -139,7 +702,7 @@ scan_title() {
   local title="$1" what="$2" body="${3:-}" bodyfile="" line out rc c pat
   if [ ! -f "$TITLE_LIB" ]; then
     for c in issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type; do
-      arc_log_skip "$c" "tools/verify-tracker-body.sh is missing"
+      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tests/verify-tracker-body.sh is missing"
     done
     return 0
   fi
@@ -162,7 +725,7 @@ scan_title() {
   # disagreeing with what was said.
   if [ "$rc" -ne 0 ]; then
     for c in issue-title-length issue-title-list issue-title-clause issue-title-scope issue-scope-type; do
-      arc_log_skip "$c" "tools/verify-tracker-body.sh exited $rc"
+      arc_log_skip "$c${LOG_OBJ:+=$LOG_OBJ}" "tests/verify-tracker-body.sh exited $rc"
     done
     [ -n "$bodyfile" ] && rm -f "$bodyfile"
     return 0
@@ -181,16 +744,16 @@ FINDINGS
       issue-title-clause) pat='carries a clause after the deliverable' ;;
       issue-title-scope)  pat='names more than one deliverable' ;;
     esac
-    if printf '%s' "$out" | grep -qE "$pat"; then arc_log_fail "$c"; else arc_log_pass "$c"; fi
+    if printf '%s' "$out" | grep -qE "$pat"; then arc_log_fail "$c${LOG_OBJ:+=$LOG_OBJ}"; else arc_log_pass "$c${LOG_OBJ:+=$LOG_OBJ}"; fi
   done
 
   # The scope-type check reads the body, so with no body it did not run at all.
   if [ -z "$bodyfile" ]; then
-    arc_log_skip issue-scope-type "no body to read"
+    arc_log_skip "issue-scope-type${LOG_OBJ:+=$LOG_OBJ}" "no body to read"
   elif printf '%s' "$out" | grep -qE 'the body describes a decomposition'; then
-    arc_log_fail issue-scope-type
+    arc_log_fail "issue-scope-type${LOG_OBJ:+=$LOG_OBJ}"
   else
-    arc_log_pass issue-scope-type
+    arc_log_pass "issue-scope-type${LOG_OBJ:+=$LOG_OBJ}"
   fi
 
   [ -n "$bodyfile" ] && rm -f "$bodyfile"
@@ -313,7 +876,7 @@ FIXTURE_DEFAULT="$(fixture arc_test_default)"
 FIXTURE_MILESTONE="$(fixture arc_test_milestone)"
 FIXTURE_LINKED="$(fixture arc_test_linked)"
 
-# The box check shells out to `tools/verify-issue-boxes.sh`, which reads the live issue and the
+# The box check shells out to `tests/verify-issue-boxes.sh`, which reads the live issue and the
 # bodies of the PRs that close it. A case supplies that tool's exit code and its output
 # directly, so the hook's own handling of all three verdicts — clean, findings, unreadable — is
 # exercised with no network and no live PR. The tool's own decision is covered by its selftest.
@@ -326,17 +889,28 @@ FIXTURE_BOXES_OUT="$(fixture arc_test_boxes_out)"
 # `pr<NN>` form is untestable through a fixture repository. A case names the branch instead.
 FIXTURE_BRANCH="$(fixture arc_test_branch)"
 
+# The state of the issue a merged work PR was supposed to close. Supplied directly because the
+# merge-close check is the one whose whole subject is what the tracker holds AFTER a merge, and
+# a case cannot merge a PR.
+FIXTURE_ISSUE_STATE="$(fixture arc_test_issue_state)"
+
+# The current branch's PR, for a `gh pr merge` or `gh pr edit` that names none — the read
+# `current_pr_number` would otherwise make live. A PR case with no number and no value here
+# resolves nothing and skips, which is the offline shape of "none could be resolved". #286
+FIXTURE_PR_NUMBER="$(fixture arc_test_pr_number)"
+
 # A payload that names a fixture key and yields no value from any of them is truncated, not an
 # invocation. Stay silent: falling through would send a half-named PR to a live `gh` read.
 case "$INPUT" in
   *'"arc_test_'*)
-    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT$FIXTURE_BRANCH" ]; then
+    if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE$FIXTURE_DEFAULT$FIXTURE_MILESTONE$FIXTURE_LINKED$FIXTURE_BOXES_RC$FIXTURE_BOXES_OUT$FIXTURE_BRANCH$FIXTURE_ISSUE_STATE$FIXTURE_PR_NUMBER" ]; then
       # Named, rather than left to the `not reached` default. This is the one condition the
       # declaration calls out for every check at once, and a reason on the record is what
       # separates "the payload was truncated" from "the hook simply did not get that far".
-      for c in placeholder-scan date-sanity milestone arc-prefix closing-keyword \
-               arc-merge-keyword close-link issue-boxes spawn-parent issue-title-length \
-               issue-title-list issue-title-clause issue-title-scope issue-scope-type pr-base; do
+      for c in placeholder-scan date-sanity spawned-heading milestone arc-prefix \
+               closing-keyword arc-merge-keyword merge-close close-link issue-boxes \
+               spawn-parent issue-title-length issue-title-list issue-title-clause \
+               issue-title-scope issue-scope-type pr-base; do
         arc_log_skip "$c" "the payload names a fixture key whose value could not be parsed"
       done
       arc_log_outcome ok "a truncated fixture payload — nothing safe to read"
@@ -350,7 +924,7 @@ esac
 # is still open and cheap to fix; a close is where an issue that was never bound to a branch
 # or a PR leaves the record for good, and nothing fired there until #163.
 #
-# The question is `tools/verify-linked-branch.sh`'s one-argument form, exactly: is this issue
+# The question is `tests/verify-linked-branch.sh`'s one-argument form, exactly: is this issue
 # linked to ANYTHING — a branch record, or a PR that closes it. Shelling out rather than
 # asking GraphQL again here keeps one copy of a reading that took #155 and #206 to get right,
 # including which field holds the link once a PR has promoted it. Its own caveat — that the
@@ -360,35 +934,15 @@ esac
 # Before the `gh` guard below, so a fixture case decides offline. Runs first among the
 # scanners because a close carries no body: none of them have anything to read.
 check_close() {
-  local args num linked runner link_lib
+  local num linked runner link_lib
 
-  # `##`, longest match, so a chain lands on the real invocation and not on an earlier
-  # mention of one — `git commit -m "ran gh issue close 42" && gh issue close 163` is 163.
-  args="${CMD##*gh issue close}"
-
-  # QUOTED SPANS GO FIRST, and this is the whole reason the extraction is not one grep. A
-  # `--comment` is where a stray issue number or URL realistically lives, and it is always
-  # quoted: `gh issue close --comment "Closed by #224" 163` must be 163, not 224, or the
-  # hook reports a missing link on an issue nobody touched — and reads it over the network
-  # to do so.
-  args="$(printf '%s' "$args" | sed -e 's/"[^"]*"//g' -e "s/'[^']*'//g")"
-
-  # `gh issue close` takes `{<number> | <url>}`, and `--repo` is an inherited flag that may
-  # sit before it — `gh issue close -R owner/repo 163` is ordinary. So the number is looked
-  # for as an argument ANYWHERE after the subcommand, never immediately after it: anchoring
-  # on `issue close +[0-9]` reads the `-R` and URL forms as "no number" and skips the check
-  # in silence, which is the shape this hook exists to catch.
-  #
-  # The bare token is tried before the URL. A URL is one whitespace token beginning with a
-  # letter, so it can never satisfy the token pattern — while a URL in a flag value that
-  # survived the quote strip would beat the real argument if the URL grep ran first.
-  #
-  # Trailing punctuation is allowed on the token because `CMD` above is cut out of the raw
-  # payload and keeps whatever followed it there — the last argument arrives as `163"}}`.
-  # Trailing `-` and word characters are NOT allowed, so a date or a branch name carrying
-  # digits is not mistaken for an issue number.
-  num="$(printf '%s' "$args" | tr '[:space:]' '\n' | grep -m1 -E '^#?[0-9]+[^0-9A-Za-z_-]*$' | grep -oE '[0-9]+' | head -1)"
-  [ -n "$num" ] || num="$(printf '%s' "$args" | grep -oE 'https://github\.com/[^/]+/[^/]+/issues/[0-9]+' | head -1 | grep -oE '[0-9]+$')"
+  # `invocation_number` above, which reads `GH_ARGS` — the arguments of the invocation the
+  # dispatch actually landed on, with the quoted spans already stripped. That strip is why a
+  # `--comment` cannot win: it is where a stray issue number or URL realistically lives, and
+  # it is always quoted, so `gh issue close --comment "Closed by #224" 163` must be 163, not
+  # 224, or the hook reports a missing link on an issue nobody touched — and reads it over
+  # the network to do so.
+  num="$(invocation_number issues)"
   if [ -z "$num" ]; then
     arc_log_skip close-link "the command names no issue number"
     return 0
@@ -397,15 +951,15 @@ check_close() {
   if [ -n "$FIXTURE_LINKED" ]; then
     linked="$FIXTURE_LINKED"
   else
-    link_lib="$(dirname "$0")/../tools/verify-linked-branch.sh"
+    link_lib="$(dirname "$0")/../tests/verify-linked-branch.sh"
     # Absent, the check does not run. Fail open is the rule; a missing helper is not a
     # reason to speak up about a link nothing read.
     if [ ! -f "$link_lib" ]; then
-      arc_log_skip close-link "tools/verify-linked-branch.sh is missing"
+      arc_log_skip "close-link=issue-$num" "tests/verify-linked-branch.sh is missing"
       return 0
     fi
     if ! command -v gh >/dev/null 2>&1; then
-      arc_log_skip close-link "gh is not on PATH"
+      arc_log_skip "close-link=issue-$num" "gh is not on PATH"
       return 0
     fi
 
@@ -432,7 +986,7 @@ check_close() {
       1) linked=0 ;;
       # Exit 2 is "the read could not be made", which is a different answer from "no link"
       # and must not be reported as one. That distinction is the whole point of that tool.
-      *) arc_log_skip close-link "the link read could not be made" ; return 0 ;;
+      *) arc_log_skip "close-link=issue-$num" "the link read could not be made" ; return 0 ;;
     esac
   fi
 
@@ -442,9 +996,16 @@ check_close() {
   return 0
 }
 
-case "$CMD" in
-  *"gh issue close"*) check_close ;;
-esac
+# EVERY close the command names, asked for by name. `gh pr merge 200 && gh issue close 163`
+# names two arms and the close is not the one the dispatch lands on; `gh issue close 1 &&
+# gh issue close 2` names two closes. Each is owed its own check, against its own number. #231.
+CLOSE_N=0
+while :; do
+  read_invocation "$CMD" issue-close "$CLOSE_N"
+  [ -n "$ARM" ] || break
+  check_close
+  CLOSE_N=$((CLOSE_N + 1))
+done
 
 # ---- a draft being marked ready --------------------------------------------------
 # The issue body's `Required` boxes are the acceptance criteria, and nothing mechanical ever
@@ -456,34 +1017,28 @@ esac
 # `run-instructions.md` §2 opens every PR as one so pass 4 can still take commits. `gh pr ready`
 # is the moment the answer stops being "not yet".
 #
-# The counting lives in `tools/verify-issue-boxes.sh`, not here, and is shelled out to for the
+# The counting lives in `tests/verify-issue-boxes.sh`, not here, and is shelled out to for the
 # same reason the title rules are: the question is decidable from the tracker alone, so it has
-# to be answerable by hand as well — `bash tools/verify-issue-boxes.sh <NN>` — and two copies of
+# to be answerable by hand as well — `bash tests/verify-issue-boxes.sh <NN>` — and two copies of
 # a rule is one copy that goes stale.
 #
 # THE PROSE HALF IS STILL #140'S. This says the record accounts for every box; whether the work
 # is right, and whether a stated reason is a real reason, is the read-back's judgement.
 check_pr_ready() {
-  local args num out rc runner tool
+  local num out rc runner tool
 
-  # The same extraction `check_close` uses, and for the same reasons: `##` for the longest
-  # match so a chained command lands on the real invocation, quoted spans stripped first so a
-  # number inside `--body "…"` cannot win, and the number looked for as an argument anywhere
-  # after the subcommand so the `-R owner/repo` and URL forms are not read as "no number".
-  args="${CMD##*gh pr ready}"
-  args="$(printf '%s' "$args" | sed -e 's/"[^"]*"//g' -e "s/'[^']*'//g")"
-  num="$(printf '%s' "$args" | tr '[:space:]' '\n' | grep -m1 -E '^#?[0-9]+[^0-9A-Za-z_-]*$' | grep -oE '[0-9]+' | head -1)"
-  [ -n "$num" ] || num="$(printf '%s' "$args" | grep -oE 'https://github\.com/[^/]+/[^/]+/pull/[0-9]+' | head -1 | grep -oE '[0-9]+$')"
+  # The same reader `check_close` uses, for the same reasons — see `invocation_number`.
+  num="$(invocation_number pull)"
 
   if [ -n "$FIXTURE_BOXES_RC" ]; then
     rc="$FIXTURE_BOXES_RC"
     out="$FIXTURE_BOXES_OUT"
   else
-    tool="$(dirname "$0")/../tools/verify-issue-boxes.sh"
+    tool="$(dirname "$0")/../tests/verify-issue-boxes.sh"
     # Absent, the check does not run. Fail open is the rule; a missing helper is not a reason
     # to speak up about boxes nothing read.
     if [ ! -f "$tool" ]; then
-      arc_log_skip issue-boxes "tools/verify-issue-boxes.sh is missing"
+      arc_log_skip issue-boxes "tests/verify-issue-boxes.sh is missing"
       return 0
     fi
     if ! command -v gh >/dev/null 2>&1; then
@@ -493,10 +1048,9 @@ check_pr_ready() {
 
     # `gh pr ready` with no argument means the current branch's PR, which is the ordinary form.
     # Reading the number here rather than declining is what keeps the check from being silently
-    # off for the way it is actually invoked.
-    if [ -z "$num" ]; then
-      num="$(cd "$CWD" 2>/dev/null && gh pr view --json number -q .number 2>/dev/null)"
-    fi
+    # off for the way it is actually invoked. `current_pr_number` is the one reader for it,
+    # shared with the write arms since #286.
+    [ -n "$num" ] || num="$(current_pr_number)"
     if [ -z "$num" ]; then
       arc_log_skip issue-boxes "the command names no PR and none could be read"
       return 0
@@ -524,30 +1078,45 @@ $(printf '%s' "$out" | sed 's/^/    /')" ;;
     # Anything else is "the read could not be made", which is a different answer from "there
     # are open boxes" and must not be reported as one. Exit 2 from the tool, 124 from
     # `timeout`, 3 from an unreadable directory all land here.
-    *) arc_log_skip issue-boxes "the box read could not be made" ;;
+    *) arc_log_skip "issue-boxes=pr-${num:-?}" "the box read could not be made" ;;
   esac
   return 0
 }
 
-case "$CMD" in
-  *"gh pr ready"*) check_pr_ready ;;
-esac
+# By name and in a loop, for `check_close`'s reasons.
+READY_N=0
+while :; do
+  read_invocation "$CMD" pr-ready "$READY_N"
+  [ -n "$ARM" ] || break
+  check_pr_ready
+  READY_N=$((READY_N + 1))
+done
 
-# A close, and a ready, are the whole command unless chained to a write that has its own
-# checks below. Returning rather than exiting, and testing that here, is what keeps
-# `gh pr merge 201 && gh issue close 163` reaching the PR checks it also deserves.
-case "$CMD" in
-  *"gh issue create"*|*"gh issue edit"*|*"gh pr create"*|*"gh pr edit"*|*"gh pr merge"*) ;;
-  *)
-    [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
-    exit 0
-    ;;
-esac
+# ---- one body-carrying write ------------------------------------------------------
+# `GH_SUB`, `GH_VERB` and `GH_ARGS` are the invocation this call is for, and the caller below
+# runs this once per write the command names. A close and a ready are handled above; the three
+# arms here are the ones that read a tracker object back.
+#
+# THE BODY IS NOT INDENTED AND NOT OTHERWISE CHANGED. Four hundred lines re-indented is four
+# hundred lines of diff over a change that is a loop, and the diff is the review surface. For
+# the same reason nothing here is `local` — a declaration list that long goes stale — so every
+# variable a second call could read from the first is cleared on entry instead.
+check_write() {
+# `LOG_OBJ` is set twice: to the arm's POSITION here, so the offline fixture path — which runs
+# the scanners before any number exists — still distinguishes a chain's arms, and to the object
+# itself once `NUM` is known. The first arm carries neither, so a single-arm firing's entry
+# reads exactly as it always did.
+LOG_OBJ=""
+[ "$WRITE_N" = 0 ] || LOG_OBJ="arm$((WRITE_N + 1))"
+NUM=""; BODY=""; BASE=""; TITLE=""; DEFAULT=""; META=""; SPAWN_PARENT=""
+MILESTONE=""; HAS_MILESTONE=""; LINKED=""; PRHEAD=""; TRUNK=""; WANTS_CLOSE=0
+HEADBR=""; ARCBASE=""; ARCNUM=""; WHAT=""
+MC_ISSUE=""; MC_PARENT=""; MC_STATE=""; MC_WHY=""; MC_RUNNER=""
 
 # A fixture case answers every question `gh` would have answered, so it must not be skipped
 # for want of `gh` — that turns a case that should report into a silent pass.
 if [ -z "$FIXTURE_BODY$FIXTURE_TITLE$FIXTURE_PR_BASE" ]; then
-  command -v gh >/dev/null 2>&1 || exit 0
+  if ! command -v gh >/dev/null 2>&1; then skip_arm "gh is not on PATH"; return 0; fi
 fi
 
 # The issue scanners take the offline path only when no PR fixture is present. A PR case
@@ -556,34 +1125,94 @@ if [ -z "$FIXTURE_PR_BASE" ] && { [ -n "$FIXTURE_BODY" ] || [ -n "$FIXTURE_TITLE
   [ -n "$FIXTURE_BODY" ] && scan_placeholders "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_BODY" ] && scan_dates "$FIXTURE_BODY" "the body"
   [ -n "$FIXTURE_TITLE" ] && scan_title "$FIXTURE_TITLE" "the issue" "$FIXTURE_BODY"
-  case "$CMD" in
-    *"gh issue create"*)
+  # An issue only. The `Spawned` row shape is `skills/issue-write`'s rule about an issue body,
+  # and a PR body reaching here with no `arc_test_pr_base` must not be judged by it.
+  if [ "$GH_SUB" = issue ]; then
+    [ -n "$FIXTURE_BODY" ] && scan_spawned_heading "$FIXTURE_BODY" "the body"
+  fi
+  case "$GH_SUB $GH_VERB" in
+    "issue create")
       SPAWN_PARENT="$(branch_parent "$(head_branch)")"
       if [ -z "$SPAWN_PARENT" ]; then
-        arc_log_skip spawn-parent "the branch names no issue or PR"
+        arc_log_skip "spawn-parent${LOG_OBJ:+=$LOG_OBJ}" "the branch names no issue or PR"
       else
         check_spawn_parent "$FIXTURE_BODY" "the new issue" "issue-new" \
           "It was created while the branch named ${SPAWN_PARENT%% *} #${SPAWN_PARENT##* }, so something caused it to exist and nothing says what."
       fi
       ;;
   esac
-  [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
-  exit 0
+  return 0
 fi
 
-# The number of whatever was just written. `gh` prints the URL on create; on edit the number
-# is an argument.
-NUM="$(printf '%s' "$CMD" | grep -oE '(issue|pr) (edit|merge|view) +#?[0-9]+' | grep -oE '[0-9]+$')"
-[ -n "$NUM" ] || NUM="$(printf '%s' "$INPUT" | grep -oE 'https://github\.com/[^/]+/[^/]+/(issues|pull)/[0-9]+' | head -1 | grep -oE '[0-9]+$')"
-[ -n "$NUM" ] || exit 0
+# The number of whatever was just written, resolved PER ARM. It used to be resolved once for the
+# whole command from `(issue|pr) (edit|merge|view) +#?[0-9]+` and taken by whichever arm the
+# substring dispatch landed on, so `gh pr merge 201 && gh issue close 163` sent the PR's 201 to
+# the issue arm and read a tracker object nobody had touched. #231.
+#
+# A create names no number — `gh` prints the URL and the payload carries it. Asking `GH_ARGS`
+# for one there reads whatever bare number the flags happen to hold, and
+# `gh pr create --fill --draft && sleep 2` resolved PR #2.
+case "$GH_VERB" in
+  create) NUM="" ;;
+  *) case "$GH_SUB" in issue) NUM="$(invocation_number issues)" ;; *) NUM="$(invocation_number pull)" ;; esac ;;
+esac
+# THE URL OF THE RIGHT KIND, AND THE RIGHT ONE OF THAT KIND. A single `(issues|pull)` grep
+# taking the first match sends an issue's number to `gh pr view` when a create of each is
+# chained, and gives two chained creates of the same kind the same number — the first one's,
+# so the second is never checked and the first's findings print twice. `CREATE_N_*` counts the
+# creates of each kind this firing has already resolved.
+if [ -z "$NUM" ]; then
+  case "$GH_SUB" in
+    issue) NUM="$(payload_url_number issues "$CREATE_N_ISSUE")"; CREATE_N_ISSUE=$((CREATE_N_ISSUE + 1)) ;;
+    *)     NUM="$(payload_url_number pull   "$CREATE_N_PR")";    CREATE_N_PR=$((CREATE_N_PR + 1)) ;;
+  esac
+fi
+# A PR write naming no number means the current branch's PR — `gh pr merge --squash
+# --delete-branch` is how a run merges its own PR from its own worktree, and this used to be
+# a bare `return 0`: the entry said the hook fired, every check read `not reached`, and nothing
+# said why. The merge's own output is asked first, then the branch, and a resolve that cannot
+# be made SKIPS — a guess here would run merge-close against the wrong PR. #286
+#
+# NOT A CREATE. A create's number is the URL `gh` printed and nothing else — a create that
+# printed none failed, or found a PR already open on the branch, and resolving that PR would
+# run the create checks against something the command did not write.
+#
+# A MERGE THAT REPORTED NO MERGED PR DID NOT MERGE. `gh pr merge` says `merged pull request
+# …#N` on every success and never on a failure — `is not mergeable` and `--auto`'s queued
+# message name the PR without that phrase, which is what `payload_merged_number` anchors on.
+# A merge that did not happen leaves the branch's PR checked out, and resolving it would
+# report "merged and the issue is still open" about a merge nobody made. Skip instead. An
+# absent `tool_response` is a fixture, and falls through to the branch read the case supplies.
+if [ -z "$NUM" ] && [ "$GH_SUB" = pr ] && [ "$GH_VERB" != create ]; then
+  NUM="$(payload_merged_number)"
+  if [ -z "$NUM" ] && [ "$GH_VERB" = merge ]; then
+    case "$INPUT" in
+      *'"tool_response"'*) skip_arm "the merge's output names no merged PR, so nothing merged"; return 0 ;;
+    esac
+  fi
+  [ -n "$NUM" ] || NUM="$(current_pr_number)"
+fi
+if [ -z "$NUM" ]; then
+  case "$GH_SUB" in
+    issue) skip_arm "the command names no issue number" ;;
+    *)     skip_arm "the command names no PR and none could be resolved from its output or the current branch" ;;
+  esac
+  return 0
+fi
 
-case "$CMD" in
-  *"gh issue"*)
+# Every check from here is about ONE tracker object, and the entry has to say which.
+LOG_OBJ="$GH_SUB-$NUM"
+
+case "$GH_SUB" in
+  issue)
     BODY="$(gh issue view "$NUM" --repo "$(git -C "$CWD" remote get-url origin 2>/dev/null)" --json body -q .body 2>/dev/null)" \
       || BODY="$(cd "$CWD" && gh issue view "$NUM" --json body -q .body 2>/dev/null)"
-    [ -n "$BODY" ] || exit 0
+    if [ -z "$BODY" ]; then skip_arm "issue #$NUM's body could not be read"; return 0; fi
     scan_placeholders "$BODY" "issue #$NUM"
     scan_dates "$BODY" "issue #$NUM"
+    # Reached on `gh issue create` and `gh issue edit` only. A close never enters `check_write`
+    # at all — the `write` filter excludes it — because it carries no body to read.
+    scan_spawned_heading "$BODY" "issue #$NUM"
 
     ITITLE="$(cd "$CWD" && gh issue view "$NUM" --json title -q .title 2>/dev/null)"
     [ -n "$ITITLE" ] && scan_title "$ITITLE" "issue #$NUM" "$BODY"
@@ -591,11 +1220,11 @@ case "$CMD" in
     # A create, never an edit. An edit is not a spawn — the parent was recorded, or was not,
     # when the issue was filed, and asking again on every subsequent edit would report the
     # same finding indefinitely on an issue that legitimately has no parent.
-    case "$CMD" in
-      *"gh issue create"*)
+    case "$GH_VERB" in
+      create)
         SPAWN_PARENT="$(branch_parent "$(head_branch)")"
         if [ -z "$SPAWN_PARENT" ]; then
-          arc_log_skip spawn-parent "the branch names no issue or PR"
+          arc_log_skip "spawn-parent${LOG_OBJ:+=$LOG_OBJ}" "the branch names no issue or PR"
         else
           check_spawn_parent "$BODY" "issue #$NUM" "issue-$NUM" \
             "It was created while the branch named ${SPAWN_PARENT%% *} #${SPAWN_PARENT##* }, so something caused it to exist and nothing says what."
@@ -604,27 +1233,83 @@ case "$CMD" in
     esac
     ;;
 
-  *"gh pr"*)
+  pr)
     if [ -n "$FIXTURE_PR_BASE" ]; then
       BASE="$FIXTURE_PR_BASE"
       BODY="$FIXTURE_BODY"
       TITLE="$FIXTURE_TITLE"
       DEFAULT="$FIXTURE_DEFAULT"
+      # `arc_test_milestone` keeps its sentinel contract — the literal `null` means none —
+      # and the answer is derived from it, never read off the name. See the live arm.
       MILESTONE="${FIXTURE_MILESTONE:-set}"
+      HAS_MILESTONE=1
+      [ "$MILESTONE" = null ] && HAS_MILESTONE=0
+      # A second sentinel, and the only way a case can reach the live arm's third state —
+      # a `META` carrying neither `"milestone":null` nor `"milestone":{`.
+      [ "$MILESTONE" = unreadable ] && HAS_MILESTONE=unknown
       LINKED="${FIXTURE_LINKED:-1}"
+      # No live PR to read a head ref off. The merge-close check falls back to `head_branch`,
+      # which a case steers with `arc_test_branch` or with the fixture repository it names.
+      PRHEAD=""
     else
-      META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,milestone,title 2>/dev/null)"
-      [ -n "$META" ] || exit 0
+      META="$(cd "$CWD" && gh pr view "$NUM" --json body,baseRefName,closingIssuesReferences,headRefName,milestone,title 2>/dev/null)"
+      if [ -z "$META" ]; then skip_arm "PR #$NUM could not be read"; return 0; fi
 
-      BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","baseRefName.*//')"
+      # `closingIssuesReferences`, not `baseRefName`. `gh` returns the fields SORTED, so
+      # `baseRefName` precedes `body` and that terminator never matched — the extracted body
+      # ran to the end of the payload, carrying the milestone's description and the PR's own
+      # title with it. The milestone check below greps this for a closing keyword, so a PR
+      # whose title happened to read `… fixes #12` was classified as closing an issue.
+      BODY="$(printf '%s' "$META" | sed 's/.*"body":"//; s/","closingIssuesReferences".*//')"
       BASE="$(printf '%s' "$META" | grep -oE '"baseRefName":"[^"]*"' | sed 's/.*:"//; s/"$//')"
       DEFAULT="$(cd "$CWD" && gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)"
-      TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+      # `tail -n1`, and the whole check depends on it. `gh` returns the fields sorted, so a
+      # closing issue's title and the milestone's title both appear BEFORE the PR's own, and
+      # an untailed match yields all three on separate lines. `grep -q` then matches the arc
+      # prefix on any of them, so a PR missing its prefix passed whenever a neighbour had one.
+      TITLE="$(printf '%s' "$META" | grep -oE '"title":"[^"]*"' | tail -n1 | sed 's/.*:"//; s/"$//')"
 
-      MILESTONE=set
-      printf '%s' "$META" | grep -q '"milestone":null' && MILESTONE=null
+      # THE ANSWER AND THE NAME ARE TWO VARIABLES. The finding names the milestone the PR
+      # carries, so a sentinel would print where a human expects `Dogfood` — but `null` and
+      # `set` are both legal milestone titles, so one string cannot hold both without a
+      # milestone called `null` reading as no milestone at all.
+      #
+      # THREE STATES, NOT TWO. A `META` carrying neither shape means the field could not be
+      # read, and neither default is safe: absent-means-set invents a milestone on a closing
+      # PR, absent-means-none demands one on a direct PR. It skips instead.
+      #
+      # ISOLATE THE OBJECT FIRST, AND ONLY WHEN IT IS THERE. `gh` sorts the fields, so the
+      # milestone sits between `closingIssuesReferences` and the PR's own `title`. A `sed`
+      # whose address is absent does not fail — it passes the payload straight through, and
+      # the next `grep` hands back a neighbour's title as the milestone's name.
+      MILESTONE=""
+      case "$META" in
+        *'"milestone":null'*) HAS_MILESTONE=0 ;;
+        *'"milestone":{'*)
+          HAS_MILESTONE=1
+          MILESTONE="$(printf '%s' "$META" | sed 's/.*"milestone":{//; s/}.*//' | grep -oE '"title":"[^"]*"' | sed 's/.*:"//; s/"$//')"
+          # A milestone whose name will not parse is still a milestone. A title carrying an
+          # escaped quote truncates rather than falling back — the verdict is unaffected,
+          # only the name printed.
+          [ -n "$MILESTONE" ] || MILESTONE="(name unreadable)"
+          ;;
+        *) HAS_MILESTONE=unknown ;;
+      esac
       LINKED=1
       printf '%s' "$META" | grep -q '"closingIssuesReferences":\[\]' && LINKED=0
+
+      # THE PR'S OWN HEAD BRANCH, NOT THIS CHECKOUT'S. `gh pr merge <NN>` runs from anywhere —
+      # an orchestrator merging a run's PR is not standing on that run's branch — and the
+      # merge-close check below reads the issue number out of this. `head_branch` is the right
+      # answer for pr-base, which is about the PR being created from here, and the wrong one
+      # here. Falls back to it when the field cannot be read, which is where a fixture case
+      # lands: a payload supplies no META at all.
+      #
+      # `tail -n1`, for `TITLE`'s reason above. `gh` sorts the fields, so `body` precedes
+      # `headRefName`, and a body quoting the literal `"headRefName":"…"` puts a second line
+      # in front of the real one. A two-line branch name yields no issue number, which turns
+      # `merge-close` off in silence — the shape this hook exists to catch.
+      PRHEAD="$(printf '%s' "$META" | grep -oE '"headRefName":"[^"]*"' | tail -n1 | sed 's/.*:"//; s/"$//')"
     fi
 
     TRUNK="$(resolve_trunk "$DEFAULT")"
@@ -632,12 +1317,39 @@ case "$CMD" in
     scan_placeholders "$BODY" "PR #$NUM"
     scan_dates "$BODY" "PR #$NUM"
 
-    # A PR with no milestone drops out of the milestone view, which is the only place a
-    # human sees the arc as one unit. Settable and unrelated to the base-branch problem —
-    # every PR in this repo's first two arcs simply never had one set.
-    [ "$MILESTONE" = null ] && arc_log_fail milestone=none
-    [ "$MILESTONE" = null ] || arc_log_pass "milestone=$MILESTONE"
-    [ "$MILESTONE" = null ] && add "PR #$NUM has no milestone. It will not appear in the milestone view, which is where the arc reads as one unit."
+    # A milestone item is ONE UNIT OF WORK, and a PR that closes an issue is not one — the
+    # issue is, and it already carries the milestone. Giving the PR one too counts the same
+    # work twice and ticks twice when it lands: 35 of Dogfood's 45 PRs did exactly that,
+    # inflating percent complete against a denominator that was itself inflated. A
+    # direct PR has no issue behind it, so it IS the unit and needs the milestone to appear
+    # in the view where the arc reads as one unit. #204.
+    #
+    # Side effect worth having: a PR in the milestone is then, by definition, a direct PR.
+    #
+    # THE KEYWORD, NOT `closingIssuesReferences`. On a base other than the default nothing
+    # binds and closure defers to the arc PR — but the issue exists and carries the milestone
+    # either way, so the PR must not. Reading the link would give every issue PR in an arc a
+    # milestone back.
+    WANTS_CLOSE=0
+    printf '%s' "$BODY" | grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+' && WANTS_CLOSE=1
+
+    # String comparisons throughout — `HAS_MILESTONE` carries `unknown`, and `-eq` on it is
+    # an error rather than a false.
+    if [ "$HAS_MILESTONE" = unknown ]; then
+      arc_log_skip "milestone${LOG_OBJ:+=$LOG_OBJ}" "the milestone field could not be read"
+    elif [ "$WANTS_CLOSE" -eq 1 ]; then
+      if [ "$HAS_MILESTONE" = 0 ]; then
+        arc_log_pass "milestone=${LOG_OBJ:+$LOG_OBJ:}none"
+      else
+        arc_log_fail "milestone=${LOG_OBJ:+$LOG_OBJ:}$MILESTONE"
+        add "PR #$NUM closes an issue and carries milestone \`$MILESTONE\`. The issue is the unit of work and already carries it — remove the milestone from the PR, or the same work counts twice."
+      fi
+    elif [ "$HAS_MILESTONE" = 0 ]; then
+      arc_log_fail "milestone=${LOG_OBJ:+$LOG_OBJ:}none"
+      add "PR #$NUM closes no issue, so it is the unit of work and needs a milestone. Without one it drops out of the milestone view, which is where the arc reads as one unit."
+    else
+      arc_log_pass "milestone=${LOG_OBJ:+$LOG_OBJ:}$MILESTONE"
+    fi
 
     # An issue branch's PR belongs to its arc. Targeting anything else — the trunk, a
     # sibling issue branch — merges the issue ahead of the arc it belongs to, and the arc
@@ -651,7 +1363,7 @@ case "$CMD" in
     HEADBR="$(head_branch)"
     case "$HEADBR" in
       arc/*-issue-[0-9]*) ;;
-      *) arc_log_skip pr-base "HEAD is not an arc issue branch" ;;
+      *) arc_log_skip "pr-base${LOG_OBJ:+=$LOG_OBJ}" "HEAD is not an arc issue branch" ;;
     esac
     case "$HEADBR" in
       arc/*-issue-[0-9]*)
@@ -666,12 +1378,12 @@ case "$CMD" in
         # the check off silently.
         ARCBASE="$(printf '%s' "$HEADBR" | sed 's#-issue-[0-9][0-9]*.*##')"
         if [ -z "$ARCBASE" ] || [ -z "$BASE" ]; then
-          arc_log_skip pr-base "the base or the arc branch could not be read"
+          arc_log_skip "pr-base${LOG_OBJ:+=$LOG_OBJ}" "the base or the arc branch could not be read"
         elif [ "$BASE" = "$ARCBASE" ]; then
-          arc_log_pass "pr-base=$BASE"
+          arc_log_pass "pr-base=${LOG_OBJ:+$LOG_OBJ:}$BASE"
         fi
         if [ -n "$ARCBASE" ] && [ -n "$BASE" ] && [ "$BASE" != "$ARCBASE" ]; then
-          arc_log_fail "pr-base=$BASE"
+          arc_log_fail "pr-base=${LOG_OBJ:+$LOG_OBJ:}$BASE"
           WHAT="\`$BASE\`"
           [ "$BASE" = "$TRUNK" ] && WHAT="trunk branch \`$BASE\`"
           add "PR #$NUM targets $WHAT from an issue branch of \`$ARCBASE\`. It belongs to its arc — base it on \`$ARCBASE\` so the arc PR carries it."
@@ -684,17 +1396,17 @@ case "$CMD" in
     # amount of correct linking provides.
     case "$BASE" in
       arc/*) ;;
-      *) arc_log_skip arc-prefix "the base is not an arc branch" ;;
+      *) arc_log_skip "arc-prefix${LOG_OBJ:+=$LOG_OBJ}" "the base is not an arc branch" ;;
     esac
     case "$BASE" in
       arc/*)
         ARCNUM="$(printf '%s' "$BASE" | sed -n 's#^arc/\([0-9][0-9]*\).*#\1#p')"
-        [ -n "$ARCNUM" ] || arc_log_skip arc-prefix "the base name carries no number"
+        [ -n "$ARCNUM" ] || arc_log_skip "arc-prefix${LOG_OBJ:+=$LOG_OBJ}" "the base name carries no number"
         if [ -n "$ARCNUM" ] && printf '%s' "$TITLE" | grep -q "^arc-$ARCNUM:"; then
-          arc_log_pass "arc-prefix=arc-$ARCNUM"
+          arc_log_pass "arc-prefix=${LOG_OBJ:+$LOG_OBJ:}arc-$ARCNUM"
         fi
         if [ -n "$ARCNUM" ] && ! printf '%s' "$TITLE" | grep -q "^arc-$ARCNUM:"; then
-          arc_log_fail "arc-prefix=arc-$ARCNUM"
+          arc_log_fail "arc-prefix=${LOG_OBJ:+$LOG_OBJ:}arc-$ARCNUM"
           add "PR #$NUM targets \`$BASE\` but its title does not start with \`arc-$ARCNUM:\`. Without it the PR list has no thread back to the arc."
         fi
         ;;
@@ -705,15 +1417,13 @@ case "$CMD" in
     # `DEFAULT`, not the arc branch, and deliberately: GitHub parses a closing keyword only
     # on a PR targeting the repository default. While m42's flip is on that is the arc
     # branch, and a keyword there does bind.
-    WANTS_CLOSE=0
-    printf '%s' "$BODY" | grep -qiE '(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+' && WANTS_CLOSE=1
-
+    # `WANTS_CLOSE` is set by the milestone check above, which needs the same answer.
     if [ "$WANTS_CLOSE" -eq 1 ] && [ "$LINKED" -eq 1 ]; then
-      arc_log_pass closing-keyword=bound
+      arc_log_pass "closing-keyword=${LOG_OBJ:+$LOG_OBJ:}bound"
     elif [ "$WANTS_CLOSE" -eq 0 ]; then
-      arc_log_skip closing-keyword "the body carries no closing keyword"
+      arc_log_skip "closing-keyword${LOG_OBJ:+=$LOG_OBJ}" "the body carries no closing keyword"
     else
-      arc_log_fail closing-keyword=unbound
+      arc_log_fail "closing-keyword=${LOG_OBJ:+$LOG_OBJ:}unbound"
     fi
 
     if [ "$WANTS_CLOSE" -eq 1 ] && [ "$LINKED" -eq 0 ]; then
@@ -732,10 +1442,10 @@ case "$CMD" in
     # PRs too, which is how PR #75 came to spawn #76.
     #
     # A create, never an edit, for the reason the issue arm records.
-    case "$CMD" in
-      *"gh pr create"*)
+    case "$GH_VERB" in
+      create)
         if [ "$WANTS_CLOSE" -ne 0 ] || [ "$LINKED" -ne 0 ]; then
-          arc_log_skip spawn-parent "not a no-issue \`gh pr create\`"
+          arc_log_skip "spawn-parent${LOG_OBJ:+=$LOG_OBJ}" "not a no-issue \`gh pr create\`"
         else
           check_spawn_parent "$BODY" "PR #$NUM" "pr-$NUM" \
             "It closes no issue, so nothing else will ever say where it came from — m46 §6."
@@ -750,23 +1460,128 @@ case "$CMD" in
     # wrong: it misses the arc PR, which targets the trunk, and it fires on every issue PR
     # merging into the arc — where closure correctly defers to the arc PR. #210.
     if [ -z "$TRUNK" ] || [ "$BASE" != "$TRUNK" ]; then
-      arc_log_skip arc-merge-keyword "the base is not the trunk"
+      arc_log_skip "arc-merge-keyword${LOG_OBJ:+=$LOG_OBJ}" "the base is not the trunk"
     else
-      case "$CMD" in
-        *"gh pr merge"*) [ "$WANTS_CLOSE" -eq 0 ] || arc_log_pass arc-merge-keyword ;;
-        *) arc_log_skip arc-merge-keyword "not a \`gh pr merge\`" ;;
+      case "$GH_VERB" in
+        merge) [ "$WANTS_CLOSE" -eq 0 ] || arc_log_pass "arc-merge-keyword${LOG_OBJ:+=$LOG_OBJ}" ;;
+        *) arc_log_skip "arc-merge-keyword${LOG_OBJ:+=$LOG_OBJ}" "not a \`gh pr merge\`" ;;
       esac
     fi
 
     if [ "$WANTS_CLOSE" -eq 0 ] && [ -n "$TRUNK" ] && [ "$BASE" = "$TRUNK" ]; then
-      case "$CMD" in
-        *"gh pr merge"*) arc_log_fail arc-merge-keyword=none
+      case "$GH_VERB" in
+        merge) arc_log_fail "arc-merge-keyword=${LOG_OBJ:+$LOG_OBJ:}none"
                          add "PR #$NUM merges to trunk branch \`$TRUNK\` with no closing keyword. If this is an arc PR, every issue it consumed stays open." ;;
+      esac
+    fi
+
+    # ---- a work PR merged, and its issue is still open ---------------------------
+    # m12 §4 row 3: "PR merged → issue actually closed → `issue.state`". Nothing read it.
+    #
+    # WHY THIS IS THE ONE THE KEYWORD CANNOT COVER. A work PR inside an arc targets the arc
+    # branch, never the default, so `Closes #NN` in its body binds nothing and closes nothing —
+    # that is m42's whole finding, and the reason m42 offers to move the default branch at all.
+    # Where the flip is off — more than one collaborator, a protected trunk, no admin rights —
+    # closure is a manual act, and a manual act is one somebody forgets. The merge succeeds, the
+    # keyword is present and correct, and the issue silently stays open.
+    #
+    # THE BRANCH NAMES THE ISSUE, NOT THE KEYWORD. Reading `closingIssuesReferences` here would
+    # be empty in exactly the case this check exists for, so the number comes from the head
+    # branch's `-issue-<NN>` — m46 §9's form, which `createLinkedBranch` put there.
+    #
+    # WHERE A KEYWORD BINDS, THIS CHECK MUST NOT RUN, AND `TRUNK` ALONE DOES NOT SAY SO. Two
+    # bases close natively and both have to be excluded:
+    #
+    #   BASE = DEFAULT  GitHub parses the keyword and the merge closes the issue. With m42's
+    #                   flip on that base is the ARC branch, not the trunk — so a trunk-only
+    #                   guard runs the check on every work PR in a flipped repo and prints
+    #                   "a closing keyword cannot bind on a base that is not the default
+    #                   branch" about a base that IS the default. #183 and #210's class again:
+    #                   comparing against the wrong branch. It also invents a race, since a
+    #                   natively-closing issue can still read OPEN a second after the merge
+    #   BASE = TRUNK    the arc PR, whose keywords are `arc-merge-keyword`'s question. Excluded
+    #                   separately because the flip makes DEFAULT and TRUNK different branches,
+    #                   and with the flip on the arc PR's base is the trunk and not the default
+    #
+    # An unreadable DEFAULT skips rather than guesses — fail open, like everything else here.
+    #
+    # POST-MERGE, SO THERE IS NOTHING TO DENY. The finding hands over the two manual steps: the
+    # Development-panel click, which no API can make — tested in m42, and
+    # `POST /repos/{o}/{r}/issues/{n}/links` does not exist — and then the close, which needs no
+    # admin right.
+    MC_ISSUE=""
+    case "$GH_VERB" in
+      merge)
+        if [ -z "$BASE" ] || [ -z "$DEFAULT" ]; then
+          arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the base or the default branch could not be read"
+        elif [ "$BASE" = "$DEFAULT" ]; then
+          arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the base IS the default branch, so the keyword binds"
+        elif [ -n "$TRUNK" ] && [ "$BASE" = "$TRUNK" ]; then
+          arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the base IS the trunk"
+        else
+          [ -n "${PRHEAD:-}" ] || PRHEAD="$(head_branch)"
+          MC_PARENT="$(branch_parent "${PRHEAD:-}")"
+          case "$MC_PARENT" in
+            "issue "*) MC_ISSUE="${MC_PARENT##* }" ;;
+            *) arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "the head branch names no issue" ;;
+          esac
+        fi
+        ;;
+      *) arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "not a \`gh pr merge\`" ;;
+    esac
+
+    if [ -n "$MC_ISSUE" ]; then
+      MC_STATE="$FIXTURE_ISSUE_STATE"
+      MC_WHY=""
+      if [ -z "$MC_STATE" ] && [ -n "$FIXTURE_PR_BASE" ]; then
+        # A fixture payload that supplies no state cannot reach a verdict, and must not go to
+        # the network to find one — an offline case that quietly makes a live read is not an
+        # offline case.
+        MC_WHY="the issue state was not supplied"
+      elif [ -z "$MC_STATE" ]; then
+        if ! command -v gh >/dev/null 2>&1; then
+          MC_WHY="gh is not on PATH"
+        else
+          # BOUNDED, for `check_close`'s reason: this is a synchronous PostToolUse hook and a
+          # hung call would hang the session. GNU's `timeout`, proven by `--version`, because
+          # Windows ships a `timeout.exe` of its own that rejects this syntax.
+          MC_RUNNER=""
+          timeout --version 2>/dev/null | grep -qi coreutils && MC_RUNNER="timeout 20"
+          MC_STATE="$(cd "$CWD" 2>/dev/null && $MC_RUNNER gh issue view "$MC_ISSUE" --json state -q .state 2>/dev/null)"
+          [ -n "$MC_STATE" ] || MC_WHY="the issue's state could not be read"
+        fi
+      fi
+      case "$MC_STATE" in
+        '') arc_log_skip "merge-close${LOG_OBJ:+=$LOG_OBJ}" "$MC_WHY" ;;
+        OPEN|open)
+          arc_log_fail "merge-close=issue-$MC_ISSUE"
+          add "PR #$NUM merged into \`$BASE\` and issue #$MC_ISSUE is still open. A closing keyword cannot bind on a base that is not the default branch, so nothing closed it and nothing will. Attach the link by hand — PR #$NUM → Development panel → #$MC_ISSUE, which no API can do — then \`gh issue close $MC_ISSUE\`."
+          ;;
+        *) arc_log_pass "merge-close=issue-$MC_ISSUE" ;;
       esac
     fi
     ;;
 esac
+return 0
+}
+
+# EVERY WRITE THE COMMAND NAMES, not the first. #230 gave the close and the ready arms a lookup
+# by name, so a chain already reached those; what was left is that only ONE body-carrying write
+# ran. `gh issue edit 38 --body-file b.md && gh pr merge 200` checked the issue and left the
+# merge unread, and `gh pr edit 200 … && gh pr edit 201 …` checked 200 twice rather than 200 and
+# then 201. #231.
+WRITE_N=0
+while :; do
+  read_invocation "$CMD" write "$WRITE_N"
+  [ -n "$ARM" ] || break
+  check_write
+  WRITE_N=$((WRITE_N + 1))
+done
 
 [ -n "$FINDINGS" ] && report "tracker-verify — the write landed, but:$FINDINGS"
+
+# After `report`, never before it: `report` records `failed` only where no outcome stands, so
+# an `ok` written here first would turn a firing with findings into a clean entry. #286
+[ -n "$SKIP_WHY" ] && arc_log_outcome ok "$SKIP_WHY"
 
 exit 0

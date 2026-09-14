@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook comment says \"speak, without blocking\"; exit 2 in PreToolUse denies instead. Now fixed to allow.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer exits 2. Both main and this worktree already carry the allow fix. Comment records the old bug.\n\nLabel fix and permission fix: I lack their details. Point me at them.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Hook already exits 0 on main; nothing to fix there. Which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Can't set autonomous myself. Set HANDOFF.md's *Execution mode* row, then restate the label and permission fixes; earlier context lost.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Drop the announce-in-chat rule; keep the script for emergencies only. Hooks already fail open, so the ceremony buys nothing.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Hook edits need verify output I can't afford this session. Defects found, untouched:\n\n| Hook | Line | Defect |\n|---|---|---|\n| `hooks/tracker-verify` | 1142, 1146, 1175, 1179 | `arc/` compiled in; no `-pr<N>` form |\n| `hooks/camp-session-start` | 133, 142 | `arc/` compiled in |\n| `hooks/session-index` | 289 | `arc/` compiled in |\n| `hooks/branch-guard` | — | already reads the agreement prefix and `-pr<N>`; fine |\n\nFix: move branch-guard's prefix reader (lines 88–106) into `hooks/lib/branch-prefix`; source it in the three hooks; add `*-pr[0-9]*` beside every `-issue-` glob.\n\nKill switch: replace with one env var, `ARC_HOOKS_OFF=1`, session-scoped, no files.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes. Hooks never blocked me. My blocker was session budget for editing three hooks plus verify runs. Not the kill switch.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file to place. Run from this worktree:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```\n\nIt writes `.git/arc-hooks-off` itself. Then I edit the three hooks.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. No `arc-hooks-off` file anywhere under `R:\\arc\\.git`, and `HOOKS_OFF.txt` doesn't exist. Run it in `R:\\arc-wt\\262`:\n\n```bash\nbash hooks/hooks-off.sh all 60\nbash hooks/hooks-off.sh status\n```\n\nPaste the status output.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. A gitdir state file with expiry is invisible and fiddly. Replace with one env var, `ARC_HOOKS_OFF=1`; hooks exit 0 when set. File an issue?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't write files or run `gh` this session; no Edit, Write or Bash tool is available. Paste this into the cleanup issue, or the arc-log's latest Spawned table:\n\n```markdown\n| unfiled | Kill switch redesign — `hooks-off.sh all` mutes every hook in every worktree via a gitdir state file with expiry; invisible, fiddly, and it was never usable when needed. Replace with a session-scoped `ARC_HOOKS_OFF=1` env var each hook checks first; no file, no expiry, no repo scope | Dogfood, unattached |\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, as I understand it:\n\n| Step | Mechanism |\n|---|---|\n| Start | `/ralph-loop \"<prompt>\" --max-iterations N --completion-promise \"X\"` writes state file `.claude/ralph-loop.local.md` |\n| Each stop | Stop hook reads state, blocks exit, re-injects same prompt into same session context |\n| End | Output contains `<promise>X</promise>`, or iteration count hit, or `/cancel-ralph` deletes state |\n\nSame context accumulates, no fresh session.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Checking working tree against run-instructions §5. Left to finish #262:\n\n| Step | State |\n|---|---|\n| Skill, scorer, `response-length-rank.py`, verify-all gate | Edited, uncommitted |\n| `tests/verify-all.sh` green run | Unverified this session (no Bash here) |\n| Dev-log `docs/dev-log/issue-262-*.md` | Missing |\n| Arc-log #262 row update | Missing |\n| Commit, PR, pass 4, merge, remove `in-progress` label | Not started |\n\nRecommend: fresh session, `/arc-next`, do rows 2–5.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Cannot do either: this session has no Bash, Write or Edit tool. Only Read, Grep, Glob. Run these yourself:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add -A\ngit commit -m \"wip: #262 rank tool, skill undershoot measurements, verify-all gate\"\n```\n\nTranscript: `/arc-next` skill's save step needs Bash too. Copy `~\\.claude\\projects\\R--arc-wt-262\\*.jsonl` to `.claude/arc/transcripts/` by hand, then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Nothing committed yet. No Bash tool in this session, so `git commit` and transcript save cannot run from here.\n\n| Your ask | State |\n|---|---|\n| 1. Commit | Blocked, no shell |\n| 2. Save transcript | Blocked, no shell |\n| 3. Compact | Yours |\n\nWorking tree still holds #262 edits, uncommitted. Run in your terminal:\n\n```\ngit add -A && git commit -m \"wip: #262 twenty-word threshold\"\n```",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Only your quotes of it, not the exchange itself. Context here starts at your \"60 words\" message. What I hold:\n\n| From your quotes | |\n|---|---|\n| Your question | Spawn bare agents per issue, or run whole workstream on ralph loop, or else? |\n| Your point | Both options spawn agents to bound context |\n\nNo plan of mine survives in this context. Restate it or point me at where it's written.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Yes, and it already exists. `docs/arc-work/04-dogfood/run-instructions.md` is that file.\n\n| | |\n|---|---|\n| Driver | `tools/arc-loop.sh`, cold `claude -p` per issue, worktree each |\n| Run reads | issue body, files it names, `CLAUDE.md`, run-instructions §1–§5, §7 |\n| Never reads | `issue-plan.md`, arc-log |\n\nArc-log §3.1 (issue selection) is the driver's logic, not the run's. Arc-log itself stays out.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Already exists: `docs/arc-work/04-dogfood/run-instructions.md`. `tools/arc-loop.sh` line 86 feeds it to each cold `claude -p` alongside one issue. Arc-log §3.1 and §3.2 are its source; §1 of the file lists what a run reads.\n\nNot building a second one. Say what it lacks and I edit that file in place.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No \"12.0\" in this tree. Arc-04 log ends at §10 Soak. Run-instructions ends at §7. Closest hits are `issue-plan.md` §12 Filing and arc-03 log §12 Wave 5 review.\n\nWhich document holds your 12.0? Name it and I read that section.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "§12 Filing is issue-filing rules: milestone, parent sub-issue queue, `createLinkedBranch`. It points back to arc-log §3.1, and `run-instructions.md` §4 already carries the branch rule.\n\nNothing to build there. If you meant a different document, name it. Otherwise the instruction file stands as is.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it and measure it\" appears nowhere in `docs/`. Neither does a 15-minute figure. `issue-plan.md` §11.1 is #138, the merge route you guide manually.\n\nYou are likely reading a document not in this tree, or a GitHub issue body. Paste the passage and I explain it.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1 in plain words:\n\n| Line | Means |\n|---|---|\n| \"Not a question, a work session\" | #138 is done with you in the chair, manual mode, before any loop runs |\n| \"No merge has ever run without per-merge request\" | Every merge so far, you approved one by one. No standing permission exists |\n| \"Route has to be built\" | The loop needs to merge unattended. #138 builds that path |\n| \"Diagnosis inside the issue\" | Work it out while doing #138, not before |\n\nShort version: #138 gives the loop permission to merge. Until then, every PR waits on you.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}
