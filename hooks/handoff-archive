@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# handoff-archive — PreToolUse hook (matchers: Edit|Write|NotebookEdit, and Bash). Carries #152.
+# handoff-archive — PreToolUse hook (matchers: Edit|Write|NotebookEdit, and Bash). Carries #152, m48.
 #
 # `HANDOFF.md` is gitignored, so rewriting it destroys the state the session was given and
 # leaves no copy anywhere. Same shape as replacing a diagram the user spent hours on instead
