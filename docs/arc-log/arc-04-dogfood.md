@@ -140,7 +140,7 @@ sequence are in
 | **Rationale is not narrative** | Leading hypothesis for why a correct handoff produces the opposite conclusion: *"we tried X then Y"* is cut as development narrative and the constraint that produced the decision goes with it. In hardware the constraint is what makes the next decision correct. Unproven — Handoff-1 tests it |
 | **The manual process the handoff replaced worked** | A cold start that began by reading the previous session's transcript produced good results, and inspired the handoff. The document is a distillation of that transcript — **distillation is where the rationale is lost**, which is the same finding as the row above, arrived at from the other direction |
 | **No standing merge grant has ever existed here** | Since Arc was installed, no merge has run without an explicit per-merge request. [#138](https://github.com/Calyx-Engineering/arc/issues/138) is building a route, not recovering a lost one |
-| **The skill length limit is Anthropic's 500 lines, not 180** | The user's call 2026-09-08: *stick to anthropic official guidance and modify our own practices.* [#90](https://github.com/Calyx-Engineering/arc/issues/90) carried 180; retired. What would have to change: Anthropic's published guidance |
+| **The skill length limit is Anthropic's 500 lines, not the earlier working figure** | The user's call 2026-09-08: *stick to anthropic official guidance and modify our own practices.* [#90](https://github.com/Calyx-Engineering/arc/issues/90) carried the earlier figure; retired. What would have to change: Anthropic's published guidance |
 | **The issue type says who does the work; the prefix says what** | GitHub issue types are single-valued, so **Agent** cannot coexist with Bug. Agent-typed issues are the loop's; any other type is a human's. Kind stays in the prefix and its label. Decided 2026-09-08; [#274](https://github.com/Calyx-Engineering/arc/issues/274) builds it. What would have to change: labels proving a better human-readable split, or types becoming multi-valued |
 | **The boundary review is where a workstream's spawned work gets routed** | Fire's review 2026-09-08 turned one 200-word report into 24 issues: four spawns never attached, eleven *needs an issue* rows never filed, §6.3.6 items nobody owned, and a new workstream. A report that lists *Not done* without a route for each item is incomplete — every item is an issue, done, or marked *cannot*, with the reason. What would have to change: a run that routes its own spawns and files its own findings, which is what [#270](https://github.com/Calyx-Engineering/arc/issues/270) builds |
 | **The user reviews every boundary report before the next workstream's report runs** | The review is the mechanism that caught the above. It is not optional and not the orchestrator's |
@@ -642,7 +642,7 @@ flowchart LR
 #### 6.9.1 Delivered
 
 1. Skill method chosen: `writing-skills`' checklist reviews, `skill-creator` writes, `quick_validate.py` pre-passes both
-2. 500 body lines, measured on `skills/`, adopted; unrecorded 180-line figure retired and gated
+2. 500 body lines, measured on `skills/`, adopted; the unrecorded earlier figure retired and gated
 3. Fourth triage bucket, deviation, added beside judgement/evidence/checkable, so five reviews compare
 4. `tools/verify-skill-length.sh` reports any `SKILL.md` over 500 lines, wired into `verify-all.sh`
 5. README's *Using Arc* section splits typed commands from skills that fire on wording; `verify-skill-registry.sh` catches one declaring neither
