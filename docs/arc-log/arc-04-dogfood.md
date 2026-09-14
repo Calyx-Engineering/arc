@@ -105,7 +105,7 @@ unproven.
 
 ### 3.3 The report at a workstream boundary
 
-**200 words maximum**, written into [§6](#6-status) under that workstream's own number. Durable
+**500 words maximum**, written into [§6](#6-status) under that workstream's own number. Durable
 there in a way a PR comment is not, and posted on the workstream parent issue, which is where it
 is read. **`bash tests/verify-report-budget.sh` counts it, and `verify-all.sh` runs that** — the
 budget was stated in three documents, this one, `run-instructions.md` §6.2 and
@@ -189,7 +189,7 @@ and acceptance criteria and carries no status — one fact, one place. The arc's
 workstreams below; how the whole thing runs is
 [`execution-process.md`](../arc-work/04-dogfood/execution-process.md).
 
-Each workstream's 200-word boundary report lands here when it closes.
+Each workstream's boundary report lands here when it closes — one per workstream, inside 500 words, in the shape [§6.4](#64-handoff--boundary-report) sets.
 
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|

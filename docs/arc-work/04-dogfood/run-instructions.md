@@ -151,7 +151,27 @@ it a review rather than an announcement.
 **Step 5 before step 7, not after.** A run that finishes the work and then keeps going has not
 reached a boundary — it has passed one.
 
-### 6.2 The boundary report — 200 words maximum
+### 6.2 The boundary report — 500 words maximum
+
+**The user's rules, set at Handoff's review on 2026-09-13.** A report is checked against every
+row before it is posted, and it is *ready* only when all pass. [§6.4 of the arc-log](../../arc-log/arc-04-dogfood.md#64-handoff--boundary-report)
+is the reviewed pattern.
+
+| | |
+|---|---|
+| **One report per workstream** | A second closing appends to the one section. It never opens the next `§6.N` |
+| **The header** | The workstream and the closed date. No word-count claim — the count is the gate's |
+| **A goal line, then a before/after table** | The goal in the user's words: what the workstream was for. The table names the instrument in each row, and a date in each column head |
+| **End state only** | No `→`, *was*, *after the fix*, *found at the review*, *filed at*; no dates that narrate. A report says where things ended up, not how they got there |
+| **Every Spawned row is an issue number with a Routed cell** | Nothing *unfiled*. A finding with no issue behind it is not a Spawned row — it is a dev-log line, or it gets filed |
+| **No label used once** | No coined term, no `C1` or `H7`. A name that appears in one table is not a name |
+| **Every *Not done* item says where it went, or why nowhere** | An issue number, a document, or the reason there is neither |
+| **Every issue and PR number links** | In the report as in chat |
+| **Two rules between reports** | `---`, a blank line, `---` |
+| **The diagram shows the end state** | Not the path |
+
+Then read it once more as the user would: **does merging this branch let him close the
+workstream in one read?**
 
 **Seven sections, in this order, as `####` headings numbered under the report's own number** —
 `#### 6.2.1 Delivered`, `#### 6.2.2 Spawned`. They are sections, not list items: a heading is
