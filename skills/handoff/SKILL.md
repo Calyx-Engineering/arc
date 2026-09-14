@@ -80,7 +80,7 @@ a comparison against the arc-log, which the reading order has already opened.
 | Check | Stale when |
 |---|---|
 | **The date in the handoff's title** | More than 24 hours before today. Age alone is not proof of staleness, but past a day the odds that something happened outside it are high enough to say so |
-| **Transcripts newer than the handoff** | `find <transcript-dir> -name '*.jsonl' -newer HANDOFF.md` prints anything. A session ran after this handoff was written and its decisions are not in here |
+| **Transcripts newer than the handoff** | `find <transcript-dir> -name '*.jsonl' -newer HANDOFF.md` prints a file other than the writer's own live session — the one the handoff's *Transcripts* line names as live, which keeps growing after the write and is always newer. Any other file means a session ran after this handoff was written and its decisions are not in here |
 | `git branch --show-current` | The branch differs from the one *Where we are* names |
 | `git status --short` | The tree is dirty and the handoff does not say work was left uncommitted |
 | `git log --oneline -5` | The last commit is not one the handoff accounts for |
