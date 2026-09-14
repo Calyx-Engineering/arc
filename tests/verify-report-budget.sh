@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# verify-report-budget.sh — a workstream boundary report fits its 200-word budget.
+# verify-report-budget.sh — a workstream boundary report fits its 500-word budget.
 #
 #   tests/verify-report-budget.sh            check every boundary report in docs/arc-log/
 #   tests/verify-report-budget.sh selftest   run the fixture cases
@@ -12,6 +12,11 @@
 # input. Loop's first boundary report was 302 words against 200, and the user caught it. #185.
 # That is the arc's own subject in miniature: a rule written down three times, loaded, and not
 # fired.
+#
+# THE BUDGET WAS 200 UNTIL 2026-09-13. The user's review of Handoff's report set the shape every
+# report now takes — a goal line, a before/after table naming its instrument, seven sections —
+# and the reviewed report is 480 words. 500 is that shape's ceiling, not a loosening of the
+# rule; a report that needs more is narrating. Arc-log §6.4 is the pattern.
 #
 # WHAT IT COUNTS, so the number is reproducible. Between a `### <n> <Workstream> — boundary
 # report` heading and its `*End of ... boundary report.*` line, a word is a whitespace-separated
@@ -52,7 +57,7 @@ set -u
 
 SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 
-BUDGET=200
+BUDGET=500
 ARCLOG_REL=docs/arc-log
 INSTRUCTIONS_REL=docs/arc-work/04-dogfood/run-instructions.md
 
@@ -475,27 +480,28 @@ three four five')
   if [ "$st" = 0 ] && [[ "$out" == *"150 words"* ]]; then ok "a report under budget passes"
   else bad "a report under budget passes" "exit $st" "$out"; fi
 
-  # 8 — OVER BUDGET FAILS, and 302 is the number that started this. Loop's first report.
-  r=$(mk over); report_of 302 > "$r/docs/arc-log/arc-04.md"
+  # 8 — OVER BUDGET FAILS. 302 against 200 is the number that started this — Loop's first
+  # report — and 602 against 500 is the same overage under the current budget.
+  r=$(mk over); report_of 602 > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
-  if [ "$st" = 1 ] && [[ "$out" == *"302 words"* ]] && [[ "$out" == *"102 over"* ]]; then
-    ok "a 302-word report fails, and the output names the overage"
-  else bad "a 302-word report fails, and the output names the overage" "exit $st" "$out"; fi
+  if [ "$st" = 1 ] && [[ "$out" == *"602 words"* ]] && [[ "$out" == *"102 over"* ]]; then
+    ok "a 602-word report fails, and the output names the overage"
+  else bad "a 602-word report fails, and the output names the overage" "exit $st" "$out"; fi
 
-  # 9 — the boundary itself. 200 passes and 201 does not; a budget compared with >= would reject
-  #     two of the three reports already written.
-  r=$(mk exact); report_of 200 > "$r/docs/arc-log/arc-04.md"
+  # 9 — the boundary itself. 500 passes and 501 does not; a budget compared with >= would reject
+  #     a report written to the limit.
+  r=$(mk exact); report_of 500 > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
-  if [ "$st" = 0 ]; then ok "exactly 200 words passes"; else bad "exactly 200 words passes" "$out"; fi
-  r=$(mk plusone); report_of 201 > "$r/docs/arc-log/arc-04.md"
+  if [ "$st" = 0 ]; then ok "exactly 500 words passes"; else bad "exactly 500 words passes" "$out"; fi
+  r=$(mk plusone); report_of 501 > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
-  if [ "$st" = 1 ]; then ok "201 words fails"; else bad "201 words fails" "exit $st" "$out"; fi
+  if [ "$st" = 1 ]; then ok "501 words fails"; else bad "501 words fails" "exit $st" "$out"; fi
 
-  # 10 — A REPORT WITH A DIAGRAM, end to end: 190 words of prose and a diagram whose words would
+  # 10 — A REPORT WITH A DIAGRAM, end to end: 490 words of prose and a diagram whose words would
   #      push it over. It passes, because run-instructions.md §6.2 says the diagram is excluded.
-  r=$(mk diagram); report_of 190 diagram > "$r/docs/arc-log/arc-04.md"
+  r=$(mk diagram); report_of 490 diagram > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
-  if [ "$st" = 0 ] && [[ "$out" == *"190 words"* ]]; then ok "a report with a diagram is scored on its prose"
+  if [ "$st" = 0 ] && [[ "$out" == *"490 words"* ]]; then ok "a report with a diagram is scored on its prose"
   else bad "a report with a diagram is scored on its prose" "exit $st" "$out"; fi
 
   # 11 — NO REPORT YET is the ordinary state of an open arc, and is not a failure.
@@ -506,7 +512,7 @@ three four five')
 
   # 12 — two reports in one file, one of each. The bad one is named and the good one is not.
   r=$(mk both)
-  { report_of 150; printf '\n---\n\n'; report_of 260 | sed 's/6\.2 Loop/6.3 Fire/'; } \
+  { report_of 150; printf '\n---\n\n'; report_of 560 | sed 's/6\.2 Loop/6.3 Fire/'; } \
     > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
   # The assertion has to bind the verdict to the report. `*"PASS"*` alone is true of every run
@@ -514,15 +520,15 @@ three four five')
   # under-budget report started failing.
   if [ "$st" = 1 ] \
      && printf '%s\n' "$out" | grep -qE '^  PASS  .*Loop — 150 words' \
-     && printf '%s\n' "$out" | grep -qE '^  FAIL  .*Fire — 260 words'; then
+     && printf '%s\n' "$out" | grep -qE '^  FAIL  .*Fire — 560 words'; then
     ok "one over-budget report among two is the one named"
   else bad "one over-budget report among two is the one named" "exit $st" "$out"; fi
 
   # 13 — a report missing its End-of line is still counted. Otherwise deleting one line is a way
   #      past the budget.
-  r=$(mk noend); report_of 260 | grep -v '^\*End of ' > "$r/docs/arc-log/arc-04.md"
+  r=$(mk noend); report_of 560 | grep -v '^\*End of ' > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
-  if [ "$st" = 1 ] && [[ "$out" == *"260 words"* ]]; then ok "a report with no End-of line is still counted"
+  if [ "$st" = 1 ] && [[ "$out" == *"560 words"* ]]; then ok "a report with no End-of line is still counted"
   else bad "a report with no End-of line is still counted" "exit $st" "$out"; fi
 
   # 13a — AN UNCLOSED FENCE IS REPORTED, not counted. It is the one shape that turns the diagram
@@ -540,20 +546,20 @@ three four five')
   # 13b — and a report missing its End-of line does not get everything after its diagram free.
   #       The region then runs to the end of the file, which is where the trailing words are.
   r=$(mk noend2)
-  { report_of 190 diagram | grep -v '^\*End of '
+  { report_of 490 diagram | grep -v '^\*End of '
     printf '## 7 Related analysis\n\n%s\n' "$(body_of 20)"
   } > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
-  if [ "$st" = 1 ] && [[ "$out" == *"210 words"* ]]; then
+  if [ "$st" = 1 ] && [[ "$out" == *"510 words"* ]]; then
     ok "an unterminated report counts what follows its diagram"
   else bad "an unterminated report counts what follows its diagram" "exit $st" "$out"; fi
 
   # 13d — a heading typed with a hyphen instead of an em dash is still a report. It used to match
   #       nothing, and a report the scan does not recognise is never counted and never named.
-  r=$(mk hyphen); report_of 260 | sed 's/6\.2 Loop — boundary/6.2 Loop - boundary/' \
+  r=$(mk hyphen); report_of 560 | sed 's/6\.2 Loop — boundary/6.2 Loop - boundary/' \
     > "$r/docs/arc-log/arc-04.md"
   out=$(run "$r"); st=$?
-  if [ "$st" = 1 ] && [[ "$out" == *"260 words"* ]]; then
+  if [ "$st" = 1 ] && [[ "$out" == *"560 words"* ]]; then
     ok "a heading dashed with a hyphen is still a report"
   else bad "a heading dashed with a hyphen is still a report" "exit $st" "$out"; fi
 
