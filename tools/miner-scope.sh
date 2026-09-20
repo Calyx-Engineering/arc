@@ -6,14 +6,14 @@
 # WHY THIS EXISTS. agents/transcript-miner said "glob across every matching raw directory,
 # never one", because worktrees get their own slug and a scoped search misses a deleted
 # worktree's orphaned directory silently — 45 MB of the richest material, once. Matching on a
-# shared prefix then pulled in a sibling repository: briefed on roadz-sound-system, the first
-# real run also read R--work-lantern-roadz-pb-firmware, which is a different product. #141.
+# shared prefix then pulled in a sibling repository: briefed on zephyr-system, the first
+# real run also read R--work-northwind-zephyr-firmware, which is a different product. #141.
 #
 # THE RULE. A directory is in scope when, case-insensitively, its slug either
 #   (a) equals a briefed slug, or
 #   (b) begins with a briefed slug followed by "--"  — the worktree form,
 #       <slug>--claude-worktrees-<branch>
-# A shared stem is not enough. "roadz-sound-system" is not a prefix of "roadz-pb-firmware"
+# A shared stem is not enough. "zephyr-system" is not a prefix of "zephyr-firmware"
 # under (b), because the separator has to be there.
 #
 # OUTPUT is two columns so a caller can act on it and a packet can quote it:
@@ -37,7 +37,7 @@ ROOT="${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}"
 if [ "${1:-}" = "selftest" ]; then
   T="$(mktemp -d)"
   trap 'rm -rf "$T"' EXIT
-  mkdir -p "$T/r--work-lantern-roadz-sound-system"            "$T/R--work-lantern-roadz-sound-system--claude-worktrees-interface-pcba-rev-b-issue-1"            "$T/R--work-lantern-roadz-pb-firmware"            "$T/r--arc"            "$T/r--lodestar"
+  mkdir -p "$T/r--work-northwind-zephyr-system"            "$T/R--work-northwind-zephyr-system--claude-worktrees-widget-board-rev-b-issue-1"            "$T/R--work-northwind-zephyr-firmware"            "$T/r--arc"            "$T/r--lodestar"
   P=0; F=0
   t() { # t <label> <expected-substring> <args...>
     local label="$1" want="$2"; shift 2
@@ -60,15 +60,15 @@ if [ "${1:-}" = "selftest" ]; then
 
   echo "miner-scope selftest"
   echo
-  t  "the briefed directory is in scope"      "IN    r--work-lantern-roadz-sound-system" r--work-lantern-roadz-sound-system
-  t  "a worktree of the briefed slug is in scope, despite the case difference"      "IN    R--work-lantern-roadz-sound-system--claude-worktrees" r--work-lantern-roadz-sound-system
-  t  "a sibling repository sharing a stem is NEAR, not IN — the #141 case"      "NEAR  R--work-lantern-roadz-pb-firmware" r--work-lantern-roadz-sound-system
-  t  "an unrelated repository is SKIP"      "SKIP  r--lodestar" r--work-lantern-roadz-sound-system
-  t  "a second briefed slug brings its directory in"      "IN    r--arc" r--work-lantern-roadz-sound-system r--arc
-  t  "nothing is silently omitted — every directory is on a line"      "SKIP  r--arc" r--work-lantern-roadz-sound-system
+  t  "the briefed directory is in scope"      "IN    r--work-northwind-zephyr-system" r--work-northwind-zephyr-system
+  t  "a worktree of the briefed slug is in scope, despite the case difference"      "IN    R--work-northwind-zephyr-system--claude-worktrees" r--work-northwind-zephyr-system
+  t  "a sibling repository sharing a stem is NEAR, not IN — the #141 case"      "NEAR  R--work-northwind-zephyr-firmware" r--work-northwind-zephyr-system
+  t  "an unrelated repository is SKIP"      "SKIP  r--lodestar" r--work-northwind-zephyr-system
+  t  "a second briefed slug brings its directory in"      "IN    r--arc" r--work-northwind-zephyr-system r--arc
+  t  "nothing is silently omitted — every directory is on a line"      "SKIP  r--arc" r--work-northwind-zephyr-system
   te "a briefed slug matching nothing exits 1, not 0" 1 r--does-not-exist
   te "no arguments exits 2" 2
-  te "a valid brief exits 0" 0 r--work-lantern-roadz-sound-system
+  te "a valid brief exits 0" 0 r--work-northwind-zephyr-system
 
   echo
   echo "$P passed, $F failed"

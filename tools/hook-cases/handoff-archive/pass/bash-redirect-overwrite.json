@@ -1,0 +1,2 @@
+# a Bash redirect over some other untracked file — #351's shell-overwrite form. Silent either way: speaking on Bash would auto-approve the command
+{"session_id":"verify-archive-bash-redirect","cwd":"__FIXTURE_ISSUE__","tool_name":"Bash","tool_input":{"command":"cat > notes.md"}}

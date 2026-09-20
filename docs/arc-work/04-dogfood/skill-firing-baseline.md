@@ -10,10 +10,10 @@ Measured before any skill was edited for firing. Every Fire issue is scored agai
 > the **Fires** and **Sessions** columns are unaffected.
 
 ```sh
-bash tools/skill-firing.sh r--work-lantern-roadz-sound-system r--arc --since 2026-08-24T09:40
+bash tools/skill-firing.sh r--work-northwind-zephyr-system r--arc --since 2026-08-24T09:40
 ```
 
-**Corpus:** 11 sessions across 3 directories — this repository and ROADZ, including its worktree
+**Corpus:** 11 sessions across 3 directories — this repository and the client repo, including its worktree
 — from the plugin's install onward. *Opening* is the first 3 user turns of a session.
 
 | Skill | Fires | Sessions | At opening |
@@ -63,7 +63,7 @@ were added to the corpus between the two runs, so this is not a like-for-like re
 above.
 
 ```sh
-bash tools/skill-firing.sh r--work-lantern-roadz-sound-system r--arc --since 2026-08-24T09:40
+bash tools/skill-firing.sh r--work-northwind-zephyr-system r--arc --since 2026-08-24T09:40
 ```
 
 | Skill | Fires | Sessions | At opening |

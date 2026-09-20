@@ -1,0 +1,2 @@
+# manual, a backticked `git commit` inside SINGLE quotes — literal, nothing runs
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "gh issue comment 364 --body 'denied `git commit` three times; $(git push) is text here'", "description": "Run"}}

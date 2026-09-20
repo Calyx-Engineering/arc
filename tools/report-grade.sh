@@ -10,10 +10,13 @@
 #
 #   --threshold N    the rate the suite must clear. Default 0.67
 #   --corpus DIR     where the source repositories live. Default $REPORT_CORPUS_DIR, else
-#                    R:/work_lantern — a path that exists on ONE machine. Everywhere else every
+#                    unset. The source repositories are on ONE machine, so everywhere else every
 #                    case falls into CORPUS NOT CHECKED and scores from its excerpt unverified;
 #                    --strict turns that into a failure, and is the flag to use in any context
 #                    where the verbatim claim has to mean something.
+#
+#   ARC_EVAL_CORPUS=DIR   where the cases live when they are not in this repository — DIR holds
+#                         report-shape/. Unset, the cases are read from evals/report-shape.
 #
 # WHY THIS EXISTS. #159: reports, READMEs and one spec are written as an account of the
 # exploration rather than as the current state of knowledge — five post-install corrections,
@@ -55,7 +58,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 cd "${RG_CD:-$HERE/..}" || exit 1
 STRICT=0
 SELFTEST=0
-CORPUS="${REPORT_CORPUS_DIR:-R:/work_lantern}"
+CORPUS="${REPORT_CORPUS_DIR:-}"
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -64,7 +67,7 @@ while [ "$#" -gt 0 ]; do
     --corpus) CORPUS="${2:-}"; shift ;;
     --file) RG_FILE="${2:-}"; export RG_FILE; shift ;;
     --threshold) RG_THRESHOLD="${2:-0.67}"; export RG_THRESHOLD; shift ;;
-    -h|--help) sed -n "2,45p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,48p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -123,8 +126,8 @@ if [ "$SELFTEST" = "1" ]; then
   mk scopeline scopeline.md 1-8
   # "**Scope:** ..." is the status header the skill requires, not a framing preamble. Failing it
   # would make the check unusable on a correctly structured report — the real case is
-  # evals/report-shape/cellular-recommendation-first.
-  printf '# A title\n\n**Status:** selected\n**Scope:** replace the RUT241 on rev B\n\n## 1. Recommendation\n\nLay down one land pattern.\n' \
+  # the report-shape corpus's recommendation-first case.
+  printf '# A title\n\n**Status:** selected\n**Scope:** replace the modem on rev B\n\n## 1. Recommendation\n\nLay down one land pattern.\n' \
     > "$E/scopeline/excerpt.md"; sync scopeline scopeline.md
 
   mk callout callout.md 1-8
@@ -143,7 +146,7 @@ if [ "$SELFTEST" = "1" ]; then
   # A region cut from the middle of a document is evidence about a table or a section, not about
   # an opening. Grading it for conclusion-first would score the absence of a status header — the
   # part the excerpt simply does not contain — as a defect. The real cases cut this way are
-  # #164's: evals/report-shape/pin-allocation-ledger and poe-device-under-test.
+  # #164's: the report-shape corpus's ledger case and its device-under-test case.
   printf '| Ref | Value |
 |---|---|
 | R2 | 24.9 kohm |
@@ -213,7 +216,7 @@ if [ "$SELFTEST" = "1" ]; then
   # #164's second incident, on 2026-08-28: a bench measurement the user had verified was
   # discounted in favour of an inference from an instrument that was reading a class-D carrier
   # as signal. It was argued out in conversation; the one document that records it is
-  # `pr-68-gain-sweep-tool.md`, which cannot be a case because it states no disagreement across
+  # a bench-tool dev-log, which cannot be a case because it states no disagreement across
   # that pair — so the shape that cost the most is still the shape with nothing scoreable, and
   # this is a fixture rather than a case. SILENT, because nothing in it says the two disagree.
   printf 'The bench measurement is 4.167 Vpp out for 100 mVpp in.\n\nThe estimated gain from the scope reading is 24.7x.\n' \
@@ -243,7 +246,7 @@ if [ "$SELFTEST" = "1" ]; then
 
   mk instrumentreading instrumentreading.md 40-42
   # THE FIXTURE #266 EXISTS FOR. Both halves read as `measured` under the seven-term
-  # vocabulary, so there was nothing for the conflict column to see. `pr-68-gain-sweep-tool.md`
+  # vocabulary, so there was nothing for the conflict column to see. That bench-tool dev-log
   # records this shape and could not become an eval case for exactly this reason.
   printf 'The gain measured on the bench is 41.7x. However the scope reported 2.473 Vpp where the tone was 1.456 Vpp.
 '     > "$E/instrumentreading/excerpt.md"; pad instrumentreading instrumentreading.md 39
@@ -258,7 +261,7 @@ if [ "$SELFTEST" = "1" ]; then
   mk firmwareschematic firmwareschematic.md 40-43
   # `firmware` is adopted BELOW `schematic`: the sheets say what the board is, the source
   # says what the code does, and where they disagree about a net the sheets win.
-  printf 'Firmware still calls this pin lights_fault. However the schematic renames it nDUSK_DETECT.\n' \
+  printf 'Firmware still calls this pin status_fault. However the schematic renames it nLEVEL_DETECT.\n' \
     > "$E/firmwareschematic/excerpt.md"; pad firmwareschematic firmwareschematic.md 39
 
   mk threadphoto threadphoto.md 40-43
@@ -654,6 +657,10 @@ if [ -n "${RG_FILE:-}" ]; then
   exit $?
 fi
 
-EVAL_DIR="${RG_EVAL_DIR_OVERRIDE:-evals/report-shape}"
+# ARC_EVAL_CORPUS is the knob; RG_EVAL_DIR_OVERRIDE stays the selftest's. #320: the cases are
+# real client report openings, so they live outside the published repository and this says where.
+EVAL_DIR="${RG_EVAL_DIR_OVERRIDE:-${ARC_EVAL_CORPUS:+$ARC_EVAL_CORPUS/report-shape}}"
+EVAL_DIR="${EVAL_DIR:-evals/report-shape}"
+[ -d "$EVAL_DIR" ] || { echo "no cases at $EVAL_DIR — set ARC_EVAL_CORPUS to the directory that holds report-shape/" >&2; exit 2; }
 score "$CORPUS" "$EVAL_DIR"
 exit $?

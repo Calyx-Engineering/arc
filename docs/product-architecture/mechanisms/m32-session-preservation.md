@@ -16,8 +16,8 @@ design.**
 
 | | |
 |---|---|
-| Live worktrees in ROADZ | **2** |
-| Transcript directories for ROADZ | **4** |
+| Live worktrees in the client repo | **2** |
+| Transcript directories for the client repo | **4** |
 | Directories whose worktree no longer exists | **2** |
 
 The two orphans are `issue-44-poe-pse-onboard` and
@@ -82,9 +82,9 @@ instead:
 |---|---|
 | Transcript directory slug | `R--...-worktrees-issue-44-poe-pse-onboard` |
 | Worktree path (may no longer exist) | `.claude/worktrees/issue-44-poe-pse-onboard` |
-| Branch | `interface-pcba/rev_b-issue-44-...` |
+| Branch | `widget-board/rev_b-issue-44-...` |
 | Issue | `#44` |
-| Arc | `interface-pcba/rev_b` |
+| Arc | `widget-board/rev_b` |
 | Date span | `2026-08-04` |
 | Status | worktree removed |
 
@@ -124,14 +124,14 @@ file at the time, too valuable to lose — and it evaporates when a worktree is 
 
 ### When it runs — PR time, not worktree removal
 
-**Worktree removal is the wrong trigger.** Measured in ROADZ, 2026-08-16:
+**Worktree removal is the wrong trigger.** Measured in the client repo, 2026-08-16:
 
 | Where work happens | Transcript directory | Does a removal ever fire? |
 |---|---|---|
-| A worktree (`issue-1-dimmer-flasher`) | Its own slug | Yes |
+| A worktree (`issue-1-<slug>`) | Its own slug | Yes |
 | **The main repo, branch checked out in place** (`issue-39`) | **Shared with every other branch** | **Never** |
 
-ROADZ's #39 work is on a branch in the main repo, not a worktree. A removal-based trigger
+The client repo's #39 work is on a branch in the main repo, not a worktree. A removal-based trigger
 would **never fire for it**, and its 18 transcripts pile into one directory spanning every
 branch ever checked out there — no per-issue boundary at all.
 
@@ -184,6 +184,13 @@ so it survives only if that branch merges — an abandoned worktree takes its ow
 the file is created untracked: `skills/handoff`'s setup step tells a new repository to `git add` it,
 and `tests/verify-session-index.sh` fails when it exists unstaged, because "committed to the repo"
 is requirement 3 and an untracked file meets none of it.
+
+**Requirement 3 has one declared exception — a published repository
+([#320](https://github.com/Calyx-Engineering/arc/issues/320)).** The index holds one person's
+machine paths and transcript directories, which a public repository cannot carry. Such a repository
+ignores the index under a `# m32 opt-out` comment in `.gitignore`; the gate passes on the comment and
+still fails on a bare ignore line. **Arc's own repository is the first to opt out**, and pays the
+stated price: its mapping from transcript directory to branch no longer outlives the machine.
 
 ## Open questions
 

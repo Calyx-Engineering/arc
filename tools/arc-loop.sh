@@ -132,7 +132,7 @@ done
 die() { echo "arc-loop: $*" >&2; exit 1; }
 
 ROOT="$(git rev-parse --show-toplevel)"
-# Same path form as $ROOT (R:/arc on Windows), so worktree paths read the same everywhere.
+# Same path form as $ROOT (a drive-letter path with forward slashes on Windows), so worktree paths read the same everywhere.
 WT_ROOT="$(dirname "$ROOT")/arc-wt"
 RUNS="$ROOT/.arc-work/runs"
 CLAIM="$HERE/arc-claim.sh"

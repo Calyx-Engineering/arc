@@ -7,7 +7,7 @@
 **C1 pass, C2 pass**, against a baseline of 5/8 and 4/8. One opening, 2026-09-08 20:38 EDT,
 session `d8fadd56` on the handoff `803108a7` wrote 0.0 h earlier. The row, the evidence and what
 it does not establish are in
-[`handoff-baseline.md`](../arc-work/04-dogfood/handoff-baseline.md#the-live-opening--2026-09-08-beside-the-corpus),
+`handoff-baseline.md` (private corpus, not in this repository),
 beside #150's eight — the corpus there is closed at `--until 2026-09-06` and a ninth row in it
 would move a denominator that has to stay fixed.
 

@@ -94,7 +94,7 @@ Running the new verifier against #155 today reports `PASS PR link — PR #205 �
 |---|---|
 | **Retry the mutation on a failed read** | It cannot link a branch that already exists, so the retry is guaranteed to fail. The script says so and offers **one** repair, chosen by whether an open PR heads the ref: delete and re-run when it is free, bind from the PR side when it is not, and the PR side when that read itself failed |
 | **A timeline read as the check** | Tested and disproved above — `createLinkedBranch` emits no event, so a timeline read cannot see a branch link at all |
-| **Re-counting the ROADZ survey in m12** | Different repo, not re-run here. Its conclusion is left standing and the recount marked unmeasured rather than asserted |
+| **Re-counting the client-repo survey in m12** | Different repo, not re-run here. Its conclusion is left standing and the recount marked unmeasured rather than asserted |
 
 ## Spawned
 

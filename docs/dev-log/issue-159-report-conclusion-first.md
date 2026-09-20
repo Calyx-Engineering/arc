@@ -19,7 +19,7 @@ the remedy.
 | File | |
 | --- | --- |
 | `tools/report-grade.py`, `.sh` | Grades a report's **opening** — first line through the end of the first `##` section — as `CONCLUSION`, `NARRATIVE`, `DEFERRED`, `PREAMBLE`, or unscored. `--file` grades one document and exits on its verdict |
-| `evals/report-shape/` | Three cases, each an excerpt copied verbatim from a real report in the ROADZ corpus, with the document and line range it came from. #164 added three more to the same suite |
+| `evals/report-shape/` | Three cases, each an excerpt copied verbatim from a real report in the client-repo corpus, with the document and line range it came from. #164 added three more to the same suite |
 | `evals/README.md` | A fourth suite, and why it is keyed by document rather than by session and turn |
 | `skills/engineering-report/SKILL.md` | A new **The opening — conclusion first** section; the `description:` trigger clause rebuilt against #155 §1; a *No framing preamble* row in *Point of view*; a grader line in *Before finishing* |
 | `tests/verify-all.sh` | The new selftest is a gate. 19 after merging the arc branch, all clean |

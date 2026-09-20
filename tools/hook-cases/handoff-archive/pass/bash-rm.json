@@ -1,0 +1,2 @@
+# a Bash `rm` of some other untracked file — #351's shell-overwrite form
+{"session_id":"verify-archive-bash-rm","cwd":"__FIXTURE_ISSUE__","tool_name":"Bash","tool_input":{"command":"rm -f notes.md"}}

@@ -1,0 +1,2 @@
+# manual, a commit inside $( ) inside double quotes — it runs
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "echo \"result: $(git commit -m work)\"", "description": "Run"}}

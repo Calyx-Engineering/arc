@@ -1,0 +1,11 @@
+# corpus.mask.example — copy to tools/corpus.mask and fill it in. The copy is gitignored.
+#
+#   real text~stand-in
+#
+# Literal, case-sensitive, applied top to bottom — so put the longest form first, or a short
+# line rewrites the inside of a long one before the long one is tried. tools/corpus_mask.py
+# applies it to the transcript side of every verbatim check, and says why.
+
+R:\work_northwind\zephyr-system~<client-repo>
+northwind~[the client]
+Morgan~[a colleague]

@@ -33,7 +33,7 @@ Diagnosis is the human's, in the retrospective interview. Your job is evidence.
 | Source | |
 |---|---|
 | **The session index** | `.claude/arc/sessions.md` in each briefed repository, written by `hooks/session-index` (m32). **Not a transcript source — a map.** One row per working directory and branch, naming the transcript directory, the worktree, the branch, the issue, the arc, the date span, and whether the worktree still exists |
-| **Curated saves** | A repository saves transcripts under a named folder — `R:rc-transcripts`, `R:\work_lantern\_transcripts`. Files are named `<date>-<arc>-<issue-or-pr>-<topic>.jsonl`, so the filename itself carries the branch and issue context the raw store lacks. Use their names as the context locator for every quote drawn from them |
+| **Curated saves** | A repository saves transcripts under a named folder — `<drive>/arc-transcripts`, `<client-dir>/_transcripts`. Files are named `<date>-<arc>-<issue-or-pr>-<topic>.jsonl`, so the filename itself carries the branch and issue context the raw store lacks. Use their names as the context locator for every quote drawn from them |
 | **The raw store** | `~/.claude/projects/<path-slug>/*.jsonl`, one directory per working directory. Everything not yet curated |
 
 **Read the index before globbing, and use it as the locator.** A glob returns paths; the index

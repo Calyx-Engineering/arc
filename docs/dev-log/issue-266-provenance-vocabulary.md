@@ -10,7 +10,7 @@ the same table.
 | | |
 | --- | --- |
 | **No term for a reading that is not a measurement** | `measured` covered a bench result and a number an instrument displayed with equal weight. On 2026-08-28 a scope reported 2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading cannot separate a tone from a tone plus a 433 kHz class-D carrier — and an estimate from that reading was taken over a bench measurement the user had verified. Under one word for both, that region held **one** source and graded `ONESIDED`: unscored, and invisible |
-| **Two vocabularies were live** | The seven #164 specified, and the eight `rp2040-pin-allocation.md` had carried since the user repaired this defect by hand. Four of the field's terms had no rank at all, and a reader could not tell whether a row reading `schematic` outranked one reading `datasheet` |
+| **Two vocabularies were live** | The seven #164 specified, and the eight the client's pin ledger had carried since the user repaired this defect by hand. Four of the field's terms had no rank at all, and a reader could not tell whether a row reading `schematic` outranked one reading `datasheet` |
 
 **Two vocabularies is the defect wearing a label.**
 
@@ -85,7 +85,7 @@ is no flag for it, and that is the one piece of this evidence a reader cannot re
 command in the tree.
 
 **The real suite does not move, and that is the honest reading.**
-`pin-allocation-ledger` scores `ROWS` off its `Provenance` header, so the adopted-term matching
+the ledger case scores `ROWS` off its `Provenance` header, so the adopted-term matching
 never runs on it; every other case's verdict is unchanged. **The change is carried by fifteen
 selftest fixtures, not by a corpus case** — recorded in the issue body as not done rather than
 closed with an invented case.
@@ -94,7 +94,7 @@ closed with an invented case.
 
 | Finding | Where it routes |
 | --- | --- |
-| **The 2026-08-28 document still cannot be an eval case.** `instrument` makes it a two-source region, which was the blocker #164 recorded — but `pr-68-gain-sweep-tool.md` carries no contrast marker across that pair, so it grades `SILENT` rather than a resolved conflict. The shape that cost the most is still the shape with no scoreable artifact | Needs an issue. It is #164's box 5, still unmet, for a **different** reason than before |
+| **The 2026-08-28 document still cannot be an eval case.** `instrument` makes it a two-source region, which was the blocker #164 recorded — but a bench-tool dev-log carries no contrast marker across that pair, so it grades `SILENT` rather than a resolved conflict. The shape that cost the most is still the shape with no scoreable artifact | Needs an issue. It is #164's box 5, still unmet, for a **different** reason than before |
 | **Bare `firmware` still matches an inference.** *"a firmware implementation would reach for the register"* is a hypothesis about code that does not exist, and reads as firmware-sourced. `(?<!in )` catches the preposition, not the mood | Recorded in the grader |
 | **`hooks/tracker-verify` misreports the milestone on `gh pr create --body-file`.** It could not read the body from the file, so `WANTS_CLOSE` stayed 0 and it asked a closing PR to *add* a milestone — the opposite of the rule it enforces two branches later, and of `templates/pr.md`. Following it put a milestone on this PR, which review pass 4 caught | Needs an issue |
 | **A guard the corpus cannot exercise is a guard held by fixtures alone.** Seven of the fifteen new fixtures are negative, and every one is synthetic. The real suite's six cases contain none of the false shapes | Recorded in the grader |

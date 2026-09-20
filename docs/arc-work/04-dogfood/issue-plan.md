@@ -83,7 +83,7 @@ flowchart LR
 
 | # | Issue | Evaluate | Fix | Done when |
 |---|---|---|---|---|
-| Loop-1 | [#138](https://github.com/Calyx-Engineering/arc/issues/138) an approved merge cannot run | **You guide this.** You solved it in ROADZ and it left no artifact | The route in `CLAUDE.md` and `skills/autonomy-set` | A merge runs from a standing grant, twice, in one session |
+| Loop-1 | [#138](https://github.com/Calyx-Engineering/arc/issues/138) an approved merge cannot run | **You guide this.** You solved it in the client repo and it left no artifact | The route in `CLAUDE.md` and `skills/autonomy-set` | A merge runs from a standing grant, twice, in one session |
 | Loop-2 | [#149](https://github.com/Calyx-Engineering/arc/issues/149) an eval suite that tests whether a skill fires | No `evals/` exists. Establish a baseline firing rate per skill | `evals/`, the manifest key, `--threshold` in `tests/verify-all.sh` | The suite reports a per-skill score and fails below threshold |
 | Loop-3 | [#141](https://github.com/Calyx-Engineering/arc/issues/141) the miner scans repositories it was not given | Scope follows a shared prefix, not the briefed set | Anchor to briefed slugs; report what was skipped | A briefed pair is read exactly, skipped directories named |
 
@@ -119,7 +119,7 @@ flowchart LR
 | Fire-5 | [#159](https://github.com/Calyx-Engineering/arc/issues/159) reports are written as narrative, not as conclusion | 5 post-install corrections | `engineering-report` | A report case grades conclusion-first |
 | Fire-6 | [#160](https://github.com/Calyx-Engineering/arc/issues/160) numbered topics are dropped mid-reply | Zero pre-install hits | `chat-response` | A multi-topic case grades numbering |
 | Fire-7 | [#161](https://github.com/Calyx-Engineering/arc/issues/161) work continues on the wrong branch | 2 post-install corrections | `hooks/branch-guard` | `verify-hook.sh` cases. **Loops** |
-| Fire-8 | [#162](https://github.com/Calyx-Engineering/arc/issues/162) camp-branch-check rejects conforming branches | **P1.** Fired 5 times, correct 0 | Read the repo's declared convention; extract the number rather than match a shape | `verify-hook.sh` cases including ROADZ's real branches. **Loops** |
+| Fire-8 | [#162](https://github.com/Calyx-Engineering/arc/issues/162) camp-branch-check rejects conforming branches | **P1.** Fired 5 times, correct 0 | Read the repo's declared convention; extract the number rather than match a shape | `verify-hook.sh` cases including the client repo's real branches. **Loops** |
 | Fire-9 | [#163](https://github.com/Calyx-Engineering/arc/issues/163) nothing fires when an issue closes | `tracker-verify` matches create, edit, PR merge only | Add `gh issue close` | `verify-hook.sh` cases. **Loops** |
 | Fire-10 | [#166](https://github.com/Calyx-Engineering/arc/issues/166) an activation log | Three friction-log rows are one absence: **Arc has no record of itself** | Every hook appends one line before exit | A session produces one line per firing. **Loops after Fire-9** |
 
@@ -238,7 +238,7 @@ flowchart LR
 | Upkeep-2 | [#142](https://github.com/Calyx-Engineering/arc/issues/142) delete the local skill copies | Unblocked — [#132](https://github.com/Calyx-Engineering/arc/issues/132) is closed | `verify-all.sh` still clean; the artifact-table gate survives |
 | Upkeep-3 | [#167](https://github.com/Calyx-Engineering/arc/issues/167) the arc-work path assumes a flat slug | A rule, not a per-repo guess | A module-shaped slug resolves |
 | Upkeep-4 | [#168](https://github.com/Calyx-Engineering/arc/issues/168) the dev-log template calls itself a decision log | Collides with `ddr/` | Wording checked |
-| Upkeep-5 | [#134](https://github.com/Calyx-Engineering/arc/issues/134) review what ships before making Arc public | **At arc close.** Blocks use at Dedrone | The audit completes |
+| Upkeep-5 | [#134](https://github.com/Calyx-Engineering/arc/issues/134) review what ships before making Arc public | **At arc close.** Blocks use at an employer | The audit completes |
 
 **Done when:** `verify-all.sh` gains `verify-mechanisms.sh`, the duplicate skill tree is gone, and no existing gate was lost with it.
 

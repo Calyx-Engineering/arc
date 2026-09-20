@@ -6,7 +6,7 @@
 
 The close sequence had nine steps and none of them read the work back. A section gets rewritten
 correctly while other sections of the same file keep describing the old behaviour — every edit
-succeeds, every gate passes, and the record is wrong. Observed in ROADZ (PR #67, four stale README
+succeeds, every gate passes, and the record is wrong. Observed in the client repo (PR #67, four stale README
 sections, 78 offline checks green) and here ([#17](https://github.com/Calyx-Engineering/arc/issues/17),
 shipped missing two of five requirements).
 
@@ -34,7 +34,7 @@ shipped missing two of five requirements).
 
 | | |
 |---|---|
-| **A `verify-all.sh` gate on the read-back itself** | Forbidden by the issue's first constraint, and correct: prose truth is not mechanically checkable. 78 offline checks passed on the ROADZ change that motivated this |
+| **A `verify-all.sh` gate on the read-back itself** | Forbidden by the issue's first constraint, and correct: prose truth is not mechanically checkable. 78 offline checks passed on the client-repo change that motivated this |
 | **A dedicated `agents/read-back.md`** | Not built. The step names a read-only sub-agent and the dispatch shape, which is enough to perform it; an agent artifact is a separate unit. Recorded in *Spawned* |
 | **A size threshold before the agent runs** | The size would be judged by the session the step distrusts |
 

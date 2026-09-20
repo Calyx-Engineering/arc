@@ -48,6 +48,9 @@ score() {  # score <projects-root> <eval-dir>
 
 if [ "$SELFTEST" = "1" ]; then
   T="$(mktemp -d)"
+  # The selftest never reads the live mask: it is untracked, so a suite that depended on it
+  # would pass on one machine only. #320.
+  export ARC_CORPUS_MASK="$T/no-mask"
   trap 'rm -rf "$T"' EXIT
   P="$T/projects/r--fixture"
   E="$T/evals"
@@ -129,6 +132,29 @@ if [ "$SELFTEST" = "1" ]; then
   else
     echo "  FAIL  an edited prompt.md is caught as drift and exits non-zero (exit $dst)"; Fc=$((Fc+1))
   fi
+
+  # #320: a stored prompt that holds a stand-in matches its transcript through the mask, and
+  # without the mask the same pair is drift. The pair is what shows the mask is what passed it.
+  printf 'Hi [the assistant], where are we at?
+' > "$E/bare/hit/prompt.md"
+  printf '# a comment
+
+Camp~[the assistant]
+' > "$T/mask"
+  mout="$(ARC_CORPUS_MASK="$T/mask" score "$T/projects" "$E" 2>&1)"
+  if printf '%s' "$mout" | grep -q "PROMPT DRIFT"; then
+    echo "  FAIL  a masked prompt matches its transcript through the mask"; Fc=$((Fc+1))
+  else
+    echo "  PASS  a masked prompt matches its transcript through the mask"; Pc=$((Pc+1))
+  fi
+  nout="$(score "$T/projects" "$E" 2>&1)"
+  if printf '%s' "$nout" | grep -q "PROMPT DRIFT"; then
+    echo "  PASS  and without the mask the same prompt is drift"; Pc=$((Pc+1))
+  else
+    echo "  FAIL  and without the mask the same prompt is drift"; Fc=$((Fc+1))
+  fi
+  printf 'Hi Camp, where are we at?
+' > "$E/bare/hit/prompt.md"
 
   # --strict turns an absent transcript into a failure; the default does not.
   sout="$(CASES_ROOT_DIR="$T/projects" CASES_EVAL_DIR="$E" CASES_STRICT=1 python "$HERE/skill-cases.py" >/dev/null 2>&1; echo $?)"

@@ -4,12 +4,22 @@
 > ships, and the state each one is in. Where another document disagrees about scope or
 > composition, this one is correct.
 
+**A cold start does not read this whole** ([#175](https://github.com/Calyx-Engineering/arc/issues/175)).
+The reading path is `skills/handoff`'s; this is opened when the work asks one of these:
+
+| The question | Read |
+|---|---|
+| What is Arc, in a minute | [*The six pieces*](#the-six-pieces) |
+| What a mechanism number means, and its state | Its row in [*Mechanisms*](#mechanisms) — one row, not the table |
+| Where a gap in the product gets written down | [*Capturing a gap*](#capturing-a-gap) |
+| Which file carries a capability, and what it needs | Its row in [*Artifacts*](#artifacts) |
+
 Arc is six pieces — workspace guard, authoring, campaign, knowledge, delegation, and
 self-improvement. Every mechanism belongs to one and resolves to an artifact, so a piece of
 work traces to the files that carry it and to whatever else must exist before it is useful.
 
 **Not the authority on:** why you would use Arc — [the repo README](../../README.md) ·
-what gets built next — [ROADMAP.md](../../ROADMAP.md) · how the Calyx plugins fit together
+what gets built next — the current arc's [arc-log](../arc-log/) and the tracker's milestones · how the Calyx plugins fit together
 — [suite-architecture/](../suite-architecture/) · how any single mechanism works —
 [mechanisms/](mechanisms/).
 
@@ -47,7 +57,7 @@ unread on disk.
 
 ## Mechanisms
 
-Thirty-five mechanisms across the six pieces.
+Thirty-seven mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -80,6 +90,8 @@ moves next; this column only reports.
 | m22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | [spec](mechanisms/m22-configuration-management.md) | ⚪ |
 | m40 | Autonomy switch | 🔥 | **The mode is state the user can see, not an instruction to remember.** *Three states — manual, autonomous, and autonomous suspended for a conversation. Entering is always explicit; returning to manual never has to be. The permission sits beside every prohibition it overrides, because the prohibition is read every turn and a cross-reference is read once* | [spec](mechanisms/m40-autonomy-switch.md) | 🔵 |
 | m41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/m41-relief-valve.md) | ⚪ |
+| m48 | Handoff / user-authored-file archive | 🔥 | **A rewrite leaves the prior version on disk.** *Archives the handoff at a session's first tool call, and any other untracked file — including a Bash `>`, `mv`, `rm` or `cp` — the moment it is about to be replaced; a tracked file needs no copy* | [spec](mechanisms/m48-handoff-archive.md) | 🔵 |
+| m49 | Execution mode guard | 🔥 | **The mode is read at the moment of the action, not recalled.** *Reads `HANDOFF.md`'s Execution mode row before a gating command — commit, push, PR, merge, or one hidden inside an invoked script. Autonomous allows it; manual puts it to the user, per command; absent is read as Manual* | [spec](mechanisms/m49-execution-mode-guard.md) | 🔵 |
 | | **AUTHORING** | | | | |
 | m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
@@ -151,9 +163,12 @@ holes has not been.
 and an undesigned knowledge filter. A single "spec written" marker made that row read as
 finished when half of it was not designed.
 
-**Status reports; the roadmap decides.** The Status column says where each mechanism stands
-today. What moves next, and in what order, is [ROADMAP.md](../../ROADMAP.md)'s call — this
-document is the authority on composition, not on sequence.
+**Status reports; the arc decides.** The Status column says where each mechanism stands
+today. What moves next, and in what order, is the current arc's [arc-log](../arc-log/) and the
+tracker's milestones — this document is the authority on composition, not on sequence. The
+roadmap that used to hold it was retired 2026-09-20
+([#175](https://github.com/Calyx-Engineering/arc/issues/175)); its frozen copy is
+[`docs/release/roadmap-2026-08.md`](../release/roadmap-2026-08.md).
 
 ---
 
@@ -204,6 +219,8 @@ function list, then read its Needs column to find what else must exist before it
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
 | `hooks/branch-guard` | hook | m10 | Automatic, before any edit | `.claude/arc/camp/operating-agreement.md`'s *branch prefix* clause |
+| `hooks/mode-guard` | hook | m49 | Automatic, on `Bash`, before a gating command such as `git commit`, `git push`, `gh pr create\|merge` | `HANDOFF.md`'s *Execution mode* row |
+| `hooks/handoff-archive` | hook | m48 | Automatic, on `Edit`, `Write`, `NotebookEdit` and `Bash` | — |
 | `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tests/verify-issue-boxes.sh` · `tests/verify-linked-branch.sh` · `tests/verify-tracker-body.sh` |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
@@ -275,7 +292,7 @@ timing. Not a separate always-on process — a check in the same sweep."*
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 — runs `skills/relief-valve` |
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
 | A decision is settled and the next topic is opening | Writing it down before moving | m15 · m13 — a gate on your own moving on. Nudges only when the surface itself has stopped holding the state |
-| Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default |
+| Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default: it is about Arc, and a repository consuming Arc has no reason to record its rough edges |
 | This session has degraded far enough that the work should move | A handoff, now, while there is budget to write one | m15 — the only one about the session rather than the work. Turn count, a compaction, and the load having drifted off the work the session was opened for |
 | A failure is about to be blamed on the user's environment | One tested alternative on your own side, first | m13 — the skill's list says which checks block. [#165](https://github.com/Calyx-Engineering/arc/issues/165) |
 

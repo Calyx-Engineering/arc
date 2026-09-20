@@ -1,0 +1,2 @@
+# manual, an issue filed with the words in its body — the second denial #364 reports
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "gh issue create --title \"fix: manual mode denies a commit\" --body \"the user asked for git commit; gh pr merge was denied too\"", "description": "File the issue"}}

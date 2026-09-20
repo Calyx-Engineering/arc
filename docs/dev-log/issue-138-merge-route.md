@@ -13,15 +13,15 @@
 | Where | Denials | What |
 |---|---|---|
 | arc | 22 | Four `gh pr merge`, plus branch deletes, a branch rename, `.claude/settings.json` writes, transcript copies, several plain file reads |
-| ROADZ | 3 | All three are copying a `.jsonl` transcript. **Zero merges** |
+| The client repo | 3 | All three are copying a `.jsonl` transcript. **Zero merges** |
 
-ROADZ ran 12 merges and none was denied. Transcript-copy denial is a different gate — a data-egress shape, not an authorization one — and it was wrongly folded into this issue before being dropped.
+The client repo ran 12 merges and none was denied. Transcript-copy denial is a different gate — a data-egress shape, not an authorization one — and it was wrongly folded into this issue before being dropped.
 
 ### The variable is how many times the prohibition is stated
 
-ROADZ was fixed on install day, [`44dbb06`](https://github.com/Lantern-Systems/roadz-sound-system/commit/44dbb06): *"Two copies of the same rule drift, and the copy an agent reads first wins."* It deleted two repo-local skills duplicating Arc's, and reduced `CLAUDE.md` to pointers plus one sentence with the override inside it.
+The client repo was fixed on install day, commit `44dbb06`: *"Two copies of the same rule drift, and the copy an agent reads first wins."* It deleted two repo-local skills duplicating Arc's, and reduced `CLAUDE.md` to pointers plus one sentence with the override inside it.
 
-| | arc | ROADZ |
+| | arc | The client repo |
 |---|---|---|
 | Mode rule stated in | 5 artifacts | 1 |
 | `CLAUDE.md` | Restates rules the skills own | *"Invoke them rather than reproducing their rules here"* |
@@ -47,7 +47,7 @@ ROADZ was fixed on install day, [`44dbb06`](https://github.com/Lantern-Systems/r
 
 | File | |
 |---|---|
-| `CLAUDE.md` | 231 → 148 lines. Mode stated once in ROADZ's shape; five preference rows, the branch mechanics, the gap-routing steps and the local-copies rationale removed as things the plugin or the product definition owns |
+| `CLAUDE.md` | 231 → 148 lines. Mode stated once in the client repo's shape; five preference rows, the branch mechanics, the gap-routing steps and the local-copies rationale removed as things the plugin or the product definition owns |
 | `skills/work-watch` | The `Never commit unasked` row deleted. A pointer under the mechanical-rules table says whether you commit is the mode's call |
 | `skills/autonomy-set` | *The rule appears beside every prohibition* replaced by *This skill is the only place the rule is stated*. New: on a denial, name which of the three gates stopped it |
 | `docs/…/m40-autonomy-switch.md` | §9 reversed, original reasoning kept in full. §10's "nothing runs a skill" corrected — Arc is installed here |
@@ -61,7 +61,7 @@ ROADZ was fixed on install day, [`44dbb06`](https://github.com/Lantern-Systems/r
 
 **Five of six requirements landed as text changes. The sixth is a behavioural test that cannot be run by asking for it** — a merge has to be attempted without the user requesting that merge, which means the test runs exactly once per session and the user has to not participate.
 
-**Two conflations were caught during the work.** Transcript-copy denials were folded into the evidence and pulled back out — same error string, different gate. And the ROADZ regression claim was withdrawn: ROADZ never had a merge problem, because it was fixed there on install day.
+**Two conflations were caught during the work.** Transcript-copy denials were folded into the evidence and pulled back out — same error string, different gate. And the client-repo regression claim was withdrawn: the client repo never had a merge problem, because it was fixed there on install day.
 
 **The user was right and the first search was wrong.** Three widening passes were needed — literal `gh pr merge`, then every denial on the machine, then the user's actual instruction, which was to search for *my* mentions of `CLAUDE.md` and read the surrounding discussion. The third pass found it in one query.
 

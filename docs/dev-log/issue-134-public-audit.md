@@ -24,7 +24,7 @@ user's own machine paths, and holds 124 files of verbatim conversation.
 |---|---|
 | **The instrument carries no policy** | `tools/audit-public.sh --markdown` emits the rows with an **empty** disposition column. Dispositions live in the audit document's rules table, so regenerating the hit list after a fix cannot silently overwrite a decision the user made |
 | **Nine classes, each with its reason on its own line** | The class table is a tilde-separated here-doc rather than an array. A class added without a reason is a class nobody can review |
-| **One line can produce several rows** | `R:\work_lantern\roadz-sound-system` is a machine path *and* a client name *and* a product name. Three separate decisions, so three rows. The single exception is `calyx-name`, tested against the line with the repository's own GitHub URLs stripped — without that, every issue link in the repository reports as an organisation-name exposure |
+| **One line can produce several rows** | A path through the client's directory to its product's repository is a machine path *and* a client name *and* a product name. Three separate decisions, so three rows. The single exception is `calyx-name`, tested against the line with the repository's own GitHub URLs stripped — without that, every issue link in the repository reports as an organisation-name exposure |
 | **`calyx-url` is counted, not listed** | 1,140 links to this repository's own tracker. Enumerating them would bury the 578 rows that need a human, and the decision on them is collective anyway — one row in the audit, not 1,140 |
 | **Dispositions come from eighteen ordered rules, not per-row judgment** | Every row cites the rule that produced it, so a reader can disagree with one rule instead of 578 rows. `R18`, the fallback, matched nothing — which is the check that the seventeen above it are complete |
 | **The gate checks the document against itself, not against the tree** | The live sweep takes **69 seconds** and its answer moves with every commit. A gate that re-swept would be slow on every unit and red on most of them. So `tests/verify-public-audit.sh` checks the four views inside the document for agreement, and `verify-all.sh --list` records the live sweep as the pre-publication step |
@@ -41,7 +41,7 @@ user's own machine paths, and holds 124 files of verbatim conversation.
 
 ## Spawned
 
-- **Arc work:** [public-audit.md](../arc-work/04-dogfood/public-audit.md) — the inventory, 578 rows
+- **Arc work:** public-audit.md (private corpus, not in this repository) — the inventory, 578 rows
 - **Issues:** none. Everything found is either a row in the audit or one of the three `ask` groups in its §5
 
 ## Findings a second run needs
@@ -70,9 +70,9 @@ reported 561** — 87 missed, 16% of the true total, all of it in classes that a
 
 | Found | Fix |
 |---|---|
-| **The three excluded files ship and had no disposition.** `tools/audit-public.sh`'s class table is a dictionary of the client's parts; the audit quotes every hit verbatim — 113 lines of `lantern`, 344 of `roadz`. An exclusion had been read as a decision that a file is safe | Audit §2.1 dispositions all three by hand, and the tool's header says an exclusion is a limit on the instrument, never a verdict |
-| **`client-hw` matched `interface pcba` with a space.** The repository writes it `interface-pcba/rev_b` — the branch, the wiki page, the milestone. 53 lines carry the board name and 39 were invisible to the space-only pattern, in files dispositioned `ship` | `interface[ _-]pcba`, plus `rp2040*`, `speaker-power`, `interface-board`, `pin-allocation`, `gain-sweep`, `inductance-sweep`, `bom-analysis`, `dimmer-flasher`. **`client-hw` went from 49 hits to 134**, and to 136 once this dev-log was staged |
-| **`heliman`, a second GitHub identity**, was reported only as `calyx-name` and took `ship` — it would have survived publication | Added to `person` |
+| **The three excluded files ship and had no disposition.** `tools/audit-public.sh`'s class table is a dictionary of the client's parts; the audit quotes every hit verbatim — 113 lines of the parent company's name, 344 of the product's. An exclusion had been read as a decision that a file is safe | Audit §2.1 dispositions all three by hand, and the tool's header says an exclusion is a limit on the instrument, never a verdict |
+| **`client-hw` matched the board's name with a space.** The repository writes it hyphenated — the branch, the wiki page, the milestone. 53 lines carry the board name and 39 were invisible to the space-only pattern, in files dispositioned `ship` | A `[ _-]` alternative for the board, plus the MCU family, a wiki page, and six document and bench slugs. **`client-hw` went from 49 hits to 134**, and to 136 once this dev-log was staged |
+| **A second GitHub identity**, was reported only as `calyx-name` and took `ship` — it would have survived publication | Added to `person` |
 | **`freaking`** was not an expletive to the pattern | Added |
 | Three prose/count contradictions — R10 saying 1,131 where everything else said 1,138; the turns count 94 where `git ls-files` says 97; §1.1 calling `docs/suite-architecture/` and `docs/reference-timescope/` clean where §4 gave each a row | Corrected |
 
@@ -94,7 +94,7 @@ fixture file now**, and the suite went from 28 cases to 32.
 **Pass 3 read the checklist against the tree** and found five of the seven boxes carrying numbers
 from an earlier sweep. It also found the thing neither earlier pass could: **this dev-log is a
 shipping artifact too.** Untracked, `git ls-files` never showed it to the sweep, and it carries
-`lantern`, `roadz`, `heliman`, `interface-pcba`, `rp2040` and three bench slugs. Staging it before
+the parent company, the product, the second identity, the board, the MCU and three bench slugs. Staging it before
 the final sweep is why the committed totals are 578 rows across 153 files rather than 561 across
 152 — **the audit now includes the document that describes it.**
 

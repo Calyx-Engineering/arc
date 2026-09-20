@@ -1,0 +1,2 @@
+# manual, a commit behind eval
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "eval \"git commit -m work\"", "description": "Run"}}

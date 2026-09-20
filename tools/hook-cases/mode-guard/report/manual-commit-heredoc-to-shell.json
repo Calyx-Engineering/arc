@@ -1,0 +1,2 @@
+# manual, a here-document fed to bash — the body is what runs
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "bash <<'EOF'\ngit add -A\ngit commit -m \"work\"\nEOF", "description": "Run"}}

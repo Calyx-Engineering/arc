@@ -12,7 +12,7 @@ repository can supply. [#287](https://github.com/Calyx-Engineering/arc/issues/28
 | [m12](../../../docs/product-architecture/mechanisms/m12-issue-linking.md) *The test that changes the design*, **as it read before #287** | The keyword is parsed when the body is written, against whatever the default was at that moment — a parse-time quirk, not a base-branch restriction | `closingIssuesReferences` **non-empty** on any base, so long as the body is (re)saved |
 | [m42](../../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) opening | GitHub ignores a closing keyword unless the PR targets the default branch | `closingIssuesReferences` **empty**, before and after the merge, and a re-save does not change it |
 
-**Why the 2026-08-16 data cannot decide it.** ROADZ PR #55 was opened after `interface-pcba/rev_b`
+**Why the 2026-08-16 data cannot decide it.** A client repo's PR #55 was opened after `widget-board/rev_b`
 became the default, so its base *was* the default at parse time — consistent with both claims.
 Every PR in this repository into an arc branch has the same problem: `arc/04-dogfood` is the
 default today, and whether it was at any given PR's parse time is a history question, not a
@@ -52,6 +52,6 @@ the base is the only variable that changed.
 
 **What this does not measure.** Whether a PR opened on a base that *later* became the default
 binds on re-save. m42 measured it negative in this repository on 2026-08-17 — five merged PRs,
-a flip, a re-save, still unbound — and ROADZ's CLAUDE.md claims the opposite for that
+a flip, a re-save, still unbound — and that client repo's CLAUDE.md claims the opposite for that
 repository. Not re-run here; #323's base was never the default, which is the state this case
 isolates.

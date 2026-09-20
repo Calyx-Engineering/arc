@@ -102,7 +102,7 @@ appear: an unsourced claim table; two sources named with nothing saying they dis
 and is exactly the shape of the incident
 [#164](https://github.com/Calyx-Engineering/arc/issues/164) was written about.
 
-Cases in [`evals/report-shape/`](../../evals/report-shape/).
+Cases in `evals/report-shape/` (private corpus, not in this repository).
 
 ---
 
@@ -112,46 +112,19 @@ Cases in [`evals/report-shape/`](../../evals/report-shape/).
 > lead-in, or not at all, is a source that stops travelling the first time the row is quoted
 > somewhere else.
 
-[#164](https://github.com/Calyx-Engineering/arc/issues/164). A demand list carried three
-kill-path signals read off **a photograph of a board the project does not hold**, treated as
-specified for weeks, because nothing on those rows said they were weaker than the rows beside
-them. Separately, a bench measurement the user had verified was discounted in favour of an
-inference from a dead instrument.
+### The vocabulary is record-route's
 
-### The vocabulary, strongest first
+**[`record-route`](../record-route/SKILL.md#every-record-carries-where-its-claims-came-from)
+tracks where a claim came from; this skill shows it to the reader.** The twelve terms, what each
+means, the incidents behind them and the reconciliation with the user's own ledger are all
+there, and only there. Strongest first:
 
-| | Is | And |
-|---|---|---|
-| `measured` | A bench result | Name the rig and its limits |
-| `instrument` | A number an instrument displayed | **Not a measurement.** Nothing yet says it was measuring what the claim names |
-| `schematic` | This board's own sheets | |
-| `datasheet` | The part's own document | Cite the page |
-| `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
-| `firmware` | Shipped source | What the code *does*, not what the hardware requires |
-| `drawing` | A reviewed diagram | As strong as the review behind it |
-| `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
-| `thread` | An issue thread | A decision was reached; no artifact records it yet |
-| `photograph` | A picture of a circuit not in hand | **Treat as a hypothesis, never as a specification** |
-| `conversation` | Said, not written down | Not a decision until it is |
-| `inferred` | Extrapolated, assumed, calculated from something else | The weakest, and the easiest to mistake for a measurement |
+`measured` · `instrument` · `schematic` · `datasheet` · `vendor` · `firmware` · `drawing` ·
+`report` · `thread` · `photograph` · `conversation` · `inferred`
 
-**The order is the point.** Without it, *record the source* is a label with no consequence. A
-project may add a term where it genuinely has one, but it places the new term **in the order**,
-or it has added a word and not a rule.
-
-**`instrument` is the one most often written as `measured`.** On 2026-08-28 a scope reported
-2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading cannot separate a tone from a
-tone plus a 433 kHz class-D carrier — and an estimate drawn from that reading was taken over a
-bench measurement the user had verified. Under one word for both, a report of that afternoon
-names one source and shows no disagreement at all. A reading becomes `measured` when the rig and
-its limits are **written down beside it**, not when it has been thought about.
-
-**These twelve are two vocabularies reconciled** —
-[#266](https://github.com/Calyx-Engineering/arc/issues/266). `firmware`, `drawing`, `report` and
-`thread` are adopted from the ledger the user had been keeping by hand, `photo` maps to
-`photograph`, and `schematic` rises above `datasheet` and `vendor` both — a claim about *this
-board* is settled by this board's own sheets. [record-route](../record-route/SKILL.md#these-twelve-are-the-fields-and-the-specs-reconciled)
-holds the mapping.
+**The order is the rule.** `instrument` — a number a display showed — is the one most often
+written as `measured`, and `photograph`, `conversation` and `inferred` are hypotheses, never
+specifications.
 
 ### The three rules
 
@@ -182,7 +155,7 @@ document is the verdict** — a perfect claim table beside an unsourced margin t
 which is the rule above being enforced and not a scoring artefact. It matches how provenance
 is actually written — *"from the product label"*, *"the scope reported"*, *"most likely
 explanation"* — not only the vocabulary words themselves, so a report is scored on the defect
-and not on adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+and not on adoption of a vocabulary. Cases in `evals/report-shape/` (private corpus, not in this repository).
 
 ---
 

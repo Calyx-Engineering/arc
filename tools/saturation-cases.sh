@@ -9,6 +9,8 @@
 #   tools/saturation-cases.sh selftest    fixtures only, no corpus needed
 #
 #   SAT_PROBE_OUT=path   keep the probe's raw replies instead of losing them with the temp dir
+#   ARC_EVAL_CORPUS=DIR  where the cases live when they are not in this repository — DIR holds
+#                        saturation/. Unset, the cases are read from evals/saturation.
 #
 # WHY THIS EXISTS. tools/skill-cases.sh asks whether a skill fired in response to one prompt.
 # Self-saturation has no prompt: the whole defect is that the user has not said anything yet.
@@ -42,7 +44,7 @@ while [ "$#" -gt 0 ]; do
     --strict) STRICT=1 ;;
     --probe) PROBE=1 ;;
     --case) ONLY="${2:-}"; shift ;;
-    -h|--help) sed -n "2,28p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,30p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -234,8 +236,14 @@ if [ "$SELFTEST" = "1" ]; then
   exit 0
 fi
 
+# #320: the case is a verbatim 52-turn client session, so it lives outside the published
+# repository. ARC_EVAL_CORPUS says where — the directory that holds saturation/.
+EVAL_DIR="${ARC_EVAL_CORPUS:+$ARC_EVAL_CORPUS/saturation}"
+EVAL_DIR="${EVAL_DIR:-evals/saturation}"
+[ -d "$EVAL_DIR" ] || { echo "no cases at $EVAL_DIR — set ARC_EVAL_CORPUS to the directory that holds saturation/" >&2; exit 2; }
+
 if [ "$PROBE" = "0" ]; then
-  score "${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}" evals/saturation
+  score "${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}" "$EVAL_DIR"
   exit $?
 fi
 
@@ -253,11 +261,11 @@ if [ -n "${SAT_PROBE_OUT:-}" ] && [ -e "$OUT" ]; then
 fi
 
 echo "saturation --probe — live against the INSTALLED plugin. This bills per turn."
-for DIR in evals/saturation/*/; do
+for DIR in "$EVAL_DIR"/*/; do
   NAME="$(basename "$DIR")"
   [ -n "$ONLY" ] && [ "$NAME" != "$ONLY" ] && continue
   echo "  $NAME"
   RL_PROBE_CWD="$(pwd)" python "$HERE/response-length-probe.py" "$DIR" "$NAME" "$OUT" || exit 1
 done
 
-score "${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}" evals/saturation "$OUT"
+score "${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}" "$EVAL_DIR" "$OUT"

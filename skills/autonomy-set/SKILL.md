@@ -60,9 +60,9 @@ stop. That direction removes authority rather than granting it, so there is noth
 is your job.
 
 **`hooks/mode-guard` enforces the other half, not this one.** It reads the mode row before every
-commit, push, PR and merge, and denies in manual. It cannot tell whether the user asked for a
-mode change — it sees a file, not a conversation — so *only the user raises it* is a rule you
-keep, not a gate that catches you.
+commit, push, PR and merge, and in manual puts the command to the user to approve — their yes
+is the ask. It cannot tell whether the user asked for a mode change — it sees a file, not a
+conversation — so *only the user raises it* is a rule you keep, not a gate that catches you.
 
 ---
 
@@ -220,7 +220,7 @@ every prohibition, on the reasoning that a cross-reference is read once and an a
 every time. That reasoning was right about the problem. It missed that the harness weighs the
 aggregate: five prohibitions each carrying an override is still five prohibitions, and each one
 is evidence that authorization has not been given. arc stated the rule five times and had four
-merges denied; ROADZ states it once and had none across twelve.
+merges denied; a client repo states it once and had none across twelve.
 [m40 §9](../../docs/product-architecture/mechanisms/m40-autonomy-switch.md) carries the full
 reasoning and the evidence; [#138](https://github.com/Calyx-Engineering/arc/issues/138) is the
 change.

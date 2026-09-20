@@ -11,7 +11,7 @@ skips:
 # Where the record goes
 
 > **The dev-log and arc-log get written, not remembered.** A template alone produces
-> nothing — ROADZ had one and it stayed an empty stub for a month. The mechanism is the
+> nothing — a client repo had one and it stayed an empty stub for a month. The mechanism is the
 > trigger plus the template plus the enforcement, and this skill is the trigger.
 
 Tier definitions are in [knowledge-tiers](../../reference/knowledge-tiers.md). This skill
@@ -90,7 +90,7 @@ specified for weeks, because nothing recorded where they came from.
 | `instrument` | A number an instrument displayed, with nothing establishing it was measuring what the claim names | Becomes `measured` when the rig is written down beside it |
 | `schematic` | This board's own sheets | |
 | `datasheet` | The part's own document | Cite the page |
-| `vendor` | A label, a listing, a product page, silkscreen | |
+| `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
 | `firmware` | Shipped source. What the code *does*, not what the hardware requires | |
 | `drawing` | A reviewed diagram | As strong as the review behind it |
 | `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
@@ -132,7 +132,7 @@ one word for both, that page holds a single source and no visible disagreement.
 
 [#266](https://github.com/Calyx-Engineering/arc/issues/266). Two vocabularies were in use: the
 seven [#164](https://github.com/Calyx-Engineering/arc/issues/164) specified, and the eight
-`rp2040-pin-allocation.md` had carried since the user repaired this defect by hand. **Two
+a client's pin ledger had carried since the user repaired this defect by hand. **Two
 vocabularies is the defect wearing a label** — a row reading `drawing` had no rank, and a
 reader could not tell whether a row reading `schematic` outranked one reading `datasheet`.
 
