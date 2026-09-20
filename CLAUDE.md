@@ -20,8 +20,9 @@ and frozen at `docs/release/roadmap-2026-08.md`. What moves next is the current 
 
 **Execution mode is manual** — files change; nothing is committed, pushed or merged unless
 asked. It changes only when `HANDOFF.md`'s *Execution mode* row says autonomous, and that row
-is read, never remembered — `hooks/mode-guard` reads it before every commit, push, PR and merge,
-and in manual puts each one to David to approve. **You may set that row to manual and never to autonomous**
+is read, never remembered. **`hooks/mode-guard` is unregistered since 2026-09-20** — it denied
+commits David had asked for — and stays off until [#373](https://github.com/Calyx-Engineering/arc/issues/373)
+re-evaluates it, so nothing enforces the row but you. **You may set that row to manual and never to autonomous**
 (`skills/autonomy-set`).
 
 ## Working with David
