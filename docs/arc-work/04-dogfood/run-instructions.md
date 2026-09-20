@@ -216,7 +216,7 @@ it reads as more of the page.
 
 ### <n> <Workstream> — boundary report
 
-**Workstream:** <name> · **Closed:** <date> · **<N> words**, diagram excluded
+**Workstream:** [#<NN>](<the workstream issue's URL>) <name> · **Closed:** <date> · **<N> words**, diagram excluded
 
 …sections 1 to 6, then 7 if there is a diagram…
 

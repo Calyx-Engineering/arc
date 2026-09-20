@@ -358,7 +358,7 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 
 ### 6.4 Handoff — boundary report
 
-**Workstream:** Handoff · **Closed:** 2026-09-13 · diagram excluded
+**Workstream:** [#146](https://github.com/Calyx-Engineering/arc/issues/146) Handoff · **Closed:** 2026-09-13 · diagram excluded
 
 **Goal:** When carrying active work from one chat to another - Handoff helps the new session take the right first action, without user correction, and carries critical reasoning forward.
 
@@ -372,14 +372,14 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 
 #### 6.4.1 Delivered
 
-1. Baseline: 8 real cold starts scored — first action 5/8, states why 4/8 ([#150](https://github.com/Calyx-Engineering/arc/issues/150))
+1. Baseline: 8 real cold starts scored, the table's *Before* column ([#150](https://github.com/Calyx-Engineering/arc/issues/150))
 2. Decisions carry what would have to change; a swap trigger ([#151](https://github.com/Calyx-Engineering/arc/issues/151))
 3. Openings load the skill: 24 of 24 ([#208](https://github.com/Calyx-Engineering/arc/issues/208), [#252](https://github.com/Calyx-Engineering/arc/issues/252))
 4. A live cold start scored: first action correct, reason stated ([#253](https://github.com/Calyx-Engineering/arc/issues/253))
 5. All fourteen staleness checks declare a path; an eighth reads the mode row against the arc-log ([#267](https://github.com/Calyx-Engineering/arc/issues/267), [#268](https://github.com/Calyx-Engineering/arc/issues/268))
 6. `handoff-archive` copies what git cannot restore; the title is re-stamped every write ([#152](https://github.com/Calyx-Engineering/arc/issues/152), [#153](https://github.com/Calyx-Engineering/arc/issues/153))
 7. `work-watch` check 7: self-saturation, with a 52-turn eval ([#154](https://github.com/Calyx-Engineering/arc/issues/154))
-8. `session-index` commits transcript locations for the miner ([#16](https://github.com/Calyx-Engineering/arc/issues/16))
+8. `session-index` indexes transcript directories for the miner; this published repository ignores it ([#16](https://github.com/Calyx-Engineering/arc/issues/16), [#320](https://github.com/Calyx-Engineering/arc/issues/320))
 9. `/handoff-write` and `/handoff-resume` replace `/arc-next`; a shell overwrite is archived; m48 and m49 ([#349](https://github.com/Calyx-Engineering/arc/issues/349), [#351](https://github.com/Calyx-Engineering/arc/issues/351), [#353](https://github.com/Calyx-Engineering/arc/issues/353))
 
 #### 6.4.2 Spawned
@@ -400,7 +400,6 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 - Both criteria together invert the recalled split
 - Two handoffs last edited by Copilot Chat
 - 17 orphaned transcript directories; m32 said 2
-- `skill-probe.py` stopped at the announce turn and under-counted fires
 - Two plugins served `handoff`; the qualified name told them apart
 - The writer's own live transcript is always newer than its handoff; the `-newer` check excludes it
 
@@ -421,7 +420,6 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 | --- | --- |
 | `verify-all.sh` | 58 gates, exit 0 at every merge |
 | Firing | `handoff` 24/24 · `camp` 12/12 |
-| Live opening | First action correct · reason stated, against 5/8 · 4/8. n = 1 |
 | `verify-handoff-rationale.sh` | 5 failed before, green after |
 | `verify-handoff-checks.sh` | 8/0; selftest 9/0 |
 | Mutation test | 9 deleted, 9 caught |
@@ -432,19 +430,18 @@ first soak in the same report. Every Fire merge now carries a row in §10, writt
 - Openings 1 and 2 of the eight: no handoff existed, or its claims were false. No format fixes those
 - [#154](https://github.com/Calyx-Engineering/arc/issues/154) box 2: check 7 never seen firing live — [#243](https://github.com/Calyx-Engineering/arc/issues/243) carries it, arc 05
 - `spec-interview` 0/3 on the side-project control — a box on [#281](https://github.com/Calyx-Engineering/arc/issues/281), arc 05
-- [#352](https://github.com/Calyx-Engineering/arc/issues/352) and [#354](https://github.com/Calyx-Engineering/arc/issues/354): rolled to arc 05, out of time
 
 #### 6.4.7 What it changed
 
 ```mermaid
 flowchart LR
-    A["#150 baseline<br/>5/8 · 4/8"] --> B["#151 constraint column,<br/>swap trigger"]
-    B --> D["#253 live opening<br/>1/1 · 1/1"]
-    S["#157 firing 22/24"] --> R["#252 re-probe 24/24"]
-    E["#208 seven checks,<br/>path declared"] --> F["#267 all fourteen"] --> G["#268 mode row<br/>vs arc-log"]
-    C["#152 handoff-archive"] --> T["#153 re-stamp gate"]
-    W["#154 work-watch check 7"] --> P["#243 probe run"]:::blocked
-    X["#16 session-index"] --> M["transcript-miner<br/>reads the index"]
+    A["#150 Eight real openings scored:<br/>right first action 5 of 8,<br/>said why 4 of 8"] --> B["#151 Each decision records the fact<br/>that would re-open it, and a session<br/>says so before doing it another way"]
+    B --> D["#253 One live opening:<br/>right first action, said why"]
+    S["#157 The skill loaded at<br/>22 of 24 test openings"] --> R["#252 24 of 24 after the fix"]
+    E["#208 Seven staleness checks say whether<br/>they run on reading or on writing"] --> F["#267 All fourteen checks say it"] --> G["#268 The handoff's mode is checked<br/>against the arc-log's"]
+    C["#152 The handoff is copied<br/>before anything can overwrite it"] --> T["#153 A gate fails a handoff whose<br/>title time was not updated"]
+    W["#154 A session watches for<br/>its own degradation"] --> P["#243 Seen firing live:<br/>not yet, arc 05"]:::blocked
+    X["#16 Each session's transcript<br/>directory is indexed"] --> M["The transcript miner<br/>finds sessions by the index"]
     classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
 ```
 
