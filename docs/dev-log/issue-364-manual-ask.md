@@ -8,7 +8,7 @@
 
 `hooks/mode-guard` denied every gated command while `HANDOFF.md` said Manual, and its denial
 said *to proceed the user asks* — but a `PreToolUse` hook cannot see the chat, so the user
-asking changed nothing. On roadz-sound-system, 2026-09-15 and 2026-09-19, a commit the user
+asking changed nothing. On the client repo, 2026-09-15 and 2026-09-19, a commit the user
 asked for was denied three times. The same string match denied a Python edit and the filing
 of #364 itself, because the words appeared in the command's text.
 

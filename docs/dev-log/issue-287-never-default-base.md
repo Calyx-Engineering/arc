@@ -7,7 +7,7 @@
 ## Problem
 
 m12 and m42 stated opposite rules for the same 2026-08-16 data and neither cited the other. m12
-read ROADZ PR #55 as proof that a keyword binds on a non-default base; m42 quotes GitHub's
+read the client repo's PR #55 as proof that a keyword binds on a non-default base; m42 quotes GitHub's
 documentation saying it does not. PR #55 was opened after its base became the default, so it
 could not tell the two apart. `skills/issue-write` already stated m42's rule from a 2026-08-17
 isolation whose base later became the default, so no measurement had isolated a base that never
@@ -38,7 +38,7 @@ repository's checker accepts, and the same form on a default base binds and clos
 
 | | |
 |---|---|
-| **m12 *The test that changes the design*** | Rewritten in place. The ROADZ table stays; the section now says what it was read as proving, why that reading was wrong, cites #323, and states m42's rule with the timing half the ROADZ data adds. The bolded consequence — *the default-branch switch is not required* — replaced. Status line updated |
+| **m12 *The test that changes the design*** | Rewritten in place. The client-repo table stays; the section now says what it was read as proving, why that reading was wrong, cites #323, and states m42's rule with the timing half the client-repo data adds. The bolded consequence — *the default-branch switch is not required* — replaced. Status line updated |
 | **m42 opening** | One sentence citing the isolation and m12's struck reading, so the two specs cite each other |
 | **`skills/issue-write`** | *The base branch decides whether the link binds* cites #323 and the case; *What is still not recoverable* says the re-save result is measured |
 | **`tests/tracker-cases/binding/never-default-base-keyword.md`** | The case: both claims with their predictions, the eight-step procedure, the run, and what it does not measure |

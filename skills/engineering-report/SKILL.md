@@ -102,7 +102,7 @@ appear: an unsourced claim table; two sources named with nothing saying they dis
 and is exactly the shape of the incident
 [#164](https://github.com/Calyx-Engineering/arc/issues/164) was written about.
 
-Cases in [`evals/report-shape/`](../../evals/report-shape/).
+Cases in `evals/report-shape/` (private corpus, not in this repository).
 
 ---
 
@@ -155,7 +155,7 @@ document is the verdict** — a perfect claim table beside an unsourced margin t
 which is the rule above being enforced and not a scoring artefact. It matches how provenance
 is actually written — *"from the product label"*, *"the scope reported"*, *"most likely
 explanation"* — not only the vocabulary words themselves, so a report is scored on the defect
-and not on adoption of a vocabulary. Cases in [`evals/report-shape/`](../../evals/report-shape/).
+and not on adoption of a vocabulary. Cases in `evals/report-shape/` (private corpus, not in this repository).
 
 ---
 

@@ -220,7 +220,7 @@ every prohibition, on the reasoning that a cross-reference is read once and an a
 every time. That reasoning was right about the problem. It missed that the harness weighs the
 aggregate: five prohibitions each carrying an override is still five prohibitions, and each one
 is evidence that authorization has not been given. arc stated the rule five times and had four
-merges denied; ROADZ states it once and had none across twelve.
+merges denied; a client repo states it once and had none across twelve.
 [m40 §9](../../docs/product-architecture/mechanisms/m40-autonomy-switch.md) carries the full
 reasoning and the evidence; [#138](https://github.com/Calyx-Engineering/arc/issues/138) is the
 change.

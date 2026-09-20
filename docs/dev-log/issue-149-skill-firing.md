@@ -35,7 +35,7 @@ So a firing rate is a query over real openings — which is what this issue aske
 
 ## The baseline
 
-[`skill-firing-baseline.md`](../arc-work/04-dogfood/skill-firing-baseline.md) — 11 post-install sessions across this repository and ROADZ.
+[`skill-firing-baseline.md`](../arc-work/04-dogfood/skill-firing-baseline.md) — 11 post-install sessions across this repository and the client repo.
 
 **`handoff` fired at no opening in 11 sessions.** The retrospective inferred that from 8 openings; measured, it is worse. **`work-watch` fired once in 11**, against a description that says *use continuously while work is in progress*. **`chat-response` fired in 4 of 11**, and it governs every reply.
 

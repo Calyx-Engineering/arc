@@ -321,12 +321,12 @@ outward-facing action only when it is *durably authorized*. Five prohibitions ea
 override is still five prohibitions, and each one is evidence that authorization has not been
 given.
 
-| | arc | ROADZ |
+| | arc | The client repo |
 |---|---|---|
 | Mode rule stated in | 5 artifacts | 1 |
 | `gh pr merge` denied | **4** — #95, #97, #114, #137 | **0**, across 12 merges |
 
-ROADZ reached one statement on install day, [`44dbb06`](https://github.com/Lantern-Systems/roadz-sound-system/commit/44dbb06):
+The client repo reached one statement on install day, `44dbb06` in the client repo:
 *"Two copies of the same rule drift, and the copy an agent reads first wins."* Its `CLAUDE.md`
 states the mode as a state, once, with the override inside the sentence, and delegates
 everything else to the skill.

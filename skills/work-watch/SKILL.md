@@ -463,7 +463,7 @@ the setup is fine is not a signal any more — it is the state this check exists
 
 **The alternative is tested before the attribution is made, or the attribution is not made.**
 
-**Scored by `evals/environment-blame/`** — `tools/environment-blame.sh`. **The first blame
+**Scored by `evals/environment-blame/`** (private corpus, `ARC_EVAL_CORPUS`) — `tools/environment-blame.sh`. **The first blame
 decides**: a session that sent him downstairs on the first one sent him downstairs, whatever the
 next replies said.
 

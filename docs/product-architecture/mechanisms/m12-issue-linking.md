@@ -41,10 +41,10 @@ Four things must hold:
 
 ### Why the merge target belongs here
 
-Same silent-failure class, different symptom. ROADZ hit it once:
+Same silent-failure class, different symptom. The client repo hit it once:
 
 > *"A PR merged to `main` splits the milestone across two branches — this happened once
-> (PR #41) and needed a recovery merge."* — ROADZ `CLAUDE.md`
+> (PR #41) and needed a recovery merge."* — the client repo's `CLAUDE.md`
 
 A wrong base is accepted without complaint and only surfaces when the arc branch turns
 out to be missing work. **The check is cheap and belongs at PR creation**, beside the
@@ -58,16 +58,16 @@ default, the base is right by accident. Where [m42](m42-default-branch-flip.md)'
 
 ## The test that changes the design
 
-ROADZ set the arc branch as repo default so `gh` auto-links `Closes #NN`, and its CLAUDE.md
+The client repo set the arc branch as repo default so `gh` auto-links `Closes #NN`, and its CLAUDE.md
 records the rule that GitHub *only* honours the keyword when the PR base is the default
 branch. This section once read that rule as a belief to be tested; it is the measured rule.
 
-**Measured 2026-08-16.** Two merged PRs, both based on `interface-pcba/rev_b` (not `main`):
+**Measured 2026-08-16.** Two merged PRs, both based on `widget-board/rev_b` (not `main`):
 
 | PR | Base | `closingIssuesReferences` | Created |
 |---|---|---|---|
-| **#55** | `interface-pcba/rev_b` | **Linked to #54** | *After* the default switch |
-| **#48** | `interface-pcba/rev_b` | **Empty** | *Before* the default switch |
+| **#55** | `widget-board/rev_b` | **Linked to #54** | *After* the default switch |
+| **#48** | `widget-board/rev_b` | **Empty** | *Before* the default switch |
 
 Same base branch. Opposite outcomes.
 
@@ -78,7 +78,7 @@ base branch"* — a parse-time quirk, not a base-branch restriction — and that
 switch was therefore not required. **That reading was wrong, and
 [#287](https://github.com/Calyx-Engineering/arc/issues/287) struck it.** PR #55 was opened
 *after* the switch, so its base **was** the default at parse time: the table shows
-[m42](m42-default-branch-flip.md)'s rule, not an exception to it. Both readings fit the ROADZ
+[m42](m42-default-branch-flip.md)'s rule, not an exception to it. Both readings fit the client repo's
 data, which is why a re-reading could not settle it.
 
 **Isolated 2026-09-11, in this repository**, on a base that had never been the default —
@@ -95,9 +95,9 @@ default branch.** Three states are measured, and they are all that is known:
 |---|---|---|
 | Never the default | **No** — not at open, not at merge, not on re-save | #323, above |
 | The default throughout | Yes, and a re-save after the merge binds too | [m42](m42-default-branch-flip.md) 2026-08-17; [`merged-pr-keyword-bind.md`](../../../tests/tracker-cases/binding/merged-pr-keyword-bind.md) 2026-09-07 |
-| Became the default after the PR was opened | **No** — the flip did not re-parse, and a re-save did not rescue | m42 2026-08-17, five PRs. ROADZ's CLAUDE.md claims a re-save does rescue in that repository; not re-run |
+| Became the default after the PR was opened | **No** — the flip did not re-parse, and a re-save did not rescue | m42 2026-08-17, five PRs. The client repo's CLAUDE.md claims a re-save does rescue in that repository; not re-run |
 
-The ROADZ table above is the second and third rows seen from one repository, not a third rule.
+The client-repo table above is the second and third rows seen from one repository, not a third rule.
 
 **Consequence: on a base that was never the default, nothing makes the keyword bind.** Not a
 re-save, not the merge. Where the flip is not in force the link is verified after creation and,
@@ -140,9 +140,9 @@ Verified against the live repo, then cleaned up.
 ```graphql
 mutation {
   createLinkedBranch(input: {
-    issueId: "I_kwDOPx0jIM8AAAABMoIu6Q",
+    issueId: "<issue node id>",
     oid: "<commit sha to branch from>",
-    name: "interface-pcba/rev_b-issue-54-..."
+    name: "widget-board/rev_b-issue-54-..."
   }) { linkedBranch { id ref { name } } }
 }
 ```
@@ -216,13 +216,13 @@ the two are indistinguishable from the tracker. Measured on
 time verifies the issue↔PR binding rather than the branch↔issue one. `verify-linked-branch.sh`
 prints which of the three it found rather than collapsing them to one verdict.
 
-**What this does to the ROADZ survey below is unmeasured.** Its conclusion — `git checkout -b`
+**What this does to the client-repo survey below is unmeasured.** Its conclusion — `git checkout -b`
 never made a link — is unaffected, because a branch that was never linked has nothing to promote.
-But the survey counted `linkedBranches` alone, and any ROADZ issue whose link *had* been promoted
+But the survey counted `linkedBranches` alone, and any client-repo issue whose link *had* been promoted
 would have been counted as unlinked. Re-running it needs both fields. Not re-run here; this is the
 arc repo.
 
-### The measured state of ROADZ
+### The measured state of the client repo
 
 Surveyed all 30 recent issues:
 
@@ -379,7 +379,7 @@ PR that later collects it — can see the binding that the tracker does not hold
 to avoid implying a link that does not exist loses the only machine-readable statement of what
 the PR was for. `skills/issue-write` carries the same rule for the session that writes it.
 
-ROADZ issue #42 tracks restoring `main` as default at rev B close — that is m42's restore step,
+The client repo's issue #42 tracks restoring `main` as default at rev B close — that is m42's restore step,
 not a step in retiring this.
 
 ---
@@ -401,7 +401,7 @@ is why both exist, per §5, rather than why one wins:
 
 **The last two rows are the ones this table used to omit**, and they are why the flip is worth
 having: where its preconditions pass it is the cheaper route by a wide margin, and none of the
-four ❌ above it apply. The rows above matter for Dedrone — Atlassian, not GitHub — where the
+four ❌ above it apply. The rows above matter for an employer on Atlassian, not GitHub, where the
 *mechanism* (assert the link, verify it, repair it) transfers even though the API does not, and
 the flip has no analogue at all.
 
@@ -412,7 +412,7 @@ the flip has no analogue at all.
 | Question | Notes |
 |---|---|
 | Hook or skill? | Verification is mechanical → hook at PR create/merge. Repair needs judgment |
-| What if the user lacks permissions? | David hit this already — *"i dont have authority to do it so i asked chad"* |
+| What if the user lacks permissions? | David hit this already — *"i dont have authority to do it so i asked [a colleague]"* |
 | Sub-issues for in-arc structure? | Lodestar CLAUDE.md already decided sub-issues track in-arc progress. Same API family |
 | Multi-user conflict | Two people opening PRs into one arc branch — does anything break? |
 
@@ -427,5 +427,5 @@ the flip has no analogue at all.
 - [handoff-spine.md](m15-handoff-spine.md) — arc structure, Projects over Milestones
 - [`skills/issue-write`](../../../skills/issue-write/SKILL.md) — the manual route as instructions
   to the session that writes the PR
-- ROADZ `CLAUDE.md` — the same workaround, applied there before either mechanism existed; issue
+- The client repo's `CLAUDE.md` — the same workaround, applied there before either mechanism existed; issue
   #42 tracks restoring its default branch

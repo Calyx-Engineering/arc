@@ -11,7 +11,7 @@ skips:
 # Where the record goes
 
 > **The dev-log and arc-log get written, not remembered.** A template alone produces
-> nothing — ROADZ had one and it stayed an empty stub for a month. The mechanism is the
+> nothing — a client repo had one and it stayed an empty stub for a month. The mechanism is the
 > trigger plus the template plus the enforcement, and this skill is the trigger.
 
 Tier definitions are in [knowledge-tiers](../../reference/knowledge-tiers.md). This skill
@@ -132,7 +132,7 @@ one word for both, that page holds a single source and no visible disagreement.
 
 [#266](https://github.com/Calyx-Engineering/arc/issues/266). Two vocabularies were in use: the
 seven [#164](https://github.com/Calyx-Engineering/arc/issues/164) specified, and the eight
-`rp2040-pin-allocation.md` had carried since the user repaired this defect by hand. **Two
+a client's pin ledger had carried since the user repaired this defect by hand. **Two
 vocabularies is the defect wearing a label** — a row reading `drawing` had no rank, and a
 reader could not tell whether a row reading `schematic` outranked one reading `datasheet`.
 

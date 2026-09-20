@@ -166,7 +166,7 @@ mocking, and it caught a real defect the first time it ran. Skills need the equi
 
 Both are named in [friction-transcript-log §5](docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview).
 
-**A related gap surfaced 2026-08-17:** ROADZ's branch-naming vocabulary comes from a BOM
+**A related gap surfaced 2026-08-17:** a client repo's branch-naming vocabulary comes from a BOM
 that lives in a Google Sheet, outside version control. Configuration management is not only
 "what is in this revision" but "what are the legal names for work."
 

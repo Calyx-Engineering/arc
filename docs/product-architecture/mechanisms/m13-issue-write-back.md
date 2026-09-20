@@ -87,9 +87,9 @@ before the write.
 ### Shape C — the write happened, into a section that does not admit it
 
 > *"you wandered again. in the \"spawned\" section of PR70 you're throwing down random
-> decisions or thoughts. thats not what the section is for..."* — ROADZ, 2026-08-14
+> decisions or thoughts. thats not what the section is for..."* — the client repo, 2026-08-14
 
-> *"why are you adding documents to the spawned section?"* — ROADZ
+> *"why are you adding documents to the spawned section?"* — the client repo
 
 Eight distinct corrections between 2026-08-14 and 2026-09-05. The body was written, the write
 landed, and the read-back confirmed it — because the read-back compares the body against
@@ -245,7 +245,7 @@ Leaning: capture into the handoff immediately, file at a checkpoint.
 
 ### 4. Verify the link actually formed
 
-Already known and documented in ROADZ `CLAUDE.md` — `Closes #NN` silently fails against
+Already known and documented in the client repo's `CLAUDE.md` — `Closes #NN` silently fails against
 a non-default base branch.
 
 ```sh
@@ -270,5 +270,5 @@ gh pr view <N> --json closingIssuesReferences   # empty means it did not link
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.7, §2.8
 - [commit-rhythm.md](m14-commit-rhythm.md) — dropped staged files, same silent-failure class
 - [handoff-spine.md](m15-handoff-spine.md) — proposed home for pending actions
-- ROADZ `.claude/skills/issue-writing/SKILL.md` — the skill under evaluation
+- The client repo's `.claude/skills/issue-writing/SKILL.md` — the skill under evaluation
 - [`work-watch`](../../../skills/work-watch/SKILL.md) checks 4, 5 and 8 — this mechanism in files, in the checklist, and in a diagnosis

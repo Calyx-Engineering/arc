@@ -23,7 +23,7 @@ recalled from earlier in the conversation.
 
 **Manual means nothing is committed, pushed, opened or merged *unasked*.** A `PreToolUse` hook
 cannot see the chat, so a deny could not tell a commit the user asked for from one nobody did.
-On roadz-sound-system, 2026-09-15 and 2026-09-19, the user asked for a commit three times and
+On the client repo, 2026-09-15 and 2026-09-19, the user asked for a commit three times and
 every attempt was denied; the only ways through were a mute typed in another terminal, or a
 standing Autonomous grant when what was asked for was one commit —
 [#364](https://github.com/Calyx-Engineering/arc/issues/364).
