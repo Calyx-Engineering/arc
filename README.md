@@ -23,7 +23,7 @@ friction between human and AI.
 
 **Status: under construction.** The architecture and mechanism specs are complete; the
 plugin skeleton, the hook harness, and the branch guard are the first working parts.
-[ROADMAP.md](ROADMAP.md) says what lands next.
+What lands next is the current arc's log under [docs/arc-log/](docs/arc-log/) and the tracker's milestones.
 
 ---
 

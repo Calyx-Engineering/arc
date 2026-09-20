@@ -1,10 +1,15 @@
-# Roadmap
+# Roadmap — frozen 2026-08-21, retired 2026-09-20
 
-> **The authority on what gets built, and in what order.** The product definition says what
-> Arc is made of; this says which parts become real, when, and what blocks what.
+**Status:** retired by [#175](https://github.com/Calyx-Engineering/arc/issues/175). Nothing here is
+maintained and nothing points a cold start at it. **What moves next is the current arc's arc-log
+and the tracker's milestones** — one fact, one place. It does not know arc 04 exists.
 
-Status per mechanism lives in the [product definition](docs/product-architecture/README.md).
-This file decides what moves next.
+**Kept, not deleted, for two sections that exist nowhere else:** *Deferred, needing an interview*
+and *Spec gaps* — read both against the [product definition](../product-architecture/README.md)'s
+Status column, which is current where this is not.
+
+> As written: **The authority on what gets built, and in what order.** The product definition
+> says what Arc is made of; this says which parts become real, when, and what blocks what.
 
 ---
 
@@ -102,7 +107,7 @@ backfilling from `~/.claude/projects/`, which is possible but loses the branch a
 context that would have been captured live.
 
 **One known gap:** the knowledge filter in
-[transcript-mining](docs/product-architecture/mechanisms/m30-transcript-mining.md) is not
+[transcript-mining](../product-architecture/mechanisms/m30-transcript-mining.md) is not
 designed. The friction filter is validated against a real 28-transcript run.
 
 ---
@@ -164,7 +169,7 @@ mocking, and it caught a real defect the first time it ran. Skills need the equi
 | m22 — Configuration management | Hardware BOM and component-revision practice |
 | m24 — Verification planning | How a campaign is planned and results recorded |
 
-Both are named in [friction-transcript-log §5](docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview).
+Both are named in [friction-transcript-log §5](../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview).
 
 **A related gap surfaced 2026-08-17:** a client repo's branch-naming vocabulary comes from a BOM
 that lives in a Google Sheet, outside version control. Configuration management is not only
@@ -187,10 +192,10 @@ undesigned — a `partial` spec names its own holes.
 | m15 — Handoff | Pass 1, item 6 | Whether issue-level K2 extends the dev-log or sits beside it |
 | m30 — Transcript mining | Pass 2 | The knowledge filter. The friction filter is validated against a real run |
 | m29 — Agent wiki | Later | Fork, depend, or reimplement — a published plugin already exists |
-| m40 — Autonomy switch | **Arc 03** | Specified and built — [m40](docs/product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set`, `tests/verify-autonomy.sh` |
+| m40 — Autonomy switch | **Arc 03** | Specified and built — [m40](../product-architecture/mechanisms/m40-autonomy-switch.md), `skills/autonomy-set`, `tests/verify-autonomy.sh` |
 | m39 — Mechanism numbering | Pass 2 | **No spec.** Covered by [issue #5](https://github.com/Calyx-Engineering/arc/issues/5) |
 | m22 · m24 | Deferred | Both need the interview above |
-| Guided flow steps 5–8 | Nothing yet | CAD review, manufacturing package, quoting, PR-as-record have no mechanisms at all. Design review is described in [m28](docs/product-architecture/mechanisms/m28-human-gate.md) but unowned |
+| Guided flow steps 5–8 | Nothing yet | CAD review, manufacturing package, quoting, PR-as-record have no mechanisms at all. Design review is described in [m28](../product-architecture/mechanisms/m28-human-gate.md) but unowned |
 
 ---
 
