@@ -6,12 +6,17 @@ not part of what Arc ships — the plugin's own artifacts (`.claude-plugin/`, `s
 
 ## Start here
 
-Read [docs/product-architecture/README.md](docs/product-architecture/README.md) first,
-every cold start. It is the authority on what Arc is made of — its six pieces, its
-mechanisms, the artifacts that carry them, and the state each is in.
+**The cold-start reading path is [`skills/handoff`](skills/handoff/SKILL.md)'s** — `HANDOFF.md`,
+this file, the current arc-log, the current issue's dev-log, then only what those name.
+`/handoff-resume` runs it. Nothing else is read before acting.
 
-**Not `ROADMAP.md`** — last updated 2026-08-21, and it does not know arc 04 exists.
-[#175](https://github.com/Calyx-Engineering/arc/issues/175) decides whether it is maintained or retired.
+[docs/product-architecture/README.md](docs/product-architecture/README.md) is the authority on
+what Arc is made of — its six pieces, its mechanisms, the artifacts that carry them, and the state
+each is in. **Opened when the work asks that question, never read whole at a cold start**; its
+opening says which section answers what.
+
+**There is no roadmap.** It was retired 2026-09-20 ([#175](https://github.com/Calyx-Engineering/arc/issues/175))
+and frozen at `docs/release/roadmap-2026-08.md`. What moves next is the current arc's arc-log.
 
 **Execution mode is manual** — files change; nothing is committed, pushed or merged unless
 asked. It changes only when `HANDOFF.md`'s *Execution mode* row says autonomous, and that row

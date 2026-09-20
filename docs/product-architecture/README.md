@@ -4,12 +4,22 @@
 > ships, and the state each one is in. Where another document disagrees about scope or
 > composition, this one is correct.
 
+**A cold start does not read this whole** ([#175](https://github.com/Calyx-Engineering/arc/issues/175)).
+The reading path is `skills/handoff`'s; this is opened when the work asks one of these:
+
+| The question | Read |
+|---|---|
+| What is Arc, in a minute | [*The six pieces*](#the-six-pieces) |
+| What a mechanism number means, and its state | Its row in [*Mechanisms*](#mechanisms) — one row, not the table |
+| Where a gap in the product gets written down | [*Capturing a gap*](#capturing-a-gap) |
+| Which file carries a capability, and what it needs | Its row in [*Artifacts*](#artifacts) |
+
 Arc is six pieces — workspace guard, authoring, campaign, knowledge, delegation, and
 self-improvement. Every mechanism belongs to one and resolves to an artifact, so a piece of
 work traces to the files that carry it and to whatever else must exist before it is useful.
 
 **Not the authority on:** why you would use Arc — [the repo README](../../README.md) ·
-what gets built next — [ROADMAP.md](../../ROADMAP.md) · how the Calyx plugins fit together
+what gets built next — the current arc's [arc-log](../arc-log/) and the tracker's milestones · how the Calyx plugins fit together
 — [suite-architecture/](../suite-architecture/) · how any single mechanism works —
 [mechanisms/](mechanisms/).
 
@@ -153,9 +163,12 @@ holes has not been.
 and an undesigned knowledge filter. A single "spec written" marker made that row read as
 finished when half of it was not designed.
 
-**Status reports; the roadmap decides.** The Status column says where each mechanism stands
-today. What moves next, and in what order, is [ROADMAP.md](../../ROADMAP.md)'s call — this
-document is the authority on composition, not on sequence.
+**Status reports; the arc decides.** The Status column says where each mechanism stands
+today. What moves next, and in what order, is the current arc's [arc-log](../arc-log/) and the
+tracker's milestones — this document is the authority on composition, not on sequence. The
+roadmap that used to hold it was retired 2026-09-20
+([#175](https://github.com/Calyx-Engineering/arc/issues/175)); its frozen copy is
+[`docs/release/roadmap-2026-08.md`](../release/roadmap-2026-08.md).
 
 ---
 
