@@ -69,7 +69,7 @@ signal that does not exist.
 
 **Every threshold above is an estimate, not a measurement.** They are placed so the mechanism
 is buildable and so first use produces evidence to correct them.
-[#36](https://github.com/Calyx-Engineering/arc/issues/36) mines this repository, ROADZ and
+[#36](https://github.com/Calyx-Engineering/arc/issues/36) mines this repository, a client repo and
 TimeScope for real instances and works backwards — what was countable *before* the
 frustration surfaced.
 

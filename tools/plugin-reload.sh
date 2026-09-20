@@ -48,7 +48,7 @@
 #
 # WHICH TREE IT CHECKS. The marketplace's own installLocation, read from
 # ~/.claude/plugins/known_marketplaces.json — not the current directory. `calyx-engineering` is
-# a directory source pointing at R:\arc, so a reload run from a worktree still installs from
+# a directory source pointing at the main checkout, so a reload run from a worktree still installs from
 # the main tree, and checking $PWD would clear a tree the reload is not going to read.
 # ARC_PLUGIN_SOURCE_DIR overrides the lookup; the cases below are its only user.
 #

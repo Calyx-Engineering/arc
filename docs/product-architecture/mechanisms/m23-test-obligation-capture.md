@@ -1,6 +1,6 @@
 # Mechanism — Test Obligation Capture
 
-**Status:** specified. Already run by hand throughout ROADZ rev B.
+**Status:** specified. Already run by hand throughout the client repo's rev B.
 **Home:** Arc — Knowledge.
 **Form:** hook + skill. Composes with [`issue-write`](../../../skills/issue-write/SKILL.md)
 and [commit-rhythm](m14-commit-rhythm.md).
@@ -15,7 +15,7 @@ specific at the moment of design and forgotten by the time hardware arrives.
 
 > *"this issue can NOT be blocked by **building hardware** we need to update the design.
 > we should probably talk about validation tests, but that is a seperate subject and set
-> of issues"* — David, ROADZ
+> of issues"* — David, the client repo
 
 **The design issue must not block on hardware. The test must not be lost.**
 
@@ -37,17 +37,17 @@ watches for a reviewable point and proposes a commit.
 **This is one of the things the design-time evaluator watches for**, alongside commit
 timing. Not a separate always-on process — a check in the same sweep.
 
-**Append or spawn is a judgement call.** ROADZ practice leans hard toward append:
+**Append or spawn is a judgement call.** The client repo practice leans hard toward append:
 
 > *"i don't want 100 issues for each little one. So please spin up the board checkout
-> issue in that milestone and then add checking out this LCPHOTO functionality"*
+> issue in that milestone and then add checking out this [sensor] functionality"*
 
 But a new issue is right when the test is substantial, needs its own procedure, or
 belongs to a different subsystem. The mechanism proposes; the user decides.
 
 ---
 
-## What ROADZ already establishes
+## What the client repo already establishes
 
 | Behaviour | Evidence |
 |---|---|
@@ -87,7 +87,7 @@ for.
 | Question | Notes |
 |---|---|
 | Which test issue receives an append | Board checkout, review checklist, per-subsystem — needs a routing rule |
-| Cross-repo test items | ROADZ firmware tests belong to `roadz_pb_firmware`, the design issue does not |
+| Cross-repo test items | The client repo's firmware tests belong to the firmware repository, the design issue does not |
 | Does the testing milestone generate itself | Or is it created by hand at arc kickoff |
 
 ---

@@ -271,7 +271,7 @@ def grade_opening(text):
 # consequence.
 #
 # #266 RECONCILED IT WITH THE ONE IN USE. Two vocabularies were live: the seven terms #164
-# specified, and the eight rp2040-pin-allocation.md had been carrying since the user repaired
+# specified, and the eight a client's pin ledger had been carrying since the user repaired
 # this defect by hand — schematic, datasheet, firmware, drawing, report, thread, photo,
 # conversation. Two vocabularies is the defect wearing a label. The ladder below is the
 # topological merge of both orders: every pair keeps the relative order at least one of them

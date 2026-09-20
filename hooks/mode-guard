@@ -15,7 +15,7 @@
 #
 # MANUAL ASKS, IT DOES NOT DENY. Manual means nothing is committed, pushed, opened or merged
 # UNASKED — and a PreToolUse hook cannot see the chat, so a deny could not tell a commit the
-# user asked for from one nobody did. On roadz-sound-system the user asked for a commit three
+# user asked for from one nobody did. In one working repository the user asked for a commit three
 # times and every attempt was denied; the only ways through were a mute typed in another
 # terminal or a standing Autonomous grant, when what was asked for was one commit. So in manual
 # this returns `permissionDecision: "ask"`: the harness puts the command in front of the user,

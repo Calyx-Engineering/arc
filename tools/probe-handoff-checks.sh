@@ -25,7 +25,7 @@
 # this names the file.
 #
 # THE QUALIFIED NAME IS LOAD-BEARING. Two marketplaces can serve the same skill — this machine
-# carried `arc:handoff` from R:\arc and `arc-scratch:handoff` from another run's scratch
+# carried `arc:handoff` from the main checkout and `arc-scratch:handoff` from another run's scratch
 # marketplace at the same time. A bare `handoff` cannot say which copy's text was read, and the
 # two need not agree. So the name is taken with its namespace intact, from the raw dump rather
 # than from tools/skill-probe.py's summary line — that keeps this readable against a dump from

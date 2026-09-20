@@ -120,6 +120,11 @@ the machine. Committed is not the same as exercised.
 - Changes made at PR time soak on the **next** work stretch.
 - The soak record lives in **this repo's** `arc-log`, appended by whichever repo
   exercised the change — never in the consuming repo, which loses cross-repo soaks.
+- **A soak line names the change, what kind of work exercised it, and the result — never the
+  consumer.** *"Soaked on a hardware bring-up stretch, another repo"*, not the repository, the
+  client, the product or the issue it was working. This file may be public; the consuming
+  repository's work is not Arc's to publish. A result that cannot be stated without the
+  consumer's content is stated as *fired / did not fire / misfired*, and the detail stays there.
 
 **Unsoaked** = a commit here with no soak line from any repo.
 

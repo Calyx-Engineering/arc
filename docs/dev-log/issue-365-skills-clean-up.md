@@ -31,7 +31,7 @@ Every number below is `measured` on this tree at `arc/04-dogfood` + #364's worki
 | `skill-creator`'s `quick_validate.py`, all 13 | **13 of 13 exit non-zero.** Eight on non-spec frontmatter keys — a kept deviation, §4.1. **Five still do not parse as YAML** — `camp`, `chat-response`, `engineering-report`, `handoff`, `record-route` — #338, unchanged since 2026-09-13 |
 | `claude plugin validate skills --strict` | Passes all 13, including the five above. Still a precondition and not a review |
 | `tools/verify-skill-length.sh` | **Two over 500 lines** — `issue-write` 867, `work-watch` 609 (file lines) |
-| `claude plugin eval` | **Still refuses to run.** `--help` prints on Claude Code 2.1.263, which it did not on 2026-09-13, but one case on Haiku with a $1 ceiling and `--no-publish` returned *`plugin eval` is currently in early access*. `evals/` holds 50 `case.yaml` files in Arc's own schema, so whether the tool would read them is untested. **`--no-publish` matters when it opens:** the default publishes the report to claude.ai, and these cases quote ROADZ documents |
+| `claude plugin eval` | **Still refuses to run.** `--help` prints on Claude Code 2.1.263, which it did not on 2026-09-13, but one case on Haiku with a $1 ceiling and `--no-publish` returned *`plugin eval` is currently in early access*. `evals/` holds 50 `case.yaml` files in Arc's own schema, so whether the tool would read them is untested. **`--no-publish` matters when it opens:** the default publishes the report to claude.ai, and these cases quote the client repo's documents |
 | Repeated text **within** a skill — 7-word shingles seen twice, fenced code excluded | **Under 2% in every skill**, and most of that is a repeated issue link. There is no verbatim repetition worth cutting inside any one skill |
 | Repeated text **between** skills — same measure | **Two pairs carry a duplicated block; every other pair shares under 30 shingles** |
 
@@ -95,7 +95,7 @@ defined by the tool** — read here as recorded invocations on this machine, `in
   by prose and the #192/#215 recovery table into m12; the three 2026-08-20 write-back failures
   and the negation trap shipping while loaded into m13. Already held by their mechanism and cut
   to a citing clause: the 2026-08-17 and #323 isolations (m12), the no-issue-PR step table
-  (m46 §9.1), the file-versus-tracker table, the #12 quote and the eight ROADZ corrections (m13).
+  (m46 §9.1), the file-versus-tracker table, the #12 quote and the eight client-repo corrections (m13).
   **The file-versus-tracker table contradicted m13**, which had struck its first row in arc 03;
   the skill now cites m13 and states neither version.
 - **Bucket E does not reach 500, and the plan said it would.** 65 lines came out and 302 remain

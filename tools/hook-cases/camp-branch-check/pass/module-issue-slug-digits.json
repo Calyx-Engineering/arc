@@ -1,0 +1,2 @@
+# A client repo, real shape, names changed: the slug carries digits (mcu2040) — the number comes from the identifier, not the slug
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/module-rev","tool_name":"Bash","tool_input":{"command":"git checkout -b widget-board/rev_b-issue-39-unify-mcu2040-pinout"}}

@@ -141,7 +141,7 @@ early signal that does not exist.
 
 **Every threshold above is an estimate, not a measurement.** They are placed so the mechanism
 is buildable and so first use produces evidence to correct them.
-[#36](https://github.com/Calyx-Engineering/arc/issues/36) mines this repository, ROADZ and
+[#36](https://github.com/Calyx-Engineering/arc/issues/36) mines this repository, the client repo and
 TimeScope for real instances and works backwards: what was countable *before* the frustration
 surfaced.
 
@@ -174,7 +174,7 @@ precondition rather than carrying its own.
 in `work-watch`, and how often that sweep may speak is unset. First use produces the number.
 
 **Whether the thresholds hold outside this repository.** They were estimated from one
-person's sessions in a docs-heavy repo. Hardware work in ROADZ may have a different natural
+person's sessions in a docs-heavy repo. Hardware work in the client repo may have a different natural
 rhythm, in which case the numbers move to the operating agreement per repo.
 
 ---

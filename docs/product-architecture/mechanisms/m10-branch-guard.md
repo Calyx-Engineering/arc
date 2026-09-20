@@ -12,8 +12,8 @@ The coordination prefix comes from the operating agreement's *branch prefix* cla
 
 The single worst moment in four weeks of hardware work:
 
-> **"CRAP!! we screwed up big time. and we both missed it. we are supposed to be working
-> off the parent branch of interface-pcba/rev_b This just completely messed everything
+> **"C\*\*P!! we screwed up big time. and we both missed it. we are supposed to be working
+> off the parent branch of [the board's integration branch] This just completely messed everything
 > up."** — 2026-08-03
 
 And a cluster of smaller instances of the same class:

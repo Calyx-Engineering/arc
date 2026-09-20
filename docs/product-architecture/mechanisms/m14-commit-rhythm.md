@@ -105,7 +105,7 @@ Each of these cost real time and belongs in whatever ships:
 | **Never commit unasked, in manual** | Standing instruction; violated repeatedly. **Autonomous mode is the exception and it is a switch, not a mood** — [m40](m40-autonomy-switch.md) |
 | **Check files are saved first** | *"darn there were unsaved changes … you should always check that the files are saved before committing"* — see §Unsaved buffers below |
 | **Never squash merge** | *"i never squash merge"* — destroys reviewability |
-| **Verify the commit identity** | *"we are supposed to be on my davidcalyx ID … it makes no sense to be committing as davidcalyx and commenting as heliman"* |
+| **Verify the commit identity** | *"we are supposed to be on my davidcalyx ID … it makes no sense to be committing as davidcalyx and commenting as [a second identity]"* |
 | **Watch for silently dropped staged files** | *"did you remove the logs that i staged?"* and *"why does the logs.jsonl keep not getting committed??"* — recurred twice, weeks apart |
 | **Verify the issue actually closed** | *"with a commit that says it closes #11 is there a reason that #11 didn't automatically get closed"* |
 | **Never amend or rebase a pushed branch** | One amend on a pushed branch during arc 02 produced a three-way crossing in the merge graph that no later commit can clean up — the arc's shape is harder to read forever, and the review surface is what a merge graph is *for*. The one rule here whose damage is permanent |
@@ -179,4 +179,4 @@ either fire constantly or miss the interesting cases.
 
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.5, §2.8
 - [handoff-spine.md](m15-handoff-spine.md) — session-end capture points coincide
-- ROADZ `CLAUDE.md` — tracker link mechanics
+- The client repo's `CLAUDE.md` — tracker link mechanics

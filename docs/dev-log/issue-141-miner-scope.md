@@ -4,7 +4,7 @@
 
 ## Problem
 
-`agents/transcript-miner` said *"glob across every matching raw directory, never one"*, because worktrees get their own slug and a deleted worktree leaves an orphaned directory a scoped search misses silently — 45 MB of the richest material, once. Matching on a shared prefix then pulled in a sibling repository: briefed on `roadz-sound-system`, the first real run also read `R--work-lantern-roadz-pb-firmware`, a different product.
+`agents/transcript-miner` said *"glob across every matching raw directory, never one"*, because worktrees get their own slug and a deleted worktree leaves an orphaned directory a scoped search misses silently — 45 MB of the richest material, once. Matching on a shared prefix then pulled in a sibling repository: briefed on `zephyr-system`, the first real run also read `R--work-northwind-zephyr-firmware`, a different product.
 
 ## The fix is a script, not a rule
 
@@ -14,7 +14,7 @@ The scope rule is exact, so it should not be a judgement the agent re-derives ea
 tools/miner-scope.sh <briefed-slug> [<briefed-slug>...]
 ```
 
-A directory is **IN** when, case-insensitively, its slug equals a briefed slug or begins with a briefed slug followed by `--` — the worktree form. **A shared stem is not enough:** `roadz-sound-system` is not a prefix of `roadz-pb-firmware` under that rule, because the separator has to be there.
+A directory is **IN** when, case-insensitively, its slug equals a briefed slug or begins with a briefed slug followed by `--` — the worktree form. **A shared stem is not enough:** `zephyr-system` is not a prefix of `zephyr-firmware` under that rule, because the separator has to be there.
 
 | Decisions | |
 |---|---|

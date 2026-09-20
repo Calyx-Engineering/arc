@@ -2,7 +2,7 @@
 
 > **Diagnoses are drafts.** Only clusters marked *interviewed* have been reviewed by the user.
 
-**Source work:** Lantern ROADZ speaker / sound-system.
+**Source work:** a client's hardware product — one board revision.
 **Window:** 2026-08-24 09:40 → 2026-09-05 — **from the moment Arc was installed.** `v0.1.0`
 released 2026-08-21.
 **Run by:** `agents/transcript-miner`, friction mode.
@@ -15,8 +15,8 @@ are excluded throughout.
 
 | | |
 |---|---|
-| Sources | 23 files · 86.6 MB — two transcript directories plus the 5 curated saves in `R:\work_lantern\_transcripts`, deduplicated on text and timestamp |
-| Excluded | `R--work-lantern-roadz-pb-firmware` — a different repository. [#141](https://github.com/Calyx-Engineering/arc/issues/141) |
+| Sources | 23 files · 86.6 MB — two transcript directories plus the 5 curated saves in the client directory's transcript folder, deduplicated on text and timestamp |
+| Excluded | the client's firmware repository — a different repository, sharing a stem. [#141](https://github.com/Calyx-Engineering/arc/issues/141) |
 | `type: user` records | 4,987 → 544 after dropping tool results and deduplicating |
 | Post-install, after filter | **84** |
 | Post-install, clustered | **47** |
@@ -25,7 +25,7 @@ are excluded throughout.
 **The filter is deliberately permissive.** A false positive costs one read; a missed correction
 costs a finding. Two passes: correction phrasing, and intensity markers — shouting, profanity,
 repeated punctuation, exasperation. The intensity pass over-matches on EE part numbers and
-standards (`RP2040`, `CISPR`, `HIZ`), which is the correct trade.
+standards (an MCU part number, `CISPR`, `HIZ`), which is the correct trade.
 
 **37 of 84 post-install messages fit none of the clusters below.** Either the cluster set is
 incomplete or the filter is loose. Recorded, not resolved.
@@ -93,7 +93,7 @@ That is a different instrument from the friction filter and does not exist. Trac
 
 ### The evidence that does exist
 
-- *"the handoff process completely failed. you did not pick up the handoff properly and you have consistently failed in picking up the handoff so the handoff procedure MUST be revised. i dont think its ever worked well once."* — `2026-09-04-arc-rev-b-pr70-closeout.jsonl` · 09-04 21:30
+- *"the handoff process completely failed. you did not pick up the handoff properly and you have consistently failed in picking up the handoff so the handoff procedure MUST be revised. i dont think its ever worked well once."* — `2026-09-04-arc-rev-b-pr70-closeout.jsonl` · 09-04
 
 On 09-04 the session read `HANDOFF.md` end to end, reported status correctly, then redesigned the
 measurement twice — neither redesign checked against what the unit exists to produce. It ended
@@ -113,25 +113,25 @@ copy of the state it was given.
 Work acknowledged and then not done, surfacing only when the user checked days later. He began
 carrying the tracking himself — *"i'll copy paste a reminder into my notepad"*.
 
-- *"the log creation should have been part of onboarding. can you do it now?"* — `2026-08-26-...-issue-39-pinout.jsonl` · 08-26 10:33
-- *"hmmmm did you re-check the readme for the mso tool? it calls out plotly ... can you add to the friction log that we REALLY need to have a final review of the modified files before PR to ensure everything got updated. thats a P1"* — `2026-08-28-...-earlier.jsonl` · 08-27 20:31
-- *"hmmm, you walked in the opposite direct ion i asked. / the documentation was pretty good before, now its all gone! and the one thing you kept is what i asked you to drop!!!!"* — `2026-08-28-...-pr68-gain-sweep-tool.jsonl` · 08-28 13:16
+- *"the log creation should have been part of onboarding. can you do it now?"* — `2026-08-26-...-issue-39-[pinout].jsonl` · 08-26
+- *"hmmmm did you re-check the readme for the mso tool? it calls out plotly ... can you add to the friction log that we REALLY need to have a final review of the modified files before PR to ensure everything got updated. thats a P1"* — `2026-08-28-...-earlier.jsonl` · 08-27
+- *"hmmm, you walked in the opposite direct ion i asked. / the documentation was pretty good before, now its all gone! and the one thing you kept is what i asked you to drop!!!!"* — `2026-08-28-...-pr68-[bench-tool].jsonl` · 08-28
 
 ## C3 — Documents written as development narrative
 
 Reports, READMEs and one spec written as an account of the exploration rather than the conclusion.
 
-- *"that whole discussion there with signal names called out is lacking all context - both you and i coming back to read this row of the table even 1 week later would not understand this at all"* — `2026-08-26-...-issue-39-pinout.jsonl` · 08-26 11:53
-- *"yaml sweep values - there is too much in there. it looks like you're running real calculations and examples that are centered around an anxiety of overdriving the resistor"* — `2026-08-28-...-pr68-gain-sweep-tool.jsonl` · 08-28 13:09
-- *"and AGAIN - what does `No alternative offered ... the opposite is a title nobody can act on.` mean???"* — `2026-09-04-arc-rev-b-pr70-closeout.jsonl` · 09-04 22:30
+- *"that whole discussion there with signal names called out is lacking all context - both you and i coming back to read this row of the table even 1 week later would not understand this at all"* — `2026-08-26-...-issue-39-[pinout].jsonl` · 08-26
+- *"yaml sweep values - there is too much in there. it looks like you're running real calculations and examples that are centered around an anxiety of overdriving the resistor"* — `2026-08-28-...-pr68-[bench-tool].jsonl` · 08-28
+- *"and AGAIN - what does `No alternative offered ... the opposite is a title nobody can act on.` mean???"* — `2026-09-04-arc-rev-b-pr70-closeout.jsonl` · 09-04
 
 ## C4 — Skills not loaded until demanded
 
 **Zero pre-install hits** — the skills did not exist before the boundary.
 
-- *"MOTHER FUCKER!!!! / LOAD ALL YOUR FUCKING SKILLS!!!! / you mis-labeled the branch so you're not using your issure writing skill or SOMETHING!"* — `2026-08-28-...-pr68-gain-sweep-tool.jsonl` · 08-28 10:36
-- *"i mean... i literally said we are writing a spec here - and you didn't load spec-interview?????????????????? i'm very angry."* — same file · 08-28 10:44
-- *"ooof - that is a lot of words. please load all the skills from Arc"* — `c4fe2b5c-....jsonl` · 08-30 13:39
+- *"M\*\*\*\*\* F\*\*\*\*\*!!!! / LOAD ALL YOUR F\*\*\*\*\*\* SKILLS!!!! / you mis-labeled the branch so you're not using your issure writing skill or SOMETHING!"* — `2026-08-28-...-pr68-[bench-tool].jsonl` · 08-28
+- *"i mean... i literally said we are writing a spec here - and you didn't load spec-interview?????????????????? i'm very angry."* — same file · 08-28
+- *"ooof - that is a lot of words. please load all the skills from Arc"* — `c4fe2b5c-....jsonl` · 08-30
 
 **The shape is more specific than unreliable.** From counting `Skill` tool-use blocks:
 
@@ -150,40 +150,40 @@ the name suppresses the match.** The two openings it missed are the two sessions
 **Zero pre-install hits.** Hardware-in-the-loop instrument work, 2026-08-28. Failures attributed
 to a bench the user had verified by hand; he went downstairs to check the rig twice.
 
-- *"the physical setup - i verified that a 100mV input generates a 4V output. if you're not getting anything then its an error on your side. / you might have broken the scope like yesterday with Bode dev"* — `2026-08-28-...-pr68-gain-sweep-tool.jsonl` · 08-28 15:15
-- *"third is me re-setting everything and PROOVING to you that 100mvpp in = 4.167vpp out...since you won't believe me. / you keep setting bad ranges so you just rail..."* — same file · 08-28 15:32
-- *"you keep assuming **I** did something wrong when you're just stopping at the first issue and not trying to figure it out yourself. / this should have been done 4 hours ago if you didn't stop every 2 seconds"* — same file · 08-28 15:54
+- *"the physical setup - i verified that [a stated input gives the stated output]. if you're not getting anything then its an error on your side. / you might have broken the scope like yesterday with [a bench tool] dev"* — `2026-08-28-...-pr68-[bench-tool].jsonl` · 08-28
+- *"third is me re-setting everything and PROOVING to you that 100mvpp in = 4.167vpp out...since you won't believe me. / you keep setting bad ranges so you just rail..."* — same file · 08-28
+- *"you keep assuming **I** did something wrong when you're just stopping at the first issue and not trying to figure it out yourself. / this should have been done 4 hours ago if you didn't stop every 2 seconds"* — same file · 08-28
 
 ## C6 — Response length, re-set and then not held
 
-- *"Again, way too many words, distill responses to 60 words or less. 100 if its something critical and keep the ask at top and number topics so i can appropriately respond"* — `2026-08-26-...-issue-39-pinout.jsonl` · 08-25 17:54
-- *"tangent - you haven't listened on conciseness - log that in friction log. this is bullshit and i'm angry now."* — `2026-08-28-...-pr68-gain-sweep-tool.jsonl` · 08-28 10:30
-- *"uggh less words."* — same file · 08-28 14:48
+- *"Again, way too many words, distill responses to 60 words or less. 100 if its something critical and keep the ask at top and number topics so i can appropriately respond"* — `2026-08-26-...-issue-39-[pinout].jsonl` · 08-25
+- *"tangent - you haven't listened on conciseness - log that in friction log. this is b\*\*\*\*\*\*\* and i'm angry now."* — `2026-08-28-...-pr68-[bench-tool].jsonl` · 08-28
+- *"uggh less words."* — same file · 08-28
 
 ## C7 — `Spawned` section filled with the wrong things
 
-- *"why are you adding documents to the spawned section?"* — `bfd1177f-....jsonl` · 08-25 15:58
-- *"hmmmm i dont think spawned in dev-log means that. can you point to something that supports the assertion?"* — same file · 08-25 15:59
-- *"you wandered again. in the spawned section of PR70 you're throwing down random decisions or thoughts. thats not what the section is for..."* — `2026-09-04-arc-rev-b-pr70-closeout.jsonl` · 09-04 21:45
+- *"why are you adding documents to the spawned section?"* — `bfd1177f-....jsonl` · 08-25
+- *"hmmmm i dont think spawned in dev-log means that. can you point to something that supports the assertion?"* — same file · 08-25
+- *"you wandered again. in the spawned section of PR70 you're throwing down random decisions or thoughts. thats not what the section is for..."* — `2026-09-04-arc-rev-b-pr70-closeout.jsonl` · 09-04
 
 ## C8 — draw.io: unsaved state, lost edits, temp files
 
-- *"hmmm that works but not quite what i wanted. i want to see it in the draw.io when i open it there, but if the draw.io.svg is rendered into an md i dont want that note displayed"* — `bfd1177f-....jsonl` · 08-25 12:00
-- *"also we need to exclude the temp draw.io files in gititgnore (i believe that is .dtmp)"* — same file · 08-25 14:52
-- *"ok 2 things, it looks like both needed to be re-saved (i had draw.io desktop open)."* — same file · 08-25 15:57
+- *"hmmm that works but not quite what i wanted. i want to see it in the draw.io when i open it there, but if the draw.io.svg is rendered into an md i dont want that note displayed"* — `bfd1177f-....jsonl` · 08-25
+- *"also we need to exclude the temp draw.io files in gititgnore (i believe that is .dtmp)"* — same file · 08-25
+- *"ok 2 things, it looks like both needed to be re-saved (i had draw.io desktop open)."* — same file · 08-25
 
 ## C9 — Commit rhythm, wrong in both directions
 
 Commits made before review, and not proposed at the stopping points the user announced. He
 reviews by diff in VS Code's source-control view; the commit boundary is what makes it legible.
 
-- *"commit now before applying changes ."* — `bfd1177f-....jsonl` · 08-24 15:38
-- *"ok this looks good. go ahead and commit."* — same file · 08-25 13:55
+- *"commit now before applying changes ."* — `bfd1177f-....jsonl` · 08-24
+- *"ok this looks good. go ahead and commit."* — same file · 08-25
 
 ## C10 — Work done in the wrong branch or worktree
 
-- *"ensure that we do not work in a stale branch"* — `2026-08-26-...-issue-66-bode-tool.jsonl` · 08-26 13:42
-- *"i cant check you on this we are in the wrong branch right now ... next step - get me back into the right 68 branch"* — `2026-08-28-...-pr68-gain-sweep-tool.jsonl` · 08-28 12:53
+- *"ensure that we do not work in a stale branch"* — `2026-08-26-...-issue-66-[bench-tool].jsonl` · 08-26
+- *"i cant check you on this we are in the wrong branch right now ... next step - get me back into the right 68 branch"* — `2026-08-28-...-pr68-[bench-tool].jsonl` · 08-28
 
 ## C11 — Context saturation forcing an unplanned stop
 
@@ -191,20 +191,20 @@ Sessions ran to a full context, the user noticed the degradation before any prom
 remaining budget went to writing a handoff rather than doing work. **This feeds C1** — a handoff
 written under a shrinking budget is the input to the next session's failure.
 
-- *"also, previous claude was overstuffed on context."* — `2026-08-26-...-issue-39-pinout.jsonl` · 08-25 16:25
-- *"make sure handoff is really well set up for next steps and getting the context spun up again. This will be the last task in this thread (context is a bit full)"* — same file · 08-26 12:09
+- *"also, previous claude was overstuffed on context."* — `2026-08-26-...-issue-39-[pinout].jsonl` · 08-25
+- *"make sure handoff is really well set up for next steps and getting the context spun up again. This will be the last task in this thread (context is a bit full)"* — same file · 08-26
 
 ## C12 — Behavior rules are not portable
 
-- *"i accidentally started work in \"Chat\" (i think that is github copilot) and it does NOT have the arc plugin running."* — `2026-08-28-...-earlier.jsonl` · 08-27 13:29
-- *"bear in mind that it was written by a less capable AI with out the benefit of Arc to help guide it."* — same file · 08-27 14:12
+- *"i accidentally started work in \"Chat\" (i think that is github copilot) and it does NOT have the arc plugin running."* — `2026-08-28-...-earlier.jsonl` · 08-27
+- *"bear in mind that it was written by a less capable AI with out the benefit of Arc to help guide it."* — same file · 08-27
 
 ## C13 — Numbered topics dropped mid-conversation
 
 **Zero pre-install hits.**
 
-- *"your table - (NOTE you stopped numbering items so i can't respond accurately to you)"* — `2026-08-28-...-pr68-gain-sweep-tool.jsonl` · 08-28 10:08
-- *"ok for heavnes sake what do you need to do now? i asked a question about using my phone"* — same file · 08-28 14:30
+- *"your table - (NOTE you stopped numbering items so i can't respond accurately to you)"* — `2026-08-28-...-pr68-[bench-tool].jsonl` · 08-28
+- *"ok for heavnes sake what do you need to do now? i asked a question about using my phone"* — same file · 08-28
 
 ---
 

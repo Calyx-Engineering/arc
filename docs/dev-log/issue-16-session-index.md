@@ -17,9 +17,9 @@ path that no longer exists, tied to no issue, branch or arc.
 | Transcript directories for them | **22** |
 | Orphaned | **17** |
 
-m32 recorded 2 orphans in ROADZ. This repository has seventeen. `tools/arc-loop.sh` names its
+m32 recorded 2 orphans in the client repo. This repository has seventeen. `tools/arc-loop.sh` names its
 worktrees after the issue, so the number happens to be recoverable here from the directory name
-alone — ROADZ's are not named that way, and there an orphan is a bare path.
+alone — the client repo's are not named that way, and there an orphan is a bare path.
 
 ## Intent and north star
 
@@ -34,7 +34,7 @@ alone — ROADZ's are not named that way, and there an orphan is a bare path.
 
 **The unit is a working directory and a branch, not a session.** One transcript directory holds
 every session ever run there, so a row per session would be a row per firing. The branch is in the
-key because of m32's measured ROADZ case: #39 was worked on a branch *in the main repo*, and its
+key because of m32's measured client-repo case: #39 was worked on a branch *in the main repo*, and its
 eighteen transcripts piled into one shared directory spanning every branch ever checked out there.
 The branch column is the only per-issue boundary such a directory can be given.
 
@@ -84,7 +84,7 @@ written before the lock and the pre-scan existed. It is re-measured, not adjuste
 |---|---|
 | **Copying transcripts** | m32's first constraint. Gigabytes, drift, and client material entering a repository |
 | **Appending only, like the event log** | m44's log never reads itself before writing, which is what makes it cheap. #16 requires an existing row's status to change when its worktree goes, and that is a rewrite by definition. Affordable because it happens once per session over a table with one row per working directory |
-| **A worktree-removal trigger** | m32 already measured this wrong: work done on a branch *in the main repo* never fires one, and that was ROADZ's #39 |
+| **A worktree-removal trigger** | m32 already measured this wrong: work done on a branch *in the main repo* never fires one, and that was the client repo's #39 |
 | **`git add` from the hook** | Staging files surprises every `git commit -a` in the repository, and `hooks/mode-guard` governs what a session may commit. `skills/handoff`'s setup step names the file instead, and the gate fails if it exists untracked |
 | **A `.gitignore` entry for the index** | The inverse of everything else under `.claude/` and `.arc-work/`, and the reason the gate asserts *both* directions: the index tracked, the markers ignored |
 

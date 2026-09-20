@@ -1,2 +1,0 @@
-# ROADZ: the module and revision are right and the identifier is missing — genuinely malformed
-{"cwd":"tools/hook-cases/camp-branch-check/fixtures/roadz","tool_name":"Bash","tool_input":{"command":"git checkout -b interface-pcba/rev-b-dimmer-flasher"}}

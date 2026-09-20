@@ -8,7 +8,7 @@
 
 `skills/issue-write` defined `Spawned` by a positive cause test — *this effort caused it to
 exist* — and never said what is inadmissible. A positive test alone admits anything
-session-shaped. Observed in ROADZ: eight corrections between 2026-08-14 and 2026-09-05, with
+session-shaped. Observed in the client repo: eight corrections between 2026-08-14 and 2026-09-05, with
 documents, a discarded approach the dev-log had already ruled out, and loose decisions all
 filed as spawned work, while issues that did belong were missed.
 

@@ -72,7 +72,7 @@ the file already believes it is covered.
 
 **[#287](https://github.com/Calyx-Engineering/arc/issues/287) is the premise §5 rested on.** m12's
 *"The test that changes the design"* concludes *"`Closes #NN` works against a non-default base
-branch"* from ROADZ PR #55; m42 opens with *"GitHub ignores a closing keyword unless the PR
+branch"* from the client repo's PR #55; m42 opens with *"GitHub ignores a closing keyword unless the PR
 targets the repository's default branch"* and quotes GitHub's documentation. They may agree once
 read closely — #55 was created *after* the default switch, so its base **was** the default at
 parse time, which is m42's rule and not an exception to it — but m12 states the opposite

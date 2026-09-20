@@ -115,7 +115,15 @@ report() {
   # inverse of the handoff archive's requirement, and the reason it is checked at all: `.claude/`
   # sits beside two gitignored session stores, and one added line would silence this mechanism
   # while every other gate stayed green.
-  if git -C "$root" check-ignore -q "$INDEX_REL" 2>/dev/null; then
+  # #320: ONE DECLARED EXCEPTION. A repository that is published cannot carry an index of one
+  # person's machine paths and transcript directories, so it may ignore the index — but only by
+  # saying so: a `# m32 opt-out` comment in its .gitignore. The comment is the point. An ignore
+  # line alone is still the silent edit the paragraph above is about, and still fails.
+  OPTOUT=0
+  grep -qE '^# m32 opt-out' "$root/.gitignore" 2>/dev/null && OPTOUT=1
+  if [ "$OPTOUT" = "1" ] && git -C "$root" check-ignore -q "$INDEX_REL" 2>/dev/null; then
+    pass "the index is ignored by a declared m32 opt-out — a published repository"
+  elif git -C "$root" check-ignore -q "$INDEX_REL" 2>/dev/null; then
     fail "the index is committable" \
          "$INDEX_REL is gitignored — the mapping then dies with the machine, which is #16" \
          "git check-ignore matched it"
@@ -127,7 +135,9 @@ report() {
   # the index untracked, so a repository can pass the check above forever while every row it has
   # ever written sits outside the record and dies with the worktree. Checked only when the file
   # exists: a repository where the hook has not yet fired has nothing to track.
-  if [ ! -f "$root/$INDEX_REL" ]; then
+  if [ "$OPTOUT" = "1" ]; then
+    pass "the index is not tracked here, by the declared opt-out"
+  elif [ ! -f "$root/$INDEX_REL" ]; then
     pass "the index has not been written here yet, so there is nothing to track"
   elif git -C "$root" ls-files --error-unmatch -- "$INDEX_REL" >/dev/null 2>&1; then
     pass "the index is tracked, not merely un-ignored"
@@ -363,7 +373,7 @@ if [ "${1:-}" = "selftest" ]; then
   fi
 
   # ---- 5 · a different branch in the same directory gets its own entry ---------------------
-  # m32's measured case: ROADZ's #39 was worked on a branch in the main repo, so eighteen
+  # m32's measured case: a client repo's #39 was worked on a branch in the main repo, so eighteen
   # transcripts piled into one shared directory spanning every branch ever checked out there. One
   # row per (directory, branch) is what gives that directory any per-issue boundary at all.
   git -C "$repo" checkout -q -B arc/04-dogfood-issue-99-other 2>/dev/null

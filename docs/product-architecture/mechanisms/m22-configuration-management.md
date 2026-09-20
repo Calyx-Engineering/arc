@@ -32,7 +32,7 @@ revision record matches what was actually changed.
 A related failure surfaced 2026-08-17, and it is worth recording because it was not
 predicted by the original framing.
 
-ROADZ names an arc branch after the product component being revised. That vocabulary — the
+The client repo names an arc branch after the product component being revised. That vocabulary — the
 five-ish component names an arc can belong to — **lives in a Google Sheet BOM, outside
 version control.**
 
@@ -52,13 +52,13 @@ Named in
 | How is BOM state tracked today? | The sheet is the answer; whether it can move is the question |
 | What is a hardware revision, exactly? | Schematic, layout, BOM and manufacturing outputs move at different rates |
 | When does a component version matter? | Not every part substitution is a revision |
-| What does the CM need to see? | The manufacturing package is the real artifact — see the ROADZ workflow, steps 6–7 |
-| Multi-user and PLM | Altium 365 and Atlassian change the answer |
+| What does the CM need to see? | The manufacturing package is the real artifact — see the client-repo workflow, steps 6–7 |
+| Multi-user and PLM | A cloud PLM and Atlassian change the answer |
 
 ---
 
 ## Related
 
-- [ROADZ workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md) — steps 6–8, the manufacturing package and its record
+- the client repo workflow (private corpus, not in this repository) — steps 6–8, the manufacturing package and its record
 - [branch-guard](m10-branch-guard.md) — needs the naming vocabulary this would own
 - [friction-transcript-log §5](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md#5-what-still-needs-the-interview) — the gap

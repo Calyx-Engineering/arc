@@ -4,6 +4,9 @@
 #   tests/verify-public-audit.sh            check this repository's audit
 #   tests/verify-public-audit.sh selftest   run the fixture cases
 #
+#   ARC_PRIVATE_DIR=DIR   where the audit lives once it has left this repository (#320). Unset and
+#                         the audit absent, the live check reports SKIP and exits 0.
+#
 # WHY. `docs/arc-work/04-dogfood/public-audit.md` is #134's deliverable: a row per hit, each with
 # a disposition, a summary table that counts them by file, a rules table that explains them, and
 # a header claim about the total. A second run applies the dispositions, and a human edits the
@@ -188,7 +191,7 @@ if [ "${1:-}" = "selftest" ]; then
 | Rule | Path | Class | Disposition | Why |
 | :--- | :--- | :--- | :--- | :--- |
 | **R1** | `docs/x/` | any | `move` | a reason |
-| **R17** | any | `roadz` | `anonymise` | a reason |
+| **R17** | any | `product` | `anonymise` | a reason |
 
 ## 3 Summary by file
 
@@ -201,9 +204,9 @@ if [ "${1:-}" = "selftest" ]; then
 
 | Class | Location | Text | Disposition |
 | :--- | :--- | :--- | :--- |
-| `roadz` | `docs/x/a.md:1` | some text | **move** R1 |
-| `lantern` | `docs/x/a.md:9` | more text | **move** R1 |
-| `roadz` | `docs/y/b.md:4` | other text | **anonymise** R17 |
+| `product` | `docs/x/a.md:1` | some text | **move** R1 |
+| `client` | `docs/x/a.md:9` | more text | **move** R1 |
+| `product` | `docs/y/b.md:4` | other text | **anonymise** R17 |
 
 ## 5 What you tick
 
@@ -289,8 +292,8 @@ DOC
   out=$(run "$root"); status=$?
   case_is "a section 5 with no ask count fails" 1 "does not state how many" "$status" "$out"
 
-  # 11 — a path containing spaces. `docs/reference-roadz/ROADZ Interface PCBA Revision
-  #      Workflow.md` is real, and a naive field split drops it from the coverage check.
+  # 11 — a path containing spaces. The audit holds a real one — a client document filed under
+  #      its own title — and a naive field split drops it from the coverage check.
   root=$(make_audit spaces)
   sed -i 's#docs/y/b.md#docs/y/a file.md#g' "$root/$AUDIT"
   out=$(run "$root"); status=$?
@@ -308,7 +311,7 @@ DOC
   #      from the second cell, never from the first thing in the line that looks like one.
   root=$(make_audit nested)
   cat >> "$root/$AUDIT" <<'ROW'
-| `roadz` | `docs/x/a.md:129` | \| **Source** \| see `docs/other/z.md:7` \| \| | **move** R1 |
+| `product` | `docs/x/a.md:129` | \| **Source** \| see `docs/other/z.md:7` \| \| | **move** R1 |
 ROW
   sed -i 's#^| `docs/x/a.md` | 2 |#| `docs/x/a.md` | 3 |#' "$root/$AUDIT"
   sed -i 's/and 3 need a decision/and 4 need a decision/' "$root/$AUDIT"
@@ -327,5 +330,22 @@ if [ "${1:-}" = "--root" ]; then
   exit $?
 fi
 
-report "$(cd "$(dirname "$0")/.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# #320: the audit quotes every hit verbatim, so it left the repository with the rest of the
+# private corpus. Absent here is the published state, not a defect — which is why this is decided
+# at the live invocation and `report` still fails a root that was named and holds no audit.
+# ARC_PRIVATE_DIR says where the private copy is; without it nothing is checked, and saying so
+# plainly is the point: a silent pass would read as "the audit agrees with itself".
+if [ ! -f "$ROOT/$AUDIT" ]; then
+  if [ -n "${ARC_PRIVATE_DIR:-}" ]; then
+    report "$ARC_PRIVATE_DIR"
+    exit $?
+  fi
+  echo "verify-public-audit — SKIP  $AUDIT is not in this repository; it is private corpus."
+  echo "                      Set ARC_PRIVATE_DIR to the directory that holds it to check it."
+  exit 0
+fi
+
+report "$ROOT"
 exit $?

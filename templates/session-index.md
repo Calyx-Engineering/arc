@@ -45,7 +45,7 @@ never backticked, so an empty cell cannot read as a branch called `-`.
 | Field | | Example |
 |---|---|---|
 | `Transcript` | The directory under `~/.claude/projects/`, backticked. From the session's own `transcript_path` where the payload carries one; otherwise the working directory with every character that is not `[A-Za-z0-9]` replaced by `-`, corrected against the store's real spelling | `R--arc-wt-16` |
-| `Worktree` | The repository root the session ran in. **May no longer exist** — that is the whole point | `R:/arc-wt/16` |
+| `Worktree` | The repository root the session ran in. **May no longer exist** — that is the whole point | `<drive>/arc-wt/16` |
 | `Branch` | What was checked out. `detached` when the worktree is still at a detached HEAD | `arc/04-dogfood-issue-16-session-index` |
 | `Issue` | `#NN` from `-issue-NN`, `PR #NN` from a direct-PR branch, `-` when the branch names neither | `#16` |
 | `Arc` | The arc branch the work branch descends from, `-` outside an arc | `arc/04-dogfood` |
@@ -58,7 +58,7 @@ One transcript directory holds **every** session ever run in that working direct
 session would be a row per firing of the hook. A later session in the same place extends the date
 span instead.
 
-It is keyed on the branch as well because of m32's measured case: ROADZ's #39 was worked on a
+It is keyed on the branch as well because of m32's measured case: a client repo's #39 was worked on a
 branch **in the main repo**, and its eighteen transcripts piled into one shared directory spanning
 every branch ever checked out there. The branch column is the only per-issue boundary such a
 directory can be given.
@@ -94,6 +94,8 @@ most likely to be forgotten. The index merges with the work, like the dev-log.
 **The file is created untracked.** `git add .claude/arc/sessions.md` the first time it appears;
 `skills/handoff`'s setup step says so, and `tests/verify-session-index.sh` fails when it exists and
 git does not know about it. An un-ignored file that nobody committed is not a committed one.
+**A published repository is the one exception** — it ignores the index under a `# m32 opt-out`
+comment, because the rows are one person's machine paths. `skills/handoff` says how.
 
 ## Who reads it
 

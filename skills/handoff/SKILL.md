@@ -365,6 +365,11 @@ of [m32](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-archite
 It is the one file here that goes **into** the record rather than out of it — the two entries above
 are ignored, this one is tracked.
 
+**One exception: a repository that is published.** The index is one person's machine paths and
+transcript directories, so a public repository ignores it instead — under a `# m32 opt-out` comment
+in `.gitignore`, which is what `tests/verify-session-index.sh` looks for. It costs that repository
+the cross-machine mapping, knowingly. An ignore line without the comment is still a defect.
+
 **At arc close, delete it.** Anything in it worth keeping was already promoted to the
 arc-log or a dev-log. If deleting it feels lossy, something skipped a tier — find what and
 put it where it belongs.

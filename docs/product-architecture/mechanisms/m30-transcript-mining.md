@@ -40,7 +40,7 @@ machine-local reasoning to a durable record.
 
 ## Why it exists
 
-Proven once, by hand, on 2026-08-16. Reading 28 ROADZ transcripts corrected three
+Proven once, by hand, on 2026-08-16. Reading 28 the client repo's transcripts corrected three
 architecture errors in a single pass that four rounds of reasoning from design
 documents had not — see [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md).
 
@@ -49,7 +49,7 @@ The general claim:
 > **A user's corrections are labeled data about where the tool is wrong, and they sit
 > unread on disk.**
 
-Two skills in ROADZ (`engineering-report`, `issue-writing`) were precipitated out of
+Two skills in the client repo (`engineering-report`, `issue-writing`) were precipitated out of
 roughly a dozen repeated corrections each — manually, and only once the pain got loud
 enough to notice. This mechanism does that at three, deliberately.
 
@@ -167,7 +167,7 @@ That last row is the only honest way to measure whether a plugin is paying for i
 | Question | Notes |
 |---|---|
 | **When does it run?** | Not ambient. Candidates: on request, at arc close, or on a counter (same correction three times) |
-| **Cross-repo?** | Patterns recurring in *both* ROADZ and TimeScope are portable-skill candidates by definition. Strong argument for scanning all projects, not one |
+| **Cross-repo?** | Patterns recurring in *both* the client repo and TimeScope are portable-skill candidates by definition. Strong argument for scanning all projects, not one |
 | **Privacy** | Transcripts contain everything said, including client and employer material. Must stay local; never send transcript content anywhere. A finding may be shareable when the transcript is not |
 | **Does it read assistant turns too?** | The hand-run read only user messages. Assistant turns would show *what* triggered a correction, at much higher token cost |
 | **Retention** | Transcripts are not forever. Findings should be durable even when the source rotates away |
@@ -177,6 +177,6 @@ That last row is the only honest way to measure whether a plugin is paying for i
 ## Related
 
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) — output of the first hand-run
-- [what-the-tools-do.md](../archive/what-the-tools-do.md) §4.4 — job 13, *Learn*
-- ROADZ `.claude/skills/engineering-report`, `issue-writing` — both precipitated from
+- what-the-tools-do.md (private corpus, not in this repository) §4.4 — job 13, *Learn*
+- The client repo's `.claude/skills/engineering-report`, `issue-writing` — both precipitated from
   corrections this mechanism would have surfaced sooner

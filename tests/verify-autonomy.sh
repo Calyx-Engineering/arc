@@ -9,7 +9,7 @@
 #
 # THE INVARIANT IS INVERTED, 2026-09-06, #138. Five prohibitions each carrying an override is
 # still five prohibitions, and the harness permits an outward-facing action only when it is
-# durably authorized. arc stated the rule five times and had four merges denied. ROADZ states it
+# durably authorized. arc stated the rule five times and had four merges denied. A client repo states it
 # once, in CLAUDE.md, with the override inside the sentence, and had none denied across twelve.
 #
 # So: skills/autonomy-set is the authority. CLAUDE.md may state the mode once, as a state, with
