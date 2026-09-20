@@ -181,10 +181,6 @@ standby current on a PWM node nobody wrote a requirement for.
 
 ## 3. Has the questioning gone too deep?
 
-> *"you'll keep asking detail questions and pushing deeper and deeper until i get frustrated
-> instead of giving yourself an escape path or relief valve so we can get back to the
-> critical point."*
-
 **It is not that the questions are wrong. It is that there is no way out of them.** Each
 answer opens two more, and the only exit is the human's patience running out.
 
@@ -193,58 +189,30 @@ answer opens two more, and the only exit is the human's patience running out.
 | Several questions deep on one decision | Depth without the scope changing |
 | Repeated clarification, no decision landing | |
 | Stakes and depth mismatched | A four-hour milestone does not warrant the questioning a four-week one does |
-| **Real decisions being made with no branch, issue, or repo** | Escalate — see below |
+| **Real decisions being made with no branch, issue, or repo** | Every answer lives in chat alone. Say so and propose tracking it — [`relief-valve`](../relief-valve/SKILL.md), *Untracked work is what makes depth expensive* |
 
 **Offer the exit; do not take it.**
 
 > *"We are three questions into naming. Want me to pick and move, or is this worth
 > settling?"*
 
-### Untracked work is what makes it expensive
-
-Before a branch or issue exists, every answer lives in chat alone — machine-local, lost with
-the transcript. An hour of structural decisions can leave no artifact at all.
-
-| | With a branch | Without one |
-|---|---|---|
-| Where the reasoning lands | Commits, issue bodies, specs | Chat only |
-| Recoverable later | Yes | Only by mining the transcript, weeks on |
-| Cost of over-depth | Time | Time, **and the record** |
-
-When decisions are landing and nothing can record them, say so and propose tracking it. That
-is the same failure class as the branch guard — work in the wrong place — except here the
-wrong place is nowhere.
-
 ### The trigger is a mechanical precondition, then judgment
 
 **No single signal means *too deep*.** Turn count alone fires during legitimate long
 analysis; *"questions without a decision landing"* needs a definition of *landed*;
-user-invoked puts the load back on the person the mechanism exists to protect.
+user-invoked puts the load back on the person the mechanism exists to protect. A combination
+of them does work.
 
-**A combination of them does work**, and that is what fires this check:
-
-| Signal | Threshold |
-|---|---|
-| Turns since the last commit or file write | 8 |
-| Questions asked with no artifact changed | 3 |
-| Minutes in one issue with no checklist movement | 45 |
-| Emphasis markers — caps, bolded corrections, profanity, sharply shorter replies | any |
-
-**Two of the first three fire it. An emphasis marker fires it alone.** The thresholds are
-provisional estimates, replaced by mined evidence in
-[#36](https://github.com/Calyx-Engineering/arc/issues/36).
-
-**[`relief-valve`](../relief-valve/SKILL.md) is what this check runs when that precondition
-trips** — the countable version of the same check, invoked rather than felt. It is not a
-separate always-on process; it runs inside this sweep.
+**[`relief-valve`](../relief-valve/SKILL.md) holds the combination and is what this check runs
+when it trips** — the four signals, their thresholds, the emphasis markers, and the nudge. It
+is not a separate always-on process; it runs inside this sweep.
 
 **Mechanical trigger, judged response.** The precondition decides whether to look; judgment
 decides whether the depth is real, and the direction question sets the nudge's strength.
 
 **What neither form fixes:** a skill the agent invokes is self-detection, and failing to
-notice is the condition being detected. The precondition limits how much this matters; it does
-not remove it. If a session ends with the person frustrated at depth, that is evidence the
-check did not fire — and it belongs in a retrospective.
+notice is the condition being detected. If a session ends with the person frustrated at depth,
+that is evidence the check did not fire — and it belongs in a retrospective.
 
 ---
 

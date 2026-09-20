@@ -90,7 +90,7 @@ specified for weeks, because nothing recorded where they came from.
 | `instrument` | A number an instrument displayed, with nothing establishing it was measuring what the claim names | Becomes `measured` when the rig is written down beside it |
 | `schematic` | This board's own sheets | |
 | `datasheet` | The part's own document | Cite the page |
-| `vendor` | A label, a listing, a product page, silkscreen | |
+| `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
 | `firmware` | Shipped source. What the code *does*, not what the hardware requires | |
 | `drawing` | A reviewed diagram | As strong as the review behind it |
 | `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
