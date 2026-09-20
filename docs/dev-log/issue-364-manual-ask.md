@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#364](https://github.com/Calyx-Engineering/arc/issues/364)  ·  **PR:** TBD  ·  **Branch:** `arc/04-dogfood-issue-364-manual-ask`
+**Issue:** [#364](https://github.com/Calyx-Engineering/arc/issues/364)  ·  **PR:** [#366](https://github.com/Calyx-Engineering/arc/pull/366)  ·  **Branch:** `arc/04-dogfood-issue-364-manual-ask`
 
 ## Problem
 
@@ -69,4 +69,16 @@ Pass 2, after reading m49, m40 and the hook: nothing changed, except that the is
 
 ## Retrospective
 
-TBD at PR time.
+Built as planned: manual asks, and the gating command is read rather than matched. Two things
+the plan did not have. `git -C path commit` had been a false allow since the hook shipped, found
+only because the new cases were written against the parser rather than against the old match.
+And the read-back found `run-instructions.md` still telling a run that the hook denies — still
+true in effect, since a `-p` run has nobody to answer an ask, and now said that way.
+
+**The session that built this was itself stopped by the rule it changes**: David asked for auto
+mode, the harness's classifier refused the mode-row write as self-modification, and the work
+stayed uncommitted until he asked a second time. The hook was not what refused — the third gate
+in [`autonomy-set`](../../skills/autonomy-set/SKILL.md)'s table was.
+
+**Unsoaked.** No live session has shown the prompt. The arc-log's §10 row names the first
+exercise: the next commit David asks for in manual, after `tools/plugin-reload.sh`.
