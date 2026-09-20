@@ -1,0 +1,2 @@
+# manual, a here-document whose line STARTS with git commit — a body is data
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "cat > steps.md <<EOF\ngit commit -m \"work\"\ngit push\nEOF", "description": "Run"}}

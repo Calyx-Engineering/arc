@@ -398,17 +398,21 @@ def selftest():
                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE)
             o = p.communicate(payload.encode("utf-8"))[0].decode("utf-8", "replace")
+            # Manual ASKS rather than denies — #364. The exact decision is read, because an
+            # allow carrying a reason would look the same to anything that only checks a hook spoke.
+            if '"permissionDecision":"ask"' in o:
+                return "ask"
             return "deny" if '"permissionDecision":"deny"' in o else "allow"
 
-        # THE CONTROL, FIRST. Absence of a denial is what this reads as "allow", so a guard that
+        # THE CONTROL, FIRST. Absence of a decision is what this reads as "allow", so a guard that
         # crashed, exited early or is inert would satisfy every allow assertion below. With no
-        # HANDOFF.md at all the guard must deny — an unset mode is manual — and that is the one
+        # HANDOFF.md at all the guard must ask — an unset mode is manual — and that is the one
         # reading that proves it ran.
         d = fixture("guard-live", None)
-        if guard_says(d) == "deny":
-            ok("mode-guard is live - with no HANDOFF.md it denies, so an allow means something")
+        if guard_says(d) == "ask":
+            ok("mode-guard is live - with no HANDOFF.md it asks, so an allow means something")
         else:
-            bad("mode-guard is live - with no HANDOFF.md it denies, so an allow means something",
+            bad("mode-guard is live - with no HANDOFF.md it asks, so an allow means something",
                 "it allowed, so every allow below proves nothing")
 
         d = fixture("roundtrip", HANDOFF_MANUAL)
@@ -422,7 +426,7 @@ def selftest():
 
         st, out = run(d, "Manual")
         said = guard_says(d)
-        if st == 0 and said == "deny":
+        if st == 0 and said == "ask":
             ok("mode-guard reads Manual out of what set-mode wrote")
         else:
             bad("mode-guard reads Manual out of what set-mode wrote",
@@ -447,7 +451,7 @@ def selftest():
         st, out = run(d, "Autonomous", "#198 merged")
         t = handoff(d)
         said = guard_says(d)
-        if (said_before == "deny" and st == 0 and said == "allow"
+        if (said_before == "ask" and st == 0 and said == "allow"
                 and row_says(t, "Autonomous") and t.count("| **Autonomous** |") == 1):
             ok("a mode row with no closing pipe is read by both, and written back closed")
         else:
@@ -462,7 +466,7 @@ def selftest():
         man = fixture("cwd-manual", HANDOFF_MANUAL)
         from_auto = guard_says(man, run_from=auto)
         from_man = guard_says(auto, run_from=man)
-        if from_auto == "deny" and from_man == "allow":
+        if from_auto == "ask" and from_man == "allow":
             ok("the mode is read from the payload's cwd, not from where the hook was run")
         else:
             bad("the mode is read from the payload's cwd, not from where the hook was run",
@@ -475,7 +479,7 @@ def selftest():
         said_before = guard_says(d)
         st, out = run(d, "Autonomous", "#198 merged")
         said = guard_says(d)
-        if said_before == "deny" and st == 0 and said == "allow" and row_says(handoff(d), "Autonomous"):
+        if said_before == "ask" and st == 0 and said == "allow" and row_says(handoff(d), "Autonomous"):
             ok("a mode row with an empty value cell is filled in, not refused")
         else:
             bad("a mode row with an empty value cell is filled in, not refused",

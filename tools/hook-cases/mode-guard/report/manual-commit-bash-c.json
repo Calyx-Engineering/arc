@@ -1,0 +1,2 @@
+# manual, a commit inside `bash -c` — the string is what the shell runs
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "bash -lc \"cd /r/arc && git commit -m work\"", "description": "Run"}}

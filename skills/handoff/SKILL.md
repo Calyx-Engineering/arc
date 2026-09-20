@@ -105,10 +105,10 @@ does not account for.
 first cell names the mode, `grep -m1 -iE` over `HANDOFF.md`, then the second cell with emphasis,
 backticks and **every space** removed, lowercased. [`hooks/mode-guard`](../../hooks/mode-guard)
 reads exactly that before every commit, push, PR and merge, so a check that located the row any
-other way could pass while the hook denies on the same file. **A cell that is not exactly
-`manual` or `autonomous` after that is unreadable, and the hook denies on it** — *Autonomous to
+other way could pass while the hook stops the same commit to ask. **A cell that is not exactly
+`manual` or `autonomous` after that is unreadable, and the hook reads it as manual** — *Autonomous to
 wave 6*, or the template's own *Manual · Autonomous* left unedited, is not a mode. Read it here,
-where it costs a sentence, rather than at a denied commit. The arc-log side costs nothing extra:
+where it costs a sentence, rather than at a commit that stops to ask. The arc-log side costs nothing extra:
 *How this arc is executed* is already row 3 of the reading order above.
 
 **Neither side is authority over the other's subject.** The arc-log is the plan and the handoff

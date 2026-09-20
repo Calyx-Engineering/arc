@@ -160,7 +160,8 @@ Dropping to manual stays Claude's to do — at a named boundary, or when the sel
 **This cannot be enforced mechanically and is not pretended to be.** `hooks/mode-guard` sees a
 file change, not who asked for it, and gating writes to `HANDOFF.md` would block the rest of a
 file Claude legitimately maintains. What became mechanical is the other half: the mode is read
-at the moment of a commit rather than recalled, and manual denies.
+at the moment of a commit rather than recalled, and manual puts the command to the user —
+[m49](m49-execution-mode-guard.md).
 
 **The user never hand-edits `HANDOFF.md` to switch modes.** The switch is a sentence in chat.
 

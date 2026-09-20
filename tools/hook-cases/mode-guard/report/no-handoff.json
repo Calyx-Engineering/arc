@@ -1,2 +1,2 @@
-# no HANDOFF.md — unset means manual, and the denial names the fix
+# no HANDOFF.md — unset means manual, and manual asks
 {"tool_name":"Bash","cwd":"__FIXTURE_NOREPO__","tool_input":{"command":"git commit -m \"work\"","description":"Commit"}}
