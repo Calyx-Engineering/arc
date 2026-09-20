@@ -279,7 +279,7 @@ timing. Not a separate always-on process — a check in the same sweep."*
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 — runs `skills/relief-valve` |
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
 | A decision is settled and the next topic is opening | Writing it down before moving | m15 · m13 — a gate on your own moving on. Nudges only when the surface itself has stopped holding the state |
-| Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default |
+| Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default: it is about Arc, and a repository consuming Arc has no reason to record its rough edges |
 | This session has degraded far enough that the work should move | A handoff, now, while there is budget to write one | m15 — the only one about the session rather than the work. Turn count, a compaction, and the load having drifted off the work the session was opened for |
 | A failure is about to be blamed on the user's environment | One tested alternative on your own side, first | m13 — the skill's list says which checks block. [#165](https://github.com/Calyx-Engineering/arc/issues/165) |
 

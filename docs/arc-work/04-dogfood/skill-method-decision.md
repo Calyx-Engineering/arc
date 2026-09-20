@@ -18,8 +18,8 @@ against the whole tree wherever a candidate runs on it. Line counts measured on 
 | **Writes a skill** | `skill-creator` | The only candidate with intent capture, a description optimiser and an eval scaffold. It drafts into `templates/SKILL.md` |
 | **Mechanical pre-pass, both paths** | `skill-creator`'s `scripts/quick_validate.py` | The only candidate that found a real defect — [#338](https://github.com/Calyx-Engineering/arc/issues/338). Free, and it exits non-zero |
 | **Precondition, not a review** | `claude plugin validate skills --strict` | Exit 0 on all thirteen, including an 852-line skill and five whose frontmatter a conformant YAML parser rejects |
-| **Unavailable** | `claude plugin eval` | `` `plugin eval` is currently in early access ``, exit 1 — [#181](https://github.com/Calyx-Engineering/arc/issues/181) |
-| **Not a reviewer** | `/skill-doctor` | Built in, `supportsNonInteractive`. Its own description is *"Show which loaded skills are unused and costing context"* — a session usage report, not a reading of a skill |
+| **Unavailable** | `claude plugin eval` | `` `plugin eval` is currently in early access ``, exit 1 — [#181](https://github.com/Calyx-Engineering/arc/issues/181). **Re-checked 2026-09-20 on Claude Code 2.1.263:** `--help` now prints and documents `case.yaml` and `--no-publish`; a one-case run on Haiku still returns the same early-access refusal. Still unavailable. Its default publishes the report to claude.ai, so `--no-publish` on the day it opens — the cases quote ROADZ documents |
+| **Not a reviewer** | `/skill-doctor` | Built in, `supportsNonInteractive`. Its own description is *"Show which loaded skills are unused and costing context"* — a session usage report, not a reading of a skill. **Run 2026-09-20**, `claude -p "/skill-doctor"` on Haiku (from Git Bash it needs `MSYS_NO_PATHCONV=1`, or the slash becomes a path): it returns uses, last-used and 7-day tokens per skill — a cost figure and a firing proxy for all thirteen, which no other available tool gives. [#365](https://github.com/Calyx-Engineering/arc/issues/365)'s dev-log holds the table |
 
 **`writing-skills` is adopted as a checklist, not as its method.** Its spine is the Iron Law —
 *"NO SKILL WITHOUT A FAILING TEST FIRST… This applies to NEW skills AND EDITS to existing
@@ -207,6 +207,7 @@ Findings from the trial that are house style, so no review re-opens them.
 | A description that summarises the workflow | [#155](https://github.com/Calyx-Engineering/arc/issues/155) measured firing on thirteen real turns. The trigger clause holds the user's words because that is what fired |
 | A description over 500 characters | Same. The alternative was measured and did not fire |
 | Non-spec frontmatter keys | `checks:`, `skips:` and `camp-reports:` are read by anything that declares what it checks. **Their spelling is not a deviation** — [#338](https://github.com/Calyx-Engineering/arc/issues/338) settles whether they move under `metadata:` |
+| A skill over 500 lines — `issue-write`, 802 file lines | David, 2026-09-20: *"its working so maybe the length is needed."* [#365](https://github.com/Calyx-Engineering/arc/issues/365)'s bucket-E pass took 65 lines out and what remains is rules. Moving them into `references/` trades a rule that is always read for one read only if the session opens the file, and that trade is unmeasured. **This skill only** — `work-watch` is still reviewed against the limit. Whether it can shrink is milestone *issue-write refactor*'s question, outside arc 04 |
 | A name that is not a gerund | Thirteen skills are installed under these names and `hooks/` resolve them by name. A rename is a breaking change with no measured payoff |
 
 ### 4.2 Where a carrier already exists

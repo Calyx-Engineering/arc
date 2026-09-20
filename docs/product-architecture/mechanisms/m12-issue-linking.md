@@ -105,6 +105,18 @@ when absent, made by hand — §5. The earlier consequence stated here, that the
 required, was the claim #287 suspected `skills/issue-write` had inherited. It had not — the skill
 already stated m42's rule — and it now cites the measurement.
 
+### A commit message binds too — measured 2026-09-12
+
+**GitHub does not care which write puts the keyword next to the number.** Commit `81b5a41`
+([PR #301](https://github.com/Calyx-Engineering/arc/pull/301)) put the word *resolve* and #300's
+number in one prose clause of its body. The commit reached the default branch — during an arc
+that is the arc branch itself, [m42](m42-default-branch-flip.md)'s flip — and GitHub closed
+[#300](https://github.com/Calyx-Engineering/arc/issues/300) with all four of its boxes still
+unticked. Same keyword set as a PR body, same parser, and none of the review a PR body gets.
+[#336](https://github.com/Calyx-Engineering/arc/issues/336) filed it; `hooks/tracker-verify`
+reports a `git commit` whose message carries a closing keyword and a number anywhere but a bare
+line, and `skills/issue-write` carries the placement rule.
+
 ---
 
 ## What the API supports
@@ -265,6 +277,30 @@ merge read `[]` on every poll. [m42](m42-default-branch-flip.md) measured the ne
 merged PRs whose base became the default only after a flip stayed unbound, and a re-save did not
 rescue those either. §5's manual route is the repair in both states: the Development-panel
 click, then the close.
+
+#### A keyword added after the merge — measured 2026-09-07
+
+**A `Closes #NN` line added to an already-merged PR still binds**, provided the base was the
+default branch — the parse is not tied to the merge. Measured on
+[#192](https://github.com/Calyx-Engineering/arc/pull/192) and again on
+[#215](https://github.com/Calyx-Engineering/arc/pull/215). `skills/issue-write` carries the
+guarded command; what the two runs showed is here.
+
+| | |
+|---|---|
+| **The read-back is not instant** | The read immediately after the edit returns an empty array; seconds later it returns the binding. **One read is a false negative** — poll before concluding the recovery failed |
+| **It links, it does not close** | The merge event that closes an issue has already fired. #225 stayed open with the reference bound. `gh issue close` is the third command, and the reason this is not the two-command fix it first looked like |
+| **It is a keyword link, not a hand-attached one** | `closingIssuesReferences(first:5,userLinkedOnly:true)` comes back empty, so nothing was clicked. The distinction matters because a hand-attached link cannot be removed through the API |
+| **Removing the keyword unbinds** | Symmetric, and the reason the check below can restore what it changed |
+
+**What changed is that the documented remedy was hand-linking through the UI**, which needs a
+human and cannot run unattended. This can. A missed keyword is still a defect, caught at PR open.
+
+**The claim is a test, not a memory.**
+[`tests/tracker-cases/binding/merged-pr-keyword-bind.md`](../../../tests/tracker-cases/binding/merged-pr-keyword-bind.md)
+carries it, and `tests/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
+live API and restores what it changed. `verify-all.sh` does not run it — it writes to the
+tracker — and `selftest` names it as not covered rather than passing over it.
 
 ### 3. Link the branch to the issue explicitly
 

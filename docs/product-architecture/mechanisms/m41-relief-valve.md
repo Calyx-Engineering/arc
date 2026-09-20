@@ -119,7 +119,9 @@ fires the check without any conversational reading.
 ### Combining them
 
 The first three are **cumulative and none is sufficient alone** — a long analysis legitimately
-runs many turns without a write. Two of three at threshold fires the check.
+runs many turns without a write, *"questions without a decision landing"* needs a definition of
+*landed*, and a valve the user has to invoke puts the load back on the person it exists to
+protect. Two of three at threshold fires the check.
 
 **Emphasis markers fire on their own**, because they are a direct report from the person the
 mechanism exists to protect.
