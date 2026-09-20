@@ -2,7 +2,7 @@
 
 > Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
-**Issue:** [#320](https://github.com/Calyx-Engineering/arc/issues/320)  ·  **PR:** none yet
+**Issue:** [#320](https://github.com/Calyx-Engineering/arc/issues/320)  ·  **PR:** [#371](https://github.com/Calyx-Engineering/arc/pull/371)
 
 ## Problem
 
