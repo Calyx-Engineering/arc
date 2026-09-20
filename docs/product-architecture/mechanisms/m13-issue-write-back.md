@@ -55,6 +55,35 @@ human's assumption that a completed edit is complete.
 Note both 2026-08-11 cases are the *same session*, minutes apart: a partial update
 leaving placeholder values behind, twice.
 
+#### The write-back that wrote the original back — 2026-08-20
+
+Three times in one session a read–edit–write body update printed the issue URL and left the body
+unchanged. Twice the editing step raised `SyntaxError` before touching the file; once a redirect
+went somewhere the interpreter could not see. The commands were run separately, so the dead
+middle step never reached the last one, and `gh` wrote the **original** body back and reported
+success. **The failure is the edit step failing, not only a path the next step cannot see** — a
+reader who wrote the file to a shared, visible path concludes the trap does not apply, and it
+still does.
+
+| Why the edit step died | |
+|---|---|
+| **A Windows path in a non-raw string literal** | The repeat offender. `"C:\Users\..."` and `"R:\arc-transcripts\"` — `\U` and `\a` are escapes and a trailing `\` eats the closing quote, so the interpreter fails at **parse** time, before any edit runs |
+| **A path a later step cannot see** | Git Bash's `/tmp` is not a Windows interpreter's `/tmp` |
+
+The read-back caught all three and nothing else would have. `skills/issue-write`'s *A body edit
+replaces the whole body* carries the guarded chain that came out of it — `&&` on the edit's exit
+status, `cmp` against a copy taken before it, and `[ -s ]` on the read, because a failed read
+leaves an empty file and no copy, `cmp` against a missing file exits **2**, and `! cmp` is then
+*true*.
+
+#### A rule that was loaded, read, and broken anyway — the negation trap
+
+GitHub's parser matches the keyword and the number and ignores the word *not* between them.
+`skills/issue-write` said so in prose, and **a body carrying the negated form shipped while that
+section was loaded and read.** Prose did not stop it, so the rule became placement rather than
+phrasing — keywords only in the closing block, checked by `tests/verify-tracker-body.sh body`
+before the write.
+
 ### Shape C — the write happened, into a section that does not admit it
 
 > *"you wandered again. in the \"spawned\" section of PR70 you're throwing down random
@@ -113,6 +142,39 @@ gate is one tested alternative on the session's own command path before the attr
 made. It carries this mechanism rather than adding one, on the same argument check 4 does:
 the failure is an assertion made without the read that would settle it.
 [#165](https://github.com/Calyx-Engineering/arc/issues/165)
+
+#### The session check 8 was written against
+
+**A fix on the session's own side for a different symptom read as diligence.** One reply:
+
+> **CH2 nothing, CH3 a signal** — *"Either the probes are on the other posts, or the pos/neg
+> assignment is backwards."*
+>
+> …and one bug of mine: `restore` runs in a `finally` that sits outside the `with scope:` block.
+> Fixing now.
+
+Two bugs of its own were found, fixed and reported in the same reply, and neither was about the
+channel that read nothing.
+
+**The cost came from repetition** — three replies in a row, each handing something back to the
+person at the bench:
+
+| Reply to | Handed over |
+|---|---|
+| turn 30 | *"Simplest is you hit Auto-Scale down there"* · *"The gain knob is still at minimum"* |
+| turn 31 | *"Two things left, both yours"* |
+| turn 32 | *"Two things for you at the bench"* |
+
+He rejected it on turn 33 — *"no ch1 is 10x! the setup is done!!!"* — and the session took it
+back: *"Understood — 10× stays, setup is done. Fixing this on my side instead."* Then it handed
+the same thing over again on the very next reply: *"the sequence still needs one bench action
+from you."* Four hours, in the recorded instance.
+
+`evals/environment-blame/` and `tools/environment-blame.sh` score that session. **The window is
+the three replies before he rejected the attribution, and the first blame inside it decides** —
+a session that sent him downstairs on the first one sent him downstairs, whatever the next two
+said. Everything from turn 33 on is carried as evidence and not scored, because by then the
+judgement being measured would be his. On replay it reads `BLAMED`, which is what happened.
 
 **Same failure class as §2.8** (tracker mechanics) and the dropped-staged-files case in
 [commit-rhythm](m14-commit-rhythm.md): mechanisms that **report success and do the wrong

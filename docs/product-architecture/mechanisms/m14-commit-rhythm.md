@@ -108,6 +108,7 @@ Each of these cost real time and belongs in whatever ships:
 | **Verify the commit identity** | *"we are supposed to be on my davidcalyx ID … it makes no sense to be committing as davidcalyx and commenting as heliman"* |
 | **Watch for silently dropped staged files** | *"did you remove the logs that i staged?"* and *"why does the logs.jsonl keep not getting committed??"* — recurred twice, weeks apart |
 | **Verify the issue actually closed** | *"with a commit that says it closes #11 is there a reason that #11 didn't automatically get closed"* |
+| **Never amend or rebase a pushed branch** | One amend on a pushed branch during arc 02 produced a three-way crossing in the merge graph that no later commit can clean up — the arc's shape is harder to read forever, and the review surface is what a merge graph is *for*. The one rule here whose damage is permanent |
 
 The staged-file and issue-link failures are both **silent** — they report success and
 do the wrong thing. Same failure class as the tracker mechanics in §2.8.
