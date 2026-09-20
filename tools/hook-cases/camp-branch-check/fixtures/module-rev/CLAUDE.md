@@ -7,12 +7,12 @@ was in force when it fired. Nothing here governs work in Arc.
 It shares Arc's `issue` label, so it is the regression fixture and not the proof that the
 convention is read — `fixtures/labelled` is that, with a label Arc does not know.
 
-The Branching section below is [ROADZ](https://github.com/Lantern-Systems/roadz-sound-system)'s,
-abridged — the repo whose real branch names the hook rejected ([#162](https://github.com/Calyx-Engineering/arc/issues/162)).
+The Branching section below is a client repository's, abridged and with its names changed —
+the repo whose real branch shapes the hook rejected ([#162](https://github.com/Calyx-Engineering/arc/issues/162)).
 
 ## Branching
 
-`interface-pcba/rev_b` is the integration branch for the Interface PCBA rev B milestone. All
+`widget-board/rev_b` is the integration branch for the Widget Board rev B milestone. All
 milestone work branches from it and merges back into it. `main` receives the milestone only
 when the revision is complete.
 

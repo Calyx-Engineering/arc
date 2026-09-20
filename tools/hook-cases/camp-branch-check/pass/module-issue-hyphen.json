@@ -1,0 +1,2 @@
+# A client repo, real shape, names changed: the current `<module>/rev-<X>-issue-<NN>-<slug>` form
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/module-rev","tool_name":"Bash","tool_input":{"command":"git switch -c widget-board/rev-b-issue-15-output-isolation"}}

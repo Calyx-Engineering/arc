@@ -173,7 +173,7 @@ arc_log_event branch-create "branch=$NAME"
 case "$NAME" in main|master|develop) nothing_to_check "trunk — camp-session-start speaks about that" ;; esac
 
 # ---- the repository's declared convention ---------------------------------------
-# Branch naming is per-repo. Arc names arcs `arc/<nn>-<slug>`; ROADZ names them after the
+# Branch naming is per-repo. Arc names arcs `arc/<nn>-<slug>`; another repo names them after the
 # product component being revised. A hook that matches one repo's shape reports every branch
 # in the other as wrong — which is what this one did, five times out of five (#162).
 #
@@ -231,8 +231,8 @@ NAMED="$(printf '%s\n' "$SECTION" | grep -oE '`[^`]+`(\]\()?' \
 # The label is two characters at least, for the same reason.
 FORMS="$(printf '%s\n' "$NAMED" | grep -E '[A-Za-z]{2,}[-_]?(<[Nn]+>|<number>|[0-9]+)[-_]')"
 
-# A name the section spells out in full is a branch the repo has already decided on — ROADZ's
-# `interface-pcba/rev_b` is its integration branch, declared two lines above the work-branch
+# A name the section spells out in full is a branch the repo has already decided on — one
+# repo's `widget-board/rev_b` is its integration branch, declared two lines above the work-branch
 # form. It carries no issue number and is not supposed to: telling the repo to rename the
 # branch its own convention names is the failure this hook is being fixed for.
 if printf '%s\n' "$NAMED" | grep -qxF "$NAME"; then
@@ -245,7 +245,7 @@ fi
 # The check is the number, never the slug — m46 §9. `issue` and `pr` are the two labels Arc's
 # own mechanism defines and hold everywhere; the declared forms add whatever else this repo
 # labels its numbers with. A repo that declares only the issue form still gets `pr` from Arc,
-# which is why ROADZ's real `…-pr58-arc-setup` passes against a section that never mentions it.
+# which is why a real `…-pr58-arc-setup` passes against a section that never mentions it.
 LABELS='issues?|pr'
 for k in $(printf '%s\n' "$FORMS" | grep -oE '[A-Za-z]{2,}[-_]?(<[Nn]+>|<number>|[0-9]+)[-_]' \
              | sed -E 's/[-_]?(<[^>]*>|[0-9]+)[-_]$//' | tr '[:upper:]' '[:lower:]' | sort -u); do

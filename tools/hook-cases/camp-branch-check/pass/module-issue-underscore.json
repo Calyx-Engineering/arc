@@ -1,0 +1,2 @@
+# A client repo, real shape, names changed: an issue branch on the pre-2026-08-24 underscore form its convention still allows
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/module-rev","tool_name":"Bash","tool_input":{"command":"git checkout -b widget-board/rev_b-issue-1-lamp-driver"}}
