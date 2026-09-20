@@ -25,7 +25,7 @@
 #
 # Every one of those seventeen is a completed run whose reasoning is on disk and unreachable by
 # anything but a wildcard glob. `tools/arc-loop.sh` happens to name its worktrees after the issue,
-# so the number is recoverable here by luck; ROADZ's worktrees are not named that way, and there
+# so the number is recoverable here by luck; another repo's worktrees are not named that way, and there
 # the orphan is a bare path.
 #
 # IT IS AN INDEX, NOT A COPY. m32's first constraint. Copying transcripts duplicates gigabytes and
@@ -34,7 +34,7 @@
 #
 # THE UNIT IS A DIRECTORY AND A BRANCH, NOT A SESSION. One transcript directory holds every
 # session ever run in that working directory, so a row per session would be a row per firing.
-# It is a row per (directory, branch) rather than per directory because of m32's measured ROADZ
+# It is a row per (directory, branch) rather than per directory because of m32's measured
 # case: #39 was worked on a branch in the MAIN repo, and its eighteen transcripts piled into one
 # shared directory spanning every branch ever checked out there, with no per-issue boundary at
 # all. The branch column is the only boundary that directory can be given.
