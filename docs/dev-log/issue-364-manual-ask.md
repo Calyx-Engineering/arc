@@ -77,7 +77,7 @@ true in effect, since a `-p` run has nobody to answer an ask, and now said that 
 
 **The session that built this was itself stopped by the rule it changes**: David asked for auto
 mode, the harness's classifier refused the mode-row write as self-modification, and the work
-stayed uncommitted until he asked a second time. The hook was not what refused — the third gate
+stayed uncommitted until he asked a second time. The hook was not what refused — the second gate
 in [`autonomy-set`](../../skills/autonomy-set/SKILL.md)'s table was.
 
 **Unsoaked.** No live session has shown the prompt. The arc-log's §10 row names the first
