@@ -13,18 +13,25 @@
 # checks: gating-command, gating-script, mode-row
 # skips: mode-row (the command is not one the mode governs), gating-script (the command names a gating command outright)
 #
-# DENY-BIASED ON PURPOSE. A false deny costs one message and names its own fix. A false
-# allow is the failure this exists to prevent. So the command match runs against the whole
-# payload rather than a parsed field: pulling "command" out of JSON with sed truncates at
-# the first comma, and a truncated command that silently allows is the wrong way to be wrong.
+# MANUAL ASKS, IT DOES NOT DENY. Manual means nothing is committed, pushed, opened or merged
+# UNASKED — and a PreToolUse hook cannot see the chat, so a deny could not tell a commit the
+# user asked for from one nobody did. On roadz-sound-system the user asked for a commit three
+# times and every attempt was denied; the only ways through were a mute typed in another
+# terminal or a standing Autonomous grant, when what was asked for was one commit. So in manual
+# this returns `permissionDecision: "ask"`: the harness puts the command in front of the user,
+# and their yes is the ask, made observable. Nothing is remembered — the next gated command
+# asks again. Where no prompt can be shown, the harness refuses the call, so an unattended run
+# in manual still commits nothing. #364.
 #
-# ABSENT MODE IS DENIED, AND THAT IS NOT A FAIL-OPEN VIOLATION. Two different conditions:
+# ASK-BIASED, WHERE THIS WAS DENY-BIASED. A false ask costs one click and says what it is
+# about. A false allow is the failure this exists to prevent.
+#
+# ABSENT MODE ASKS, AND THAT IS NOT A FAIL-OPEN VIOLATION. Two different conditions:
 #
 #   the hook fails                      crash, missing tool, malformed input  ->  exit 0
-#   the hook reads and finds no mode    a documented state: absent is manual  ->  deny
+#   the hook reads and finds no mode    a documented state: absent is manual  ->  ask
 #
-# "Absent means manual" is an answer, not an unexpected failure. Every denial names its own
-# fix, so a wrong one costs a message rather than a wedged session.
+# "Absent means manual" is an answer, not an unexpected failure.
 #
 # THE SWITCH IS ASYMMETRIC, AND THIS HOOK DOES NOT ENFORCE THAT HALF. Claude may set the mode
 # row to Manual and may never set it to Autonomous; only the user raises it, and tools/arc-loop.sh
@@ -62,9 +69,11 @@ json_string() {
   printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
 }
 
-deny() {
-  arc_log_outcome_default denied "the hook denied the call"
-  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$(json_string "$1")}}"
+# The reason of an `ask` is shown to the user and never to Claude, so it is written to the
+# person deciding: what is about to run, why they are being asked, and what a no does.
+ask() {
+  arc_log_outcome_default asked "the hook put the call to the user"
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"ask\",\"permissionDecisionReason\":$(json_string "$1")}}"
   exit 0
 }
 
@@ -146,9 +155,156 @@ need_cwd() {
 }
 
 # 2. Is this a command the mode governs? Anything else is none of this hook's business.
+#
+# THE COMMAND BEING RUN, NOT THE WORDS IN ITS TEXT. This was a string match over the whole
+# payload, on the reasoning that pulling "command" out of JSON truncated at the first comma and
+# a truncated command silently allows. `field` has been quote-aware since #300, so that reason
+# is gone, and what the string match cost is on record: a Python edit denied because its source
+# carried the words, and an issue denied because its body did. It also missed the other way —
+# `git -C path commit` holds no "git commit". #364.
+#
+# So the command is read the way a shell reads it. Quotes, comments and here-document bodies
+# are text, not commands; the text is split into invocations at `;` `&` `|` `(` `)` `{` `}`, a
+# backtick and a line break; leading `VAR=x` assignments, wrapper words and shell keywords are
+# stepped over; and only what lands in command position counts — `git` with its global options
+# stepped over and `commit` or `push` as the subcommand, `gh pr` with `create`, `merge` or
+# `ready`. What a shell would run from inside a string is followed in: a `$( )` or a backtick
+# inside double quotes, the argument of `bash -c`, the arguments of `eval`, and a here-document
+# whose opening line names a shell.
+#
+# One awk process, and only when the payload could hold a gating command at all — the case
+# pattern below is the pre-filter that keeps every other Bash call free of it.
+#
+# WHAT THIS CANNOT DO.
+#   · `xargs git commit`, `find -exec git push`, an alias, a function, or a command held in a
+#     variable — the gating command is never in command position in the text. A false allow.
+#   · Another interpreter running it — `python -c "subprocess.run(['git','commit'])"`.
+#   · A here-document piped to a shell on a LATER line than the one that opens it.
+#   · A line inside a here-document that names a shell is read as commands, so a heredoc of
+#     documentation opened on a line carrying the word `bash` can ask when nothing would run.
+#     A false ask, and the prompt shows the command.
+gating_command() {
+  printf '%s' "$1" | awk '
+    function endword() {
+      if (word != "" || quoted) {
+        words[++nw] = word
+        if (word ~ /^(bash|sh|zsh|ksh|dash|source|eval|\.)$/) lineshell = 1
+      }
+      word = ""; quoted = 0
+    }
+    function endseg(   i, j, c, rest) {
+      endword()
+      i = 1
+      while (i <= nw && (words[i] ~ /^[A-Za-z_][A-Za-z0-9_]*=/ || words[i] ~ /^(command|env|exec|nohup|time|sudo|builtin|if|then|else|elif|do|while|until|!)$/)) i++
+      if (i <= nw && found == "") {
+        c = words[i]; sub(/^.*[\/\\]/, "", c); sub(/\.exe$/, "", c)
+        if (c == "eval") {
+          rest = ""
+          for (j = i + 1; j <= nw; j++) rest = rest " " words[j]
+          todo[++ntodo] = rest
+        } else if (c ~ /^(bash|sh|zsh|ksh|dash)$/) {
+          for (j = i + 1; j <= nw && words[j] ~ /^-/; j++)
+            if (words[j] ~ /^-[A-Za-z]*c/) { if (j < nw) todo[++ntodo] = words[j + 1]; break }
+        } else if (c == "git") {
+          j = i + 1
+          while (j <= nw && words[j] ~ /^-/) j += (words[j] ~ /^(-C|-c|--git-dir|--work-tree|--namespace)$/) ? 2 : 1
+          if (j <= nw && (words[j] == "commit" || words[j] == "push")) found = "git " words[j]
+        } else if (c == "gh") {
+          j = i + 1
+          while (j <= nw && words[j] ~ /^-/) j += (words[j] ~ /^(-R|--repo)$/) ? 2 : 1
+          if (j <= nw && words[j] == "pr") {
+            j++
+            while (j <= nw && words[j] ~ /^-/) j += (words[j] ~ /^(-R|--repo)$/) ? 2 : 1
+            if (j <= nw && words[j] ~ /^(create|merge|ready)$/) found = "gh pr " words[j]
+          }
+        }
+      }
+      for (j = 1; j <= nw; j++) delete words[j]
+      nw = 0
+    }
+    function scan(s,   n, i, c, d, q, sp, e, t, h, delim, strip) {
+      n = length(s); q = ""; sp = 0; word = ""; quoted = 0; nw = 0; lineshell = 0; nhd = 0
+      for (i = 1; i <= n && found == ""; i++) {
+        c = substr(s, i, 1)
+        if (q == SQ) { if (c == SQ) q = ""; else word = word c; continue }
+        if (q == DQ) {
+          if (c == "\\") {
+            d = substr(s, i + 1, 1)
+            if (d == "\n") i++
+            else if (d != "" && index("\"\\$`", d)) { word = word d; i++ }
+            else word = word c
+            continue
+          }
+          if (c == DQ) { q = ""; continue }
+          # A substitution inside double quotes runs. Read it as commands, then come back.
+          if (c == "`") { endseg(); stk[++sp] = DQ; bt[sp] = 1; par[sp] = 0; q = ""; continue }
+          if (c == "$" && substr(s, i + 1, 1) == "(") { endseg(); stk[++sp] = DQ; bt[sp] = 0; par[sp] = 0; q = ""; i++; continue }
+          word = word c; continue
+        }
+        if (c == "\\") { d = substr(s, i + 1, 1); if (d != "\n") word = word d; i++; continue }
+        if (c == SQ || c == DQ) { q = c; quoted = 1; continue }
+        if (c == "#" && word == "" && !quoted) { while (i < n && substr(s, i + 1, 1) != "\n") i++; continue }
+        if (c == " " || c == "\t" || c == "\r") { endword(); continue }
+        if (c == "<" && substr(s, i + 1, 1) == "<") {
+          if (substr(s, i + 2, 1) == "<") { i += 2; continue }
+          i += 2; strip = 0
+          if (substr(s, i, 1) == "-") { strip = 1; i++ }
+          while (i <= n && (substr(s, i, 1) == " " || substr(s, i, 1) == "\t")) i++
+          delim = ""
+          while (i <= n) {
+            d = substr(s, i, 1)
+            if (d ~ /[ \t\r\n;&|()<>]/) break
+            if (d != SQ && d != DQ && d != "\\") delim = delim d
+            i++
+          }
+          i--
+          if (delim != "") { hd[++nhd] = delim; hdstrip[nhd] = strip }
+          continue
+        }
+        if (c == "\n") {
+          endseg()
+          # The bodies of the here-documents this line opened are data — unless the line names
+          # a shell, and then they are what that shell runs.
+          for (h = 1; h <= nhd && !lineshell; h++) {
+            while (i < n) {
+              e = index(substr(s, i + 1), "\n")
+              t = (e ? substr(s, i + 1, e - 1) : substr(s, i + 1))
+              i = (e ? i + e : n)
+              sub(/\r$/, "", t); if (hdstrip[h]) sub(/^\t+/, "", t)
+              if (t == hd[h]) break
+            }
+          }
+          nhd = 0; lineshell = 0
+          continue
+        }
+        if (c == "`") { endseg(); if (sp > 0 && bt[sp]) { q = stk[sp]; sp-- }; continue }
+        if (c == "(") { endseg(); if (sp > 0) par[sp]++; continue }
+        if (c == ")") {
+          endseg()
+          if (sp > 0) { if (par[sp] > 0) par[sp]--; else if (!bt[sp]) { q = stk[sp]; sp-- } }
+          continue
+        }
+        if (index(";&|{}", c)) { endseg(); continue }
+        word = word c
+      }
+      endseg()
+    }
+    BEGIN { SQ = "\047"; DQ = "\""; found = "" }
+    { s = s (NR > 1 ? "\n" : "") $0 }
+    END {
+      todo[1] = s; ntodo = 1
+      for (k = 1; k <= ntodo && found == ""; k++) scan(todo[k])
+      if (found != "") print found
+    }' 2>/dev/null
+}
+
 GATED=no
+RUNS=""
 case "$INPUT" in
-  *"git commit"*|*"git push"*|*"gh pr create"*|*"gh pr merge"*|*"gh pr ready"*) GATED=yes ;;
+  *git*commit*|*git*push*|*gh*pr*create*|*gh*pr*merge*|*gh*pr*ready*)
+    RUNS="$(gating_command "$(field command)")"
+    [ -n "$RUNS" ] && GATED=yes
+    ;;
 esac
 arc_log_pass "gating-command=$GATED"
 
@@ -162,15 +318,16 @@ arc_log_pass "gating-command=$GATED"
 #
 # A SCRIPT DECLARES ITSELF, AND AN UNDECLARED ONE IS NOT GATED. Scanning a script's text for
 # `git commit` looks more thorough and is wrong: tests/verify-activation-log.sh carries that
-# string inside a test payload, so a content match would deny a read-only verifier. #201's
+# string inside a test payload, so a content match would gate a read-only verifier. #201's
 # constraint is explicit — the guard must not block reads — so the guard asks the script
 # rather than guessing about it, and an unrecognised script fails open.
 #
-# THIS HALF READS THE COMMAND FIELD, NOT THE PAYLOAD, and that is the opposite of step 2 on
-# purpose. Step 2 scans everything because its only failure mode is an extra deny. This half
-# has two failure modes, and both were reached by scanning the payload: `git status` denied for
-# a description reading "see bash tools/arc-loop.sh for details", and a real dispatch allowed
-# because a `--dry-run` elsewhere in the payload looked like its own flag.
+# THIS HALF READS THE COMMAND FIELD, NOT THE PAYLOAD, as step 2 now does. Both of its failure
+# modes were reached by scanning the payload: `git status` denied for a description reading
+# "see bash tools/arc-loop.sh for details", and a real dispatch allowed because a `--dry-run`
+# elsewhere in the payload looked like its own flag. It keeps its own, older splitter — blind
+# to quotes, which step 2's is not — because what it looks for is a path in command position,
+# and a quoted mention of one has never landed there.
 #
 # A MENTION IS NOT AN INVOCATION, so the command is split at `&` `;` `|` `(` and a backtick and
 # each segment is read as a command: leading `VAR=x` assignments and wrapper words are stepped
@@ -193,7 +350,7 @@ arc_log_pass "gating-command=$GATED"
 #     one in this half that is not closed.
 #   · The hook-root fallback resolves against Arc's own copy, so in a consumer repo a relative
 #     path that does not exist there can still gate if Arc ships a script of that name. A false
-#     deny, and it names the file it read.
+#     ask, and it names the file it read.
 SCRIPT_GATED=""
 MG_ROOT=""
 if [ "$GATED" = no ]; then
@@ -303,18 +460,19 @@ if [ "$GATED" = no ]; then
   exit 0
 fi
 
-# A denial names what it denied. Reading `git commit` in the payload is self-evident; reading
-# it out of a script the payload only named is not.
-VIA=""
-[ -n "$SCRIPT_GATED" ] && VIA=" \`$SCRIPT_GATED\` declares \`mode-guard: writes-outward\` — it commits, pushes or opens a PR from inside, so running it is one of those actions."
+# The question names what it is about. `git commit` read out of the command is self-evident;
+# reading it out of a script the command only named is not.
+WHAT="\`$RUNS\`"
+[ -n "$SCRIPT_GATED" ] && WHAT="\`$SCRIPT_GATED\`, which declares \`mode-guard: writes-outward\` — it commits, pushes or opens a PR from inside, so running it is one of those actions"
+TAIL="Approve it if you asked for it. Decline, and Claude stops at the edit. Nothing is remembered: the next commit, push, PR or merge asks again."
 
 need_cwd
 HANDOFF="$CWD/HANDOFF.md"
 
 if [ ! -f "$HANDOFF" ]; then
   arc_log_fail mode-row=no-handoff
-  arc_log_outcome denied "no HANDOFF.md, so the mode is unset — unset means manual"
-  deny "No HANDOFF.md, so the execution mode is unset — and unset means manual.${VIA} Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add HANDOFF.md with a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** |, or ask the user to switch to autonomous and name the boundary."
+  arc_log_outcome asked "no HANDOFF.md, so the mode is unset — unset means manual"
+  ask "Claude is about to run ${WHAT}. There is no HANDOFF.md here, so the execution mode is unset — and unset means manual. ${TAIL}"
 fi
 
 # 3. The mode row is the first table row whose first cell names the mode.
@@ -322,8 +480,8 @@ ROW="$(grep -m1 -iE '^\|[^|]*\bmode\b[^|]*\|' "$HANDOFF" 2>/dev/null)"
 
 if [ -z "$ROW" ]; then
   arc_log_fail mode-row=absent
-  arc_log_outcome denied "HANDOFF.md has no Execution mode row — unset means manual"
-  deny "HANDOFF.md has no Execution mode row, so the mode is unset — and unset means manual.${VIA} Nothing is committed, pushed, opened as a PR or merged unless the user asks. To proceed: add a table row reading | **Mode** | **Manual** | or | **Mode** | **Autonomous** | under an Execution mode heading."
+  arc_log_outcome asked "HANDOFF.md has no Execution mode row — unset means manual"
+  ask "Claude is about to run ${WHAT}. HANDOFF.md has no Execution mode row, so the mode is unset — and unset means manual. ${TAIL}"
 fi
 
 # The second cell, stripped of markdown emphasis and whitespace, lowercased.
@@ -337,15 +495,15 @@ case "$MODE" in
     ;;
   manual)
     arc_log_fail mode-row=manual
-    arc_log_outcome denied "the mode is manual — propose and wait"
-    deny "The execution mode is manual — HANDOFF.md says so, and this hook reads it rather than recalling it.${VIA} In manual, nothing is committed, pushed, opened as a PR or merged unless the user asks. Propose the change and stop: say what you did, and let the diff be read. To proceed the user asks, or sets HANDOFF.md's Execution mode row to Autonomous and names the boundary it runs to."
+    arc_log_outcome asked "the mode is manual — the user decides"
+    ask "Claude is about to run ${WHAT}. The execution mode is manual — HANDOFF.md's Execution mode row says so, read now rather than recalled. ${TAIL}"
     ;;
   *)
     # A row exists and says something this hook does not model. Not a crash, and not
     # permission — an unreadable mode is the same as no mode.
     arc_log_fail mode-row=unreadable
-    arc_log_outcome denied "the mode row says neither manual nor autonomous"
-    deny "HANDOFF.md's Execution mode row does not say manual or autonomous, so the mode is unreadable — and unreadable means manual.${VIA} The row read: $ROW — set that cell to Manual or Autonomous."
+    arc_log_outcome asked "the mode row says neither manual nor autonomous"
+    ask "Claude is about to run ${WHAT}. HANDOFF.md's Execution mode row says neither manual nor autonomous, so the mode is unreadable — and unreadable means manual. The row read: $ROW ${TAIL}"
     ;;
 esac
 

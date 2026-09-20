@@ -60,9 +60,9 @@ stop. That direction removes authority rather than granting it, so there is noth
 is your job.
 
 **`hooks/mode-guard` enforces the other half, not this one.** It reads the mode row before every
-commit, push, PR and merge, and denies in manual. It cannot tell whether the user asked for a
-mode change — it sees a file, not a conversation — so *only the user raises it* is a rule you
-keep, not a gate that catches you.
+commit, push, PR and merge, and in manual puts the command to the user to approve — their yes
+is the ask. It cannot tell whether the user asked for a mode change — it sees a file, not a
+conversation — so *only the user raises it* is a rule you keep, not a gate that catches you.
 
 ---
 

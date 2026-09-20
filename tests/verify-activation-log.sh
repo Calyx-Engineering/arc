@@ -274,7 +274,7 @@ check_hook() {
       if [ "$n" = "1" ]; then
         shape_bad=""
         grep -qE '^  checked: ' "$log" || shape_bad="$shape_bad checked-line"
-        grep -qE '^  outcome: (ok|denied|repaired|failed)' "$log" || shape_bad="$shape_bad outcome-line"
+        grep -qE '^  outcome: (ok|asked|denied|repaired|failed)' "$log" || shape_bad="$shape_bad outcome-line"
         grep -qE "^[0-9-]+T[0-9:]+Z  $name  " "$log" || shape_bad="$shape_bad artifact-name"
         if [ -z "$shape_bad" ]; then
           ok "$kind  entry shape        $desc"

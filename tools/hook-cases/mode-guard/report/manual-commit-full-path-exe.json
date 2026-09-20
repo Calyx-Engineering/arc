@@ -1,0 +1,2 @@
+# manual, git by its full Windows path
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "\"C:/Program Files/Git/cmd/git.exe\" push origin HEAD", "description": "Run"}}

@@ -94,7 +94,7 @@ Branch, commit and PR mechanics are `CLAUDE.md`'s. What this arc pins down:
 | **Then read the link back** | `bash tests/verify-linked-branch.sh <NN> <branch>`, straight after the mutation and **before the PR exists — that is the only moment the answer is decisive.** The mutation's own return value is not evidence; it reports what it was asked to do, not what the tracker holds. Once the PR is open the link has moved into its `closingIssuesReferences`, where a `Closes #NN` keyword produces the same reading a real branch link does. [#206](https://github.com/Calyx-Engineering/arc/issues/206) |
 | **Worktree** | `tools/arc-loop.sh` put you in a worktree of your own — the prompt names it, `git worktree list` confirms it. Check your branch out **there**. Never `cd` to the main tree: another run, or the orchestrator, is working in it |
 | **Dev-log** | `docs/dev-log/issue-<NN>-<slug>.md` |
-| **A run commits** | A loop cannot ask, so the driver dispatches into autonomous mode and `HANDOFF.md`'s row says so. **If it does not, `hooks/mode-guard` denies the commit** — that is correct, and the fix is the mode row, never a workaround |
+| **A run commits** | A loop cannot ask, so the driver dispatches into autonomous mode and `HANDOFF.md`'s row says so. **If it does not, `hooks/mode-guard` puts the commit to the user, a run has nobody to answer, and the harness refuses it** — that is correct, and the fix is the mode row, never a workaround |
 | **A run merges its own PR** | In autonomous mode, and only there. `hooks/mode-guard` reads `HANDOFF.md` before the merge as it does before the commit, so manual stops it at the same place. The row it reads is the one in **your worktree** |
 
 ## 5 When you stop
@@ -221,6 +221,6 @@ defending it.
 | Commit to the default branch | `CLAUDE.md` — everything happens on a branch |
 | Take on an issue you were not given | What the driver handed you — one issue, or one batch — is the unit. Stop |
 | Choose your own issue | The driver picks — [arc-log §3.1](../../arc-log/arc-04-dogfood.md#31-how-a-run-knows-which-issue-is-next). A run that selects its own work has read the whole milestone to do it |
-| Commit, push, PR or merge when the mode says manual | Propose and wait. `hooks/mode-guard` denies it, and a denial is the rule working, not an obstacle |
+| Commit, push, PR or merge when the mode says manual | Propose and wait. `hooks/mode-guard` asks the user, a run has no user, and the refusal that follows is the rule working, not an obstacle |
 | Set the mode to autonomous | Only the user raises it. You may set it to manual — that removes authority rather than granting it |
 | Close a workstream parent | It stays open until the user closes it. All children closed is completion, not review — §6.1 |

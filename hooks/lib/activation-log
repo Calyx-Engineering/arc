@@ -20,7 +20,7 @@
 #   arc_log_pass  <name>[=<value>]    a declared check that ran and passed
 #   arc_log_fail  <name>[=<value>]    a declared check that ran and found something
 #   arc_log_skip  <name> <why>        a declared check that did not run, and the reason
-#   arc_log_outcome <word> <detail>   one of ok · denied · repaired · failed, then detail
+#   arc_log_outcome <word> <detail>   one of ok · asked · denied · repaired · failed, then detail
 #
 # ONE DECLARATION DRIVES BOTH. The `checks:` line in the hook's own `camp-reports:` header
 # is the list. A declared check the hook never marked is written to `skipped:` as `not
