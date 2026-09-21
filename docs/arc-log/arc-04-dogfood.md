@@ -140,7 +140,12 @@ sequence are in
 | **Rationale is not narrative** | Leading hypothesis for why a correct handoff produces the opposite conclusion: *"we tried X then Y"* is cut as development narrative and the constraint that produced the decision goes with it. In hardware the constraint is what makes the next decision correct. Unproven — Handoff-1 tests it |
 | **The manual process the handoff replaced worked** | A cold start that began by reading the previous session's transcript produced good results, and inspired the handoff. The document is a distillation of that transcript — **distillation is where the rationale is lost**, which is the same finding as the row above, arrived at from the other direction |
 | **No standing merge grant has ever existed here** | Since Arc was installed, no merge has run without an explicit per-merge request. [#138](https://github.com/Calyx-Engineering/arc/issues/138) is building a route, not recovering a lost one |
+| **The skill length limit is Anthropic's 500 lines, not the earlier working figure** | The user's call 2026-09-08: *stick to anthropic official guidance and modify our own practices.* [#90](https://github.com/Calyx-Engineering/arc/issues/90) carried the earlier figure; retired. What would have to change: Anthropic's published guidance |
+| **The issue type says who does the work; the prefix says what** | GitHub issue types are single-valued, so **Agent** cannot coexist with Bug. Agent-typed issues are the loop's; any other type is a human's. Kind stays in the prefix and its label. Decided 2026-09-08; [#274](https://github.com/Calyx-Engineering/arc/issues/274) builds it. What would have to change: labels proving a better human-readable split, or types becoming multi-valued |
+| **The boundary review is where a workstream's spawned work gets routed** | Fire's review 2026-09-08 turned one 200-word report into 24 issues: four spawns never attached, eleven *needs an issue* rows never filed, §6.3.6 items nobody owned, and a new workstream. A report that lists *Not done* without a route for each item is incomplete — every item is an issue, done, or marked *cannot*, with the reason. What would have to change: a run that routes its own spawns and files its own findings, which is what [#270](https://github.com/Calyx-Engineering/arc/issues/270) builds |
+| **The user reviews every boundary report before the next workstream's report runs** | The review is the mechanism that caught the above. It is not optional and not the orchestrator's |
 | **Issue writing is in scope** | The user's call: *"good issue writing and naming has become a critical core to the development workflow."* Six issues carry it |
+| **Hook edits leave the approval path once three things exist** | David's call 2026-09-12: *"I'd love for there to be a way for you to make hook edits without my approval."* A canary session gate ([#325](https://github.com/Calyx-Engineering/arc/issues/325)), a wrapper with a timeout and a circuit breaker ([#326](https://github.com/Calyx-Engineering/arc/issues/326)), and fixture hooks that validate `verify-hook.sh` under a two-file rule ([#327](https://github.com/Calyx-Engineering/arc/issues/327)). m10 §5 then excludes `settings.json` alone — that one stays his. Until they merge, the TEMPLATE and the validator are each edited once, under explicit approval in chat |
 
 ### 4.1 Judgement calls made unattended — 2026-09-07, workstream #145
 
@@ -189,7 +194,7 @@ Each workstream's boundary report lands here when it closes — one per workstre
 | Workstream | Parent | Issues | Status |
 |---|---|---|---|
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
-| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 37 | **31 of 37 closed.** Reports in [§6.3](#63-fire--boundary-report) — the original thirteen — and [§6.7](#67-fire-second-closing--boundary-report) — fifteen attached after the first report. Six roll to arc 05 — [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294), [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327) — cut 2026-09-12 for a weekend release. The parent stays open until the user closes it |
+| **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 31 | **31 of 31 closed.** Report in [§6.3](#63-fire--boundary-report). Six rolled to arc 05 and detached — [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294), [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327). The parent closes at the user's review |
 | **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 13 | **13 of 13 closed.** Report in [§6.4](#64-handoff--boundary-report). [#352](https://github.com/Calyx-Engineering/arc/issues/352) and [#354](https://github.com/Calyx-Engineering/arc/issues/354) rolled to arc 05 and detached. The parent closes at the user's review |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 18 | **18 of 18 closed.** Report in [§6.6](#66-tracker--boundary-report). [#346](https://github.com/Calyx-Engineering/arc/issues/346) rolled to arc 05 and detached. The parent closes at the user's review |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
@@ -261,7 +266,7 @@ Three preconditions for every other workstream. None existed.
 #### 6.2.6 Not done
 
 - `plugin eval` regression — [#181](https://github.com/Calyx-Engineering/arc/issues/181), awaiting early access
-- `mode-guard` has never fired live — needs a session restart
+- `mode-guard` has never fired live — needs a session restart. **Unregistered 2026-09-20:** its installed copy refused commits the user had asked for — [#373](https://github.com/Calyx-Engineering/arc/issues/373), milestone *tracker refactor*
 
 #### 6.2.7 What it changed
 
@@ -282,75 +287,98 @@ flowchart LR
 
 ### 6.3 Fire — boundary report
 
-**Workstream:** Fire · **Closed:** 2026-09-08 · **200 words**, diagram excluded
+**Workstream:** [#145](https://github.com/Calyx-Engineering/arc/issues/145) Fire · **Closed:** 2026-09-12 · diagram excluded
+
+**Goal:** When Arc already has a rule for the moment you are in - Fire gets that rule loaded and followed, and leaves a record that shows whether it was. 21 of 47 corrections after install were a rule that existed and was never read.
+
+**How:** A skill loads when your words match its description, so the descriptions were rewritten against real openings and are tested against them. A hook runs on every tool call, so each hook now has test cases and writes every firing to a log. Four graders score replies and reports against the rules they are meant to follow.
+
+| You say, or do | Before | Now |
+|---|---|---|
+| *"Pick up where we left off"* · *"Hey Camp, and also…"* | `handoff` loaded at 0 of 9 plain-language openings. `camp` loaded at 2 of 4 when its name came wrapped in other requests ([#157](https://github.com/Calyx-Engineering/arc/issues/157), [#156](https://github.com/Calyx-Engineering/arc/issues/156)) | Both load: 10 of 12 test openings here, 24 of 24 after Handoff's follow-up ([§6.4](#64-handoff--boundary-report)) |
+| *"Keep replies to 20 words"* | The budget was met on the turn it was set and lost on the next ([#158](https://github.com/Calyx-Engineering/arc/issues/158), [#213](https://github.com/Calyx-Engineering/arc/issues/213)) | `chat-response` holds 60 words. At 20 words it counts and cuts before sending: held on 78 of 102 turns, from 37 of 109 ([#262](https://github.com/Calyx-Engineering/arc/issues/262)) |
+| *"Did the hook fire?"* | Nothing said. The log held three hand-written entries ([#166](https://github.com/Calyx-Engineering/arc/issues/166)) | Every hook writes each firing to `.claude/arc/log.md`: what it checked, what it skipped and why, and the outcome. The log is compressed, rotated at arc close and untracked ([#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239), [#273](https://github.com/Calyx-Engineering/arc/issues/273)) |
+| You edit a file on the wrong branch | `branch-guard` had one of its three checks, and matched only this repository's branch names ([#161](https://github.com/Calyx-Engineering/arc/issues/161), [#162](https://github.com/Calyx-Engineering/arc/issues/162)) | It reads the repository's own branch convention from the operating agreement. It stops a source edit on an arc branch, an edit in a window opened for other work, and an edit on a branch that has fallen behind its base |
+| `gh issue close`, or any command with a comma or a flag in it | `tracker-verify` did not look at a close, and cut every command at its first comma — silently ([#163](https://github.com/Calyx-Engineering/arc/issues/163), [#230](https://github.com/Calyx-Engineering/arc/issues/230)) | It reads the whole command and checks the close. `hooks/TEMPLATE` and four hooks share the one reader ([#231](https://github.com/Calyx-Engineering/arc/issues/231), [#300](https://github.com/Calyx-Engineering/arc/issues/300)) |
+| You change a hook | 49 test cases, over 4 of the hooks | 242 over the six live hooks, all passing, run 2026-09-20 — `tools/verify-hook.sh`. `mode-guard`'s cases do not run while it is switched off; 41 at their last recorded run ([#300](https://github.com/Calyx-Engineering/arc/issues/300)) |
+
+**Measured, not yet improved — four graders.** Reply length, topic numbering, report shape with claim sources, and blaming your setup before testing its own side ([#158](https://github.com/Calyx-Engineering/arc/issues/158), [#160](https://github.com/Calyx-Engineering/arc/issues/160), [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#165](https://github.com/Calyx-Engineering/arc/issues/165)). Each now has an instrument and a baseline. Only reply length has moved; the other three sit below their thresholds.
+
+**Not delivered — approval before a commit or a merge.** `hooks/mode-guard` refused every commit, push, PR and merge in manual mode, including ones you had asked for; a hook cannot see the chat. [#364](https://github.com/Calyx-Engineering/arc/issues/364) changed it to put the command in front of you instead, but the installed plugin was never reloaded, so that change never ran in a live session. [#373](https://github.com/Calyx-Engineering/arc/issues/373) switched the hook off on 2026-09-20, by [PR #374](https://github.com/Calyx-Engineering/arc/pull/374). Whether it comes back is milestone *tracker refactor*'s to decide.
 
 #### 6.3.1 Delivered
 
-1. Openings load `handoff` and `camp`: 0/12 to 0.83
-2. Four graders: length, numbering, report shape, environment blame
-3. 60-word budgets hold; 20-word do not
-4. Three hooks stop misreporting; `branch-guard` gains two checks
-5. Every hook logs its firing
+1. `handoff`'s and `camp`'s descriptions rewritten so plain-language openings load them ([#156](https://github.com/Calyx-Engineering/arc/issues/156), [#157](https://github.com/Calyx-Engineering/arc/issues/157), [#208](https://github.com/Calyx-Engineering/arc/issues/208), [#252](https://github.com/Calyx-Engineering/arc/issues/252))
+2. Four graders, each with a measured baseline: reply length, topic numbering, report shape with claim sources, blaming the user's setup ([#158](https://github.com/Calyx-Engineering/arc/issues/158), [#160](https://github.com/Calyx-Engineering/arc/issues/160), [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#165](https://github.com/Calyx-Engineering/arc/issues/165))
+3. `chat-response` holds a 60-word budget, and a 20-word one under a count-and-cut rule ([#213](https://github.com/Calyx-Engineering/arc/issues/213), [#262](https://github.com/Calyx-Engineering/arc/issues/262))
+4. `branch-guard`'s two missing checks; hooks read the repository's branch convention, the arc's base branch and `gh issue close`; every hook writes to the log ([#162](https://github.com/Calyx-Engineering/arc/issues/162), [#183](https://github.com/Calyx-Engineering/arc/issues/183), [#210](https://github.com/Calyx-Engineering/arc/issues/210), [#163](https://github.com/Calyx-Engineering/arc/issues/163), [#161](https://github.com/Calyx-Engineering/arc/issues/161), [#166](https://github.com/Calyx-Engineering/arc/issues/166), [#272](https://github.com/Calyx-Engineering/arc/issues/272))
+5. `tracker-verify` reads a whole command; `hooks/TEMPLATE` and four hooks share that reader ([#230](https://github.com/Calyx-Engineering/arc/issues/230), [#231](https://github.com/Calyx-Engineering/arc/issues/231), [#300](https://github.com/Calyx-Engineering/arc/issues/300))
+6. The hook log is compressed, rotated into `docs/arc-log/events/` at arc close, and untracked ([#238](https://github.com/Calyx-Engineering/arc/issues/238), [#239](https://github.com/Calyx-Engineering/arc/issues/239), [#273](https://github.com/Calyx-Engineering/arc/issues/273))
+7. The four graders share one test-case reader; the twelve words for where a claim came from are fixed in one place; every Fire merge has a row in §10 saying what real work exercised it ([#265](https://github.com/Calyx-Engineering/arc/issues/265), [#266](https://github.com/Calyx-Engineering/arc/issues/266), [#263](https://github.com/Calyx-Engineering/arc/issues/263))
 
 #### 6.3.2 Spawned
 
 | | | Routed |
 |---|---|---|
-| [#208](https://github.com/Calyx-Engineering/arc/issues/208) · [#210](https://github.com/Calyx-Engineering/arc/issues/210) · [#213](https://github.com/Calyx-Engineering/arc/issues/213) | Closed | Fire |
-| [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) | Hook extraction; log volume, rotation | Fire — open, **not sub-issues** |
-| [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#246](https://github.com/Calyx-Engineering/arc/issues/246) | Reload reverts edits; check 8 live | Dogfood — open |
-| Unfiled | Eleven *needs an issue* findings | Nowhere |
+| [#208](https://github.com/Calyx-Engineering/arc/issues/208) · [#210](https://github.com/Calyx-Engineering/arc/issues/210) · [#213](https://github.com/Calyx-Engineering/arc/issues/213) · [#230](https://github.com/Calyx-Engineering/arc/issues/230) · [#231](https://github.com/Calyx-Engineering/arc/issues/231) · [#238](https://github.com/Calyx-Engineering/arc/issues/238) · [#239](https://github.com/Calyx-Engineering/arc/issues/239) · [#259](https://github.com/Calyx-Engineering/arc/issues/259)–[#266](https://github.com/Calyx-Engineering/arc/issues/266) · [#269](https://github.com/Calyx-Engineering/arc/issues/269) · [#272](https://github.com/Calyx-Engineering/arc/issues/272) · [#273](https://github.com/Calyx-Engineering/arc/issues/273) · [#300](https://github.com/Calyx-Engineering/arc/issues/300) | Found and finished here | Fire — closed |
+| [#364](https://github.com/Calyx-Engineering/arc/issues/364) | `mode-guard` asks instead of refusing | Fire — closed; never loaded, see above |
+| [#373](https://github.com/Calyx-Engineering/arc/issues/373) | `mode-guard` switched off, by [PR #374](https://github.com/Calyx-Engineering/arc/pull/374) | Closed. Whether it comes back is milestone *tracker refactor*'s |
+| [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#297](https://github.com/Calyx-Engineering/arc/issues/297) · [#314](https://github.com/Calyx-Engineering/arc/issues/314) · [#315](https://github.com/Calyx-Engineering/arc/issues/315) | The plugin reload reverting edits; a probe dying on a rate limit; two grader defects | Upkeep — closed |
+| [#246](https://github.com/Calyx-Engineering/arc/issues/246) | Catching a session that blames your bench setup, on a real instrument | Out of the milestone — needs a bench day |
+| [#243](https://github.com/Calyx-Engineering/arc/issues/243) · [#261](https://github.com/Calyx-Engineering/arc/issues/261) · [#294](https://github.com/Calyx-Engineering/arc/issues/294) | A live probe of a session noticing its own degradation; claim sources up to the pass mark; a `branch-guard` path case | Arc 05 |
+| [#325](https://github.com/Calyx-Engineering/arc/issues/325) · [#326](https://github.com/Calyx-Engineering/arc/issues/326) · [#327](https://github.com/Calyx-Engineering/arc/issues/327) | Hook safety: a trial session before a hook merges, a timeout wrapper, test hooks that check the hook tester | Arc 05 |
+| [#355](https://github.com/Calyx-Engineering/arc/issues/355) · [#356](https://github.com/Calyx-Engineering/arc/issues/356) | `tracker-verify` cannot read a PR body passed as a file; one grader test case | Arc 05 |
 
 #### 6.3.3 Unexpected
 
-- Firing and adherence move independently ([#155](https://github.com/Calyx-Engineering/arc/issues/155)), except at 20 words ([#213](https://github.com/Calyx-Engineering/arc/issues/213)). Unresolved
-- `createLinkedBranch` succeeds; `linkedBranches` reads 0, four times
-- `verify-hook.sh` left `HOOKS_OFF` on once; every hook inert
-- [#166](https://github.com/Calyx-Engineering/arc/issues/166) first claimed live firing off fixtures
+- A skill loading and its rule being followed are separate things: `chat-response` loaded on a 2,251-character reply, and a 60-word budget was met without it loading ([#155](https://github.com/Calyx-Engineering/arc/issues/155)). Only at 20 words did loading matter ([#213](https://github.com/Calyx-Engineering/arc/issues/213)). Nothing measures the two together — no issue
+- A hook change does not run until the installed plugin is reloaded. `mode-guard`'s fix sat unloaded until the hook was switched off ([#373](https://github.com/Calyx-Engineering/arc/issues/373))
+- A grader that scores saved excerpts cannot score a change to a skill: emptying `SKILL.md` scored the same ([#260](https://github.com/Calyx-Engineering/arc/issues/260))
+- A pass mark written as `0.67` failed a score of 2 out of 3 ([#315](https://github.com/Calyx-Engineering/arc/issues/315))
+- The report grader failed the table its own skill requires ([#314](https://github.com/Calyx-Engineering/arc/issues/314))
 
 #### 6.3.4 Unplanned but needed
 
 | | |
 |---|---|
-| Five instruments | None existed |
-| `skill-firing.py` | Miscounted turns |
-| Log write cost | 1.4 s per call, now 91 ms |
+| Five measuring tools — `skill-cases.sh`, `response-length-probe.py`, `topic-numbering.py`, `report-grade.py`, `skill-probe.py` | None existed, and nothing could be scored without them |
+| `hooks/TEMPLATE` | The next hook starts with the logging and the whole-command reader already in it |
+| `.gitignore` | The hook log is written on every tool call and was dirtying every tree |
 
 #### 6.3.5 Evidence
 
 | | |
 |---|---|
-| `verify-all.sh` | 11 → 38 gates, exit 0 every merge |
-| Live here | Exit 1 — local `grep -q` aborts; one gate reads an ignored file |
-| Baselines | Opening 1/3 · provenance 1/4 · topics 0/3 · environment `BLAMED` |
-| Activation log | 455 live entries today — first soak |
+| `verify-all.sh` | 69 gates, exit 0 at Fire's close, 2026-09-12. 73 gates on 2026-09-20, one failure: `close-sequence count`, reading a gitignored file |
+| `verify-hook.sh tracker-verify` | 136 passed, 0 failed — run 2026-09-20 |
+| The hook log | 58,466 lines rotated to `docs/arc-log/events/` |
+| A live session, 2026-09-20 — the hook log | `branch-guard` stopped three edits, each correctly: a source edit on the arc branch, and two on branches behind their base. Every firing was recorded |
+| The 20-word probe | 79 billed runs, $145; counting and cutting against aiming low alone, `p=0.0021` |
+| Grader baselines | Report shape 1 of 3 · claim sources 1 of 4 · topic numbering 0 of 3 · blaming the setup: still blamed |
 
 #### 6.3.6 Not done
 
-- *Done when* unmet: [#156](https://github.com/Calyx-Engineering/arc/issues/156), [#159](https://github.com/Calyx-Engineering/arc/issues/159), [#213](https://github.com/Calyx-Engineering/arc/issues/213), [#165](https://github.com/Calyx-Engineering/arc/issues/165)
-- Boxes unticked: [#164](https://github.com/Calyx-Engineering/arc/issues/164), [#210](https://github.com/Calyx-Engineering/arc/issues/210), [#166](https://github.com/Calyx-Engineering/arc/issues/166)
-- [#160](https://github.com/Calyx-Engineering/arc/issues/160)'s case cannot discriminate
-- Everything merged unsoaked
-- `TEMPLATE`, `verify-hook.sh` edits proposed only
+- Approval before a commit or a merge — switched off by [#373](https://github.com/Calyx-Engineering/arc/issues/373) and [PR #374](https://github.com/Calyx-Engineering/arc/pull/374); whether it comes back is milestone *tracker refactor*'s
+- Report shape, claim sources and topic numbering are measured and still fail. Claim sources is [#261](https://github.com/Calyx-Engineering/arc/issues/261), arc 05. The other two have no issue: their test cases are saved excerpts, which cannot score a change, and the live probe that could is [#243](https://github.com/Calyx-Engineering/arc/issues/243), arc 05
+- Catching a session that blames your bench setup, on a real instrument — [#246](https://github.com/Calyx-Engineering/arc/issues/246), out of the milestone
+- Hook safety — [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327), arc 05. 2026-09-20 is what it costs without them: one stale hook took an hour of a review
 
 #### 6.3.7 What it changed
 
 ```mermaid
 flowchart LR
-    A["#155 three shapes<br/>wrapped 2/7"] --> B["#156 #157 #208<br/>openings load<br/>handoff + camp"]
-    A --> C["#158 #213 length<br/>#160 numbering<br/>#159 #164 report shape<br/>#165 environment"]
-    C --> D["four graders,<br/>baselines measured,<br/>none passing yet"]
-    E["#162 #183 #210 #163<br/>hooks read the repo,<br/>the arc, the close"] --> F["#166 every hook<br/>leaves a record"]
-    G["#161 branch-guard<br/>worktree + base"] --> F
-    H["#181 plugin eval"]:::blocked -.->|"gated"| B
+    U["You say or do something<br/>Arc has a rule for"] --> K["A skill loads when your words<br/>match its description:<br/>handoff and camp, 10 of 12 openings"]
+    U --> HK["A hook runs on the tool call:<br/>6 live hooks, 242 test cases"]
+    K --> F["The rule is followed?<br/>Four graders measure it"]
+    F --> L["Reply length: held,<br/>78 of 102 turns at 20 words"]
+    F --> N["Report shape, claim sources,<br/>topic numbering, blaming the setup:<br/>measured, still failing"]:::blocked
+    HK --> LOG["Every firing is written to the hook log:<br/>checked, skipped, outcome"]
+    HK --> MG["mode-guard: your approval before<br/>a commit or merge —<br/>OFF since 2026-09-20, #373"]:::blocked
+    HK --> SAFE["A hook change runs only after<br/>the plugin is reloaded,<br/>and hook safety is arc 05"]:::blocked
     classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
 ```
 
 *End of Fire's boundary report.*
-
-**§6.3.6's *Everything merged unsoaked* overstated it on the day** — §6.3.5 records the activation log's
-first soak in the same report. Every Fire merge now carries a row in §10, written by
-[#263](https://github.com/Calyx-Engineering/arc/issues/263); several record defects the exercise found.
 
 ---
 
@@ -468,7 +496,7 @@ flowchart LR
 | *"Merge it"* | Into an arc branch, `Closes #NN` linked nothing and closed nothing: 47 of 102 issues were linked to nothing ([#136](https://github.com/Calyx-Engineering/arc/issues/136), [#287](https://github.com/Calyx-Engineering/arc/issues/287)) | The keyword works only into the default branch — tested live. Anywhere else, `skills/issue-write` has the session close the issue itself — `gh issue close`, right after the merge — and ask you for the one step no API can do: the click that links the PR to the issue. An issue left open is reported, and `tools/arc-link-sweep.sh` lists the unlinked: 9 of 106 |
 | *"Commit this"* | One sentence in a commit message closed [#300](https://github.com/Calyx-Engineering/arc/issues/300) with every box unticked ([#336](https://github.com/Calyx-Engineering/arc/issues/336)) | Closing keywords go on a bare last line only. Every commit message is read, and a keyword inside a sentence is reported while it can still be amended |
 
-**Not delivered — approval before a commit or a merge.** In manual mode `hooks/mode-guard` was to put every commit, push, PR and merge in front of you to approve. It was built under Loop ([#189](https://github.com/Calyx-Engineering/arc/issues/189)) and changed from refusing to asking under Fire ([#364](https://github.com/Calyx-Engineering/arc/issues/364)), but the installed copy never picked up that change and refused commits you had asked for. It is unregistered since 2026-09-20 and stays off until [#373](https://github.com/Calyx-Engineering/arc/issues/373), milestone *tracker refactor*, re-evaluates it. Nothing stands between a session and a commit today but the session's own reading of the mode.
+**Not delivered — approval before a commit or a merge.** In manual mode `hooks/mode-guard` was to put every commit, push, PR and merge in front of you to approve. It was built under Loop ([#189](https://github.com/Calyx-Engineering/arc/issues/189)) and changed from refusing to asking under Fire ([#364](https://github.com/Calyx-Engineering/arc/issues/364)), but the installed copy never picked up that change and refused commits you had asked for. [#373](https://github.com/Calyx-Engineering/arc/issues/373) switched it off on 2026-09-20, by [PR #374](https://github.com/Calyx-Engineering/arc/pull/374). Whether it comes back is milestone *tracker refactor*'s to decide. Nothing stands between a session and a commit today but the session's own reading of the mode.
 
 #### 6.6.1 Delivered
 
@@ -538,73 +566,6 @@ flowchart LR
 *End of Tracker's boundary report.*
 
 ---
-
----
-
-### 6.7 Fire, second closing — boundary report
-
-**Workstream:** Fire · **Closed:** 2026-09-12 · **200 words**, diagram excluded
-
-Six roll to arc 05 — #243, #261, #294, #325, #326, #327 — cut 2026-09-12 for a weekend release.
-
-#### 6.7.1 Delivered
-
-1. `tracker-verify`'s reader stops truncating at commas; a chained `gh` command runs both arms
-2. `TEMPLATE` and four hooks share one comma-safe reader
-3. Activation log 43% smaller, rotates at the boundary, stops dirtying trees
-4. `branch-guard`'s no-repository exemption fixed
-5. `chat-response`'s 20-word budget: 0.34 to 0.76 under a post-write cut
-6. Shared case reader; `verify-hook.sh` fixed; provenance pinned
-
-#### 6.7.2 Spawned
-
-| | | Routed |
-|---|---|---|
-| #297 #314 #315 | Rate-limit retry, grader bugs | Upkeep — closed |
-| #266's three findings | Unfiled | Fire |
-| #264's stale doc | Says unapplied | This arc |
-
-#### 6.7.3 Unexpected
-
-- `0.67` rejects two-out-of-three — `2/3`, `4/6`, `6/9` all print FAIL, routed as #315
-- The report-shape grader fails the skill's own mandated table
-- #300's second defect: an unparsed fragment was handed back as the value, passing every `[ -z ]` guard
-
-#### 6.7.4 Unplanned but needed
-
-| | |
-|---|---|
-| `hooks/TEMPLATE`'s `field()` | Rewritten so the next hook inherits the fix |
-| `.gitignore` | A third entry; log stops dirtying trees |
-| `tools/response-length-rank.py` | Ranks replies a terminal call had tied |
-
-#### 6.7.5 Evidence
-
-| | |
-|---|---|
-| `verify-all.sh` | 58 → 69 gates, exit 0 |
-| Activation log | 4.6M bytes, 43% smaller; 58,466 lines rotated |
-| `chat-response` probe | 79 runs, $145 — Fire's largest |
-
-#### 6.7.6 Not done
-
-- #259, #260 still short of threshold; #260's wiring unticked
-- Six children roll to arc 05 rather than close here
-
-#### 6.7.7 What it changed
-
-```mermaid
-flowchart LR
-    A["#230 tracker-verify's<br/>reader fixed"] --> B["#300 TEMPLATE +<br/>four hooks inherit it"]
-    C["#238 volume −43%<br/>#239 rotation<br/>#273 gitignored"] --> D["log stops dirtying<br/>every tree"]
-    E["#272 branch-guard<br/>no-repo exemption"]
-    F["#262 chat-response<br/>0.34 → 0.76"]
-    G["#265 shared reader<br/>#264 verify-hook fixed<br/>#266 provenance pinned"]
-    H["#243 #261 #294<br/>#325 #326 #327"]:::blocked -.->|"cut 2026-09-12"| I["arc 05"]
-    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
-```
-
-*End of Fire's second boundary report.*
 
 ---
 
@@ -732,6 +693,9 @@ Committed is not exercised. Unsoaked means a commit here with no soak line from 
 | `skills/handoff`'s eighth staleness check, the mode row read against the arc-log ([#268](https://github.com/Calyx-Engineering/arc/issues/268)) | — | **Unsoaked, and only a live cold start can soak it.** No gate in this repository invokes a skill, so what is asserted is location, in two halves: the row is a `CHECKS` probe and the command that reads it a `RULES` probe, both inside the read-path slice `tests/verify-handoff-checks.sh` bounds. Both are selftest cases — `the mode row deleted` and `the mode-row parse rule deleted`, exit 1 each, in the nine `tests/verify-handoff-checks.sh selftest` runs. That is the same guarantee #208's seven have and no stronger. **The first exercise is the next cold start on a handoff whose mode row can be compared**, and the thing to read is whether the session quotes both readings rather than picking one. This arc is the case to watch: §3 says *Manual until the merge route is fixed. Autonomous per workstream after*, a loop-dispatched run's row says Autonomous, and **whether those agree depends on a condition the row does not carry** — which is the reading the check asks for, and one no run has made yet |
 | `skills/chat-response`'s count-and-cut rule, `tools/response-length-rank.py`, and `tools/response-length.sh --plugin-dir` ([#262](https://github.com/Calyx-Engineering/arc/issues/262)) | **79 billed live probe runs**, five arms, `$145` — the largest exercise any Fire artifact has had | **Soaked as an instrument, unsoaked as a skill, and the distinction is the point.** The two tools ran against real model output 79 times and the ranker found what a terminal could not: `p=0.72` between two wordings that a person reading three scrollbacks had called a difference. `--plugin-dir` was what made the runs possible at all — the marketplace source is a directory pointing at the main checkout, so a worktree could not install its own branch, and four live worktrees were reading the one cache. **`skills/chat-response` itself has fired in no real session under this rule**: every one of the 79 runs put it to a model as a *measurement*, against eleven recorded turns, never as the skill governing a session doing work. **The soak found the defect the gates could not, three times over** — the skill quoting a measurement of itself, each correction editing the file that had been measured, which is what arms C, D and E cost. Nothing in `tests/verify-all.sh` checks for a skill asserting a number the repository can score. **The next work stretch in this repo is the rule's first exercise**, and the thing to read is whether a 20-word budget stated in conversation survives ten turns of real work rather than ten replayed ones |
 | `tools/audit-public.sh` and `tests/verify-public-audit.sh` ([#134](https://github.com/Calyx-Engineering/arc/issues/134)) | Its own unit, three review passes | **Partially soaked, and the soak is what found the gaps.** The sweep ran seven times against the live tree and the reviews found what running it could not: the `client-hw` class matched the client's board name only in the spaced form the reports use and missed 39 lines of the hyphenated form everything else uses; a second GitHub identity of the user's was read as an organisation name and took `ship`; the three files the sweep excludes from itself had no disposition at all. **`client-hw` went from 49 hits to 136.** What is unsoaked is the other half: nothing has yet *applied* a disposition, so whether the rules survive contact with the edits is unexercised, and the gate has never seen a document a human has edited. The second run is its first real exercise |
+| `m12` and `m42` state one rule for a closing keyword on a non-default base ([#287](https://github.com/Calyx-Engineering/arc/issues/287)) | The run's own probe, 2026-09-12: PR #323 into `probe/287-base`, never the default branch | **Soaked.** `closingIssuesReferences` was `[]` before merge, after merge and after a body re-save — m42's rule holds, m12's parse-time reading struck. PR [#324](https://github.com/Calyx-Engineering/arc/pull/324) |
+| `tests/verify-close-sequence.sh` and `tests/verify-tracker-body.sh` ([#226](https://github.com/Calyx-Engineering/arc/issues/226) · [#234](https://github.com/Calyx-Engineering/arc/issues/234)) | Every run's `verify-all.sh` at PR time, from S12 on | **Unsoaked at merge, 2026-09-12.** PR [#329](https://github.com/Calyx-Engineering/arc/pull/329) merged before any sibling PR passed through the gates. S12's four PRs are the first exercise |
+| `hooks/tracker-verify` — the PR number read from the command ([#286](https://github.com/Calyx-Engineering/arc/issues/286)) | The orchestrator's `gh pr merge 330 --merge`, 2026-09-12 | **Partially soaked.** Fired and reported PR [#330](https://github.com/Calyx-Engineering/arc/pull/330)'s missing milestone — the number-first form, which worked before the fix. The exposed form, a run merging its own PR with no number, is what S12's runs exercise |
 | `hooks/mode-guard` — manual asks, and the gating command is read out of the command ([#364](https://github.com/Calyx-Engineering/arc/issues/364)) | **[#365](https://github.com/Calyx-Engineering/arc/issues/365)'s close, 2026-09-20** — its commit, push, PR and merge, in this repository, in manual | **Fired on all four, and it went badly.** The prompt appears and a yes lands the command, so the unobserved half below is now observed. What it cost: David — *"why am i being asked about all these dumb things? … the hook for protecting PR/push seems to be hurting far more than it helps."* **What made it hostile was the command shown, not the ask:** a compound line with a temp path cannot be reviewed, so the approval is a yes to something unread. Whether the ask stays is his, undecided. **As written before the soak —** Unsoaked, and the half that matters cannot be soaked here. `tools/verify-hook.sh` proves the hook's output — 61 cases — and `tools/set-mode.py selftest` proves the decision is exactly `ask`. Neither proves the harness shows the prompt: that an `ask` prompts under an allow rule and in auto permission mode is read from Claude Code's hooks reference, not observed. **First exercise: the next commit David asks for in manual, in any repository, after `tools/plugin-reload.sh`** — one prompt labelled `[plugin:arc]`, and a yes that lands the commit |
 | `skills/plugin-retrospective` — quotes masked at write time · `CLAUDE.md` — a soak line names no consumer · `tools/corpus_mask.py` · `ARC_EVAL_CORPUS` · the `# m32 opt-out` ([#320](https://github.com/Calyx-Engineering/arc/issues/320)) | **The scorers, the mask and the opt-out: their own unit, 2026-09-20** — each scorer run against the private corpus, seven masked cases compared against their transcripts, the session-index gate run both ways. **The two inbound rules: —** | **Partly soaked.** The tooling half ran on real data and held. **The two rules are unsoaked, and unsoakable here:** no gate invokes a skill, so the masking rule's first exercise is the next retrospective, and the soak-line rule's is the next soak line written from another repository — this row is the first written under it, and names none |
 
