@@ -1,0 +1,2 @@
+# manual, a commit inside backticks inside double quotes — it runs
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "echo \"result: `git push origin main`\"", "description": "Run"}}

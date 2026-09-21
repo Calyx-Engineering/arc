@@ -1,6 +1,6 @@
 # Issue #48 — verify every shipping skill matches its local copy before release
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#68](https://github.com/Calyx-Engineering/arc/issues/68)  ·  **PR:** [#114](https://github.com/Calyx-Engineering/arc/pull/114)
 
@@ -50,7 +50,7 @@ path, with a mechanism number against it.
 | | |
 |---|---|
 | **What makes it durable** | It survives the next skill being added without the script being touched. It survives a CRLF checkout. It survives a genuinely repo-local skill appearing in `.claude/skills/` later, without a second hardcoded list to maintain |
-| **Out of scope** | Redesigning the copy arrangement — it is deleted at first release ([#68](https://github.com/Calyx-Engineering/arc/issues/68)'s own constraint). Reconciling `skills/engineering-report` against the frozen `docs/reference-roadz/` copy. Sweeping registry rows this issue does not touch — that is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s, per arc-log §6.1.3 |
+| **Out of scope** | Redesigning the copy arrangement — it is deleted at first release ([#68](https://github.com/Calyx-Engineering/arc/issues/68)'s own constraint). Reconciling `skills/engineering-report` against the frozen the client reference directory copy. Sweeping registry rows this issue does not touch — that is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s, per arc-log §6.1.3 |
 
 ### Intent check
 
@@ -69,7 +69,7 @@ cannot be satisfied durably without it. Both are closed by this PR.
 | 3 | **Add the reverse check** — a `.claude/skills/` directory with no source in `skills/`. It fails when the copy carries the do-not-edit banner (a copy whose source was deleted) and reports without failing when it does not (a repo-local skill by intent) |
 | 4 | **Add the registry check** — every skill in `skills/` appears in the product definition's artifact table with at least one `m<NN>`. This is [#48](https://github.com/Calyx-Engineering/arc/issues/48)'s fifth box made mechanical instead of asserted |
 | 5 | **Sync**, which copies `engineering-report` and `plugin-retrospective` for the first time |
-| 6 | **Repoint two registry rows** at `skills/` — m18, which links the frozen `docs/reference-roadz/` copy, and m33, which links `.claude/skills/` |
+| 6 | **Repoint two registry rows** at `skills/` — m18, which links the frozen the client reference directory copy, and m33, which links `.claude/skills/` |
 
 **No exception list.** A second hardcoded list is the defect [#68](https://github.com/Calyx-Engineering/arc/issues/68)
 names, reintroduced one line lower. The banner is the marker instead — the sync writes it, so
@@ -92,7 +92,7 @@ nothing has to be kept in step by hand.
 | **Adding the two missing names to `SKILLS`** | What [#48](https://github.com/Calyx-Engineering/arc/issues/48) item 4 literally asks. It closes today's gap and re-opens on the next skill — which is how this one opened |
 | **An `EXCEPT` list for skills not worth copying locally** | The old comment's stance — "not every shipped skill, only the ones that shape how work is done here". A second hardcoded list, one line below the one being deleted |
 | **Testing by mutating the real trees** | How the four cases were first run by hand. Fine interactively, wrong committed: an interrupted run leaves `skills/ghost/` behind in the tree the check is meant to police |
-| **Adding `tools/verify-sync-parity.sh` to the registry's artifact table** | No `tools/` script is in it — not `verify-hook.sh`, not `verify-tracker-body.sh`. Adding one alone would be the inconsistency, and the table having no home for `tools/` is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s to resolve. Named, not swept, per arc-log §6.1.3 |
+| **Adding `tools/verify-sync-parity.sh` to the registry's artifact table** | No gate script is in it — not `verify-hook.sh`, not `verify-tracker-body.sh`. Adding one alone would be the inconsistency, and the table having no home for `tools/` is [#105](https://github.com/Calyx-Engineering/arc/issues/105)'s to resolve. Named, not swept, per arc-log §6.1.3 |
 
 ## Retrospective
 

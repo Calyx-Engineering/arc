@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook `camp-session-start` documents exit 2 as a warning. As a PreToolUse hook, exit 2 denies instead.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Already fixed: pattern copied from a PostToolUse hook, where exit 2 only warns. Hook now returns `allow`. Direct PR needs only label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked: this session has no Edit, Write or Bash tools. Cannot change files or open PR. Rerun in interactive session.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot: Arc forbids me setting autonomous, and this session still has no Edit, Write or Bash tools. Also lost what the label and permission fixes are. Restate them in a fresh session.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Kill switch: replace per-hook timed switch with one repo-wide marker file in `.git`. Every hook honours it. Revert stays the real safety.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still no Edit, Write or Bash here. Cannot fix anything this session. Reopen interactively with the three items listed.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; they cannot remove tools. Edit, Write and Bash are absent from this session's toolset entirely.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. Run this from the repo root:\n\n```powershell\nbash hooks/hooks-off.sh all\n```\n\nIt writes the marker itself. `all` already exists.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Same 2026-09-07 mistake, documented in the lib. Run instead:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nWon't restore my tools either. Fresh session needed.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Fix in the direct PR: one plain file at repo root, `HOOKS_OFF`, honoured by every hook. No timer, no script.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Correction: `hooks-off.sh all` mutes this repository only, not everywhere. Cannot add the item: no Write or Bash here. Say it to the next session.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook comment says exit 2 warns. In PreToolUse, exit 2 denies. Docs and behaviour disagree.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't. Already fixed, committed: `report()` exits 0 with an `allow` decision. I misread the comment.\n\nDirect PR: label fix plus permission fix only.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Blocked.** Lost the earlier context: which label and which permission. Also this session has no edit or shell tools. Restate both, and I'll write exact diffs for you to apply.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Decision needed.**\n\nContext lost — what are the label fix and permission fix? Name files or issue numbers.\n\nAlso: I cannot set autonomous mode myself. Set the HANDOFF.md *Execution mode* row to autonomous and I proceed.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Guard already handles both: `*-pr[0-9]*` at line 125, agreement prefix at line 88.\n\nKill switch: replace per-hook timer with one env var, `ARC_HOOKS_OFF=1`. No expiry, no file.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot fix blind. Branch guard already handles both: PR branches (`hooks/branch-guard:125`) and agreement prefix (line 98).\n\nStill unknown to me: the label fix, the permission fix. Point me at the file or error and I do them.\n\nKill switch: keep `hooks-off.sh`, drop the say-it-in-chat rule. The script is the safety; the ceremony is the pain.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No hook is blocking me. I lost the conversation context — I don't know what \"label fix\" and \"permission fix\" mean. Tell me and I start.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Drop it in `R:\\arc-wt\\262\\` root, any name. I read it and leave it out of the PR.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "Not yet. File is in `r:\\arc`, unsaved or empty. Save it into `R:\\arc-wt\\262\\` instead.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. File landed in `R:\\arc`, not this worktree. I can only read `R:\\arc-wt\\262`. Move it there.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write it: this session has no edit or shell tool, only read. No cleanup file exists in this worktree either.\n\nItem to file, verbatim:\n\n```text\nhooks-off is per-repo but the file lands wherever cwd is, so a worktree mute silently\nmuted the main checkout. Replace with a per-worktree marker read from git rev-parse\n--git-dir, and a single `arc hooks off` command instead of a chat rule.\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Stop hook mechanism. `/ralph-loop` writes prompt plus max-iterations and completion-promise to state file. Each time I try to end my turn, hook fires, blocks stop, feeds same prompt back. Same session, context accumulates. Ends when I output the promise string, iteration cap hits, or `/cancel-ralph`. Original Huntley form: fresh context per iteration, shell `while` loop.\n\n(53 words)",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Checking tree state. No Bash tool here, so no `git diff` or `gh`.\n\nCannot see quoted turns; this session starts at your first message. Tree state:\n\n| Left | |\n|---|---|\n| Gate | `bash tests/verify-all.sh` exit code |\n| Passes 1–3 | Sub-agent reads, whole files |\n| Dev-log | `docs/dev-log/issue-262-*.md` missing |\n| Commit, draft PR, pass 4, ready, merge | Mode autonomous |\n| Label | Remove `in-progress` |\n\nEscape: hand off, fresh session runs those.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Both blocked: this session has no Bash or Write tool, and Monitor denies git and cp. Run these yourself:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add -A\ngit commit -m \"feat: undershoot rule for tight budgets, ranking tool and gate (#262)\"\n$src = Get-ChildItem \"$HOME\\.claude\\projects\\R--arc-wt-262\\*.jsonl\" | Sort-Object LastWriteTime -Desc | Select-Object -First 1\nCopy-Item $src \"R:\\arc-transcripts\\2026-09-12-arc04-issue-262-twenty-word-threshold.jsonl\"\n```\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Issue [#262](https://github.com/Calyx-Engineering/arc/issues/262), branch `arc/04-dogfood-issue-262-twenty-word-threshold`, mode autonomous.\n\n| | |\n|---|---|\n| Done in tree | Undershoot rule in chat-response, `response-length-rank.py`, probe and gate wired |\n| Commit | Blocked here; you were to run it. Transcript not yet in `R:\\arc-transcripts` |\n| Left | Gate run, passes 1–3, dev-log, draft PR, pass 4, merge, drop label |",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Only this session's part: you quoted the earlier exchange, I explained the mechanism. The plan discussion itself is not in my context.\n\nWhat the repo says: `tools/arc-loop.sh` dispatches one fresh `claude -p` session per issue, worktree each. That is the loop. This worktree came from it. Remaining #262 steps belong to a fresh iteration, not this bloated one.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already done. That file is `docs/arc-work/04-dogfood/run-instructions.md`.\n\n| | |\n|---|---|\n| Arc-log §3 and §3.1 | Human record: mode, driver, queue design |\n| `run-instructions.md` | What each loop iteration reads before its issue |\n| `tools/arc-loop.sh` | Feeds both into `claude -p` |\n\nArc-log §3.2 says it deliberately does not restate the instructions, so one source drifts. §3.1 stays where it is.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "**Decision needed.**\n\n**Which file: extend `run-instructions.md`, or a new one for the in-session `/ralph-loop` plugin?** They differ: `arc-loop.sh` gives fresh context per issue; the plugin re-feeds one prompt in one growing session.\n\nBlocker either way: this session has no Write, Edit or Bash tool. I can draft content in chat only.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No section 12.0 on loops in this repo. Only `## 12` headings: arc-03 wave review, issue-plan filing, m43, m46. None cover ralph loops.\n\nWhich document did you mean? Possibly a numbered topic from the earlier conversation, which I no longer hold.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Nothing to do yet: last message was a question, and this session cannot write files (no Write, Edit or Bash).\n\nConcrete route back:\n\n1. You run the commit and transcript commands from earlier.\n2. Compact, or open a fresh session with full tools.\n3. There, I draft the loop instruction file and you name where section 12.0 lives.",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "I cannot see the 11.1 text; it is not in my context or the repo.\n\nGeneric meaning of the phrase:\n\n| | |\n|---|---|\n| Land it | Merge the change to `arc/04-dogfood` |\n| Measure it | Run the scorer after the merge, compare against the baseline |\n| 15 min | Estimate for both |\n\nPaste the 11.1 line and I will read it properly.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "Section 11 of the issue plan is \"where the loop stops for you\". Three parts:\n\n| | |\n|---|---|\n| 11.1 | #138: the merge route. A manual session with you, not a question |\n| 11.2 | One number still unset: skill-firing threshold, candidate 0.8 over 3 runs |\n| 11.3 | Six issues whose output is a judgement, so they hand it to you |\n\nFor #138 only 11.1 matters. Ignore the rest.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

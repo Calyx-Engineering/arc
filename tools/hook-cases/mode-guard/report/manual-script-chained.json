@@ -1,0 +1,2 @@
+# manual mode, a read-only run chained ahead of a real one — the second script is still gated
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"bash tools/arc-loop.sh 145 --dry-run && bash tools/new-direct-pr.sh slug \"T\"","description":"Preview then open"}}

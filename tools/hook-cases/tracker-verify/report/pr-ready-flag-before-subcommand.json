@@ -1,0 +1,2 @@
+# a draft marked ready with `-R` between `gh` and the subcommand — the dispatch missed it, so the boxes were never counted. `gh pr ready` takes no flag that can carry a comma, so this arm has the one shape. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_boxes_rc":"1","arc_test_boxes_out":"FAIL  #199 — 2 of 7 boxes unticked, 2 of them undispositioned","tool_input":{"command":"gh -R Calyx-Engineering/arc pr ready 250"}}

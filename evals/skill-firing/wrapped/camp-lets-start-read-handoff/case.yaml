@@ -1,0 +1,13 @@
+shape: wrapped
+expect:
+  - handoff
+  - camp
+
+source:
+  session: 6e94ca79
+  turn: 1
+  opening: true
+why: >
+  The shortest opening in the corpus that asks for both. `camp` fired on this turn; `handoff`
+  did not fire until turn 9, eight turns after the user asked for it. A case where one of two
+  expected skills fires is the one that shows the two descriptions are not equally reachable.

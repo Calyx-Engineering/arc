@@ -1,0 +1,2 @@
+# a create chained ahead of a command carrying a bare number — a create names no number, and the next command's argument must not become one. Nothing to read back, so silence
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh pr create --fill --draft && sleep 2"}}

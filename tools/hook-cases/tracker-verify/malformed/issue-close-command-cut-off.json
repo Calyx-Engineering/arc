@@ -1,0 +1,2 @@
+# a payload cut off inside the close command itself, so the `command` value never closes its quote — nothing parses out of it and the hook must stay silent rather than run an arm against half a command. The fixture is intact and says unlinked, so any number an extractor invented here would report. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close

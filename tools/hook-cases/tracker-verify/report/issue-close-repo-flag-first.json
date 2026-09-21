@@ -1,0 +1,2 @@
+# a close with `--repo` before the number, unlinked — the flag form is an ordinary invocation and must not read as "no number" and skip the check
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close -R Calyx-Engineering/arc 163"}}

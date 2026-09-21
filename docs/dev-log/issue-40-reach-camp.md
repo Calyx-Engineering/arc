@@ -1,6 +1,6 @@
 # Issue #40 — Reaching Camp
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#40](https://github.com/Calyx-Engineering/arc/issues/40)  ·  **PR:** [#53](https://github.com/Calyx-Engineering/arc/pull/53)
 

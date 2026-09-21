@@ -1,6 +1,6 @@
 # Issue #119 — the pre-release review
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#119](https://github.com/Calyx-Engineering/arc/issues/119)  ·  **PR:** —
 
@@ -61,7 +61,7 @@ about Arc itself.
 |---|---|---|
 | 1 | **Write `docs/release/pre-release-review.md` first** | The passes, the routing of a finding, and what the review cannot establish. Two mermaid diagrams — the pass order, and a finding's route from spotted to filed |
 | 2 | **Run it**, pass by pass, recording findings as they appear | Read, do not repair |
-| 3 | **`bash tools/verify-all.sh`** | And record which of the issue's boxes it closes, rather than re-checking them by eye |
+| 3 | **`bash tests/verify-all.sh`** | And record which of the issue's boxes it closes, rather than re-checking them by eye |
 | 4 | **File the findings** | One issue per finding, or one issue per cluster where a fix is one change. **Nothing fixed in this PR** |
 | 5 | **Record the result in the document** | The first run's findings live with the process that found them, so the second run has a baseline |
 

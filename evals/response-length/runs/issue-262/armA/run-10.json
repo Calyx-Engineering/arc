@@ -1,0 +1,59 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook file now sends `allow`, not `exit 2`. Registered PreToolUse, fine. No live problem found. Item 2 withdrawn.",
+   "cut": "",
+   "fired": []
+  },
+  "12": {
+   "text": "Copied from camp-branch-check (PostToolUse, exit 2 harmless). Already fixed, line 60: allow, exit 0. PR needs only label plus permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Can't. This session has no edit or shell tool. Also: exit 2 already fixed in both copies. Restart session; I'll do label and permission fixes then.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Still no edit or shell tools here. Can't do the PR from this session. Also: I may set autonomous never; only you can.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both handled already: prefix read from agreement (line 88 fallback), `-pr<N>` counted as work (line 125). Kill switch: replace per-hook with one global mute, `hooks-off.sh 30`, no arguments.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Can't edit or run commands in this session. Only read tools loaded. Open a fresh session and say \"fix everything\"; I'll go.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; here Edit, Write and Bash tools don't exist in this session at all. Harness launch config, not hooks. Restart with default tools.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Which file? No settings deny tools here (checked user and repo `settings*.json`). Absence comes from session launch flags, not a file.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Edit, Write, Bash still absent. HOOKS_OFF.txt mutes hooks, not tool availability. Needs new session.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Kill switch solves hook bugs only; today's fault was tool availability. Next session: one global mute, drop per-hook argument.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Not everywhere. HOOKS_OFF.txt does nothing (lib line 14). Real switch: `.git/arc-hooks-off`, per repo, per hook, expiring. Can't file cleanup item this session; next one.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

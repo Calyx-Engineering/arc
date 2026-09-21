@@ -1,0 +1,2 @@
+# a PR edited with a comma inside a quoted flag and the number after it — the comma cut the command short of the number, and with no number every PR check was skipped. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"main","arc_test_milestone":"Dogfood","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closes #10\n","tool_input":{"command":"gh pr edit --add-label \"needs-review, blocked\" 200"}}

@@ -1,0 +1,2 @@
+# a prose heading about spawn rows, not a `Spawned` section — the title must be the whole heading, so this must be silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] one thing\n\n## Spawned versus related\n\nWhich row an edge takes.\n","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

@@ -1,0 +1,9 @@
+shape: bare
+expect:
+  - *>=8
+source:
+  session: c4fe2b5c
+  turn: 2
+  opening: true
+why: >
+  An explicit demand for skills as a category. Eleven fired at once — the ceiling case.

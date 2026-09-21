@@ -1,0 +1,59 @@
+3c3
+< description: INVOKE THIS SKILL ON THE TURN A LENGTH BUDGET IS STATED OR TIGHTENED — not later, once a reply has already run long. The trigger is the user saying "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complaining "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that". Invoke it again on every conversational reply after that one, because THE BUDGET IS STILL IN FORCE: that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. A TIGHT BUDGET NEEDS AN UNDERSHOOT: at 25 words or fewer, aim at two-thirds of the number and stop — about 13 words when told 20. THEN COUNT WHAT YOU WROTE AND CUT IT BEFORE SENDING. With this rule in force the breach is a near miss, not a blow-out: measured over nineteen runs, the median reply that breaks a 20-word ceiling lands at 30 words and the median reply overall at 26. That is one clause and one qualifier too many, and both can be removed after the sentence exists — the restatement of the question, the second example, the hedge, the sentence that says what you are about to say. Aiming low is not enough by itself; count the prose you actually wrote and delete words until the number fits. THE REPOSITORY MAY HAVE SET ONE TOO, and it applies with nobody stating it: `.claude/arc/camp/operating-agreement.md`, section 1, **Response verbosity** — the checked box is the value, and its own line states the number. `normal`, a missing clause and a missing file all mean the default table in this skill. Read it at the start of a session rather than when a reply already feels long. A number the user states in conversation outranks it. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block, and linking every issue and PR number rather than writing it bare. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
+---
+> description: INVOKE THIS SKILL ON THE TURN A LENGTH BUDGET IS STATED OR TIGHTENED — not later, once a reply has already run long. The trigger is the user saying "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complaining "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that". Invoke it again on every conversational reply after that one, because THE BUDGET IS STILL IN FORCE: that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. A TIGHT BUDGET NEEDS AN UNDERSHOOT: at 25 words or fewer, aim at two-thirds of the number and stop — about 13 words when told 20. THEN COUNT WHAT YOU WROTE AND CUT IT BEFORE SENDING. Aiming low without this second step leaves a near miss, not a blow-out: measured over nineteen runs aiming low and not cutting, the median reply that broke a 20-word ceiling landed at 30 words and the median reply at 26. That is one clause and one qualifier too many, and both can be removed after the sentence exists — the restatement of the question, the second example, the hedge, the sentence that says what you are about to say. Aiming low is not enough by itself; count the prose you actually wrote and delete words until the number fits. THE REPOSITORY MAY HAVE SET ONE TOO, and it applies with nobody stating it: `.claude/arc/camp/operating-agreement.md`, section 1, **Response verbosity** — the checked box is the value, and its own line states the number. `normal`, a missing clause and a missing file all mean the default table in this skill. Read it at the start of a session rather than when a reply already feels long. A number the user states in conversation outranks it. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block, and linking every issue and PR number rather than writing it bare. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
+102c102
+< | 20 words, *"i'm not going to read that"* | 1 turn | 1 of 10 — the next reply was 85 words, and the worst 219 |
+---
+> | 20 words, *"i'm not going to read that"* | 1 turn | 2 of 11 — the next reply was 85 words, and the worst 219 |
+107c107
+< #### The small number is the hard one, and it is now missed by a clause
+---
+> #### The small number is the hard one, and aiming low only gets it to a near miss
+109,111c109,112
+< A 60-word budget is held once the rule is in force. A 20-word one is not. Across nineteen probe
+< runs of the 20-word case the budget was **met on the turn it was stated in eighteen of them and
+< broken on the very next turn in fourteen** — met where it was set, gone on the following reply.
+---
+> A 60-word budget is held once the rule is in force. A 20-word one is not, on the target alone.
+> Across nineteen probe runs of the 20-word case aiming low without cutting, the budget was **met
+> on the turn it was stated in eighteen of them and broken on the very next turn in fourteen** —
+> met where it was set, gone on the following reply.
+113c114,117
+< | Budget | Median prose after it was set | Within it |
+---
+> Every row counts every scoreable turn, the turn the budget was stated on included, which is the
+> scorer's own denominator:
+> 
+> | Budget, and which rules were in force | Median prose after it was set | Within it |
+115,123c119,129
+< | 60 words | — | 52 of 52 |
+< | 20 words, before the undershoot rule | 55 words | 6 of 32 |
+< | 20 words, with it | **26 words** | 54 of 185 |
+< 
+< **The breach used to be a blow-out and is now a near miss, and the difference changes the
+< fix.** The median reply that breaks the ceiling lands at **30 words**, and 28% of breaches are
+< in the 21–25 band. Half as much again, not three times — [#213](https://github.com/Calyx-Engineering/arc/issues/213)
+< measured 58 against the skill as it stood before the undershoot rule, and that figure no longer
+< describes this one.
+---
+> | 60 words, aim low and cut | — | 47 of 50 |
+> | 20 words, neither | 55 words | 6 of 32 |
+> | 20 words, aim low only | 26 words | 37 of 109 |
+> | 20 words, aim low **and cut** | **19 words** | **76 of 106** |
+> 
+> **Aiming low turns a blow-out into a near miss, and the near miss is what the cut is for.**
+> Aiming low alone, the median reply that breaks the ceiling lands at **30 words** and 28% of
+> breaches are in the 21–25 band — half as much again, not three times.
+> [#213](https://github.com/Calyx-Engineering/arc/issues/213) measured 58 against the skill as it
+> stood before the undershoot rule, and that figure stopped describing this one the moment the
+> rule worked.
+132,134c138,141
+< 0.19 to roughly 0.35 and stopped there; every measurement above is at the target, with the cut
+< not yet in force. Scored by `tools/response-length.sh` and
+< `tools/response-length-rank.py`.
+---
+> 0.19 to 0.34 and stopped there; adding the cut took it to 0.72, ten probe runs each way,
+> `p=0.0021`. Scored by `tools/response-length.sh` and ranked by
+> `tools/response-length-rank.py`; the runs behind every figure here are in
+> `evals/response-length/runs/issue-262`.

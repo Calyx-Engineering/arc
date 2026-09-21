@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook `camp-session-start` exits 2, which denies in PreToolUse. Comment claims warning only.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from `camp-branch-check`, a PostToolUse hook, where exit 2 only prints. In PreToolUse it denies.\n\nAlready fixed in both checkouts: `report()` now returns `allow`, exits 0. Nothing left for (2).\n\nDirect PR: label fix plus permission fix only.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "**Decision needed.**\n\nExit 2 already fixed in both copies. Which label fix and permission fix? Lost that context.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Decision needed.**\n\n**Which label fix and permission fix?** Earlier context lost. Hook exit 2 already fixed in both copies.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both: reads prefix from agreement, matches `pr<NN>`. Nothing to fix.\n\nKill switch: replace with one env var, `ARC_HOOKS_OFF=1`, no timer. Simpler.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "All three already fixed on main. Retract env-var idea: issue [#202](https://github.com/Calyx-Engineering/arc/issues/202) rejected global switches. Keep current one.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, exactly its purpose. But nothing blocks now: fixes merged. What is denying you?",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Run this from any terminal in the repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `.git/arc-hooks-off` absent. `HOOKS_OFF.txt` is old, ignored. Run the command in a terminal.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Better: a `/hooks-off 30` skill I run for you. Want it filed?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write: no Edit, Bash or Write tool this session. Paste into Upkeep row, arc-log §6:\n\n```markdown\nSpawned: kill switch `hooks-off.sh` is unusable in practice — repository-wide `all`, terminal-only, no slash command. Replace with a per-hook `/hooks-off <hook> <min>` skill the session runs itself; keep the expiry and the `.git` state file\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

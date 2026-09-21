@@ -34,7 +34,7 @@ flowchart TB
     REV --> BLOCK{{"<b>Any blocking finding?</b>"}}
     BLOCK ==>|yes| FIX["<b>Fix it, in its own PR</b><br/><i>the release waits.<br/>Non-blocking findings do not<br/>hold the release</i>"]
     FIX --> REV
-    BLOCK ==>|no| GATES["<b>Every gate clean</b><br/><code>bash tools/verify-all.sh</code>"]
+    BLOCK ==>|no| GATES["<b>Every gate clean</b><br/><code>bash tests/verify-all.sh</code>"]
     GATES --> VER{{"<b>Decide the version</b><br/>§3"}}
     VER --> BUMP["<b>Bump both manifests</b><br/><code>plugin.json</code> version<br/><code>marketplace.json</code> plugin version<br/><i>they must agree</i>"]
     BUMP --> DEF{{"<b>Is the default branch<br/>the release branch?</b><br/><i>m42's flip</i>"}}
@@ -136,7 +136,7 @@ flowchart TB
 | | |
 |---|---|
 | **Local is documented first, and is not a lesser route** | It is what makes a fix-and-reinstall cycle seconds rather than a release. Anyone changing Arc uses it |
-| **The repository is private** | Both routes use the installer's existing git credentials. `gh auth setup-git` is what makes the marketplace route work unattended |
+| **The repository is public since 2026-09-20** | Neither route needs credentials. Before that it was private, and `gh auth setup-git` was what made the marketplace route work unattended |
 | **If the install summary says `Run /reload-plugins to activate.`, run it** | Otherwise the plugin is installed and not loaded |
 
 ---

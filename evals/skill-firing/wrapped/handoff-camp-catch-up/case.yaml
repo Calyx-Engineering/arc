@@ -1,0 +1,10 @@
+shape: wrapped
+expect:
+  - handoff
+  - camp
+source:
+  session: 10774bf5
+  turn: 1
+  opening: true
+why: >
+  Both names present, both inside instructions, and three more requests stacked behind them.

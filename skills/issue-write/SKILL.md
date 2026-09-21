@@ -1,13 +1,17 @@
 ---
 name: issue-write
+user-invocable: false
 description: Use when creating or editing a tracker issue or pull request — GitHub, Jira, Linear or equivalent. Covers what a body contains, how issues link to each other and to a PR, which link mechanics silently do the wrong thing, and the read-back that catches a write that did not land. Invoke before writing any issue or PR body, and before choosing a closing keyword.
 camp-reports: [issue-create, issue-edit, pr-open, pr-edit]
-checks: [arc-intent, title-size, base-branch, milestone, arc-prefix, closing-keyword, placeholder-scan, read-back]
+checks: [arc-intent, title-size, base-branch, milestone, label, issue-type, arc-prefix, closing-keyword, placeholder-scan, read-back, read-back-dispositions]
 skips:
   - arc-prefix (base is not an arc branch)
   - closing-keyword (the change informs rather than delivers — Refs, not Closes)
   - arc-intent (the current arc has no arc-log)
+  - read-back-dispositions (the write is an issue, not a PR)
   - title-size (editing a body, not a title)
+  - label (the prefix licenses none — `scope:`, `chore:`, `refactor:`, `test:`)
+  - issue-type (the write is a PR, or an edit to an issue body rather than its fields)
 ---
 
 # Writing issues and pull requests
@@ -36,10 +40,42 @@ to go — what it prevents is filing silently while the arc's stated scope says 
 | **Cut every sentence explaining why a problem is a problem** | If the defect is stated, the reader supplies the why |
 | **Tables and checklists over prose** | Prose is the fallback, not the default |
 | **Draft, then delete** | Remove every line a competent engineer already knows. This usually halves it |
-| **Lists of related items are bullets** | Never comma-separated inline |
+| **Lists of related items are bullets** | Never comma-separated inline. The `Related` section is the exception — it is a table, below |
 | **No development narrative** | Not "we tried X then found Y". State Y |
 
 A body that survives this is usually a short paragraph plus one or two tables.
+
+### A PR body carries one section the rules above do not
+
+**The read-back's dispositions.** Step 5 of
+[`close-sequence.md`](../../docs/product-architecture/close-sequence.md) reads every changed file
+against the issue and returns findings; the body says what happened to each — acted on, or
+declined with the reason. **A pass that returned nothing is recorded as having returned
+nothing.** That step has no gate, because prose truth is not mechanically checkable, so the body
+is the only place it is recorded at all — and silence there is indistinguishable from a step
+nobody ran.
+
+**One thing in the body is gated, and it is not the prose.** An unticked box named here as not
+done, or as moved to the issue that owns it, is read back by `tests/verify-issue-boxes.sh` —
+which [`hooks/tracker-verify`](../../hooks/tracker-verify) runs on `gh pr ready`.
+
+**Copy the box's first eight words, unbroken and in order, then say what happened.** The quote
+is what ties the disposition to the box; a reason with no quote reads as prose about something
+else, and the check cannot match it to anything.
+
+```markdown
+- A read-back step in close-sequence.md, between step 4b — not done, it belongs to the skill
+- Selftest cases for every shape the check can meet — moved to #250
+```
+
+**Then at least three words the box does not carry.** `— moved to #250` is three; the box pasted
+back unchanged is none, and a copied checklist states nothing about what happened to it.
+`Box 4: not done` fails on the quote, not the reason.
+
+Punctuation, links and emphasis are all ignored in the comparison — only the words count, so a
+box carrying a markdown link keeps the link's text and drops its target.
+
+---
 
 ## Titles
 
@@ -91,11 +127,86 @@ it is too long. `fix: a spawned issue records no parent` passes both.
 |---|---|
 | `scope:` | The output is a decision or a decomposition — the specification, not the thing it specifies |
 | `feat:` · `fix:` · `docs:` · `chore:` | New construction · repair · documentation · housekeeping |
+| `refactor:` · `test:` | Restructuring with no behaviour change · a gap in what is verified |
+| `arc:` · `workstream:` | **Containers, not work.** They hold an ordered list of children and a boundary; nothing merges them. `arc: 04 dogfood — …`, `workstream: Fire — …` |
+
+**A container's title is exempt from the checks below**, and `verify-tracker-body.sh title`
+returns clean for both prefixes. Every check asks *does merging this ship the thing the title
+names* — a question a container cannot answer, because it never merges. Its children do.
+
+**A container closes when the user says so**, not when its children close. All children closed is
+mechanical completion; the boundary is a review, and closing removes the surface it happens on.
 
 **`scope:` is the one that has to exist** — without it a scoping issue takes `feat:` and
-inherits a capability-sized title, which is the first failure above. **Not `spec:`**: one
-word per meaning, or the type sorts nothing. Whether the rest of the conventional set earns
-its keep stays open until a month of real use answers it.
+inherits a capability-sized title, which is the first failure above. **`spec:` is retired**:
+one word per meaning, or the type sorts nothing. `tests/verify-labels.sh` reports an unmapped
+prefix, so the retirement is enforced rather than remembered.
+
+### Labels — the prefix decides, and only the prefix
+
+**A label that disagrees with the prefix is worse than no label.** `label:bug` then returns
+work that is not a bug and hides work that is.
+
+| Prefix | Label |
+|---|---|
+| `fix:` | `bug` |
+| `feat:` | `enhancement` |
+| `docs:` | `documentation` |
+| `arc:` | `arc` |
+| `workstream:` | `workstream` |
+| `scope:` · `chore:` · `refactor:` · `test:` | **none** |
+
+**Licensing nothing is a decision, not an omission.** Nobody filters on a chore, so a label for
+one costs attention at every issue write and returns nothing anyone asked for. The test is
+whether a query would actually run.
+
+Three labels say what a title cannot, and ride alongside the type label:
+
+| | |
+|---|---|
+| `in-progress` | A run is working it now. The driver reads it |
+| `priority: high` | Blocks or degrades other work. High only — medium is the absence of a label, and nobody queries for the absence of urgency |
+| `issue-discipline` | The area. A second area label has to name a query that would run |
+
+**The arc is the milestone, never a label.** A label duplicating it is one more thing to set,
+one more thing to get wrong, and nothing the milestone view does not already show.
+
+```sh
+tests/verify-labels.sh             every open issue: prefix against label, and the issue type
+tests/verify-labels.sh labels      the label set itself
+```
+
+**The table above and the script's `MAP` are the same fact.** A new prefix needs both.
+
+### The issue type says who does the work
+
+**The prefix says what kind of work it is. The type says who does it.** They are different
+questions and they do not overlap — an issue holds exactly one type, so it is the field that
+can carry *who* without competing with the kind already in the prefix and its label.
+
+| Type | |
+|---|---|
+| `Agent` | **The loop's.** Sized for one unattended run. `tools/arc-loop.sh` dispatches these and nothing else |
+| Any other type | **A human's.** Needs judgement, hardware, an account nobody has delegated, or a call that is not the session's to make |
+| No type | **A defect.** The issue answers neither question. `tests/verify-labels.sh` reports it |
+
+**Which non-`Agent` type is a human's call, and no check has an opinion.** The rule is *who*,
+not *which*: `Task`, `Bug` and `Feature` all say the same thing here. A check that preferred one
+would invent a rule the tracker's own type set does not carry, and would report every type the
+org adds as a defect on the day it is created.
+
+**Set it at creation.** It is one of the fields that never appears in the body, so it is
+invisible once missed:
+
+```sh
+gh issue create --type Agent --milestone "<name>" --label <label> --title "…" --body-file body.md
+gh issue edit <N> --type Task                      # backfilling, or handing one back to a human
+gh issue view <N> --json issueType                 # the read-back
+```
+
+**Types are an organisation-level set, not a repository one.** `gh issue create --type` fails on
+a name the org has not defined, so a new type is a decision made once for every repository under
+the org — never worked around by inventing a label.
 
 **Titles go stale — do not copy them.** When referencing an issue from a document, link the
 number and describe it in the document's own words. A copied title silently diverges the
@@ -128,17 +239,24 @@ rewritten; *Editing an existing body* below governs the description.
 | | |
 |---|---|
 | **Retitle at the descent, not at review time** | The moment the scope changed is the moment it is cheapest to name, and the only moment you still remember what it was before |
-| **A tangent does not trigger it** | Something spotted and recorded in `Spawned`, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
+| **A tangent does not trigger it** | Something spotted and recorded as a `Spawned` row, or fixed on this branch because it could not wait, leaves the unit what it was. Only a change to what the unit *is* forces the retitle |
 | **The same test applies** | The retitled PR still has to pass *A name, not a summary* above. A title that grew by accretion is the other failure |
 
 ### What a good issue contains
 
-| Section | Holds |
-|---|---|
-| Opening | The defect or the need, in one or two sentences |
-| **Required** | What must be true when this is done. Checklist if there are several |
-| Constraints | Numbers, parts, interfaces, standards — as a table |
-| Related | Bulleted issue links, each with a few words on the relationship |
+**The shape is [`templates/issue.md`](../../templates/issue.md)** — four sections, in order,
+each with its purpose, and [`templates/pr.md`](../../templates/pr.md) for a PR. **Copy it; do
+not assemble one from memory.** The rules here are grouped by subject, so the positional one —
+where `Related` sits — is the furthest from the section list.
+
+**This skill is the judgement and the template is the shape.** Neither repeats the other.
+
+**Spawned work lives in `Related`'s rows, and `Related` is the body's last section — so the
+spawn edges are in the last section, at the top of its table.** Not "at the end" as a habit —
+last in a stated order, which is what makes a heading appearing after that section a reportable
+defect rather than a matter of taste. `tests/verify-tracker-body.sh body`
+reports a heading that follows the `Related` section — or a `Spawned` section, in a body written
+before this shape. *Related — one table, four kinds* below gives the table's shape.
 
 **A `scope:` issue carries one more thing: the question inventory.** Every subject the spec
 cannot be written without, as a checklist, checked off as each is settled.
@@ -188,38 +306,22 @@ is the higher of the latest issue and the latest PR, plus one.
 tools/new-direct-pr.sh <hint-slug> "<PR title>"
 ```
 
-**Steps 1 to 4 are one command, and they have to be** — by hand the sequence takes minutes with
-a real race running underneath it, which makes *the window is seconds wide* false.
+**One command: branch, stub dev-log, draft PR, confirm the number — before the work, not after
+it.** Then work, fill in the dev-log, and mark it ready. Why each step sits where it does is
+[m46 §9.1](../../docs/product-architecture/mechanisms/m46-work-navigation.md)'s.
 
-| | |
-|---|---|
-| 1 | Branch with the predicted number |
-| 2 | Commit a **stub** dev-log — a PR needs a commit to exist, and a merged unit needs a dev-log anyway. Writing the real one first is what reintroduces the delay |
-| 3 | **Open it as a draft, before doing the work** |
-| 4 | Confirm the PR's number against the branch's — **a mismatch is recorded, never retried** |
-| 5 | Then work, fill in the dev-log, and mark it ready |
-
-**The draft comes before the work.** Branching, building for an hour and opening the PR at the
-end leaves the number unclaimed for that hour, and puts the check *after* everything has landed
-on a possibly-wrong branch.
-
-**A miss is never retried.** Retrying burns a real number to buy a tidier branch name, and the
-name was only ever a pointer — an explained mismatch points just as well. **The notification is
-the fix**, in three places:
+**A mismatch is recorded, never retried** — rename nothing, close nothing. Say it in three places:
 
 | | |
 |---|---|
 | **The PR body, near the top** | *"Branch says `pr112`, this is PR #114."* Unexplained, the branch is silently wrong. Explained, it is merely inexact |
 | **The dev-log** | It already exists — it was the first commit. One line under the problem statement |
-| **The friction log**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md` — [`record-route`](../record-route/SKILL.md) routes it. A race is a fact about the repository and reaches nobody unless written down |
-
-**Rename nothing, close nothing.** See the warning above.
+| **The friction log**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md` — [`record-route`](../record-route/SKILL.md) routes it |
 
 > **Never rename the branch of an open PR. It closes the PR.** Tested: the rename succeeds,
 > the branch moves, and GitHub closes the PR whose head just disappeared.
 
-[m46 §9.1](../../docs/product-architecture/mechanisms/m46-work-navigation.md) carries the
-detail. **A branch naming a PR that is not its own is worse than one naming nothing.**
+**A branch naming a PR that is not its own is worse than one naming nothing.**
 
 ### Placement
 
@@ -232,9 +334,30 @@ Closes #42
 Parsers do not understand prose. `Closes the block-diagram item of #26` creates **no link** —
 the Development sidebar stays empty and the issue looks orphaned.
 
+**Where that line sits in the body is [`templates/pr.md`](../../templates/pr.md)'s** — last
+line, after the spawn rows.
+
 When a PR closes exactly one issue, cite it in the title: `<type>: <name> (#42)`. When it
 closes several, omit the number from the title and list them in the body. The title number
 is cosmetic — the body still needs its own line.
+
+### Commit messages close the same way, and just as silently
+
+**A closing keyword binds from a commit message exactly as it does from a PR body** — the same
+keyword set, followed by `#<N>`, and the same placement rule: **a bare line, never a clause
+inside a sentence**, at the end of the message. *"this is expected to resolve #42"* closes #42
+exactly as reliably as `Closes #42` does, with none of the review a PR body gets — one prose
+clause closed an issue with every box unticked,
+[m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md), *A commit message binds
+too*.
+
+**The post-merge read-back names what the merge closed.** `gh pr view --json
+closingIssuesReferences` and the issue's own state are what confirm it — never a memory of which
+line was meant to close something. A commit's prose can close an issue nobody intended to touch,
+and the read-back is what catches that before a checklist ticked from memory is trusted.
+
+`hooks/tracker-verify` reports a `git commit` whose message carries a closing keyword and a
+number anywhere but a bare line.
 
 ### PR titles inside an arc take the arc's prefix
 
@@ -256,49 +379,148 @@ needed.
 ## The base branch decides whether the link binds
 
 **A closing keyword binds only when the PR targets the repository's default branch.**
-Isolated 2026-08-17: two PRs, identical keyword form, one into `main` bound five issues and
-one into an arc branch bound none.
-
-This is not a corner case in a nested-branch workflow — it is *every* issue PR.
+Not at open, not at the merge, not on a re-save — isolated twice,
+[m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md), *The test that changes
+the design*. This is not a corner case in a nested-branch workflow — it is *every* issue PR.
 
 | Base | Empty `closingIssuesReferences` means |
 |---|---|
 | The default branch | **A defect.** The link should have formed |
 | An arc or integration branch | **Expected.** The link cannot form; it defers to the arc PR |
 
-**The fix is [m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md):
-point the default branch at the arc for its lifetime.** Where that is in force, keywords bind
-normally and the rest of this section does not apply. Where it is not — more than one
-collaborator, protected trunk — the following holds.
+**There are two routes, and the repository chooses one.**
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) points the default
+branch at the arc for its lifetime, and where that is in force keywords bind normally and the
+rest of this section does not apply. Where it is not — more than one collaborator, a protected
+trunk, no admin rights, or simply nobody flipped it — the manual route below is what runs.
+[m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md) §5 holds the comparison.
+**Neither is a fallback for the other**; do not propose switching a repository's default branch
+because a keyword did not bind.
 
 Two consequences:
 
-- On an issue PR into an arc branch, write the `Closes #NN` line anyway and say in the PR
-  that closure defers to the arc PR. The line documents intent even where it cannot bind.
-- **The arc PR into the default branch needs a `Closes` line for every issue the arc
-  consumed.** That is the one PR where an empty array is a real bug, and the only place the
-  issues actually close.
+- On an issue PR into an arc branch, write the `Closes #NN` line anyway — see *What the keyword
+  is still for* below — and then **run the manual route.** The issue closes at its own PR's
+  merge, by hand, not at the arc's close
+- **The arc PR into the default branch still needs a `Closes` line for every issue the arc
+  consumed.** That is the one PR where an empty array is a real bug. It is the backstop for
+  issues nobody closed, not the plan
 
-Re-saving the body forces a re-parse of a *stale* link. It cannot create a link the base
-branch forbids — do not read a failed re-save as a transient problem.
+**"Closure defers to the arc PR" is the degraded state, not a practice** — it is what
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) lists as the *cost*
+of an unflipped repository. Do not let it stand in for closing the issue.
+
+### The manual route — when a work PR merges into a non-default base
+
+**Do all three, in this order, immediately after the merge.** Not at the arc's close: the click
+is the one nobody remembers, and an issue left open reads as work not done.
+
+| | |
+|---|---|
+| 1 | **Merge the PR.** Nothing binds and nothing closes. `gh pr merge` reports success either way |
+| 2 | **Attach the link by hand.** The merged PR → the **Development** panel on its right-hand side → the issue. **No API does this.** No mutation creates or removes a hand-attached link, and `POST /repos/{o}/{r}/issues/{n}/links` does not exist — it 404s with full `repo` scope. This step needs a human, and saying so is part of the step |
+| 3 | **`gh issue close <NN>`.** Closing an issue is not an admin operation and needs no special right. Do it after step 2, not before — a closed issue with no link is what `hooks/tracker-verify`'s `close-link` check reports |
+
+**Do not skip step 2 because step 3 closes the issue anyway.** The link is what makes the work
+findable from the issue: without it the Development panel stays empty, and an issue that looks
+orphaned is indistinguishable from one that was forgotten.
+
+**Two things watch for the step nobody did.** Neither can do it for you.
+
+| | |
+|---|---|
+| `hooks/tracker-verify`'s `merge-close` | Fires on `gh pr merge` of a PR whose base is neither the default branch nor the trunk — that is, one where no keyword can bind — and reports when the issue its head branch names is still open |
+| `tools/arc-link-sweep.sh <milestone>` | The arc-checkpoint sweep — every issue in the milestone that is linked to nothing at all. m12 §4 |
+
+### What the keyword is still for
+
+**On a PR whose base is not the default branch, `Closes #NN` is recorded intent, not a working
+link.** It binds nothing, the merge closes nothing, and `closingIssuesReferences` comes back
+empty. Write it anyway, on its own last line — *Placement* above is unchanged by the base branch.
+
+| | |
+|---|---|
+| **What it does** | States which issue this PR was for, in one machine-readable line, in the record that outlives the branch |
+| **Who reads it** | The arc PR that later collects this work · `tests/verify-issue-boxes.sh`, which reads the bodies of the PRs that close an issue · a reviewer asking what a merged PR was for |
+| **What it does not do** | Close the issue, form a link, or populate the Development panel |
+
+**Say so in the PR body as well as writing the line**, so a reader is not left concluding the
+link failed: *"A keyword cannot bind on a base of `arc/NN-slug`, so #NN is linked and closed by
+hand at the merge."* Name the route, not a deferral — the issue closes here.
+Leaving the keyword out to avoid implying a link that does not exist is the wrong trade: it
+removes the only statement of what the PR was for and leaves the issue looking orphaned anyway.
+
+### A missed keyword is recoverable after the merge
+
+**A `Closes #NN` line added to an already-merged PR still binds** — provided the base was the
+repository's default branch. Re-saving the body re-parses it, and the parse is not tied to the
+merge — measured twice, [m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md)
+§2.
+
+```sh
+gh pr view NN --json body --jq .body > body.md \
+  && [ -s body.md ] \
+  && cp body.md body.before \
+  && printf '\n\nCloses #MM\n' >> body.md \
+  && ! cmp -s body.before body.md \
+  && gh pr edit NN --body-file body.md
+
+gh pr view NN --json state,closingIssuesReferences        # read it back — then read it AGAIN
+gh issue close MM                                          # the link came back; the closure did not
+```
+
+| | |
+|---|---|
+| **Poll the read-back** | The read immediately after the edit returns an empty array; seconds later it returns the binding. **One read is a false negative** |
+| **It links, it does not close** | The merge event has already fired. `gh issue close` is the third command |
+
+**This is the repair, not the practice.** A missed keyword is still a defect — it is caught at
+PR open, by *Verify* below. `tests/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs the
+claim against the live API.
+
+#### What is still not recoverable
+
+**A PR whose base was never the default branch.** There is nothing for a re-save to re-parse —
+the base-branch rule above is not a timing problem and no edit gets around it. **The fix is *The
+manual route* above**, the same route whether the keyword was missed or could never have bound.
+
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md)'s flip does not
+re-parse existing PRs. **So it is never the answer to a PR that has already merged, and never
+something to propose because one keyword did not bind.** Whether a repository runs with the flip
+is a decision made once, at arc start, by the user.
 
 ---
 
 ## Verify — the step that is not optional
 
-Never assume a write landed. This is the same behaviour already applied routinely to file
-edits, and the asymmetry is the whole finding:
+Never assume a write landed. **The API returns success regardless, on a website nobody
+re-opens** — why that costs more than a bad file edit is
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md)'s.
 
-| | File edit | Tracker write |
-|---|---|---|
-| Verification | The tool errors if the match fails | The API returns success regardless |
-| Visibility | The diff is in front of the user | Lives on a website nobody re-opens |
-| Detection | Immediate | Only when someone happens to look |
+**A milestone item is one unit of work, so a PR that closes an issue takes no milestone.**
+The issue is the unit and already carries it; giving the PR one counts the same work twice and
+ticks twice when it lands. A direct PR has no issue behind it, so it is the unit — set its
+milestone at creation, `gh pr create --milestone "<name>"`, or it drops out of the milestone
+view, which is the only place a human sees the arc as one unit.
 
-**Set the milestone at creation.** `gh pr create --milestone "<name>"`. A PR without one
-drops out of the milestone view, which is the only place a human sees the arc as one unit.
-This is unrelated to the base-branch problem and purely an omission — every PR in this
-repo's first two arcs was missing it.
+| PR | Milestone |
+|---|---|
+| Carries a closing keyword | None |
+| No closing keyword — a direct PR | Required |
+
+**The keyword decides it, not whether the link bound.** On a base other than the default
+nothing binds and closure defers to the arc PR — but the issue exists and carries the
+milestone either way.
+
+**Side effect worth having: a PR in the milestone is, by definition, a direct PR.** The view
+had no other way to tell the two apart. `hooks/tracker-verify`'s `milestone` check reports
+both directions. #204.
+
+**The fields set at creation rather than written into the body are listed at the top of
+[`templates/issue.md`](../../templates/issue.md) and
+[`templates/pr.md`](../../templates/pr.md)** — milestone, label, type and base for an issue;
+milestone, label, base and draft for a PR, which carries no issue type. Each is invisible once
+missed, which is why they are named where the body is assembled and not only here.
 
 After **every** create or edit:
 
@@ -312,7 +534,7 @@ turns one visible failure into two invisible ones.
 
 ### Scan what you wrote
 
-Three of the six evaluation cases are mechanically catchable. Before and after writing:
+Three of the seven evaluation cases are mechanically catchable. Before and after writing:
 
 | Pattern | |
 |---|---|
@@ -320,35 +542,34 @@ Three of the six evaluation cases are mechanically catchable. Before and after w
 | A number that was meant to change and did not | Diff the old body against the new |
 | A date inconsistent with reality | Compare against the current date |
 | A referenced commit or issue that does not exist | Check it resolves |
-| A closing keyword anywhere but the last line | `tools/verify-tracker-body.sh body <file>` |
-| A title that promises what merging will not deliver | `tools/verify-tracker-body.sh title "<title>" [file]` |
+| A closing keyword anywhere but the closing block — the final lines, one keyword each | `tests/verify-tracker-body.sh body <file>` |
+| A title that promises what merging will not deliver | `tests/verify-tracker-body.sh title "<title>" [file]` |
 
 The first four patterns are *scaffolding survived*. The last two are the opposite shape —
 text that is complete and correct-looking and promises something it should not. Each needs
 its own check, because reading for the first four does not surface either.
 
 ```sh
-tools/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
-tools/verify-tracker-body.sh body body.md      # before the write
-tools/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
+tests/verify-tracker-body.sh title "fix: a spawned issue records no parent" body.md
+tests/verify-tracker-body.sh body body.md      # before the write
+tests/verify-tracker-body.sh binding 54 refs   # after — did intent match what bound?
 ```
 
 All three report and none blocks. `binding` is the only one that has to run after the write
 — it reads the API. `title` and `body` are decidable from text, so running them afterwards
 means the wrong thing is already in the tracker.
 
-`hooks/tracker-verify` runs the mechanical half at branch create, PR open, and PR merge.
-The judgement half — *does this match what we agreed* — is this skill's.
+`hooks/tracker-verify` runs the mechanical half on `gh issue create|edit|close`, on
+`gh pr create|edit`, on `gh pr ready` and on `gh pr merge`. The judgement half — *does this
+match what we agreed* — is this skill's.
 
 ---
 
 ## Actions agreed in conversation
 
-Two of the six cases are not verification failures. **The write never started.** Something
-was agreed mid-conversation and had nowhere to go.
-
-> *"i asked you to update #12 with the new component selection. i checked and that didn't
-> happe. please do that before we forget again"*
+Two of the seven cases are not verification failures. **The write never started.** Something
+was agreed mid-conversation and had nowhere to go —
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) Shape A.
 
 **Capture immediately into the handoff's open threads; file at a checkpoint.** Filing every
 provisional remark produces tracker noise; forgetting produces the case above. The handoff
@@ -371,10 +592,12 @@ keyword entirely:
 - ✗ "Does not close #42"
 - ✓ "This does not complete the capability — the deliverable in #42 is …"
 
-**This trap shipped a defect while this section was loaded and read.** Prose does not stop
-it, so the rule is placement rather than phrasing: one keyword, on the last line, checked by
-`tools/verify-tracker-body.sh body` before the write. Escaping the keyword is a workaround
-for writing *about* the trap in a document, not a fix.
+**Prose does not stop it** — it shipped once with this section loaded,
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) — so the rule is
+placement rather than phrasing: keywords only in the closing block — the
+final lines, one keyword per line and nothing else on them; one line for one issue, one line
+per issue for several — checked by `tests/verify-tracker-body.sh body` before the write.
+Escaping the keyword is a workaround for writing *about* the trap in a document, not a fix.
 
 ### Hand-attached links are separate from body keywords
 
@@ -397,13 +620,40 @@ panel → ✕.
 edit the file, write it back — and read it back again:
 
 ```sh
-gh issue view NN --json body --jq .body > body.md
-gh issue edit NN --body-file body.md
+gh issue view NN --json body --jq .body > body.md \
+  && [ -s body.md ] \
+  && cp body.md body.before \
+  && python edit.py body.md \
+  && ! cmp -s body.before body.md \
+  && gh issue edit NN --body-file body.md
+
 gh issue view NN --json body --jq .body | grep -n 'the thing you changed'
 ```
 
-**A redirect to a path a later step cannot see produces an unmodified body, and `gh`
-reports success.** Write the temp file somewhere the shell and any helper agree on.
+**The commands are independent, and that is the trap.** Run separately, a middle command that
+dies leaves the last one running against the file an earlier one wrote — `gh` writes the
+**original** body back and reports success. **Guard the write-back:** chain it on the edit's
+exit status, or compare the file against a copy taken before the edit. The snippet above does
+both, because neither alone covers everything: `&&` misses an edit that exits 0 having changed
+nothing, and `cmp` misses nothing but is the one people drop.
+
+**Guard the read as well, in the same chain.** A failed `gh issue view` leaves an empty
+`body.md` — the redirect truncated it before the command failed — and no `body.before` at
+all. `cmp` against a missing file exits **2**, so `! cmp` is *true* and the write-back runs
+anyway. `[ -s body.md ]` stops it, and it has to be **one chain**: split in two, the read's
+failure never reaches the write.
+
+**The failure is the edit step failing, not only a path the next step cannot see** — three
+times in one session, [m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md),
+*The write-back that wrote the original back*.
+
+| Why the edit step dies | |
+|---|---|
+| **A Windows path in a non-raw string literal** | The repeat offender — it fails at **parse** time, before any edit runs. Use a raw string, forward slashes, or keep the path out of the source |
+| **A path a later step cannot see** | Write the temp file somewhere the shell and any helper agree on. Git Bash's `/tmp` is not a Windows interpreter's `/tmp` |
+
+**The read-back stays mandatory regardless.** The guard stops the bad write; the read-back
+proves it.
 
 ### Non-ASCII and the console
 
@@ -412,41 +662,99 @@ body to a file rather than passing it inline.
 
 ---
 
-## Spawned versus related
+## Related — one table, four kinds
 
-When work uncovers new work, classify it by **cause, not by subject**.
+**A body has one `Related` section, it is a table, and it is the last thing in the body.**
+There is no separate `Spawned` heading. Spawned work is a row like every other edge, which is
+what keeps the spawn edges inside the last section, where the arc-log's tree reads them. **The
+section is last; the spawn rows are first within it.**
+
+**The table's shape and its position are [`templates/issue.md`](../../templates/issue.md)'s.**
+What follows is which row a given edge takes — the judgement the template does not carry.
+
+**Why the spawn edge is the table's first row:** the first question asked of an issue is where
+it came from, and a table is scanned down its first column.
+
+### Four kinds. There is no fifth
+
+| | Means |
+|---|---|
+| **Spawned by** | The parent — the effort that caused this issue to exist. First row |
+| **Spawned** | This effort caused that one to exist |
+| **Blocked by** | This cannot start until that one lands |
+| **Related** | It exists independently and touches the same area |
+
+**A fifth word is a synonym for one of these.** *Creates*, *Depends on* and *See also* were
+each reached for and are each wrong. One word per meaning, or the column sorts nothing.
+
+**The parent's rows use the same table.** The edge is written from both ends and both ends
+look identical, so neither side has a second shape to learn.
+
+### `Blocked by #NN` also goes in the body as a bare line
+
+Under the table, on its own line:
+
+```text
+Blocked by #136
+```
+
+**The driver greps for it.** `| Blocked by | [#136](…) |` splits the words from the number
+across two cells, so nothing matching `Blocked by #[0-9]+` finds it. The table is for the
+reader and the bare line is for the machine; dropping either loses one of them.
+
+### Spawned — the test is cause, not subject and not surprise
 
 | | Test |
 |---|---|
-| **Spawned** | This effort caused the issue to exist. It would not have been filed otherwise |
+| **Spawned** | This effort caused it to exist. It would not have been filed otherwise |
 | **Related** | It exists independently and touches the same area |
 
-The common error is filtering on topic — rejecting a spawned issue because its subject looks
-unrelated to the parent. A documentation cleanup discovered while editing a diagram is
-**spawned**: the parent effort is why it exists, regardless of what it is about.
+**A deliverable counts, not only a discovery.** Something the work needed to exist is spawned
+whether or not it was foreseen — [#196](https://github.com/Calyx-Engineering/arc/issues/196)
+was created by [#194](https://github.com/Calyx-Engineering/arc/issues/194) and belongs in
+#194's `Spawned` rows. *Unplanned* is not the test; *caused* is.
 
-Keep spawned work in a `Spawned` section at the end of the parent issue, and say plainly
-whether any of it blocks the parent. It is also the raw material for the arc-log's tree.
+The common error the other way is filtering on **topic** — rejecting a spawned issue because
+its subject looks unrelated to the parent. A documentation cleanup discovered while editing a
+diagram is spawned: the parent effort is why it exists, whatever it is about.
 
-**Spawned work is not always an issue.** A small fix taken branch-to-PR is spawned work too,
-and it belongs in the parent's `Spawned` section like any other row. Two things then carry the link:
+**Spawned work is not always an issue.** A small fix taken branch-to-PR is spawned work and
+gets a row like any other. Two things then carry the link:
 
 | | |
 |---|---|
-| **The parent's `Spawned` section** | Gets a row naming the PR, same as it would an issue |
+| **The parent's `Spawned` row** | Names the PR, exactly as it would an issue |
 | **The PR body** | Carries `Spawned by #NN` — the only place the relationship exists when there is no issue |
 
 Without both, a no-issue PR is invisible to the arc's tree: the tree is built from what
 records its own parent, and a PR nobody linked records nothing.
 
+### `Spawned` holds units of work. Nothing else
+
+**A unit of work is an issue, or a PR with no issue.** That is the whole admissible set, and
+it has to be stated as a negative — a cause test on its own admits anything session-shaped.
+
+| Not a unit of work | Where it belongs |
+|---|---|
+| **A discarded approach** | The dev-log, as a decision. Ruling something out is not filing work |
+| **An option raised in conversation** | Nowhere yet. Writing it down does not promote it to work |
+| **A document produced by the work** | Nowhere. It is an output of the unit, not a unit of its own |
+| **A known limitation of a tool** | The dev-log. It becomes a row only when someone files the issue to fix it |
+
+**Corrected eight times in real work** — case 7 of the evaluation set,
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) Shape C.
+
+**This does not weaken the rule below.** A row for real work that was decided against stays,
+marked. What is barred is a row that was never work.
+
 ### A row that was decided against stays, marked
 
 **Never delete a `Spawned` row.** When the work is abandoned — folded into something else,
-ruled out, or overtaken — mark it and leave it where it is.
+ruled out, or overtaken — mark it in the first column and leave it where it is.
 
-```text
-| **Abandoned** — folded into #78 | A dev-log for every merged unit |
-| **Abandoned** — the shared `temp/` branch, disproved by PR #111 | Retarget a PR's head |
+```markdown
+| **Spawned — abandoned**, folded into #78 | #94 | a dev-log for every merged unit |
+| **Spawned — abandoned**, disproved by PR #111 | #102 | the shared `temp/` branch, to retarget a PR's head |
 ```
 
 | | |
@@ -455,8 +763,8 @@ ruled out, or overtaken — mark it and leave it where it is.
 | **Say what happened to it**, not only that it stopped | *Abandoned* alone leaves the next reader to re-derive whether it was wrong, done elsewhere, or deferred — which is the work the row exists to save |
 | **A deleted row loses the spawn edge** | The tree is built from recorded relationships, so a removed row does not become an unspawned discovery. It becomes one nobody can see was ever considered |
 
-**A record of what was chosen against is worth more than a tidy table.** The `Spawned` section
-is a growing definition of what this work turned out to be, not a to-do list that gets cleared
+**A record of what was chosen against is worth more than a tidy table.** The spawn rows are a
+growing definition of what this work turned out to be, not a to-do list that gets cleared
 down — so length is evidence, and pruning it destroys the evidence.
 
 ---
@@ -473,12 +781,14 @@ endpoint, not the starting point.** Reviewers read it before the diff.
 
 ## The evaluation set
 
-Six real cases with checkable outcomes, in
+Seven real cases with checkable outcomes, in
 [m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md). **Any change to
 this skill is tested against them.** Cases 1–2 are *never written*; cases 3–6 are *written
-wrong and reported right*.
+wrong and reported right*; case 7 is *written right into the wrong place* — spawn rows
+populated with things that were never work, which no read-back catches because the body
+matches the intent and the intent was wrong.
 
-The base-branch case above is the seventh, and the first isolated by this repo's own work.
+The base-branch case above is the eighth, and the first isolated by this repo's own work.
 
 ---
 

@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+# activation-log — the record every Arc hook leaves when it fires. Carries m44.
+#
+# Arc's artifacts fired without leaving a trace, so the only evidence a hook ran was what
+# surfaced in conversation — and verbosity can turn that off. This library is the branch
+# verbosity cannot reach: one entry per firing, appended before exit, on every path.
+#
+# NOT A HOOK. It is sourced by one, immediately after the hook's own kill switch:
+#
+#     . "$(dirname "$0")/lib/activation-log"
+#     arc_log_event edit-denied "file=$FILE"
+#
+# From that line on the entry is written whichever way the hook exits — an early `exit 0`,
+# a `deny`, a crash — because the write is on an EXIT trap rather than at any one exit. A
+# hook with fourteen exit paths would otherwise instrument thirteen of them.
+#
+# WHAT A HOOK CALLS. Nothing is mandatory; an entry is written either way.
+#
+#   arc_log_event <event> [subject]   what happened, and to what. `pr-open` `pr=51 issue=39`
+#   arc_log_pass  <name>[=<value>]    a declared check that ran and passed
+#   arc_log_fail  <name>[=<value>]    a declared check that ran and found something
+#   arc_log_skip  <name> <why>        a declared check that did not run, and the reason
+#   arc_log_outcome <word> <detail>   one of ok · asked · denied · repaired · failed, then detail
+#
+# ONE DECLARATION DRIVES BOTH. The `checks:` line in the hook's own `camp-reports:` header
+# is the list. A declared check the hook never marked is written to `skipped:` as `not
+# reached`, so a check that silently stopped running is visible rather than absent — except
+# where NO check ran and nothing is reported, which is most firings and carries no `skipped:`
+# line at all. See `volume` at the write, and #238.
+# Format: templates/event-log.md · Spec: docs/product-architecture/mechanisms/m44-event-log.md
+#
+# IT RECORDS A SESSION, NOT A TEST RUN. The log is written only when `CLAUDE_PROJECT_DIR` is
+# set — which Claude Code sets for a hook and nothing else does — or when `ARC_EVENT_LOG`
+# names a file, which is how the case harness reads back what a firing wrote. A `$PWD`
+# fallback was the first shape of this, and it made a verifier's fixtures indistinguishable
+# from real firings: one `tools/verify-hook.sh` run appended ten fabricated entries to the
+# tracked, append-only log, and a full `verify-all.sh` run appended hundreds. A record that
+# cannot tell a test from a session is worse than no record, because it is read as one.
+#
+# NO SUBPROCESSES ON THE WRITE PATH, and this is a requirement rather than a preference.
+# `mode-guard`, `handoff-archive` and `session-index` are PreToolUse on Bash and
+# `tracker-verify` and `camp-branch-check` are both PostToolUse on Bash, so anything here is
+# paid five times per Bash tool call. The first version used `printf | tr | sed` inside a
+# command substitution for every field and a
+# five-process pipeline to read the declaration — about twenty-five spawns per firing, which
+# measured at +1.4s per Bash call on Windows. Everything below is parameter expansion and
+# builtins; the only forks left are `date` where the shell has no time builtin, and `mkdir`
+# where the log's directory does not yet exist. m44 lists `cheap to append` as a requirement,
+# and a hook that costs a second is a hook someone turns off.
+#
+# VERBOSITY NEVER REACHES THIS FILE. Nothing here reads the operating agreement. Turning the
+# volume down costs display and never data, which is the whole of m44.
+#
+# IT FAILS OPEN, AND SILENTLY. A log that can break a hook is worse than no log: the hook is
+# a guardrail and the log is a record of one. Every write is redirected, every failure is
+# swallowed, and nothing here writes to stdout — a PreToolUse hook's stdout is parsed as a
+# permission decision, so one stray line there denies or allows by accident.
+#
+# BASH, NOT POSIX SH. Every hook is invoked as `bash <file>` by `hooks/hooks.json` and by
+# both verifiers, so `${v//a/b}` and `printf -v` are available. That is what makes the
+# no-subprocess rule above achievable at all.
+
+# ---- kill switch ----------------------------------------------------------------
+# `bash hooks/hooks-off.sh <hook> 30` makes that hook inert, and inert includes leaving no
+# record. The functions are still defined so a sourcing hook cannot die on a missing
+# command; only the trap that writes is skipped. `lib/hooks-off` guards against being
+# sourced twice, so the hook that already consulted it pays nothing here. #202.
+if . "${BASH_SOURCE[0]%/*}/hooks-off" 2>/dev/null && arc_hooks_off "${0##*/}"; then _ARC_LOG_OFF=1; else _ARC_LOG_OFF=0; fi
+
+_ARC_LOG_ARTIFACT="${0##*/}"
+_ARC_LOG_HOOK_FILE="$0"
+_ARC_LOG_EVENT=""
+_ARC_LOG_SUBJECT=""
+_ARC_LOG_RAN=""
+_ARC_LOG_FAILED=""
+_ARC_LOG_SKIPPED=""
+_ARC_LOG_MARKED=""
+_ARC_LOG_OUTCOME=""
+_ARC_LOG_DETAIL=""
+
+# `printf '%(...)T'` is a builtin and `date` is a fork. Probe once, here, rather than
+# deciding at write time — the probe itself costs nothing.
+if printf -v _ARC_LOG_PROBE '%(%Y)T' -1 2>/dev/null && [ -n "$_ARC_LOG_PROBE" ]; then
+  _ARC_LOG_TIME_BUILTIN=1
+else
+  _ARC_LOG_TIME_BUILTIN=0
+fi
+
+# Flatten into `_ARC_FLAT` rather than returning a string: a command substitution is a fork,
+# and this runs on every field of every entry. An entry is three lines and a denial reason is
+# a paragraph, so a newline that got through would split one entry into two — and "one entry
+# per firing" is the shape the whole gate is built on.
+_arc_log_flat() {
+  _ARC_FLAT="$1"
+  _ARC_FLAT="${_ARC_FLAT//$'\n'/ }"
+  _ARC_FLAT="${_ARC_FLAT//$'\r'/ }"
+  _ARC_FLAT="${_ARC_FLAT//$'\t'/ }"
+  while [ "$_ARC_FLAT" != "${_ARC_FLAT//  / }" ]; do _ARC_FLAT="${_ARC_FLAT//  / }"; done
+  _ARC_FLAT="${_ARC_FLAT# }"
+  _ARC_FLAT="${_ARC_FLAT% }"
+}
+
+arc_log_event() {
+  _arc_log_flat "$1"; _ARC_LOG_EVENT="$_ARC_FLAT"
+  if [ $# -gt 1 ]; then _arc_log_flat "$2"; _ARC_LOG_SUBJECT="$_ARC_FLAT"; fi
+  return 0
+}
+
+arc_log_outcome() {
+  _arc_log_flat "$1"; _ARC_LOG_OUTCOME="$_ARC_FLAT"
+  if [ $# -gt 1 ]; then _arc_log_flat "$2"; _ARC_LOG_DETAIL="$_ARC_FLAT"; fi
+  return 0
+}
+
+# For a `deny` or `report` function, which fires from many call sites. A site that named its
+# own outcome keeps it; one that did not still records that the hook spoke up, rather than
+# leaving a denial on the record as `ok`.
+arc_log_outcome_default() {
+  [ -n "$_ARC_LOG_OUTCOME" ] || arc_log_outcome "$@"
+  return 0
+}
+
+# The name before any `=value`, so a check recorded as `mode-row=Manual` still counts as the
+# declared check `mode-row` when the unrun list is worked out.
+_arc_log_mark() {
+  _ARC_LOG_MARKED="$_ARC_LOG_MARKED ${1%%=*}"
+}
+
+arc_log_pass() {
+  _arc_log_flat "$1"
+  _ARC_LOG_RAN="$_ARC_LOG_RAN${_ARC_LOG_RAN:+ · }$_ARC_FLAT"
+  _arc_log_mark "$_ARC_FLAT"
+  return 0
+}
+
+arc_log_fail() {
+  _arc_log_flat "$1"
+  _ARC_LOG_RAN="$_ARC_LOG_RAN${_ARC_LOG_RAN:+ · }$_ARC_FLAT"
+  _ARC_LOG_FAILED="$_ARC_LOG_FAILED${_ARC_LOG_FAILED:+, }${_ARC_FLAT%%=*}"
+  _arc_log_mark "$_ARC_FLAT"
+  return 0
+}
+
+arc_log_skip() {
+  _arc_log_flat "$1"; _arc_skip_name="$_ARC_FLAT"
+  _arc_log_flat "${2:-no reason given}"
+  _ARC_LOG_SKIPPED="$_ARC_LOG_SKIPPED${_ARC_LOG_SKIPPED:+ · }$_arc_skip_name ($_ARC_FLAT)"
+  _arc_log_mark "$_arc_skip_name"
+  return 0
+}
+
+# The `checks:` line of the hook's own header, into `_ARC_DECLARED`. Read from the file
+# rather than restated here: two lists is how a declaration and a log drift apart. The read
+# stops at the header, so the size of the hook below it does not matter.
+_arc_log_declared() {
+  _ARC_DECLARED=""
+  while IFS= read -r _arc_l; do
+    case "$_arc_l" in
+      '# checks: '*)
+        _ARC_DECLARED="${_arc_l#\# checks: }"
+        _ARC_DECLARED="${_ARC_DECLARED//,/ }"
+        return 0
+        ;;
+      '# ---- '*) return 0 ;;
+    esac
+  done
+  return 0
+  # The redirect wraps the compound, not the loop: a failed redirect PRINTS, and this runs
+  # inside an EXIT trap where a PostToolUse hook's stderr reaches the transcript. It is the
+  # only path in this file that could speak, and the file's whole contract is that it cannot.
+} 2>/dev/null < "$_ARC_LOG_HOOK_FILE"
+
+# Where the entry goes, into `_ARC_LOG_FILE` — empty means do not write. `ARC_EVENT_LOG` is
+# the case harness's override. `CLAUDE_PROJECT_DIR` is what says a session is running: see
+# the header. Neither set is a verifier, and a verifier leaves no trace.
+_arc_log_path() {
+  _ARC_LOG_FILE=""
+  if [ -n "${ARC_EVENT_LOG:-}" ]; then
+    _ARC_LOG_FILE="$ARC_EVENT_LOG"
+  elif [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    _ARC_LOG_FILE="$CLAUDE_PROJECT_DIR/.claude/arc/log.md"
+  fi
+}
+
+# ---- the write ------------------------------------------------------------------
+# One `printf`, appended. Never read the file first: an append that has to locate a header
+# is an append that gets skipped under load, and skipped is how the record gets holes.
+_arc_log_write() {
+  _arc_rc=$?
+  [ "$_ARC_LOG_OFF" = "1" ] && exit "$_arc_rc"
+
+  _arc_log_path
+  [ -n "$_ARC_LOG_FILE" ] || exit "$_arc_rc"
+
+  # ---- volume ---------------------------------------------------------------------
+  # A firing that reached no declared check and reports nothing writes no `skipped:` line —
+  # the whole line, both of the things it would have held, neither of which is evidence about
+  # the firing:
+  #
+  #   the unreached list   this hook's own `checks:` declaration copied back, every name
+  #                        marked `not reached`. Seventeen of them for `tracker-verify`
+  #   explicit skips       `arc_log_skip` reasons recorded on the way out, which on a firing
+  #                        that reached nothing restate the `outcome:` line — `skipped:
+  #                        index-entry (this session was already indexed) · orphan-sweep
+  #                        (same)` under `outcome: ok — already indexed this session`
+  #
+  # Measured over the log rotated out at arc 03's close, docs/arc-log/events/arc-03-camp:
+  # 14,734 entries in 4,643,015 bytes, of which 11,156 were of this kind and the skipped lines
+  # of the 11,105 cleanly-written ones were 2,342,122 bytes — 50% of the file, restating what
+  # the two lines above them already said. #238.
+  #
+  # THE ENTRY IS NEVER OMITTED, and sampling was rejected for the same reason: one firing is
+  # one entry on every path, or `tests/verify-activation-log.sh` has nothing it can assert and
+  # a hook that stopped firing becomes indistinguishable from one that was not sampled.
+  #
+  # THE CONDITION IS NARROW, AS A GUARD RATHER THAN FOR A POPULATION. `denied`, `failed` and
+  # `repaired` keep the full line whatever else is true. No entry in that log was both — a
+  # hook that reports something has reached a check first — so the clause costs nothing and
+  # keeps the compression off the entries a human actually reads.
+  #
+  # It also takes the declaration read off the common path. `_arc_log_declared` opens and
+  # scans the hook file, and this branch is most firings of the five registrations on the
+  # `Bash` matcher — so the cheapest entry to write is now also the one written most.
+  if [ -z "$_ARC_LOG_RAN" ] && [ "${_ARC_LOG_OUTCOME:-ok}" = "ok" ]; then
+    _arc_checked="— none reached"
+    _arc_skipped=""
+  else
+    _arc_log_declared
+    _arc_unrun=""
+    # `set -f` because the split below is deliberate and the glob is not: a `*` or `[` in a
+    # hook's `checks:` line would otherwise expand against whatever directory the session is
+    # in, and the skipped line becomes a directory listing.
+    set -f
+    for _arc_c in $_ARC_DECLARED; do
+      case " $_ARC_LOG_MARKED " in
+        *" $_arc_c "*) ;;
+        *) _arc_unrun="$_arc_unrun${_arc_unrun:+ · }$_arc_c (not reached)" ;;
+      esac
+    done
+    set +f
+
+    _arc_skipped="$_ARC_LOG_SKIPPED"
+    [ -n "$_arc_unrun" ] && _arc_skipped="$_arc_skipped${_arc_skipped:+ · }$_arc_unrun"
+
+    # State what was checked, not only what was found. A line of passes is the evidence the
+    # machinery ran at all — recording only failures makes a silent hook look like a working one.
+    if [ -n "$_ARC_LOG_FAILED" ]; then
+      _arc_checked="$_ARC_LOG_RAN — $_ARC_LOG_FAILED found something"
+    elif [ -n "$_ARC_LOG_RAN" ]; then
+      _arc_checked="$_ARC_LOG_RAN — all ok"
+    else
+      _arc_checked="— none reached"
+    fi
+  fi
+
+  if [ "$_ARC_LOG_TIME_BUILTIN" = "1" ]; then
+    TZ=UTC printf -v _arc_ts '%(%Y-%m-%dT%H:%MZ)T' -1 2>/dev/null
+  else
+    _arc_ts="$(date -u +%Y-%m-%dT%H:%MZ 2>/dev/null)"
+  fi
+
+  _arc_line="$_arc_ts  $_ARC_LOG_ARTIFACT  ${_ARC_LOG_EVENT:-fired}"
+  [ -n "$_ARC_LOG_SUBJECT" ] && _arc_line="$_arc_line  $_ARC_LOG_SUBJECT"
+
+  # Only when it is missing. In a session it never is, and this is on the path of every
+  # Bash tool call.
+  _arc_dir="${_ARC_LOG_FILE%/*}"
+  [ "$_arc_dir" = "$_ARC_LOG_FILE" ] || [ -d "$_arc_dir" ] || mkdir -p "$_arc_dir" >/dev/null 2>&1
+
+  {
+    if [ -n "$_arc_skipped" ]; then
+      printf '%s\n  checked: %s\n  outcome: %s — %s\n  skipped: %s\n' \
+        "$_arc_line" "$_arc_checked" "${_ARC_LOG_OUTCOME:-ok}" "${_ARC_LOG_DETAIL:-nothing to report}" "$_arc_skipped"
+    else
+      printf '%s\n  checked: %s\n  outcome: %s — %s\n' \
+        "$_arc_line" "$_arc_checked" "${_ARC_LOG_OUTCOME:-ok}" "${_ARC_LOG_DETAIL:-nothing to report}"
+    fi
+  } >> "$_ARC_LOG_FILE" 2>/dev/null
+
+  # The hook's exit code, not this function's. An EXIT trap that changes the status turns a
+  # PostToolUse report into silence, or a clean allow into a crash.
+  exit "$_arc_rc"
+}
+
+trap _arc_log_write EXIT

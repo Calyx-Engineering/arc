@@ -1,0 +1,2 @@
+# two closes in one command, both linked — each is looked up on its own, and neither has a finding. The loop over the arms must not invent one, and must terminate
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"1","tool_input":{"command":"gh issue close 1 && gh issue close 2"}}

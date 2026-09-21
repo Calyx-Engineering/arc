@@ -23,7 +23,7 @@ friction between human and AI.
 
 **Status: under construction.** The architecture and mechanism specs are complete; the
 plugin skeleton, the hook harness, and the branch guard are the first working parts.
-[ROADMAP.md](ROADMAP.md) says what lands next.
+What lands next is the current arc's log under [docs/arc-log/](docs/arc-log/) and the tracker's milestones.
 
 ---
 
@@ -32,9 +32,6 @@ plugin skeleton, the hook harness, and the branch guard are the first working pa
 **Two routes, and both add a marketplace.** They differ only in where the marketplace comes from.
 Full process — versioning, what a release consists of, what gates one — in
 [`docs/release/release-process.md`](docs/release/release-process.md).
-
-> **The repository is private.** Both routes use your existing git credentials. Run
-> `gh auth setup-git` once so Claude Code can clone without prompting.
 
 ### Local — a clone on disk
 
@@ -75,18 +72,73 @@ The path is the repository root — the directory holding `.claude-plugin/`. Aft
 
 ## Turning hooks off
 
-Arc ships hooks that can deny a tool call. If one misbehaves, from any terminal:
+Arc ships hooks that can deny a tool call. If one misbehaves, from any terminal in the
+repository it is misbehaving in — PowerShell, cmd or bash, the same line in each:
 
 ```bash
-touch ~/.claude/HOOKS_OFF
+bash hooks/hooks-off.sh branch-guard 30
 ```
 
-Every Arc hook goes inert immediately — no editing settings while the broken thing fights
-back. Restore with `rm ~/.claude/HOOKS_OFF`.
+That hook goes inert immediately, and the command prints what it muted, where it wrote, when
+the mute lapses, and how to end it early. `all` in place of a hook name mutes every one of
+them; `status` reads back what is muted; `clear` restores.
 
-Every hook opens with the line that checks for that file, and
+**In a repository that has Arc installed as a plugin, there is no `hooks/` directory in
+front of you** — the plugin's is under Claude Code's plugin cache, and the path carries the
+marketplace and the version:
+
+```bash
+bash ~/.claude/plugins/cache/calyx-engineering/arc/<version>/hooks/hooks-off.sh branch-guard 30
+```
+
+`<version>` is the one `/plugin` lists. Nothing about the mute changes: it is still written
+into the repository you are standing in, because the command reads that from where you run it
+and not from where it lives — and every line it prints back, including how to restore, names
+the path you invoked it by.
+
+| | |
+|---|---|
+| **It is a command, not a file** | It refuses a name that is not a hook and prints the ones that are. Placing a file by hand had four ways to go wrong and feedback on none |
+| **Per hook** | Muting `branch-guard` to get past it leaves `mode-guard` guarding |
+| **It expires** | Thirty minutes by default, eight hours at most. A forgotten mute heals itself |
+| **This repository only** | The state lives in this repository's git directory, so no other repository on the machine is touched — and being inside `.git`, a muted repository cannot be committed |
+
+Every hook opens with the line that consults it, and
 [`tools/verify-hook.sh`](tools/verify-hook.sh) fails a hook that has lost it. The full
 reasoning is in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md#safe-hook-development).
+
+---
+
+## Using Arc
+
+The `/` menu lists more than what you type. Four commands are meant to be typed:
+
+| Command | What it does |
+|---|---|
+| `/handoff-resume` | Resumes the arc from the handoff — reads it, then runs its ordered actions |
+| `/handoff-write` | Saves the transcript, writes or updates the handoff, and prints the prompt for the next chat |
+| `/arc-run` | Runs the next set of the arc's playlist — names its tracks, waits for a yes, then dispatches them |
+| `/camp` | Asks Camp where the arc stands, what was decided, or what comes next |
+
+Everything else in the menu is a skill. **Skills fire on their own, from what you say — they are
+not typed.** The table below is reference for what each one does when it fires, not a list of
+commands.
+
+| Skill | What it does when it fires |
+|---|---|
+| `arc-intent` | Classifies proposed work — Agreed, Derived, or Escalate — against the arc's stated intent |
+| `autonomy-set` | Switches the session between manual and autonomous mode, and announces which |
+| `camp` | Answers where the arc stands, what was decided, and what comes next, from the record. Also addressable by name, or `/camp` |
+| `chat-response` | Shapes a reply's length and structure to the stated budget |
+| `decompose` | Turns a spec, idea, or accumulated `Spawned` section into a proposed, ordered set of issues |
+| `engineering-report` | Writes or revises a report, README, or findings write-up |
+| `handoff` | Reads or writes the session handoff: the staleness checks, what it holds, and the ordered actions the next session runs. Also addressable by name |
+| `issue-write` | Checks an issue or PR body before it is created or edited, and reads the write back |
+| `plugin-retrospective` | Mines a work stretch's transcripts for tooling friction and turns it into plugin fixes. Also addressable by name |
+| `record-route` | Decides which file a decision, finding, or measurement belongs in, across the K1–K4 ladder |
+| `relief-valve` | Offers a way back to the point when questioning has run long with nothing written |
+| `spec-interview` | Interviews for an unspecified capability, then writes up the decisions |
+| `work-watch` | Runs an ongoing sweep for eight things — commit points, test obligations, drift — while work proceeds |
 
 ---
 
@@ -137,6 +189,5 @@ self-improvement piece holds the mechanisms that regenerate it.
 | [docs/suite-architecture/](docs/suite-architecture/) | **What the three-plugin suite is.** Boundaries, build order, mechanism numbering. Mirrored files live here |
 | [docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md](docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
 | [docs/reference-timescope/](docs/reference-timescope/) | TimeScope's working files — source material for extraction, do not edit |
-| [docs/reference-roadz/](docs/reference-roadz/) | ROADZ's `issue-writing` and `engineering-report` skills — same |
 | [hooks/](hooks/) | The hooks, and the `TEMPLATE` every new one starts from |
 | [tools/verify-hook.sh](tools/verify-hook.sh) | The gate — run it before any hook is registered |

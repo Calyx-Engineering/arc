@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Already fixed in the tree: hook returns explicit allow. Before, exit 2 in PreToolUse denied the session's first edit.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Exit 2 already fixed on both copies. Hook returns `allow` now. Direct PR needs only label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked: no edit or shell tools this session. Which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot set autonomous myself. Set HANDOFF.md's Execution mode row, then I proceed.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both: `hooks/branch-guard:125` PR numbers, `:98` agreement prefix.\n\nKill switch: keep `hooks-off.sh`, drop the say-it-in-chat rule.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Blocked. No edit or shell tools this session. Branch guard and exit 2 already fixed. Label and permission fixes: unknown to me. Name them.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes. But no hook is blocking here. Both hooks already carry the fixes. Nothing left to kill.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. Run from repo root:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `.git/arc-hooks-off` itself.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file does nothing. Run instead:\n\n```powershell\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. `HOOKS_OFF.txt` did nothing. Only the command works:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nAgreed on the design. Propose: keep the command, drop the say-it-in-chat rule.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Blocked: this session has no edit or shell tools. Draft to file yourself:\n\n| Field | Value |\n|---|---|\n| Title | `fix: kill switch mutes per hook, per repo, never machine-wide` |\n| Body | Replace `HOOKS_OFF.txt` with `.git/arc-hooks-off` entry, one hook, expiring. Closes #202 |",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

@@ -1,6 +1,7 @@
 ---
 name: camp
-description: Use when the user addresses Camp by name, or runs /camp, and when a question is answered from the committed record rather than from the conversation — where the arc stands, what was decided, what comes next, what closing an issue still requires. Not for questions about code, files, or execution; those are the main thread's. Whether proposed work belongs in this arc is arc-intent's.
+user-invocable: true
+description: Use when the user says "hey Camp" or "hi Camp", names Camp anywhere in the message, or asks "where are we at", "where we are", "what to do next", "up to speed" or "pick up from where we left off", or runs /camp — and when a question is answered from the committed record rather than from the conversation — where the arc stands, what was decided, what comes next, what closing an issue still requires. Fires when the name or the question is wrapped inside other instructions rather than being the whole message. A greeting to Camp followed by "please read handoff", a goal for the day, or three further requests is still a Camp turn — load Camp first, then let the rest of the turn load whatever owns it. Camp loading does not answer the rest: a turn that also asks for the handoff to be read, or for a transcript to be saved, is a handoff turn as well, and both load on the same turn. A request to read HANDOFF.md does not make the turn "about files" and does not hand it to the main thread — if Camp is named or the turn asks where things stand, camp fires alongside handoff, never instead of it. Not for questions about code, files, or execution; those are the main thread's. Whether proposed work belongs in this arc is arc-intent's.
 camp-reports: [amendment-proposed, note-written, status-answered, close-step-named, handoff-fired]
 checks: [documents-loaded, clause-named, record-read, close-step-order, closing-keyword-bound, handoff-current]
 ---
@@ -194,15 +195,15 @@ Three or four lines. Which issues are open, what merged, what is next.
 
 ### The close sequence — the same every time
 
-**Nine steps, in one order, every issue** — so the process does not vary with how much
+**Ten steps, in one order, every issue** — so the process does not vary with how much
 context the session still holds. The list, what owns each step and how each is confirmed:
 [`close-sequence.md`](../../docs/product-architecture/close-sequence.md).
 
 **Camp names which remain and stops at the first that is not done.** It does not recite all
-nine; a session three steps in hears about steps 4 onward. Each is confirmed landed before
-the next is named.
+ten; a session three steps in hears about steps 4 onward. Each is confirmed landed before
+the next is named — step 5 excepted, whose record lands with the PR at step 6.
 
-> **Camp refuses to call an issue closeable while step 6 is unverified.** `Closes #NN` on a PR
+> **Camp refuses to call an issue closeable while step 7 is unverified.** `Closes #NN` on a PR
 > into an arc branch reports success and binds nothing. The check is
 > `gh pr view <N> --json closingIssuesReferences` — an empty array means not closed, whatever
 > the body says.
@@ -263,10 +264,10 @@ Yes — an amendment. No — a note.
 
 [asked]        "Help me close this and get to the next issue."
 
-               Four steps remain on #41: two files uncommitted, no PR yet, step 6
-               unverified once it opens, and a soak line is due — it touches the
-               plugin. Next is #44, the relief valve; it comes off arc/03-camp and
-               depends on nothing unmerged.
+               Five steps remain on #41: two files uncommitted, the read-back not run,
+               no PR yet, step 7 unverified once it opens, and a soak line is due —
+               it touches the plugin. Next is #44, the relief valve; it comes off
+               arc/03-camp and depends on nothing unmerged.
 
 [asked]        "Should I file this as part of this arc?"
 
@@ -335,7 +336,7 @@ Format: [`camp-reports.md`](../../docs/product-architecture/camp-reports.md).
 ## Related
 
 - [`arc-intent`](../arc-intent/SKILL.md) — the intent check, the ladder and its four firing moments
-- [`close-sequence.md`](../../docs/product-architecture/close-sequence.md) — the nine steps, and what owns each
+- [`close-sequence.md`](../../docs/product-architecture/close-sequence.md) — the ten steps, and what owns each
 - [`camp-reports.md`](../../docs/product-architecture/camp-reports.md) — the declaration every acting artifact carries
 - `.claude/arc/camp/operating-agreement.md` — the authority on what Camp does here
 - [m43](../../docs/product-architecture/mechanisms/m43-camp-assistant.md) — the specification

@@ -1,8 +1,13 @@
 # Mechanism — The event log
 
-**Status:** partial — the artifact, its independence from verbosity, its consumers, the
-entry format and per-arc rotation are settled. Retention after an arc closes, and volume
-control, are open.
+**Status:** partial — implemented and unsoaked. Every registered hook writes an entry on
+every exit path, via `hooks/lib/activation-log`
+([#166](https://github.com/Calyx-Engineering/arc/issues/166)). The artifact, its independence
+from verbosity, its consumers, the entry format and volume control
+([#238](https://github.com/Calyx-Engineering/arc/issues/238)) are settled.
+Per-arc rotation is specified, performed and gated
+([#239](https://github.com/Calyx-Engineering/arc/issues/239)); retention after an arc closes
+is open.
 **Home:** Arc — Self-improvement.
 **Src:** 🔥 observed.
 **Covers:** m44.
@@ -43,6 +48,30 @@ setting.**
 **Plugin-level, not owned by any one mechanism.** It records what *every* artifact did — a
 `branch-guard` denial, an `issue-write` verification, a PR report. Filing it under a
 consumer's directory would imply an ownership no consumer has.
+
+**The live file is untracked; rotation is what commits an arc's events.** Every hook firing
+appends, so a tracked live log leaves every worktree dirty at every moment and one
+`git add -u` sweeps thousands of machine-written lines into a review diff
+([#273](https://github.com/Calyx-Engineering/arc/issues/273)). The path does not move — every
+reader still resolves `.claude/arc/log.md` — and nothing is lost, because the arc-close move
+to `docs/arc-log/events/` lands it somewhere git does carry.
+
+| | |
+|---|---|
+| **Live** | `.claude/arc/log.md` · gitignored · this arc's events, being appended to |
+| **Archived** | `docs/arc-log/events/arc-<NN>-<slug>.log.md` · tracked · a closed arc's events, committed by the rotation that moved them |
+
+**A record git does not hold is a record one `rm -rf` ends**, and that is the cost accepted
+here: an arc's events are recoverable only from the moment they are rotated. The alternative —
+a tracked file rewritten by machine on every tool call — makes every human diff unreadable,
+which loses the review the tracking was for.
+
+**The live log is per-worktree, and untracking it makes that visible rather than causing it.**
+The path resolves under `$CLAUDE_PROJECT_DIR`, so five worktrees keep five logs. While the file
+was tracked they were merged by whoever committed next; nothing merges them now, and **the
+archive a rotation produces is one worktree's slice rather than the arc's whole record.**
+Measured across the five trees live at arc 03's rotation: 58,210 · 58,466 · 60,014 · 62,089 ·
+58,481 lines, one of them holding 250 lines the archived copy does not.
 
 ---
 
@@ -89,6 +118,41 @@ not restated here, so the two cannot drift.
 machinery ran; only recording failures makes a silent artifact indistinguishable from a
 working one.
 
+### Volume
+
+**The rate is kept and the entry is what got smaller.** Five hook registrations sit on the
+`Bash` matcher — `mode-guard`, `handoff-archive` and `session-index` before the call,
+`tracker-verify` and `camp-branch-check` after — so an ordinary Bash tool call appends five
+entries. The log rotated out at arc 03's close holds **14,734 entries in 4,643,015 bytes**, and
+**11,156 of them (75%)** recorded a hook that returned before any declared check ran. Every
+number in this section is measured against that file,
+[`docs/arc-log/events/arc-03-camp.log.md`](../../arc-log/events/arc-03-camp.log.md), as
+committed. **The counting rule, because two passes of this got different answers:** an entry
+runs from its timestamp line to the next one, and the stripped population is those with exactly
+one `checked:` line reading `— none reached` and exactly one `outcome:` line starting `ok` — so
+the 96 torn and 50 merged entries below are excluded rather than guessed at.
+
+| Considered | |
+|---|---|
+| **Sample** | Rejected. Sampling makes a missing entry ordinary, so a hook that stopped firing is indistinguishable from one that was not sampled — the absence m44 exists to fix. It also ends `tests/verify-activation-log.sh` as a gate, which can only assert *one entry per firing* if that is true on every path |
+| **Log at a lower rate** | Rejected. The hooks fire at that rate because the tool calls happen at that rate; a hook that logs only sometimes is the sampling case wearing different clothes |
+| **Accept the rate, shrink the entry** | **Chosen.** Every firing still writes exactly one entry |
+
+**An entry where no declared check ran, and which reports nothing, carries no `skipped:`
+line** — the whole line, not only the part of it the artifact did not write. **2,342,122 bytes
+of 4,643,015 — 50% of the file**, over the 11,105 entries that meet the rule above. What that line held on such an entry is two things, and
+neither is evidence about the firing:
+
+| | |
+|---|---|
+| **The unreached list** | The artifact's own `checks:` declaration copied back, every name marked `not reached`. **1,213,851 bytes.** `tracker-verify` declares seventeen checks today and its lines in that log carry thirteen to fifteen — the declaration grew while the log was being written |
+| **Explicit skip reasons** | `arc_log_skip` calls made on the way out, which on a firing that reached nothing say what the `outcome:` line says: `skipped: index-entry (this session was already indexed) · orphan-sweep (this session was already indexed)` under `outcome: ok — already indexed this session`. **1,004,622 bytes** |
+
+**The narrowness is the design, and it is a guard rather than a measurement.** A `denied`,
+`failed` or `repaired` entry keeps its `skipped:` line whatever else is true. No entry in that
+log was both — a hook that reports something has always reached a check first — so the clause
+costs nothing today and is what keeps the compression away from the entries someone reads.
+
 ---
 
 ## Relationship to the `arc-log`
@@ -105,13 +169,14 @@ both are required for a retrospective to say anything useful.
 
 ## What is not designed
 
+**Aggregation across worktrees.** The live log is per-worktree and rotation archives one of
+them. Whether the others are merged at the boundary, kept as separate files, or accepted as
+lost, is undecided. Untracking did not create the divergence — it removed the accident that
+was masking it.
+
 **Retention after an arc closes.** Per-arc rotation is settled — the log moves to
 `docs/arc-log/events/` beside that arc's arc-log. How long it is kept there, and whether it
 is ever pruned, is undecided. The move preserves the file until that question has an answer.
-
-**Volume control.** An artifact firing on every tool call could dominate the file. Whether
-that needs sampling, or whether the artifact simply should not log at that rate, is unanswered
-until real volume exists.
 
 ---
 
@@ -121,4 +186,8 @@ until real volume exists.
 - [m31](m31-self-improvement-loop.md) — the retrospective that reads it
 - [m30](m30-transcript-mining.md) — what was said, beside this record of what ran
 - [m17](m17-k1-upkeep.md) — the `arc-log`, which records decisions rather than events
-- [#37](https://github.com/Calyx-Engineering/arc/issues/37) — the issue that builds this
+- [`hooks/lib/activation-log`](../../../hooks/lib/activation-log) — the library every hook sources to write one
+- [`tests/verify-activation-log.sh`](../../../tests/verify-activation-log.sh) — the gate that asserts one entry per firing, on every path
+- [`tests/verify-log-rotation.sh`](../../../tests/verify-log-rotation.sh) — the gate that asserts the live log names the arc writing to it
+- [#37](https://github.com/Calyx-Engineering/arc/issues/37) — the issue that built the format and the file
+- [#166](https://github.com/Calyx-Engineering/arc/issues/166) — the issue that gave it producers

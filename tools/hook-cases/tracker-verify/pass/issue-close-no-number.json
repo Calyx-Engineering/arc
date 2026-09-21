@@ -1,0 +1,2 @@
+# a close whose command names no issue number at all — there is nothing to read the link of, so the check does not run rather than guessing
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close --repo Calyx-Engineering/arc"}}

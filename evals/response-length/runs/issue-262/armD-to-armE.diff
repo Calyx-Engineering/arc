@@ -1,0 +1,38 @@
+112c112,113
+< met where it was set, gone on the following reply.
+---
+> met where it was set, gone on the following reply. The ten of those nineteen that the row below
+> counts are the ten with the shipped ordering.
+114,117c115
+< Every row counts every scoreable turn, the turn the budget was stated on included, which is the
+< scorer's own denominator:
+< 
+< | Budget, and which rules were in force | Median prose after it was set | Within it |
+---
+> | 20 words, and which of the two rules was in force | Median prose after it was set | Within it |
+119,122c117,127
+< | 60 words, aim low and cut | — | 47 of 50 |
+< | 20 words, neither | 55 words | 6 of 32 |
+< | 20 words, aim low only | 26 words | 37 of 109 |
+< | 20 words, aim low **and cut** | **19 words** | **76 of 106** |
+---
+> | Neither | 55 words | 6 of 32 |
+> | Aiming low only | 26 words | 37 of 109 |
+> 
+> Both rows count every scoreable turn, the turn the budget was stated on included, which is the
+> scorer's own denominator. **Neither row is this skill's current score, and that is deliberate** —
+> a rule that quotes its own measurement is stale the moment it works, and correcting such a figure
+> edits the file that was measured, so the correction needs a fresh measurement of its own.
+> [#262](https://github.com/Calyx-Engineering/arc/issues/262) did that twice before removing the
+> rows. What is above is the failure each rule was written against, which no later edit falsifies.
+> Where the skill stands today is in
+> [its dev-log](../../docs/dev-log/issue-262-twenty-word-threshold.md), beside the runs.
+137,140c142,144
+< told 20 — and then count what came out and cut it down. The target alone moved the case from
+< 0.19 to 0.34 and stopped there; adding the cut took it to 0.72, ten probe runs each way,
+< `p=0.0021`. Scored by `tools/response-length.sh` and ranked by
+< `tools/response-length-rank.py`; the runs behind every figure here are in
+---
+> told 20 — and then count what came out and cut it down. The target alone stalled at 0.34 and the
+> cut roughly doubled it, ten probe runs each way, `p=0.0021`. Scored by
+> `tools/response-length.sh`, ranked by `tools/response-length-rank.py`, and every run is kept in

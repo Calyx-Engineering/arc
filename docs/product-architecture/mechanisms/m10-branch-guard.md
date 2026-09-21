@@ -1,7 +1,7 @@
 # Mechanism — Branch / Worktree Guard
 
-**Status:** partial — one of three checks has a working precedent; the other two are
-undesigned.
+**Status:** built — all three checks fire in `hooks/branch-guard` ([#161](https://github.com/Calyx-Engineering/arc/issues/161)).
+The coordination prefix comes from the operating agreement's *branch prefix* clause ([#203](https://github.com/Calyx-Engineering/arc/issues/203)); a work branch is recognised by an `issue-<N>` or `pr<N>` segment in its name, with or without a prefix before it ([#200](https://github.com/Calyx-Engineering/arc/pull/200)).
 **Home:** Arc — Workspace guard.
 **Src:** 🔥 observed.
 **Covers:** m10.
@@ -12,8 +12,8 @@ undesigned.
 
 The single worst moment in four weeks of hardware work:
 
-> **"CRAP!! we screwed up big time. and we both missed it. we are supposed to be working
-> off the parent branch of interface-pcba/rev_b This just completely messed everything
+> **"C\*\*P!! we screwed up big time. and we both missed it. we are supposed to be working
+> off the parent branch of [the board's integration branch] This just completely messed everything
 > up."** — 2026-08-03
 
 And a cluster of smaller instances of the same class:
@@ -31,14 +31,16 @@ to recover; the others cost minutes each but recur.
 
 Each failure above is a different check:
 
-| Check | Catches | Precedent |
+| Check | Catches | Built as |
 |---|---|---|
-| **Branch** — is this the right branch for the work? | Work landing on the wrong parent — the 08-03 incident | TimeScope's `block_source_edits.js` |
-| **Worktree** — is this window the one opened for this issue? | Editing in a worktree opened for something else | None |
-| **Base freshness** — was this branch cut before other work merged? | A silently stale branch | None |
+| **Branch** — is this the right branch for the work? | Work landing on the wrong parent — the 08-03 incident | Branch kind against a writable-path list |
+| **Worktree** — is this window the one opened for this issue? | Editing in a worktree opened for something else | An absolute path landing in another worktree of the *same* repository |
+| **Base freshness** — was this branch cut before other work merged? | A silently stale branch | `HEAD..<base>` count — `origin/<base>` if it is there, the local ref otherwise — said once per base commit |
 
-**Ship the branch check first.** One working check beats three half-finished, and the branch
-check is the one that maps to the session-costing failure.
+**The branch check shipped first**, and the other two followed in
+[#161](https://github.com/Calyx-Engineering/arc/issues/161) once each had a condition narrow
+enough to deny on. All three deny only their own condition; anything the guard cannot classify
+is allowed.
 
 ---
 
@@ -73,11 +75,13 @@ session needed to fix it. Three layers, cheapest first.
 ### 1. The kill switch — the one thing that must exist
 
 ```bash
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 ```
 
-`touch ~/.claude/HOOKS_OFF` from any terminal makes every hook inert. No editing JSON while
-the broken thing fights back. **This is what makes the rest safe to attempt.**
+`bash hooks/hooks-off.sh <hook> 30` from any terminal makes that hook inert for a bounded
+window, in this repository only — the command prints what it muted and when the mute lapses,
+and `status` reads it back. No editing JSON while the broken thing fights back. **This is what
+makes the rest safe to attempt.**
 
 **It is a chat obligation, not only a README line.** The agent states the kill switch in
 chat *before proposing any hook change* — the reminder fires at the moment it is needed.
@@ -118,7 +122,7 @@ never be touched is right in spirit and wrong in mechanism:
 | | |
 |---|---|
 | A hook validating hook changes | Can be broken by the change it is validating |
-| It is the one thing the kill switch disables | `HOOKS_OFF` turns off the guard along with everything else |
+| It is the one thing the kill switch disables | A mute naming it, or `all`, turns the guard off for as long as that mute lasts |
 | A script works with hooks off | And produces output the user can see, rather than a silent pass |
 
 ### 4. One hook per commit
@@ -139,6 +143,15 @@ process safe:
 
 Changes to these come to the user as a proposal, always.
 
+**Decided 2026-09-12 — the list shrinks to `settings.json` once three things exist.** Each is
+filed under Fire in arc 04: a canary session gate that proves a session survives the edited hooks
+([#325](https://github.com/Calyx-Engineering/arc/issues/325)); a shared wrapper with a timeout and
+a circuit breaker, so a bad hook costs a few calls and not the session
+([#326](https://github.com/Calyx-Engineering/arc/issues/326)); and fixture hooks that validate
+`verify-hook.sh`, with the rule that the validator and its fixtures never change in one commit
+([#327](https://github.com/Calyx-Engineering/arc/issues/327)). Until they merge, the table above
+holds — the template and the validator were each edited once under explicit approval in chat.
+
 ### What this permits
 
 With all five in place, the agent **may** write hook registration — provided it shows the
@@ -149,21 +162,38 @@ bash.**
 
 ---
 
+## Decided in the build
+
+**Worktree identity — decided by narrowing, not by a session signal.** Nothing ties a Claude
+Code session to the worktree it was opened for, and the guard does not need it to: the payload's
+`cwd` names the tree the session is in, so an absolute path landing in a *different worktree of
+the same repository* is the failure, and that is what it denies. A different clone stays allowed —
+mirrored files are edited in two repos in one session by design.
+
+**Base freshness without noise — said once per base commit.** A stale branch is only worth a
+word when the base actually moved, and only once: the deny is stamped under the worktree's git
+dir, keyed on the base's sha, so the next merge into the base speaks again and nothing else does.
+The stamp is written before the deny, so a stamp that cannot be written means silence rather than
+a branch nobody can edit.
+
+---
+
 ## What is not decided
 
-**Where the guard learns what is correct.** Branch naming is per-repo — ROADZ names arcs
-after the product component being revised, TimeScope uses a free slug. The guard needs that
-convention from somewhere: repo config, the arc-log, or inference from the current branch.
+**One convention, read from two places.** `branch-guard` takes the coordination prefix from
+the operating agreement; `camp-branch-check` derives the labels a work branch may number
+itself with from `CLAUDE.md`'s branching section. Which file is the authority is not settled,
+and the two are not read against each other.
 
-**Worktree identity.** No signal ties a Claude Code session to the worktree it was opened
-for. The transcript directory slug encodes the working directory, which may be enough.
+**Which labels mark a work branch.** `branch-guard` compiles in `issue` and `pr`. A repo that
+declares a prefix and numbers its work branches some other way — `feat/ticket-12-slug` — has
+them classified as coordination and its source edits denied, while `camp-branch-check` accepts
+the same name. The prefix became a setting in #203; the label set did not.
 
-**Base freshness without noise.** A branch cut before other work merged is only a problem
-if that work matters. Firing on every stale branch would be constant.
-
-**Whether it denies or warns.** Denying a source edit on the wrong branch is correct for
-software. In guided hardware work the "source" is a CAD file edited outside the session,
-which the hook never sees.
+**Whether it denies or warns in a hardware repo.** Denying a source edit on the wrong branch
+is correct for software, and that is what ships. In guided hardware work the "source" is a CAD
+file edited outside the session, which the hook never sees — so what the guard should do there
+is still open.
 
 ---
 

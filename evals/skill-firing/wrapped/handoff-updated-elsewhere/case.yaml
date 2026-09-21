@@ -1,0 +1,10 @@
+shape: wrapped
+expect:
+  - handoff
+  - camp
+source:
+  session: 6b72c941
+  turn: 1
+  opening: true
+why: >
+  Names handoff as something already done by another tool, then asks to pick up.

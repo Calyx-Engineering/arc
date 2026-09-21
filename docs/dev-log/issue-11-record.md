@@ -1,6 +1,6 @@
 # Issue #11 — the record
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#11](https://github.com/Calyx-Engineering/arc/issues/11)  ·  **PR:** [#21](https://github.com/Calyx-Engineering/arc/pull/21)
 

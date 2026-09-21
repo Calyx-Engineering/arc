@@ -3,6 +3,10 @@
 > **The workflow matches how the work actually runs.** One switch, with state the user can
 > see — not an instruction the session has to remember.
 
+**Status:** built — `hooks/mode-guard` reads `HANDOFF.md`'s *Execution mode* row before every
+commit, push, PR and merge, `skills/autonomy-set` carries the three states, and
+`tests/verify-autonomy.sh` gates §9's single-statement rule.
+
 **Spawned from:** three to five attempts to declare auto mode in prose, none of which changed
 behaviour. `docs/arc-work/03-camp/friction-log.md` entries 1, 2 and 4 are the observations.
 
@@ -80,7 +84,7 @@ stateDiagram-v2
     [*] --> Manual
     Manual --> Autonomous: <b>explicit only</b><br/>"switch to autonomous"<br/>or the handoff's mode row
     Autonomous --> Suspended: <i>inferred</i><br/>a question, a correction,<br/>anything not the next action
-    Suspended --> Autonomous: the user points back<br/>at the work — "continue",<br/>"next issue", /arc-next
+    Suspended --> Autonomous: the user points back<br/>at the work — "continue",<br/>"next issue", /handoff-resume
     Suspended --> Manual: <b>explicit</b><br/>"switch back to manual"
     Autonomous --> Manual: <b>explicit</b>, a failed<br/>self-test, or the<br/>named boundary
     note right of Suspended
@@ -104,14 +108,14 @@ and it needs no setting — which is why the mode row carries two values and not
 | **The user can see it** | A mode the user cannot observe is a wrong belief that surfaces only after an unwanted push |
 | **It survives the window** | The same argument that makes the handoff a document rather than a chat — [m15](m15-handoff-spine.md) |
 | **A mid-session change rewrites it immediately** | Not at the next break. The row *is* the state, so it is wrong the moment it lags |
-| **A fresh session reads it before acting** | `/arc-next` already does. Absent or unreadable means manual |
+| **A fresh session reads it before acting** | The cold-start read path already does — `skills/handoff`, whether it was opened by `/handoff-resume` or by wording. Absent or unreadable means manual |
 
 **A dedicated `mode` file was rejected.** Two files holding one fact disagree — the condition
 [#105](https://github.com/Calyx-Engineering/arc/issues/105) exists to fix, created on purpose.
 
 **Which mode a wave runs in is the arc-log's**, stated once beside the description of the wave.
 The handoff cues the *current* session; the arc-log is the plan. When they disagree the handoff
-is stale, and `/arc-next`'s staleness checks are what catch it.
+is stale, and the staleness checks in `skills/handoff`'s read path are what catch it.
 
 ### 3.1 How a plan reaches a session
 
@@ -123,7 +127,7 @@ visible:
 flowchart LR
     P["<b>arc-log §10.1</b><br/>this wave runs autonomous<br/><i>the plan</i>"] --> A(["<b>the user approves<br/>the plan</b><br/>— explicit —"])
     A --> H["<b>HANDOFF.md</b><br/><i>Execution mode</i> row<br/>set to autonomous"]
-    H --> S["<b>/arc-next</b><br/>reads the row<br/>before acting"]
+    H --> S["<b>the cold-start read path</b><br/>skills/handoff<br/>reads the row before acting"]
     S --> X["<b>executes the<br/>ordered actions</b>"]
     X --> B{{"<b>wave boundary</b>"}}
     B --> W["<b>write the handoff</b><br/>mode row set from<br/>§10.1's <i>next</i> wave"]
@@ -149,6 +153,18 @@ because a document declared something and everyone downstream was expected to co
 
 ## 4 Entering and leaving
 
+**The switch is asymmetric.** Claude may set the mode to manual and may never set it to
+autonomous. Only the user raises it, by saying so; Claude writes the row on being told.
+Dropping to manual stays Claude's to do — at a named boundary, or when the self-test fails.
+
+**This cannot be enforced mechanically and is not pretended to be.** `hooks/mode-guard` sees a
+file change, not who asked for it, and gating writes to `HANDOFF.md` would block the rest of a
+file Claude legitimately maintains. What became mechanical is the other half: the mode is read
+at the moment of a commit rather than recalled, and manual puts the command to the user —
+[m49](m49-execution-mode-guard.md).
+
+**The user never hand-edits `HANDOFF.md` to switch modes.** The switch is a sentence in chat.
+
 ### Entering — explicit, and never inferred
 
 | Counts as entering | Does not |
@@ -169,6 +185,9 @@ remembering is what this mechanism exists to replace.
 | **An explicit return** | *"switch back to manual"*, *"stop"*, *"wait"* |
 | **A failed self-test** | §6. Ends auto and hands off — never *try harder* |
 
+**All three are Claude writing the row.** That direction needs no permission: dropping to manual
+removes authority rather than granting it, so there is nothing to guard.
+
 ### Suspension — inferred, per exchange
 
 **Auto suspends when the exchange is a conversation rather than the execution of a named
@@ -181,8 +200,9 @@ action.** The signals, any one of which is enough:
 | A request scoped to something other than the next ordered action | *"give me a 60 word summary"* |
 | Any turn where the user is deciding rather than the agent executing | Discussing an approach, weighing options |
 
-**Resuming needs the user to point back at the work.** *"continue"*, *"next issue"*, `/arc-next`,
-or naming the issue. **It does not resume because the conversation happened to stop.**
+**Resuming needs the user to point back at the work.** *"continue"*, *"next issue"*,
+`/handoff-resume`, or naming the issue. **It does not resume because the conversation happened to
+stop.**
 
 > **When suspended, answer. Do not commit, push, or merge as a side effect of answering.**
 
@@ -280,20 +300,53 @@ been re-taught three times here and would be re-taught in the next repo.
 
 ---
 
-## 9 Why the permission is duplicated four times
+## 9 Why the permission was duplicated, and why it is not any more
 
-**Every artifact that states a prohibition states its auto arm in the same row.** Not a
-cross-reference.
+**Superseded 2026-09-06 by [#138](https://github.com/Calyx-Engineering/arc/issues/138).** The
+reasoning below was right about the problem and wrong about the remedy; it is kept because the
+problem has not changed.
+
+### The reasoning, as it stood
 
 | | |
 |---|---|
 | **A cross-reference is read once** | *"see m40"* is a pointer the reader follows if they have budget. The clause beside the rule is read whenever the rule is |
 | **The asymmetry is the whole bug** | §1. Fixing it means making the permission exactly as frequent as the prohibition, which means putting it in the same place |
-| **The cost is four copies of one clause** | Accepted deliberately. `tools/verify-autonomy.sh` is what keeps them honest — it fails when an artifact states a prohibition with no auto arm |
+| **The cost is four copies of one clause** | Accepted deliberately, on the grounds that a script keeps them honest |
 
-**This is a knowing exception to *one fact, one place*.** The rule it breaks exists because
-duplicated facts drift; here the drift is caught by a script, and the alternative has failed
-five times.
+### What it did not account for
+
+**The harness weighs the aggregate, not the ratio.** The base instruction permits an
+outward-facing action only when it is *durably authorized*. Five prohibitions each carrying an
+override is still five prohibitions, and each one is evidence that authorization has not been
+given.
+
+| | arc | The client repo |
+|---|---|---|
+| Mode rule stated in | 5 artifacts | 1 |
+| `gh pr merge` denied | **4** — #95, #97, #114, #137 | **0**, across 12 merges |
+
+The client repo reached one statement on install day, `44dbb06` in the client repo:
+*"Two copies of the same rule drift, and the copy an agent reads first wins."* Its `CLAUDE.md`
+states the mode as a state, once, with the override inside the sentence, and delegates
+everything else to the skill.
+
+### The rule now
+
+| | |
+|---|---|
+| **One authority** | [`skills/autonomy-set`](../../../skills/autonomy-set/SKILL.md) states the rule. Nothing else does |
+| **The repository's `CLAUDE.md` may state the mode once** | As a *state*, with the override in the same sentence, delegating the rest |
+| **Everything else points** | `work-watch` says whether you commit is the mode's call, not its own |
+| **The state carrier is not a restatement** | `templates/handoff.md` defines what *suspended* means. That is the semantics of the state, not a standing prohibition |
+
+`tests/verify-autonomy.sh` enforces it as a census: the prohibition appears only in
+`autonomy-set`, and `CLAUDE.md` states the mode exactly once with its override. **Scope is what
+a session loads every turn** — `CLAUDE.md`, skills, templates, hooks, agents, commands. `docs/`
+is opened deliberately rather than loaded, so m14 §3 and `close-sequence.md` steps 9 and 10 keep
+the older shape.
+
+**This is no longer an exception to *one fact, one place*.** It is that rule, applied.
 
 ---
 
@@ -303,14 +356,16 @@ five times.
 
 | | Delivered by |
 |---|---|
-| A document defining an execution plan with the switch set **executes correctly** | §3 — the arc-log states the wave's mode, the handoff cues the session, `/arc-next` reads it before acting |
+| A document defining an execution plan with the switch set **executes correctly** | §3 — the arc-log states the wave's mode, the handoff cues the session, and the cold-start read path in [`handoff`](../../../skills/handoff/SKILL.md) reads it before acting |
 | *"switch to autonomous"* enters auto; *"switch back to manual"* leaves it | §4, and [`skills/autonomy-set`](../../../skills/autonomy-set/SKILL.md) |
 | It **returns to manual on its own when conversation starts** | §4's suspension, on signals that need no setting |
 
-**What can be tested mechanically, and what cannot.** Nothing in this repository runs a skill,
-so behaviour is not executable here. `tools/verify-autonomy.sh` tests the half that is
-decidable from text — that no shipping artifact states a prohibition without its auto arm, and
-that the mode vocabulary has not drifted. **That is the failure that actually happened**, five
+**What can be tested mechanically, and what cannot.** `tests/verify-autonomy.sh` tests the half
+that is decidable from text — that the prohibition is stated only by `autonomy-set`, that
+`CLAUDE.md` states the mode once with its override, and that the mode vocabulary has not
+drifted. Behaviour is a separate instrument: Arc is now installed in this repository and
+`claude plugin eval` can execute a skill, which [#149](https://github.com/Calyx-Engineering/arc/issues/149)
+builds the suite for. **That is the failure that actually happened**, five
 times; the behavioural half is exercised by using it.
 
 ---
@@ -323,5 +378,5 @@ times; the behavioural half is exercised by using it.
 - [m15](m15-handoff-spine.md) — the handoff, which holds the mode
 - [m43](m43-camp-assistant.md) — Camp, which announces the transitions
 - [m47](m47-onboarding.md) — how the behaviour reaches a fresh repository
-- [`close-sequence.md`](../close-sequence.md) — steps 8 and 9, now mode-dependent
+- [`close-sequence.md`](../close-sequence.md) — steps 9 and 10, now mode-dependent
 - `docs/arc-work/03-camp/friction-log.md` entries 1, 2 and 4 — the evidence

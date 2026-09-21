@@ -42,7 +42,27 @@ stale.
 
 **Verbosity governs display, never what reaches `.claude/arc/log.md`.**
 
-### Friction log — Arc's own rough edges · [`record-route`](../../skills/record-route/SKILL.md)
+### Response verbosity — the session's own replies · [`chat-response`](https://github.com/Calyx-Engineering/arc/blob/main/skills/chat-response/SKILL.md)
+
+**Not Camp's.** The two settings above govern what Camp says about an action. This one governs
+how long every reply in the session is.
+
+- [ ] **brief** — the answer and nothing after it. **40 words** of prose
+- [x] **normal** — `chat-response`'s own table: ~150 words for a finding, ~200 for a proposal
+- [ ] **full** — the reasoning before the conclusion, at whatever length that takes
+- [ ] Other:
+
+**`normal` changes nothing.** It is the table `chat-response` already applies, so a repository
+that never touches this clause behaves exactly as it did before the clause existed.
+
+**Prose only** — tables, code blocks and headings are not budgeted, and an issue, a PR, a spec
+or a report is not a reply. `tools/response-length.sh` counts it the same way.
+
+**A number typed into `Other:` is the budget** — `Other: 25 words`. **A number the user states
+in conversation outranks it**, for the rest of that conversation: this is the standing default,
+not a ceiling on what can be asked for.
+
+### Friction log — Arc's own rough edges · [`record-route`](https://github.com/Calyx-Engineering/arc/blob/main/skills/record-route/SKILL.md)
 
 - [ ] **on** — friction with Arc itself is appended to `docs/arc-work/<arc-slug>/friction-log.md`
 - [x] **off** — friction with Arc itself is not recorded
@@ -85,9 +105,24 @@ Per-artifact exceptions go here, as rows.
 
 **This is the rule Camp applies when it breaks an idea or a base issue into issues.**
 
-- [x] **Many small issues over few large ones.** An issue with a fourteen-point checklist is two or more issues
-- [ ] **Fewer, larger issues.** Multiple sections, twenty to forty checklist items, one issue per area of work
+- [x] **Many small issues over few large ones.** One artifact or one decision each
+- [ ] **Fewer, larger issues.** Multiple sections, one issue per area of work
 - [ ] Other:
+
+**The direction, not the number.** How long a checklist may get is the ceiling below, and
+raising that ceiling is how the second option is made to mean what it says.
+
+### Work size — where *many small issues* stops being an opinion · [`decompose`](https://github.com/Calyx-Engineering/arc/blob/main/skills/decompose/SKILL.md)
+
+**Checklist ceiling:** `7`
+
+**One value, not a choice.** A proposed issue whose `Required` checklist is longer than this is
+split before it is filed. The setting above says which direction to lean; this says where the
+lean becomes a decision, which is the half `decompose` could not supply for itself.
+
+**Unset means `7`**, and so does an unreadable value. **Seven is a starting value, not a
+finding about your repository** — it is the 90th percentile of the `Required` checklists in the
+repository Arc was built in. Change it once your own issues give you a distribution to read.
 
 ### Issue bodies
 
@@ -120,6 +155,20 @@ each has a fixed template that prescribes its structure.
 **Prose last is a valid answer.** So is prose first. The order is a preference, not a ladder
 of quality.
 
+### Branch prefix — what marks a coordination branch · [`branch-guard`](https://github.com/Calyx-Engineering/arc/blob/main/hooks/branch-guard)
+
+**Branch prefix:** `arc/`
+
+**One value, not a choice.** Coordination branches begin with it; work branches nest under
+them by name. **End it with its separator** — `arc/` and `rev-` are both prefixes; a value
+that does not end in one is read as a word rather than a setting.
+
+**Unset means `arc/`**, and so does an unreadable value — `none` and `unset` among them.
+
+**Work branches under the prefix carry `-issue-<N>-` or `-pr<N>-`.** That segment is what
+marks one. A branch under the prefix without it is classified as coordination, and source
+edits on it are denied.
+
 ### Branch naming
 
 - [x] **One per issue, named for the issue number** — `arc/03-camp-issue-45-announce`
@@ -147,6 +196,10 @@ State what the reader gets when it merges, comprehensible with no prior context.
 **Check one.**
 
 ### Chat length
+
+**The order, not the length.** How long a reply may be is section 1's **Response verbosity**;
+this is whether the answer or the reasoning comes first. Two clauses stating a number would be
+two numbers to keep in step.
 
 - [x] **Short.** Lead with the answer; detail on request
 - [ ] **Full.** Reasoning stated up front, before the conclusion

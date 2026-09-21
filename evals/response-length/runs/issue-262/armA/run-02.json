@@ -1,0 +1,59 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook already allows with reason, not exit 2. My finding was stale. Nothing to fix.",
+   "cut": "",
+   "fired": []
+  },
+  "12": {
+   "text": "It doesn't. Fixed already, both copies: explicit allow, exit 0. (2) needs no PR. Label and permission fixes: remind me which.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked two ways. This session has no Edit, Write or Bash tools, so I cannot edit or open a PR. And the label and permission fixes are not in my context or in sessions.md. Tell me both in one line, from a session with edit tools.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot. Three blockers:\n\n- I may never set autonomous mode myself. You edit HANDOFF.md's *Execution mode* row.\n- This session has no Edit, Write or Bash tools.\n- Label and permission fixes still unknown to me.\n\nStart a new session with tools, name the two fixes there.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already handles both: `*-pr[0-9]*` counts as work, prefix read from the agreement, `arc/` only as fallback. Paste the denial you got.\n\nKill switch: delete it. Hooks fail open, one hook per commit, so revert is the escape. Thirty-minute per-hook muting solves a problem revert already solves.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still cannot. This session has no Edit, Write or Bash tools, only read and search. Nothing I can change from here.\n\nOpen a new session on this branch and paste:\n\n```\nDirect PR: remove hooks-off kill switch from every hook and lib/hooks-off; fix branch guard denial [paste it]; leave uncommitted for review.\n```",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Nothing is denying me. Edit, Write and Bash tools do not exist in this session at all. No hook involved. Restart the session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Which file? If the kill switch: no file to place. Run this from any terminal in the repo:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `.git/arc-hooks-off` itself. But it will not restore my missing tools.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong file, and hooks are not the blocker. Tools still absent.\n\nRun this instead of hand-writing a file:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nThen start a new session.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Next session: delete the kill switch, rely on fail-open plus revert. Note that in the handoff.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot add it: no Write tool this session. Small correction: it is per repository, `.git/arc-hooks-off`, not everywhere.\n\nIssue text for the cleanup workstream, paste when ready:\n\n```\nReplace hooks-off kill switch\n\nPer-hook, timed muting is the wrong escape. Hooks fail open and each ships one per commit, so `git revert` is the fix path.\n\n- [ ] Remove `hooks/hooks-off.sh` and `hooks/lib/hooks-off`\n- [ ] Remove the kill-switch prologue from every hook and `hooks/TEMPLATE`\n- [ ] Update m10 and CLAUDE.md \"Safe hook editing\"\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

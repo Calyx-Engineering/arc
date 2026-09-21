@@ -1,6 +1,6 @@
 # Issue #32 — Sizing a title to what merging delivers
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#32](https://github.com/Calyx-Engineering/arc/issues/32)  ·  **PR:** _pending_
 
@@ -36,7 +36,7 @@ The north star did not move. Four things changed underneath it.
 
 | | |
 |---|---|
-| **m11's spec is a frozen reference, not an editable spec** | §9 traces this issue to m11, whose registry row links [`docs/reference-roadz/issue-writing/SKILL.md`](../reference-roadz/issue-writing/SKILL.md). That tree is *"copied verbatim from a client project… do not edit these to change Arc's behavior."* **`skills/issue-write` is m11's spec in practice**, and it is the only artifact of the two this issue may touch |
+| **m11's spec is a frozen reference, not an editable spec** | §9 traces this issue to m11, whose registry row links the client reference copy of `issue-writing` (private corpus, not in this repository). That tree is *"copied verbatim from a client project… do not edit these to change Arc's behavior."* **`skills/issue-write` is m11's spec in practice**, and it is the only artifact of the two this issue may touch |
 | **The `## Titles` section already exists** | [#31](https://github.com/Calyx-Engineering/arc/issues/31) shipped it. This issue is not adding a section; it is repairing one that demonstrates the failure it now has to prevent |
 | **Its own *Instead* examples break the new rule** | *"Number multi-topic questions so they can be answered by reference"* and *"Keep the issue checklist current while the work runs"* both carry the trailing clause the issue names as body material. **The examples are the guidance** — a rule contradicted by the example under it teaches the example |
 | **`hooks/tracker-verify` already scans titles, for neither failure** | `scan_title` catches `X and Y and Z` — a title naming more than one deliverable. Over-claiming and over-explaining pass it untouched |
@@ -59,15 +59,15 @@ the arc-log records the user's proceed in §4.1. Not re-raised.
 | 4 | `hooks/tracker-verify` — a mechanical signal for length, and the verify-hook ceremony run and pasted | Done, `12c34a1` · moved to the tool in `2500659` |
 | 5 | `tools/sync-local-skills.sh` after any `skills/` edit | Done, every commit |
 | 6 | Four refining passes, three review passes, against this north star | Done |
-| + | **`tools/verify-tracker-body.sh title`** — not in the plan. Refining pass 2 found the hook cannot reach *before the write*, which the north star requires | Done, `2500659` |
+| + | **`tests/verify-tracker-body.sh title`** — not in the plan. Refining pass 2 found the hook cannot reach *before the write*, which the north star requires | Done, `2500659` |
 | + | **`.gitattributes`** — a `.txt` fixture escaped a `**/*.md` rule and committed CRLF-bound | Done, `5cbf96f` |
-| + | **m11's registry row** — pointed at the frozen ROADZ copy, where the rule does not exist | Done, `319e45e` |
+| + | **m11's registry row** — pointed at the frozen client-repo copy, where the rule does not exist | Done, `319e45e` |
 
 ## Decisions & trade-offs
 
 | | |
 |---|---|
-| **The title rules live in `tools/verify-tracker-body.sh`, not in the hook** | The hook is `PostToolUse` — by the time it speaks the wrong title is in the tracker, and the north star says *caught before the write*. That tool already carries the same argument for keyword placement. The hook calls it as a subprocess rather than sourcing it: the tool sets `-u`, and a guardrail that must fail open cannot inherit that |
+| **The title rules live in `tests/verify-tracker-body.sh`, not in the hook** | The hook is `PostToolUse` — by the time it speaks the wrong title is in the tracker, and the north star says *caught before the write*. That tool already carries the same argument for keyword placement. The hook calls it as a subprocess rather than sourcing it: the tool sets `-u`, and a guardrail that must fail open cannot inherit that |
 | **The mechanical threshold is twelve words; the guidance is eight** | Run against this repo's twenty-five open issues, a threshold of ten flagged three titles that were doing their job. Judgement lives in the skill and takes the borderline; the check takes what nobody would defend |
 | **A comma count, not a word count, catches the worst case** | `feat: carry work navigation in issue-write, decompose, …` is eleven words, under any defensible length gate. Six file names cost one word each. Three separators is the signal, and a serial list inside one name needs at most two |
 | **[#73](https://github.com/Calyx-Engineering/arc/issues/73) keeps its `spec:` prefix** | The skill decides the type is `scope:`, and the same section says *retitle before children exist, not after*. [#73](https://github.com/Calyx-Engineering/arc/issues/73) is referenced from three sections of the arc-log and from a pointer comment on the issue itself. Leaving it is the rule being followed, not a contradiction of it |
@@ -90,8 +90,8 @@ The plan grew by three rows, each from a refining axis rather than from the issu
 
 | Found by | |
 |---|---|
-| *Does this reach the north star?* | The north star says *before the write*, and a `PostToolUse` hook is by definition after. The rules moved into `tools/verify-tracker-body.sh`, whose own header already argued exactly this for keyword placement. The hook now calls it |
-| *Consistent with every file in the repo?* | m11's registry row pointed at the do-not-edit ROADZ copy, which has none of this. A session following the registry to m11's spec would have concluded the rule does not exist |
+| *Does this reach the north star?* | The north star says *before the write*, and a `PostToolUse` hook is by definition after. The rules moved into `tests/verify-tracker-body.sh`, whose own header already argued exactly this for keyword placement. The hook now calls it |
+| *Consistent with every file in the repo?* | m11's registry row pointed at the do-not-edit client-repo copy, which has none of this. A session following the registry to m11's spec would have concluded the rule does not exist |
 | *Have all evaluating tests been run?* | Running the check over all twenty-five open issues is what set the threshold. At ten words it flagged three titles that were doing their job; at twelve it flags nine, every one of them a title this issue names |
 
 **The measurement changed the design.** A word count alone misses the worst real case —

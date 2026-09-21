@@ -1,6 +1,7 @@
 ---
 name: record-route
-description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Decides which file it belongs in across the K1–K4 ladder, requires a dev-log of every merged unit whether or not an issue exists, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
+user-invocable: false
+description: Use when writing down anything that outlives the current turn — a decision, a measurement, an analysis, a rejected approach, a finding, a report. Also fires when the question is where a claim came from: "where did that number come from", "is that measured or assumed", "did we verify that", "that was from a photo, not the schematic", "who said that". Decides which file it belongs in across the K1–K4 ladder, requires a dev-log of every merged unit whether or not an issue exists, requires every claim to carry its source strongest-first, and keeps the arc-log and dev-log current. Invoke at plan time, at a decision point, and at PR time.
 camp-reports: [record-routed, arc-log-updated, dev-log-written]
 checks: [tier, destination-exists, arc-log-status-current, dev-log-exists]
 skips:
@@ -10,7 +11,7 @@ skips:
 # Where the record goes
 
 > **The dev-log and arc-log get written, not remembered.** A template alone produces
-> nothing — ROADZ had one and it stayed an empty stub for a month. The mechanism is the
+> nothing — a client repo had one and it stayed an empty stub for a month. The mechanism is the
 > trigger plus the template plus the enforcement, and this skill is the trigger.
 
 Tier definitions are in [knowledge-tiers](../../reference/knowledge-tiers.md). This skill
@@ -69,6 +70,83 @@ in that one instead, and the `Spawned` rows link the two.
 **A no-issue PR's dev-log is written before the PR exists**, as its first commit: a PR needs a
 commit to exist, and the dev-log is what that commit is. It starts as a stub and is filled in
 before the PR is marked ready. `tools/new-direct-pr.sh` does this as one of its steps.
+
+---
+
+## Every record carries where its claims came from
+
+> **A number written down without its source is a number that outlives the reason to doubt it.**
+
+Routing decides which file. This decides what the row says once it gets there, and it applies at
+every tier — a wiki fact, an arc-work ledger, a scratch measurement, a report table.
+
+[#164](https://github.com/Calyx-Engineering/arc/issues/164): a demand list carried three
+kill-path signals read off **a photograph of a board the project does not hold**, treated as
+specified for weeks, because nothing recorded where they came from.
+
+| Provenance | Is | Strength |
+|---|---|---|
+| `measured` | A bench result, with the rig and its limits named | **Strongest** |
+| `instrument` | A number an instrument displayed, with nothing establishing it was measuring what the claim names | Becomes `measured` when the rig is written down beside it |
+| `schematic` | This board's own sheets | |
+| `datasheet` | The part's own document | Cite the page |
+| `vendor` | A label, a listing, a product page, silkscreen | The seller's claim about the seller's part |
+| `firmware` | Shipped source. What the code *does*, not what the hardware requires | |
+| `drawing` | A reviewed diagram | As strong as the review behind it |
+| `report` | A merged study in `docs/report/` | Never stronger than the row it cites |
+| `thread` | An issue thread. A decision was reached; no artifact records it yet | |
+| `photograph` | A picture of a circuit not in hand | Treat as a hypothesis |
+| `conversation` | Said, not written down | Not a decision until it is |
+| `inferred` | Extrapolated, assumed, calculated from something else | **Weakest** |
+
+**The order is the point.** Without it, *record the source* is a label with no consequence. A
+project may add a term it genuinely has, but it places the new term **in the order**, or it has
+added a word and not a rule.
+
+| | |
+|---|---|
+| **A table row carries its source, on the row** | Not once in a lead-in above it. A row gets quoted somewhere else; the lead-in does not travel with it |
+| **A strong claim is not overridden by a weak one without saying so** | If an inference wins over a measurement, the record says so where the claim is, with why |
+| **Raised as an option is not decided** | `conversation` is the provenance for something said and not yet written. An option recorded as a requirement is the same defect wearing different clothes |
+
+**This is not the same as the confidence split.** That groups a whole report; this travels with
+one row. [engineering-report](../engineering-report/SKILL.md#where-each-claim-came-from) carries
+the report side and the grader that scores it.
+
+### A reading is not a measurement
+
+**`measured` is the bench. `instrument` is the display.** They read the same to anyone who did
+not run the rig, and separating them is the whole of [#266](https://github.com/Calyx-Engineering/arc/issues/266).
+
+On 2026-08-28 a scope reported 2.473 Vpp where the tone was 1.456 Vpp — a peak-to-peak reading
+cannot separate a tone from a tone plus a 433 kHz class-D carrier — and an estimate drawn from
+that reading was taken over a bench measurement the user had verified by hand. Written down with
+one word for both, that page holds a single source and no visible disagreement.
+
+| | |
+|---|---|
+| **A reading is `instrument` until the rig is written down** | Name the instrument, the setting, and what would make it lie. Then it is `measured` |
+| **The promotion is the record, not the intent** | An `instrument` row that has been *thought about* is still `instrument` |
+
+### These twelve are the field's and the spec's, reconciled
+
+[#266](https://github.com/Calyx-Engineering/arc/issues/266). Two vocabularies were in use: the
+seven [#164](https://github.com/Calyx-Engineering/arc/issues/164) specified, and the eight
+a client's pin ledger had carried since the user repaired this defect by hand. **Two
+vocabularies is the defect wearing a label** — a row reading `drawing` had no rank, and a
+reader could not tell whether a row reading `schematic` outranked one reading `datasheet`.
+
+| The field's term | |
+|---|---|
+| `schematic`, `datasheet`, `conversation` | Already specified. Unchanged |
+| `photo` | **Mapped** to `photograph`. The same claim, spelled shorter |
+| `firmware`, `drawing`, `report`, `thread` | **Adopted**, in the field's own relative order. Each is a source this project genuinely has, and `thread` is not `conversation`: a thread is written down and can be read back |
+
+**The ladder above is both orders merged, and exactly one term moves:** `schematic` rises above
+`datasheet` and `vendor` both. That is the field's ordering and it is right — a claim about
+*this board* is settled by this board's own sheets, and neither the part's document nor the
+seller's label is about this board at all. Every other pair keeps the order at least one of the
+two vocabularies gave it.
 
 ---
 

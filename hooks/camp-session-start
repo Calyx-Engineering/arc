@@ -8,7 +8,7 @@
 #
 # camp-reports: session-start
 # checks: branch-is-work, issue-in-branch-name
-# skips: arc-active (no arc registry exists yet)
+# skips: arc-active (no arc registry exists yet), branch-is-work (not a git repository, the payload names no session or no tool, already checked this session, or a detached HEAD), issue-in-branch-name (the same four, and: the branch is trunk, the branch is an arc branch and names no issue, or a direct PR branch carries a PR number instead)
 #
 # The three lines above are the `camp-reports:` declaration. They are why this hook is
 # visible when it fires — one declaration drives both the spoken report and the event-log
@@ -17,9 +17,19 @@
 # Format: docs/product-architecture/camp-reports.md
 
 # ---- kill switch ----------------------------------------------------------------
-# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
-# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+# `bash hooks/hooks-off.sh camp-session-start 30` from any terminal in this repository mutes this one
+# hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+# The escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
+
+# ---- the activation log ---------------------------------------------------------
+# Sourced before anything can exit. This hook speaks once per session and is otherwise
+# silent by design, so without a record there is no way to tell a session it checked and
+# passed from one where it never ran. m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event session-start
+arc_log_skip arc-active "no arc registry exists yet"
 
 # ---- fail-open wrapper ----------------------------------------------------------
 # Never `set -e`. A guardrail bug must never block every tool call. This hook never denies
@@ -28,15 +38,87 @@ set +e
 
 INPUT="$(cat 2>/dev/null)"
 
+# The three whitespace escapes `field` resolves. `printf -v` is a builtin, so the resolver
+# below forks nothing — and a raw tab or carriage return sitting in this file would not
+# survive an editor or a line-ending normalisation.
+printf -v _ARC_NL  '\n'
+printf -v _ARC_TAB '\t'
+printf -v _ARC_CR  '\r'
+
 # Read a top-level or nested field out of the hook payload without requiring jq.
+# Usage: field file_path
+#
+# NOT `tr ',{}' | grep | sed`, which is what this was, and which was wrong twice. It split
+# the payload on commas, so a value carrying one arrived truncated at the comma; and when its
+# `sed` could not parse the fragment it printed that fragment unchanged, so the caller was
+# handed the key and its quotes back as if they were the value. Both are silent. #230, #300.
+#
+# A JSON string ends at the first quote that is NOT escaped, so the scan counts the
+# backslashes in front of each quote rather than stopping at the first one. The escapes `\"`,
+# `\\`, `\n`, `\t` and `\r` are then resolved, because the resolved form is the one the caller
+# acts on: a Windows `cwd` arrives with its separators doubled, and a multi-line command
+# carries its line breaks as the two characters `\` and `n`.
+#
+# NO CLOSING QUOTE MEANS THE PAYLOAD WAS CUT OFF MID-VALUE. Yield nothing, never the rest —
+# half a value is the shape a hook must be silent about rather than act on.
+#
+# Parameter expansion, no subprocess. The old form cost five processes on every tool call.
 field() {
-  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+  local rest raw out chunk bs key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+
+  raw=""
+  while :; do
+    case "$rest" in *'"'*) ;; *) return 0 ;; esac
+    chunk="${rest%%\"*}"
+    rest="${rest#"$chunk"\"}"
+    # The backslash run immediately before the quote. An odd count escapes it.
+    bs="${chunk##*[!\\]}"
+    if [ $(( ${#bs} % 2 )) -eq 0 ]; then raw="$raw$chunk"; break; fi
+    raw="$raw$chunk\""
+  done
+
+  out=""
+  while [ -n "$raw" ]; do
+    case "$raw" in *'\'*) ;; *) out="$out$raw"; break ;; esac
+    chunk="${raw%%\\*}"
+    out="$out$chunk"
+    raw="${raw#"$chunk"\\}"
+    case "$raw" in
+      '"'*) out="$out\"";        raw="${raw#?}" ;;
+      '\'*) out="$out\\";        raw="${raw#?}" ;;
+      n*)   out="$out$_ARC_NL";  raw="${raw#?}" ;;
+      t*)   out="$out$_ARC_TAB"; raw="${raw#?}" ;;
+      r*)   out="$out$_ARC_CR";  raw="${raw#?}" ;;
+      # Not an escape this reader resolves — a shell escape, a `\u`. Left as it is.
+      *)    out="$out\\" ;;
+    esac
+  done
+  printf '%s' "$out"
+  return 0
 }
 
-# Speak, without blocking. exit 2 surfaces stderr to the transcript; the edit still runs.
+json_string() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
+}
+
+# Speak, without blocking.
+#
+# THIS WAS exit 2, AND exit 2 DENIES. The pattern came from camp-branch-check, which is a
+# PostToolUse hook — there the tool has already run, so exit 2 only surfaces stderr and the
+# comment was true. Copied to a PreToolUse hook it inverts: exit 2 is the deny signal, and
+# this hook silently ate the first Edit of every session. The marker is written before this
+# runs, so the retry succeeded and the denial looked like a hiccup rather than a bug.
+#
+# An explicit "allow" decision with the message attached is the shape that reports without
+# blocking. It is what hooks/TEMPLATE carries, inverted from deny.
 report() {
-  printf '%s\n' "$1" >&2
-  exit 2
+  arc_log_outcome_default failed "Camp spoke at the first edit"
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":$(json_string "$1")}}"
+  exit 0
 }
 
 # ---- hook body ------------------------------------------------------------------
@@ -48,22 +130,42 @@ CWD="$(field cwd)"
 # and lives under the repo's .git so it is never committed and dies with the clone.
 GITDIR="$(git -C "$CWD" rev-parse --git-dir 2>/dev/null)"
 # No repo means nothing to say — this hook is about repository state.
-[ -n "$GITDIR" ] || exit 0
+if [ -z "$GITDIR" ]; then
+  arc_log_skip branch-is-work "not a git repository"
+  arc_log_skip issue-in-branch-name "not a git repository"
+  arc_log_outcome ok "not a git repository"
+  exit 0
+fi
 case "$GITDIR" in /*|?:*) ;; *) GITDIR="$CWD/$GITDIR" ;; esac
 
 # A truncated payload can still yield a readable `cwd`, which is enough to classify a
 # branch and speak — on input that is not a real hook call. Requiring the tool name as
 # well as the session id means a half-written payload is silent rather than wrong.
 SESSION="$(field session_id)"
-[ -n "$SESSION" ] || exit 0
-[ -n "$(field tool_name)" ] || exit 0
+if [ -z "$SESSION" ] || [ -z "$(field tool_name)" ]; then
+  arc_log_skip branch-is-work "the payload names no session or no tool"
+  arc_log_skip issue-in-branch-name "the payload names no session or no tool"
+  arc_log_outcome ok "not a complete hook payload"
+  exit 0
+fi
 MARKER="$GITDIR/arc-camp-session-$SESSION"
 # Already spoke this session. Silence is the default and repeating is the annoyance.
-[ -e "$MARKER" ] && exit 0
+if [ -e "$MARKER" ]; then
+  arc_log_skip branch-is-work "already checked this session"
+  arc_log_skip issue-in-branch-name "already checked this session"
+  arc_log_outcome ok "already checked this session"
+  exit 0
+fi
 
 BRANCH="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 # Detached HEAD or git unavailable — nothing to classify, so nothing to say.
-[ -n "$BRANCH" ] || exit 0
+if [ -z "$BRANCH" ]; then
+  arc_log_skip branch-is-work "detached HEAD, or git is unavailable"
+  arc_log_skip issue-in-branch-name "detached HEAD, or git is unavailable"
+  arc_log_outcome ok "no branch to classify"
+  exit 0
+fi
+arc_log_event session-start "branch=$BRANCH"
 
 FINDINGS=""
 add() { FINDINGS="$FINDINGS
@@ -71,16 +173,30 @@ add() { FINDINGS="$FINDINGS
 
 case "$BRANCH" in
   main|master|develop)
+    arc_log_fail branch-is-work=trunk
+    arc_log_skip issue-in-branch-name "the branch is trunk, so there is no issue to find"
     add "you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit"
     ;;
-  arc/*-issue-*)
+  *-issue-[0-9]*|issue-[0-9]*)
     # An issue branch. This is the correct place to work, and it names its issue.
+    arc_log_pass branch-is-work
+    arc_log_pass issue-in-branch-name
+    ;;
+  *-pr[0-9]*|pr[0-9]*)
+    # A direct PR's branch. It carries the PR's number instead of an issue's, which is the
+    # whole point of the form — there is no issue behind it. Nothing to say.
+    arc_log_pass branch-is-work
+    arc_log_skip issue-in-branch-name "a direct PR branch carries a PR number instead"
     ;;
   arc/*)
+    arc_log_fail branch-is-work=arc-branch
+    arc_log_skip issue-in-branch-name "an arc branch is coordination, so it names no issue"
     add "you are on \`$BRANCH\`, an arc branch. It is coordination only — create \`$BRANCH-issue-<N>-<slug>\` for the work"
     ;;
   *)
     # A topic branch is fine, but it carries no issue number, so nothing links the work.
+    arc_log_pass branch-is-work
+    arc_log_fail issue-in-branch-name=absent
     add "\`$BRANCH\` names no issue. If this work has one, an \`arc/<nn>-<slug>-issue-<N>-<slug>\` branch links them"
     ;;
 esac
@@ -88,6 +204,8 @@ esac
 # Write the marker whatever the outcome, so a clean session is also only checked once.
 : > "$MARKER" 2>/dev/null
 
+[ -n "$FINDINGS" ] && arc_log_outcome failed "Camp named the branch condition at the first edit"
+[ -n "$FINDINGS" ] || arc_log_outcome ok "the branch is a work branch and names its issue"
 [ -n "$FINDINGS" ] && report "**Camp here —** first edit of the session.
   Checked: branch is a work branch, issue in branch name$FINDINGS
   Declared but skipped: arc-active (no arc registry yet)"

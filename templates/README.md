@@ -4,7 +4,7 @@ Each file here is **copied somewhere else before anyone reads it.** That makes a
 only artifact whose links must be correct somewhere it is not, and it is why eighteen of them
 shipped broken: every review read them here, where they were fine.
 
-`tools/verify-template-links.sh` is the gate. It runs inside `tools/verify-all.sh`.
+`tests/verify-template-links.sh` is the gate. It runs inside `tests/verify-all.sh`.
 
 ---
 
@@ -16,11 +16,17 @@ shipped broken: every review read them here, where they were fine.
 | `dev-log.md` | `docs/dev-log/issue-<NN>-<slug>.md`, or `pr-<NN>-<slug>.md` |
 | `handoff.md` | `HANDOFF.md`, at the repo root |
 | `event-log.md` | `.claude/arc/log.md` |
+| `session-index.md` | `.claude/arc/sessions.md` |
+| `issue.md` | a body file at the repo root, then `gh issue create --body-file` |
+| `pr.md` | a body file at the repo root, then `gh pr create --body-file` |
 | `SKILL.md` | `skills/<name>/SKILL.md` |
 | `camp/operating-agreement.md` · `camp/voice.md` · `camp/notes.md` | `.claude/arc/camp/` |
 
 **This table and the gate's `MAP` are the same fact.** A new template needs a row in both, and
 the gate fails on a template it has no row for rather than skipping it.
+
+**Only the `MAP` half is checked.** Nothing reads this table, so a template added to `MAP` and
+not to it goes unnoticed. Write both rows in the same commit.
 
 ---
 
@@ -52,6 +58,6 @@ examples**: both land under `docs/`, and everything they point at is the consumi
 
 ## Related
 
-- [`tools/verify-template-links.sh`](../tools/verify-template-links.sh) — the gate, and the destination map
+- [`tests/verify-template-links.sh`](../tests/verify-template-links.sh) — the gate, and the destination map
 - [`docs/release/pre-release-review.md`](../docs/release/pre-release-review.md) — pass 2, which is where this was found
 - [m43](../docs/product-architecture/mechanisms/m43-camp-assistant.md) — `camp/`'s three documents and why a user reads them

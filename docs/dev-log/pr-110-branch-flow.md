@@ -1,6 +1,6 @@
 # PR #110 — The branch-naming flow, drawn and corrected
 
-> Decision log, not a spec. A no-issue PR is a unit of work like any other
+> Dev-log, not a spec. A no-issue PR is a unit of work like any other
 > ([m46 §6.1](../product-architecture/mechanisms/m46-work-navigation.md)).
 
 **Issue:** none  ·  **PR:** [#110](https://github.com/Calyx-Engineering/arc/pull/110)

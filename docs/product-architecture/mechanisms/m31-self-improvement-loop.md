@@ -200,7 +200,7 @@ Two independent gates. Both must pass.
 
 | Gate | Check | Fails when |
 |---|---|---|
-| **Identity** | git identity is on the allowlist | Anyone else — including the user's Dedrone identity |
+| **Identity** | git identity is on the allowlist | Anyone else — including the user's employer identity |
 | **Capability** | plugin repos present and writable on disk | Nobody else has them checked out |
 
 Allowlist, in plugin config so entries can be added without a code change:
@@ -257,10 +257,10 @@ The user is explicit about not being a hook author. The design goal is therefore
 Every hook the plugins ship begins with:
 
 ```bash
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
 ```
 
-`touch ~/.claude/HOOKS_OFF` from any terminal makes every hook inert — no editing JSON
+`bash hooks/hooks-off.sh <hook> 30` from any terminal makes that hook inert — no editing JSON
 while the broken thing fights back.
 
 **This must be in each plugin's README**, and the agent must state it in chat before
@@ -330,14 +330,14 @@ Push is the gate, and it gates on *has this run*, not *is this committed*.
 
 ### The loop in practice
 
-A worked example — one ROADZ issue, five plugin edits:
+A worked example — one the client repo issue, five plugin edits:
 
 | Step | What happens |
 |---|---|
 | Mid-stretch | 3 edits made live. Each is committed locally, then **the plugin is reloaded** so the change is active for the rest of the issue |
 | Rest of the issue | Those 3 run against real work — that is the soak |
 | PR time | The loop fires, produces 2 more edits. Reviewed and committed, but nothing has exercised them |
-| Push | ROADZ PR goes up. Plugin repo gets **its own PR**, carrying the 3 soaked edits |
+| Push | The client repo PR goes up. Plugin repo gets **its own PR**, carrying the 3 soaked edits |
 | Next stretch | The 2 unsoaked edits are live from the start; they soak there and ride the next plugin PR |
 
 **Reload is what makes soak real.** A committed but unloaded change has not been
@@ -355,11 +355,11 @@ the next one.
 ```text
 a3f21b0 — branch-guard fix
   soak: timescope 2026-08-16 (authored)
-  soak: roadz 2026-08-16..09-13, 4 weeks live
+  soak: client-repo 2026-08-16..09-13, 4 weeks live
 ```
 
 The consuming repo cannot own this record. A change authored while working in TimeScope,
-then exercised for four weeks in ROADZ, would leave its only evidence in a TimeScope
+then exercised for four weeks in the client repo, would leave its only evidence in a TimeScope
 arc-log nobody opens — and would look unsoaked forever.
 
 Soak is recorded **on use, not on edit**, so the repo doing the exercising is the one

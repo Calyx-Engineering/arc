@@ -1,6 +1,6 @@
 # Issue #14 — the work watcher, and engineering reports
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#14](https://github.com/Calyx-Engineering/arc/issues/14)  ·  **PR:** [#24](https://github.com/Calyx-Engineering/arc/pull/24)
 
@@ -29,7 +29,7 @@ did: a session ending with the user frustrated at depth.
 recommendation in a skill is a rule with no trigger — the exact failure this product exists
 to fix — so `.vscode/settings.json` is committed.
 
-**`engineering-report` gains a K-tier framing on the way across.** ROADZ's version says "one
+**`engineering-report` gains a K-tier framing on the way across.** The client repo's version says "one
 directory per report topic"; the tier ladder says the unit is a *capability*, and that a
 report is rare. Stating it at the top is the one substantive addition to an otherwise
 faithful port.

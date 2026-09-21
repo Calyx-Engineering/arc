@@ -1,5 +1,6 @@
 ---
 name: relief-valve
+user-invocable: false
 description: Use when questioning has run long without producing an artifact — eight turns since the last write, three questions with nothing changed, forty-five minutes with no checklist movement, or any emphasis marker in the user's messages. Offers a way back to the critical point. Runs inside work-watch's sweep, not as its own always-on check.
 camp-reports: [depth-flagged, exit-offered]
 checks: [turns-since-write, questions-since-write, checklist-stall, emphasis-marker, direction]
@@ -68,7 +69,7 @@ signal that does not exist.
 
 **Every threshold above is an estimate, not a measurement.** They are placed so the mechanism
 is buildable and so first use produces evidence to correct them.
-[#36](https://github.com/Calyx-Engineering/arc/issues/36) mines this repository, ROADZ and
+[#36](https://github.com/Calyx-Engineering/arc/issues/36) mines this repository, a client repo and
 TimeScope for real instances and works backwards — what was countable *before* the
 frustration surfaced.
 

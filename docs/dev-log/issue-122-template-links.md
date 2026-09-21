@@ -1,6 +1,6 @@
 # Issue #122 — template links break where the template lands
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#122](https://github.com/Calyx-Engineering/arc/issues/122)  ·  **PR:** —
 
@@ -68,8 +68,8 @@ decorative.
 |---|---|---|
 | 1 | **The rule, in `templates/` itself** | Which form a link takes, and why. A rule that lives only in this dev-log is one the next template omits |
 | 2 | **Repair the 18** | 15 to absolute URLs, 3 to the correct depth |
-| 3 | **`tools/verify-template-links.sh`** | The destination map, and every link resolved from where it lands. Fails on a template with no map row — the same shape as `verify-all.sh` failing on a hook with no case directory |
-| 4 | **Into `tools/verify-all.sh`** | A ninth gate. A check nobody runs is what produced this |
+| 3 | **`tests/verify-template-links.sh`** | The destination map, and every link resolved from where it lands. Fails on a template with no map row — the same shape as `verify-all.sh` failing on a hook with no case directory |
+| 4 | **Into `tests/verify-all.sh`** | A ninth gate. A check nobody runs is what produced this |
 | 5 | ~~Repair `.claude/arc/camp/*`~~ | **Dropped.** They were already correct — see above. Verified by resolving each, not by grepping for the prefix |
 
 ## Retrospective

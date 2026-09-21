@@ -1,0 +1,2 @@
+# manual mode, grepping a gated script — a read, and the pattern before it is quoted
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"grep -n \"set_mode\" tools/arc-loop.sh","description":"Find set_mode"}}

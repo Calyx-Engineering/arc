@@ -1,0 +1,2 @@
+# manual mode, a command the mode does not govern — not this hook's business
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"git status --short","description":"Status"}}

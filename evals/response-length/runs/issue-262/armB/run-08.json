@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Already fixed in this tree. Hook once used `exit 2` as a warning; in PreToolUse that denies the first Edit.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check, a PostToolUse hook where `exit 2` only prints. PreToolUse `exit 2` denies.\n\nAlready fixed and committed on both branches. Direct PR needs only label fix plus permission fix.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. This session has no shell or edit tools, so I cannot change files or open PRs.\n\nAlso lost context: which label fix and permission fix? Run from a normal session.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked. This session has no Edit, Write or Bash tools. Cannot change files, commit or open PR.\n\nAlso HANDOFF.md's autonomous row is yours to set, not mine. Restart session with tools enabled, set it, and I proceed.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch-guard here already handles `-pr123` and reads prefix from agreement; installed plugin copy likely lags.\n\nKill switch: put exact absolute command inside every deny message, plus `/hooks-off` skill.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still cannot. This session has no Edit, Write or Bash. Open new session with tools, set autonomous row, say \"go\". I will fix all four.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny specific calls. Here the tools themselves are absent from the session, before any hook runs. Kill switch cannot restore a tool. That is a session launch problem, likely permission mode or tool allowlist.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Run from any terminal in the repo:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nBut hooks are not my blocker. This session lacks Edit, Write, Bash tools entirely.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file is inert. Kill switch is a command:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nWon't help here though. No hook denied me. This session lacks Edit, Write and Bash tools entirely. Delete the file.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed, and it failed the same way today as on 09-07.\n\n`HOOKS_OFF.txt` does nothing. The switch is a command, run in a terminal at `r:\\arc`:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nBut hooks are not this session's blocker. It has no Edit, Write or Bash tools at all. A new session is needed either way.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Correction: that command mutes this repo only, expiring in 60 minutes. Still a bad tool.\n\nCannot write the item from here. Paste into the cleanup issue:\n\n```\n- [ ] Kill switch redesign. Deny messages carry the exact absolute command. Add `/hooks-off <hook>` skill so nothing is typed by hand. Retire file-based lore from every doc.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

@@ -1,6 +1,6 @@
 # PR #118 — one command runs every gate
 
-> Decision log, not a spec. No issue behind it — the runner is a prerequisite for
+> Dev-log, not a spec. No issue behind it — the runner is a prerequisite for
 > [#117](https://github.com/Calyx-Engineering/arc/issues/117) and smaller than an issue.
 
 **Issue:** none  ·  **PR:** [#118](https://github.com/Calyx-Engineering/arc/pull/118)
@@ -45,7 +45,7 @@ touched. **A verifier added tomorrow cannot be silently skipped.**
 
 | | |
 |---|---|
-| **What makes it durable** | The invocation table is checked against `tools/verify-*.sh` on disk, so it fails on a verifier it does not know rather than quietly running the rest |
+| **What makes it durable** | The invocation table is checked against the verifiers on disk — `tools/verify-*.sh` when this shipped, both that and `tests/verify-*.sh` since [#190](https://github.com/Calyx-Engineering/arc/issues/190) — so it fails on a verifier it does not know rather than quietly running the rest |
 | **Out of scope** | CI. That is [#117](https://github.com/Calyx-Engineering/arc/issues/117), filed into *Self-improvement*, and blocked until the plugin is released — `hooks/hooks.json` resolves `${CLAUDE_PLUGIN_ROOT}` |
 
 ### Intent check
@@ -59,7 +59,7 @@ in *Why this arc exists*.
 
 | | |
 |---|---|
-| 1 | `tools/verify-all.sh` — every gate, one exit code, the failing one named |
+| 1 | `tests/verify-all.sh` — every gate, one exit code, the failing one named |
 | 2 | The invocation table checked against disk, so an unknown verifier fails |
 | 3 | A hook with no case directory fails rather than being skipped |
 | 4 | `--list` prints the plan and the two un-covered classes |
@@ -70,7 +70,7 @@ in *Why this arc exists*.
 
 | | |
 |---|---|
-| **A table of invocations, checked against disk** | The scripts take different arguments, so a pure glob cannot call them. But a bare table is [#68](https://github.com/Calyx-Engineering/arc/issues/68) again — so `tools/verify-*.sh` is enumerated and **an unknown one fails the run.** The list cannot rot without saying so |
+| **A table of invocations, checked against disk** | The scripts take different arguments, so a pure glob cannot call them. But a bare table is [#68](https://github.com/Calyx-Engineering/arc/issues/68) again — so the verifiers on disk are enumerated — `tools/verify-*.sh` when this shipped, both directories since [#190](https://github.com/Calyx-Engineering/arc/issues/190) — and **an unknown one fails the run.** The list cannot rot without saying so |
 | **A hook with no case directory fails, rather than being skipped** | `CLAUDE.md` requires pass, deny and malformed cases before a hook is registered. Skipping an uncased hook would report coverage for the one hook that has none |
 | **The un-covered half is printed on success** | A green run ends with *"Not covered: hooks in a live session, and every skill."* A runner that only lists what it did is read as a complete picture, and here it is emphatically not one |
 | **Reports, never blocks** | Every verifier it calls does. Exit 1 is a finding, and the runner does not gate a merge on its own |

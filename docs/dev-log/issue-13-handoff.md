@@ -1,6 +1,6 @@
 # Issue #13 — the handoff
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#13](https://github.com/Calyx-Engineering/arc/issues/13)  ·  **PR:** [#23](https://github.com/Calyx-Engineering/arc/pull/23)
 

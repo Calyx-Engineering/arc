@@ -13,9 +13,9 @@ is described in a reference document but not specced.
 **Scope is agreed before a branch exists.** A hard stop at the start of an arc: what is in,
 what is out, and what the sequence looks like.
 
-TimeScope enforces this as a literal stop before any branch is created. ROADZ has the same
+TimeScope enforces this as a literal stop before any branch is created. The client repo has the same
 shape in prose — the
-[Interface PCBA revision workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md)
+The client's board-revision workflow (private corpus, not in this repository)
 steps 2 and 3: create the milestone, add in-scope issues, **freeze the scope**, then create
 the revision branch.
 
@@ -34,12 +34,12 @@ The hardware kickoff has parts the software one does not:
 | Step | |
 |---|---|
 | Review all labelled issues | The backlog is the input, not a fresh conversation |
-| Create the milestone | `Interface PCBA — Rev X` |
+| Create the milestone | `<Board> — Rev X` |
 | Add in-scope issues, agree what defers | The negotiation |
 | **Freeze** | The gate itself |
 | Create the revision branch | Named for the thing being revised |
 
-**Branch naming comes out of this step.** ROADZ names an arc after the product component
+**Branch naming comes out of this step.** The client repo names an arc after the product component
 being revised — the vocabulary comes from the BOM. TimeScope uses a free slug. This is a
 per-repo decision the kickoff has to make and record, because the branch guard reads it.
 
@@ -70,7 +70,7 @@ mechanism does in the meantime is open.
 
 ## Related
 
-- [ROADZ Interface PCBA revision workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md) — the guided flow, steps 1–3
+- the client's board-revision workflow (private corpus, not in this repository) — the guided flow, steps 1–3
 - [doc 04](../../suite-architecture/04-arc-execution-and-roles.md) — the three-role kickoff
 - [arc-decomposition](m20-arc-decomposition.md) — the other half of `skills/kickoff`
 - [branch-guard](m10-branch-guard.md) — consumes the branch convention this sets

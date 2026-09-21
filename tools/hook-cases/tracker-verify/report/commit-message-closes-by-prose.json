@@ -1,0 +1,2 @@
+# a commit message that closes an issue by prose — the keyword and the number share a sentence instead of a bare line, exactly commit 81b5a41's shape from #300, which GitHub closed with all four boxes unticked
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"git commit -m \"fix: the comma-split payload reader\n\nThis change is expected to resolve #300 along with the hooks it touches.\""}}

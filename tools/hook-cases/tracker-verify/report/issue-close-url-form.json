@@ -1,0 +1,2 @@
+# a close naming the issue by URL, unlinked — `gh issue close` takes {<number> | <url>}, so the URL form has to resolve to a number too
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_linked":"0","tool_input":{"command":"gh issue close https://github.com/Calyx-Engineering/arc/issues/163"}}

@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Already fixed. `camp-session-start` once exited 2, which denies on PreToolUse. Now exits 0; comment records it.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check, a PostToolUse hook, where exit 2 only prints. PreToolUse: denies. Fixed here. Direct PR: yes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Can't. This session has no edit or shell tools. Also lost the label/permission context. Restate both fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked twice. Can't set autonomous mode — only manual. No edit or shell tools here. Restart session with tools; I'll do it in manual.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch guard already reads prefix from agreement and knows `-pr200-` form. Verify later.\n\nKill switch: drop chat ritual and per-hook timers. Keep one repo-wide off file, fail-open.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still no edit or shell tools in this session. Nothing I can change here. Open a new session; I'll fix all there.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; here Edit, Write and Bash tools don't exist at all. Harness config, not a hook.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Easier: run from any terminal in the repo:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```\n\nManual: `R:\\arc\\.git\\arc-hooks-off`, one line `<epoch-expiry> all`.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong file and place. Run from `R:\\arc`:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nNote: my missing tools aren't hook-caused.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. Wrong file. Run this from `r:\\arc`:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nWrites `.git/arc-hooks-off`. But hooks didn't remove my tools; that's session config.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Repo-scoped only, not everywhere. Can't write files this session. Paste into cleanup:\n\n```text\nKill switch: replace hooks-off.sh with one touch-able file, no arguments, no expiry math.\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop, mechanically:\n\n1. `/ralph-loop` writes a state file: prompt, iteration count, max, completion promise.\n2. I work, then try to end turn.\n3. Stop hook reads state file. Not done? Blocks stop, re-injects same prompt.\n4. Repeat until output contains `<promise>DONE</promise>`, max hit, or `/cancel-ralph` deletes file.\n\nSame session, same context. Prompt repeats, not resets.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Checking state, then answering.\n\nCannot run git here: no Bash tool in this session. From tree state:\n\n| Left | Note |\n|---|---|\n| Commit 4 modified files | dev-log, runs README, SKILL.md, rank.py |\n| `bash tests/verify-all.sh` exit code | Not yet evidenced |\n| Passes 1–3 via read-only sub-agents | |\n| Draft PR, pass 4, ready, merge | Mode is autonomous until #262 merged |\n| Remove `in-progress` label | |\n\nRecommend: fresh session, this worktree, hand it that list.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked. This session has no Bash, Write or Edit tool, and the shell workaround was denied twice. Run these yourself:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add -A\ngit commit -m \"chore: wip on #262 before context compaction\"\nCopy-Item \"$env:USERPROFILE\\.claude\\projects\\R--arc-wt-262\\11797626-d29a-4324-b5a9-8a0f6a08e88c.jsonl\" \"R:\\work_northwind\\_transcripts\\2026-09-12-arc04-issue-262-context-bloat.jsonl\"\n```\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "| | |\n|---|---|\n| Branch | `arc/04-dogfood-issue-262-twenty-word-threshold`, worktree `R:\\arc-wt\\262` |\n| Uncommitted | dev-log, runs README, chat-response skill, ranker script |\n| Dev-log | Written. Arm C ships, suite 93/119 · 0.78 |\n| Mode | Autonomous until #262 merged |\n| Unknown | Whether PR is open and checklist ticked. Can't run `gh` here |\n\nNext: you commit and compact, then verify PR state.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. That discussion is gone from my context. What I have is the repo's definition: `tools/arc-loop.sh` spawns a fresh `claude -p` session per issue, repo is the only state, session ends when the issue merges. Tell me what we agreed and I'll proceed from there.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already exists. That file is `docs/arc-work/04-dogfood/run-instructions.md`.\n\n| Piece | Who reads it |\n|---|---|\n| arc-log §3.1 | The driver, `tools/arc-loop.sh`. Picks the issue, never read by a run |\n| arc-log §3.2 | Points at `run-instructions.md`, does not restate it |\n| `run-instructions.md` + issue body | The run. Nothing else, not the plan |",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "It already exists: `docs/arc-work/04-dogfood/run-instructions.md`. That is the file each loop iteration reads ahead of its issue, and arc-log §3.1 and §3.2 point at it rather than restating it. The driver is `tools/arc-loop.sh`.\n\nAlso: this session has no Write or Edit tool, so I cannot build or change files here.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "I have no §12.0 in context. The only `## 12` headings in the tree are issue-plan §12 *Filing*, arc-03 §12 *Wave 5 review*, and m43/m46 §12. Which document do you mean?",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "My last three replies came out empty, so nothing was proposed and there is nothing agreed to. Also, this session has no Bash, Write or Edit tool, so I cannot build a file at all.\n\nWhat I can say: the instruction file already exists, `docs/arc-work/04-dogfood/run-instructions.md`. Arc-log §3.1 stays the driver's rule, not the run's.\n\nWhat did \"section 12.0\" refer to?",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "Loop's tagline. Two halves, two issues:\n\n| | Issue | Means |\n|---|---|---|\n| **Land it** | [#138](https://github.com/Calyx-Engineering/arc/issues/138) | A merge runs from a standing grant, no per-merge ask |\n| **Measure it** | [#149](https://github.com/Calyx-Engineering/arc/issues/149) | A change produces a score, not an opinion |\n\n§11.1 is the *land it* half: a short manual session with you building that merge route, since none exists yet.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1 is three claims, badly written:\n\n| Line | Means |\n|---|---|\n| \"A work session to run together\" | #138 is done with you, manually, before anything else |\n| \"No merge has ever run without a per-merge request\" | Autonomous merge never worked here. Build it, don't repair it |\n| \"Diagnosis happens inside the issue\" | Don't investigate first. Open #138 and work it |\n\nCut it to line one.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

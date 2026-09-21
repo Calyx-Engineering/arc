@@ -1,0 +1,2 @@
+# an issue branch's PR stacked on a sibling issue branch — the arc PR would not carry it
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation-issue-11-other","arc_test_default":"arc/02-foundation","arc_test_milestone":"null","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closes #10\n","tool_input":{"command":"gh pr edit 200 --body-file body.md"}}

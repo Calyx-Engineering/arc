@@ -1,0 +1,2 @@
+# an issue branch's PR based on the default branch mid-arc — a genuine finding, must not be weakened
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"main","arc_test_default":"main","arc_test_milestone":"null","arc_test_title":"fix: the thing","arc_test_body":"Closes #10\n","tool_input":{"command":"gh pr edit 200 --body-file body.md"}}

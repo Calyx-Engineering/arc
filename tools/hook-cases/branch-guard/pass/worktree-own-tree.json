@@ -1,0 +1,2 @@
+# absolute path inside the session's own tree — where the work belongs
+{"tool_name":"Edit","cwd":"__FIXTURE_ISSUE__","tool_input":{"file_path":"__FIXTURE_ISSUE__/src/index.ts"}}

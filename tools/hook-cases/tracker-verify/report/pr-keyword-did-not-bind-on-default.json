@@ -1,0 +1,2 @@
+# a closing keyword on the default branch that bound to nothing — this is the failure the check exists for
+{"tool_name":"Bash","cwd":"__FIXTURE_ARC__","arc_test_pr_base":"main","arc_test_default":"main","arc_test_milestone":"null","arc_test_linked":"0","arc_test_title":"fix: the thing","arc_test_body":"Closes #10\n","tool_input":{"command":"gh pr edit 200 --body-file body.md"}}

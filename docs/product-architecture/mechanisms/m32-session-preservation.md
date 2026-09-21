@@ -1,6 +1,6 @@
 # Mechanism — Session Preservation
 
-**Status:** specified. Prerequisite for [transcript-mining](m30-transcript-mining.md); pairs with [handoff-spine](m15-handoff-spine.md).
+**Status:** built — the index ships as `hooks/session-index`. Knowledge mining (§3) is not built and is [m19](m30-transcript-mining.md)'s, not this one's. Prerequisite for [transcript-mining](m30-transcript-mining.md); pairs with [handoff-spine](m15-handoff-spine.md).
 **Home:** Arc — Self-improvement.
 **Spawned from:** [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4.
 
@@ -16,8 +16,8 @@ design.**
 
 | | |
 |---|---|
-| Live worktrees in ROADZ | **2** |
-| Transcript directories for ROADZ | **4** |
+| Live worktrees in the client repo | **2** |
+| Transcript directories for the client repo | **4** |
 | Directories whose worktree no longer exists | **2** |
 
 The two orphans are `issue-44-poe-pse-onboard` and
@@ -82,9 +82,9 @@ instead:
 |---|---|
 | Transcript directory slug | `R--...-worktrees-issue-44-poe-pse-onboard` |
 | Worktree path (may no longer exist) | `.claude/worktrees/issue-44-poe-pse-onboard` |
-| Branch | `interface-pcba/rev_b-issue-44-...` |
+| Branch | `widget-board/rev_b-issue-44-...` |
 | Issue | `#44` |
-| Arc | `interface-pcba/rev_b` |
+| Arc | `widget-board/rev_b` |
 | Date span | `2026-08-04` |
 | Status | worktree removed |
 
@@ -124,14 +124,14 @@ file at the time, too valuable to lose — and it evaporates when a worktree is 
 
 ### When it runs — PR time, not worktree removal
 
-**Worktree removal is the wrong trigger.** Measured in ROADZ, 2026-08-16:
+**Worktree removal is the wrong trigger.** Measured in the client repo, 2026-08-16:
 
 | Where work happens | Transcript directory | Does a removal ever fire? |
 |---|---|---|
-| A worktree (`issue-1-dimmer-flasher`) | Its own slug | Yes |
+| A worktree (`issue-1-<slug>`) | Its own slug | Yes |
 | **The main repo, branch checked out in place** (`issue-39`) | **Shared with every other branch** | **Never** |
 
-ROADZ's #39 work is on a branch in the main repo, not a worktree. A removal-based trigger
+The client repo's #39 work is on a branch in the main repo, not a worktree. A removal-based trigger
 would **never fire for it**, and its 18 transcripts pile into one directory spanning every
 branch ever checked out there — no per-issue boundary at all.
 
@@ -165,14 +165,41 @@ index makes transcripts findable; it does not make them durable.**
 
 ---
 
+## As built — 2026-09-08, [#16](https://github.com/Calyx-Engineering/arc/issues/16)
+
+| Part | |
+|---|---|
+| §1 Index, do not copy | **Built.** `hooks/session-index` writes `.claude/arc/sessions.md`, one row per working directory and branch, with the seven fields above. Format: [templates/session-index.md](../../../templates/session-index.md). Gate: `tests/verify-session-index.sh` |
+| §2 Capture at creation | **Built.** The row is written at the first tool call of the first session in a directory; a later firing from elsewhere flips its status to `orphaned`. Nothing is written at deletion |
+| §3 Distil before deletion | **Not built**, and not this mechanism's. Knowledge mining is m19's trigger over m30's pipeline |
+| §4 Retention | **Not addressed, and cannot be.** The index makes transcripts findable; nothing here makes them durable |
+
+**What it does not do.** It does not backfill. A directory orphaned before the hook shipped has no
+row, and reconstructing one from `~/.claude/projects/` loses the live context the hook exists to
+capture. Measured here on 2026-09-08: 5 live worktrees, 22 transcript directories, **17 orphans**,
+none of which this can recover the branch and issue for by itself.
+
+**And two limits the shipped shape carries.** A row is written into the working tree it describes,
+so it survives only if that branch merges — an abandoned worktree takes its own row with it. And
+the file is created untracked: `skills/handoff`'s setup step tells a new repository to `git add` it,
+and `tests/verify-session-index.sh` fails when it exists unstaged, because "committed to the repo"
+is requirement 3 and an untracked file meets none of it.
+
+**Requirement 3 has one declared exception — a published repository
+([#320](https://github.com/Calyx-Engineering/arc/issues/320)).** The index holds one person's
+machine paths and transcript directories, which a public repository cannot carry. Such a repository
+ignores the index under a `# m32 opt-out` comment in `.gitignore`; the gate passes on the comment and
+still fails on a bare ignore line. **Arc's own repository is the first to opt out**, and pays the
+stated price: its mapping from transcript directory to branch no longer outlives the machine.
+
 ## Open questions
 
 | Question | Notes |
 |---|---|
-| Who writes the index entry? | A worktree-creation hook is the natural point. Arc territory |
+| ~~Who writes the index entry?~~ | **Answered.** `hooks/session-index`, at the first tool call of a session — the PreToolUse proxy for a cold start, because CLAUDE.md bars writing a `SessionStart` hook autonomously |
 | Distil automatically on removal, or prompt? | Automatic risks a slow, expensive pass at an inconvenient moment |
 | How much survives distillation? | A page per worktree is probably right; a paragraph is too little |
-| Cross-machine? | Desktop and laptop have separate transcript stores. The index is committed; the transcripts are not |
+| Cross-machine? | **Half answered.** The index is committed and the transcripts are not, so a row is marked `orphaned` only when its worktree is absent **and** its transcript directory is present on this machine — otherwise one machine declares the other's live worktrees dead. What is still open is whether a row should say which machine wrote it |
 | Does this generalise beyond worktrees? | Any directory rename orphans a transcript directory the same way |
 
 ---

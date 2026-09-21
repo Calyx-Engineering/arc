@@ -1,0 +1,122 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Session-start hook copied `exit 2` from a PostToolUse hook. There it warns; on PreToolUse it denies. Wrong exit code.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check (PostToolUse: exit 2 warns). PreToolUse: exit 2 denies. Already fixed on main; (2) done.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked: this session has no shell or edit tools, and I lost what \"label fix\" and \"permission fix\" are. Restate both?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot enter auto here: no Write, Edit or Bash tools this session. Needs a fresh session, plus the two fixes restated.",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Both already built: `*-pr[0-9]*` at line 125, prefix read from agreement at line 98.\n\n| Kill switch | Suggest |\n|---|---|\n| Runtime line in each hook | Keep; one line, fails open |\n| Chat ritual (say it, paste verify output) | Drop; let `verify-hook.sh` check the line exists |",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still no edit or shell tools here; nothing I can change. Guard already handles pr numbers and agreement prefix. Kill switch: drop the chat ritual, keep the lib line.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny commands; this session was launched without Edit, Write or Bash at all. Restart the session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Which file? Nothing in repo settings drops the tools; likely the session launch flags. User settings: `C:\\Users\\class\\.claude\\settings.json`.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file has no effect (the lib says so, line 14), and tools are still missing. Restart session; use `bash hooks/hooks-off.sh <hook> 30`.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Replace it: one file, `.git/ARC_HOOKS_OFF`, touched or deleted by hand, every hook exits 0 on sight. No timer, no script, no chat ritual.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Still no write tools this session. Paste this into the cleanup list:\n\n```text\n- [ ] Kill switch redesign. Current: per-hook timer via hooks-off.sh, chat ritual, repo-wide. Wanted: one obvious per-repo, per-hook off switch, no timer, no ceremony. Also: HOOKS_OFF.txt at repo root must either work or be refused loudly. (#202 follow-up)\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop = Stop hook. State file `.claude/ralph-loop.local.md` holds prompt, iteration count, max, completion promise. When session tries to end turn, hook fires: promise string absent from last output and under max, hook blocks stop, re-feeds same prompt. Same session, context accumulates. Ends on promise text or max iterations. No fresh context each pass.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "No dev-log, no commit, no PR yet. Working tree holds the skill, three tools and `tests/verify-all.sh` edits.\n\nLeft, §2 order:\n\n1. Run `bash tests/verify-all.sh`, exit code\n2. Passes 1–3 via sub-agent, tick #262 boxes\n3. Dev-log `docs/dev-log/issue-262-*.md`, commit, draft PR\n4. Pass 4, ready, merge\n\nRecommend: kill this session, fresh run picks up the tree.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Commit blocked: no Bash tool in this session, and the shell path via Monitor needs approval it cannot get non-interactively. No Write tool either, so the transcript cannot be saved from here.\n\nWhat I hold that survives compaction:\n\n| | |\n|---|---|\n| Branch | `arc/04-dogfood-issue-262-twenty-word-threshold`, mode autonomous |\n| Uncommitted | `skills/chat-response/SKILL.md`, `tests/verify-all.sh`, `tools/response-length{,-probe,-rank}.py`, `tools/response-length.sh` |\n| Not started | gate run, passes 1–3, dev-log, PR |\n| Ralph loop, agreed | Stop-hook re-prompt, same session, context accumulates. Your plan and mine match |\n\nRun the commit yourself:\n\n```bash\ngit add skills/chat-response/SKILL.md tests/verify-all.sh tools/response-length*.py tools/response-length.sh\ngit commit -m \"feat: twenty-word threshold — undershoot rule, rank tool, probe scoring (#262)\"\n```",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Nothing committed. This session has no Bash or Write tool — git via Monitor was denied for approval, transcript could not be written.\n\n| | State |\n|---|---|\n| Branch | `arc/04-dogfood-issue-262-twenty-word-threshold` |\n| Tree | skill, three tools, `tests/verify-all.sh` uncommitted |\n| Dev-log, PR | none |\n| Transcript | not saved |\n\nNext: you commit, then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Partly. Only what your quotes carried: you offered spawning bare agents per issue, or whole workstream on Ralph loop. I contradicted you wrongly. The earlier plan itself is gone from my context — compacted. Restate it in one line and I work from that.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already did. §3.1 describes the driver, `tools/arc-loop.sh`. The instruction file is `docs/arc-work/04-dogfood/run-instructions.md` — each `claude -p` run reads it plus the issue body, nothing else. §3.1 itself stays in the arc-log for humans, not the run. This session is one such run, worktree 262.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "Cannot write files here — this session has no Write, Edit or Bash tool. Needs a normal session.\n\nProposed shape, `docs/arc-work/04-dogfood/ralph-instructions.md`, the prompt each iteration re-reads:\n\n| § | Holds |\n|---|---|\n| 1 | Pick next: first open `Agent` sub-issue, §3.1 rules |\n| 2 | Dispatch one sub-agent, fresh context, `run-instructions.md` + issue body |\n| 3 | Read its PR, merge, remove label |\n| 4 | Stop conditions: none open, blocked, report run |\n\nApprove and I draft it next session.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "No section 12.0 found. Only `## 12` headings: arc-03 arc-log wave 5 review, issue-plan §12 Filing, m43 §12, m46 §12. Which document do you mean? If issue-plan §12, it names the queue mechanics, not the run's instructions.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "Still no Write, Edit or Bash tool in this session. Draft below; paste to `docs/arc-work/04-dogfood/ralph-instructions.md`, or next session writes it.\n\n```markdown\n# Arc 04 dogfood — the Ralph loop\n\n**You are the loop's orchestrator, and you hold nothing.** Each iteration re-reads this file.\nYour context is the cost: every line you read that a sub-agent could have read is a line the\nloop carries to its end. You pick, dispatch, check, stop. You never implement.\n\n## 1 What you read\n\n| | |\n|---|---|\n| This file | Every iteration |\n| The queue | `gh issue list --label workstream --milestone Dogfood`, then the parent's sub-issues |\n| Nothing else | Not the issue plan, not the arc-log, not the code |\n\n## 2 One iteration\n\n| | |\n|---|---|\n| 1 | **Pick.** First open `Agent`-typed sub-issue of the workstream parent whose `Blocked by` issues are all closed. Arc-log §3.1 rules; do not re-derive them |\n| 2 | **Dispatch one sub-agent, fresh context.** It receives `run-instructions.md` and the issue body, nothing from you. It runs the issue start to finish — branch, checklist, gate, passes, dev-log, PR, merge |\n| 3 | **Check, do not read.** `gh pr view` — merged, closing keyword bound, label removed. Three `gh` reads, no file opens |\n| 4 | **Record one line** in the arc-log status table: issue, PR, merged or not |\n| 5 | End the turn. The Stop hook re-feeds this file |\n\n## 3 Stop\n\nOutput the completion promise, `ARC WORKSTREAM DONE`, when:\n\n| | |\n|---|---|\n| No open children of any type | Dispatch the report run first, §6 of `run-instructions.md` |\n| A human-typed issue is next | Say which and stop. Not yours |\n| A sub-agent returned blocked | Say why. Do not retry, do not pick the next |\n| Max iterations reached | The hook stops you. Say where the queue stands |\n\n## 4 Never\n\n| | |\n|---|---|\n| Implement | A sub-agent that edits is fine; you editing is the context blow-up |\n| Read a changed file | Pass 4 is the sub-agent's. You read `gh`, not the tree |\n| Pick two | One issue per iteration |\n| Raise the mode | `HANDOFF.md` says autonomous or the sub-agent's commit is denied. You never write that row |\n```",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "That line is not in the repo, and the message it came from is gone from my context. Paste the row — the item name and the two words around it — and I explain it, or rewrite it.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11 = every point the loop needs you. Three parts:\n\n| | |\n|---|---|\n| 11.1 | #138, the merge route. Manual session, you and me. First in the arc |\n| 11.2 | One number you set: skill-firing threshold, proposed 0.8 over 3 runs |\n| 11.3 | Six issues whose output is your judgement, so each stops and hands you it |\n\n\"15min, land it, measure it\" is not from this file.",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

@@ -1,0 +1,2 @@
+# an issue created with `-R` between `gh` and the subcommand, its body carrying scaffolding — the dispatch missed it, so the body was never scanned. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] set the current limit to TBD mA\n","tool_input":{"command":"gh -R Calyx-Engineering/arc issue create --title x --body-file body.md"}}

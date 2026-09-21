@@ -1,0 +1,2 @@
+# a Bash `mv` over some other untracked file — #351's shell-overwrite form
+{"session_id":"verify-archive-bash-mv","cwd":"__FIXTURE_ISSUE__","tool_name":"Bash","tool_input":{"command":"mv draft.md notes.md"}}

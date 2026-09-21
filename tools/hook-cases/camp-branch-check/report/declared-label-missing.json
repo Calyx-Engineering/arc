@@ -1,0 +1,2 @@
+# the same repo, a branch missing the `ticket` number its convention requires
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/labelled","tool_name":"Bash","tool_input":{"command":"git checkout -b feat/sync-retry"}}

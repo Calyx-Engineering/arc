@@ -1,0 +1,2 @@
+# manual mode, a script that declares nothing — unrecognised fails open, it is not denied
+{"tool_name":"Bash","cwd":"__FIXTURE_MANUAL__","tool_input":{"command":"bash tests/verify-all.sh","description":"Run the gates"}}

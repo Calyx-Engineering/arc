@@ -1,6 +1,6 @@
 # Issue #55 — Rejecting a misplaced closing keyword
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#55](https://github.com/Calyx-Engineering/arc/issues/55)  ·  **PR:** _pending_
 
@@ -29,7 +29,7 @@ written for a link that *failed* to form.
 | **Reports, never blocks** | The `verify-hook.sh` declaration-check precedent. A misplaced keyword is caught by a human reading the report; a blocking gate becomes a cost paid while trying to fix something else |
 | **Not a hook alone** | Check 1 must run *before* the body is written. A `PostToolUse` hook is too late by definition — the wrong body already exists in the tracker |
 | **Escaping is not the fix** | A zero-width space inside the keyword is a workaround for writing *about* the trap, in a document. The rule the check enforces is placement: keyword and number appear once, on the last non-empty line |
-| **Fixtures mirror `hook-cases/`** | `tools/tracker-cases/`, same pass/fail directory shape. A second convention for the same job would be gratuitous |
+| **Fixtures mirror `hook-cases/`** | `tests/tracker-cases/`, same pass/fail directory shape. A second convention for the same job would be gratuitous |
 
 ## The five-hit fixture is reconstructed, not recovered
 

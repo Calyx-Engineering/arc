@@ -1,0 +1,2 @@
+# no handoff, and a target that does not exist — nothing git cannot restore, so silence
+{"session_id":"verify-archive-issue","cwd":"__FIXTURE_ISSUE__","tool_name":"Edit","tool_input":{"file_path":"__FIXTURE_ISSUE__/src/a.c"}}

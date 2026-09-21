@@ -1,0 +1,2 @@
+# the arc PR merging into the trunk with the flip off, so the trunk IS the default — the base is where keywords bind, and merge-close skips on the default arm rather than firing on every arc merge
+{"tool_name":"Bash","cwd":"__FIXTURE_ARC__","arc_test_pr_base":"main","arc_test_default":"main","arc_test_milestone":"null","arc_test_title":"arc-02: the foundation arc","arc_test_body":"Everything this arc consumed.\n\nCloses #10\n","arc_test_issue_state":"OPEN","tool_input":{"command":"gh pr merge 201 --merge"}}

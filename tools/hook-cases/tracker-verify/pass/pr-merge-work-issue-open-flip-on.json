@@ -1,0 +1,2 @@
+# a work PR merged into its arc branch while m42's flip has made that branch the default, with the issue still open — the keyword binds there and GitHub is closing it, so merge-close must skip rather than report a falsehood about the base
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_pr_base":"arc/02-foundation","arc_test_default":"arc/02-foundation","arc_test_milestone":"null","arc_test_title":"arc-02: fix: the thing","arc_test_body":"Closes #10\n","arc_test_issue_state":"OPEN","tool_input":{"command":"gh pr merge 200 --squash"}}

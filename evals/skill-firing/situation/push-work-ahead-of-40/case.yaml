@@ -1,0 +1,13 @@
+shape: situation
+expect:
+  - arc-intent
+source:
+  session: 6b72c941
+  turn: 2
+  opening: true
+why: >
+  Work proposed and reordered against an issue — arc-intent's stated trigger, unnamed. It
+  scores a pass, but read the transcript before counting it as a situation match: record-route
+  fired first, under the assistant's own words "First the Arc workflow", and issue-write and
+  arc-intent followed as part of that sequence. It is a chained fire, not the description
+  matching the user's words. No case in this suite fires on a situation alone.

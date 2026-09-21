@@ -1,0 +1,2 @@
+# an issue EDITED on an issue branch with no Spawned by — an edit is not a spawn, and asking again on every edit would report the same finding forever on an issue that legitimately has no parent
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_body":"## Required\n\n- [ ] one thing\n\nNo parent recorded anywhere in this body.","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

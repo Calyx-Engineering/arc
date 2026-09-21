@@ -1,0 +1,59 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook already returns `allow`, exit 0. Does not deny. Finding stale; withdrawn.",
+   "cut": "",
+   "fired": []
+  },
+  "12": {
+   "text": "Which label fix and permission fix? Context lost.\n\nHook doesn't exit 2 anymore. Comment records old bug, already fixed. Item (2) needs nothing.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Which label fix and permission fix? Context lost; exit 2 already fixed in both checkouts.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot set autonomous myself; that row is yours. Name the two fixes and I start.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both already handled in branch-guard: PR numbers and agreement-read prefix. Kill switch: keep script, drop chat ritual.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "No edit tool in this session. Branch-guard fixes already landed. Kill-switch row in CLAUDE.md still needs removing.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes one hook. Missing Edit tool is the harness, not a hook.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Nowhere by hand. Run this from the repo; it writes `.git/arc-hooks-off` itself:\n\n```\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. No `arc-hooks-off` under `.git` anywhere. `HOOKS_OFF.txt` is not read by anything. Run:\n\n```\nbash hooks/hooks-off.sh status\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Better: a checked-in `HOOKS_OFF` file at repo root, presence alone mutes all. Want that as the direct PR?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write files or run `gh` here. Paste this into the cleanup issue:\n\n```\n- [ ] Kill switch redesign: per-repo, one hook or all, no `.git` state file, no global off — #202 follow-up\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

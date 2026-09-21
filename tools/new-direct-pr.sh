@@ -4,6 +4,13 @@
 #   tools/new-direct-pr.sh <hint-slug> "<PR title>"
 #   tools/new-direct-pr.sh --dry-run <hint-slug> "<PR title>"
 #
+# mode-guard: writes-outward
+# mode-guard-read-only: --dry-run
+#
+# The declaration above is read by hooks/mode-guard, which otherwise sees a payload holding
+# none of the words it gates on — this script commits, pushes and opens a PR from inside, and
+# in manual mode ran unguarded until #201. --dry-run writes nothing outward, so it is exempt.
+#
 # A direct PR is one with no issue behind it. Its branch still carries a number, because the
 # branch name is often the only reference visible while the PR is being read — m46 §9. The
 # number it carries is the PR's, and the PR does not exist yet.
@@ -20,6 +27,12 @@
 # REPORTS, NEVER GUESSES. If the predicted number and the real one differ, the script says so
 # and tells you what to record. It does not retry — m46 §9.1: a miss is a race that already
 # happened, and buying a tidier branch name costs a real number.
+#
+# `git checkout -b` IS CORRECT HERE, and is not the thing #206 was about. `createLinkedBranch`
+# links a branch TO AN ISSUE; a direct PR has no issue, so there is nothing to link and the
+# mutation has no input to take. The arc's "never `git checkout -b`" rule is about issue
+# branches. Nothing in this script needs the read-back that rule now carries — the link this
+# PR does get is the ordinary PR↔base one, which `gh pr create` returns a URL for.
 
 set -u
 
@@ -91,7 +104,7 @@ mkdir -p docs/dev-log
 cat > "$DEVLOG" <<STUB
 # PR #${N} — ${TITLE}
 
-> Decision log, not a spec. **Stub** — opened by \`tools/new-direct-pr.sh\` so the draft PR
+> Dev-log, not a spec. **Stub** — opened by \`tools/new-direct-pr.sh\` so the draft PR
 > could claim its number. Written properly as the work proceeds, before the PR is marked ready.
 
 **Issue:** none  ·  **PR:** [#${N}](https://github.com/Calyx-Engineering/arc/pull/${N})

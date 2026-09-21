@@ -1,6 +1,6 @@
 # Issue #33 — The scoping loop's missing half
 
-> Decision log, not a spec. Started at plan time, finalised as a retrospective at PR time.
+> Dev-log, not a spec. Started at plan time, finalised as a retrospective at PR time.
 
 **Issue:** [#33](https://github.com/Calyx-Engineering/arc/issues/33)  ·  **PR:** _pending_
 

@@ -1,0 +1,12 @@
+shape: wrapped
+expect:
+  - handoff
+
+source:
+  session: 045b77e5
+  turn: 1
+  opening: true
+why: >
+  The handoff read is the first clause of five. The rest — run autonomously, review at the
+  end of the wave, write the handoff, grep before reporting an edit done — is what the turn is
+  about, and it buries the read. Nothing fired at all in the real session.

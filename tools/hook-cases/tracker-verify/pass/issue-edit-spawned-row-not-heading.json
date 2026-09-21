@@ -1,0 +1,2 @@
+# spawned work written the one correct way — a row in the three-column `Related` table. This must be silent
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] one thing\n\n## Related\n\n| | Link | What it is |\n| :--- | :--- | :--- |\n| **Spawned by** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | the workstream that caused it |\n| **Spawned** | [#271](https://github.com/Calyx-Engineering/arc/issues/271) | the follow-up this filed |","tool_input":{"command":"gh issue edit 38 --body-file body.md"}}

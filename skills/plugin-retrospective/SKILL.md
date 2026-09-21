@@ -1,5 +1,6 @@
 ---
 name: plugin-retrospective
+user-invocable: true
 description: Use when returning to a Calyx plugin repo after a stretch of real work elsewhere, to mine that work's transcripts for friction and turn it into concrete plugin improvements. Also use when the user says "let's do a plugin retrospective", "what did that arc teach us about the tooling", or wants to defer plugin iteration until after a work push rather than context-switching mid-task. Covers extraction, clustering, the review interview, and writing findings up as mechanism specs. Not a general project or team retrospective — this one improves the tooling.
 ---
 
@@ -123,13 +124,41 @@ Two kinds of output, two destinations.
 
 | Output | Goes to |
 |---|---|
-| **The friction log** — evidence, clusters, verbatim quotes | `docs/retrospectives/<YYYY-MM>-<slug>/friction-log.md` |
+| **The retrospective** — evidence, clusters, verbatim quotes | `docs/retrospectives/<YYYY-MM>-<slug>/README.md` |
 | **Mechanism specs** — one file each | `docs/product-architecture/mechanisms/` |
 
-**The friction log is dated and never edited afterwards.** It is evidence, and evidence
+**What is committed is masked. The quote survives; the names in it do not.** Both outputs are
+committed, and a retrospective run for a plugin is committed to **the plugin's** repository —
+which is not the repository the words were said in, and may be public. Everything up to here is
+local: the miner's packet, the draft, the interview. This step is where a consumer's words would
+leave their machine, so this step is where they are masked.
+
+| At write time | |
+|---|---|
+| **Keep the user's words about the tooling** | *"why am i being asked about all these dumb things"* is the finding. It names nobody |
+| **Replace every name with its class, in brackets** | A client, a product, a person, an employer, a part number, a net, a repository, a machine path — `[the client]`, `[a colleague]`, `[the board]`, `[repo]`. Brackets mark the edit, so the quote still reads as quoted |
+| **A quote whose substance is the work itself is cited, not quoted** | A pinout argument or a measurement cannot be masked without destroying it, and it is the consumer's. Give the locator — transcript, minute — and one sentence on what the tooling did wrong |
+| **No wall-clock timestamps beside a quote** | A date is enough to order the evidence. Minute-level times reconstruct someone's working day |
+| **Locators name the transcript, never its path** | The path carries the machine and usually the client's directory name |
+| **Ask before committing, once, naming the destination** | *"This writes masked quotes from `[repo]` sessions into the plugin's repository."* The user is the only one who knows what their employer's agreement covers |
+
+**Masked is not paraphrased.** *Quote, do not paraphrase* still holds: the sentence is theirs, word
+for word, with names swapped for classes. Rewriting the sentence is the drift that rule prevents.
+
+**The retrospective is dated and never edited afterwards.** It is evidence, and evidence
 freezes when the run ends. Every retrospective produces one, so they need a home that does
-not clog the product definition — the first run's log sat in the architecture root and had
+not clog the product definition — the first run's sat in the architecture root and had
 to be moved.
+
+**`README.md`, and never `friction-log.md`.** Two reasons, both learned the hard way:
+
+| | |
+|---|---|
+| **It is not a log** | A log is appended to as friction happens — that is the running `friction-log.md` a *work* repository keeps. This is written once, at the end of a run. Naming both the same thing makes a reader open the wrong one |
+| **`README.md` matches the convention already in use** | `report/<capability-slug>/README.md`, `docs/product-architecture/README.md`. The folder name carries the run; the filename's job is *this is the document*, and GitHub renders it on the folder |
+
+**The `# H1` carries the identity, not the filename** — `# Retrospective — <slug>, <date>`. A file
+that escapes its folder still says what it is.
 
 **Specs are living.** They change as mechanisms get built. That is why they live apart from
 the evidence that produced them.
@@ -139,7 +168,7 @@ One file per mechanism. Do not bury specs inside argument documents.
 | Section | Holds |
 | --- | --- |
 | Status · Home · Spawned from | Where it belongs and why it exists |
-| The problem | Verbatim quotes |
+| The problem | Verbatim quotes, masked as above |
 | Proposed shape | Hook, agent, skill, or rule — and why that form |
 | Open questions | What is genuinely undecided |
 
@@ -200,6 +229,7 @@ Record cluster counts per run so the comparison is possible.
 | **Read your own wrong turns as evidence** | A correction after a skill exists means the skill is wrong |
 | **Cross-repo patterns are portable candidates** | A cluster in two repos belongs in a plugin, not a `CLAUDE.md` |
 | **Transcripts stay local** | They contain client and employer material. Findings may be shareable when the source is not |
+| **So do unmasked quotes** | A quote is a piece of the transcript. It is masked at write time — step 5 — before anything is committed, and never committed to the plugin's repository raw |
 | **Distil before deletion** | Transcripts rotate. Anything that matters goes into a committed artifact |
 | **Stay product-agnostic** | This process runs the same way for every plugin. Nothing here should assume which products exist |
 

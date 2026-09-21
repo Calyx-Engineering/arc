@@ -1,0 +1,2 @@
+# A client repo, real shape, names changed: a second PR-numbered branch, created with `git branch`
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/module-rev","tool_name":"Bash","tool_input":{"command":"git branch widget-board/rev-b-pr70-bench-sweep"}}

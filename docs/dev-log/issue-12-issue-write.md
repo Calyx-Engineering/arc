@@ -1,6 +1,6 @@
 # Issue #12 — issue writing, and verifying the write landed
 
-> Decision log, not a spec.
+> Dev-log, not a spec.
 
 **Issue:** [#12](https://github.com/Calyx-Engineering/arc/issues/12)  ·  **PR:** [#22](https://github.com/Calyx-Engineering/arc/pull/22)
 

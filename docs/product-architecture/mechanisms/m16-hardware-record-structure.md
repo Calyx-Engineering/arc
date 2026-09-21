@@ -1,6 +1,6 @@
 # Mechanism — Hardware Record Structure
 
-**Status:** specified. Mostly **already grown organically in ROADZ** — this documents and
+**Status:** specified. Mostly **already grown organically in the client repo** — this documents and
 tightens what exists.
 **Home:** Arc — Knowledge. Guided mode, per m40.
 **Spawned from:** the context ladder in [handoff-spine](m15-handoff-spine.md).
@@ -28,7 +28,7 @@ files stop being compact, and their review value is destroyed.
 
 ---
 
-## What ROADZ already grew
+## What the client repo already grew
 
 Discovered by doing, not designed. `docs/report/issue-01-warning-light-dimming/`:
 
@@ -75,7 +75,7 @@ settled during the rev B work.
 | **No arc-level analysis home** | Cross-issue findings (EMI budget, thermal, power) have nowhere to live; they land in whichever issue happened to raise them |
 | **Retrospective does not link down** | The dev-log's retrospective is the natural index into the analyses; it does not point at them |
 | **No graduation step** | Durable facts stay buried in an issue folder instead of reaching the wiki |
-| **Report vs dev-log unclear** | ROADZ has `docs/report/issue-NN/`; TimeScope has `docs/dev-log/issue-NN.md`. Both per-issue, different purposes, no stated relationship |
+| **Report vs dev-log unclear** | The client repo has `docs/report/issue-NN/`; TimeScope has `docs/dev-log/issue-NN.md`. Both per-issue, different purposes, no stated relationship |
 
 ---
 
@@ -91,7 +91,7 @@ lifetime.
 
 | | **Report** | **Scratchpad analysis** |
 |---|---|---|
-| Audience | **User-facing** — David, Chad, reviewers | **Agent-facing** — future sessions, and David when digging |
+| Audience | **User-facing** — David, a colleague, reviewers | **Agent-facing** — future sessions, and David when digging |
 | Scope | **A product capability** | **One issue's working-out** |
 | Frequency | **Rare** — a handful per product | **Common** — most non-trivial issues |
 | Lifetime | Durable product documentation | Durable but rarely re-read |
@@ -180,7 +180,7 @@ docs/
 │   └── issue-<N>-<slug>.md         ← K1 · compact per issue, unchanged
 │
 ├── arc-work/<arc-slug>/            ← K2a · ARC-LEVEL depth
-│   ├── bom-analysis.md             ·   spans the whole revision
+│   ├── parts-analysis.md           ·   spans the whole revision
 │   ├── pinout-unification.md
 │   └── figures/<topic>/
 │
@@ -214,7 +214,7 @@ docs/
 
 | Path | Example |
 |---|---|
-| Arc-level work | `arc-work/interface-pcba-rev-b/bom-analysis.md` |
+| Arc-level work | `arc-work/widget-board-rev-b/parts-analysis.md` |
 | Per-issue scratch | `scratch/issue-08-hard-kill-path/gate-drive-margin.md` |
 | Agent index | `.claude/index/emi.md` — links only, no status |
 | Capability report | `report/pwm-light-dimming/README.md` |
@@ -263,7 +263,7 @@ Lookup table for agents. No findings, no status. Status lives in the RD.
 | Subject | Analysis |
 |---|---|
 | PWM light dimming | [analysis-emi](../../docs/report/pwm-light-dimming/analysis-emi.md) |
-| Cellular module | [emi-coexistence](../../docs/arc-work/interface-pcba-rev-b/emi-coexistence.md) |
+| Radio module | [emi-coexistence](../../docs/arc-work/widget-board-rev-b/emi-coexistence.md) |
 ```
 
 **The rule: an index never holds findings.** The moment it does, the same fact exists in
@@ -315,7 +315,7 @@ attention of every future reader; an unnecessary analysis file costs disk.
 ### The two compact files stay compact
 
 **Nothing about the dev-log changes** except one line: its retrospective gains a link
-into the analyses. Its template rule — *"Decision log, not a spec … capture the why, not
+into the analyses. Its template rule — *"Dev-log, not a spec … capture the why, not
 a blow-by-blow"* — is what makes it reviewable and must not be relaxed.
 
 ```markdown
@@ -341,7 +341,7 @@ template's existing "skip any section that doesn't apply" rule.
 
 - **Scratch:** [gate drive margin](../scratch/issue-08-.../gate-drive-margin.md)
 - **Report:** [PWM light dimming](../report/pwm-light-dimming/README.md)
-- **Arc work:** [BOM analysis](../arc-work/interface-pcba-rev-b/bom-analysis.md)
+- **Arc work:** [Parts analysis](../arc-work/widget-board-rev-b/parts-analysis.md)
 - **Issues:** #49, #50 — spawned from the EMI finding
 ```
 
@@ -397,7 +397,7 @@ issue analysis  →  arc analysis  →  wiki
 | After promotion | The ladder entry becomes a **link, not a copy** |
 
 **Duplication is the failure mode.** A fact in two places drifts, and the stale copy is
-the one a future agent trusts. ROADZ `.claude/wiki/speaker-power.md` is a good example
+the one a future agent trusts. The client repo's wiki page on its output stage is a good example
 of a graduated fact — device physics that outlived the analysis that produced it.
 
 ---
@@ -428,10 +428,10 @@ works.
 
 | Question | Notes |
 |---|---|
-| `report/` or a neutral name? | ROADZ calls it `report/`, but not everything in it is a report. `analysis/` may fit better |
+| `report/` or a neutral name? | The client repo calls it `report/`, but not everything in it is a report. `analysis/` may fit better |
 | Does K3 need its own README when small? | A single-analysis issue may not warrant one |
 | Who writes K3? | Likely a scribe-type agent; the analysis itself is the engineer's |
-| Figure naming | ROADZ uses `c25-0nf-1khz.png` — condition-encoded. Worth making a convention |
+| Figure naming | The client repo uses `c25-0nf-1khz.png` — condition-encoded. Worth making a convention |
 | How does a fresh session find K2? | The arc-log needs a "Related analysis" section |
 | Retention of source PDFs | Datasheets and brochures in the issue folder — commit, or link? |
 
@@ -441,6 +441,6 @@ works.
 
 - [handoff-spine.md](m15-handoff-spine.md) — the three-tier ladder this implements
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §3.2b — the autonomy switch
-- ROADZ `docs/report/issue-01-warning-light-dimming/` — the working example
-- ROADZ `.claude/skills/engineering-report/SKILL.md` — governs K3 content
+- The client repo's `docs/report/issue-01-<slug>/` — the working example
+- The client repo's `.claude/skills/engineering-report/SKILL.md` — governs K3 content
 - TimeScope `docs/dev-log/TEMPLATE.md` — the compact form to preserve

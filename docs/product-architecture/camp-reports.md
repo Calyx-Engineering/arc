@@ -56,16 +56,17 @@ skips:
 
 ### In a hook — a comment block
 
-Hooks are shell scripts, so the declaration is a comment. **Placed directly under the
-one-line description**, before the kill switch.
+Hooks are shell scripts, so the declaration is a comment. **Above the kill switch**, in the
+header block — after the one-line description and whatever rationale the hook carries, so the
+declaration is the last thing read before the code.
 
 ```bash
 #!/usr/bin/env bash
 # branch-guard — PreToolUse hook (matcher: Edit|Write|NotebookEdit). Carries m10.
 #
-# camp-reports: edit-denied, edit-allowed
-# checks: branch-is-coordination, path-is-source
-# skips: worktree-identity (not built), base-freshness (not built)
+# camp-reports: edit-denied
+# checks: branch-kind, path-is-source, worktree-identity, base-freshness
+# skips: worktree-identity (the path is relative, or lands outside this repository), base-freshness (not a work branch, the branch name carries no base, the base ref is absent, or this base commit was already reported)
 ```
 
 ---
@@ -149,8 +150,8 @@ it is what makes turning the volume down cost display only. Format in
 |---|---|---|
 | ran, passed | On the checked line | On the checked line |
 | ran, failed | On the checked line, and in the outcome | Both |
-| did not run | On the skipped line | On the skipped line |
-| not declared at all | Nothing | Nothing |
+| did not run | On the skipped line | On the skipped line — unless NO declared check ran and the outcome is `ok`, where the log carries no skipped line at all ([#238](https://github.com/Calyx-Engineering/arc/issues/238)) |
+| not declared at all | Nothing | Nothing, unless the artifact marks it by name anyway — `camp-branch-check`'s `base-is-arc` — which is logged, and goes with the line above |
 
 ---
 

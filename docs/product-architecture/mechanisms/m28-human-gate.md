@@ -52,8 +52,8 @@ desk.
 
 The first hardware gate — CAD review — has inputs, a human decision, and gates a merge. No
 mechanism claims it. The
-[ROADZ workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md)
-step 5 describes it as practice: request review, review the branch in Altium, feedback via
+the client repo workflow (private corpus, not in this repository)
+step 5 describes it as practice: request review, review the branch in the CAD tool, feedback via
 GitHub threads, iterate until both approve.
 
 That loop is real and running. Whether it is this mechanism, or a mechanism of its own, is
@@ -68,7 +68,7 @@ share nothing else. The design review is synchronous and blocks a merge; the ben
 asynchronous and happens after the arc closed.
 
 **What the gate packet holds for hardware.** In software: what to run, what to look for, what
-was already verified. For a CAD review the reviewer opens Altium and forms their own view,
+was already verified. For a CAD review the reviewer opens the CAD tool and forms their own view,
 so the packet may be a summary of what changed and why rather than a checklist.
 
 **How a deferred gate is tracked.** A test that cannot run for weeks is a test obligation
@@ -80,5 +80,5 @@ so the packet may be a summary of what changed and why rather than a checklist.
 
 - [test-obligation-capture](m23-test-obligation-capture.md) — captures what the deferred gate will check
 - [arc-decomposition](m20-arc-decomposition.md) — places the checkpoints this sits at
-- [ROADZ workflow](../../reference-roadz/ROADZ%20Interface%20PCBA%20Revision%20Workflow.md) — steps 5–8, the guided gates
+- the client repo workflow (private corpus, not in this repository) — steps 5–8, the guided gates
 - [suite-architecture](../../suite-architecture/README.md#open-questions) — gate latency as an open question

@@ -1,10 +1,23 @@
 ---
 name: handoff
-description: Use at a cold start to rehydrate from the previous session in one read, and at session end, issue close, or branch change to write what the next session needs. Covers what the handoff holds, the ordered actions the next session executes, saving the transcript, the three-line prompt that starts the next chat, what belongs in the committed record instead, and why it is a document rather than a chat window.
+user-invocable: true
+description: Use when the user asks for the handoff to be read or written, in any wording — "read HANDOFF.md first", "read HANDOFF.md if it exists", "please read handoff", "ingest handoff", "get up to speed", "get back up to speed", "pick up from where we left off", "where did we leave off", "do these in order", "write the handoff", "give me the prompt for the next chat" — or runs /handoff-resume or /handoff-write. Also fires when the request describes this work without naming it: copying or saving a session transcript to the arc's transcript directory, or being told the handoff was updated elsewhere. Fires when the read is wrapped inside other instructions rather than being the whole message: a read followed by a branch name and three further requests, or a read buried under "run autonomously", is still a handoff turn. Loading this skill does not answer the rest of the turn and does not replace another skill. When the same message also greets Camp or asks where things stand, that is a Camp turn as well — load camp too, on the same turn, rather than choosing between them. Covers the reading order, the staleness checks before acting on a handoff, what it holds, the ordered actions the next session executes, saving the transcript, and what belongs in the committed record instead.
 camp-reports: [handoff-written, handoff-read, transcript-saved]
-checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed]
+checks: [handoff-exists, ordered-actions-present, transcript-saved, open-threads-carried, graduated-to-record, stale-rows-removed, handoff-age, transcripts-newer, branch-matches, tree-accounted, commits-accounted, open-prs-accounted, first-action-issue-open, mode-row-agrees]
 skips:
-  - graduated-to-record (nothing in the handoff outlives the arc)
+  - handoff-exists (the write path — the handoff is being written, and its absence is what the write fixes)
+  - transcript-saved (the read path — no handoff is being written, and the save is the write's first step)
+  - open-threads-carried (the read path — no handoff is being written)
+  - graduated-to-record (the read path — no handoff is being written; and on a write, when nothing in the handoff outlives the arc)
+  - stale-rows-removed (the read path — no handoff is being written)
+  - handoff-age (the write path — no handoff is being acted on)
+  - transcripts-newer (the write path — no handoff is being acted on)
+  - branch-matches (the write path — no handoff is being acted on)
+  - tree-accounted (the write path — no handoff is being acted on)
+  - commits-accounted (the write path — no handoff is being acted on)
+  - open-prs-accounted (the write path — no handoff is being acted on)
+  - first-action-issue-open (the write path — no handoff is being acted on)
+  - mode-row-agrees (the write path — no handoff is being acted on)
 ---
 
 # The handoff
@@ -54,6 +67,108 @@ If you finished this list and still do not know what to do next, **that is a fin
 personal failing** — record it in the handoff's open threads. The mechanism is being tested
 every time it is used.
 
+### Check the handoff is still true, before acting on it
+
+**A handoff is written at a stop point and describes the state at that moment.** Anything
+done afterwards — including in another window, or by the user between sessions — is absent
+from it. Acting on a stale handoff is worse than having none, because it is specific and
+wrong.
+
+Run these before executing anything. They cost one command each — the last costs one command and
+a comparison against the arc-log, which the reading order has already opened.
+
+| Check | Stale when |
+|---|---|
+| **The date in the handoff's title** | More than 24 hours before today. Age alone is not proof of staleness, but past a day the odds that something happened outside it are high enough to say so |
+| **Transcripts newer than the handoff** | `find <transcript-dir> -name '*.jsonl' -newer HANDOFF.md` prints a file other than the writer's own live session — the one the handoff's *Transcripts* line names as live, which keeps growing after the write and is always newer. Any other file means a session ran after this handoff was written and its decisions are not in here |
+| `git branch --show-current` | The branch differs from the one *Where we are* names |
+| `git status --short` | The tree is dirty and the handoff does not say work was left uncommitted |
+| `git log --oneline -5` | The last commit is not one the handoff accounts for |
+| `gh pr list --state open` | An open PR the handoff calls merged, or says nothing about |
+| The issue in *Do these in order* row 1 | `gh issue view <NN> --json state` returns `CLOSED` |
+| **The *Execution mode* row, against the arc-log** | The row is absent, unreadable, or names a mode the arc-log's *How this arc is executed* does not grant |
+
+**Compare modification times, never the handoff's *Transcripts* table.** That table is
+curated — it names the few transcripts worth reading, not every file on disk — so measuring a
+complete directory against it reports a lost session on every cold start once the arc has run
+more sessions than the table lists. The check wants one fact: *did a session run after this
+handoff was written.* An mtime answers it and nothing else does.
+
+The saved transcript never trips this. The order at a break is fixed — save the transcript,
+then write the handoff — so the newest file is always older than `HANDOFF.md` by construction.
+
+**What it cannot see: a session that ran and saved no transcript.** Nothing on disk records
+it. The checks against the tree are what catch that one — a commit, a branch, or a PR the handoff
+does not account for.
+
+**The mode row is read with the command the hook reads it with** — the first table row whose
+first cell names the mode, `grep -m1 -iE` over `HANDOFF.md`, then the second cell with emphasis,
+backticks and **every space** removed, lowercased. [`hooks/mode-guard`](../../hooks/mode-guard)
+reads exactly that before every commit, push, PR and merge, so a check that located the row any
+other way could pass while the hook stops the same commit to ask. **A cell that is not exactly
+`manual` or `autonomous` after that is unreadable, and the hook reads it as manual** — *Autonomous to
+wave 6*, or the template's own *Manual · Autonomous* left unedited, is not a mode. Read it here,
+where it costs a sentence, rather than at a commit that stops to ask. The arc-log side costs nothing extra:
+*How this arc is executed* is already row 3 of the reading order above.
+
+**Neither side is authority over the other's subject.** The arc-log is the plan and the handoff
+is this session, so a row that disagrees with it means the handoff is stale — the rule
+[`autonomy-set`](../autonomy-set/SKILL.md) states and
+[m40 §3](../../docs/product-architecture/mechanisms/m40-autonomy-switch.md) specifies. Quote both
+readings and stop, and **until it is settled the mode is manual** — absent or unreadable means
+manual, m40 §3. **The hook cannot settle this one**: it reads `HANDOFF.md` and never the arc-log,
+so a row saying autonomous is allowed by it whether the plan granted it or not. That gap is the
+reason this check is in the read path rather than left to the guard.
+
+**If any check disagrees, stop and report the specific contradiction** — what the handoff
+says, what the repository says. Do not reconcile it silently and do not proceed on a guess.
+The handoff is the spine; a spine that disagrees with the tree is the one thing this
+mechanism cannot let pass.
+
+Two exceptions, which are not staleness: a handoff that *says* work was left uncommitted and
+the tree is dirty in exactly that way, and a branch that does not exist yet because row 1
+creates it.
+
+### Then execute
+
+Execute *Do these in order*, top to bottom. The rows are instructions, not topics —
+start the first one without asking what to do.
+
+**If `HANDOFF.md` does not exist**, say so and stop. There is nothing to resume from, and
+guessing the arc's state is the failure the handoff exists to prevent.
+
+**If the handoff has no *Do these in order* section**, report where the arc stands from what
+it does carry, and ask for the next step. A handoff missing its ordered actions is a finding
+worth naming, not a gap to fill by inference.
+
+### When you are about to do it a different way
+
+**The unit was accepted. How it was to be done was accepted with it.** This fires on a
+substitution — the same issue and the same branch, not new work — in either of its two forms:
+
+| The substitution | |
+|---|---|
+| **A different approach inside a row the handoff names** | The same ordered action, done another way |
+| **A different order across rows it names** | A sequence is itself a decision. Re-ordering accepted rows replaces the approach to all of them at once, and it is the form least likely to be noticed, because every row still gets done |
+
+Twice in the measured corpus a session did one without noticing — one of each form. One inverted
+the handoff's step order and supplied a reason it had derived itself. The other read *not built,
+only needed if the coupler floor lands above the audio band*, stated the correct rationale for
+the rig unprompted, and about twelve minutes after that read had promoted the method to the
+primary plan. Neither announced a substitution, because neither saw itself making one.
+
+| | |
+|---|---|
+| **Say it before the work, not in the report** | One line: what the handoff names, what you are about to do instead, and what makes you think so |
+| **Then read the fact the decision rests on** | For an approach, *What would have to change* in *Load-bearing decisions*. For an order, the reason the row gave for its position. **If that fact has not changed, the decision has not been superseded — it has been forgotten**, and the accepted one stands |
+| **A row that gave no reason for its position is a finding, not a licence** | It is the gap that produced the inversion in the corpus. Say the reason is missing and ask, rather than supplying one of your own — a re-derived reason reaches the opposite answer as easily as the same one |
+| **A condition attached to the alternative is a condition to test** | *Only needed if X* is not a licence to start with it. Check X, and say what you found |
+| **If the fact has changed, name which one, then proceed** | A substitution carrying its constraint is a decision. One without is a re-derivation |
+
+**Stating your reason is not the check.** One of the two openings above gave a correct,
+unprompted rationale for what it was building and built the wrong thing anyway. The check is
+against the recorded constraint, not against your own account of it.
+
 ---
 
 ## Writing
@@ -70,6 +185,15 @@ every time it is used.
 
 **Not continuously.** Per-turn churn is narration by another name.
 
+**Every one of those moments re-stamps the title.** `YYYY-MM-DD HH:MM` — the current date *and*
+time of day, on **every write**, not only when the file is created. A stale stamp is worse than
+a missing one: the read path's first staleness check reads exactly this line, so a handoff
+rewritten at 16:40 and still headed with the morning's time is trusted by precisely as much as
+it should not be. And **a date with no time cannot separate an hour-old handoff from a week-old
+one** — a cold start then treats both as current.
+
+The rule is mechanical: **if the body changed and the stamp did not, the stamp is wrong.**
+
 At a break the order is fixed: **save the transcript, write the handoff, say it was written,
 give the prompt for the next chat.** The transcript is saved first so the handoff can name
 it.
@@ -83,7 +207,7 @@ Every section below exists because something was missing at a real failed cold s
 | **Where we are** | Current issue, branch, worktree, what was just finished | Work landing on the wrong branch |
 | **Do these in order** | The numbered actions the next session executes, top to bottom | A session that knows the state and still asks what to do |
 | **The tree** | Issues and what spawned them, with status | A flat list losing the shape of hardware work |
-| **Load-bearing decisions** | What must not be re-litigated | A fresh session re-opening settled questions |
+| **Load-bearing decisions** | What must not be re-litigated, **and the fact that would have to change to re-open it** | A fresh session re-deriving a settled question and reaching the opposite answer |
 | **Open threads** | Agreed but unfiled follow-ups, and unresolved questions | *"i asked you to update #12 … that didn't happen"* |
 | **What was ruled out** | Causes checked and eliminated, with what eliminated them | The next session re-deriving what this one already disproved |
 | **Next action** | One line, concrete — the first row of *do these in order* | The "what now?" round trip |
@@ -104,6 +228,14 @@ what to do — the round trip the mechanism exists to remove.
 Order by dependency, not importance. **When a row must be done before another is even
 readable, say so in the row** — an approval that has already been given, a file that must be
 read first, a branch that does not exist yet.
+
+**And where the order is not a hard dependency, the row still says why it sits there.** This is
+the same rule as *Load-bearing decisions*' second column, applied to the sequence: an order is a
+decision, and a decision with no reason gets re-derived. The corpus has the case — a handoff
+correctly ordered a tool commit ahead of an issue, gave no reason, and the next session
+re-derived one from the dependency graph and inverted it. The fact that would have settled it
+was that the user was about to be physically at the bench, which is not in a dependency graph
+and was never written down. A soft reason is exactly the kind that looks omissible and is not.
 
 **Rows come off the top and the rest renumber.** The list is working state, not a plan: the
 next session rewrites it when it hands off.
@@ -129,8 +261,8 @@ own *transcripts* note rather than leaving it to be supplied each time.
 **The handoff's *Transcripts* table is curated, not a directory listing.** It names the few
 worth reading and says why; an arc accumulates far more than that, and listing all of them is
 the growth failure this document warns about below. **So nothing may compare that table
-against the directory** — `/arc-next` asks whether a session ran after the handoff by mtime,
-which is the only question it needs answered.
+against the directory** — the staleness check in the read path above asks whether a session
+ran after the handoff by mtime, which is the only question it needs answered.
 
 #### A saved transcript is stale the moment it is written
 
@@ -151,26 +283,25 @@ not the current state.
 
 A prompt that restates where we are creates a second copy of the state, and the two drift
 immediately — the next session then has two sources disagreeing and no way to tell which is
-current.
+current. `/handoff-resume` already reads `HANDOFF.md` first and executes *Do these in order*
+on its own, so the branch and the next step do not need restating either — they are rows in
+the file the command is about to open.
 
-Three lines, and nothing that is already in the handoff:
+The prompt is the command alone:
 
 ```text
-Read HANDOFF.md first, then do the steps in "Do these in order".
-Branch is arc/03-camp-issue-61-handoff-prompt.
-Next is #61 — the handoff's ordered actions and transcript save.
+/handoff-resume
 ```
 
 | The prompt carries | The prompt never carries |
 |---|---|
-| *Read `HANDOFF.md` first* | The tree, the status table, the open threads |
-| The branch | Load-bearing decisions |
-| The next step, by issue number | A summary of what was just finished |
-| Anything **not** in the handoff — a standing approval, an instruction for how to work | Anything the handoff already says |
+| `/handoff-resume` | The tree, the status table, the open threads |
+| | The branch, or the next step — rows in the handoff, not the prompt |
+| Anything **not** in the handoff — a standing approval, an instruction for how to work, appended on its own line | A summary of what was just finished |
 
 **The last row is the only reason a prompt is more than one line.** An approval given in
 chat, or an instruction about how the next session should run, has no home in the handoff —
-so it goes in the prompt. Everything else has a home, and belongs there.
+so it goes in the prompt, after the command. Everything else has a home, and belongs there.
 
 **Give the prompt as a copyable block**, not as prose describing what to paste.
 
@@ -180,7 +311,7 @@ so it goes in the prompt. Everything else has a home, and belongs there.
 
 | Not here | Where |
 |---|---|
-| Why a decision was made | The dev-log. The handoff says *what was decided*, not the reasoning |
+| The narrative of how a decision was reached | The dev-log. *"We tried X, then Y"* is disposable. **The constraint that forces the decision is not** — it stays here, in the second column of *Load-bearing decisions*. A decision whose reason lives only in the dev-log is one the next session re-derives, and re-derivation reaches the opposite answer as easily as the same one |
 | Measurements, analysis, rejected topologies | K2 — `scratch/` or `arc-work/` |
 | Anything true after this arc ends | The wiki. The handoff dies with the arc |
 | A narrative of the session | Nowhere. Nobody reads it |
@@ -204,8 +335,40 @@ committed record, not here.
 Committing it means the record contains a file that is stale the moment it is written, and
 a fresh session cannot tell which of two overlapping documents to trust.
 
-**Add `HANDOFF.md` to `.gitignore` when starting an arc in a new repo.** It is the one
-setup step this skill needs.
+**Which is also why overwriting it destroys something.** Gitignored means git cannot restore
+it, so a rewrite takes the state this session was *given* with it. `hooks/handoff-archive`
+copies it to `.arc-work/archive/<timestamp>/` at the session's **first tool call of any kind** —
+not when the handoff is written, because a session that crashes never reaches its own write, and
+not only on an edit, because `cat > HANDOFF.md`, `mv` and `rm` destroy it without going near
+`Edit` or `Write`.
+The same rule covers any file git cannot restore: tracked files need no copy, git is the copy.
+
+The store is gitignored too. It is **recovery, not record** — nothing reads it as history,
+nothing prunes it, and getting a file back is a plain `cp` from the timestamped directory.
+
+**Add `/HANDOFF.md`, `.arc-work/` *and* `/.claude/arc/log.md` to `.gitignore` when starting an
+arc in a new repo.** It is the one setup step this skill needs, and it is **three entries, not
+one**. `.arc-work/archive/` is where the copies above land, so a repo that ignores only the
+handoff commits a copy of every handoff the arc ever had straight into the record — the exact
+opposite of what the store is for. `/.claude/arc/log.md` is the event log every hook firing
+appends to: tracked, it leaves the tree dirty at every moment and one `git add -u` sweeps
+thousands of machine-written lines into a review diff. Its record is committed by rotation at
+arc close instead, into `docs/arc-log/events/` — #273.
+
+Anchor the handoff entry at the root. A bare `HANDOFF.md` also matches `templates/handoff.md`,
+which is a shipped artifact and must be committed.
+
+**And `git add .claude/arc/sessions.md` the first time it appears.** `hooks/session-index` creates
+it untracked, and an untracked index is one `git commit -a` away from never existing: the mapping
+from a transcript directory to its branch and issue then dies with the worktree, which is the whole
+of [m32](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m32-session-preservation.md).
+It is the one file here that goes **into** the record rather than out of it — the two entries above
+are ignored, this one is tracked.
+
+**One exception: a repository that is published.** The index is one person's machine paths and
+transcript directories, so a public repository ignores it instead — under a `# m32 opt-out` comment
+in `.gitignore`, which is what `tests/verify-session-index.sh` looks for. It costs that repository
+the cross-machine mapping, knowingly. An ignore line without the comment is still a defect.
 
 **At arc close, delete it.** Anything in it worth keeping was already promoted to the
 arc-log or a dev-log. If deleting it feels lossy, something skipped a tier — find what and
@@ -243,3 +406,18 @@ these in order* fails in exactly the way those sections exist to prevent.
 document that says when the state it describes was true, and the next session reads it to
 decide whether to trust the rest. A date alone cannot distinguish a handoff written an hour
 ago from one written before a full day's work in another window.
+
+---
+
+## Which path each check runs on
+
+**Two paths, one `checks:` declaration.** A check that runs on only one of them has to say
+which, or both reports are wrong at once — a `handoff-read` claiming the transcript was saved,
+and a `handoff-written` claiming the tree was checked against the handoff. So every name in
+`checks:` does one of two things and never both: it carries a `skips:` entry whose condition
+**opens** with *the read path* or *the write path* — the one it does not run on — or it is named
+on the both-path line below.
+
+**Both-path checks:** `ordered-actions-present` — the ordered actions are read before they are
+executed and required when the handoff is written, so it skips on neither. The set is the names
+on that line.

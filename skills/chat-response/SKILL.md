@@ -1,6 +1,7 @@
 ---
 name: chat-response
-description: Use when writing any conversational reply to the user — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block that lets several topics be answered by number, linking every issue and PR number rather than writing it bare, and the rules that keep a short answer from becoming an unreliable one. Does not apply to reports, issues, PRs, commits, or code comments.
+user-invocable: false
+description: INVOKE THIS SKILL ON THE TURN A LENGTH BUDGET IS STATED OR TIGHTENED — not later, once a reply has already run long. The trigger is the user saying "60 words or less", "in 20 words", "keep responses to N words or less", "keep it short", "shorter responses", "give me a bottom line", or complaining "too many words", "TOO MANY WORDS!", "ooof - that is a lot of words", "way too much response", "i'm not going to read that". Invoke it again on every conversational reply after that one, because THE BUDGET IS STILL IN FORCE: that number is the ceiling on THIS reply and every later one, until the user changes it. Count the prose before sending. It does not expire because the subject changed, because this turn ran tools or finished work worth reporting, or because the answer would be more complete if it were longer; when the answer does not fit, cut the answer. A TIGHT BUDGET NEEDS AN UNDERSHOOT: at 25 words or fewer, aim at two-thirds of the number and stop — about 13 words when told 20. THEN COUNT WHAT YOU WROTE AND CUT IT BEFORE SENDING. Aiming low without this second step leaves a near miss, not a blow-out: measured over nineteen runs aiming low and not cutting, the median reply that broke a 20-word ceiling landed at 30 words and the median reply at 26. That is one clause and one qualifier too many, and both can be removed after the sentence exists — the restatement of the question, the second example, the hedge, the sentence that says what you are about to say. Aiming low is not enough by itself; count the prose you actually wrote and delete words until the number fits. THE REPOSITORY MAY HAVE SET ONE TOO, and it applies with nobody stating it: `.claude/arc/camp/operating-agreement.md`, section 1, **Response verbosity** — the checked box is the value, and its own line states the number. `normal`, a missing clause and a missing file all mean the default table in this skill. Read it at the start of a session rather than when a reply already feels long. A number the user states in conversation outranks it. LABEL EVERY TOPIC IN A MULTI-TOPIC REPLY. A reply built out of two or more sibling sections — several questions, several findings, several decisions — labels every one of them (`D1`, `D2`, or the inventory's letter: `V1`, `A2`) so the user can answer by number rather than restate the question. Labelling the first two and dropping the rest is the defect, not partial credit: the reader cannot tell which topics are answerable by number. Never a bare number. Also use when writing any conversational reply — answering a question, reporting what was found, proposing an approach, considering asking for a decision, or asking where the work goes next. Governs length, structure, when to decide rather than ask, the decision that leads the message, the ascend/descend prompt that sends it as a message of its own, the labelled question block, and linking every issue and PR number rather than writing it bare. Loading it does not replace whatever else owns the turn: a reply reporting a handoff, an issue, a commit or a finished piece of work is still a reply, so it loads alongside that skill rather than instead of it. Does not apply to reports, issues, PRs, commits, or code comments.
 ---
 
 # chat-response
@@ -31,6 +32,118 @@ wrong: move the payload into a table or a list.
 
 **Never pad to seem thorough.** A two-sentence answer to a two-sentence question is
 correct, not lazy.
+
+
+## The repository can set the budget, and usually should
+
+**The table above is the shipped default. A repository replaces it in its operating agreement**
+— `.claude/arc/camp/operating-agreement.md`, **section 1, Response verbosity**. The checked box
+is the value, the same mechanism [`camp`](../camp/SKILL.md) reads Report and Nudge verbosity
+through.
+
+| Checked | Every reply in the session is |
+| --- | --- |
+| **brief** | the number its own line states — `**40 words**` in the shipped clause, and `25 words` typed plainly works the same |
+| **normal** | the table above. The shipped default, and what a repository with no clause gets |
+| **full** | uncapped. Reasoning before the conclusion |
+| `Other: <n> words` | that number |
+
+**The clause's number is the number, not the one above.** A repository that edits `brief` down
+to 25 words gets 25. The figure here is what ships, not what the setting means.
+
+**Read it before the first reply of a session, not when a reply feels long.** A setting
+consulted after the fact is a setting that never applied.
+
+**A repository with no clause behaves exactly as it did before the clause existed.** No file,
+no section, `normal` checked, an unreadable value — all four mean the table above. Two of the
+three levels set no budget at all, and that is deliberate: the table is four figures for four
+kinds of reply, and flattening it to one is a budget the user never chose.
+
+**Why the setting is in the agreement and not in a repository's instructions:** the fact behind
+a tight one is a property of the reader, not of one repository. A user who works in three
+repositories on two machines states it once and it is in force in all of them.
+
+Scored by `tools/response-length.sh` against `evals/response-length/agreement-brief-long-answer`.
+
+
+## A stated budget outranks the agreement, and stands until the user changes it
+
+**A number the user states in conversation replaces both the table and the agreement's clause —
+for every reply after that, not just the next one.**
+
+> **The agreement is the standing default; a stated budget is the live one.** The clause is
+> what the user set once, in writing, for every session. A number said in conversation is what
+> they want now, and now wins — until they change it again.
+
+> **An instruction does not expire because the subject changed.** *"60 words or less"* was
+> said about the conversation, not about the question that happened to be open.
+
+| | |
+| --- | --- |
+| **It replaces the table, it does not sit beside it** | While a budget stands, the rows above do not apply. Left in place they are a standing licence to write ~150 words about anything, and that is exactly what a lost budget decays back into |
+| **It survives the work** | A turn that read files, ran a tool or changed something is still a reply. Reporting what happened is not an exemption, and it is where the overrun starts |
+| **It survives a change of subject** | A new question does not clear it. Neither does a new topic, a new file, or a new day inside the same conversation |
+| **It survives being met once** | Meeting it on the turn it was set is not discharging it |
+| **Count, do not estimate** | Estimating lands just over: 63 words against 60. Count the prose before sending |
+| **A tight budget needs an undershoot** | At 25 words or fewer, aim at two-thirds of the number — about 13 when told 20. Counting is not enough at that size: one sentence that felt necessary is the whole budget again. See below |
+| **A length complaint restates it** | *"too many words"*, *"ooof — that is a lot of words"*, *"way too much response"*, *"i'm not going to read that"*. Treat as the budget re-asserted at or below the last number stated |
+| **It ends when the user ends it** | Explicitly — *"you can go longer now"*, or a new number. Never on your own reading of the situation. What it falls back to is the agreement's clause, not the table, unless the repository set none |
+
+**When the answer does not fit the budget, the answer is what gives.** Cut to the decision,
+move the payload into a table, or say what can be asked for. Overrunning to be complete is
+the failure: the user asked for the reply to be short, not for the subject to be small.
+
+### What the loss looks like, measured
+
+Two real conversations, scored by `tools/response-length.sh`:
+
+| Budget | Held for | Replies within it |
+| --- | --- | --- |
+| 60 words, *"you're getting very verbose again"* | 0 turns | 5 of 11 |
+| 20 words, *"i'm not going to read that"* | 1 turn | 2 of 11 — the next reply was 85 words, and the worst 219 |
+
+**Both budgets were met when they were set and lost immediately after.** Nothing in either
+conversation withdrew them.
+
+#### The small number is the hard one, and aiming low only gets it to a near miss
+
+A 60-word budget is held once the rule is in force. A 20-word one is not, on the target alone.
+Across nineteen probe runs of the 20-word case aiming low without cutting, the budget was **met
+on the turn it was stated in eighteen of them and broken on the very next turn in fourteen** —
+met where it was set, gone on the following reply. The ten of those nineteen that the row below
+counts are the ten with the shipped ordering.
+
+| 20 words, and which of the two rules was in force | Median prose after it was set | Within it |
+| --- | --- | --- |
+| Neither | 55 words | 6 of 32 |
+| Aiming low only | 26 words | 37 of 109 |
+
+Both rows count every scoreable turn, the turn the budget was stated on included, which is the
+scorer's own denominator. **Neither row is this skill's current score, and that is deliberate** —
+a rule that quotes its own measurement is stale the moment it works, and correcting such a figure
+edits the file that was measured, so the correction needs a fresh measurement of its own.
+[#262](https://github.com/Calyx-Engineering/arc/issues/262) did that twice before removing the
+rows. What is above is the failure each rule was written against, which no later edit falsifies.
+Where the skill stands today is in
+[its dev-log](../../docs/dev-log/issue-262-twenty-word-threshold.md), beside the runs.
+
+**Aiming low turns a blow-out into a near miss, and the near miss is what the cut is for.**
+Aiming low alone, the median reply that breaks the ceiling lands at **30 words** and 28% of
+breaches are in the 21–25 band — half as much again, not three times.
+[#213](https://github.com/Calyx-Engineering/arc/issues/213) measured 58 against the skill as it
+stood before the undershoot rule, and that figure stopped describing this one the moment the
+rule worked.
+
+**So there IS something to trim, and trimming it is the step that gets skipped.** Six words off
+a 26-word reply is one qualifier and one restatement. Count the prose after writing it and
+delete until the number fits: the sentence that says what you are about to say, the second
+example, the hedge, the clause restating the question.
+
+**Aim low, then cut.** At 25 words or fewer, write to two-thirds of the number — about 13 when
+told 20 — and then count what came out and cut it down. The target alone stalled at 0.34 and the
+cut roughly doubled it, ten probe runs each way, `p=0.0021`. Scored by
+`tools/response-length.sh`, ranked by `tools/response-length-rank.py`, and every run is kept in
+`evals/response-length/runs/issue-262`.
 
 
 ## Structure
@@ -259,6 +372,25 @@ questions inside it. Reusing it is what lets a nudge say *three of five settled*
 
 **Never a bare number.** `D1`, not *"question 1"* — issue numbers, mechanism numbers and pass
 numbers all appear in the same sentences.
+
+#### It applies to the whole reply, not only to a block
+
+**Every top-level section of a multi-topic reply carries a label.** The
+block is the shape the rule is easiest to see in; the rule is about the reply. Six subjects
+answered under six unlabelled headings is the same defect in a different wrapper — the user
+still cannot answer by number.
+
+**Partial numbering is worse than none.** Labels on the first two topics and none on the rest
+tell the reader that numbering is available and then withhold it: they cannot tell which topics
+they are allowed to answer by number, so they restate all of them. `tools/topic-numbering.sh`
+grades it as a fail, not as part marks.
+
+| Measured | |
+| --- | --- |
+| Three consecutive turns of one design discussion | **0 of 3 replies labelled**, sixteen topics between them |
+| Two turns earlier, same conversation | Topics numbered `D1` and `D2`. The user's entire next message was *"D1 - new / D2 - off"* — four words for two decisions |
+
+Scored by `tools/topic-numbering.sh` against `evals/topic-numbering`.
 
 **Say what you would do.** "I'd go with A because X — object if you disagree" beats an
 even-handed survey. The user can overrule a recommendation; they cannot overrule a

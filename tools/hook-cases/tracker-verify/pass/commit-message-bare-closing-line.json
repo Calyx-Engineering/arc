@@ -1,0 +1,2 @@
+# a commit message that closes an issue the right way — the keyword and the number sit alone on the message's last line, so the scan finds nothing left to report once that line is scrubbed
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"git commit -m \"fix: mode-guard reads the payload with the quote-aware reader\n\nCloses #300\""}}

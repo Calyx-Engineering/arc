@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook currently allows, not denies. Earlier claim wrong. No problem there.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer exits 2. Fixed already, both checkouts. Permission fix done; only label fix remains.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Both already done. Label fix and permission fix merged via PR [#200](https://github.com/Calyx-Engineering/arc/pull/200). Nothing to do.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Decision needed.** Nothing to PR: both fixes merged in [#200](https://github.com/Calyx-Engineering/arc/pull/200). What should this direct PR change?",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "All three already fixed on main:\n\n| Ask | Fixed by |\n|---|---|\n| PR-number branches | [#200](https://github.com/Calyx-Engineering/arc/pull/200) |\n| Prefix from agreement | [#203](https://github.com/Calyx-Engineering/arc/issues/203) |\n| Kill switch per-hook, per-repo, expiring | [#202](https://github.com/Calyx-Engineering/arc/issues/202) |\n\nSuggest: keep new switch. Nothing to PR.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Repo already fixed. Installed plugin copy is stale (old global kill switch). Refresh it:\n\n```text\n/plugin marketplace update calyx-engineering\n/plugin update arc@calyx-engineering\n```",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, for editing hooks. Here nothing needs editing. The running copy is the cache, not this repo. Muting won't refresh it.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Installed hooks still read the old switch. Create empty file:\n\n```text\nC:\\Users\\class\\.claude\\HOOKS_OFF\n```\n\nDelete it after the plugin refresh.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Wrong place, wrong name. Installed hooks check:\n\n```text\nC:\\Users\\class\\.claude\\HOOKS_OFF\n```\n\nNo extension. Delete `r:\\arc\\HOOKS_OFF.txt`.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Already replaced by per-hook, per-repo, expiring switch in [#202](https://github.com/Calyx-Engineering/arc/issues/202). Just not installed yet.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Can't file it: this session has no shell or edit tool. Paste-ready issue:\n\n```text\nTitle: fix: released kill switch is global — ship the per-hook one\n\nInstalled 0.1.0 still reads ~/.claude/HOOKS_OFF: mutes every Arc hook in every repo, permanently.\n#202 replaced it (per hook, per repo, expiring) but only on main.\n\n- [ ] Cut a release carrying #202 so /plugin update picks it up\n- [ ] Old switch: retire path after one release\n\nMilestone: Dogfood. Parent: cleanup workstream.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

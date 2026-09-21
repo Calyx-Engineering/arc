@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Fixed already. Comment says exit 2 only warns. On PreToolUse, exit 2 denies. Now returns explicit allow.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It no longer exits 2. Pattern copied from a PostToolUse hook, where exit 2 only warns. Fix already landed in both checkouts.\n\nContext lost: which label fix, what is (2)?",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. This session has no shell, edit or write tools, so no branch, edit or PR is possible. The \"label fix\" and item (2) are also unknown to me. Reopen in a normal session with those two named.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot. Two blocks:\n\n- I may never set the mode to autonomous. That row in HANDOFF.md is yours to flip.\n- This session still has no shell, edit or write tools. No branch or PR can be made here.\n\nStart a normal session, set autonomous yourself, and name the label fix and item (2).",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Make guards `ask`, not deny. You answer yes in-session. Kill switch becomes rarely needed; keep it only for `mode-guard`.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot fix anything from here. This session has no edit, write or shell tools, only read and search. Open a fresh session and paste this:\n\n```text\nFix on a direct PR off arc/04-dogfood:\n1. branch-guard: accept PR-number branches and read the branch prefix from the operating agreement, not hardcoded arc/.\n2. branch-guard and camp-branch-check: return permissionDecision \"ask\" instead of deny; keep deny only in mode-guard.\n3. Also apply the label fix (name it).\nLeave it uncommitted for my review.\n```",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Hooks deny calls; here the tools are absent entirely, not denied. Kill switch cannot add tools. Session config issue.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Run from repo root:\n\n```text\nbash hooks/hooks-off.sh all 30\n```\n\nWon't help this session though; tools are missing, not blocked.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. `HOOKS_OFF.txt` does nothing; no hook reads it. Delete it. The switch is the command, run in a terminal at `r:\\arc`:\n\n```text\nbash hooks/hooks-off.sh all 30\n```\n\nThen check:\n\n```text\nbash hooks/hooks-off.sh status\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. A file you can drop anywhere beats a command you must remember. Better: hooks ask instead of deny, so no switch at all.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Not everywhere. Repo-scoped, expires in 30 minutes. Still, agreed.\n\nCannot file from here, no shell. Paste into the cleanup workstream:\n\n```markdown\nTitle: Replace the hook kill switch with ask-not-deny\n\nHooks deny, so a bad hook needs an out-of-band command to bypass. Nobody remembers it.\n\n- [ ] branch-guard, camp-branch-check, camp-session-start return `permissionDecision: ask`\n- [ ] mode-guard is the only hook that denies\n- [ ] delete hooks/hooks-off.sh and hooks/lib/hooks-off\n- [ ] update m10 and CLAUDE.md \"Safe hook editing\"\n- [ ] branch-guard reads the branch prefix from the operating agreement, not `arc/`\n- [ ] branch-guard accepts PR-number branches\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

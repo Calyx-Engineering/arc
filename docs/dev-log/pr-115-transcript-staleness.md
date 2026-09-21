@@ -1,6 +1,6 @@
 # PR #115 — the staleness check compares transcripts by mtime
 
-> Decision log, not a spec. No issue behind it — the fix was smaller than the issue would have
+> Dev-log, not a spec. No issue behind it — the fix was smaller than the issue would have
 > been. Found by `/arc-next` firing it during [#48](https://github.com/Calyx-Engineering/arc/issues/48)'s cold start.
 
 **Issue:** none  ·  **PR:** [#115](https://github.com/Calyx-Engineering/arc/pull/115)

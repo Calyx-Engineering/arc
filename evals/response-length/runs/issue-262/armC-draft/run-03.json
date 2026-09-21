@@ -1,0 +1,120 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Re-read the hook: it returns allow, not deny. Earlier claim unverified. Withdrawn.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "It doesn't anymore. Fixed already: repo, main checkout, installed plugin all exit 0 with allow. (2) needs nothing.\n\nLabel fix and permission fix: no context here. Say which files.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. This session has no Edit, Write or Bash tools, so I cannot change files or open a PR.\n\nAlso lost: which \"label fix\" you mean. Camp-session-start's exit 2 is already fixed in both checkouts and the installed plugin.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Cannot. Two blockers:\n\n- Autonomous is set by you, in HANDOFF.md's Execution mode row. I may only set manual.\n- This session has no Edit, Write or Bash tools. Restart it, then I can build the PR.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Drop it. Hooks only fire inside Claude; a wrong deny is fixed from a plain terminal with `git revert`. Fail-open covers the rest.\n\nBranch guard: agreed, PR numbers and agreement-set prefix both need handling. Still no edit tools here.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. This session has no Edit, Write or Bash tool. Start a fresh session in this worktree and I will do all three.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Nothing is denying me. This session simply has no Edit, Write or Bash tools loaded. Kill switch mutes hooks; it cannot add tools. Restart session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file by hand. Run from any terminal in this repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `r:\\arc\\.git\\arc-hooks-off`, shared by every worktree.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Nothing at `r:\\arc\\.git\\arc-hooks-off`. `HOOKS_OFF.txt` in the repo root does nothing. Run:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nThen `bash hooks/hooks-off.sh status` should print the entry.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Fix: honour the file you keep reaching for. Hooks also check `<repo>/HOOKS_OFF.txt`, gitignored, no command needed. Delete it to re-arm.\n\nWant that in the same direct PR?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot file it from here. This session has no write or shell tools. Paste-ready issue:\n\n```text\nTitle: Kill switch is unusable by hand; replace it (#202 follow-up)\n\nDefect: muting a hook needs a bash command; the file a human makes by hand\n(`HOOKS_OFF.txt`) is ignored, or mutes everything.\n\nRequired:\n- [ ] A switch creatable in Explorer or PowerShell, no command\n- [ ] Per hook, this repository only, expiring\n- [ ] `status` shows what is muted and until when\n\nConstraints: hooks stay fail-open; nothing global, nothing permanent.\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Ralph loop = Stop hook. `/ralph-loop \"<prompt>\"` writes state file (prompt, max iterations, completion promise). Each time I finish a turn, hook fires: checks last output for `<promise>` tag. Absent and iterations remain: hook blocks stop, re-feeds same prompt. Same session, context grows. Ends on promise, max iterations, or `/cancel-ralph`.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Agreed. Earlier turns gone from my context; cannot re-read them. No Bash tool this session either, so gates cannot run here.\n\nLeft for #262, working tree uncommitted:\n\n| Step | State |\n|---|---|\n| `tests/verify-all.sh` exit code | unrun |\n| Passes 1–3 (sub-agent) | unknown |\n| Dev-log `issue-262` | missing |\n| Commit, draft PR, pass 4, ready, merge, drop label | not started |\n\nEscape: fresh session in this worktree.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked: this session has no Bash tool, and `git commit` through Monitor needs approval it cannot get. Run these yourself:\n\n```powershell\ncd R:\\arc-wt\\262\ngit add -A\ngit commit -m \"wip: #262 twenty-word threshold, unreviewed emergency commit before compaction\"\nCopy-Item \"$HOME\\.claude\\projects\\R--arc-wt-262\\ff4f6199-137b-4087-a0c2-6a6bee37c136.jsonl\" \"R:\\arc-transcripts\\2026-09-12-arc04-262-twenty-word-threshold.jsonl\"\n```\n\nTranscript destination unrecorded in repo; adjust path. Then compact.",
+   "cut": "",
+   "fired": []
+  },
+  "75": {
+   "text": "Issue #262, twenty-word threshold. Branch `arc/04-dogfood-issue-262-twenty-word-threshold`, worktree `R:\\arc-wt\\262`, mode autonomous until merge.\n\n| Item | State |\n|---|---|\n| Skill undershoot rule, probe, ranker edits | in tree; committed only if you ran my commands |\n| `verify-all.sh` gate | unrun |\n| Passes 1–3, dev-log, PR, pass 4, merge | not started |\n\nCannot run git here: no Bash tool.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "No. That discussion predates my context; only your quotes of it survive. What I hold: you proposed spawning fresh agents or a Ralph loop per issue to bound context, I wrongly argued against it, then restated your point. No execution plan retained. Tell me which option you chose and I proceed from there.",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already done: that file is `run-instructions.md`. Arc-log §3.1 describes the driver, `tools/arc-loop.sh`; the driver feeds each fresh `claude -p` session `run-instructions.md` plus the issue body. Arc-log itself is never read by a run. §3.1 stays where it is as the human's record; only run-instructions travels into the loop.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "No Write tool this session, so draft below; save it as `docs/arc-work/04-dogfood/ralph-instructions.md`. One design call flagged: the Ralph session dispatches, a sub-agent implements. That inverts run-instructions §3 for the orchestrator only; the sub-agent still follows run-instructions unchanged.\n\n```markdown\n# Arc 04 dogfood — Ralph loop driver\n\n**You are the loop, not the worker.** This prompt is re-fed to you every iteration by the\nRalph Stop hook. You hold one thing across iterations: nothing. GitHub holds the queue.\n\n## Each iteration, in order\n\n| | |\n|---|---|\n| 1 | `gh issue list --label workstream --milestone <name>` — take the parent named in `$ARGUMENTS` |\n| 2 | Next = first open `Agent`-typed sub-issue with no open `Blocked by`. None left: go to step 6 |\n| 3 | `git worktree add R:/arc-wt/<NN> arc/04-dogfood` — never work in the main tree |\n| 4 | Dispatch **one** foreground sub-agent. Its prompt is `run-instructions.md` verbatim plus the issue body, and the worktree path. It does the whole issue: branch, tests, passes 1–4, PR, merge, label |\n| 5 | Read its return. Accept only: PR URL, merge state, boxes ticked / unticked with reason. Anything longer, do not read — write it to `.arc-work/<NN>-return.md` |\n| 6 | Queue empty: dispatch the report run (run-instructions §6), then output `<promise>WORKSTREAM DONE</promise>` |\n\n## Never\n\n| | |\n|---|---|\n| Read `issue-plan.md`, the arc-log, or any file the sub-agent changed | Your context is the budget this loop protects |\n| Implement, review, or fix anything yourself | Blocked sub-agent = one comment on the issue, remove `in-progress`, next iteration |\n| Retry a failed issue in the same iteration | It surfaces as still-open next iteration; two failures, stop and say so |\n| Run more than one sub-agent at a time | Worktrees share `.git`; merges collide |\n```",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "Not finding it. No `§12.0` in arc-04's log; issue-plan §12 is *Filing*, arc-03's §12 is a wave review. Which file has section 12.0? If you mean the driver already specified in arc-log §3.1 plus `tools/arc-loop.sh`, then yes: my draft duplicates it, and the Ralph prompt should just invoke that script.",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "No Write tool here, so save this as `docs/arc-work/04-dogfood/ralph-prompt.md` and start with `/ralph-loop \"$(cat docs/arc-work/04-dogfood/ralph-prompt.md) 145\"`, parent number last.\n\n```markdown\n# Ralph prompt — drive one workstream through arc-loop.sh\n\nYou are the loop's supervisor, not a worker. The last token of this prompt is the workstream\nparent issue number, `<parent>`. Every iteration, and nothing else:\n\n| | |\n|---|---|\n| 1 | `bash tools/arc-loop.sh <parent> --max 1` in the foreground. Wait for exit |\n| 2 | `bash tools/arc-loop.sh --status`. Read only the last table row |\n| 3 | Row says a run stopped or rate-limited: `bash tools/arc-loop.sh --resume <NN>`, once. Twice on the same issue: comment on the issue and stop this loop |\n| 4 | Workstream still has open children: end your turn. The hook re-feeds this prompt |\n| 5 | Report run finished: output `<promise>WORKSTREAM <parent> DONE</promise>` |\n\nNever: read issue bodies, PRs, diffs, the arc-log or the plan; fix anything yourself; run two\nloops at once. Your context is what this prompt exists to keep small.\n```",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "\"Land it · measure it\" is the Loop workstream's two instruments, issue-plan §5:\n\n| Half | Issue | Means |\n|---|---|---|\n| Land it | [#138](https://github.com/Calyx-Engineering/arc/issues/138) | a run can merge its own PR from a standing grant, no per-merge ask |\n| Measure it | [#149](https://github.com/Calyx-Engineering/arc/issues/149) | a skill change yields a firing score, not an opinion |\n\nThe 15 minutes was my estimate; that turn is gone from my context.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11 is every point the loop needs a human. Only §11.1 is now.\n\n| | | Now? |\n|---|---|---|\n| §11.1 | [#138](https://github.com/Calyx-Engineering/arc/issues/138), build the standing-grant merge route with you | yes |\n| §11.2 | one number: skill-firing threshold, proposed 0.8 | later, before Fire |\n| §11.3 | six issues whose output is your judgement, so each stops and hands it to you | as they arrive |",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

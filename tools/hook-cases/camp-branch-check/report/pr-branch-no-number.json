@@ -1,2 +1,2 @@
 # a no-issue branch with a slug but no PR number — nothing links it to anything
-{"tool_name":"Bash","cwd":"__FIXTURE_ARC__","tool_input":{"command":"git checkout -b arc/02-foundation-branch-number"}}
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git checkout -b arc/02-foundation-branch-number"}}

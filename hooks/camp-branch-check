@@ -7,19 +7,41 @@
 # when the fix is one command.
 #
 # camp-reports: branch-create
-# checks: branch-name-convention, issue-or-pr-number-present, base-is-arc
-# skips: base-is-arc (branch was created without an explicit base)
+# checks: declared-convention-read, issue-or-pr-number-present
+# skips: base-is-arc (not built), declared-convention-read (there is no branch name to check — the payload names no command, the command creates no branch, it lists, deletes or renames, no name could be read out of it, the argument is a flag or carries a shell operator, the name is trunk — or no CLAUDE.md up the tree declares a convention, or it declares no branching section), issue-or-pr-number-present (the same conditions)
 #
 # The three lines above are the `camp-reports:` declaration. They are why this hook is
 # visible when it fires — one declaration drives both the spoken report and the event-log
 # entry. Name every check, including the ones that always pass: only reporting failures
 # makes a silent hook indistinguishable from a working one.
 # Format: docs/product-architecture/camp-reports.md
+#
+# A repo that declares no branching convention silences this hook entirely. That is not a
+# `skips` entry: there is no report to carry the skip line.
 
 # ---- kill switch ----------------------------------------------------------------
-# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert. This is the
-# escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+# `bash hooks/hooks-off.sh camp-branch-check 30` from any terminal in this repository mutes this one
+# hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+# The escape hatch when a hook misbehaves — no editing JSON while the broken thing fights back.
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
+
+# ---- the activation log ---------------------------------------------------------
+# Sourced before anything can exit. This hook is silent on most commands it sees, so the
+# log is the only thing separating "read the command and had nothing to say" from "never
+# ran". m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event branch-create
+arc_log_skip base-is-arc "not built"
+
+# A path this hook takes before it has a branch name to check: both declared checks are
+# recorded as unrun, with the reason, and the hook leaves quietly.
+nothing_to_check() {
+  arc_log_skip declared-convention-read "$1"
+  arc_log_skip issue-or-pr-number-present "$1"
+  arc_log_outcome ok "$1"
+  exit 0
+}
 
 # ---- fail-open wrapper ----------------------------------------------------------
 # Never `set -e`. The branch already exists by the time this runs, so there is nothing to
@@ -28,73 +50,229 @@ set +e
 
 INPUT="$(cat 2>/dev/null)"
 
+# The three whitespace escapes `field` resolves. `printf -v` is a builtin, so the resolver
+# below forks nothing — and a raw tab or carriage return sitting in this file would not
+# survive an editor or a line-ending normalisation.
+printf -v _ARC_NL  '\n'
+printf -v _ARC_TAB '\t'
+printf -v _ARC_CR  '\r'
+
 # Read a top-level or nested field out of the hook payload without requiring jq.
+# Usage: field file_path
+#
+# NOT `tr ',{}' | grep | sed`, which is what this was, and which was wrong twice. It split
+# the payload on commas, so a value carrying one arrived truncated at the comma; and when its
+# `sed` could not parse the fragment it printed that fragment unchanged, so the caller was
+# handed the key and its quotes back as if they were the value. Both are silent. #230, #300.
+#
+# A JSON string ends at the first quote that is NOT escaped, so the scan counts the
+# backslashes in front of each quote rather than stopping at the first one. The escapes `\"`,
+# `\\`, `\n`, `\t` and `\r` are then resolved, because the resolved form is the one the caller
+# acts on: a Windows `cwd` arrives with its separators doubled, and a multi-line command
+# carries its line breaks as the two characters `\` and `n`.
+#
+# NO CLOSING QUOTE MEANS THE PAYLOAD WAS CUT OFF MID-VALUE. Yield nothing, never the rest —
+# half a value is the shape a hook must be silent about rather than act on.
+#
+# Parameter expansion, no subprocess. The old form cost five processes on every tool call.
 field() {
-  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "$1" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+  local rest raw out chunk bs key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+
+  raw=""
+  while :; do
+    case "$rest" in *'"'*) ;; *) return 0 ;; esac
+    chunk="${rest%%\"*}"
+    rest="${rest#"$chunk"\"}"
+    # The backslash run immediately before the quote. An odd count escapes it.
+    bs="${chunk##*[!\\]}"
+    if [ $(( ${#bs} % 2 )) -eq 0 ]; then raw="$raw$chunk"; break; fi
+    raw="$raw$chunk\""
+  done
+
+  out=""
+  while [ -n "$raw" ]; do
+    case "$raw" in *'\'*) ;; *) out="$out$raw"; break ;; esac
+    chunk="${raw%%\\*}"
+    out="$out$chunk"
+    raw="${raw#"$chunk"\\}"
+    case "$raw" in
+      '"'*) out="$out\"";        raw="${raw#?}" ;;
+      '\'*) out="$out\\";        raw="${raw#?}" ;;
+      n*)   out="$out$_ARC_NL";  raw="${raw#?}" ;;
+      t*)   out="$out$_ARC_TAB"; raw="${raw#?}" ;;
+      r*)   out="$out$_ARC_CR";  raw="${raw#?}" ;;
+      # Not an escape this reader resolves — a shell escape, a `\u`. Left as it is.
+      *)    out="$out\\" ;;
+    esac
+  done
+  printf '%s' "$out"
+  return 0
 }
 
 # Speak, without blocking. exit 2 surfaces stderr to the transcript.
 report() {
+  arc_log_outcome_default failed "Camp reported on the new branch"
   printf '%s\n' "$1" >&2
   exit 2
 }
 
 # ---- hook body ------------------------------------------------------------------
 
-CMD="$(printf '%s' "$INPUT" | tr ',' '\n' | grep -m1 '"command"' | sed 's/.*"command" *: *"//; s/"$//')"
-[ -n "$CMD" ] || exit 0
+# The command ends at its closing quote, not at the end of the line — a payload that carries
+# `"command":"…"}}` leaves the braces attached otherwise, and they end up inside the branch
+# name the report quotes back.
+#
+# THIS WAS ITS OWN `tr ',' '\n' | grep | sed`, a second copy of the reader above and the exact
+# shape #230 replaced in `tracker-verify`. It split the payload on commas, so a commit message
+# carrying one truncated the command at it — `git commit -m "checkpoint, wip" && git checkout
+# -b _wip` arrived as `git commit -m \`, which creates no branch, so every check below was
+# skipped and the numberless branch went unreported. Silently, which is the whole defect. #300.
+CMD="$(field command)"
+[ -n "$CMD" ] || nothing_to_check "the payload names no command"
 
 # Only branch creation. `git checkout <existing>` and `git switch` without -c are moves,
 # not creations, and this hook has nothing to say about them.
 case "$CMD" in
   *"git checkout -b "*|*"git checkout -B "*|*"git switch -c "*|*"git switch -C "*|*"git branch "*) ;;
-  *) exit 0 ;;
+  *) nothing_to_check "the command creates no branch" ;;
 esac
 
 # The name is the argument after the creating flag. `git branch -d` and friends delete
 # rather than create, so they are excluded before the name is read.
 case "$CMD" in
-  *"git branch -d"*|*"git branch -D"*|*"git branch -m"*|*"git branch --list"*|*"git branch -a"*|*"git branch -r"*) exit 0 ;;
+  *"git branch -d"*|*"git branch -D"*|*"git branch -m"*|*"git branch --list"*|*"git branch -a"*|*"git branch -r"*)
+    nothing_to_check "the command lists, deletes or renames rather than creates" ;;
 esac
 
 NAME="$(printf '%s' "$CMD" \
   | grep -oE 'git (checkout|switch|branch) +(-[bBcC] +)?[^ ]+' \
   | head -1 \
   | awk '{print $NF}')"
-[ -n "$NAME" ] || exit 0
+[ -n "$NAME" ] || nothing_to_check "no branch name could be read out of the command"
 
-# A flag rather than a name means the command was something this hook does not model.
-case "$NAME" in -*) exit 0 ;; esac
+# The token is a shell word, not yet a ref: `git checkout -b 'fix-the-thing';` carries quotes
+# and a terminator that are no part of the name.
+NAME="$(printf '%s' "$NAME" | sed -e "s/^['\"]//" -e "s/['\"]$//" -e 's/[;&]*$//')"
+
+# A flag rather than a name means the command was something this hook does not model. So does
+# an operator: `git branch | grep foo` and `git branch > list.txt` create nothing, and a report
+# on a branch named `|` is the same false report this hook exists to stop making. Only the
+# shell's own metacharacters are rejected — git's legal ref names are wider than any pattern
+# worth writing here, and `_wip` is exactly the numberless branch that should be reported.
+case "$NAME" in -*) nothing_to_check "the argument is a flag, not a name" ;; esac
+case "$NAME" in *['|&;()<>$`']*) nothing_to_check "the argument carries a shell operator, not a name" ;; esac
+[ -n "$NAME" ] || nothing_to_check "no branch name could be read out of the command"
+arc_log_event branch-create "branch=$NAME"
 
 # The trunk branches are not work branches and are never created by this path in practice;
 # if one is, the session-start hook is the thing that speaks about it.
-case "$NAME" in main|master|develop) exit 0 ;; esac
+case "$NAME" in main|master|develop) nothing_to_check "trunk — camp-session-start speaks about that" ;; esac
 
-FINDINGS=""
-add() { FINDINGS="$FINDINGS
-  - $1"; }
+# ---- the repository's declared convention ---------------------------------------
+# Branch naming is per-repo. Arc names arcs `arc/<nn>-<slug>`; another repo names them after the
+# product component being revised. A hook that matches one repo's shape reports every branch
+# in the other as wrong — which is what this one did, five times out of five (#162).
+#
+# So the convention is read, not assumed. `CLAUDE.md`'s branching section is where a repo
+# declares it, and it is the file the session was already given. The nearest one up the tree
+# wins, so a subproject that declares its own is read instead of its parent's.
+#
+# The payload holds a JSON string, so a Windows cwd arrives with its separators doubled. The
+# unescape is `field`'s own now — it resolves `\\` along with the rest — so only the
+# forward-slash form is taken here. Without one or the other, every session on Windows
+# silently falls back to `$PWD` and the walk-up above never runs where it was meant to.
+CWD="$(field cwd | tr '\\' '/')"
+{ [ -n "$CWD" ] && [ -d "$CWD" ]; } || CWD="$PWD"
 
-# Two work-branch forms, and the number names whichever identifier exists first — m46 §9.
-# A no-issue branch carries the PR number instead, and the `pr` label is what tells a reader
-# which counter the number came from. Issues and PRs share one, so an unlabelled number
-# points at whichever object happens to hold it.
-case "$NAME" in
-  arc/*-issue-*)
-    # An issue branch. The convention. Nothing to say.
-    ;;
-  arc/*-pr[0-9]*)
-    # A no-issue branch, named for the PR it will open. Also the convention.
-    ;;
-  arc/*)
-    add "\`$NAME\` is an arc branch, not a work branch. Work belongs on \`$NAME-issue-<N>-<slug>\`, or \`$NAME-pr<NN>-<slug>\` where there is no issue"
-    ;;
-  *)
-    add "\`$NAME\` matches neither \`arc/<nn>-<slug>-issue-<N>-<slug>\` nor \`arc/<nn>-<slug>-pr<NN>-<slug>\`, so nothing links it to an issue or a PR"
-    ;;
-esac
+CONVENTION=""
+dir="$(cd "$CWD" 2>/dev/null && pwd)"
+while [ -n "$dir" ]; do
+  if [ -f "$dir/CLAUDE.md" ]; then CONVENTION="$dir/CLAUDE.md"; break; fi
+  case "$dir" in */?*) dir="${dir%/*}" ;; *) dir="" ;; esac
+done
+[ -n "$CONVENTION" ] || nothing_to_check "no CLAUDE.md up the tree, so no convention is declared"
 
-[ -n "$FINDINGS" ] && report "**Camp here —** branch \`$NAME\` created.
-  Checked: name convention, issue or PR number present$FINDINGS
-  Declared but skipped: base-is-arc (no explicit base in the command)"
+# The section runs from the heading that names branching to the next heading of any kind. The
+# heading whose whole subject is branching is preferred, so a `## Branch protection` elsewhere
+# in the file cannot supply the forms; only if there is no such heading does any heading naming
+# a branch do. A repo that declares no convention gets silence: with nothing to check against,
+# anything this hook said would be its own opinion.
+section() {
+  awk -v pat="$1" '
+    $0 ~ /^#+ +/ && inb { exit }
+    $0 ~ pat { inb = 1; next }
+    inb { print }
+  ' "$CONVENTION" 2>/dev/null
+}
+SECTION="$(section '^#+ +[Bb]ranch(ing|es|[- ]naming)?([- ](strategy|conventions?|rules?|names?))?[[:space:]]*$')"
+[ -n "$SECTION" ] || SECTION="$(section '^#+ +.*[Bb]ranch')"
+[ -n "$SECTION" ] || nothing_to_check "CLAUDE.md declares no branching section"
+arc_log_pass declared-convention-read
+
+# The declared forms are the backticked branch names in that section — `arc/03-camp-issue-78-work-nav`,
+# `<module>/rev-<X>-issue-<NN>-<slug>`. Only those carrying an identifier count: a form with a
+# number or a numeric placeholder in it is the repo saying which word labels the number.
+# A backticked token that is a link target or a filename is not a branch — `skills/issue-write`
+# and `tools/new-direct-pr.sh` both appear in Arc's branching section, and neither is a name
+# anyone creates a branch with.
+NAMED="$(printf '%s\n' "$SECTION" | grep -oE '`[^`]+`(\]\()?' \
+  | grep -v ']($' | tr -d '`' \
+  | grep -E '^[A-Za-z0-9_.<>-]+/[A-Za-z0-9_.<>-]+$' \
+  | grep -vE '\.[A-Za-z]{1,4}$')"
+
+# A declared form is one where the number is followed by the slug — `…-issue-78-work-nav`,
+# `…-pr115-transcript-staleness`, `feat/ticket-<NN>-<slug>`. That trailing separator is what
+# separates a labelled identifier from a version or a date: `release/2026-q4` ends at its
+# number, and reading `q` out of it as a label would let `feat/q4-anything` pass as numbered.
+# The label is two characters at least, for the same reason.
+FORMS="$(printf '%s\n' "$NAMED" | grep -E '[A-Za-z]{2,}[-_]?(<[Nn]+>|<number>|[0-9]+)[-_]')"
+
+# A name the section spells out in full is a branch the repo has already decided on — one
+# repo's `widget-board/rev_b` is its integration branch, declared two lines above the work-branch
+# form. It carries no issue number and is not supposed to: telling the repo to rename the
+# branch its own convention names is the failure this hook is being fixed for.
+if printf '%s\n' "$NAMED" | grep -qxF "$NAME"; then
+  arc_log_pass issue-or-pr-number-present=declared-by-name
+  arc_log_outcome ok "the convention names this branch in full"
+  exit 0
+fi
+
+# ---- does the name carry an identifier number? ----------------------------------
+# The check is the number, never the slug — m46 §9. `issue` and `pr` are the two labels Arc's
+# own mechanism defines and hold everywhere; the declared forms add whatever else this repo
+# labels its numbers with. A repo that declares only the issue form still gets `pr` from Arc,
+# which is why a real `…-pr58-arc-setup` passes against a section that never mentions it.
+LABELS='issues?|pr'
+for k in $(printf '%s\n' "$FORMS" | grep -oE '[A-Za-z]{2,}[-_]?(<[Nn]+>|<number>|[0-9]+)[-_]' \
+             | sed -E 's/[-_]?(<[^>]*>|[0-9]+)[-_]$//' | tr '[:upper:]' '[:lower:]' | sort -u); do
+  case "|$LABELS|" in *"|$k|"*|*"|$k?|"*) ;; *) LABELS="$LABELS|$k" ;; esac
+done
+
+NUM="$(printf '%s' "$NAME" | tr '[:upper:]' '[:lower:]' \
+  | grep -oE "(^|[-/_])($LABELS)[-_]?[0-9]+" | head -1 | grep -oE '[0-9]+$')"
+if [ -n "$NUM" ] && [ "$NUM" -gt 0 ] 2>/dev/null; then
+  # It names an issue or a PR. Whatever else the name is, the tracker link exists.
+  arc_log_pass "issue-or-pr-number-present=$NUM"
+  arc_log_outcome ok "the name carries an identifier number"
+  exit 0
+fi
+
+# ---- nothing links it -----------------------------------------------------------
+# One finding, and it quotes the repo's own words rather than a shape compiled in here.
+arc_log_fail issue-or-pr-number-present=absent
+arc_log_outcome failed "the branch name links to nothing in the tracker"
+
+FORM="$(printf '%s\n' "$FORMS" | head -1)"
+DECLARES=""
+[ -n "$FORM" ] && DECLARES=" This repo declares \`$FORM\` (\`CLAUDE.md\`, branching)."
+
+report "**Camp here —** branch \`$NAME\` created.
+  Checked: declared convention read, issue or PR number present
+  - \`$NAME\` carries no issue or PR number, so nothing links it to the tracker.$DECLARES Rename it now — once a PR is open the name is fixed
+  Declared but skipped: base-is-arc (not built)"
 
 exit 0

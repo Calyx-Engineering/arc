@@ -1,0 +1,2 @@
+# autonomous mode, in a cwd carrying a comma — the mirror of report/manual-cwd-comma.json, so the pair flips whatever the ambient tree declares
+{"tool_name":"Bash","cwd":"tools/hook-cases/mode-guard/fixtures/autonomous,comma","tool_input":{"command":"git commit -m \"work\"","description":"Commit"}}

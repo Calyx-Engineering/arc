@@ -4,12 +4,22 @@
 > ships, and the state each one is in. Where another document disagrees about scope or
 > composition, this one is correct.
 
+**A cold start does not read this whole** ([#175](https://github.com/Calyx-Engineering/arc/issues/175)).
+The reading path is `skills/handoff`'s; this is opened when the work asks one of these:
+
+| The question | Read |
+|---|---|
+| What is Arc, in a minute | [*The six pieces*](#the-six-pieces) |
+| What a mechanism number means, and its state | Its row in [*Mechanisms*](#mechanisms) — one row, not the table |
+| Where a gap in the product gets written down | [*Capturing a gap*](#capturing-a-gap) |
+| Which file carries a capability, and what it needs | Its row in [*Artifacts*](#artifacts) |
+
 Arc is six pieces — workspace guard, authoring, campaign, knowledge, delegation, and
 self-improvement. Every mechanism belongs to one and resolves to an artifact, so a piece of
 work traces to the files that carry it and to whatever else must exist before it is useful.
 
 **Not the authority on:** why you would use Arc — [the repo README](../../README.md) ·
-what gets built next — [ROADMAP.md](../../ROADMAP.md) · how the Calyx plugins fit together
+what gets built next — the current arc's [arc-log](../arc-log/) and the tracker's milestones · how the Calyx plugins fit together
 — [suite-architecture/](../suite-architecture/) · how any single mechanism works —
 [mechanisms/](mechanisms/).
 
@@ -47,7 +57,7 @@ unread on disk.
 
 ## Mechanisms
 
-Thirty-five mechanisms across the six pieces.
+Thirty-seven mechanisms across the six pieces.
 
 **Src** — how the mechanism came to be part of the product. Individual specs name their
 specific origin; this column says which direction it arrived from.
@@ -73,13 +83,15 @@ moves next; this column only reports.
 | ID | Mechanism | Src | Payoff | Spec | Status |
 |---|---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | | |
-| m10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/m10-branch-guard.md) | ⚪ |
+| m10 | Branch / worktree guard | 🔥 | **Right workspace, every time.** *Verifies branch, worktree, and base freshness before any edit* | [spec](mechanisms/m10-branch-guard.md) | 🔵 |
 | m12 | Issue linking | 🔥 | **Everything links, nothing strays.** *Branch↔issue and PR↔issue links form; the PR targets the arc branch* | [spec](mechanisms/m12-issue-linking.md) | ⚪ |
 | m42 | Default branch flip | 🔥 | **Closing keywords bind inside an arc.** *Offers to point the default branch at the arc for its lifetime, on preconditions it checks itself; restores at close* | [spec](mechanisms/m42-default-branch-flip.md) | ⚪ |
 | m14 | Commit rhythm | 🔥 | **Commits at reviewable points.** *Judges when to propose one; checks files saved, identity, nothing dropped* | [spec](mechanisms/m14-commit-rhythm.md) | ⚪ |
 | m22 | Configuration management | 🔥 | **What is in this revision, exactly.** *Versioning is verified as work lands. Software is solved by branches and releases; hardware component and BOM state is not* | [spec](mechanisms/m22-configuration-management.md) | ⚪ |
 | m40 | Autonomy switch | 🔥 | **The mode is state the user can see, not an instruction to remember.** *Three states — manual, autonomous, and autonomous suspended for a conversation. Entering is always explicit; returning to manual never has to be. The permission sits beside every prohibition it overrides, because the prohibition is read every turn and a cross-reference is read once* | [spec](mechanisms/m40-autonomy-switch.md) | 🔵 |
 | m41 | Relief valve | 🔥 | **Depth has a way out.** *Notices when questioning has gone deeper than the decision needs — especially before a repo or branch exists, where the work is untracked — and offers to back out to the critical point* | [spec](mechanisms/m41-relief-valve.md) | ⚪ |
+| m48 | Handoff / user-authored-file archive | 🔥 | **A rewrite leaves the prior version on disk.** *Archives the handoff at a session's first tool call, and any other untracked file — including a Bash `>`, `mv`, `rm` or `cp` — the moment it is about to be replaced; a tracked file needs no copy* | [spec](mechanisms/m48-handoff-archive.md) | 🔵 |
+| m49 | Execution mode guard | 🔥 | **The mode is read at the moment of the action, not recalled.** *Reads `HANDOFF.md`'s Execution mode row before a gating command — commit, push, PR, merge, or one hidden inside an invoked script. Autonomous allows it; manual puts it to the user, per command; absent is read as Manual* | [spec](mechanisms/m49-execution-mode-guard.md) | 🔵 |
 | | **AUTHORING** | | | | |
 | m11 | `issue-writing` | ⚙️ | **Issues someone can act on.** *Issue and PR body practice, title sizing, and the link mechanics that fail silently* | [skill](../../skills/issue-write/SKILL.md) | 🔵 |
 | m13 | Issue write-back | 🔥 | **Edits land, agreed actions get filed.** *Reads back what it wrote; captures follow-ups agreed mid-conversation* | [spec](mechanisms/m13-issue-write-back.md) | ⚪ |
@@ -110,10 +122,10 @@ moves next; this column only reports.
 | m30 | Transcript mining | 🔥 | **One pipeline, two filters.** *Knowledge filter promotes findings into the record; friction filter clusters corrections into mechanism candidates* | [spec](mechanisms/m30-transcript-mining.md) | ⚪ |
 | | **SELF-IMPROVEMENT** | | | | |
 | m31 | Self-improvement loop | 🔥 | **Tooling fixes land without leaving the work.** *Files the issue, makes the fix locally uncommitted, opens the diff* | [spec](mechanisms/m31-self-improvement-loop.md) | ⚪ |
-| m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | ⚪ |
+| m32 | Session preservation | 🔥 | **Past sessions stay findable.** *Indexes transcript directories at creation, before a worktree is deleted* | [spec](mechanisms/m32-session-preservation.md) | 🔵 |
 | m33 | Plugin retrospective | 🔥 | **Future work becomes mechanisms.** *The process that produced this product definition* | [skill](../../skills/plugin-retrospective/SKILL.md) | 🔵 |
 | m39 | Mechanism numbering | 📐 | **A new mechanism gets a number that is actually free.** *The number space spans all three plugins; a registry issues the next one and records the claim* | — | ⚪ |
-| m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | ⚪ |
+| m44 | Event log | 🔥 | **Turning the volume down does not erase the evidence.** *Every artifact firing is appended to a plugin-level log, independent of verbosity — the record a retrospective and a human read to tell whether Arc is working* | [spec](mechanisms/m44-event-log.md) | 🔵 |
 
 Numbering is inherited from the retrospective's product plan and kept stable so existing
 specs and evidence still resolve. That plan ran to 37 across all three plugins, so new
@@ -128,20 +140,35 @@ reads is in
 
 ### Spec completeness
 
-A spec that exists is not automatically finished. Each one states its own state at the top:
+A spec that exists is not automatically finished. Each one states its own state at the top, in
+a `**Status:**` line above its first `##` heading. **These five words are the whole vocabulary**
+— `tests/verify-mechanisms.sh` reports any other, so a sixth is a deliberate act rather than a
+drift.
 
-| | Means |
-|---|---|
-| `partial` | A spec exists with known holes. **The holes must be named** |
-| `specified` | Buildable without further decisions |
+| | Means | Compatible with |
+|---|---|---|
+| `undefined` | Deferred. There is nothing to build from yet | ⚪ |
+| `partial` | A spec exists with known holes. **The holes must be named** | ⚪ 🔵 |
+| `specified` | Buildable without further decisions | ⚪ 🔵 ✅ |
+| `built` | The spec describes what is in Arc now | 🔵 ✅ |
+| `definition` | A definition rather than a build target — `knowledge-tiers.md` | ⚪ 🔵 ✅ |
+
+**The two ladders are one check, not one scale.** A word describes how finished the *spec* is;
+the Status glyph describes how far the *mechanism* is into Arc. The right-hand column is the
+only relation between them, and it is the one `tests/verify-mechanisms.sh` enforces — a
+`partial` spec cannot sit behind ✅ Matured, because Matured means soaked and a spec with named
+holes has not been.
 
 **Why `partial` must name its holes.** Transcript mining has a validated friction filter
 and an undesigned knowledge filter. A single "spec written" marker made that row read as
 finished when half of it was not designed.
 
-**Status reports; the roadmap decides.** The Status column says where each mechanism stands
-today. What moves next, and in what order, is [ROADMAP.md](../../ROADMAP.md)'s call — this
-document is the authority on composition, not on sequence.
+**Status reports; the arc decides.** The Status column says where each mechanism stands
+today. What moves next, and in what order, is the current arc's [arc-log](../arc-log/) and the
+tracker's milestones — this document is the authority on composition, not on sequence. The
+roadmap that used to hold it was retired 2026-09-20
+([#175](https://github.com/Calyx-Engineering/arc/issues/175)); its frozen copy is
+[`docs/release/roadmap-2026-08.md`](../release/roadmap-2026-08.md).
 
 ---
 
@@ -191,11 +218,13 @@ function list, then read its Needs column to find what else must exist before it
 | Artifact | Form | Carries | Invoked by | Needs |
 |---|---|---|---|---|
 | | **WORKSPACE GUARD** | | | |
-| `hooks/branch-guard` | hook | m10 | Automatic, before any edit | Campaign's branch convention |
-| `hooks/tracker-verify` | hook | m12 · m43 | Automatic, on issue create, PR open, PR merge | `skills/issue-write` for repair |
+| `hooks/branch-guard` | hook | m10 | Automatic, before any edit | `.claude/arc/camp/operating-agreement.md`'s *branch prefix* clause |
+| `hooks/mode-guard` | hook | m49 | Automatic, on `Bash`, before a gating command such as `git commit`, `git push`, `gh pr create\|merge` | `HANDOFF.md`'s *Execution mode* row |
+| `hooks/handoff-archive` | hook | m48 | Automatic, on `Edit`, `Write`, `NotebookEdit` and `Bash` | — |
+| `hooks/tracker-verify` | hook | m12 · m43 · m46 | Automatic, on `gh issue create\|edit\|close`, `gh pr create\|edit`, `gh pr ready` and `gh pr merge` | `skills/issue-write` for repair · `tests/verify-issue-boxes.sh` · `tests/verify-linked-branch.sh` · `tests/verify-tracker-body.sh` |
 | `hooks/camp-session-start` | hook | m43 | Automatic, at a session's first edit | `skills/camp` for the voice |
 | `hooks/camp-branch-check` | hook | m43 | Automatic, on branch creation | `skills/camp` for the voice |
-| `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry |
+| `skills/work-watch` | skill | m14 · m23 · m41 · m13 · m15 · m17 | Always, as work proceeds | `skills/relief-valve` when the depth precondition trips · `skills/issue-write` to file what it catches · `skills/record-route` for the friction entry · `skills/handoff` to write the handoff the saturation check proposes |
 | `skills/relief-valve` | skill | m41 | Run by `work-watch` when the precondition trips | — |
 | `skills/config-check` | skill | m22 | Invoked, when a revision is cut | — |
 | `skills/autonomy-set` | skill | m40 | Invoked, at kickoff, on a mode word, at a wave boundary, and when an exchange turns into a conversation | `HANDOFF.md`'s *Execution mode* row for the state · `skills/work-watch` for the capture points auto commits at |
@@ -219,7 +248,8 @@ function list, then read its Needs column to find what else must exist before it
 | `skills/verification-plan` | skill | m24 | Invoked, when requirements need proving | Lodestar, for what must be proven |
 | | **KNOWLEDGE** | | | |
 | `skills/handoff` | skill | m15 | Read at cold start, written at session end | `skills/record-route` for where it lives |
-| `commands/arc-next.md` | command | m15 | Typed as `/arc-next`, at the start of a session | `skills/handoff` for the read path |
+| `commands/handoff-resume.md` | command | m15 | Typed as `/handoff-resume` — one of two openings into the read path, and the only one that needs typing. The wordings in `skills/handoff`'s description are the other | `skills/handoff`, which carries the read path, the staleness checks and the ordered actions. The command holds no rule of its own |
+| `commands/handoff-write.md` | command | m15 | Typed as `/handoff-write` — one of two openings into the write path, and the only one that needs typing. The wordings in `skills/handoff`'s description are the other | `skills/handoff`, which carries what a handoff holds, the write order and the prompt. The command holds no rule of its own |
 | `skills/record-route` | skill | m16 · m17 | Invoked, at session start and decision points | `reference/knowledge-tiers` |
 | `reference/knowledge-tiers` | reference | — | Read by anything that reads or writes the record | — |
 | `hooks/mining-trigger` | hook | m19 | Automatic, at PR open | `agents/transcript-miner` |
@@ -227,28 +257,30 @@ function list, then read its Needs column to find what else must exist before it
 | `agents/*.md` | agents | m25 | Dispatched by the orchestrator | `wiki/` |
 | `skills/delegate` | skill | m25 · m26 | Invoked, when deciding how much to hand over | `agents/*.md` |
 | `wiki/` | agent | m29 | Invoked, and read by every agent before exploring | — |
-| `agents/transcript-miner` | agent | m30 | Called by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
+| `agents/transcript-miner` | agent | m30 | Invoked by `skills/plugin-retrospective` step 1; later by `hooks/mining-trigger` and `agents/improver` | `hooks/session-index` |
 | | **SELF-IMPROVEMENT** | | | |
 | `agents/improver` | agent | m31 | Called at PR time, and on request | `agents/transcript-miner` · `skills/issue-write` |
-| `hooks/session-index` | hook | m32 | Automatic, at worktree creation | — |
+| `hooks/session-index` | hook | m32 | Automatic, at the first tool call of a session | `skills/handoff`'s setup step, which is what gets the index committed rather than merely written |
 | `skills/plugin-retrospective` | skill | m33 | Invoked, after a stretch of real work | `agents/transcript-miner` |
 | `scripts/next-mechanism` | script | m39 | Called when a mechanism is captured | The suite registry |
 | `.claude/arc/log.md` | record | m44 | Appended whenever any artifact fires | Every artifact that declares `camp-reports:` |
+| `.claude/arc/sessions.md` | record | m32 | Rewritten at a session's first tool call | `hooks/session-index`, which is the only thing that writes it |
 
 **Mostly one artifact per mechanism.** Four merges, each because the
 mechanisms fire together:
 
 | Artifact | Merges | Why |
 |---|---|---|
-| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | One always-on sweep, six things it watches for. See below |
+| `skills/work-watch` | m14 · m23 · m41 · m13 · m15 · m17 | One always-on sweep, eight things it watches for. See below |
 | `skills/issue-write` | m11 · m13 | Write the issue and verify the write landed — one moment |
 | `skills/kickoff` | m09 · m20 | Scope agreement and decomposition happen in one sitting |
 | `skills/delegate` | m25 · m26 | Choosing the tier and shaping the brief are the same decision |
 
 ### `skills/work-watch` — the design-time evaluator
 
-Six mechanisms watch work as it proceeds. Splitting them into six always-on
-checks means four separate sweeps competing for the same attention — and
+Eight checks watch work as it proceeds. Five of them notice something and say so; the other
+three are gates that fire on an act rather than a pause. **Splitting the five into
+always-on checks means five separate sweeps competing for the same attention** — and
 [test-obligation-capture](mechanisms/m23-test-obligation-capture.md) rejects the split
 outright: *"one of the things the design-time evaluator watches for, alongside commit
 timing. Not a separate always-on process — a check in the same sweep."*
@@ -260,15 +292,21 @@ timing. Not a separate always-on process — a check in the same sweep."*
 | Questioning has gone deeper than the decision needs | Backing out to the critical point | m41 — runs `skills/relief-valve` |
 | An edit was reported done while the file still contradicts it | The grep that settles it | m13 |
 | A decision is settled and the next topic is opening | Writing it down before moving | m15 · m13 — a gate on your own moving on. Nudges only when the surface itself has stopped holding the state |
-| Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default |
+| Arc itself cost the work something | A line in the arc's friction log | m17 — **the only one with an off switch**, and off is the default: it is about Arc, and a repository consuming Arc has no reason to record its rough edges |
+| This session has degraded far enough that the work should move | A handoff, now, while there is budget to write one | m15 — the only one about the session rather than the work. Turn count, a compaction, and the load having drifted off the work the session was opened for |
+| A failure is about to be blamed on the user's environment | One tested alternative on your own side, first | m13 — the skill's list says which checks block. [#165](https://github.com/Calyx-Engineering/arc/issues/165) |
 
-The first three **propose and never act**, and share one open question: how often they may
-fire before the nudging becomes the annoyance.
+**Most of them propose and never act** — the skill's own list says which — and they share one
+open question: how often they may fire before the nudging becomes the annoyance. The saturation
+check carries that question in its own terms: a session nagged about its length at every pause
+is the failure that makes the whole sweep ignorable.
 
-**The fourth blocks instead of proposing.** Edit completeness gates the agent's own report
-that an edit is done — a `grep` for the replaced string, zero hits or it is not finished. It
-is m13's shape B in files, which m13 had recorded as already handled; arc 03 disproved that
-four times in one session.
+**Two of them block instead of proposing, and the skill's own list is the authority on
+which.** Edit completeness gates the agent's own report that an edit is done — a `grep` for the
+replaced string, zero hits or it is not finished. It is m13's shape B in files, which m13 had
+recorded as already handled; arc 03 disproved that four times in one session. The environment
+check gates the same shape in a *diagnosis*: naming the user's bench, install or wiring as the
+cause of a failure, with nothing tried on the session's own command path first.
 
 **Names are provisional.** Paths firm up when the plugin skeleton exists.
 

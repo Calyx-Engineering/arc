@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook comment says \"warn\". Exit 2 in PreToolUse denies. Comment lies; first edit blocked.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check, PostToolUse, where exit 2 only prints stderr. PreToolUse exit 2 denies.\n\nAlready fixed in this worktree (`hooks/camp-session-start:60`, allow + exit 0). Whether main has it: unverified, no shell here.\n\nDirect PR: label fix + permission fix. Yes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. No shell tool in this session, so no git, no `tools/new-direct-pr.sh`, no `gh`.\n\nAlso lost earlier context: don't know which label fix. Restate it in one line, in a session with Bash.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Blocked, two ways.\n\n- Autonomous: only you set HANDOFF.md's *Execution mode* row. I may not.\n- This session is read-only: no Edit, Write or Bash tools. Cannot branch, edit or open PR.\n\nStart fresh session with tools, row set autonomous, then I do it.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Branch-guard already does both: prefix from agreement (`hooks/branch-guard:98`), `pr<N>` (`:125`). Hardcoded `arc/*` left in camp-session-start and session-index only.\n\nKill switch: retire `hooks-off.sh`. Hooks fail open; `/plugin disable arc` is the kill switch. Drop the CLAUDE.md ceremony too.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Cannot. Session still has no Edit, Write or Bash. Read-only. Open a normal session; I fix there.\n\nWhat that session fixes:\n\n| Where | What |\n|---|---|\n| `hooks/camp-session-start:133` | hardcoded `arc/*`; read agreement prefix like branch-guard does |\n| `hooks/session-index:289` | same |\n| branch-guard | already reads prefix and `pr<N>`; nothing to do |\n| label | the label fix |\n\nKill switch: keep file, drop chat ritual. Mention only in commit body.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, for hooks. My block is different: this session has no Edit, Write or Bash tools. No hook denies me; nothing can act.\n\nFindings so far, unfixed:\n\n| Item | State |\n|---|---|\n| branch-guard prefix from agreement | already built (`hooks/branch-guard:98`) |\n| branch-guard `pr<N>` | already built (`:125`) |\n| `arc/*` hardcoded | `camp-session-start:133`, `session-index:289` |\n\nKill switch: keep one command, drop per-hook timers. Suggest `hooks-off.sh all` in a new session.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Don't place it by hand. Run from any terminal in the repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `R:\\arc\\.git\\arc-hooks-off`, shared by every worktree. Yes, this is exactly what the switch is for.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Hooks read `r:\\arc\\.git\\arc-hooks-off`, not `HOOKS_OFF.txt`. Not there.\n\nEasiest, any terminal in `r:\\arc`:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```\n\nManual alternative, one line, epoch expiry then hook:\n\n```text\n1757640000 all\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. Wrong place. File goes here, one line, epoch expiry then hook name:\n\n```\nR:\\arc\\.git\\arc-hooks-off\n```\n\n```\n9999999999 all\n```\n\nOr from any terminal in R:\\arc:\n\n```\nbash hooks/hooks-off.sh all 60\n```\n\nAgreed on design. Suggest: env var `ARC_HOOKS_OFF=1` in settings.json also mutes. One line, no file hunt.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write this session, no Edit tool. Paste this into cleanup:\n\n| Kill switch | `.git/arc-hooks-off` unreachable without bash; wrong file silently ignored. Replace: hook-level `settings.local.json` toggle or `hooks-off.sh` runnable from Claude, verified by `status` |\n\nCorrection: switch scopes to one repo, not everywhere. Your `HOOKS_OFF.txt` did nothing. Run:\n\n```\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

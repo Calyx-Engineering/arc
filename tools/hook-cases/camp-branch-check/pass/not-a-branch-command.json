@@ -1,2 +1,2 @@
 # an unrelated command
-{"cwd":"__FIXTURE_MAIN__","tool_name":"Bash","tool_input":{"command":"git status --short"}}
+{"cwd":".","tool_name":"Bash","tool_input":{"command":"git status --short"}}

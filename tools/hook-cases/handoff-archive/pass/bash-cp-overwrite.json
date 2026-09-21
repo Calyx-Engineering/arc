@@ -1,0 +1,2 @@
+# a Bash `cp` over some other untracked file — #351's shell-overwrite form
+{"session_id":"verify-archive-bash-cp","cwd":"__FIXTURE_ISSUE__","tool_name":"Bash","tool_input":{"command":"cp -p draft.md notes.md"}}

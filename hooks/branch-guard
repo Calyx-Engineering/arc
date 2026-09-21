@@ -6,21 +6,32 @@
 # same class of mistake recurred eight-plus times. CLAUDE.md said "check the branch first"
 # and it was skipped, because advice with no trigger is not a mechanism.
 #
-# Coordination branches are `main`, `develop`, and any arc branch (`arc/<slug>`). An arc
-# branch is where issue branches merge to; source work belongs on the issue branch nested
-# under it. Docs and agent-facing files stay writable everywhere, because maintaining the
-# record IS the coordination work those branches exist for.
+# Coordination branches are `main`, `develop`, and any branch under the prefix the operating
+# agreement declares — `arc/` in this repository, and `arc/` anywhere the agreement is silent.
+# A coordination branch is where issue branches merge to; source work belongs on the issue
+# branch nested under it. Docs and agent-facing files stay writable everywhere, because
+# maintaining the record IS the coordination work those branches exist for.
 #
-# One check, not three. Worktree identity and base freshness are follow-ups — one working
-# check beats three half-finished.
+# Three checks, m10's three. Branch kind is the one that maps to the session-costing 08-03
+# failure; worktree identity catches an edit made in a window opened for something else, and
+# base freshness catches a branch cut before other work merged. Each denies on its own
+# condition only, and each is silent when it cannot classify what it is looking at.
 #
 # camp-reports: edit-denied
-# checks: branch-kind, path-is-source
-# skips: worktree-identity (not built), base-freshness (not built)
+# checks: branch-kind, path-is-source, worktree-identity, base-freshness
+# skips: branch-kind (there is no branch — no repository, a detached HEAD, or git is unavailable), path-is-source (the branch is not a coordination branch, the payload names no file, the path lands outside every git worktree, or there is no branch to check), worktree-identity (the path is relative, is in a different repository, resolves to no directory that exists, this session is not in a repository, lands outside every git worktree, or there is no branch or file to check), base-freshness (not a work branch, the branch name carries no base, the base ref is absent, this base commit was already reported, the reminder could not be recorded, the path lands outside every git worktree, or there is no branch or file to check)
 
 # ---- kill switch ----------------------------------------------------------------
-# `touch ~/.claude/HOOKS_OFF` from any terminal makes every Arc hook inert.
-[ -f "$HOME/.claude/HOOKS_OFF" ] && exit 0
+# `bash hooks/hooks-off.sh branch-guard 30` from any terminal in this repository mutes this
+# one hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
+
+# ---- the activation log ---------------------------------------------------------
+# Sourced before anything can exit, so an entry lands whichever of this hook's exits is
+# taken — and there are eight. m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event edit-checked
 
 # ---- fail-open wrapper ----------------------------------------------------------
 # Never `set -e`. A guardrail bug must never block every tool call.
@@ -33,12 +44,72 @@ json_string() {
 }
 
 deny() {
+  arc_log_outcome_default denied "the hook denied the edit"
   printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":$(json_string "$1")}}"
   exit 0
 }
 
+# The three whitespace escapes `field` resolves. `printf -v` is a builtin, so the resolver
+# below forks nothing — and a raw tab or carriage return sitting in this file would not
+# survive an editor or a line-ending normalisation.
+printf -v _ARC_NL  '\n'
+printf -v _ARC_TAB '\t'
+printf -v _ARC_CR  '\r'
+
+# Read a top-level or nested field out of the hook payload without requiring jq.
+# Usage: field file_path
+#
+# NOT `tr ',{}' | grep | sed`, which is what this was, and which was wrong twice. It split
+# the payload on commas, so a value carrying one arrived truncated at the comma; and when its
+# `sed` could not parse the fragment it printed that fragment unchanged, so the caller was
+# handed the key and its quotes back as if they were the value. Both are silent. #230, #300.
+#
+# A JSON string ends at the first quote that is NOT escaped, so the scan counts the
+# backslashes in front of each quote rather than stopping at the first one. The escapes `\"`,
+# `\\`, `\n`, `\t` and `\r` are then resolved, because the resolved form is the one the caller
+# acts on: a Windows `cwd` arrives with its separators doubled, and a multi-line command
+# carries its line breaks as the two characters `\` and `n`.
+#
+# NO CLOSING QUOTE MEANS THE PAYLOAD WAS CUT OFF MID-VALUE. Yield nothing, never the rest —
+# half a value is the shape a hook must be silent about rather than act on.
+#
+# Parameter expansion, no subprocess. The old form cost five processes on every tool call.
 field() {
-  printf '%s' "$INPUT" | tr ',{}' '\n\n\n' | grep -m1 -- "\"$1\"" | sed 's/.*: *"\(.*\)"[^"]*$/\1/'
+  local rest raw out chunk bs key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+
+  raw=""
+  while :; do
+    case "$rest" in *'"'*) ;; *) return 0 ;; esac
+    chunk="${rest%%\"*}"
+    rest="${rest#"$chunk"\"}"
+    # The backslash run immediately before the quote. An odd count escapes it.
+    bs="${chunk##*[!\\]}"
+    if [ $(( ${#bs} % 2 )) -eq 0 ]; then raw="$raw$chunk"; break; fi
+    raw="$raw$chunk\""
+  done
+
+  out=""
+  while [ -n "$raw" ]; do
+    case "$raw" in *'\'*) ;; *) out="$out$raw"; break ;; esac
+    chunk="${raw%%\\*}"
+    out="$out$chunk"
+    raw="${raw#"$chunk"\\}"
+    case "$raw" in
+      '"'*) out="$out\"";        raw="${raw#?}" ;;
+      '\'*) out="$out\\";        raw="${raw#?}" ;;
+      n*)   out="$out$_ARC_NL";  raw="${raw#?}" ;;
+      t*)   out="$out$_ARC_TAB"; raw="${raw#?}" ;;
+      r*)   out="$out$_ARC_CR";  raw="${raw#?}" ;;
+      # Not an escape this reader resolves — a shell escape, a `\u`. Left as it is.
+      *)    out="$out\\" ;;
+    esac
+  done
+  printf '%s' "$out"
+  return 0
 }
 
 # ---- hook body ------------------------------------------------------------------
@@ -49,38 +120,269 @@ CWD="$(field cwd)"
 BRANCH="$(git -C "$CWD" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 # No branch means no repo, a detached HEAD, or git unavailable. Allow — the guard has
 # nothing to say about work it cannot classify.
-[ -n "$BRANCH" ] || exit 0
+if [ -z "$BRANCH" ]; then
+  for c in branch-kind path-is-source worktree-identity base-freshness; do
+    arc_log_skip "$c" "no branch — no repository, a detached HEAD, or git is unavailable"
+  done
+  arc_log_outcome ok "no branch to classify"
+  exit 0
+fi
 
-# Issue branches nest under an arc by name, not by ref — git refs cannot nest under an
+# ---- the coordination prefix ----------------------------------------------------
+# Which prefix marks a coordination branch is a per-repository decision, so the operating
+# agreement states it as a setting and this hook reads it. `arc/` is Arc's own; a hardware
+# repository's is `rev/`, and a hook that compiles one in classifies every branch in the
+# other wrongly — #203.
+#
+# Fail open, and in one direction only. An absent agreement, an absent clause, or a value
+# that is not a plain prefix all fall back to `arc/` — the shipped default, and what this
+# hook used before it read anything.
+#
+# EMPTY IS THE DANGEROUS VALUE, not a glob. The pattern below is `"$PREFIX"*`, and a quoted
+# expansion in a `case` pattern is matched literally — a clause reading `*` matches only a
+# branch actually named `*…`. An empty one does not: `""*` matches every branch in the
+# repository, classifies all of it as coordination, and denies every source edit in it.
+# What holds that off is that an empty value never reaches the assignment at all —
+# `printf '%s' ""` emits no line, so the test below has nothing to match and fails.
+PREFIX=arc/
+TOP="$(git -C "$CWD" rev-parse --show-toplevel 2>/dev/null)"
+AGREEMENT="$TOP/.claude/arc/camp/operating-agreement.md"
+if [ -n "$TOP" ] && [ -f "$AGREEMENT" ]; then
+  # The clause is a line the user edits, so the forms a user writes are all read: indented,
+  # bulleted, or checkboxed — section 3 of the agreement says "check one per setting", and a
+  # checkbox is what the clause's neighbours look like. The value is the first token after
+  # the label, with backticks treated as whitespace, so a clause typed without the code span
+  # still reads: falling back to `arc/` because the backticks were missing would be the
+  # silent misclassification #203 is about.
+  LINE="$(grep -m1 -E '^[[:space:]]*([-*][[:space:]]*(\[[ xX]\][[:space:]]*)?)?\*\*Branch prefix' \
+    "$AGREEMENT" 2>/dev/null)"
+  DECLARED="$(printf '%s' "$LINE" | sed -e 's/.*[Bb]ranch prefix[*:]*//' -e 's/`/ /g' | awk '{print $1}')"
+  # It must end in its separator. That is what the agreement's own clause asks for, and it
+  # is what tells a prefix from a word: `none`, `unset` and `TBD` are how a repository says
+  # it has no prefix, and taking one of those literally would classify nothing as
+  # coordination and silently switch the guard off across the whole repository.
+  if printf '%s' "$DECLARED" | grep -qE '^[A-Za-z0-9_./-]+[/_-]$'; then PREFIX="$DECLARED"; fi
+fi
+
+# Work branches nest under an arc by name, not by ref — git refs cannot nest under an
 # existing branch — so `arc/02-foundation-issue-10-skeleton` is a *work* branch and
-# `arc/02-foundation` is not. The `-issue-` segment is what tells them apart, and getting
-# this backwards would block work on the very branch the guard tells you to create.
+# `arc/02-foundation` is not. A numbered `-issue-` or `-pr-` segment is what tells them
+# apart, and getting this backwards blocks work on the very branch the guard tells you to
+# create: a direct PR's branch is `arc/04-dogfood-pr200-slug`, which carried no `-issue-`
+# and so was read as coordination-only. It denied the fix to itself.
+#
+# The segment, not the prefix. Which prefix marks a coordination branch is read above rather
+# than compiled in, so a work branch under another repository's prefix is recognised here too.
+#
+# Both bare forms are listed because a repo with no prefix at all names the branch
+# `issue-42-slug`, which has nothing before the hyphen and misses `*-issue-*`. It would
+# fall through to the topic-branch case and still be allowed, so this is classification
+# rather than permission — but the fallback is what would have to stay permissive forever
+# for that to keep being true, and a guard should not depend on its own catch-all.
 case "$BRANCH" in
-  main|master|develop) KIND=trunk ;;
-  arc/*-issue-*)       exit 0 ;;   # an issue branch — the correct place to work
-  arc/*)               KIND=arc ;;
-  *)                   exit 0 ;;   # a topic branch — also fine
+  main|master|develop)       KIND=trunk ;;
+  *-issue-[0-9]*|issue-[0-9]*|*-pr[0-9]*|pr[0-9]*) KIND=work ;;   # an issue branch or a direct PR
+  "$PREFIX"*)                KIND=coord ;;
+  *)                         KIND=topic ;;
 esac
+arc_log_event edit-checked "branch=$BRANCH prefix=$PREFIX"
+arc_log_pass "branch-kind=$KIND"
 
 FILE="$(field file_path)"
-[ -n "$FILE" ] || exit 0
+if [ -z "$FILE" ]; then
+  for c in path-is-source worktree-identity base-freshness; do
+    arc_log_skip "$c" "the payload names no file"
+  done
+  arc_log_outcome ok "no file path to check"
+  exit 0
+fi
 
 # Normalise separators so one set of patterns covers Windows and POSIX paths.
 NORM="$(printf '%s' "$FILE" | tr '\\' '/')"
 
-# Writable on a coordination branch: the record, the process, and the plugin's own
-# agent-facing surface. This is what those branches exist to maintain.
+lower() { printf '%s' "$1" | tr 'A-Z' 'a-z'; }
+
+# ---- resolving the target -------------------------------------------------------
+# WHICH REPOSITORY THE WRITTEN PATH LANDS IN IS NEEDED BEFORE CHECK 1, not only by check 2.
+# Check 1 asks whether a path is source work; a path in no repository at all is not source
+# work in *this* one, and none of this hook's business. Resolving it inside check 2 put that
+# answer downstream of a denial already sent — a scratchpad `.py` written from
+# `arc/04-dogfood` was blocked as source work on a coordination branch, and the check that
+# exempts a path in no repository never ran. #272.
+#
+# Resolution happens once, here. Check 2 reads what this leaves behind and decides.
+# `$TOP` already holds it, from the same command against the same cwd. The hoist made
+# this unconditional, and a fork here is paid by every relative-path write — the common
+# case, which used to reach none of this.
+CWD_TOP="$TOP"
+TDIR=
+TGT_TOP=
+WT_ELSEWHERE=
+WT_SKIP="the path is relative, so it resolves inside this worktree"
 case "$NORM" in
-  */docs/*|docs/*)                 exit 0 ;;
-  */.claude/*|.claude/*)           exit 0 ;;
-  */.claude-plugin/*|.claude-plugin/*) exit 0 ;;
-  *.md)                            exit 0 ;;
-  */.gitignore|.gitignore)         exit 0 ;;
+  /*|[A-Za-z]:/*)
+    # The reason a fall-through is logged with. After the early exit below there is one:
+    # a path in a *different* repository — the mirrored-file edit, which is not this hook's
+    # business but is emphatically inside a repository. It was logged as "outside any
+    # repository" until #272, which is wrong about the only case it now describes.
+    WT_SKIP="the path is in a different repository"
+    TDIR="$(dirname "$NORM")"
+    # A new file's directory may not exist yet. Walk up to the nearest one that does.
+    while [ -n "$TDIR" ] && [ ! -d "$TDIR" ]; do
+      TPARENT="$(dirname "$TDIR")"
+      [ "$TPARENT" = "$TDIR" ] && break
+      TDIR="$TPARENT"
+    done
+    # A path on a root that does not exist walks up to `.`, which is a directory — the
+    # hook's own cwd, not the target's. Anything that stopped being absolute is unresolved.
+    case "$TDIR" in /*|[A-Za-z]:/*|[A-Za-z]:) ;; *) TDIR= ;; esac
+    if [ -z "$TDIR" ] || [ ! -d "$TDIR" ]; then
+      TDIR=
+      WT_SKIP="the path resolves to no directory that exists"
+    fi
+    if [ -n "$TDIR" ]; then
+      TGT_TOP="$(git -C "$TDIR" rev-parse --show-toplevel 2>/dev/null)"
+      if [ -n "$CWD_TOP" ] && [ -n "$TGT_TOP" ]; then
+        if [ "$(lower "$CWD_TOP")" != "$(lower "$TGT_TOP")" ]; then
+          # The common dir is the shared `.git` of a repository's worktrees. Equal means one
+          # repository seen from two worktrees; unequal means two repositories, and those are
+          # not this hook's business.
+          CWD_COMMON="$(git -C "$CWD" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+          TGT_COMMON="$(git -C "$TDIR" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+          if [ -n "$CWD_COMMON" ] && [ "$(lower "$CWD_COMMON")" = "$(lower "$TGT_COMMON")" ]; then
+            WT_ELSEWHERE=yes
+          fi
+        else
+          WT_SKIP=""
+        fi
+      fi
+      [ -n "$CWD_TOP" ] || WT_SKIP="this session is not in a repository"
+    fi
+    ;;
 esac
 
-# Everything else on a coordination branch is source work.
-if [ "$KIND" = arc ]; then
-  deny "Source edit blocked: you are on \`$BRANCH\`, an arc branch. Arc branches are coordination only — issue branches nest under them and merge back in. Create \`$BRANCH-issue-<N>-<slug>\` and edit there. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here — maintaining the record is what this branch is for.)"
-else
-  deny "Source edit blocked: you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here.)"
+# A path in no worktree of any repository is allowed, and all three checks are skipped.
+#
+# Checks 1 and 2 have no question to ask about it: `~/.claude/settings.json` and a scratchpad
+# file under the system temp directory are on no branch and in no worktree. Check 3 is
+# different and the exemption is deliberate — base freshness is a property of the session's
+# BRANCH, not of the path, so it would still have something to say. It is skipped anyway,
+# because #272's requirement is that such a path is allowed, and a stale-base denial landing
+# on a write this guard has no claim over is the same denial the issue is about. Nothing is
+# lost: the stamp is written only where the reminder is delivered, so the next in-repo edit
+# on that branch still gets it.
+#
+# EXEMPTING HERE RATHER THAN CHECK BY CHECK IS THE FIX. Check 2 owned the resolution and
+# check 1 ran first, so the exemption was never reached.
+if [ -n "$TDIR" ] && [ -z "$TGT_TOP" ]; then
+  for c in path-is-source worktree-identity base-freshness; do
+    arc_log_skip "$c" "the path lands outside every git worktree"
+  done
+  arc_log_outcome ok "the path is in no repository"
+  exit 0
 fi
+
+# ---- check 1: branch kind -------------------------------------------------------
+# Writable on a coordination branch: the record, the process, and the plugin's own
+# agent-facing surface. This is what those branches exist to maintain.
+if [ "$KIND" = trunk ] || [ "$KIND" = coord ]; then
+  case "$NORM" in
+    */docs/*|docs/*) arc_log_pass path-is-source=no ;;
+    */.claude/*|.claude/*) arc_log_pass path-is-source=no ;;
+    */.claude-plugin/*|.claude-plugin/*) arc_log_pass path-is-source=no ;;
+    *.md) arc_log_pass path-is-source=no ;;
+    */.gitignore|.gitignore) arc_log_pass path-is-source=no ;;
+    *)
+      arc_log_fail path-is-source=yes
+      # Everything else on a coordination branch is source work.
+      if [ "$KIND" = coord ]; then
+        deny "Source edit blocked: you are on \`$BRANCH\`, a coordination branch — \`$PREFIX\` marks one here (the operating agreement's branch prefix). Issue branches nest under it and merge back in, and that is where source work goes. Create \`$BRANCH-issue-<N>-<slug>\` and edit there. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here — maintaining the record is what this branch is for.)"
+      else
+        deny "Source edit blocked: you are on \`$BRANCH\`. Work belongs on a branch — create one before the first edit. (Markdown, docs/, .claude/ and .claude-plugin/ stay writable here.)"
+      fi
+      ;;
+  esac
+else
+  arc_log_skip path-is-source "the branch is not a coordination branch"
+fi
+
+# ---- check 2: worktree identity -------------------------------------------------
+# A run gets a worktree of its own while another run works in the main tree, so an edit
+# whose absolute path lands in a *different worktree of the same repository* is being made
+# in someone else's window. `arc-loop.sh` opens those worktrees; the failure is a session
+# reaching back into the tree it was moved out of.
+#
+# Same repository is the whole restriction, and it is what keeps this narrow. A different
+# clone is a legitimate target — CLAUDE.md requires 04-arc-execution-and-roles.md to be
+# edited in lodestar and arc in the same session — and a path in no repository at all
+# (~/.claude/settings.json) is none of this hook's business. Both stay allowed; the second
+# never reaches here, having been allowed above. A relative path resolves against the
+# session's own cwd, so it cannot land elsewhere.
+#
+# The resolution is above, before check 1. This decides on it.
+if [ "$WT_ELSEWHERE" = yes ]; then
+  arc_log_fail worktree-identity=elsewhere
+  arc_log_outcome denied "the file is in another worktree of this repository"
+  deny "Edit blocked: \`$FILE\` is in \`$TGT_TOP\`, a different worktree of this repository. This session's worktree is \`$CWD_TOP\` — another run, or the orchestrator, is working in that one. Edit the copy under your own worktree, or open a session there."
+fi
+if [ -n "$WT_SKIP" ]; then
+  arc_log_skip worktree-identity "$WT_SKIP"
+else
+  arc_log_pass worktree-identity=own
+fi
+
+# ---- check 3: base freshness ----------------------------------------------------
+# A work branch cut before other work merged carries a base that has moved on. The name
+# gives the base away: `arc/04-dogfood-issue-161-slug` was cut from `arc/04-dogfood`.
+BF_SKIP="the branch is not a work branch, so it names no base"
+if [ "$KIND" = work ]; then
+  BF_SKIP="the branch name carries no base"
+  BASE="$(printf '%s' "$BRANCH" | sed -E 's/-(issue-[0-9]+|pr[0-9]+).*$//')"
+  # No prefix before the segment (`issue-42-slug`) leaves the name unchanged — there is no
+  # base to name, so there is nothing to compare.
+  if [ -n "$BASE" ] && [ "$BASE" != "$BRANCH" ]; then
+    BF_SKIP="the base ref is absent"
+    # `origin/` first: what merged is a fact about the remote, and a local base ref can be
+    # stale itself. Either way, an absent ref means silence.
+    BASE_REF=
+    for ref in "refs/remotes/origin/$BASE" "refs/heads/$BASE"; do
+      if git -C "$CWD" rev-parse --verify -q "$ref" >/dev/null 2>&1; then BASE_REF="$ref"; break; fi
+    done
+    if [ -n "$BASE_REF" ]; then
+      BF_SKIP=""
+      BEHIND="$(git -C "$CWD" rev-list --count "HEAD..$BASE_REF" 2>/dev/null)"
+      case "$BEHIND" in ''|*[!0-9]*) BEHIND=0 ;; esac
+      if [ "$BEHIND" -gt 0 ]; then
+        # Said once per base commit, not on every edit. m10 named the noise directly: firing
+        # on every stale branch would be constant, and a guard nobody can work through gets
+        # switched off. The stamp is keyed on the base's sha, so the next merge into the base
+        # speaks up again.
+        BASE_SHA="$(git -C "$CWD" rev-parse --short "$BASE_REF" 2>/dev/null)"
+        GITDIR="$(git -C "$CWD" rev-parse --absolute-git-dir 2>/dev/null)"
+        SLUG="$(printf '%s' "$BRANCH" | tr '/' '-')"
+        STAMP="$GITDIR/arc-branch-guard/$SLUG-$BASE_SHA"
+        if [ -n "$GITDIR" ] && [ ! -f "$STAMP" ]; then
+          # Deny only once the reminder is recorded. A stamp that cannot be written would
+          # otherwise deny the same edit forever, which is the dead session the fail-open
+          # rule exists to prevent.
+          if mkdir -p "$(dirname "$STAMP")" 2>/dev/null && : > "$STAMP" 2>/dev/null; then
+            arc_log_fail base-freshness=behind-$BEHIND
+            arc_log_outcome denied "the base is $BEHIND commit(s) ahead of this branch"
+            deny "Base moved: \`$BASE_REF\` is $BEHIND commit(s) ahead of \`$BRANCH\`, so this branch was cut before that work merged. Run \`git merge $BASE_REF\` (or rebase) before continuing. Said once per base commit — repeat the edit to proceed without merging."
+          else
+            BF_SKIP="the reminder could not be recorded, so nothing was said"
+          fi
+        else
+          BF_SKIP="this base commit was already reported"
+        fi
+      fi
+    fi
+  fi
+fi
+if [ -n "$BF_SKIP" ]; then
+  arc_log_skip base-freshness "$BF_SKIP"
+else
+  arc_log_pass base-freshness=current
+fi
+
+exit 0

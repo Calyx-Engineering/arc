@@ -1,5 +1,6 @@
 ---
 name: arc-intent
+user-invocable: false
 description: Use when work is proposed and the question is whether it belongs in this arc — an issue about to be spawned, a PR about to open, an issue closing, the relief valve firing on depth, or the user asking directly. Classifies the work Agreed, Derived or Escalate against the arc-log's stated intent, and asks rather than blocks. Not for whether work is correct or well built; only whether it is the work this arc agreed to do.
 camp-reports: [intent-checked, drift-escalated, override-recorded]
 checks: [arc-log-read, intent-located, classification, override-row-written]
@@ -131,7 +132,7 @@ arc exists*, in a diff.
 | Moment | Fired by | The question |
 |---|---|---|
 | **An issue is spawned** | [`decompose`](../decompose/SKILL.md) | Does this belong in the arc, or outside it |
-| **An issue closes · a PR opens** | [`issue-write`](../issue-write/SKILL.md), inside [close-sequence](../../docs/product-architecture/close-sequence.md) step 5 | Is what this delivers the work the arc asked for |
+| **An issue closes · a PR opens** | [`issue-write`](../issue-write/SKILL.md), inside [close-sequence](../../docs/product-architecture/close-sequence.md) step 6 | Is what this delivers the work the arc asked for |
 | **The user asks** | [`camp`](../camp/SKILL.md) | Always available |
 | **The relief valve fires on depth** | [`relief-valve`](../relief-valve/SKILL.md) | Direction and depth, asked together |
 

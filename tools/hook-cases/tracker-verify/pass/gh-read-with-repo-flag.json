@@ -1,0 +1,2 @@
+# `gh issue view` with the repo flag in both positions, chained — still two reads, and a read must reach no arm. The verb is matched as a word, so neither flag's value may be mistaken for one
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","tool_input":{"command":"gh -R Calyx-Engineering/arc issue view 10 --json body && gh issue -R Calyx-Engineering/arc view 11 --json body"}}

@@ -1,0 +1,2 @@
+# a no-issue direct PR merging into its arc — the head branch names a PR, not an issue, so there is no issue to ask about
+{"tool_name":"Bash","cwd":"__FIXTURE_ISSUE__","arc_test_branch":"arc/02-foundation-pr75-no-issue-pr","arc_test_pr_base":"arc/02-foundation","arc_test_default":"main","arc_test_milestone":"Dogfood","arc_test_title":"arc-02: chore: a direct PR","arc_test_body":"Spawned by #12\n","arc_test_issue_state":"OPEN","tool_input":{"command":"gh pr merge 202 --squash"}}

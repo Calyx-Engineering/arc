@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "`camp-session-start` documents \"report, never block\" but exited 2, which denies PreToolUse edits.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from `camp-branch-check`, a PostToolUse hook, where exit 2 only surfaces stderr. On PreToolUse, exit 2 denies.\n\nAlready fixed in this worktree: `report()` now returns explicit allow, exit 0 (`hooks/camp-session-start:60`). The direct PR carries it with the label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Exit 2 already fixed, all three copies. No shell tool here. Which label and permission fixes?",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked. Table says why.**\n\n| Item | State |\n|---|---|\n| Autonomous mode | Only you may set it: edit HANDOFF.md *Execution mode* row |\n| Bash / git / gh | Not available this session, so no commit, push or PR |\n| Exit 2 in `camp-session-start` | Already fixed: branch, main checkout and installed 0.1.0 all return `allow`, exit 0 |\n| Label fix, permission fix | Lost from my context. Say which files or issues |",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "| Claim | Branch-guard today, branch and installed 0.1.0 |\n|---|---|\n| PR number | Handled: `*-pr[0-9]*` counts as work. Form is `pr200`, not `pr-200` |\n| Prefix not `arc/` | Handled: read from the agreement, `arc/` only as fallback |\n\nKill switch: delete it. Claude Code's `disableAllHooks` setting already covers the emergency.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "**Cannot. This session has no Edit, Write or Bash tool.**\n\n| Needed | Blocker |\n|---|---|\n| Kill-switch removal, seven hooks | No file edits possible here |\n| Verify output, commits, PR | No shell |\n\nOpen a normal session in this worktree and say \"remove the kill switch\". Rest is already fixed.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No hook blocked me. Those empty replies were my error. Real blocker: this session has no Bash tool, so I cannot commit, push or open the PR.\n\n| Fix wanted | Status |\n|---|---|\n| Exit 2 | Already fixed everywhere |\n| PR number, prefix | Already handled |\n| Kill switch removal | Editable now, pending your yes |\n| Label fix, permission fix | Need you to name them |",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file by hand. From any terminal in this repository:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```\n\nMutes every Arc hook for sixty minutes, all worktrees. State lands in `R:\\arc\\.git\\arc-hooks-off`.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Nothing at either path. Put this in `R:\\arc\\.git\\arc-hooks-off`, no extension:\n\n```text\n1789400000 all\n```\n\nMutes every Arc hook, all worktrees, until 2026-09-14.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Hand-placed file does nothing by design. Run this from `r:\\arc`:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nMutes every hook, all worktrees, thirty minutes. Then I fix.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "**Cannot edit: this session has no Write, Edit or Bash tool.** Only Read, Glob, Grep.\n\nWhat to add once a session can write, Upkeep-6 in the plan's §9 table:\n\n| ID | Item | Direction |\n|---|---|---|\n| Upkeep-6 | Kill switch mutes every hook in the repository and is not hand-writable | Per-hook, `touch`-able file, or delete it and rely on `disableAllHooks` |",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

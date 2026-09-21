@@ -1,0 +1,2 @@
+# a PR body carrying a `Spawned` heading — the rule is `skills/issue-write`'s about an ISSUE body, so a PR must not be judged by it. This is the only case that pins the gating; hoist the scan out of its `case` block and this is what fails
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"Spawned by #74 — noticed while reading its output.\n\n## Spawned\n\n- a scratch note this PR produced\n","tool_input":{"command":"gh pr edit 75 --body-file body.md"}}

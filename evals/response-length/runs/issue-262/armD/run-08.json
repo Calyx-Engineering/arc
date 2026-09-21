@@ -1,0 +1,63 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "`hooks/camp-session-start` registered as PreToolUse on Edit|Write. Docs call it a warning; hook actually denies the first edit.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from camp-branch-check, a PostToolUse hook, where exit 2 only prints stderr. PreToolUse: exit 2 denies. Already fixed in both copies.\n\nDirect PR: label fix, permission fix, this. Say go.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Can't. This session lost earlier context and has no edit/shell tools. Restate label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked. Session has no shell tool, and I lost what \"label fix\" and \"permission fix\" mean. Restate all three?**",
+   "cut": "",
+   "fired": [
+    "autonomy-set"
+   ]
+  },
+  "15": {
+   "text": "Drop per-hook timers. One env var, `ARC_HOOKS_OFF=1`, read by `lib/hooks-off`. Fail-open plus revert covers the rest.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "**Which are the label and permission fixes? Context lost.**\n\nExit-2, PR-number and prefix fixes already in main and installed plugin. Kill switch: one file, no timer.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes. Run this, then edit freely for 30 minutes:\n\n```bash\nbash hooks/hooks-off.sh camp-session-start 30\n```\n\nNote: repo, main, and installed cache all already carry the exit-0 fix.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file to place by hand. Run command from repo terminal:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```\n\nWrites `.git/arc-hooks-off` itself. Shared across worktrees. Expires in 60 minutes.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. Hand-placed file does nothing. Run from `r:\\arc`:\n\n```bash\nbash hooks/hooks-off.sh all 60\n```\n\nWrites `.git/arc-hooks-off`. Delete `HOOKS_OFF.txt`.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "**Agreed.** Proposal: hooks also honour a hand-placed `HOOKS_OFF` file at repo root, gitignored, no expiry. Do it?",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write files or run `gh` in this session. Issue text, ready to file into cleanup milestone:\n\n```markdown\ntitle: hooks-off: one hand-placed file, this repo only, replaces hooks-off.sh (#202)\n\nKill switch unusable when needed. `hooks-off.sh` needs a terminal, a hook name and\nbash; a hand-placed `HOOKS_OFF.txt` does nothing. Fired today: hook stuck, no way out.\n\nRequired:\n- [ ] `<repo>/.claude/HOOKS_OFF` present = every Arc hook exits 0 for this repo\n- [ ] `touch` is enough. No script, no expiry, no hook name\n- [ ] Gitignored by the plugin, never committed\n- [ ] `hooks/lib/hooks-off` reads it first; `hooks-off.sh` may stay as the timed form\n- [ ] README: one line, the path\n\nConstraints: repo scope, never `$HOME`. Fail towards guard on if path unresolvable.\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

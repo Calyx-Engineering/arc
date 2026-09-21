@@ -1,0 +1,61 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook copied `exit 2` from a PostToolUse hook. In PreToolUse, `exit 2` denies the edit. Already fixed to `allow`.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "Copied from a PostToolUse hook, where `exit 2` only prints. Already fixed. Direct PR: yes, all three.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. No shell tool here, and label and permission fixes aren't in my context. Restate them.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "**Blocked.** Autonomous row is yours to flip, not mine. No shell or edit tools here. Restate label and permission fixes.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both already built: prefix read from agreement, PR-number branches allowed.\n\nKill switch: replace timer with one flag file, `.claude/arc/hooks-off`. Present means off.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Blocked. This session has no edit or shell tools. Already in tree: exit-2 fix, PR-number branches, agreement prefix. Kill switch suggestion: delete timer, one on/off file.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "Yes, but no hook blocks me. This session has no edit or shell tools at all.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "Don't place a file. Run from any terminal in the repository:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```\n\nIt writes `<main checkout>/.git/arc-hooks-off`, shared by every worktree.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. That file has no effect. Run from any terminal in the repo:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "No. `r:\\arc\\HOOKS_OFF.txt` does nothing. Run in any terminal:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "Cannot write this session, no edit tool. Global switch already replaced by [#202](https://github.com/Calyx-Engineering/arc/issues/202). Your `.txt` does nothing. Run:\n\n```bash\nbash hooks/hooks-off.sh all 30\n```",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

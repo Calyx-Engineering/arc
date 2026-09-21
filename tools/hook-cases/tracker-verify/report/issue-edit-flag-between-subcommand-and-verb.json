@@ -1,0 +1,2 @@
+# an issue edited with `-R` between the subcommand and the verb, its body carrying scaffolding. #230
+{"tool_name":"Bash","cwd":"__FIXTURE_MAIN__","arc_test_body":"## Required\n\n- [ ] set the current limit to TBD mA\n","tool_input":{"command":"gh issue -R Calyx-Engineering/arc edit 230 --body-file body.md"}}

@@ -1,0 +1,9 @@
+shape: wrapped
+expect:
+  - handoff
+source:
+  session: be5aca1c
+  turn: 1
+  opening: true
+why: >
+  Names the artifact HANDOFF.md rather than the skill, and pairs it with a length budget.

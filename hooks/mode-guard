@@ -1,0 +1,510 @@
+#!/usr/bin/env bash
+# mode-guard — PreToolUse hook (matcher: Bash). Carries m49.
+#
+# The execution mode was a word in a gitignored file that nothing read at the moment it
+# mattered. On 2026-09-07, in manual mode, three PRs were committed, pushed, opened and
+# merged without the user asking — hours after #138 consolidated that rule into a single
+# sentence and shipped a verifier for it. That verifier checks the rule is STATED once:
+# text, not behaviour. It was green while the behaviour was broken. This hook is the
+# behaviour half — HANDOFF.md's Execution mode row is read before every commit, push, PR
+# and merge, so the mode is read rather than recalled. #189, m49.
+#
+# camp-reports: mode-check
+# checks: gating-command, gating-script, mode-row
+# skips: mode-row (the command is not one the mode governs), gating-script (the command names a gating command outright)
+#
+# MANUAL ASKS, IT DOES NOT DENY. Manual means nothing is committed, pushed, opened or merged
+# UNASKED — and a PreToolUse hook cannot see the chat, so a deny could not tell a commit the
+# user asked for from one nobody did. In one working repository the user asked for a commit three
+# times and every attempt was denied; the only ways through were a mute typed in another
+# terminal or a standing Autonomous grant, when what was asked for was one commit. So in manual
+# this returns `permissionDecision: "ask"`: the harness puts the command in front of the user,
+# and their yes is the ask, made observable. Nothing is remembered — the next gated command
+# asks again. Where no prompt can be shown, the harness refuses the call, so an unattended run
+# in manual still commits nothing. #364.
+#
+# ASK-BIASED, WHERE THIS WAS DENY-BIASED. A false ask costs one click and says what it is
+# about. A false allow is the failure this exists to prevent.
+#
+# ABSENT MODE ASKS, AND THAT IS NOT A FAIL-OPEN VIOLATION. Two different conditions:
+#
+#   the hook fails                      crash, missing tool, malformed input  ->  exit 0
+#   the hook reads and finds no mode    a documented state: absent is manual  ->  ask
+#
+# "Absent means manual" is an answer, not an unexpected failure.
+#
+# THE SWITCH IS ASYMMETRIC, AND THIS HOOK DOES NOT ENFORCE THAT HALF. Claude may set the mode
+# row to Manual and may never set it to Autonomous; only the user raises it, and tools/arc-loop.sh
+# may write it because a human ran the script. This hook sees a file change, not who asked for it,
+# so the asymmetry stays a rule — m40 §4. What it enforces is that the row is read at the moment
+# of the action rather than recalled.
+#
+# WHAT THIS CANNOT DO. `hooks/hooks-off.sh mode-guard` disables it for as long as that mute
+# lasts. It fails open on its own errors. It sees Bash and nothing else. It stops the command,
+# never the decision. There is no second layer: a static deny in settings.json would block
+# autonomous mode permanently, and lifting one is an edit no agent may make. This is the only
+# mechanism, and its gaps are accepted.
+
+# ---- kill switch ----------------------------------------------------------------
+# `bash hooks/hooks-off.sh mode-guard 30` from any terminal in this repository mutes this one
+# hook for thirty minutes and prints when it lapses. Per-hook, repo-scoped and expiring —
+# `hooks/hooks-off.sh status` reads it back, `clear` ends it early. #202.
+. "${0%/*}/lib/hooks-off" 2>/dev/null && arc_hooks_off && exit 0
+
+# ---- the activation log ---------------------------------------------------------
+# Sourced here, before anything can exit, so an entry is written whichever way this hook
+# leaves — including the `[ -n "$INPUT" ] || exit 0` a few lines down. m44.
+. "$(dirname "$0")/lib/activation-log" 2>/dev/null
+arc_log_event mode-check
+
+# ---- fail-open wrapper ----------------------------------------------------------
+# Globbing off with it: the command is split into words below, and a `*.sh` in a payload
+# must stay the string it was rather than becoming whatever is in the hook's directory.
+set +e -f
+
+INPUT="$(cat 2>/dev/null)"
+[ -n "$INPUT" ] || exit 0
+
+json_string() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | awk 'BEGIN{printf "\""} {printf "%s%s", sep, $0; sep="\\n"} END{printf "\""}'
+}
+
+# The reason of an `ask` is shown to the user and never to Claude, so it is written to the
+# person deciding: what is about to run, why they are being asked, and what a no does.
+ask() {
+  arc_log_outcome_default asked "the hook put the call to the user"
+  printf '%s' "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"ask\",\"permissionDecisionReason\":$(json_string "$1")}}"
+  exit 0
+}
+
+# The three whitespace escapes `field` resolves. `printf -v` is a builtin, so the resolver
+# below forks nothing — and a raw tab or carriage return sitting in this file would not
+# survive an editor or a line-ending normalisation.
+printf -v _ARC_NL  '\n'
+printf -v _ARC_TAB '\t'
+printf -v _ARC_CR  '\r'
+
+# Read a top-level or nested field out of the hook payload without requiring jq.
+# Usage: field file_path
+#
+# NOT `tr ',{}' | grep | sed`, which is what this was, and which was wrong twice. It split
+# the payload on commas, so a value carrying one arrived truncated at the comma; and when its
+# `sed` could not parse the fragment it printed that fragment unchanged, so the caller was
+# handed the key and its quotes back as if they were the value. Both are silent. #230, #300.
+#
+# A JSON string ends at the first quote that is NOT escaped, so the scan counts the
+# backslashes in front of each quote rather than stopping at the first one. The escapes `\"`,
+# `\\`, `\n`, `\t` and `\r` are then resolved, because the resolved form is the one the caller
+# acts on: a Windows `cwd` arrives with its separators doubled, and a multi-line command
+# carries its line breaks as the two characters `\` and `n`.
+#
+# NO CLOSING QUOTE MEANS THE PAYLOAD WAS CUT OFF MID-VALUE. Yield nothing, never the rest —
+# half a value is the shape a hook must be silent about rather than act on.
+#
+# Parameter expansion, no subprocess. The old form cost five processes on every tool call.
+field() {
+  local rest raw out chunk bs key="\"$1\""
+  case "$INPUT" in *"$key"*) rest="${INPUT#*"$key"}" ;; *) return 0 ;; esac
+  rest="${rest#*:}"
+  while [ "${rest# }" != "$rest" ]; do rest="${rest# }"; done
+  case "$rest" in '"'*) rest="${rest#\"}" ;; *) return 0 ;; esac
+
+  raw=""
+  while :; do
+    case "$rest" in *'"'*) ;; *) return 0 ;; esac
+    chunk="${rest%%\"*}"
+    rest="${rest#"$chunk"\"}"
+    # The backslash run immediately before the quote. An odd count escapes it.
+    bs="${chunk##*[!\\]}"
+    if [ $(( ${#bs} % 2 )) -eq 0 ]; then raw="$raw$chunk"; break; fi
+    raw="$raw$chunk\""
+  done
+
+  out=""
+  while [ -n "$raw" ]; do
+    case "$raw" in *'\'*) ;; *) out="$out$raw"; break ;; esac
+    chunk="${raw%%\\*}"
+    out="$out$chunk"
+    raw="${raw#"$chunk"\\}"
+    case "$raw" in
+      '"'*) out="$out\"";        raw="${raw#?}" ;;
+      '\'*) out="$out\\";        raw="${raw#?}" ;;
+      n*)   out="$out$_ARC_NL";  raw="${raw#?}" ;;
+      t*)   out="$out$_ARC_TAB"; raw="${raw#?}" ;;
+      r*)   out="$out$_ARC_CR";  raw="${raw#?}" ;;
+      # Not an escape this reader resolves — a shell escape, a `\u`. Left as it is.
+      *)    out="$out\\" ;;
+    esac
+  done
+  printf '%s' "$out"
+  return 0
+}
+
+# ---- hook body ------------------------------------------------------------------
+
+# 1. Where the mode lives: the payload's cwd, else wherever this is running. Read on demand,
+# not up front — most Bash calls are none of this hook's business, and paying for a read on
+# every one of them is how a hook becomes one people turn off. The reader is parameter
+# expansion now rather than the five-process pipeline that made this matter most.
+CWD=""
+need_cwd() {
+  [ -n "$CWD" ] && return 0
+  CWD="$(field cwd)"
+  { [ -n "$CWD" ] && [ -d "$CWD" ]; } || CWD="$PWD"
+  return 0
+}
+
+# 2. Is this a command the mode governs? Anything else is none of this hook's business.
+#
+# THE COMMAND BEING RUN, NOT THE WORDS IN ITS TEXT. This was a string match over the whole
+# payload, on the reasoning that pulling "command" out of JSON truncated at the first comma and
+# a truncated command silently allows. `field` has been quote-aware since #300, so that reason
+# is gone, and what the string match cost is on record: a Python edit denied because its source
+# carried the words, and an issue denied because its body did. It also missed the other way —
+# `git -C path commit` holds no "git commit". #364.
+#
+# So the command is read the way a shell reads it. Quotes, comments and here-document bodies
+# are text, not commands; the text is split into invocations at `;` `&` `|` `(` `)` `{` `}`, a
+# backtick and a line break; leading `VAR=x` assignments, wrapper words and shell keywords are
+# stepped over; and only what lands in command position counts — `git` with its global options
+# stepped over and `commit` or `push` as the subcommand, `gh pr` with `create`, `merge` or
+# `ready`. What a shell would run from inside a string is followed in: a `$( )` or a backtick
+# inside double quotes, the argument of `bash -c`, the arguments of `eval`, and a here-document
+# whose opening line names a shell.
+#
+# One awk process, and only when the payload could hold a gating command at all — the case
+# pattern below is the pre-filter that keeps every other Bash call free of it.
+#
+# WHAT THIS CANNOT DO.
+#   · `xargs git commit`, `find -exec git push`, an alias, a function, or a command held in a
+#     variable — the gating command is never in command position in the text. A false allow.
+#   · Another interpreter running it — `python -c "subprocess.run(['git','commit'])"`.
+#   · A here-document piped to a shell on a LATER line than the one that opens it.
+#   · A line inside a here-document that names a shell is read as commands, so a heredoc of
+#     documentation opened on a line carrying the word `bash` can ask when nothing would run.
+#     A false ask, and the prompt shows the command.
+gating_command() {
+  printf '%s' "$1" | awk '
+    function endword() {
+      if (word != "" || quoted) {
+        words[++nw] = word
+        if (word ~ /^(bash|sh|zsh|ksh|dash|source|eval|\.)$/) lineshell = 1
+      }
+      word = ""; quoted = 0
+    }
+    function endseg(   i, j, c, rest) {
+      endword()
+      i = 1
+      while (i <= nw && (words[i] ~ /^[A-Za-z_][A-Za-z0-9_]*=/ || words[i] ~ /^(command|env|exec|nohup|time|sudo|builtin|if|then|else|elif|do|while|until|!)$/)) i++
+      if (i <= nw && found == "") {
+        c = words[i]; sub(/^.*[\/\\]/, "", c); sub(/\.exe$/, "", c)
+        if (c == "eval") {
+          rest = ""
+          for (j = i + 1; j <= nw; j++) rest = rest " " words[j]
+          todo[++ntodo] = rest
+        } else if (c ~ /^(bash|sh|zsh|ksh|dash)$/) {
+          for (j = i + 1; j <= nw && words[j] ~ /^-/; j++)
+            if (words[j] ~ /^-[A-Za-z]*c/) { if (j < nw) todo[++ntodo] = words[j + 1]; break }
+        } else if (c == "git") {
+          j = i + 1
+          while (j <= nw && words[j] ~ /^-/) j += (words[j] ~ /^(-C|-c|--git-dir|--work-tree|--namespace)$/) ? 2 : 1
+          if (j <= nw && (words[j] == "commit" || words[j] == "push")) found = "git " words[j]
+        } else if (c == "gh") {
+          j = i + 1
+          while (j <= nw && words[j] ~ /^-/) j += (words[j] ~ /^(-R|--repo)$/) ? 2 : 1
+          if (j <= nw && words[j] == "pr") {
+            j++
+            while (j <= nw && words[j] ~ /^-/) j += (words[j] ~ /^(-R|--repo)$/) ? 2 : 1
+            if (j <= nw && words[j] ~ /^(create|merge|ready)$/) found = "gh pr " words[j]
+          }
+        }
+      }
+      for (j = 1; j <= nw; j++) delete words[j]
+      nw = 0
+    }
+    function scan(s,   n, i, c, d, q, sp, e, t, h, delim, strip) {
+      n = length(s); q = ""; sp = 0; word = ""; quoted = 0; nw = 0; lineshell = 0; nhd = 0
+      for (i = 1; i <= n && found == ""; i++) {
+        c = substr(s, i, 1)
+        if (q == SQ) { if (c == SQ) q = ""; else word = word c; continue }
+        if (q == DQ) {
+          if (c == "\\") {
+            d = substr(s, i + 1, 1)
+            if (d == "\n") i++
+            else if (d != "" && index("\"\\$`", d)) { word = word d; i++ }
+            else word = word c
+            continue
+          }
+          if (c == DQ) { q = ""; continue }
+          # A substitution inside double quotes runs. Read it as commands, then come back.
+          if (c == "`") { endseg(); stk[++sp] = DQ; bt[sp] = 1; par[sp] = 0; q = ""; continue }
+          if (c == "$" && substr(s, i + 1, 1) == "(") { endseg(); stk[++sp] = DQ; bt[sp] = 0; par[sp] = 0; q = ""; i++; continue }
+          word = word c; continue
+        }
+        if (c == "\\") { d = substr(s, i + 1, 1); if (d != "\n") word = word d; i++; continue }
+        if (c == SQ || c == DQ) { q = c; quoted = 1; continue }
+        if (c == "#" && word == "" && !quoted) { while (i < n && substr(s, i + 1, 1) != "\n") i++; continue }
+        if (c == " " || c == "\t" || c == "\r") { endword(); continue }
+        if (c == "<" && substr(s, i + 1, 1) == "<") {
+          if (substr(s, i + 2, 1) == "<") { i += 2; continue }
+          i += 2; strip = 0
+          if (substr(s, i, 1) == "-") { strip = 1; i++ }
+          while (i <= n && (substr(s, i, 1) == " " || substr(s, i, 1) == "\t")) i++
+          delim = ""
+          while (i <= n) {
+            d = substr(s, i, 1)
+            if (d ~ /[ \t\r\n;&|()<>]/) break
+            if (d != SQ && d != DQ && d != "\\") delim = delim d
+            i++
+          }
+          i--
+          if (delim != "") { hd[++nhd] = delim; hdstrip[nhd] = strip }
+          continue
+        }
+        if (c == "\n") {
+          endseg()
+          # The bodies of the here-documents this line opened are data — unless the line names
+          # a shell, and then they are what that shell runs.
+          for (h = 1; h <= nhd && !lineshell; h++) {
+            while (i < n) {
+              e = index(substr(s, i + 1), "\n")
+              t = (e ? substr(s, i + 1, e - 1) : substr(s, i + 1))
+              i = (e ? i + e : n)
+              sub(/\r$/, "", t); if (hdstrip[h]) sub(/^\t+/, "", t)
+              if (t == hd[h]) break
+            }
+          }
+          nhd = 0; lineshell = 0
+          continue
+        }
+        if (c == "`") { endseg(); if (sp > 0 && bt[sp]) { q = stk[sp]; sp-- }; continue }
+        if (c == "(") { endseg(); if (sp > 0) par[sp]++; continue }
+        if (c == ")") {
+          endseg()
+          if (sp > 0) { if (par[sp] > 0) par[sp]--; else if (!bt[sp]) { q = stk[sp]; sp-- } }
+          continue
+        }
+        if (index(";&|{}", c)) { endseg(); continue }
+        word = word c
+      }
+      endseg()
+    }
+    BEGIN { SQ = "\047"; DQ = "\""; found = "" }
+    { s = s (NR > 1 ? "\n" : "") $0 }
+    END {
+      todo[1] = s; ntodo = 1
+      for (k = 1; k <= ntodo && found == ""; k++) scan(todo[k])
+      if (found != "") print found
+    }' 2>/dev/null
+}
+
+GATED=no
+RUNS=""
+case "$INPUT" in
+  *git*commit*|*git*push*|*gh*pr*create*|*gh*pr*merge*|*gh*pr*ready*)
+    RUNS="$(gating_command "$(field command)")"
+    [ -n "$RUNS" ] && GATED=yes
+    ;;
+esac
+arc_log_pass "gating-command=$GATED"
+
+# 2b. THE COMMAND STRING IS NOT THE WHOLE COMMAND. `tools/new-direct-pr.sh` branches, commits,
+# pushes and opens a PR; the payload that runs it holds none of those words, so in manual mode
+# the guard never fired. Found running PR #200 — #201. Where a command INVOKES a script, that
+# script's own declaration is read as well:
+#
+#   # mode-guard: writes-outward
+#   # mode-guard-read-only: --dry-run --status --report
+#
+# A SCRIPT DECLARES ITSELF, AND AN UNDECLARED ONE IS NOT GATED. Scanning a script's text for
+# `git commit` looks more thorough and is wrong: tests/verify-activation-log.sh carries that
+# string inside a test payload, so a content match would gate a read-only verifier. #201's
+# constraint is explicit — the guard must not block reads — so the guard asks the script
+# rather than guessing about it, and an unrecognised script fails open.
+#
+# THIS HALF READS THE COMMAND FIELD, NOT THE PAYLOAD, as step 2 now does. Both of its failure
+# modes were reached by scanning the payload: `git status` denied for a description reading
+# "see bash tools/arc-loop.sh for details", and a real dispatch allowed because a `--dry-run`
+# elsewhere in the payload looked like its own flag. It keeps its own, older splitter — blind
+# to quotes, which step 2's is not — because what it looks for is a path in command position,
+# and a quoted mention of one has never landed there.
+#
+# A MENTION IS NOT AN INVOCATION, so the command is split at `&` `;` `|` `(` and a backtick and
+# each segment is read as a command: leading `VAR=x` assignments and wrapper words are stepped
+# over, then an interpreter and its flags, and only the token that lands in command position
+# counts. `cat tools/arc-loop.sh` and `grep -n "bash tools/arc-loop.sh" notes.md` never reach it.
+# The rest of the segment is that invocation's own arguments, so in
+# `bash tools/arc-loop.sh --dry-run && bash tools/arc-loop.sh 145 --max 1` the second half is
+# gated and the first is not.
+#
+# WHAT THIS CANNOT DO.
+#   · A new outward-writing script that omits the declaration is invisible here. Only the two
+#     #201 named carry one; tools/arc-default-branch.sh and tests/verify-tracker-body.sh also
+#     write outward under some subcommands and do not. There is no repo-wide sweep for them.
+#   · `cd tools && bash arc-loop.sh` is not caught: resolution is against the payload's cwd and
+#     this hook's own root, and neither sees a `cd` earlier in the same command.
+#   · A path held in a variable, or displaced by a flag's argument (`bash -o errexit tools/x.sh`),
+#     is not caught.
+#   · The command field is found by the first `"command"` in the payload, so a description
+#     carrying that quoted word ahead of the real field mis-parses. A false allow, and the only
+#     one in this half that is not closed.
+#   · The hook-root fallback resolves against Arc's own copy, so in a consumer repo a relative
+#     path that does not exist there can still gate if Arc ships a script of that name. A false
+#     ask, and it names the file it read.
+SCRIPT_GATED=""
+MG_ROOT=""
+if [ "$GATED" = no ]; then
+  # Cheap pre-filter, and it is what keeps the common path free. Everything below is parameter
+  # expansion and builtins until a script actually lands in command position.
+  case "$INPUT" in
+    *.sh*)
+      # The command field, unescaped. This was a SECOND payload reader, written inline because
+      # `field` truncated at the first comma and a command is where the commas are. `field` is
+      # the quote-aware one now, so the inline copy goes: one reader in this file, one set of
+      # escape rules, and one place a defect in it can be fixed. #300.
+      #
+      # `field` resolves `\n` to a line break, which is what the segment split below depends
+      # on — a multi-line command is the ordinary shape of a Bash tool call, and leaving the
+      # escapes encoded glued every line after the first onto its predecessor, so only line one
+      # was ever read as a command.
+      CMD="$(field command)"
+
+      # A tab or a carriage return is whitespace between words here, never part of one. `field`
+      # yields them raw, and `set -- $SEG` below splits on IFS — which holds a tab but not a
+      # carriage return, so a `\r\n` line ending would otherwise leave one stuck to the last
+      # token and the path comparison would miss.
+      CMD="${CMD//$'\t'/ }"; CMD="${CMD//$'\r'/ }"
+
+      # One command per line, so each can be read from its own start.
+      SEGS="$CMD"
+      SEGS="${SEGS//&/$'\n'}"; SEGS="${SEGS//;/$'\n'}"; SEGS="${SEGS//|/$'\n'}"
+      SEGS="${SEGS//(/$'\n'}"; SEGS="${SEGS//)/$'\n'}"; SEGS="${SEGS//\`/$'\n'}"
+      SEGS="${SEGS//\{/$'\n'}"; SEGS="${SEGS//\}/$'\n'}"
+
+      while IFS= read -r SEG; do
+        [ -n "$SEG" ] || continue
+        set -- $SEG
+        # Leading environment assignments and wrappers are not the command.
+        while [ $# -gt 0 ]; do
+          case "$1" in
+            *=*|command|env|exec|nohup|time|sudo|builtin) shift ;;
+            *) break ;;
+          esac
+        done
+        [ $# -gt 0 ] || continue
+        # An interpreter and its flags are not the command either.
+        NOEXEC=no
+        case "$1" in
+          bash|sh|zsh|ksh|dash|source|.)
+            shift
+            # `bash -n script` parses and runs nothing. It is a read, and it is the form used
+            # to check this hook's own edits.
+            while [ $# -gt 0 ]; do
+              case "$1" in
+                --*)  shift ;;
+                -*n*) NOEXEC=yes; shift ;;
+                -*)   shift ;;
+                *)    break ;;
+              esac
+            done
+            ;;
+        esac
+        [ "$NOEXEC" = yes ] && continue
+        [ $# -gt 0 ] || continue
+
+        s="$1"; shift
+        s="${s#\"}"; s="${s%\"}"; s="${s#\'}"; s="${s%\'}"
+        case "$s" in *.sh) ;; *) continue ;; esac
+
+        need_cwd
+        [ -n "$MG_ROOT" ] || MG_ROOT="$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)"
+        SPATH=""
+        for cand in "$CWD/$s" "$MG_ROOT/$s" "$s"; do
+          [ -f "$cand" ] && { SPATH="$cand"; break; }
+        done
+        [ -n "$SPATH" ] || continue
+        grep -qE '^#[[:space:]]*mode-guard:[[:space:]]*writes-outward' "$SPATH" 2>/dev/null || continue
+
+        # A declared read-only flag is a way into the script that writes nothing outward. The
+        # script names them, so this hook keeps no per-script knowledge — and they are matched
+        # against THIS invocation's arguments, which is the rest of this segment and nothing else.
+        RO="$(sed -n 's/^#[[:space:]]*mode-guard-read-only:[[:space:]]*//p' "$SPATH" 2>/dev/null | head -n1)"
+        ARGS=""
+        for a in "$@"; do
+          case "$a" in \#*) break ;; esac
+          ARGS="$ARGS $a"
+        done
+        READONLY=no
+        for f in $RO; do
+          case "$ARGS " in *" $f "*) READONLY=yes ;; esac
+        done
+        [ "$READONLY" = yes ] && continue
+
+        GATED=yes
+        SCRIPT_GATED="$s"
+        break
+      done <<<"$SEGS"
+      ;;
+  esac
+fi
+
+if [ "$GATED" = yes ] && [ -z "$SCRIPT_GATED" ]; then
+  arc_log_skip gating-script "the command names a gating command outright"
+else
+  arc_log_pass "gating-script=${SCRIPT_GATED:-no}"
+fi
+
+if [ "$GATED" = no ]; then
+  arc_log_skip mode-row "the command is not one the mode governs"
+  arc_log_outcome ok "not a command the mode governs"
+  exit 0
+fi
+
+# The question names what it is about. `git commit` read out of the command is self-evident;
+# reading it out of a script the command only named is not.
+WHAT="\`$RUNS\`"
+[ -n "$SCRIPT_GATED" ] && WHAT="\`$SCRIPT_GATED\`, which declares \`mode-guard: writes-outward\` — it commits, pushes or opens a PR from inside, so running it is one of those actions"
+TAIL="Approve it if you asked for it. Decline, and Claude stops at the edit. Nothing is remembered: the next commit, push, PR or merge asks again."
+
+need_cwd
+HANDOFF="$CWD/HANDOFF.md"
+
+if [ ! -f "$HANDOFF" ]; then
+  arc_log_fail mode-row=no-handoff
+  arc_log_outcome asked "no HANDOFF.md, so the mode is unset — unset means manual"
+  ask "Claude is about to run ${WHAT}. There is no HANDOFF.md here, so the execution mode is unset — and unset means manual. ${TAIL}"
+fi
+
+# 3. The mode row is the first table row whose first cell names the mode.
+ROW="$(grep -m1 -iE '^\|[^|]*\bmode\b[^|]*\|' "$HANDOFF" 2>/dev/null)"
+
+if [ -z "$ROW" ]; then
+  arc_log_fail mode-row=absent
+  arc_log_outcome asked "HANDOFF.md has no Execution mode row — unset means manual"
+  ask "Claude is about to run ${WHAT}. HANDOFF.md has no Execution mode row, so the mode is unset — and unset means manual. ${TAIL}"
+fi
+
+# The second cell, stripped of markdown emphasis and whitespace, lowercased.
+MODE="$(printf '%s' "$ROW" | awk -F'|' '{print $3}' | tr -d '*` ' | tr '[:upper:]' '[:lower:]')"
+
+case "$MODE" in
+  autonomous)
+    arc_log_pass mode-row=autonomous
+    arc_log_outcome ok "autonomous — the command is allowed"
+    exit 0
+    ;;
+  manual)
+    arc_log_fail mode-row=manual
+    arc_log_outcome asked "the mode is manual — the user decides"
+    ask "Claude is about to run ${WHAT}. The execution mode is manual — HANDOFF.md's Execution mode row says so, read now rather than recalled. ${TAIL}"
+    ;;
+  *)
+    # A row exists and says something this hook does not model. Not a crash, and not
+    # permission — an unreadable mode is the same as no mode.
+    arc_log_fail mode-row=unreadable
+    arc_log_outcome asked "the mode row says neither manual nor autonomous"
+    ask "Claude is about to run ${WHAT}. HANDOFF.md's Execution mode row says neither manual nor autonomous, so the mode is unreadable — and unreadable means manual. The row read: $ROW ${TAIL}"
+    ;;
+esac
+
+exit 0

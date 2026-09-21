@@ -30,7 +30,7 @@ context budget. The mechanism must assume frequent restarts, not try to prevent 
 |---|---|---|---|
 | **Wiki** | Durable facts about the repo | Forever | Too slow-moving. A two-week arc's state is not a durable repo fact |
 | **TimeScope spine** | One coordinating chat window | The arc | Assumes the spine window *stays alive*; hardware kills windows on context |
-| **ROADZ handoff files** | Ad-hoc markdown | Written at session end | **Tried and proved insufficient** — the 2026-08-10 failure |
+| **The client repo's handoff files** | Ad-hoc markdown | Written at session end | **Tried and proved insufficient** — the 2026-08-10 failure |
 
 **The gap:** something that robustly supports **2 to 12 days of end-on-end
 development**, survives repeated window death, and is cheap to rehydrate from.
@@ -83,13 +83,13 @@ what any session must read.
 | K1 | `docs/dev-log/issue-<N>-<slug>.md` | **Good.** Compact per-issue rationale |
 | K2 | *(none)* | **Gap** |
 
-**The dev-log is K1, not K2.** Its own template says: *"Decision log, not a spec …
+**The dev-log is K1, not K2.** Its own template says: *"Dev-log, not a spec …
 capture the why, not a blow-by-blow."* Sections are Problem · Decisions & trade-offs ·
 Rejected approaches · Retrospective.
 
 That is **rationale**, deliberately kept short — summary depth, read every session. K2
 is **working context**: the measurements, the scope captures, the datasheet numbers, the
-failed bench attempt. In ROADZ that material lives in `docs/report/issue-NN-*/`, a
+failed bench attempt. In the client repo that material lives in `docs/report/issue-NN-*/`, a
 different artifact with a different purpose.
 
 **Open question:** does K2 issue-level context extend the dev-log, or is it a separate
@@ -158,7 +158,7 @@ Not continuously — TimeScope already learned that lesson for dev-logs
 (*"Continuous per-turn dev-log churn is narration by another name"*). Write at
 checkpoints: issue close, branch change, session end, and before any handoff.
 
-### The entry point — `/arc-next`
+### The entry points — `/handoff-resume` and `/handoff-write`
 
 A document-as-spine still needs something to open it. Left to a pasted prompt, the read
 path is only as reliable as what the user types while tired at the end of a long stretch.
@@ -171,27 +171,11 @@ then execute its ordered actions*. So it is a command rather than a message.
 
 | | |
 |---|---|
-| **`commands/arc-next.md`** | Reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
-| **The loop is one action** | New session, `/arc-next`. Nothing to copy, nothing to keep straight |
+| **`commands/handoff-resume.md`** | The typed opening into the read path. It invokes `skills/handoff`, which reads `HANDOFF.md` first, then only what it points at, then executes the ordered actions top to bottom |
+| **`commands/handoff-write.md`** | The typed opening into the write path — save the transcript, write or update `HANDOFF.md`, print the prompt for the next chat |
+| **Both share the skill's stem** | Typing `/hand` shows both, rather than a name that has to be remembered whole |
+| **The loop is one action** | New session, `/handoff-resume`. Nothing to copy, nothing to keep straight |
 | **Two stated failure modes** | No handoff — stop and say so, because guessing the arc's state is the failure this mechanism exists to prevent. No ordered actions — report what the handoff does carry and ask, rather than filling the gap by inference |
-
-#### The handoff is checked against the tree before it is acted on
-
-**A handoff describes the state at the moment it was written.** Anything done afterwards — in
-another window, or by the user between sessions — is absent from it, and acting on a stale
-handoff is worse than having none, because it is specific and wrong.
-
-So the entry point checks it before executing anything, against the branch, the tree, the
-commit log, open PRs, the age of the handoff, the state of its first ordered action, and
-whether a session ran after it was written. **A disagreement stops the run and is reported**
-— never reconciled silently, and never guessed past. `commands/arc-next.md` carries the
-current list.
-
-| A check must | Because |
-|---|---|
-| **Cost one command, with one mechanical answer** | A check performed by judgement is one that gets performed differently each time, and the response here is to halt a run |
-| **Compare two things that are both maintained the same way** | Measuring a **curated** artifact against a **complete** one reports a disagreement that is not there. Observed: the transcript check compared the handoff's curated *Transcripts* table against the whole directory — twelve files, four listed — and so tripped on every cold start once the arc had run more sessions than the table named. It compares modification times instead |
-| **Say what it cannot see** | The transcript check cannot see a session that saved no transcript. Naming the blind spot is what stops the next reader re-deriving it, and what shows which other check covers it |
 
 **A pasted prompt remains valid** and is still the way to carry something that has no home in
 the handoff — a standing approval, or an instruction for how the next session should run.
@@ -200,6 +184,32 @@ The command replaces the invariant half, not the whole message.
 **Observed 2026-08-20.** The user's description of the loop was *"all I do is pull the handoff
 from you at the end of each stop point, copy/paste a prompt, and then start a new prompt"* —
 three manual steps where the varying part was already written down.
+
+### The handoff is checked against the tree before it is acted on
+
+**A handoff describes the state at the moment it was written.** Anything done afterwards — in
+another window, or by the user between sessions — is absent from it, and acting on a stale
+handoff is worse than having none, because it is specific and wrong.
+
+So the read path checks it before executing anything, against the branch, the tree, the
+commit log, open PRs, the age of the handoff, the state of its first ordered action, whether a
+session ran after it was written, and the *Execution mode* row against the mode the arc-log
+states — #268. **A disagreement stops the run and is reported** — never reconciled silently,
+and never guessed past. `skills/handoff` carries the current
+list, because the command is one opening and the skill's own wordings are the other; a check
+that lived only in the command was one a skill-only cold start never ran — #208.
+
+**The mode row meets the first constraint below on one half only.** Absence is one command with
+one answer; a disagreement is a comparison against a document the reading order has already
+opened. It is carried because two artifacts — `skills/autonomy-set` and
+[m40 §3](m40-autonomy-switch.md) — stated the read path caught it while nothing did, and because
+an unsettled mode is manual, which halts nothing that was not already halted.
+
+| A check must | Because |
+|---|---|
+| **Cost one command, with one mechanical answer** | A check performed by judgement is one that gets performed differently each time, and the response here is to halt a run. **One admitted exception**, above: the mode row's absence is mechanical and its disagreement with the arc-log is a comparison. It is carried because the alternative was two artifacts stating a check that did not exist — and it halts nothing on its own, since an unsettled mode is manual, which is already the default |
+| **Compare two things that are both maintained the same way** | Measuring a **curated** artifact against a **complete** one reports a disagreement that is not there. Observed: the transcript check compared the handoff's curated *Transcripts* table against the whole directory — twelve files, four listed — and so tripped on every cold start once the arc had run more sessions than the table named. It compares modification times instead |
+| **Say what it cannot see** | The transcript check cannot see a session that saved no transcript. Naming the blind spot is what stops the next reader re-deriving it, and what shows which other check covers it |
 
 ---
 
@@ -220,7 +230,7 @@ work into disjoint tracks; a hardware arc discovers its own scope as it runs.
 
 ### The deliverable: a spawn diagram
 
-Issues already record what spawned them (ROADZ practice, and the subject of the
+Issues already record what spawned them (client-repo practice, and the subject of the
 2026-08-14 spawned-vs-related correction). That data supports a generated
 **family tree of issues** — each node an issue, each edge a spawn relationship.
 
@@ -275,9 +285,11 @@ than duplicate its ordering — duplicated order drifts.
 ## Related
 
 - [`handoff`](../../../skills/handoff/SKILL.md) — **the skill that implements this.** The read path, the write, the ordered actions, and the transcript save
-- [`commands/arc-next.md`](../../../commands/arc-next.md) — the entry point, and the staleness checks that run before a handoff is acted on
+- [`commands/handoff-resume.md`](../../../commands/handoff-resume.md) — the typed read-path entry point. It holds no rule of its own; the skill carries the staleness checks that run before a handoff is acted on
+- [`commands/handoff-write.md`](../../../commands/handoff-write.md) — the typed write-path entry point. Same rule: no logic of its own, the skill carries it
 - [friction-transcript-log.md](../../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.4 — the evidence
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 5 — **the in-session case of this argument.** State outside the context does not degrade with context length; this mechanism applies that between sessions, that check applies it within one
+- [`work-watch`](../../../skills/work-watch/SKILL.md) check 7 — **what decides that a handoff is due.** This mechanism says what a handoff holds and how it is read; that check watches for the session having degraded far enough to need one, while there is still budget to write it well. [#154](https://github.com/Calyx-Engineering/arc/issues/154)
 - [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism
 - TimeScope `docs/arc-log/arc-local-first-storage.md` — the software precedent
-- ROADZ `CLAUDE.md` — arc-tracking GitHub mechanics
+- The client repo's `CLAUDE.md` — arc-tracking GitHub mechanics

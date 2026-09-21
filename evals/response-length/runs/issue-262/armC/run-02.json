@@ -1,0 +1,122 @@
+{
+ "too-many-words-20-words": {
+  "11": {
+   "text": "Hook already fixed. Comment says warn, exits 0, so nothing denied. No problem left.",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "12": {
+   "text": "No longer does. Exit 2 warns PostToolUse, denies PreToolUse. Fixed already, both copies. Direct PR: label plus permission.",
+   "cut": "",
+   "fired": []
+  },
+  "13": {
+   "text": "Blocked. No shell or edit tools this session, and no record of which label or permission fix you mean. Restate both.",
+   "cut": "",
+   "fired": []
+  },
+  "14": {
+   "text": "Can't. I may never set autonomous, only you. Still no shell or edit tools, and no fix definitions.",
+   "cut": "",
+   "fired": []
+  },
+  "15": {
+   "text": "Both branch-guard gaps noted; file them. Kill switch: retire it. Make every hook except mode-guard warn, never deny.",
+   "cut": "",
+   "fired": []
+  },
+  "16": {
+   "text": "Still can't. This session has no edit or shell tool, only read. Open a normal session; I'll do it there.",
+   "cut": "",
+   "fired": []
+  },
+  "17": {
+   "text": "No. Kill switch mutes Arc hooks. Here Claude Code itself gave me no Edit or Bash tool. Different layer.",
+   "cut": "",
+   "fired": []
+  },
+  "18": {
+   "text": "No file. Run in any terminal here:\n\n```\nbash hooks/hooks-off.sh all 30\n```\n\nWon't restore my tools though. Missing tools are a Claude Code session setting.",
+   "cut": "",
+   "fired": []
+  },
+  "19": {
+   "text": "No. State file `.git/arc-hooks-off` absent. `HOOKS_OFF.txt` does nothing. Run the bash command in a terminal, inside `r:\\arc`.",
+   "cut": "",
+   "fired": []
+  },
+  "20": {
+   "text": "Agreed. Twice reached for, twice failed. Retire it: hooks warn, only mode-guard denies. Needs an issue.",
+   "cut": "",
+   "fired": []
+  },
+  "21": {
+   "text": "This repo only, 30 minutes. Still dumb. Can't write the issue this session. Paste-ready:\n\n```\ntitle: retire hooks-off kill switch; hooks warn, only mode-guard denies\n\nKill switch failed both times it was reached for (2026-09-07, 2026-09-12).\n\n- [ ] every hook except mode-guard emits allow + reason, never deny\n- [ ] delete hooks/hooks-off.sh, hooks/lib/hooks-off, tools/hooks-off.sh\n- [ ] branch-guard: accept PR-number branch form\n- [ ] branch-guard: prefix from operating agreement, not literal `arc/`\n- [ ] update m10, CLAUDE.md safe-hook-editing table\n```",
+   "cut": "",
+   "fired": []
+  }
+ },
+ "verbose-again-60-words": {
+  "72": {
+   "text": "Two mechanics, both called Ralph loop:\n\n| Form | Mechanism |\n|---|---|\n| Original (Huntley) | Bash `while true`: fresh Claude process each pass, same prompt, state lives in files and git, loop until done |\n| Plugin here | Stop hook blocks turn end, re-injects same prompt into same session, until promise string or max iterations |\n\nWhich do you mean?",
+   "cut": "",
+   "fired": [
+    "chat-response"
+   ]
+  },
+  "73": {
+   "text": "Edits done in tree: skill undershoot rule, probe, `response-length-rank.py`, gate wiring. Nothing committed, no dev-log, no PR.\n\nLeft:\n\n1. `bash tests/verify-all.sh` exit code\n2. Passes 1–3 by sub-agent\n3. Dev-log, commit, draft PR\n4. Pass 4, ready, merge, drop `in-progress`\n\nEscape: fresh session runs these from the tree. Say go.",
+   "cut": "",
+   "fired": []
+  },
+  "74": {
+   "text": "Blocked. This session has no Bash tool, and the shell path I tried denies `git add` without approval. Cannot commit or copy the transcript myself.\n\nRun these:\n\n```powershell\ngit add -A\ngit commit -m \"feat: undershoot rule for tight budgets, ranked probe scoring (#262)\"\nCopy-Item (Get-ChildItem ~\\.claude\\projects\\R--arc-wt-262\\*.jsonl | Sort-Object LastWriteTime -Desc | Select-Object -First 1) R:\\arc-transcripts\\2026-09-12-arc04-issue-262-twenty-word-threshold.jsonl\n```\n\nThen compact.",
+   "cut": "",
+   "fired": [
+    "handoff"
+   ]
+  },
+  "75": {
+   "text": "Blocked. This session has no Bash tool, and the shell fallback needs approval it cannot get.\n\n| | State |\n|---|---|\n| #262 edits | In tree, uncommitted |\n| Commit | Not done |\n| Transcript save | Not done |\n\nRun yourself:\n\n```powershell\ngit add -A; git commit -m \"feat: undershoot rule for tight budgets, ranked probe scoring (#262)\"\n```\n\nThen compact.",
+   "cut": "",
+   "fired": []
+  },
+  "76": {
+   "text": "Only what is in this window: ralph loop = fresh session per issue, state in repo, context stays small. That matches your original question. Earlier plan discussion is gone from my context.\n\nBlocker: `git add`/`git commit` need approval here, so nothing committed yet. Approve, or run:\n\n```\ngit add -A && git commit -m \"feat: undershoot rule for tight budgets, ranked probe scoring (#262)\"\n```",
+   "cut": "",
+   "fired": []
+  },
+  "77": {
+   "text": "Already split, and deliberately:\n\n| Arc-log | Becomes | Read by |\n|---|---|---|\n| §3.1 (queue, claim, next issue) | `tools/arc-loop.sh` | Driver only |\n| §3.2 (how to do the work) | `run-instructions.md` | Every run, before its issue |\n\nRun never reads arc-log or §3.1. Driver picks; run executes.",
+   "cut": "",
+   "fired": []
+  },
+  "78": {
+   "text": "It already exists: `docs/arc-work/04-dogfood/run-instructions.md`. `tools/arc-loop.sh` feeds it plus the issue body to each fresh `claude -p` run. Arc-log §3.1 is the driver's logic, not the run's. Building a second copy is the drift §3.2 warns of.\n\nAlso: commit blocked, shell approval denied this session. Tree still uncommitted.",
+   "cut": "",
+   "fired": []
+  },
+  "79": {
+   "text": "Instruction file already exists: `docs/arc-work/04-dogfood/run-instructions.md`. Arc-log §3.2 names it as the file each run reads before its issue.\n\nArc-log §3.1 is driver logic for `tools/arc-loop.sh`, not run input. Issue-plan §12 Filing is the same, queue setup.\n\nNot sure which document your 12.0 is. Name it?",
+   "cut": "",
+   "fired": []
+  },
+  "80": {
+   "text": "**Decision needed. My last five replies reached you empty — I never answered the ralph-loop or §12 questions. What am I doing?**\n\nWhat I hold:\n\n| | |\n|---|---|\n| Instruction file | Already exists: `run-instructions.md`. Arc-log §3.1 is the driver's, not the run's |\n| Commit | Blocked, no shell approval here |\n| Issue-plan §12 | Filing rules, not run instructions |",
+   "cut": "",
+   "fired": []
+  },
+  "81": {
+   "text": "Phrase not in any file. It came from an earlier reply of mine, now lost to context.\n\nBest plain reading, for issue [#138](https://github.com/Calyx-Engineering/arc/issues/138) (§11.1, the merge route):\n\n| | Means |\n|---|---|\n| Land it | Build the merge route with you, merge it |\n| Measure it | Next runs merge with no per-merge ask. Count them |\n\nFifteen minutes was my estimate for that session.",
+   "cut": "",
+   "fired": []
+  },
+  "82": {
+   "text": "§11.1 has two paragraphs. Line one: you help with [#138](https://github.com/Calyx-Engineering/arc/issues/138). Rest says one thing:\n\nRuns cannot merge their own PRs today. Every merge so far needed you to say \"merge\". #138 builds that permission path, and the diagnosing happens inside the issue, not in the plan.\n\nCut the second paragraph to one line?",
+   "cut": "",
+   "fired": []
+  }
+ }
+}

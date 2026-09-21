@@ -1,0 +1,2 @@
+# A client repo, real shape, names changed: the integration branch its convention names in full, which carries no number
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/module-rev","tool_name":"Bash","tool_input":{"command":"git checkout -b widget-board/rev_b"}}

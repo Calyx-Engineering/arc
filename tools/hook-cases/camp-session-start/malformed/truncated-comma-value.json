@@ -1,0 +1,2 @@
+# a payload cut off inside a value carrying a comma — the comma-split reader handed back the key and its quotes as the session id, so a half-written payload spoke
+{"cwd":"__FIXTURE_MAIN__","tool_name":"Edit","session_id":"verify,trunc

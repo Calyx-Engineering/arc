@@ -1,5 +1,6 @@
 ---
 name: decompose
+user-invocable: false
 description: Use when turning a specification, a rough idea, or an accumulated Spawned section into a proposed set of issues — reading the source and the arc's intent, listing every part that must exist, grouping into one artifact or one decision each, ordering by dependency, and naming what each delivers when it merges. Presents the set for approval and files nothing unapproved.
 camp-reports: [decomposition-proposed]
 checks: [intent-read, origin-recorded, parts-listed, one-artifact-each, dependency-ordered, deliverable-named, intent-classified, approval-held]
@@ -72,6 +73,24 @@ and those have opposite fixes.
 **A decision can be an issue.** A choice that must be settled before anything can be built is
 a unit of work, even though it produces only a document.
 
+### How fine is too fine — the repository answers, not this skill
+
+**The boundary is a value in the operating agreement**, section 3, **Work size** — a
+`Checklist ceiling:` line. A proposed issue whose `Required` checklist is longer than it is
+split before it is presented, and the split is named in the set rather than made quietly.
+
+| The agreement says | Then |
+|---|---|
+| `Checklist ceiling: <n>` | `<n>` boxes in `Required` is the largest issue this repository wants |
+| No clause, no file, an unreadable value | **7** |
+
+**Read it at step 3**, where issues first get their shape. Applied at step 7 it is a review of
+a set already built, and the grouping that produced the oversized issue has already happened.
+
+**It is a ceiling, not a target.** The value is where a decomposition stops being defensible,
+not what an issue should aim at. A typical issue sits well under it; the clause says how the
+repository arrived at its number.
+
 ### Order by dependency, not by value
 
 **The most valuable issue is frequently the one that cannot start.** Ordering by value puts it
@@ -113,7 +132,7 @@ From m43 §3, the Camp spec.
 3  Announcing completed actions      needs 1, 2
    Merging makes Arc's operation visible in conversation.
 4  Status and the close sequence     needs 2
-   Merging makes the nine closing steps identical every issue.
+   Merging makes the ten closing steps identical every issue.
 5  Holding the arc's intent          needs 4
    Merging lets Camp test proposed work against the arc's goal.
 
@@ -132,7 +151,6 @@ Nothing filed. Approve, edit, or reject the set.
 
 | | |
 |---|---|
-| **How fine is too fine** | *"Many small issues, not a couple with 14-point checklists"* is a stated preference; the boundary is undefined. It belongs in the operating agreement as a work-size clause once first use produces examples |
 | **The boundary against [m20](../../docs/product-architecture/mechanisms/m20-arc-decomposition.md)** | m20 sequences an arc's issues at kickoff; this decomposes a single idea or spec at any point. They overlap when the idea being decomposed **is** the arc, and which owns that case is unsettled |
 | **Whether a large idea should be an arc** | A large enough idea is an arc rather than a set of issues. This skill does not make that call — say so and let the user decide |
 
