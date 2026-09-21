@@ -221,4 +221,4 @@ but every rule in it is electrical engineering.
 
 - [friction-transcript-log.md](../retrospectives/2026-08-plugin-line/friction-transcript-log.md) §2.6 — the entry this corrects
 - Lodestar docs — case 1's missing duty-cycle story is the requirements gap, observed live
-- ROADZ `.claude/wiki/speaker-power.md` — an existing example of captured device physics
+- The client repo's wiki page on its output stage — an existing example of captured device physics

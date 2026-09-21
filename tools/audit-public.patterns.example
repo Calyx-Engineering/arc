@@ -1,0 +1,20 @@
+# audit-public.patterns.example — copy to tools/audit-public.patterns and fill it in.
+#
+# The copy is gitignored, and it has to be: a list of what must not be published is itself the
+# thing that must not be published. tools/audit-public.sh reads it, or the file AUDIT_PATTERNS
+# names, and adds these classes to its built-in ones.
+#
+#   id ~ bulk ~ ERE, matched case-insensitively ~ what it is
+#
+# Tilde-separated, because every useful regex here holds `|`. `bulk` is `yes` for a class that
+# is counted rather than listed. One class per line; `#` lines and blank lines are skipped.
+#
+# A LITERAL LIST IS AS COMPLETE AS ITS LAST EDITOR. Write each name the way the repository
+# writes it — a board named in prose with a space is a branch name with a hyphen — and give a
+# class its reason, or nobody can review it.
+
+client~no~northwind~the client's parent company
+product~no~zephyr~the client's product
+employer~no~initech~an employer named in the record
+person~no~\b(morgan|altuser)\b~a person other than the user
+client-hw~no~\b(acme|xr-100|widget[ _-]board|widget-pinout)\b~a real client's hardware

@@ -1,0 +1,2 @@
+# manual, a commit behind an assignment and a wrapper
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "GIT_AUTHOR_DATE=now command git commit -m \"work\"", "description": "Run"}}

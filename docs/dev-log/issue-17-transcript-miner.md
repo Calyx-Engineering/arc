@@ -24,7 +24,7 @@ writes a skill by hand. `skills/plugin-retrospective` step 1 had no agent behind
 **Built friction-mode only, per m30's split.** The knowledge filter's open question — whether the
 two filters can share extraction at all — is untouched.
 
-**Exercised before it was registered.** The agent ran against 68 MB of ROADZ transcripts with its
+**Exercised before it was registered.** The agent ran against 68 MB of the client repo's transcripts with its
 brief passed inline, and returned 13 clusters. Three defects surfaced from that run and are fixed
 here rather than being discovered later:
 
@@ -73,4 +73,4 @@ run resolved it narrowly — counts and timestamps only, never assistant prose. 
 spec; the agent flags when it bites.
 
 This unblocks [#138](https://github.com/Calyx-Engineering/arc/issues/138), whose fix exists only in
-ROADZ transcripts.
+The client repo's transcripts.

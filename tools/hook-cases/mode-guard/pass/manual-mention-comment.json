@@ -1,0 +1,2 @@
+# manual, a shell comment naming the command, separators and all
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "git status   # ; git commit -m later\nls", "description": "Run"}}

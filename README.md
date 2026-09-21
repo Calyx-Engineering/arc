@@ -23,7 +23,7 @@ friction between human and AI.
 
 **Status: under construction.** The architecture and mechanism specs are complete; the
 plugin skeleton, the hook harness, and the branch guard are the first working parts.
-[ROADMAP.md](ROADMAP.md) says what lands next.
+What lands next is the current arc's log under [docs/arc-log/](docs/arc-log/) and the tracker's milestones.
 
 ---
 
@@ -192,6 +192,5 @@ self-improvement piece holds the mechanisms that regenerate it.
 | [docs/suite-architecture/](docs/suite-architecture/) | **What the three-plugin suite is.** Boundaries, build order, mechanism numbering. Mirrored files live here |
 | [docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md](docs/retrospectives/2026-08-plugin-line/friction-transcript-log.md) | The evidence — eight frictions from four weeks of hardware work, with verbatim quotes |
 | [docs/reference-timescope/](docs/reference-timescope/) | TimeScope's working files — source material for extraction, do not edit |
-| [docs/reference-roadz/](docs/reference-roadz/) | ROADZ's `issue-writing` and `engineering-report` skills — same |
 | [hooks/](hooks/) | The hooks, and the `TEMPLATE` every new one starts from |
 | [tools/verify-hook.sh](tools/verify-hook.sh) | The gate — run it before any hook is registered |

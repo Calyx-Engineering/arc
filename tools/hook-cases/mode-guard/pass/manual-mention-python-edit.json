@@ -1,0 +1,2 @@
+# manual, a Python edit whose source carries the words — the denial #364 reports
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "python - <<'EOF'\nimport io\ns = io.open('notes.md').read()\ns = s.replace('run git commit', 'run git commit -m')\nio.open('notes.md', 'w').write(s)\nEOF", "description": "Edit notes.md"}}

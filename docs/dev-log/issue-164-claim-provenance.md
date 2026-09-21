@@ -20,7 +20,7 @@ wins*. Both failures are silent overrides, and silence is what makes them expens
 | File | |
 | --- | --- |
 | `tools/report-grade.py`, `.sh` | Two more columns on the instrument #159 built. `ROWS` / `NONE` / `TABLE` per claim table; `RESOLVED` / `WEAKWINS` / `SILENT` / `ONESIDED` where two sources disagree |
-| `evals/report-shape/` | Three more cases: `pin-allocation-ledger` (the exemplar), `poe-device-under-test` (uniform-source, reported not scored), `poe-class-conflict` (the conflict). The three #159 cases gained a table verdict as well |
+| `evals/report-shape/` | Three more cases: the ledger case (the exemplar), `poe-device-under-test` (uniform-source, reported not scored), `poe-class-conflict` (the conflict). The three #159 cases gained a table verdict as well |
 | `skills/engineering-report/SKILL.md` | **Where each claim came from** — the vocabulary, the three rules, and why it is not the confidence split |
 | `skills/record-route/SKILL.md` | **Every record carries where its claims came from** — the same vocabulary at every tier, and a `description:` clause so the skill fires on *"where did that number come from"* |
 
@@ -40,7 +40,7 @@ against the vendor's own label, model suffix and silkscreen, with the inference 
 inference rather than as settled.
 
 **1/4 is the baseline, and it is the interesting number.** The one pass is the user's own repair
-of this exact defect: `rp2040-pin-allocation.md` grew a `Provenance` column after the photograph
+of this exact defect: the client's pin ledger grew a `Provenance` column after the photograph
 incident. The three fails are an option comparison with six prices and no basis, a consequences
 table derived from a standard it does not cite, and — the sharpest one — a findings table whose
 per-row links point at **where the claim was worked out** rather than where it came from. Two of
@@ -63,7 +63,7 @@ clean-except-one-line case.
 ## Unexpected
 
 **The vocabulary in the field does not match the one the issue specifies.**
-`rp2040-pin-allocation.md` — written by the user, in response to this exact defect — uses
+the client's pin ledger — written by the user, in response to this exact defect — uses
 `schematic · datasheet · firmware · drawing · report · thread · photo · conversation`. Four of
 those terms have no home in `measured > datasheet > vendor > schematic > photograph >
 conversation > inferred` — `firmware`, `drawing`, `report`, `thread` — and three of the issue's
@@ -143,7 +143,7 @@ happen because anyone lied about the photograph, it happened because nobody wrot
 the box is left unticked.** `poe-class-conflict` is a real conflict — measured against a vendor
 label, with an inference named alongside and declined — but the measurement is the report's own,
 not the user's. The 2026-08-28 instance is the right shape. It was argued out in conversation;
-the one place it is written down is `pr-68-gain-sweep-tool.md`, which was cut as a candidate
+the one place it is written down is a bench-tool dev-log, which was cut as a candidate
 case and dropped because the vocabulary cannot tell the fooled instrument's number from the
 bench's — both read as `measured`, so the region grades `ONESIDED`. It is a selftest fixture
 instead. Recorded in *Findings* below, and the box says so rather than a case being invented to close
@@ -156,7 +156,7 @@ Moved verbatim from #164's body under [#271](https://github.com/Calyx-Engineerin
 | Finding | Where it routes |
 |---|---|
 | **The vocabulary has no term for an instrument reading that is not a measurement.** `measured` collapses *a number the bench produced* and *a number a fooled instrument produced* — and that distinction is the whole of the 2026-08-28 incident | Needs an issue. It is why the unticked box above could not be closed |
-| **The vocabulary in the field does not match the one specified.** `rp2040-pin-allocation.md` — the user's own repair of this defect — uses `schematic · datasheet · firmware · drawing · report · thread · photo · conversation`. Four of those have no home in the issue's list (`firmware`, `drawing`, `report`, `thread`) and three of the issue's are absent from his (`measured`, `vendor`, `inferred`) | Needs an issue. The skills ship the issue's list and the rule for extending it; reconciling the two is a decision, not an edit |
+| **The vocabulary in the field does not match the one specified.** the client's pin ledger — the user's own repair of this defect — uses `schematic · datasheet · firmware · drawing · report · thread · photo · conversation`. Four of those have no home in the issue's list (`firmware`, `drawing`, `report`, `thread`) and three of the issue's are absent from his (`measured`, `vendor`, `inferred`) | Needs an issue. The skills ship the issue's list and the rule for extending it; reconciling the two is a decision, not an edit |
 | **The conflict column cannot tell whether two sources are about the same thing.** Incidental co-occurrence plus an ordinary *but* is reported as a conflict, and `RESOLVED` is the scored bucket. Held down by scoping to the case's excerpt, not removed | Recorded in the grader |
 | **A sourced table with a totals row scores `NONE`**, because the inline path requires every row | Recorded in the grader |
 | **The grader cannot check that a source named is the true one** | Recorded in the grader. Not solvable by this instrument |
@@ -167,6 +167,6 @@ detail; the third is not in the body at all.
 
 | Finding | Where it routes |
 | --- | --- |
-| **The vocabulary has no term for an instrument reading that is not a measurement.** `measured` collapses *a number the bench produced* and *a number a fooled instrument produced* — and that distinction is the whole of the 2026-08-28 incident. `pr-68-gain-sweep-tool.md` records it (*"the scope reported 2.473 Vpp where the tone was 1.456 Vpp"*); the candidate region grades `ONESIDED` because both readings are `measured` to the matcher. The whole file grades `SILENT`, on an unrelated pairing further down | Needs an issue. It is why that document could not become the box-5 case |
+| **The vocabulary has no term for an instrument reading that is not a measurement.** `measured` collapses *a number the bench produced* and *a number a fooled instrument produced* — and that distinction is the whole of the 2026-08-28 incident. a bench-tool dev-log records it (*"the scope reported 2.473 Vpp where the tone was 1.456 Vpp"*); the candidate region grades `ONESIDED` because both readings are `measured` to the matcher. The whole file grades `SILENT`, on an unrelated pairing further down | Needs an issue. It is why that document could not become the box-5 case |
 | **The two vocabularies do not reconcile** — see *Unexpected* | Needs an issue |
 | **Four scorers duplicate fence-tracking and case-reading** — also raised on #159 | Needs an issue |

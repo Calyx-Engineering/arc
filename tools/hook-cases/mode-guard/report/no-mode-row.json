@@ -1,0 +1,2 @@
+# HANDOFF.md present, no Execution mode row — unset means manual, and manual asks
+{"tool_name": "Bash", "cwd": "tools/hook-cases/mode-guard/fixtures/no-row", "tool_input": {"command": "git commit -m \"work\"", "description": "Commit"}}

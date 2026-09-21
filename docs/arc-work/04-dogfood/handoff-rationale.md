@@ -13,7 +13,7 @@ constraint column, the reason an ordered-actions row gives for its position, and
 because opening 4's missing fact turned out to live in the ordered actions rather than in the
 decisions table. Each covers different openings and none covers all of them.
 
-The corpus and the criteria are [the baseline](handoff-baseline.md)'s. *Bad* means bad by
+The corpus and the criteria are the baseline (private corpus, not in this repository)'s. *Bad* means bad by
 [#150](https://github.com/Calyx-Engineering/arc/issues/150)'s definition — either criterion
 failed — which is five openings, not three.
 
@@ -24,7 +24,7 @@ failed — which is five openings, not three.
 
 | # | Failed | What the document did | Explained? |
 |---|---|---|---|
-| 1 | C2 | Nothing was carried. The writer's document went to a session scratchpad headed *"Not committed to ROADZ"*, and the reader found `=====HANDOFF=====` with nothing under it | **No** — a delivery failure. Nothing was stripped because nothing was written |
+| 1 | C2 | Nothing was carried. The writer's document went to a session scratchpad headed *"Not committed to the client repo"*, and the reader found `=====HANDOFF=====` with nothing under it | **No** — a delivery failure. Nothing was stripped because nothing was written |
 | 2 | C1, C2 | The document was **wrong**, not thin. It asserted *"not cloned here"* and *"Fill in rows 2–4"* when the clone existed and all five rows were open | **No** — and the binding worked. The session repeated both claims faithfully 4.2 seconds after reading them. Stale content, not missing rationale |
 | 3 | C2 | *"Option 1 is the recommended fix: a 1:1 600 Ω line isolation transformer per channel"* — the choice asserted, with no *why Option 1* anywhere in the file | **Yes** |
 | 4 | C1, C2 | *"Once filed, steps 0a–0b … unlock the #40 work"* — the order given, the reason absent. The session re-derived a reason from the dependency graph and inverted the order | **Yes — the predicted mechanism exactly, in a slot the hypothesis did not name.** Decision, no constraint, re-derived, opposite answer: that is the hypothesis step for step. What it got wrong is *where*. It points at *Load-bearing decisions*; this decision was an **order**, and lives in the ordered actions. The fact that would have settled it — the user was about to be physically at the bench — was never written down anywhere |
@@ -68,7 +68,7 @@ Both are recorded as spawned findings rather than fixed here.
 a property of the corpus, not a shortcut.**
 
 ```sh
-bash tools/handoff-openings.sh r--work-lantern-roadz-sound-system r--arc \
+bash tools/handoff-openings.sh r--work-northwind-zephyr-system r--arc \
   --since 2026-08-24T09:40 --until 2026-09-06
 ```
 

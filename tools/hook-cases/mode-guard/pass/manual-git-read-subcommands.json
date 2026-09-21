@@ -1,0 +1,2 @@
+# manual, git subcommands that carry the words as arguments — log --grep, show of a ref
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "git log --grep=\"commit\" -3 && git show push-fix && git config alias.ci commit", "description": "Run"}}

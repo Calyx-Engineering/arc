@@ -1,7 +1,7 @@
 # Closing keywords bind only on a PR into the default branch
 
 **Isolated 2026-08-17**, during arc 02. Previously suspected and recorded as unconfirmed in
-ROADZ's `issue-writing` skill: *"Observed on one repository, not isolated as a variable."*
+The client repo's `issue-writing` skill: *"Observed on one repository, not isolated as a variable."*
 
 It is isolated now.
 
@@ -55,4 +55,4 @@ The arc PR into `main` is where the check must actually bite: it needs a `Closes
 
 - [m12](../../product-architecture/mechanisms/m12-issue-linking.md) — the mechanism
 - [m13](../../product-architecture/mechanisms/m13-issue-write-back.md) — the evaluation set this joins
-- ROADZ `issue-writing` — where the unconfirmed observation was recorded
+- The client repo's `issue-writing` — where the unconfirmed observation was recorded
