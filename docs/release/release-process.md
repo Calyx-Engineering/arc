@@ -146,6 +146,16 @@ flowchart TB
 | Version | Date | | |
 |---|---|---|---|
 | `v0.1.0` | 2026-08-21 | The first. 13 skills, 4 hooks, 2 commands, 5 templates, 9 gates | [#120](https://github.com/Calyx-Engineering/arc/issues/120) |
+| `v0.2.0` | 2026-09-20 | The first that has run against real work — arc 04. 13 skills, 6 registered hooks, 4 commands, 1 agent, 12 templates, 73 gates. Public, MIT | [#196](https://github.com/Calyx-Engineering/arc/issues/196) |
+
+### What `v0.2.0` is known not to have done
+
+| | |
+|---|---|
+| **The pre-release review was not run** | §2 makes it the gate. This release was cut at the arc's close on the user's word without the four passes; the five boundary reports in the arc-log, each checked against the code, are what stands in for it |
+| **Three gates failed at the tag, from two causes** | `close-sequence count` reads a gitignored run prompt that exists only in the maintainer's tree. `report budget` and its self-test fail because four boundary reports exceed 500 words, which the user accepted 2026-09-20. 70 of 73 passed |
+| **`hooks/mode-guard` is not registered** | It refused commits the user had asked for. Nothing enforces the execution mode but the session ([#373](https://github.com/Calyx-Engineering/arc/issues/373)) |
+| **No mechanism is ✅** | 26 are ⚪ todo and 11 are 🔵 implemented, waiting on the soak |
 
 ### What `v0.1.0` is known not to have done
 
