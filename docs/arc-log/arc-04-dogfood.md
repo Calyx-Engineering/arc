@@ -661,14 +661,24 @@ flowchart LR
 
 **Workstream:** [#148](https://github.com/Calyx-Engineering/arc/issues/148) Upkeep · **Closed:** 2026-09-20 · diagram excluded
 
-**Goal:** When something in the repository quietly stops being true - Upkeep gets a gate to fail on it, and gets Arc clean enough to make public. Stale tables, dead copies and unchecked claims were each cheap alone and invisible together.
+**Goal:** Clear what dogfooding found that belonged to no feature workstream - 25 small repairs to the gates, the hooks, the loop and the documents - and finish the privacy review that gates making Arc public. Where a repair could be given a gate it was, so the same thing cannot go quietly wrong twice.
 
-**How:** `tests/verify-all.sh` runs every gate the repository has, and most of this workstream is a new gate or a fix one of them found. `tools/audit-public.sh` sweeps every tracked file for what a public copy would expose. The rest is small repairs to the loop, the hooks' off switch and the plugin reload.
+**How:** No single mechanism — this workstream is a clearing house. Its issues, by subject:
+
+| Subject | Issues |
+|---|---|
+| Gates that fail when the repository stops being true | [#143](https://github.com/Calyx-Engineering/arc/issues/143) · [#185](https://github.com/Calyx-Engineering/arc/issues/185) · [#198](https://github.com/Calyx-Engineering/arc/issues/198) · [#227](https://github.com/Calyx-Engineering/arc/issues/227) · [#258](https://github.com/Calyx-Engineering/arc/issues/258) |
+| Going public | [#134](https://github.com/Calyx-Engineering/arc/issues/134) · [#320](https://github.com/Calyx-Engineering/arc/issues/320) |
+| The loop and its runs | [#194](https://github.com/Calyx-Engineering/arc/issues/194) · [#195](https://github.com/Calyx-Engineering/arc/issues/195) · [#214](https://github.com/Calyx-Engineering/arc/issues/214) · [#204](https://github.com/Calyx-Engineering/arc/issues/204) · [#167](https://github.com/Calyx-Engineering/arc/issues/167) · [#297](https://github.com/Calyx-Engineering/arc/issues/297) |
+| Hooks | [#201](https://github.com/Calyx-Engineering/arc/issues/201) · [#202](https://github.com/Calyx-Engineering/arc/issues/202) · [#203](https://github.com/Calyx-Engineering/arc/issues/203) · [#206](https://github.com/Calyx-Engineering/arc/issues/206) |
+| The plugin reload and the repository's layout | [#211](https://github.com/Calyx-Engineering/arc/issues/211) · [#177](https://github.com/Calyx-Engineering/arc/issues/177) · [#190](https://github.com/Calyx-Engineering/arc/issues/190) |
+| Documents | [#175](https://github.com/Calyx-Engineering/arc/issues/175) · [#174](https://github.com/Calyx-Engineering/arc/issues/174) · [#168](https://github.com/Calyx-Engineering/arc/issues/168) |
+| Graders | [#314](https://github.com/Calyx-Engineering/arc/issues/314) · [#315](https://github.com/Calyx-Engineering/arc/issues/315) |
 
 | You say, or do | Before | Now |
 |---|---|---|
 | *"Is what the repo says still true?"* — you run `verify-all.sh` | 11 gates. A mechanism table behind its specs, a dead link in the operating agreement, a report over its budget, a mode row that was never written — none of them failed anything ([#143](https://github.com/Calyx-Engineering/arc/issues/143), [#258](https://github.com/Calyx-Engineering/arc/issues/258), [#185](https://github.com/Calyx-Engineering/arc/issues/185), [#198](https://github.com/Calyx-Engineering/arc/issues/198), [#227](https://github.com/Calyx-Engineering/arc/issues/227)) | 73 gates, and each of those now fails one. Two fail today: one reads a file outside git, and the report budget fails on the four rewritten reports. The full run takes about 25 minutes |
-| *"Make Arc public"* | Nobody had looked at what a public copy shows: 1,718 hits ([#134](https://github.com/Calyx-Engineering/arc/issues/134)) | Every hit has a decision and every decision is applied ([#320](https://github.com/Calyx-Engineering/arc/issues/320)). Run 2026-09-20: no tracked file names the client, its product, its hardware, a person or an employer. Client material moved to a private directory outside the repository; the client's search terms are gitignored; the licence is MIT. **The repository is still private** — that switch is yours — and git history is not rewritten, your decision |
+| *"Make Arc public"* | Nobody had looked at what a public copy shows: 1,718 hits ([#134](https://github.com/Calyx-Engineering/arc/issues/134)) | Every hit has a decision and every decision is applied ([#320](https://github.com/Calyx-Engineering/arc/issues/320)). Run 2026-09-20: no tracked file names the client, its product, its hardware, a person or an employer. **The repository is still private** — that switch is yours. Detail in [§6.10.7](#6107-going-public--what-was-done-and-what-is-left) |
 | *"This hook is broken, turn it off"* | The off switch was a file placed by hand. The one time it was needed it landed in the wrong directory under the wrong name, and nothing said so ([#202](https://github.com/Calyx-Engineering/arc/issues/202)) | `bash hooks/hooks-off.sh <hook> 30` — one hook, this repository only, and it expires. `status` reads it back. Used live on `mode-guard`, 2026-09-20 |
 | *"Run the next set"* | Starting a workstream was commands assembled by hand, and two runs could take the same issue ([#194](https://github.com/Calyx-Engineering/arc/issues/194), [#214](https://github.com/Calyx-Engineering/arc/issues/214)) | `/arc-run` names the tracks, waits for your yes, and dispatches them. `tools/arc-claim.sh` refuses the second run on an issue — seen live on [#214](https://github.com/Calyx-Engineering/arc/issues/214) itself |
 | You open the milestone | 120 items for 85 units of work: 35 PRs were counted beside the issues they closed ([#204](https://github.com/Calyx-Engineering/arc/issues/204)) | A PR that closes an issue carries no milestone; a PR with no issue must. `tracker-verify` reports either one wrong |
@@ -730,7 +740,8 @@ flowchart LR
 
 #### 6.10.6 Not done
 
-- Making the repository public — yours. What Arc collects from a repository it is installed in was in your brief for [#320](https://github.com/Calyx-Engineering/arc/issues/320) and in none of its boxes; its dev-log records it, no issue
+- Making the repository public — yours
+- A gate on the two privacy rules in [§6.10.7](#6107-going-public--what-was-done-and-what-is-left): they are instructions a session follows, and nothing checks that one does — no issue
 - A report of an installed plugin copy older than the tree — no issue
 - `verify-all.sh` takes about 25 minutes, past the ten-minute limit on a run's own tool call, so runs background it — no issue
 - `close-sequence count` reads a gitignored file and fails in this tree only — no issue
@@ -738,7 +749,31 @@ flowchart LR
 - `hooks/mode-guard` missing from the definition's artifact table — recorded on [#143](https://github.com/Calyx-Engineering/arc/issues/143), belongs to [#124](https://github.com/Calyx-Engineering/arc/issues/124)
 - `tools/arc-default-branch.sh` and `verify-tracker-body.sh live-bind` write outward with no declaration — recorded on [#201](https://github.com/Calyx-Engineering/arc/issues/201), no issue
 
-#### 6.10.7 What it changed
+#### 6.10.7 Going public — what was done, and what is left
+
+[#134](https://github.com/Calyx-Engineering/arc/issues/134) found what a public copy would show; [#320](https://github.com/Calyx-Engineering/arc/issues/320) acted on every row. Your brief, 2026-09-20: *"no one sees proprietary information."* [#320's dev-log](../dev-log/issue-320-public-audit-dispositions.md) quotes each decision you made.
+
+| | |
+|---|---|
+| **What a public copy would have shown** | 2,022 hits on 2026-09-20, 716 of them needing a decision: the client's product name 250 times, its hardware 145, its parent company 51, people 16, an employer 4 — plus local paths and expletives |
+| **Moved out of the repository** | 106 files, to a private directory on this machine at the same relative paths: the client reference folder, the architecture archive, three test suites built from client sessions, one friction log and the handoff baseline. The scorers reach them through one variable, `ARC_EVAL_CORPUS` |
+| **Made anonymous in place** | 18 tools, skills and tests, then 37 documents, then comments in three hooks: names generalised, hook test cases renamed, 32 to-the-minute timestamps cut to dates, expletives masked. Six test prompts that must match their transcripts word for word are masked through a stand-in list rather than moved |
+| **Kept out of git** | The client's search terms and the stand-in list — `tools/audit-public.patterns`, `tools/corpus.mask` — are gitignored, and neutral examples ship in their place. `.claude/arc/sessions.md`, one machine's paths, is untracked under a declared opt-out |
+| **Licence** | MIT — *"lets just go MIT."* Every released version stays free for any use |
+| **Ships, knowingly** | 138 of this repository's own checkout paths, in measurement records and dev-logs. None names a client or a person — *"the rest are fine"* |
+| **How it stays clean** | `tools/audit-public.sh` is a word search, run by you before publishing — not a feature anyone who installs Arc uses. It finds only the terms someone typed into its private list, so every anonymised file was also read by hand. Without the list it reports *partial* and exits 1, never *clean*. `tests/verify-public-audit.sh` runs in `verify-all.sh` |
+| **Left, and yours** | Making the repository public. **Git history still holds every removed file and name** — your decision, no rewrite: *"the proprietary information isnt really sensitive."* |
+
+**How Arc protects the people who install it.** Your brief for [#320](https://github.com/Calyx-Engineering/arc/issues/320) had a second half: *"so that i don't end up inadvertently trying to take proprietary information from others who use the plugin."* It was in none of the issue's boxes and was done inside it.
+
+| | |
+|---|---|
+| **Nothing is sent anywhere** | Checked 2026-09-20 across every hook, skill, agent, command, template and tool: no `curl`, no `wget`, no webhook, no telemetry, no HTTP library. The only network use is `gh issue view` and `gh pr view`, reading the installer's own tracker with the installer's own login |
+| **Everything Arc writes stays with the installer** | The hook log, the session index, the friction log and saved transcripts all land in their repository or on their machine. None of it reaches Calyx |
+| **The two ways a client's words could still reach Arc — both rules a session follows, both fixed** | A retrospective run from Arc's own checkout commits transcript quotes here: `skills/plugin-retrospective` now masks names when it writes, cites rather than quotes anything whose substance is the client's work, keeps no file paths or to-the-minute times, and asks once, naming the destination, before the commit. A soak line in this arc-log: `CLAUDE.md` now says it names the change and the result, **never the consumer** |
+| **What this does not cover** | Both fixes are instructions, and no gate checks that a session follows them. No issue |
+
+#### 6.10.8 What it changed
 
 ```mermaid
 flowchart LR
