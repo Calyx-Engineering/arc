@@ -1,4 +1,4 @@
-<ide_selection>The user selected the lines 606 to 606 from r:\work_lantern\roadz-sound-system\.timescope\logs.jsonl:
+<ide_selection>The user selected the lines 606 to 606 from <client-repo>\.timescope\logs.jsonl:
 kftkt-w-rpk
 
 This may or may not be related to the current task.</ide_selection>

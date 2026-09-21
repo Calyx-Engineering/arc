@@ -48,7 +48,7 @@
 #
 # WHICH TREE IT CHECKS. The marketplace's own installLocation, read from
 # ~/.claude/plugins/known_marketplaces.json — not the current directory. `calyx-engineering` is
-# a directory source pointing at R:\arc, so a reload run from a worktree still installs from
+# a directory source pointing at the main checkout, so a reload run from a worktree still installs from
 # the main tree, and checking $PWD would clear a tree the reload is not going to read.
 # ARC_PLUGIN_SOURCE_DIR overrides the lookup; the cases below are its only user.
 #
@@ -70,7 +70,7 @@ set -u
 #   .vscode/           editor settings
 #   .gitignore  ·  .gitattributes  ·  .markdownlint.json   git and lint configuration
 #   README.md          prose about the repository
-#   ROADMAP.md         the same, and #175 may retire it outright
+#   LICENSE            the licence text. Nothing loads it
 #   CLAUDE.md          instructions for sessions working ON this repo. Not loaded from an install
 #
 # The list is exhaustive against this repository's tracked top level as of 2026-09-09, checked
@@ -90,7 +90,7 @@ set -u
 # Generalising from one inert file to its whole directory is the mistake this comment exists to
 # stop being repeated.
 INERT_PATHS="docs evals .claude .vscode .gitignore .gitattributes .markdownlint.json
-             README.md ROADMAP.md CLAUDE.md"
+             README.md LICENSE CLAUDE.md"
 
 # True when an uncommitted change at this path would reach the installed plugin as something
 # it reads. Ignored files are the one shipped-but-unnamed case — see dirty_component_paths.
@@ -350,7 +350,7 @@ fixture_repo() {
   echo v > "$d/tests/verify-all.sh"
   echo v > "$d/tests/verify-tracker-body.sh"
   echo r > "$d/README.md"
-  echo r > "$d/ROADMAP.md"
+  echo r > "$d/LICENSE"
   echo c > "$d/CLAUDE.md"
   git -C "$d" init -q >/dev/null 2>&1
   git -C "$d" config core.autocrlf false >/dev/null 2>&1
@@ -434,7 +434,7 @@ selftest() {
   # `.claude/arc/log.md` is the one that matters in practice: record-route appends to it most
   # sessions, so a guard that named it would refuse nearly every reload in this repository.
   R="$WORK/u6"; fixture_repo "$R"
-  echo x >> "$R/docs/d.md"; echo x >> "$R/README.md"; echo x >> "$R/ROADMAP.md"
+  echo x >> "$R/docs/d.md"; echo x >> "$R/README.md"; echo x >> "$R/LICENSE"
   echo x >> "$R/CLAUDE.md"; echo x >> "$R/evals/e.md"; echo x >> "$R/.claude/arc/log.md"
   echo x >> "$R/.gitignore"; echo x >> "$R/.markdownlint.json"
   echo x > "$R/docs/untracked.txt"; echo x > "$R/evals/untracked.txt"

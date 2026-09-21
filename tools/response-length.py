@@ -43,6 +43,7 @@ import sys
 # The case scan and the fence rule, shared with the other three graders — #265. `tools/` is
 # sys.path[0] because response-length.sh runs this file by path.
 import case_reader
+import corpus_mask  # the transcript side is masked before it is compared — #320
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -400,6 +401,7 @@ def main():
         raise SystemExit(2)
 
     drift, missing = [], []
+    MASK = corpus_mask.load()
     tot_under = tot_over = tot_thin = 0
 
     print("response-length — %d case(s) under %s, mode %s, thin floor min(%d, budget/2)"
@@ -493,7 +495,7 @@ def main():
         for t, text in sorted(stored.items()):
             if t not in got:
                 drift.append("%s t%d  (turn not in %s)" % (name, t, session))
-            elif got[t].rstrip("\n") != text.rstrip("\n"):
+            elif corpus_mask.apply(got[t], MASK).rstrip("\n") != text.rstrip("\n"):
                 drift.append("%s t%d" % (name, t))
         for t, _, _, _ in rows:
             if t not in stored:

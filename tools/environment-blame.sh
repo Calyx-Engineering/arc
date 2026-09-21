@@ -7,6 +7,9 @@
 #   tools/environment-blame.sh --strict     also fail when a case's transcript is not on this machine
 #   tools/environment-blame.sh selftest     fixtures only, no corpus needed
 #
+#   ARC_EVAL_CORPUS=DIR   where the cases live when they are not in this repository — DIR holds
+#                         environment-blame/. Unset, the cases are read from evals/environment-blame.
+#
 # WHY THIS EXISTS. #165, C5 in the dogfood retrospective: "you keep assuming I did something
 # wrong when you're just stopping at the first issue and not trying to figure it out yourself."
 # The highest single-day cost in the corpus, and the user walked down to the rig twice. It is
@@ -48,7 +51,7 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     selftest) SELFTEST=1 ;;
     --strict) STRICT=1 ;;
-    -h|--help) sed -n "2,37p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,40p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -266,5 +269,10 @@ PHRASES
   exit 0
 fi
 
-score "${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}" evals/environment-blame
+# #320: the cases are verbatim turns from a client bench session, so they live outside the
+# published repository. ARC_EVAL_CORPUS says where — the directory that holds environment-blame/.
+EVAL_DIR="${ARC_EVAL_CORPUS:+$ARC_EVAL_CORPUS/environment-blame}"
+EVAL_DIR="${EVAL_DIR:-evals/environment-blame}"
+[ -d "$EVAL_DIR" ] || { echo "no cases at $EVAL_DIR — set ARC_EVAL_CORPUS to the directory that holds environment-blame/" >&2; exit 2; }
+score "${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}" "$EVAL_DIR"
 exit $?

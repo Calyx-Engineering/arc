@@ -30,7 +30,7 @@ context budget. The mechanism must assume frequent restarts, not try to prevent 
 |---|---|---|---|
 | **Wiki** | Durable facts about the repo | Forever | Too slow-moving. A two-week arc's state is not a durable repo fact |
 | **TimeScope spine** | One coordinating chat window | The arc | Assumes the spine window *stays alive*; hardware kills windows on context |
-| **ROADZ handoff files** | Ad-hoc markdown | Written at session end | **Tried and proved insufficient** — the 2026-08-10 failure |
+| **The client repo's handoff files** | Ad-hoc markdown | Written at session end | **Tried and proved insufficient** — the 2026-08-10 failure |
 
 **The gap:** something that robustly supports **2 to 12 days of end-on-end
 development**, survives repeated window death, and is cheap to rehydrate from.
@@ -89,7 +89,7 @@ Rejected approaches · Retrospective.
 
 That is **rationale**, deliberately kept short — summary depth, read every session. K2
 is **working context**: the measurements, the scope captures, the datasheet numbers, the
-failed bench attempt. In ROADZ that material lives in `docs/report/issue-NN-*/`, a
+failed bench attempt. In the client repo that material lives in `docs/report/issue-NN-*/`, a
 different artifact with a different purpose.
 
 **Open question:** does K2 issue-level context extend the dev-log, or is it a separate
@@ -230,7 +230,7 @@ work into disjoint tracks; a hardware arc discovers its own scope as it runs.
 
 ### The deliverable: a spawn diagram
 
-Issues already record what spawned them (ROADZ practice, and the subject of the
+Issues already record what spawned them (client-repo practice, and the subject of the
 2026-08-14 spawned-vs-related correction). That data supports a generated
 **family tree of issues** — each node an issue, each edge a spawn relationship.
 
@@ -292,4 +292,4 @@ than duplicate its ordering — duplicated order drifts.
 - [`work-watch`](../../../skills/work-watch/SKILL.md) check 7 — **what decides that a handoff is due.** This mechanism says what a handoff holds and how it is read; that check watches for the session having degraded far enough to need one, while there is still budget to write it well. [#154](https://github.com/Calyx-Engineering/arc/issues/154)
 - [transcript-mining.md](m30-transcript-mining.md) — sibling mechanism
 - TimeScope `docs/arc-log/arc-local-first-storage.md` — the software precedent
-- ROADZ `CLAUDE.md` — arc-tracking GitHub mechanics
+- The client repo's `CLAUDE.md` — arc-tracking GitHub mechanics

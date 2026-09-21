@@ -1,0 +1,2 @@
+# A client repo, real shape, names changed: a no-issue branch carrying its PR number
+{"cwd":"tools/hook-cases/camp-branch-check/fixtures/module-rev","tool_name":"Bash","tool_input":{"command":"git checkout -b widget-board/rev-b-pr58-arc-setup"}}

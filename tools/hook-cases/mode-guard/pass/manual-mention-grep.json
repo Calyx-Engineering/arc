@@ -1,0 +1,2 @@
+# manual, grep FOR the words
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "grep -rn \"git commit\" docs/ | head; git log --oneline -3", "description": "Run"}}

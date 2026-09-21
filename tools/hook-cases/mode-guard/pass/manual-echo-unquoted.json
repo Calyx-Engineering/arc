@@ -1,0 +1,2 @@
+# manual, echo of the words unquoted — echo is in command position, not git
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "echo git commit is gated", "description": "Run"}}

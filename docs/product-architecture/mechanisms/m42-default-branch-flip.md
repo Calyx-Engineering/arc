@@ -23,7 +23,7 @@ on the issues."* Isolated in this repository 2026-09-11 on a base that had never
 default: [#323](https://github.com/Calyx-Engineering/arc/pull/323) bound nothing before the
 merge, after it, or after a body re-save —
 [`tests/tracker-cases/binding/never-default-base-keyword.md`](../../../tests/tracker-cases/binding/never-default-base-keyword.md).
-[m12](m12-issue-linking.md) once read the 2026-08-16 ROADZ data as a parse-time quirk that a re-save could
+[m12](m12-issue-linking.md) once read the 2026-08-16 the client repo data as a parse-time quirk that a re-save could
 get around; [#287](https://github.com/Calyx-Engineering/arc/issues/287) struck that.
 
 An arc runs issue branches into an arc branch, and the arc branch into the trunk. **Every

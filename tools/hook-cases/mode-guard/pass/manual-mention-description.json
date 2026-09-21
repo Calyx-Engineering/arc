@@ -1,0 +1,2 @@
+# manual, a read whose DESCRIPTION says git commit
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "git status --short", "description": "Check the tree before git commit"}}

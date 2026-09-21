@@ -306,38 +306,22 @@ is the higher of the latest issue and the latest PR, plus one.
 tools/new-direct-pr.sh <hint-slug> "<PR title>"
 ```
 
-**Steps 1 to 4 are one command, and they have to be** — by hand the sequence takes minutes with
-a real race running underneath it, which makes *the window is seconds wide* false.
+**One command: branch, stub dev-log, draft PR, confirm the number — before the work, not after
+it.** Then work, fill in the dev-log, and mark it ready. Why each step sits where it does is
+[m46 §9.1](../../docs/product-architecture/mechanisms/m46-work-navigation.md)'s.
 
-| | |
-|---|---|
-| 1 | Branch with the predicted number |
-| 2 | Commit a **stub** dev-log — a PR needs a commit to exist, and a merged unit needs a dev-log anyway. Writing the real one first is what reintroduces the delay |
-| 3 | **Open it as a draft, before doing the work** |
-| 4 | Confirm the PR's number against the branch's — **a mismatch is recorded, never retried** |
-| 5 | Then work, fill in the dev-log, and mark it ready |
-
-**The draft comes before the work.** Branching, building for an hour and opening the PR at the
-end leaves the number unclaimed for that hour, and puts the check *after* everything has landed
-on a possibly-wrong branch.
-
-**A miss is never retried.** Retrying burns a real number to buy a tidier branch name, and the
-name was only ever a pointer — an explained mismatch points just as well. **The notification is
-the fix**, in three places:
+**A mismatch is recorded, never retried** — rename nothing, close nothing. Say it in three places:
 
 | | |
 |---|---|
 | **The PR body, near the top** | *"Branch says `pr112`, this is PR #114."* Unexplained, the branch is silently wrong. Explained, it is merely inexact |
 | **The dev-log** | It already exists — it was the first commit. One line under the problem statement |
-| **The friction log**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md` — [`record-route`](../record-route/SKILL.md) routes it. A race is a fact about the repository and reaches nobody unless written down |
-
-**Rename nothing, close nothing.** See the warning above.
+| **The friction log**, where the repository keeps one | `docs/arc-work/<arc-slug>/friction-log.md` — [`record-route`](../record-route/SKILL.md) routes it |
 
 > **Never rename the branch of an open PR. It closes the PR.** Tested: the rename succeeds,
 > the branch moves, and GitHub closes the PR whose head just disappeared.
 
-[m46 §9.1](../../docs/product-architecture/mechanisms/m46-work-navigation.md) carries the
-detail. **A branch naming a PR that is not its own is worse than one naming nothing.**
+**A branch naming a PR that is not its own is worse than one naming nothing.**
 
 ### Placement
 
@@ -361,23 +345,11 @@ is cosmetic — the body still needs its own line.
 
 **A closing keyword binds from a commit message exactly as it does from a PR body** — the same
 keyword set, followed by `#<N>`, and the same placement rule: **a bare line, never a clause
-inside a sentence.** GitHub does not care which write puts the words next to each other. Commit
-`81b5a41` ([PR #301](https://github.com/Calyx-Engineering/arc/pull/301)) put the word *resolve*
-and #300's number in one prose clause of its body; the commit reached the default branch — during
-an arc that is the arc branch itself,
-[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md)'s flip — and GitHub
-closed #300 with all four of its boxes still unticked.
-
-Put a closing keyword in a commit message only on its own bare line, at the end of the message,
-exactly as *Placement* above requires for a PR body:
-
-```text
-Closes #42
-```
-
-Never inside a sentence describing the change — *"this is expected to resolve #42"* closes #42
-exactly as reliably as `Closes #42` does, with none of the review a PR body gets before it is
-written and merged.
+inside a sentence**, at the end of the message. *"this is expected to resolve #42"* closes #42
+exactly as reliably as `Closes #42` does, with none of the review a PR body gets — one prose
+clause closed an issue with every box unticked,
+[m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md), *A commit message binds
+too*.
 
 **The post-merge read-back names what the merge closed.** `gh pr view --json
 closingIssuesReferences` and the issue's own state are what confirm it — never a memory of which
@@ -407,15 +379,9 @@ needed.
 ## The base branch decides whether the link binds
 
 **A closing keyword binds only when the PR targets the repository's default branch.**
-Isolated 2026-08-17: two PRs, identical keyword form, one into `main` bound five issues and
-one into an arc branch bound none. Isolated again 2026-09-11 on a base that had **never** been
-the default: [#323](https://github.com/Calyx-Engineering/arc/pull/323) into `probe/287-base`
-bound nothing before the merge, after it, or after an unchanged body re-save, and the merge left
-its issue open — [`tests/tracker-cases/binding/never-default-base-keyword.md`](../../tests/tracker-cases/binding/never-default-base-keyword.md).
-That run is what settled [#287](https://github.com/Calyx-Engineering/arc/issues/287): m12 once
-read the same rule as a parse-time quirk that a re-save could get around, and it cannot.
-
-This is not a corner case in a nested-branch workflow — it is *every* issue PR.
+Not at open, not at the merge, not on a re-save — isolated twice,
+[m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md), *The test that changes
+the design*. This is not a corner case in a nested-branch workflow — it is *every* issue PR.
 
 | Base | Empty `closingIssuesReferences` means |
 |---|---|
@@ -440,12 +406,9 @@ Two consequences:
   consumed.** That is the one PR where an empty array is a real bug. It is the backstop for
   issues nobody closed, not the plan
 
-**"Closure defers to the arc PR" is the degraded state, not a practice**, and the earlier wording
-here read as though it were one. Leaving an issue open from its own merge until the arc's is what
+**"Closure defers to the arc PR" is the degraded state, not a practice** — it is what
 [m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) lists as the *cost*
-of an unflipped repository — *"issues stay open after their work merges"* — and both mechanisms
-exist to remove it. Say it in the PR body so a reader is not left thinking the link failed; do
-not let it stand in for closing the issue.
+of an unflipped repository. Do not let it stand in for closing the issue.
 
 ### The manual route — when a work PR merges into a non-default base
 
@@ -487,18 +450,12 @@ hand at the merge."* Name the route, not a deferral — the issue closes here.
 Leaving the keyword out to avoid implying a link that does not exist is the wrong trade: it
 removes the only statement of what the PR was for and leaves the issue looking orphaned anyway.
 
-**Re-saving the body forces a re-parse, and the parse is not tied to the merge.** It cannot
-create a link the base branch forbids — that much still holds, and a failed re-save on an
-unflipped base is not a transient problem. But on a base that *is* the default branch it works
-after the merge as well as before, which the next section is about. The earlier wording here
-implied the opposite.
-
 ### A missed keyword is recoverable after the merge
 
 **A `Closes #NN` line added to an already-merged PR still binds** — provided the base was the
 repository's default branch. Re-saving the body re-parses it, and the parse is not tied to the
-merge. Measured on [#192](https://github.com/Calyx-Engineering/arc/pull/192) and again on
-[#215](https://github.com/Calyx-Engineering/arc/pull/215), 2026-09-07.
+merge — measured twice, [m12](../../docs/product-architecture/mechanisms/m12-issue-linking.md)
+§2.
 
 ```sh
 gh pr view NN --json body --jq .body > body.md \
@@ -514,49 +471,31 @@ gh issue close MM                                          # the link came back;
 
 | | |
 |---|---|
-| **The read-back is not instant** | The read immediately after the edit returns an empty array; seconds later it returns the binding. **One read is a false negative** — poll before concluding the recovery failed |
-| **It links, it does not close** | The merge event that closes an issue has already fired. #225 stayed open with the reference bound. `gh issue close` is the third command, and the reason this is not the two-command fix it first looked like |
-| **It is a keyword link, not a hand-attached one** | `closingIssuesReferences(first:5,userLinkedOnly:true)` comes back empty, so nothing was clicked. The distinction matters because a hand-attached link cannot be removed through the API |
-| **Removing the keyword unbinds** | Symmetric, and the reason the check below can restore what it changed |
+| **Poll the read-back** | The read immediately after the edit returns an empty array; seconds later it returns the binding. **One read is a false negative** |
+| **It links, it does not close** | The merge event has already fired. `gh issue close` is the third command |
 
 **This is the repair, not the practice.** A missed keyword is still a defect — it is caught at
-PR open, by *Verify* above. What changed is that the documented remedy was hand-linking through
-the UI, which needs a human and cannot run unattended. This can.
+PR open, by *Verify* below. `tests/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs the
+claim against the live API.
 
 #### What is still not recoverable
 
-**A PR whose base was never the default branch.** The keyword cannot bind at all, so there is
-nothing for a re-save to re-parse — the base-branch rule above is not a timing problem and no
-edit gets around it. Measured, not inferred: #323's unchanged re-save after the merge read
-`[]` on every poll — [`never-default-base-keyword.md`](../../tests/tracker-cases/binding/never-default-base-keyword.md). **The fix is *The manual route* above** — the click and the close, which
-work on any base and need no admin right. It is the same route whether the keyword was missed
-or could never have bound.
+**A PR whose base was never the default branch.** There is nothing for a re-save to re-parse —
+the base-branch rule above is not a timing problem and no edit gets around it. **The fix is *The
+manual route* above**, the same route whether the keyword was missed or could never have bound.
 
-[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md) removes the
-question for a whole arc, but only if the flip is already in place before that arc's first PR is
-opened — it does not re-parse existing PRs. **So it is never the answer to a PR that has already
-merged, and never something to propose because one keyword did not bind.** Whether a repository
-runs with the flip is a decision made once, at arc start, by the user.
-
-**The claim is a test, not a memory.**
-[`tests/tracker-cases/binding/merged-pr-keyword-bind.md`](../../tests/tracker-cases/binding/merged-pr-keyword-bind.md)
-carries it, and `tests/verify-tracker-body.sh live-bind <merged-pr> <issue>` runs it against the
-live API and restores what it changed. `verify-all.sh` does not run it — it writes to the
-tracker — and `selftest` names it as not covered rather than passing over it.
-
+[m42](../../docs/product-architecture/mechanisms/m42-default-branch-flip.md)'s flip does not
+re-parse existing PRs. **So it is never the answer to a PR that has already merged, and never
+something to propose because one keyword did not bind.** Whether a repository runs with the flip
+is a decision made once, at arc start, by the user.
 
 ---
 
 ## Verify — the step that is not optional
 
-Never assume a write landed. This is the same behaviour already applied routinely to file
-edits, and the asymmetry is the whole finding:
-
-| | File edit | Tracker write |
-|---|---|---|
-| Verification | The tool errors if the match fails | The API returns success regardless |
-| Visibility | The diff is in front of the user | Lives on a website nobody re-opens |
-| Detection | Immediate | Only when someone happens to look |
+Never assume a write landed. **The API returns success regardless, on a website nobody
+re-opens** — why that costs more than a bad file edit is
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md)'s.
 
 **A milestone item is one unit of work, so a PR that closes an issue takes no milestone.**
 The issue is the unit and already carries it; giving the PR one counts the same work twice and
@@ -629,10 +568,8 @@ match what we agreed* — is this skill's.
 ## Actions agreed in conversation
 
 Two of the seven cases are not verification failures. **The write never started.** Something
-was agreed mid-conversation and had nowhere to go.
-
-> *"i asked you to update #12 with the new component selection. i checked and that didn't
-> happe. please do that before we forget again"*
+was agreed mid-conversation and had nowhere to go —
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) Shape A.
 
 **Capture immediately into the handoff's open threads; file at a checkpoint.** Filing every
 provisional remark produces tracker noise; forgetting produces the case above. The handoff
@@ -655,8 +592,9 @@ keyword entirely:
 - ✗ "Does not close #42"
 - ✓ "This does not complete the capability — the deliverable in #42 is …"
 
-**This trap shipped a defect while this section was loaded and read.** Prose does not stop
-it, so the rule is placement rather than phrasing: keywords only in the closing block — the
+**Prose does not stop it** — it shipped once with this section loaded,
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) — so the rule is
+placement rather than phrasing: keywords only in the closing block — the
 final lines, one keyword per line and nothing else on them; one line for one issue, one line
 per issue for several — checked by `tests/verify-tracker-body.sh body` before the write.
 Escaping the keyword is a workaround for writing *about* the trap in a document, not a fix.
@@ -705,19 +643,17 @@ all. `cmp` against a missing file exits **2**, so `! cmp` is *true* and the writ
 anyway. `[ -s body.md ]` stops it, and it has to be **one chain**: split in two, the read's
 failure never reaches the write.
 
-**The failure is the edit step failing, not only a path the next step cannot see.** A reader
-who wrote the file to a shared, visible path concludes the trap does not apply, and it still
-does. 2026-08-20, three times in one session: twice the editing step raised `SyntaxError`
-before touching the file, once a redirect went somewhere the interpreter could not see. Every
-time `gh` printed the issue URL and every time the body was unchanged.
+**The failure is the edit step failing, not only a path the next step cannot see** — three
+times in one session, [m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md),
+*The write-back that wrote the original back*.
 
 | Why the edit step dies | |
 |---|---|
-| **A Windows path in a non-raw string literal** | The repeat offender. `"C:\Users\..."` and `"R:\arc-transcripts\"` — `\U` and `\a` are escapes and a trailing `\` eats the closing quote, so the interpreter fails at **parse** time, before any edit runs. Use a raw string, forward slashes, or keep the path out of the source |
+| **A Windows path in a non-raw string literal** | The repeat offender — it fails at **parse** time, before any edit runs. Use a raw string, forward slashes, or keep the path out of the source |
 | **A path a later step cannot see** | Write the temp file somewhere the shell and any helper agree on. Git Bash's `/tmp` is not a Windows interpreter's `/tmp` |
 
-**The read-back stays mandatory regardless.** It is the detector, not the fix — it caught all
-three, and nothing else would have. The guard stops the bad write; the read-back proves it.
+**The read-back stays mandatory regardless.** The guard stops the bad write; the read-back
+proves it.
 
 ### Non-ASCII and the console
 
@@ -805,9 +741,8 @@ it has to be stated as a negative — a cause test on its own admits anything se
 | **A document produced by the work** | Nowhere. It is an output of the unit, not a unit of its own |
 | **A known limitation of a tool** | The dev-log. It becomes a row only when someone files the issue to fix it |
 
-**Observed in ROADZ: eight corrections between 2026-08-14 and 2026-09-05.** Documents, a
-discarded approach the dev-log had already ruled out, and loose decisions were all added as
-spawned work — while issues that did belong were missed. It is case 7 of the evaluation set.
+**Corrected eight times in real work** — case 7 of the evaluation set,
+[m13](../../docs/product-architecture/mechanisms/m13-issue-write-back.md) Shape C.
 
 **This does not weaken the rule below.** A row for real work that was decided against stays,
 marked. What is barred is a row that was never work.

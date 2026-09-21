@@ -53,7 +53,7 @@ work decomposes continuously, which makes this less a step and more a standing b
 and possibly part of `skills/work-watch` rather than `skills/kickoff`.
 
 **What makes a chunk the right size.** TimeScope sizes chunks so one feature loop completes
-reliably. Guided hardware has no equivalent unit; the ROADZ rule is one issue per
+reliably. Guided hardware has no equivalent unit; the client-repo rule is one issue per
 function or problem, with sub-steps left to the engineer.
 
 **How risk is judged.** "Riskiest and most ambiguous" is the placement rule and it is

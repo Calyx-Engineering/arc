@@ -18,6 +18,8 @@
 #                       directory, so a billed run can be re-scored after the scorer changes
 #                       ONE RUN PER PATH: the runner writes the case's entry whole, so
 #                       --runs N leaves only the last. Give each run its own path.
+#   ARC_EVAL_CORPUS=DIR where the cases live when they are not in this repository — DIR holds
+#                       response-length/. Unset, the cases are read from evals/response-length.
 #
 # WHY THIS EXISTS. tools/skill-cases.sh and tools/skill-probe.sh both measure ONE thing:
 # whether a Skill was invoked. #155 established that firing is neither necessary nor sufficient
@@ -69,7 +71,7 @@ while [ "$#" -gt 0 ]; do
     --case) ONLY="${2:-}"; shift ;;
     --plugin-dir) PLUGIN_DIR="${2:-}"; shift ;;
     --threshold) RL_THRESHOLD="${2:-0.67}"; export RL_THRESHOLD; shift ;;
-    -h|--help) sed -n "2,50p" "$0"; exit 0 ;;
+    -h|--help) sed -n "2,52p" "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -86,6 +88,9 @@ score() {  # score <projects-root> <eval-dir> [probe-json]
 
 if [ "$SELFTEST" = "1" ]; then
   T="$(mktemp -d)"
+  # The selftest never reads the live mask: it is untracked, so a suite that depended on it
+  # would pass on one machine only. #320.
+  export ARC_CORPUS_MASK="$T/no-mask"
   trap 'rm -rf "$T"' EXIT
   P="$T/projects/r--fixture"
   E="$T/evals"
@@ -415,7 +420,11 @@ PYJSON
 fi
 
 ROOT="${MINER_PROJECTS_ROOT:-$HOME/.claude/projects}"
-EVAL_DIR="${RL_EVAL_DIR_OVERRIDE:-evals/response-length}"
+# ARC_EVAL_CORPUS is the knob; RL_EVAL_DIR_OVERRIDE stays the selftest's. #320: a suite that
+# cannot be published lives outside the repository, and one variable says where for every scorer.
+EVAL_DIR="${RL_EVAL_DIR_OVERRIDE:-${ARC_EVAL_CORPUS:+$ARC_EVAL_CORPUS/response-length}}"
+EVAL_DIR="${EVAL_DIR:-evals/response-length}"
+[ -d "$EVAL_DIR" ] || { echo "no cases at $EVAL_DIR — set ARC_EVAL_CORPUS to the directory that holds response-length/" >&2; exit 2; }
 
 if [ "$PROBE" = "0" ]; then
   score "$ROOT" "$EVAL_DIR"

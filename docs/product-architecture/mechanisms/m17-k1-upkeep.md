@@ -28,11 +28,11 @@ there, not here.
 ## Why it is inherited
 
 Both templates run in TimeScope today and are the reason a cold session there rehydrates in
-one read. Thirteen dev-logs exist. ROADZ has the same structure as an empty stub, which is
+one read. Thirteen dev-logs exist. The client repo has the same structure as an empty stub, which is
 the evidence that the template alone is not the mechanism — the enforcement is.
 
 **The three-part rule applies exactly:** trigger (plan time and PR time), template (the two
-files above), enforcement (a `Stop` hook gating the PR). ROADZ had the template and neither
+files above), enforcement (a `Stop` hook gating the PR). The client repo had the template and neither
 of the others, and produced nothing.
 
 ---

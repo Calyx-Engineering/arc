@@ -13,7 +13,7 @@ decided.
 **Exploration cost compounds downward.** Distilled operational knowledge every agent reads
 before exploring, so the same repo facts are not re-derived every session.
 
-Working in both repos surveyed during the retrospective — ROADZ has 14 pages, TimeScope 6.
+Working in both repos surveyed during the retrospective — the client repo has 14 pages, TimeScope 6.
 It is the most consistently successful mechanism in either.
 
 **Why it works, in the three-part rule's terms:** a wiki-first rule as trigger, six fixed
@@ -58,8 +58,8 @@ was never written down, and the published plugin has moved since.
 ## What is not decided
 
 **Which pages Arc ships.** TimeScope's six are software-shaped: `arch`, `contracts`, `ops`,
-`testing`, `gotchas`, plus the index. ROADZ grew fourteen, and they are hardware subjects —
-`interface-board`, `speaker-power`, `rp2040-signals`. The page set may be per-repo rather
+`testing`, `gotchas`, plus the index. The client repo grew fourteen, and they are hardware subjects —
+a board page, an output-stage page, an MCU-signals page. The page set may be per-repo rather
 than fixed, which changes what the template is.
 
 **The seam with K2.** The wiki is K2 by depth but permanent by lifetime, which is what

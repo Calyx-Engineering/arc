@@ -1,0 +1,2 @@
+# manual, gh with a flag ahead of the subcommand
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "gh -R Calyx-Engineering/arc pr create --draft --title x --body-file b.md", "description": "Run"}}
