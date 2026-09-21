@@ -10,7 +10,7 @@
       "name": "arc",
       "source": "./",
       "description": "AI-driven engineering delivery — workspace guard, issue and report authoring, the campaign, the record, delegation, and the loop that improves them.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "Calyx Engineering"
       },
