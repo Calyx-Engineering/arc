@@ -136,7 +136,7 @@ flowchart TB
 | | |
 |---|---|
 | **Local is documented first, and is not a lesser route** | It is what makes a fix-and-reinstall cycle seconds rather than a release. Anyone changing Arc uses it |
-| **The repository is private** | Both routes use the installer's existing git credentials. `gh auth setup-git` is what makes the marketplace route work unattended |
+| **The repository is public since 2026-09-20** | Neither route needs credentials. Before that it was private, and `gh auth setup-git` was what made the marketplace route work unattended |
 | **If the install summary says `Run /reload-plugins to activate.`, run it** | Otherwise the plugin is installed and not loaded |
 
 ---

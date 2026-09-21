@@ -485,7 +485,7 @@ flowchart LR
 
 **Goal:** When issues and PRs are written, linked and closed - Tracker gets the record right the first time, and catches and repairs it when it does not.
 
-**How:** `skills/issue-write` does the writing. `hooks/tracker-verify` re-reads every issue, PR, merge and commit once it lands and tells the session what is wrong; the session repairs it through the skill. The hook never blocks.
+**How:** You ask in plain language — *"spawn an issue for that"*, *"merge it"* — and the session reaches for `skills/issue-write` itself; you never name it. `hooks/tracker-verify` re-reads every issue, PR, merge and commit once it lands and tells the session what is wrong; the session repairs it through the skill. The hook never blocks.
 
 | You say | Before | Now |
 |---|---|---|
@@ -678,7 +678,7 @@ flowchart LR
 | You say, or do | Before | Now |
 |---|---|---|
 | *"Is what the repo says still true?"* — you run `verify-all.sh` | 11 gates. A mechanism table behind its specs, a dead link in the operating agreement, a report over its budget, a mode row that was never written — none of them failed anything ([#143](https://github.com/Calyx-Engineering/arc/issues/143), [#258](https://github.com/Calyx-Engineering/arc/issues/258), [#185](https://github.com/Calyx-Engineering/arc/issues/185), [#198](https://github.com/Calyx-Engineering/arc/issues/198), [#227](https://github.com/Calyx-Engineering/arc/issues/227)) | 73 gates, and each of those now fails one. Two fail today: one reads a file outside git, and the report budget fails on the four rewritten reports. The full run takes about 25 minutes |
-| *"Make Arc public"* | Nobody had looked at what a public copy shows: 1,718 hits ([#134](https://github.com/Calyx-Engineering/arc/issues/134)) | Every hit has a decision and every decision is applied ([#320](https://github.com/Calyx-Engineering/arc/issues/320)). Run 2026-09-20: no tracked file names the client, its product, its hardware, a person or an employer. **The repository is still private** — that switch is yours. Detail in [§6.10.7](#6107-going-public--what-was-done-and-what-is-left) |
+| *"Make Arc public"* | Nobody had looked at what a public copy shows: 1,718 hits ([#134](https://github.com/Calyx-Engineering/arc/issues/134)) | Every hit has a decision and every decision is applied ([#320](https://github.com/Calyx-Engineering/arc/issues/320)). Run 2026-09-20: no tracked file names the client, its product, its hardware, a person or an employer. The tracker was swept and reworded the same night, and the repository was made public 2026-09-20. Detail in [§6.10.7](#6107-going-public--what-was-done-and-what-is-left) |
 | *"This hook is broken, turn it off"* | The off switch was a file placed by hand. The one time it was needed it landed in the wrong directory under the wrong name, and nothing said so ([#202](https://github.com/Calyx-Engineering/arc/issues/202)) | `bash hooks/hooks-off.sh <hook> 30` — one hook, this repository only, and it expires. `status` reads it back. Used live on `mode-guard`, 2026-09-20 |
 | *"Run the next set"* | Starting a workstream was commands assembled by hand, and two runs could take the same issue ([#194](https://github.com/Calyx-Engineering/arc/issues/194), [#214](https://github.com/Calyx-Engineering/arc/issues/214)) | `/arc-run` names the tracks, waits for your yes, and dispatches them. `tools/arc-claim.sh` refuses the second run on an issue — seen live on [#214](https://github.com/Calyx-Engineering/arc/issues/214) itself |
 | You open the milestone | 120 items for 85 units of work: 35 PRs were counted beside the issues they closed ([#204](https://github.com/Calyx-Engineering/arc/issues/204)) | A PR that closes an issue carries no milestone; a PR with no issue must. `tracker-verify` reports either one wrong |
@@ -740,7 +740,7 @@ flowchart LR
 
 #### 6.10.6 Not done
 
-- Making the repository public — yours
+- The old wording in the edit history of 39 issues and PRs and two comments — a click per item
 - A gate on the two privacy rules in [§6.10.7](#6107-going-public--what-was-done-and-what-is-left): they are instructions a session follows, and nothing checks that one does — no issue
 - A report of an installed plugin copy older than the tree — no issue
 - `verify-all.sh` takes about 25 minutes, past the ten-minute limit on a run's own tool call, so runs background it — no issue
@@ -762,7 +762,8 @@ flowchart LR
 | **Licence** | MIT — *"lets just go MIT."* Every released version stays free for any use |
 | **Ships, knowingly** | 138 of this repository's own checkout paths, in measurement records and dev-logs. None names a client or a person — *"the rest are fine"* |
 | **How it stays clean** | `tools/audit-public.sh` is a word search, run by you before publishing — not a feature anyone who installs Arc uses. It finds only the terms someone typed into its private list, so every anonymised file was also read by hand. Without the list it reports *partial* and exits 1, never *clean*. `tests/verify-public-audit.sh` runs in `verify-all.sh` |
-| **Left, and yours** | Making the repository public. **Git history still holds every removed file and name** — your decision, no rewrite: *"the proprietary information isnt really sensitive."* |
+| **The tracker, found at the flip** | [#320](https://github.com/Calyx-Engineering/arc/issues/320) swept tracked files only, and a public repository publishes its issues and PRs too. 2026-09-20: 39 issue and PR bodies, one title and two comments named the client. All reworded through the API and read back; a re-sweep of all 375 bodies, 68 comments, the milestones, labels and releases finds none. **Each item's edit history still shows the old wording** — deleting a revision is a click per item, not done |
+| **Made public 2026-09-20, on your word** | *"there really isnt anything that proprietary in here. there are no design files, just conversations."* **Git history and the `v0.1.0` tag still hold every removed file and name** — your decision, no rewrite |
 
 **How Arc protects the people who install it.** Your brief for [#320](https://github.com/Calyx-Engineering/arc/issues/320) had a second half: *"so that i don't end up inadvertently trying to take proprietary information from others who use the plugin."* It was in none of the issue's boxes and was done inside it.
 
@@ -781,7 +782,7 @@ flowchart LR
     G --> S["About 25 minutes a run;<br/>two fail today"]:::blocked
     P["You want Arc public"] --> AU["audit-public.sh sweeps<br/>every tracked file"]
     AU --> CL["No client, product, hardware,<br/>person or employer named"]
-    CL --> PV["Still private —<br/>the switch is yours"]:::blocked
+    CL --> PV["Tracker reworded too;<br/>public since 2026-09-20"]
     H["A hook misbehaves"] --> OFF["hooks-off.sh: one hook,<br/>this repository, expiring"]
     R["You say run the next set"] --> RUN["/arc-run dispatches;<br/>arc-claim.sh refuses a second run"]
     ED["You edit a skill and reload"] --> KEEP["The reload keeps your edits"]
@@ -816,7 +817,7 @@ flowchart LR
 - [ ] K2 and K3 swept
 - [ ] **Milestone closed by hand.** GitHub does not close it when its last issue closes
 - [ ] **The execution process graduates, or is deleted with a reason.** [`execution-process.md`](../arc-work/04-dogfood/execution-process.md) §8 carries the table: the run kinds, queue and driver to **m25**; `mode-guard` and the asymmetry to **m40**; the boundary sequence and report shape to m20 or m43, undecided; `skill-firing` to m33's territory, undecided. **It graduates on §7 being shorter, not on the document existing**
-- [ ] **When the repository is flipped public — David's, in the same sitting:** `README.md`'s *"The repository is private"* callout under the install routes goes, and `gh auth setup-git` stops being a requirement. Until the flip it is true and stays ([#320](https://github.com/Calyx-Engineering/arc/issues/320))
+- [x] **When the repository is flipped public — David's, in the same sitting:** `README.md`'s *"The repository is private"* callout under the install routes goes, and `gh auth setup-git` stops being a requirement. Until the flip it is true and stays ([#320](https://github.com/Calyx-Engineering/arc/issues/320))
 - [ ] **Default branch restored** — `tools/arc-default-branch.sh restore`. **It was flipped to `arc/04-dogfood` on 2026-09-05 and must be pointed back at `main`.** A crashed session leaves it on a branch that may later be deleted, and nothing about that state is visible in ordinary work
 
 ## 10 Soak

@@ -33,9 +33,6 @@ What lands next is the current arc's log under [docs/arc-log/](docs/arc-log/) an
 Full process — versioning, what a release consists of, what gates one — in
 [`docs/release/release-process.md`](docs/release/release-process.md).
 
-> **The repository is private.** Both routes use your existing git credentials. Run
-> `gh auth setup-git` once so Claude Code can clone without prompting.
-
 ### Local — a clone on disk
 
 **Documented first because it is the one you use while changing Arc.** Edit, reinstall, retry
