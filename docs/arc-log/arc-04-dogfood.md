@@ -191,7 +191,7 @@ Each workstream's boundary report lands here when it closes — one per workstre
 | **Loop** | [#144](https://github.com/Calyx-Engineering/arc/issues/144) | 5 | **5 of 5 closed.** Report in [§6.2](#62-loop--boundary-report). The parent stays open until the user closes it |
 | **Fire** | [#145](https://github.com/Calyx-Engineering/arc/issues/145) | 37 | **31 of 37 closed.** Reports in [§6.3](#63-fire--boundary-report) — the original thirteen — and [§6.7](#67-fire-second-closing--boundary-report) — fifteen attached after the first report. Six roll to arc 05 — [#243](https://github.com/Calyx-Engineering/arc/issues/243), [#261](https://github.com/Calyx-Engineering/arc/issues/261), [#294](https://github.com/Calyx-Engineering/arc/issues/294), [#325](https://github.com/Calyx-Engineering/arc/issues/325), [#326](https://github.com/Calyx-Engineering/arc/issues/326), [#327](https://github.com/Calyx-Engineering/arc/issues/327) — cut 2026-09-12 for a weekend release. The parent stays open until the user closes it |
 | **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 13 | **13 of 13 closed.** Report in [§6.4](#64-handoff--boundary-report). [#352](https://github.com/Calyx-Engineering/arc/issues/352) and [#354](https://github.com/Calyx-Engineering/arc/issues/354) rolled to arc 05 and detached. The parent closes at the user's review |
-| **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 12 | **12 of 12 closed.** Report in [§6.6](#66-tracker--boundary-report). Three children — [#270](https://github.com/Calyx-Engineering/arc/issues/270), [#271](https://github.com/Calyx-Engineering/arc/issues/271), [#274](https://github.com/Calyx-Engineering/arc/issues/274) — were filed by the parent mid-run. Spawned [#226](https://github.com/Calyx-Engineering/arc/issues/226), [#234](https://github.com/Calyx-Engineering/arc/issues/234), [#242](https://github.com/Calyx-Engineering/arc/issues/242), [#286](https://github.com/Calyx-Engineering/arc/issues/286) and [#287](https://github.com/Calyx-Engineering/arc/issues/287), open in Dogfood under no workstream. The parent stays open until the user closes it |
+| **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 18 | **18 of 18 closed.** Report in [§6.6](#66-tracker--boundary-report). [#346](https://github.com/Calyx-Engineering/arc/issues/346) rolled to arc 05 and detached. The parent closes at the user's review |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
 | **Skills** | [#90](https://github.com/Calyx-Engineering/arc/issues/90) | 9 | **3 of 9 closed.** Report in [§6.9](#69-skills--boundary-report). Six roll to arc 05 — [#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#282](https://github.com/Calyx-Engineering/arc/issues/282) — cut 2026-09-12 for a 24-hour autonomous push and weekend release. The parent stays open until the user closes it |
 
@@ -453,81 +453,91 @@ flowchart LR
 
 ### 6.6 Tracker — boundary report
 
-**Workstream:** Tracker · **Closed:** 2026-09-09 · **200 words**, diagram excluded
+**Workstream:** [#147](https://github.com/Calyx-Engineering/arc/issues/147) Tracker · **Closed:** 2026-09-13 · diagram excluded
+
+**Goal:** When issues and PRs are written, linked and closed - Tracker gets the record right the first time, and catches and repairs it when it does not.
+
+**How:** `skills/issue-write` does the writing. `hooks/tracker-verify` re-reads every issue, PR, merge and commit once it lands and tells the session what is wrong; the session repairs it through the skill. The hook never blocks.
+
+| You say | Before | Now |
+|---|---|---|
+| *"Spawn an issue for that"* | The new issue recorded nothing about where it came from — four in one review, found by hand ([#83](https://github.com/Calyx-Engineering/arc/issues/83)) | It names its parent in the first row of its `Related` table, and the parent gains a `Spawned` row. A miss is reported right after the create, and repaired |
+| *"Write an issue"* | No template: sections landed mid-body, seven `fix:` issues had no label, nothing said who does the work ([#85](https://github.com/Calyx-Engineering/arc/issues/85), [#84](https://github.com/Calyx-Engineering/arc/issues/84), [#274](https://github.com/Calyx-Engineering/arc/issues/274)) | One template, one `Related` table. The label follows the title's prefix; the type says loop or person, and the loop takes only its own. Every write is checked for title, headings, placeholders and dates |
+| *"Update issue #N"* | A failed edit saved the old text and `gh` reported success ([#87](https://github.com/Calyx-Engineering/arc/issues/87)) | The edit stops rather than save the old text, and the issue is re-read to confirm the new text is there |
+| *"Mark the PR ready"* | [#17](https://github.com/Calyx-Engineering/arc/issues/17) shipped missing two of five requirements; [#194](https://github.com/Calyx-Engineering/arc/issues/194) reached its PR with twelve finished boxes unticked ([#199](https://github.com/Calyx-Engineering/arc/issues/199), [#140](https://github.com/Calyx-Engineering/arc/issues/140)) | At the close, every box is ticked with evidence, named not done with its reason, or moved to the issue that owns it, and the work is read back against the issue. At `gh pr ready`, a box neither ticked nor explained in the PR text is listed, and settled. **Boxes are not ticked as the work goes** |
+| *"Merge it"* | Into an arc branch, `Closes #NN` linked nothing and closed nothing: 47 of 102 issues were linked to nothing ([#136](https://github.com/Calyx-Engineering/arc/issues/136), [#287](https://github.com/Calyx-Engineering/arc/issues/287)) | The keyword works only into the default branch — tested live. Anywhere else, `skills/issue-write` has the session close the issue itself — `gh issue close`, right after the merge — and ask you for the one step no API can do: the click that links the PR to the issue. An issue left open is reported, and `tools/arc-link-sweep.sh` lists the unlinked: 9 of 106 |
+| *"Commit this"* | One sentence in a commit message closed [#300](https://github.com/Calyx-Engineering/arc/issues/300) with every box unticked ([#336](https://github.com/Calyx-Engineering/arc/issues/336)) | Closing keywords go on a bare last line only. Every commit message is read, and a keyword inside a sentence is reported while it can still be amended |
+
+**Not delivered — approval before a commit or a merge.** In manual mode `hooks/mode-guard` was to put every commit, push, PR and merge in front of you to approve. It was built under Loop ([#189](https://github.com/Calyx-Engineering/arc/issues/189)) and changed from refusing to asking under Fire ([#364](https://github.com/Calyx-Engineering/arc/issues/364)), but the installed copy never picked up that change and refused commits you had asked for. It is unregistered since 2026-09-20 and stays off until [#373](https://github.com/Calyx-Engineering/arc/issues/373), milestone *tracker refactor*, re-evaluates it. Nothing stands between a session and a commit today but the session's own reading of the mode.
 
 #### 6.6.1 Delivered
 
-1. `hooks/tracker-verify`: `spawn-parent`, `issue-boxes`, `spawned-heading`, `merge-close`
-2. `tests/verify-issue-boxes.sh` gates `gh pr ready`
-3. Read-back step in `close-sequence.md`
-4. `issue-write`: `Related` table, guarded edit, post-merge bind, issue type
-5. Templates, type labels, `verify-labels.sh`; `arc-loop.sh` dispatches `Agent` only
-6. Fire's nine bodies reshaped; m12 §5 rewritten; `arc-link-sweep.sh`
+1. `skills/issue-write` — the `Related` table, the guarded edit, linking after a merge, labels, the issue type ([#135](https://github.com/Calyx-Engineering/arc/issues/135), [#87](https://github.com/Calyx-Engineering/arc/issues/87), [#193](https://github.com/Calyx-Engineering/arc/issues/193), [#84](https://github.com/Calyx-Engineering/arc/issues/84), [#274](https://github.com/Calyx-Engineering/arc/issues/274))
+2. `templates/issue.md` and `templates/pr.md`; Fire's nine issues rewritten to them ([#85](https://github.com/Calyx-Engineering/arc/issues/85), [#271](https://github.com/Calyx-Engineering/arc/issues/271))
+3. `hooks/tracker-verify` — five new checks: the parent, the boxes, heading order, an issue left open, a keyword in a commit ([#83](https://github.com/Calyx-Engineering/arc/issues/83), [#199](https://github.com/Calyx-Engineering/arc/issues/199), [#270](https://github.com/Calyx-Engineering/arc/issues/270), [#136](https://github.com/Calyx-Engineering/arc/issues/136), [#336](https://github.com/Calyx-Engineering/arc/issues/336))
+4. Three false alarms removed from it: ordinary prose, a PR closing several issues, a merge typed with no number ([#226](https://github.com/Calyx-Engineering/arc/issues/226), [#234](https://github.com/Calyx-Engineering/arc/issues/234), [#286](https://github.com/Calyx-Engineering/arc/issues/286))
+5. `tests/verify-issue-boxes.sh`, `tests/verify-labels.sh`, `tools/arc-link-sweep.sh`
+6. A read-back step in `close-sequence.md` ([#140](https://github.com/Calyx-Engineering/arc/issues/140))
+7. m12 and m42, the two specs for closing keywords, state one rule ([#287](https://github.com/Calyx-Engineering/arc/issues/287), [#322](https://github.com/Calyx-Engineering/arc/issues/322))
 
 #### 6.6.2 Spawned
 
 | | | Routed |
 |---|---|---|
-| [#270](https://github.com/Calyx-Engineering/arc/issues/270) [#271](https://github.com/Calyx-Engineering/arc/issues/271) [#274](https://github.com/Calyx-Engineering/arc/issues/274) | Filed by the parent | This workstream, closed |
-| [#225](https://github.com/Calyx-Engineering/arc/issues/225) [#233](https://github.com/Calyx-Engineering/arc/issues/233) | Bind probes | Closed |
-| [#226](https://github.com/Calyx-Engineering/arc/issues/226) | Gate fires on prose | Dogfood, unattached |
-| [#234](https://github.com/Calyx-Engineering/arc/issues/234) | Batch PR rejected | Dogfood, unattached |
-| [#242](https://github.com/Calyx-Engineering/arc/issues/242) | Stock labels | Dogfood, unattached |
-| [#286](https://github.com/Calyx-Engineering/arc/issues/286) | PR checks silently off | Dogfood, unattached |
-| [#287](https://github.com/Calyx-Engineering/arc/issues/287) | m12 contradicts m42 | Dogfood, unattached |
+| [#225](https://github.com/Calyx-Engineering/arc/issues/225) · [#226](https://github.com/Calyx-Engineering/arc/issues/226) · [#233](https://github.com/Calyx-Engineering/arc/issues/233) · [#234](https://github.com/Calyx-Engineering/arc/issues/234) · [#242](https://github.com/Calyx-Engineering/arc/issues/242) · [#270](https://github.com/Calyx-Engineering/arc/issues/270) · [#271](https://github.com/Calyx-Engineering/arc/issues/271) · [#274](https://github.com/Calyx-Engineering/arc/issues/274) · [#286](https://github.com/Calyx-Engineering/arc/issues/286) · [#287](https://github.com/Calyx-Engineering/arc/issues/287) · [#322](https://github.com/Calyx-Engineering/arc/issues/322) · [#336](https://github.com/Calyx-Engineering/arc/issues/336) | Found and finished here | Tracker — closed |
+| [#305](https://github.com/Calyx-Engineering/arc/issues/305) | The hook's test fixtures closed real issues | Dogfood, no workstream — closed |
+| [#346](https://github.com/Calyx-Engineering/arc/issues/346) | The placeholder report prints the whole body | Arc 05 |
+| [#375](https://github.com/Calyx-Engineering/arc/issues/375) | Boxes are ticked only at the close | Milestone *tracker refactor* |
 
 #### 6.6.3 Unexpected
 
-- Flip off: `Closes #NN` binds nothing; 47 of 102 Dogfood issues unlinked
-- `closingIssuesReferences` empty on every arc PR
-- Post-merge bind: three commands, second read-back
-- A hook cannot be soaked by the run that changes it
-- Secondary rate limit at full quota
+- A hook change does not run until the installed plugin is reloaded, so two new checks could not be tried on their own PRs
+- m12 and m42 drew opposite rules from the same 2026-08-16 test
+- The hook's test fixtures closed real issues and hit GitHub's rate limit ([#305](https://github.com/Calyx-Engineering/arc/issues/305))
 
 #### 6.6.4 Unplanned but needed
 
 | | |
 |---|---|
-| `tools/arc-link-sweep.sh` | Nothing counted unlinked |
-| 17 issues relabelled | Template needs labels |
-| [#305](https://github.com/Calyx-Engineering/arc/issues/305) via base merge | 57 hook cases failing |
+| One shared routine that finds a PR's number | Two checks each had their own |
+| [#305](https://github.com/Calyx-Engineering/arc/issues/305)'s fix, merged in from the arc branch | 57 hook cases failed without it |
 
 #### 6.6.5 Evidence
 
 | | |
 |---|---|
-| `verify-all.sh` | 15 → 58 gates, exit 0; [#302](https://github.com/Calyx-Engineering/arc/pull/302) killed at 42, 11 unreached |
-| `verify-hook.sh tracker-verify` | 60 → 78/0 |
-| `verify-issue-boxes.sh` | selftest 27/27 |
-| `verify-labels.sh` | selftest 27 → 39 |
+| `verify-all.sh` | 69 gates, exit 0 |
+| `verify-hook.sh tracker-verify` | 136 passed, 0 failed |
+| `verify-issue-boxes.sh` | selftest 27 of 27 |
+| A live session, 2026-09-20 — the activation log | The hook ran its checks on one issue, one PR, two merges and two commits: nothing to report |
 
 #### 6.6.6 Not done
 
-- [#84](https://github.com/Calyx-Engineering/arc/issues/84) one box: label delete denied
-- [#135](https://github.com/Calyx-Engineering/arc/issues/135) two boxes ticked on a reading
-- [#302](https://github.com/Calyx-Engineering/arc/pull/302) gate not green
-- Three hook checks unsoaked
-- 24 untyped outside Dogfood; m12 partial
-- `agents/read-back`; four [#271](https://github.com/Calyx-Engineering/arc/issues/271) findings unfiled
+- [#135](https://github.com/Calyx-Engineering/arc/issues/135): two boxes ticked from reading the code, never tested — in its dev-log, no issue
+- Ticking a box when its work is done, not at the close: only `skills/work-watch`'s sweep asks for it, and that sweep rarely runs — [#375](https://github.com/Calyx-Engineering/arc/issues/375)
+- No new check has yet caught a real mistake: the parent, issue-left-open and commit checks have reported only on test cases — §10 rows
+- No read-back agent was built; `issue-write` keeps that judgement. Four [#271](https://github.com/Calyx-Engineering/arc/issues/271) findings stay on it, unfiled
+- `gh pr merge` typed with a number still gets a wrong `merge-close` report — noted on [#286](https://github.com/Calyx-Engineering/arc/issues/286), no issue
 
 #### 6.6.7 What it changed
 
 ```mermaid
 flowchart LR
-    A["#83 spawn-parent"] --> H["hooks/tracker-verify<br/>60 → 78 cases"]
-    B["#199 issue-boxes"] --> H
-    C["#270 spawned-heading"] --> H
-    D["#136 merge-close"] --> H
-    E["#140 read-back<br/>judgement half"] --> B
-    F["#135 Related table"] --> G["#85 template"] --> I["#271 nine bodies"]
-    C --> I
-    J["#84 labels: kind"] --> K["#274 type: who<br/>arc-loop gate"]
-    L["#87 guarded edit"] --> M["#193 live-bind"] --> D
-    N["#226 #234 #242<br/>#286 #287"]:::blocked
+    U["You: spawn an issue, update it,<br/>mark the PR ready, merge, commit"] --> S["skills/issue-write writes it:<br/>template, Related table, label, type,<br/>an edit that cannot silently fail"]
+    S --> M["hooks/mode-guard: your approval before<br/>a commit, push, PR or merge —<br/>OFF since 2026-09-20, #373"]:::blocked
+    M --> G["GitHub:<br/>the issue, PR, merge or commit lands"]
+    G --> H["hooks/tracker-verify re-reads what landed:<br/>18 checks"]
+    H -- "something is wrong" --> R["The session is told,<br/>and repairs it through the skill"]
+    R --> G
+    H -- "nothing wrong" --> OK["Silent"]
+    G --> W["tools/arc-link-sweep.sh, at a checkpoint:<br/>issues still linked to nothing"]
+    W --> P["A person clicks the link —<br/>no API can"]:::blocked
     classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
 ```
 
 *End of Tracker's boundary report.*
+
+---
 
 ---
 
@@ -595,54 +605,6 @@ flowchart LR
 ```
 
 *End of Fire's second boundary report.*
-
----
-
-### 6.8 Tracker, second closing — boundary report
-
-**Workstream:** Tracker · **Closed:** 2026-09-13 · **197 words**, diagram excluded
-
-§6.6 covered through 2026-09-09. This covers what it left open: #226, #234, #286, #287, #336.
-
-#### 6.8.1 Delivered
-
-1. The close-sequence gate stops reporting ordinary prose as a step-count drift, still catches a real one
-2. A PR body closing several issues passes the tracker check as one well-formed closing block
-3. `tracker-verify` resolves a numberless `gh pr merge`'s target from its output or the branch, and logs why when it cannot
-4. m12 and m42's contradictory non-default-base rule resolved by a live test; m12's reading struck
-5. `tracker-verify` catches a closing keyword in commit-message prose, not only `gh` arguments
-
-#### 6.8.2 Spawned
-
-| | | Routed |
-|---|---|---|
-| [#322](https://github.com/Calyx-Engineering/arc/issues/322) | Probe for #287's live test | This workstream, closed |
-
-#### 6.8.3 Unexpected
-
-- m12 and m42 read the same 2026-08-16 data as opposite rules; a live test settled it (#287)
-- Two of #286's five requirements had already landed under #231, before this branch
-- #336's own fix commit tripped the defect it fixed — caught only by a reviewer's read
-
-#### 6.8.4 Unplanned but needed
-
-| | |
-|---|---|
-| Shared PR-number resolver | `merge-close` and `check_pr_ready` each had one; #286 unified them |
-
-#### 6.8.5 Evidence
-
-| | |
-|---|---|
-| `verify-hook.sh tracker-verify` | 78 → 136 passed, 0 failed |
-| `verify-all.sh` | 58 → 69 gates, exit 0 |
-
-#### 6.8.6 Not done
-
-- #286's numbered-merge case still misreports `merge-close` — recorded, not filed
-- `issue-write`'s two lingering "closure defers to the arc PR" sentences — pre-existing, untouched
-
-*End of Tracker's second boundary report.*
 
 ---
 
