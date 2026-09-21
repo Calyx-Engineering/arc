@@ -6,17 +6,24 @@ not part of what Arc ships — the plugin's own artifacts (`.claude-plugin/`, `s
 
 ## Start here
 
-Read [docs/product-architecture/README.md](docs/product-architecture/README.md) first,
-every cold start. It is the authority on what Arc is made of — its six pieces, its
-mechanisms, the artifacts that carry them, and the state each is in.
+**The cold-start reading path is [`skills/handoff`](skills/handoff/SKILL.md)'s** — `HANDOFF.md`,
+this file, the current arc-log, the current issue's dev-log, then only what those name.
+`/handoff-resume` runs it. Nothing else is read before acting.
 
-**Not `ROADMAP.md`** — last updated 2026-08-21, and it does not know arc 04 exists.
-[#175](https://github.com/Calyx-Engineering/arc/issues/175) decides whether it is maintained or retired.
+[docs/product-architecture/README.md](docs/product-architecture/README.md) is the authority on
+what Arc is made of — its six pieces, its mechanisms, the artifacts that carry them, and the state
+each is in. **Opened when the work asks that question, never read whole at a cold start**; its
+opening says which section answers what.
+
+**There is no roadmap.** It was retired 2026-09-20 ([#175](https://github.com/Calyx-Engineering/arc/issues/175))
+and frozen at `docs/release/roadmap-2026-08.md`. What moves next is the current arc's arc-log.
 
 **Execution mode is manual** — files change; nothing is committed, pushed or merged unless
 asked. It changes only when `HANDOFF.md`'s *Execution mode* row says autonomous, and that row
-is read, never remembered — `hooks/mode-guard` reads it before every commit, push, PR and merge,
-and denies in manual. **You may set that row to manual and never to autonomous**
+is read, never remembered. **`hooks/mode-guard` is unregistered since 2026-09-20** — it denied
+commits David had asked for. [#373](https://github.com/Calyx-Engineering/arc/issues/373) switched it off, by
+[PR #374](https://github.com/Calyx-Engineering/arc/pull/374); whether it comes back is milestone *tracker refactor*'s
+to decide, so nothing enforces the row but you. **You may set that row to manual and never to autonomous**
 (`skills/autonomy-set`).
 
 ## Working with David
@@ -120,6 +127,11 @@ the machine. Committed is not the same as exercised.
 - Changes made at PR time soak on the **next** work stretch.
 - The soak record lives in **this repo's** `arc-log`, appended by whichever repo
   exercised the change — never in the consuming repo, which loses cross-repo soaks.
+- **A soak line names the change, what kind of work exercised it, and the result — never the
+  consumer.** *"Soaked on a hardware bring-up stretch, another repo"*, not the repository, the
+  client, the product or the issue it was working. This file may be public; the consuming
+  repository's work is not Arc's to publish. A result that cannot be stated without the
+  consumer's content is stated as *fired / did not fire / misfired*, and the detail stays there.
 
 **Unsoaked** = a commit here with no soak line from any repo.
 

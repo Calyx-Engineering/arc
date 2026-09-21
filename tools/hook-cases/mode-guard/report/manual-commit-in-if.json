@@ -1,0 +1,2 @@
+# manual, a commit in an if condition and after a multi-line edit
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "python edit.py\nif git commit -qm work; then echo done; fi", "description": "Run"}}

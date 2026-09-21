@@ -1,0 +1,2 @@
+# manual, `git -C path commit` — holds no "git commit", and the old string match allowed it
+{"tool_name": "Bash", "cwd": "__FIXTURE_MANUAL__", "tool_input": {"command": "git -C ../other -c user.name=x commit -m \"work\"", "description": "Run"}}

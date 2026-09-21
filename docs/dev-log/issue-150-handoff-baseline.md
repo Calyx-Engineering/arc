@@ -13,7 +13,7 @@ criteria for a working handoff; nothing measured either of them.
 **Five of the eight post-install cold starts got their first action right with no correction,
 three did not** — the 5/3 split #150 recalled, from the *first action* criterion alone. Full
 table and per-cell evidence in
-[`handoff-baseline.md`](../arc-work/04-dogfood/handoff-baseline.md).
+`handoff-baseline.md` (private corpus, not in this repository).
 
 **No single score satisfies the "Done when" as written.** The issue defines a working handoff as
 correct first action **and** able to say why. Requiring both scores 3 good and 5 bad, inverting

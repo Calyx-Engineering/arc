@@ -22,6 +22,11 @@ root = os.environ["CASES_ROOT_DIR"]
 evaldir = os.environ["CASES_EVAL_DIR"]
 strict = os.environ.get("CASES_STRICT") == "1"
 
+# The transcript side is masked before it is compared — tools/corpus_mask.py says why. #320.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import corpus_mask
+MASK = corpus_mask.load()
+
 
 def is_prompt_turn(o):
     """A turn that a prompt opened — typed by the user, or dispatched by the loop.
@@ -159,7 +164,7 @@ for cp in cases:
         continue
 
     stored = io.open(os.path.join(d, "prompt.md"), encoding="utf-8").read()
-    if stored.rstrip("\n") != body.rstrip("\n"):
+    if stored.rstrip("\n") != corpus_mask.apply(body, MASK).rstrip("\n"):
         drift.append("%s/%s" % (shape, slug))
 
     got = set(fires)

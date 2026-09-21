@@ -15,7 +15,7 @@
         "name": "Calyx Engineering"
       },
       "homepage": "https://github.com/Calyx-Engineering/arc",
-      "license": "UNLICENSED",
+      "license": "MIT",
       "category": "workflow",
       "tags": ["engineering", "hardware", "workflow", "delivery"]
     }

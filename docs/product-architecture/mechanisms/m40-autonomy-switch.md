@@ -160,7 +160,8 @@ Dropping to manual stays Claude's to do — at a named boundary, or when the sel
 **This cannot be enforced mechanically and is not pretended to be.** `hooks/mode-guard` sees a
 file change, not who asked for it, and gating writes to `HANDOFF.md` would block the rest of a
 file Claude legitimately maintains. What became mechanical is the other half: the mode is read
-at the moment of a commit rather than recalled, and manual denies.
+at the moment of a commit rather than recalled, and manual puts the command to the user —
+[m49](m49-execution-mode-guard.md).
 
 **The user never hand-edits `HANDOFF.md` to switch modes.** The switch is a sentence in chat.
 
@@ -320,12 +321,12 @@ outward-facing action only when it is *durably authorized*. Five prohibitions ea
 override is still five prohibitions, and each one is evidence that authorization has not been
 given.
 
-| | arc | ROADZ |
+| | arc | The client repo |
 |---|---|---|
 | Mode rule stated in | 5 artifacts | 1 |
 | `gh pr merge` denied | **4** — #95, #97, #114, #137 | **0**, across 12 merges |
 
-ROADZ reached one statement on install day, [`44dbb06`](https://github.com/Lantern-Systems/roadz-sound-system/commit/44dbb06):
+The client repo reached one statement on install day, `44dbb06` in the client repo:
 *"Two copies of the same rule drift, and the copy an agent reads first wins."* Its `CLAUDE.md`
 states the mode as a state, once, with the override inside the sentence, and delegates
 everything else to the skill.

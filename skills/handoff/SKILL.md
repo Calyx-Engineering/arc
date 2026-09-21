@@ -80,7 +80,7 @@ a comparison against the arc-log, which the reading order has already opened.
 | Check | Stale when |
 |---|---|
 | **The date in the handoff's title** | More than 24 hours before today. Age alone is not proof of staleness, but past a day the odds that something happened outside it are high enough to say so |
-| **Transcripts newer than the handoff** | `find <transcript-dir> -name '*.jsonl' -newer HANDOFF.md` prints anything. A session ran after this handoff was written and its decisions are not in here |
+| **Transcripts newer than the handoff** | `find <transcript-dir> -name '*.jsonl' -newer HANDOFF.md` prints a file other than the writer's own live session — the one the handoff's *Transcripts* line names as live, which keeps growing after the write and is always newer. Any other file means a session ran after this handoff was written and its decisions are not in here |
 | `git branch --show-current` | The branch differs from the one *Where we are* names |
 | `git status --short` | The tree is dirty and the handoff does not say work was left uncommitted |
 | `git log --oneline -5` | The last commit is not one the handoff accounts for |
@@ -105,10 +105,10 @@ does not account for.
 first cell names the mode, `grep -m1 -iE` over `HANDOFF.md`, then the second cell with emphasis,
 backticks and **every space** removed, lowercased. [`hooks/mode-guard`](../../hooks/mode-guard)
 reads exactly that before every commit, push, PR and merge, so a check that located the row any
-other way could pass while the hook denies on the same file. **A cell that is not exactly
-`manual` or `autonomous` after that is unreadable, and the hook denies on it** — *Autonomous to
+other way could pass while the hook stops the same commit to ask. **A cell that is not exactly
+`manual` or `autonomous` after that is unreadable, and the hook reads it as manual** — *Autonomous to
 wave 6*, or the template's own *Manual · Autonomous* left unedited, is not a mode. Read it here,
-where it costs a sentence, rather than at a denied commit. The arc-log side costs nothing extra:
+where it costs a sentence, rather than at a commit that stops to ask. The arc-log side costs nothing extra:
 *How this arc is executed* is already row 3 of the reading order above.
 
 **Neither side is authority over the other's subject.** The arc-log is the plan and the handoff
@@ -364,6 +364,11 @@ from a transcript directory to its branch and issue then dies with the worktree,
 of [m32](https://github.com/Calyx-Engineering/arc/blob/main/docs/product-architecture/mechanisms/m32-session-preservation.md).
 It is the one file here that goes **into** the record rather than out of it — the two entries above
 are ignored, this one is tracked.
+
+**One exception: a repository that is published.** The index is one person's machine paths and
+transcript directories, so a public repository ignores it instead — under a `# m32 opt-out` comment
+in `.gitignore`, which is what `tests/verify-session-index.sh` looks for. It costs that repository
+the cross-machine mapping, knowingly. An ignore line without the comment is still a defect.
 
 **At arc close, delete it.** Anything in it worth keeping was already promoted to the
 arc-log or a dev-log. If deleting it feels lossy, something skipped a tier — find what and

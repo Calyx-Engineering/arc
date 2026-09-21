@@ -1,7 +1,7 @@
-# Friction transcript log — ROADZ rev B, 2026-07-21 → 2026-08-14
+# Friction transcript log — a client hardware revision, 2026-07-21 → 2026-08-14
 
 Evidence for the plugin-scope decision. Extracted from 28 Claude Code transcripts
-across the ROADZ branches and worktrees (~91 MB), filtered to 474 David messages, then
+across the client repo's branches and worktrees (~91 MB), filtered to 474 David messages, then
 to 75 carrying a correction or friction signal.
 
 Method: read the user's own words, not the assistant's summaries of them. Every row
@@ -37,8 +37,8 @@ Ranked by how often it recurred, because recurrence is what a mechanism can fix.
 
 The single worst moment in four weeks:
 
-> **"CRAP!! we screwed up big time. and we both missed it. we are supposed to be
-> working off the parent branch of interface-pcba/rev_b This just completely messed
+> **"C\*\*P!! we screwed up big time. and we both missed it. we are supposed to be
+> working off the parent branch of [the board's integration branch] This just completely messed
 > everything up."** *(2026-08-03)*
 
 And a cluster of smaller instances of the same class:
@@ -59,7 +59,7 @@ needed, one per failure above:
 | **Base is current** | A branch cut before other work merged, silently stale |
 
 TimeScope solves an adjacent problem with a `PreToolUse` hook blocking source edits on
-protected branches. ROADZ has no equivalent, and none of these three checks exist.
+protected branches. The client repo has no equivalent, and none of these three checks exist.
 
 **A hook, and the highest-value single mechanism in this document** — the 08-03 case cost
 a session to recover; the others cost minutes each but recur.
@@ -114,7 +114,7 @@ Confirmed in David's own words two weeks later:
 
 **Diagnosis.** David already knows the fix and named it himself — TimeScope's spine
 session. It exists in software and has never been ported to hardware. Handoff files
-were tried in ROADZ and proved insufficient.
+were tried in the client repo and proved insufficient.
 
 ### 2.5 Committing too early / unreviewable diffs
 
@@ -141,7 +141,7 @@ The most technically serious category, and the least mechanical:
 > *"update your assumptions, i already have a 2mOhm in the LTC surge stopper."*
 
 > *"ok i actually got the requirement wrong - max output is 4A per channel … here is
-> where the requirement came from - january 15th from chad on slack: [link]"*
+> where the requirement came from - january 15th from [a colleague] on slack: [link]"*
 
 **Diagnosis — corrected 2026-08-16 by David.** The original reading here was
 *"assumptions invisible until wrong."* That is wrong. The information was available —
@@ -179,10 +179,10 @@ The failure is silent — caught only because David happened to check.
 > *"with a commit that says it closes #11 is there a reason that #11 didn't automatically
 > get closed and tagged to the commit?"*
 
-> *"i found how to do it. i dont have authority to do it so i asked chad. please manually
+> *"i found how to do it. i dont have authority to do it so i asked [a colleague]. please manually
 > close issue 3"*
 
-Already documented in ROADZ `CLAUDE.md` (the default-branch workaround) and already
+Already documented in the client repo's `CLAUDE.md` (the default-branch workaround) and already
 decided as build work.
 
 ---
@@ -207,7 +207,7 @@ hurt during four weeks of hardware work was almost entirely delivery.
 | Friction | Hardware-specific? | TimeScope already solves it? |
 |---|---|---|
 | Wrong branch / worktree | No | Partly — `PreToolUse` branch guard |
-| Report style | No | No — ROADZ built the skill |
+| Report style | No | No — the client repo built the skill |
 | Issue style | No | No |
 | Session context loss | No | **Partly — see 3.2a** |
 | Premature commits | No | No |
@@ -236,7 +236,7 @@ is a role that reads it. **A window is not a place to store state.**
 context saturates.
 
 **And TimeScope's arc-log is software-shaped** — waves, tracks, PRs. It carries none of
-the working context a hardware session needs. Neither did ROADZ's `handoff.md`.
+the working context a hardware session needs. Neither did the client repo's `handoff.md`.
 
 **A single deeper file does not fix it either** — it grows across a 2–12 day arc until it
 saturates a fresh session by itself, which is the spine's failure moved into a file.
@@ -384,7 +384,7 @@ the person who lived it corrected them. **The interview step is not optional.**
 | **2.6** | Assumptions invisible until wrong → the human should state more | **Analysis depth** — datasheet curves available, not retrieved | Needs a domain-expert persona, not a communication fix |
 | **2.4** | Worktree conversations are lost | **They survive; they become unfindable** | Needs an index, not a backup |
 
-The §2.4 correction was empirical. ROADZ has **2 live worktrees and 4 transcript
+The §2.4 correction was empirical. The client repo has **2 live worktrees and 4 transcript
 directories** — two orphans, including the issue-44 conversation David reported lost. It
 is on disk. See [session-preservation](../../product-architecture/mechanisms/m32-session-preservation.md).
 
@@ -393,12 +393,12 @@ is on disk. See [session-preservation](../../product-architecture/mechanisms/m32
 CLAUDE.md records the belief that `Closes #NN` only links when the PR base is the repo
 default branch. **Measured 2026-08-16 and disproved.**
 
-Two merged PRs, both based on `interface-pcba/rev_b`:
+Two merged PRs, both based on `widget-board/rev_b`:
 
 | PR | Base | `closingIssuesReferences` | Created |
 |---|---|---|---|
-| #55 | `interface-pcba/rev_b` | **Linked to #54** | After the default switch |
-| #48 | `interface-pcba/rev_b` | **Empty** | Before the default switch |
+| #55 | `widget-board/rev_b` | **Linked to #54** | After the default switch |
+| #48 | `widget-board/rev_b` | **Empty** | Before the default switch |
 
 Same non-default base, opposite outcomes. GitHub parses the keyword **when the body is
 written**, against whatever the default was at that moment — a parse-time quirk, not a
@@ -440,7 +440,7 @@ already exists for file edits and is simply not applied elsewhere.
 **Friction-derived only.** These fifteen came out of the evidence above.
 They are not the full product scope — mechanisms that already work caused no friction
 and left no trace here. The complete picture, including those, is in
-[product-plan.md](../../product-architecture/archive/product-plan.md).
+product-plan.md (private corpus, not in this repository).
 
 **Form** — `hook` fires automatically and can deny · `skill` is invoked and shapes
 behavior · `agent` runs token-heavy work and returns a bounded packet.
@@ -504,7 +504,7 @@ was absent — which is where the remaining gaps are:
 | **Merge → board-in-hand** | Fab, assembly, receiving — entirely unmodelled |
 | **Verification once hardware exists** | How a campaign gets planned and results recorded |
 | **BOM and component-revision control** | Configuration management in practice, not theory |
-| **Multi-user and PLM** | A second engineer; Dedrone with Altium 365 and Atlassian |
+| **Multi-user and PLM** | A second engineer; an employer with a cloud PLM and Atlassian |
 
 **One question is now sharper than the others.** §3.4 shows requirements hiding in Slack
 threads and undocumented conversation. Before designing elicitation, it is worth knowing

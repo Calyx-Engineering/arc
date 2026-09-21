@@ -15,7 +15,7 @@ case "$NAME" in
 esac
 ```
 
-Arc names arcs `arc/<nn>-<slug>`. [ROADZ](https://github.com/Lantern-Systems/roadz-sound-system) names them after the product component being revised, and declares so in its own `CLAUDE.md`: *"New branches take `<module>/rev-<X>-issue-<NN>-<slug>`"*. Every branch on that convention fell through to the last arm. Five firings in three weeks of hardware work, correct none of the times.
+Arc names arcs `arc/<nn>-<slug>`. The client repo names them after the product component being revised, and declares so in its own `CLAUDE.md`: *"New branches take `<module>/rev-<X>-issue-<NN>-<slug>`"*. Every branch on that convention fell through to the last arm. Five firings in three weeks of hardware work, correct none of the times.
 
 The hook was not wrong about the rule. It was wrong about whose rule it was.
 
@@ -34,9 +34,9 @@ The hook was not wrong about the rule. It was wrong about whose rule it was.
 
 | | |
 |---|---|
-| **`issue` and `pr` are not derived** | ROADZ's `CLAUDE.md` declares only the issue form, and its real `…-pr58-arc-setup` branches conform. Deriving labels *only* from the declared text would have re-created the bug against a repo that documents one of its two forms |
+| **`issue` and `pr` are not derived** | The client repo's `CLAUDE.md` declares only the issue form, and its real `…-pr58-arc-setup` branches conform. Deriving labels *only* from the declared text would have re-created the bug against a repo that documents one of its two forms |
 | **A declared form ends `-<number>-<slug>`** | The trailing separator is what separates an identifier from a version tag. `release/2026-q4` ends at its number; reading `q` out of it as a label let `feat/q4-anything` pass as numbered — [pass 2](#the-review-passes) caught that, live |
-| **A name the section spells out in full is exempt** | ROADZ declares `interface-pcba/rev_b` as its integration branch two lines above the work-branch form. It carries no number and is not meant to. Telling a repo to rename the branch its own convention names is the failure being fixed |
+| **A name the section spells out in full is exempt** | The client repo declares `widget-board/rev_b` as its integration branch two lines above the work-branch form. It carries no number and is not meant to. Telling a repo to rename the branch its own convention names is the failure being fixed |
 | **Link targets and filenames are not branch names** | `skills/issue-write` and `tools/new-direct-pr.sh` both appear in Arc's branching section |
 | **Only shell metacharacters are rejected, never "illegal" ref names** | `git branch \| grep foo` put an operator in the name slot and got a report about a branch called `\|`. The first repair whitelisted ref-shaped names instead and silenced `'fix-the-thing'`, `fix-the-thing;` and `_wip` — legal names, one of them exactly what the hook is for |
 
@@ -46,11 +46,11 @@ The hook was not wrong about the rule. It was wrong about whose rule it was.
 
 | Fixture | What it is for |
 |---|---|
-| `fixtures/roadz` | ROADZ's declared convention. The **regression** fixture: five of its real branch names, all of which reported before this change |
+| `fixtures/module-rev` | The client repo's declared convention. The **regression** fixture: five of its real branch names, all of which reported before this change |
 | `fixtures/labelled` | A convention labelling numbers `ticket`, a word Arc does not know. The **proof of the read** — and only as a pair, because a pass case alone is also green when nothing was read |
 | `fixtures/silent` | A `CLAUDE.md` with no branching section. One of the two silences; `__FIXTURE_MAIN__` is the other, a repo with no `CLAUDE.md` at all |
 
-The real ROADZ names, all previously reported and all now passing: `interface-pcba/rev_b-issue-1-dimmer-flasher`, `interface-pcba/rev-b-issue-15-audio-out-isolation`, `interface-pcba/rev_b-issue-39-unify-rp2040-pinout`, `interface-pcba/rev-b-pr58-arc-setup`, `interface-pcba/rev-b-pr70-inductance-sweep`. The third carries digits in its slug (`rp2040`), which is the case that pins *extract the number, do not match the slug*.
+The client repo's branch shapes (names changed), all previously reported and all now passing: `widget-board/rev_b-issue-1-lamp-driver`, `widget-board/rev-b-issue-15-output-isolation`, `widget-board/rev_b-issue-39-unify-mcu2040-pinout`, `widget-board/rev-b-pr58-arc-setup`, `widget-board/rev-b-pr70-bench-sweep`. The third carries digits in its slug (`mcu2040`), which is the case that pins *extract the number, do not match the slug*.
 
 ## Three repairs the issue does not name
 
@@ -59,7 +59,7 @@ The convention read exposed defects in the surrounding code that had to be fixed
 | | |
 |---|---|
 | **`field()` matched an unquoted substring** | `grep -m1 -- "$1"` matches any key *or value* containing the field name. The helper was dead code until this change; the convention read is its first caller, and the path it returns had to be the `cwd` key. Now `"\"$1\""`, as `mode-guard` has it |
-| **`CMD` kept the payload's closing braces** | `s/"$//` strips a quote only at end of line, so a `…"}}`-terminated payload put `interface-pcba/rev-b-pr70-inductance-sweep"}}` in the report — the name quoted back was not the name created |
+| **`CMD` kept the payload's closing braces** | `s/"$//` strips a quote only at end of line, so a `…"}}`-terminated payload put `widget-board/rev-b-pr70-bench-sweep"}}` in the report — the name quoted back was not the name created |
 | **`NAME` can be emptied after it is read** | Stripping quotes and a `;` from a shell token can leave nothing, so the emptiness test is repeated after the strip |
 
 **Eight existing cases changed their `cwd`** from a throwaway fixture repo to `.`, because a hook that reads a convention cannot be tested against a repo that has none. The consequence is a coupling worth knowing: those eight now read **Arc's own `CLAUDE.md`**, so editing this repo's branching section changes their verdicts.
@@ -73,13 +73,13 @@ bash tests/verify-all.sh                            → 13 gates, all clean   ex
 
 **Run them one at a time** — see the last row of *Not done*.
 
-Before the change, the case directory as it then stood ran 15 passed, 5 failed. Against the directory as it stands now, the old hook runs 17 passed, 10 failed, and **all five ROADZ names report in one run**. An earlier reading of this dev-log said four of the five reported and the fifth was confirmed by hand; that was the kill-switch race below, not a property of the hook.
+Before the change, the case directory as it then stood ran 15 passed, 5 failed. Against the directory as it stands now, the old hook runs 17 passed, 10 failed, and **all five client-repo names report in one run**. An earlier reading of this dev-log said four of the five reported and the fifth was confirmed by hand; that was the kill-switch race below, not a property of the hook.
 
 ## The review passes
 
 The three passes are the record's substance here, because two of them found defects the run had already convinced itself were not there.
 
-**Pass 1**, against the issue: nine findings. Seven in scope and fixed — `git branch | grep foo` reported on `|`; ROADZ's own integration branch was reported; the `camp-reports:` declaration named a `base-is-arc` check that does not exist and printed a skip reason that was false when a base *was* given; the section extraction merged two headings; a Windows `cwd` arrives escaped and was silently discarded; and two cases passed for the wrong reason.
+**Pass 1**, against the issue: nine findings. Seven in scope and fixed — `git branch | grep foo` reported on `|`; the client repo's own integration branch was reported; the `camp-reports:` declaration named a `base-is-arc` check that does not exist and printed a skip reason that was false when a base *was* given; the section extraction merged two headings; a Windows `cwd` arrives escaped and was silently discarded; and two cases passed for the wrong reason.
 
 **Pass 2**, against pass 1's repairs: the two that mattered were both introduced by the repairs.
 
@@ -100,4 +100,4 @@ Both are now cases: `report/quoted-name`, `report/version-tag-not-a-label`.
 
 ## Soak
 
-Unsoaked at merge. A hook change is exercised by the next work stretch that creates a branch — in this repo or in ROADZ, whose real names are now the regression cases. The soak line belongs in this repo's `arc-log`, appended by whichever repo exercises it.
+Unsoaked at merge. A hook change is exercised by the next work stretch that creates a branch — in this repo or in the client repo, whose branch shapes are now the regression cases. The soak line belongs in this repo's `arc-log`, appended by whichever repo exercises it.

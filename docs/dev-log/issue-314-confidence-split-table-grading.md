@@ -31,10 +31,10 @@ one thing `skills/engineering-report` fixes the name of, so that is what is matc
 
 A real excerpt —
 `docs/report/issue-01-warning-light-dimming/analysis-night-detect.md` lines 120-159 in the
-`roadz-sound-system` corpus, the document's own `## Confidence` section — scored `NONE` before
+client-repo corpus, the document's own `## Confidence` section — scored `NONE` before
 the fix (its only table is *Not established*, six rows, none naming a source) and `NOTABLE`
 after, since the region now has no claim table in it at all. Filed as
-[`evals/report-shape/night-detect-not-established`](../../evals/report-shape/night-detect-not-established).
+`evals/report-shape/night-detect-not-established` (private corpus, not in this repository).
 
 Two selftest fixtures in `tools/report-grade.sh` pin the mechanism directly:
 

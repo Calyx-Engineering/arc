@@ -22,7 +22,7 @@ then *generate* issues as understanding develops.
 *known* work into disjoint tracks; a guided arc discovers its own scope as it runs. A flat
 issue list loses that structure entirely.
 
-Issues already record what spawned them — established ROADZ practice — so the data exists.
+Issues already record what spawned them — established client-repo practice — so the data exists.
 What is missing is anything that reads it.
 
 ```mermaid
@@ -75,7 +75,7 @@ issue metadata, and no drift risk. Rendered into the arc-log at arc close so the
 part of the record.
 
 **Spawned versus related.** The distinction is by cause, not subject: spawned means this
-effort caused the issue to exist. ROADZ got this wrong at least once. The tree is only as
+effort caused the issue to exist. The client repo got this wrong at least once. The tree is only as
 good as that classification, so the mechanism may need to check it rather than trust it.
 
 **Where the data comes from.** Issue bodies carry spawn relationships as prose. GitHub

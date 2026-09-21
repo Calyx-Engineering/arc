@@ -23,7 +23,7 @@ stay open.
 | **Every wave** | **Done and merged. The milestone is 65 closed, 0 open.** Wave 6 ran [#48](https://github.com/Calyx-Engineering/arc/issues/48) · [#73](https://github.com/Calyx-Engineering/arc/issues/73) · [#78](https://github.com/Calyx-Engineering/arc/issues/78) · [#119](https://github.com/Calyx-Engineering/arc/issues/119) · [#122](https://github.com/Calyx-Engineering/arc/issues/122) · [#120](https://github.com/Calyx-Engineering/arc/issues/120) — the last three are review, the fix it found, and the release |
 | **`v0.1.0`** | **Arc's first release.** [`docs/release/release-process.md`](../release/release-process.md) is how the second is cut. **Nothing in it has run** — that is what the release makes possible, not what it proves |
 | **After wave 5** | Four no-issue PRs — [PR #107](https://github.com/Calyx-Engineering/arc/pull/107) [PR #108](https://github.com/Calyx-Engineering/arc/pull/108) [PR #110](https://github.com/Calyx-Engineering/arc/pull/110) [PR #113](https://github.com/Calyx-Engineering/arc/pull/113) — and [#105](https://github.com/Calyx-Engineering/arc/issues/105) · [#106](https://github.com/Calyx-Engineering/arc/issues/106) filed **out of** the arc. See §12.2 |
-| **Friction with Arc itself** | Goes in [`docs/arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md), **as it happens**. Read in by the retrospective at the end; it does not replace one. Governed by a switch in Camp's operating agreement, **on in this repository and off everywhere else** — [#98](https://github.com/Calyx-Engineering/arc/issues/98) |
+| **Friction with Arc itself** | Goes in `docs/arc-work/03-camp/friction-log.md` (private corpus, not in this repository), **as it happens**. Read in by the retrospective at the end; it does not replace one. Governed by a switch in Camp's operating agreement, **on in this repository and off everywhere else** — [#98](https://github.com/Calyx-Engineering/arc/issues/98) |
 | **Not in this arc** | The monitoring agent · onboarding · mined thresholds |
 
 **The one thing to check:** the spec-to-issue table below. Every section of m43 appears
@@ -302,7 +302,7 @@ and `git push`.
 | | |
 |---|---|
 | **The user writes that file, not Claude** | `CLAUDE.md` says `settings.json` outside the hooks block is never edited autonomously, and an agent that can widen its own permissions has no switch at all |
-| **Where the evidence is** | [`arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md) entries 1 and 2 |
+| **Where the evidence is** | `arc-work/03-camp/friction-log.md` (private corpus, not in this repository) entries 1 and 2 |
 | **Where the durable version goes** | m40, via [#73](https://github.com/Calyx-Engineering/arc/issues/73). *The agent cannot install its own switch* is a design constraint m40 does not yet state |
 
 #### 6.1.2 Establishing the intent — two passes
@@ -455,7 +455,7 @@ write.
 |---|---|---|---|
 | [#27](https://github.com/Calyx-Engineering/arc/issues/27) | This spec and the decomposition | **m43** · **m44** | [m43](../product-architecture/mechanisms/m43-camp-assistant.md) whole — this issue produced it |
 | [#31](https://github.com/Calyx-Engineering/arc/issues/31) | Say what a branch, file or setting is when naming it | **m38** `chat-response` · **m42** | [`skills/chat-response`](../../skills/chat-response/SKILL.md) · [m42](../product-architecture/mechanisms/m42-default-branch-flip.md) |
-| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **m11** `issue-writing` | [`skills/issue-write`](../../skills/issue-write/SKILL.md) — the skill is its own spec. **Not the ROADZ copy**, which is a frozen client-project reference the registry pointed at until this issue |
+| [#32](https://github.com/Calyx-Engineering/arc/issues/32) | Size an issue title to what merging delivers | **m11** `issue-writing` | [`skills/issue-write`](../../skills/issue-write/SKILL.md) — the skill is its own spec. **Not the client-repo copy**, which is a frozen client-project reference the registry pointed at until this issue |
 | [#33](https://github.com/Calyx-Engineering/arc/issues/33) | A repeatable loop for scoping involved work | **m45** `spec-interview` | [`skills/spec-interview`](../../skills/spec-interview/SKILL.md) — the skill is its own spec |
 | [#34](https://github.com/Calyx-Engineering/arc/issues/34) | Numbered questions in a multi-topic reply | **m38** `chat-response` | [`skills/chat-response`](../../skills/chat-response/SKILL.md) — the skill is its own spec |
 | [#35](https://github.com/Calyx-Engineering/arc/issues/35) | Keep the issue checklist current as working state | **m13** issue write-back | [m13](../product-architecture/mechanisms/m13-issue-write-back.md) |
@@ -810,4 +810,4 @@ in this arc still missed.
 - [m41](../product-architecture/mechanisms/m41-relief-valve.md) — the relief valve's precondition and thresholds
 - [m42](../product-architecture/mechanisms/m42-default-branch-flip.md) — why the default branch is pointed at this arc
 - [m46](../product-architecture/mechanisms/m46-work-navigation.md) — where a discovery goes and how the work gets back out, spawned mid-arc by [#75](https://github.com/Calyx-Engineering/arc/pull/75)
-- [`arc-work/03-camp/friction-log.md`](../arc-work/03-camp/friction-log.md) — friction with Arc itself, appended while this arc runs
+- `arc-work/03-camp/friction-log.md` (private corpus, not in this repository) — friction with Arc itself, appended while this arc runs

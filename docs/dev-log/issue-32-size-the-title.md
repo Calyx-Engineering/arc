@@ -36,7 +36,7 @@ The north star did not move. Four things changed underneath it.
 
 | | |
 |---|---|
-| **m11's spec is a frozen reference, not an editable spec** | §9 traces this issue to m11, whose registry row links [`docs/reference-roadz/issue-writing/SKILL.md`](../reference-roadz/issue-writing/SKILL.md). That tree is *"copied verbatim from a client project… do not edit these to change Arc's behavior."* **`skills/issue-write` is m11's spec in practice**, and it is the only artifact of the two this issue may touch |
+| **m11's spec is a frozen reference, not an editable spec** | §9 traces this issue to m11, whose registry row links the client reference copy of `issue-writing` (private corpus, not in this repository). That tree is *"copied verbatim from a client project… do not edit these to change Arc's behavior."* **`skills/issue-write` is m11's spec in practice**, and it is the only artifact of the two this issue may touch |
 | **The `## Titles` section already exists** | [#31](https://github.com/Calyx-Engineering/arc/issues/31) shipped it. This issue is not adding a section; it is repairing one that demonstrates the failure it now has to prevent |
 | **Its own *Instead* examples break the new rule** | *"Number multi-topic questions so they can be answered by reference"* and *"Keep the issue checklist current while the work runs"* both carry the trailing clause the issue names as body material. **The examples are the guidance** — a rule contradicted by the example under it teaches the example |
 | **`hooks/tracker-verify` already scans titles, for neither failure** | `scan_title` catches `X and Y and Z` — a title naming more than one deliverable. Over-claiming and over-explaining pass it untouched |
@@ -61,7 +61,7 @@ the arc-log records the user's proceed in §4.1. Not re-raised.
 | 6 | Four refining passes, three review passes, against this north star | Done |
 | + | **`tests/verify-tracker-body.sh title`** — not in the plan. Refining pass 2 found the hook cannot reach *before the write*, which the north star requires | Done, `2500659` |
 | + | **`.gitattributes`** — a `.txt` fixture escaped a `**/*.md` rule and committed CRLF-bound | Done, `5cbf96f` |
-| + | **m11's registry row** — pointed at the frozen ROADZ copy, where the rule does not exist | Done, `319e45e` |
+| + | **m11's registry row** — pointed at the frozen client-repo copy, where the rule does not exist | Done, `319e45e` |
 
 ## Decisions & trade-offs
 
@@ -91,7 +91,7 @@ The plan grew by three rows, each from a refining axis rather than from the issu
 | Found by | |
 |---|---|
 | *Does this reach the north star?* | The north star says *before the write*, and a `PostToolUse` hook is by definition after. The rules moved into `tests/verify-tracker-body.sh`, whose own header already argued exactly this for keyword placement. The hook now calls it |
-| *Consistent with every file in the repo?* | m11's registry row pointed at the do-not-edit ROADZ copy, which has none of this. A session following the registry to m11's spec would have concluded the rule does not exist |
+| *Consistent with every file in the repo?* | m11's registry row pointed at the do-not-edit client-repo copy, which has none of this. A session following the registry to m11's spec would have concluded the rule does not exist |
 | *Have all evaluating tests been run?* | Running the check over all twenty-five open issues is what set the threshold. At ten words it flagged three titles that were doing their job; at twelve it flags nine, every one of them a title this issue names |
 
 **The measurement changed the design.** A word count alone misses the worst real case —
