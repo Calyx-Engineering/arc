@@ -114,7 +114,7 @@ reasoning is in [m10](docs/product-architecture/mechanisms/m10-branch-guard.md#s
 
 ## Using Arc
 
-The `/` menu lists more than what you type. Three commands are meant to be typed:
+The `/` menu lists more than what you type. Four commands are meant to be typed:
 
 | Command | What it does |
 |---|---|

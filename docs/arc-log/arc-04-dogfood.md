@@ -198,7 +198,7 @@ Each workstream's boundary report lands here when it closes — one per workstre
 | **Handoff** | [#146](https://github.com/Calyx-Engineering/arc/issues/146) | 13 | **13 of 13 closed.** Report in [§6.4](#64-handoff--boundary-report). [#352](https://github.com/Calyx-Engineering/arc/issues/352) and [#354](https://github.com/Calyx-Engineering/arc/issues/354) rolled to arc 05 and detached. The parent closes at the user's review |
 | **Tracker** | [#147](https://github.com/Calyx-Engineering/arc/issues/147) | 18 | **18 of 18 closed.** Report in [§6.6](#66-tracker--boundary-report). [#346](https://github.com/Calyx-Engineering/arc/issues/346) rolled to arc 05 and detached. The parent closes at the user's review |
 | **Upkeep** | [#148](https://github.com/Calyx-Engineering/arc/issues/148) | 9 | **In progress.** [#203](https://github.com/Calyx-Engineering/arc/issues/203) — the coordination prefix becomes an operating-agreement setting rather than a constant in `hooks/branch-guard` — merged in [#249](https://github.com/Calyx-Engineering/arc/pull/249). [#185](https://github.com/Calyx-Engineering/arc/issues/185) — the boundary report's word budget, counted — and [#198](https://github.com/Calyx-Engineering/arc/issues/198) — `set-mode.py`'s read-back and its round trip to `hooks/mode-guard` — are in [#256](https://github.com/Calyx-Engineering/arc/pull/256). [#204](https://github.com/Calyx-Engineering/arc/issues/204) — a milestone item is one unit of work, so an issue-closing PR carries no milestone — is in [#257](https://github.com/Calyx-Engineering/arc/pull/257); 35 issue-closing PRs stripped, Dogfood down from 120 items to 85 |
-| **Skills** | [#90](https://github.com/Calyx-Engineering/arc/issues/90) | 3 | **3 of 3 closed.** Report in [§6.9](#69-skills--boundary-report). Eight rolled to arc 05 and detached — [#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#282](https://github.com/Calyx-Engineering/arc/issues/282), [#338](https://github.com/Calyx-Engineering/arc/issues/338), [#341](https://github.com/Calyx-Engineering/arc/issues/341). The parent closes at the user's review |
+| **Skills** | [#90](https://github.com/Calyx-Engineering/arc/issues/90) | 4 | **4 of 4 closed** — [#365](https://github.com/Calyx-Engineering/arc/issues/365) joined and closed 2026-09-20. Report in [§6.9](#69-skills--boundary-report). Eight rolled and detached — [#278](https://github.com/Calyx-Engineering/arc/issues/278)–[#282](https://github.com/Calyx-Engineering/arc/issues/282), [#338](https://github.com/Calyx-Engineering/arc/issues/338), [#341](https://github.com/Calyx-Engineering/arc/issues/341) to arc 05; [#277](https://github.com/Calyx-Engineering/arc/issues/277) to milestone *tracker refactor*. The parent closes at the user's review |
 
 ### 6.1 The retrospective and the plan
 
@@ -571,58 +571,87 @@ flowchart LR
 
 ### 6.9 Skills — boundary report
 
-**Workstream:** Skills · **Closed:** 2026-09-13
+**Workstream:** [#90](https://github.com/Calyx-Engineering/arc/issues/90) Skills · **Closed:** 2026-09-20 · diagram excluded
 
-**Goal:** Thirteen shipping skills, 4,400 lines, none written or reviewed with a skill-writing tool. Review every skill, enlist Anthropic's skill-writing help, and for each ask whether a hook, script or template does part of the job more cheaply — potentially the whole of it.
+**Goal:** When a skill is written or changed - Skills gets it reviewed by one method, held to one length limit, and checked at the moment of the write. Thirteen skills, 4,400 lines, and none had been reviewed with a skill-writing tool.
 
-| | Before — 2026-09-12 | After — 2026-09-13 |
+**How:** One document says which tool reviews a skill, which tool writes one, and what the limit is. Three gates in `tests/verify-all.sh` check the tree at PR time. The reviews themselves, and the hook that fires on the write, were not built — both are below.
+
+| You say, or do | Before | Now |
 |---|---|---|
-| Skills reviewed with the chosen method — `writing-skills`' checklist, `skill-creator` | 0 of 13 | 0 of 13; the six reviews are arc 05's |
-| Skills over the adopted 500-line limit — `tools/verify-skill-length.sh` | 2 of 13, no gate | 2 of 13, reported by the gate |
-| Skills declaring neither a command nor a trigger — `tests/verify-skill-registry.sh` | unchecked | 0 of 13 |
-| Gates — `tests/verify-all.sh` | 69 | 73 |
+| *"Review this skill"* | No method. Five skill tools were installed and no session had run any of them ([#275](https://github.com/Calyx-Engineering/arc/issues/275)) | [`skill-method-decision.md`](../arc-work/04-dogfood/skill-method-decision.md): `writing-skills`' checklist reviews, `skill-creator` writes, `quick_validate.py` runs first on both. A finding goes one of four ways — a judgement call, needs evidence, a script can check it, or house style Arc keeps. **No skill has been reviewed with it yet** |
+| *"Are the skills too long?"* | An earlier, much lower figure sat in two dev-logs and was read by nothing. Eleven of thirteen were over it, unnoticed ([#275](https://github.com/Calyx-Engineering/arc/issues/275), [#276](https://github.com/Calyx-Engineering/arc/issues/276)) | 500 lines, Anthropic's number. `verify-all.sh` names every skill over it at PR time and never fails on it: `issue-write` 802, `work-watch` 505. The gate counts the whole file and the limit is the body — `work-watch`'s body is 496 ([#341](https://github.com/Calyx-Engineering/arc/issues/341)) |
+| *"Is there anything to cut?"* | Nobody had run the tools over all thirteen ([#365](https://github.com/Calyx-Engineering/arc/issues/365)) | Length is not repetition: under 2% of any skill repeats itself. Two blocks were copied between skills, and each now has one owner — where a claim came from lives in `record-route`, with its twelve words kept on one line of `engineering-report`; `work-watch` cites `relief-valve`. `issue-write` went 867 → 802 and stays there by your word: *"its working so maybe the length is needed."* `work-watch` went 609 → 505 |
+| You type `/` | Sixteen entries, three meant to be typed, and the README said nothing ([#283](https://github.com/Calyx-Engineering/arc/issues/283)) | Every skill says whether it belongs in the menu: ten `user-invocable: false`, three `true`. README's *Using Arc* lists the typed commands, then what each skill does when it fires. A skill that says neither fails `tests/verify-skill-registry.sh`. **Not checked in a live menu** |
+
+**Not delivered — the reviews.** [#90](https://github.com/Calyx-Engineering/arc/issues/90)'s first box. None of the thirteen has been reviewed with the method. [#278](https://github.com/Calyx-Engineering/arc/issues/278)–[#281](https://github.com/Calyx-Engineering/arc/issues/281) are arc 05; [#277](https://github.com/Calyx-Engineering/arc/issues/277) and [#368](https://github.com/Calyx-Engineering/arc/issues/368), both `issue-write`, are milestone *tracker refactor*.
+
+**Not delivered — anything that fires when a skill is changed.** [#90](https://github.com/Calyx-Engineering/arc/issues/90)'s third box, and half of its second. `hooks/skill-guard` is named in the method's §5 and does not exist. `CLAUDE.md` has no line pointing a skill edit at the method. Both are [#282](https://github.com/Calyx-Engineering/arc/issues/282), arc 05. Today a session editing a skill meets the limit at PR time, and the method only if it opens the document.
 
 #### 6.9.1 Delivered
 
-1. The skill method chosen: `writing-skills`' checklist reviews, `skill-creator` writes, `quick_validate.py` pre-passes both ([#275](https://github.com/Calyx-Engineering/arc/issues/275))
-2. 500 body lines, measured on `skills/`, adopted; the unrecorded earlier figure retired and gated ([#275](https://github.com/Calyx-Engineering/arc/issues/275), [#276](https://github.com/Calyx-Engineering/arc/issues/276))
-3. A fourth triage bucket, deviation, beside judgement, evidence and checkable, so five reviews compare ([#275](https://github.com/Calyx-Engineering/arc/issues/275))
-4. `tools/verify-skill-length.sh` reports any `SKILL.md` over 500 lines, wired into `verify-all.sh` ([#276](https://github.com/Calyx-Engineering/arc/issues/276))
-5. README's *Using Arc* section splits typed commands from skills that fire on wording; `verify-skill-registry.sh` catches one declaring neither ([#283](https://github.com/Calyx-Engineering/arc/issues/283))
+1. The method: which tool reviews, which writes, which runs first, and the four ways a finding is routed ([#275](https://github.com/Calyx-Engineering/arc/issues/275))
+2. 500 body lines adopted, measured on `skills/`; 180 retired, and `tests/verify-skill-method.sh` fails if the method loses a decision or a live file ties a limit to 180 again ([#275](https://github.com/Calyx-Engineering/arc/issues/275))
+3. `tools/verify-skill-length.sh` names any `SKILL.md` over 500 lines, in `verify-all.sh` ([#276](https://github.com/Calyx-Engineering/arc/issues/276))
+4. README's *Using Arc*; every skill declares `user-invocable`; `verify-skill-registry.sh` fails one that does not ([#283](https://github.com/Calyx-Engineering/arc/issues/283))
+5. Every available tool run over all thirteen, and the verdict: nothing to cut by repetition. Two copied blocks given one owner. `issue-write` 867 → 802 with its incidents moved to m12 and m13; `work-watch` 609 → 505 with its evidence moved to m13, m14 and m41 ([#365](https://github.com/Calyx-Engineering/arc/issues/365))
 
 #### 6.9.2 Spawned
 
 | | | Routed |
 |---|---|---|
-| [#338](https://github.com/Calyx-Engineering/arc/issues/338) | Five skills' frontmatter fails a conformant parser | Arc 05 |
-| [#341](https://github.com/Calyx-Engineering/arc/issues/341) | The length gate counts the file, not the adopted body limit | Arc 05 |
-| [#346](https://github.com/Calyx-Engineering/arc/issues/346) | `tracker-verify` prints a whole PR body as its excerpt | Tracker — arc 05 |
+| [#365](https://github.com/Calyx-Engineering/arc/issues/365) | Whether the skills need a clean-up at all | Skills — closed, on a scope cut to its mechanical half |
+| [#338](https://github.com/Calyx-Engineering/arc/issues/338) | Five skills' frontmatter fails a standard YAML parser | Arc 05 |
+| [#341](https://github.com/Calyx-Engineering/arc/issues/341) | The length gate counts the file; the limit is the body | Arc 05 |
+| [#346](https://github.com/Calyx-Engineering/arc/issues/346) | `tracker-verify` prints a whole PR body as its excerpt | Arc 05 |
+| [#368](https://github.com/Calyx-Engineering/arc/issues/368) | Whether `issue-write` can shrink without losing quality | Milestone *tracker refactor* |
+| [#369](https://github.com/Calyx-Engineering/arc/issues/369) | #365's unmeasured half | Closed, not planned — filed after you said no more scope |
 
 #### 6.9.3 Unexpected
 
-- `plugin eval` is early-access gated; `plugin validate --strict` exits 0 on an 852-line body
-- Five skills' frontmatter fails a conformant YAML parser and loads only by a lenient loader ([#338](https://github.com/Calyx-Engineering/arc/issues/338))
-- Four skills are named by no hook or script at all
+- `claude plugin validate .` at the repository root checks the marketplace manifest and not one skill, and prints *Validation passed*. `--strict` on the skills folder passes an 852-line skill ([#275](https://github.com/Calyx-Engineering/arc/issues/275))
+- `claude plugin eval` refuses to run: early access, on 2026-09-13 and again on 2026-09-20
+- Five skills load only because Claude Code's loader is lenient ([#338](https://github.com/Calyx-Engineering/arc/issues/338)). Four skills are named by no hook or script
+- Two skills had copied a mechanism document's finding and gone stale when the mechanism was corrected. A citation does not go stale ([#365](https://github.com/Calyx-Engineering/arc/issues/365))
+- `/skill-doctor`, seven days on this machine: `issue-write` cost 20.1m tokens over 22 loads; `chat-response` loaded 102 times for a fifth of that. **`work-watch` and `relief-valve` show one load each**, and `work-watch` says *use continuously* — its firing is the defect, not its length. No issue, by your word
 
 #### 6.9.4 Unplanned but needed
 
 | | |
 |---|---|
-| The deviation bucket | Without it, house style re-litigates [#155](https://github.com/Calyx-Engineering/arc/issues/155) five times over |
+| The fourth route, house style Arc keeps — method §4.1 | The review checklist reports Arc's own measured choices as defects. Without the list, the first review re-opens [#155](https://github.com/Calyx-Engineering/arc/issues/155), and so does each one after it |
+| [#365](https://github.com/Calyx-Engineering/arc/issues/365) itself | The five review issues assumed a clean-up was warranted. Nobody had measured |
 
 #### 6.9.5 Evidence
 
 | | |
 |---|---|
-| `verify-skill-length.sh` | Reports only. `issue-write` 867, `work-watch` 609 |
-| `verify-skill-registry.sh` | 5 of 5 passed · selftest 12 of 12 |
-| `verify-all.sh` | 73 gates, exit 0 |
+| `tools/verify-skill-length.sh` — run 2026-09-20 | 11 passed, 2 over 500 lines: `issue-write` 802, `work-watch` 505 |
+| `tests/verify-skill-registry.sh` — run 2026-09-20 | 5 of 5 · selftest 12 of 12 |
+| `tests/verify-skill-method.sh` — run 2026-09-20 | The method states all 6 decisions; nothing ties a limit to 180 |
+| `verify-all.sh` — #365's dev-log | 73 gates, one failure: `close-sequence count`, reading a gitignored file, in no diff |
+| Repeated text, 7-word runs — #365's dev-log | Under 2% inside every skill; two pairs between skills, 199 and 156 runs; every other pair under 30 |
 
 #### 6.9.6 Not done
 
-- The six reviews — [#277](https://github.com/Calyx-Engineering/arc/issues/277)–[#282](https://github.com/Calyx-Engineering/arc/issues/282) — rolled to arc 05 and detached; no skill has been reviewed under the method
-- `hooks/skill-guard`, `CLAUDE.md`'s line and the product definition's row — named, built by [#282](https://github.com/Calyx-Engineering/arc/issues/282), arc 05
-- [#338](https://github.com/Calyx-Engineering/arc/issues/338), [#341](https://github.com/Calyx-Engineering/arc/issues/341), [#346](https://github.com/Calyx-Engineering/arc/issues/346) — filed, rolled to arc 05 and detached
+- The reviews of all thirteen — [#278](https://github.com/Calyx-Engineering/arc/issues/278)–[#281](https://github.com/Calyx-Engineering/arc/issues/281), arc 05; [#277](https://github.com/Calyx-Engineering/arc/issues/277), milestone *tracker refactor*
+- `hooks/skill-guard`, `CLAUDE.md`'s line and the product definition's row — [#282](https://github.com/Calyx-Engineering/arc/issues/282), arc 05
+- Whether each skill fires and is followed; `skill-creator`'s own evals; a verdict per skill. Cut from [#365](https://github.com/Calyx-Engineering/arc/issues/365) and recorded only in its dev-log — no issue, by your word
+- [#338](https://github.com/Calyx-Engineering/arc/issues/338), [#341](https://github.com/Calyx-Engineering/arc/issues/341), [#346](https://github.com/Calyx-Engineering/arc/issues/346) — arc 05
+
+#### 6.9.7 What it changed
+
+```mermaid
+flowchart LR
+    E["You write or change a skill"] --> W["On the write: nothing fires.<br/>skill-guard is not built — #282"]:::blocked
+    E --> M["The method: which tool reviews,<br/>which writes, 500 body lines"]
+    M --> R["The thirteen reviews:<br/>not started — #277 to #281"]:::blocked
+    E --> PR["At PR time: verify-all.sh"]
+    PR --> L["Names each skill over 500 lines:<br/>issue-write 802, work-watch 505"]
+    PR --> G["Fails a skill that does not say<br/>whether it is in the menu"]
+    PR --> D["Fails if the method loses a decision,<br/>or 180 comes back"]
+    classDef blocked fill:#fff3cd,stroke:#e0a800,color:#111
+```
 
 *End of Skills' boundary report.*
 
